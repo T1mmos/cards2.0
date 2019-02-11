@@ -6,11 +6,14 @@ Hi there.
 I'm Tim De Mey, a software engineer developing in Java, C#, and some C++ as well.
 
 The goal of this one-man project is to recreate MSN's Solitaire Showdown which you could play back in the days around 2000 - 2005
-within the Windows Live Messenger application. It's a fun project, but with a lot of attention to detail and smooth gameplay.
+within the Windows Live Messenger application. It's a fun project, but with a lot of attention to detail and smooth gameplay. I once
+started with this 5 years ago, but the architecture was bad, it had ugly cards, I used vectorial cards and the SVG library was 
+really slow, and in the end I just didn't continue on it. This is cards2.0, which has the same goal as the first iteration, but the
+remake should resemble the original game, and I'll finish it. The approach is more like "think a little, implement the idea, think 
+again, refactor a little when needed". Only when the architecture doesn't support some feature, I'd go into refactor mode to build 
+support for it. Don't waste time on improving the architecture when it won't be necessary.
 
-Development started somewhere mid-2018 and was initially focused at making a standard, single-player Solitaire game in order to have most 
-of the UI stuff working. Starting late 2018, network support was added, after which the work on the actual game, Solitaire Showdown, 
-was started.
+Development started somewhere mid-2018 and was initially focused at making a standard, single-player Solitaire game in order to have most of the UI stuff working. Starting late 2018, network support was added, after which the work on the actual game, Solitaire Showdown, was started.
 
 At the time of writing I did my first commmit which includes a working Solitaire and a partially working Solitaire Showdown. There's
 still a lot of stuff that must be fixed or added, or stuff I'd really like to see in there but isn't really necessary at this moment:
