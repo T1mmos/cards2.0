@@ -15,6 +15,8 @@ support for it. Don't waste time on improving the architecture when it won't be 
 
 Development started somewhere mid-2018 and was initially focused at making a standard, single-player Solitaire game in order to have most of the UI stuff working. Starting late 2018, network support was added, after which the work on the actual game, Solitaire Showdown, was started.
 
+All in-game sprites were made by me. For example, all cards were made in Paint.NET, using a bunch of layers to switch between red and black, to switch the card value etc., to add a gloss etc. Then, I saved 52 times to a PNG file, each time with different layers switched on and off, resulting in 52 cards in PNG format.
+
 At the time of writing this README I did my first commmit which includes a working Solitaire and a partially working Solitaire Showdown. There's
 still a lot of stuff that must be fixed or added, or stuff I'd really like to see in there but isn't really necessary at this moment:
 - Support for concurrent card stack updates. Right now the game will go into an invalid state if both players try to manipulate the same
@@ -29,7 +31,7 @@ still a lot of stuff that must be fixed or added, or stuff I'd really like to se
 - Configuration (e.g. remembering your name).
 - Plug & play: framework detecting plugins, so an automatic discovery of games that can be played. Currently a startup parameter
   controls what game is loaded in the framework, I hope to move this into a full runtime discovery thing.
-
+- Better sound architecture. There is support for sound effects but it is slow and sometimes there is a very noticable delay between       the game action and playing the sound.
 
 This is the list of currently supported features:
 - A framework that can support a card game implemented in a plugin.
@@ -49,3 +51,4 @@ This is the list of currently supported features:
   that the last move was rejected, ...).
 - LAN server discovery by UDP broadcasting.
 - Clients are notified when the server goes down and do clean up the connections.
+- Sound effects
