@@ -49,3 +49,5 @@ This is the list of currently supported features:
 - Sound effects
 - Plugin: Solitaire. 
 - Plugin: Solitaire Showdown.
+
+Enjoy.
