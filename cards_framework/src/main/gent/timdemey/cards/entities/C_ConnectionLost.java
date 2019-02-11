@@ -6,9 +6,8 @@ import gent.timdemey.cards.services.dialogs.IDialogService;
 
 public class C_ConnectionLost extends ACommandPill {
 
-    C_ConnectionLost(MetaInfo info) {
-        super(info);
-        // TODO Auto-generated constructor stub
+    C_ConnectionLost()
+    {        
     }
 
     @Override
@@ -31,7 +30,7 @@ public class C_ConnectionLost extends ACommandPill {
             getThreadContext().removeRemotes();
             getThreadContext().setServerId(null);
             
-            scheduleOn(ContextType.UI);
+            reschedule(ContextType.UI);
         }
         else 
         {

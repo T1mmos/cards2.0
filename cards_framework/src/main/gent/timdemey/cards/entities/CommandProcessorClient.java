@@ -32,11 +32,12 @@ class CommandProcessorClient extends ACommandProcessorAsync {
         public void onTcpMessageReceived(TCP_Connection connection, String message) {
             try 
             {
-                ICommand cmd = Json.receive(message).command;
+                CommandEnvelope envelope = Json.receive(message);
+                ICommand cmd = envelope.command;
                 cmd.setVolatileData(connection);
                 
                 Services.get(ILogManager.class).log("Received command '" + cmd.getClass().getSimpleName() + "' from " + connection.getRemote());
-                cmd.scheduleOn(ContextType.Client);
+                envelope.reschedule(ContextType.Client);
             } 
             catch (Exception e)
             {
@@ -50,9 +51,9 @@ class CommandProcessorClient extends ACommandProcessorAsync {
             Services.get(ILogManager.class).log("A TCP connection was added to " + connection.getRemote());
             ContextLimited context = Services.get(IContextProvider.class).getContext(ContextType.Client);            
             
-            C_JoinGame cmd = new C_JoinGame(new MetaInfo(0,0,context.localPlayerId), context.localPlayerName, context.localPlayerId);
+            C_JoinGame cmd = new C_JoinGame(context.localPlayerName, context.localPlayerId);
             cmd.setVolatileData(connection);
-            cmd.scheduleOn(ContextType.Client);
+            cmd.schedule(ContextType.Client);
         }
 
         @Override
@@ -69,8 +70,8 @@ class CommandProcessorClient extends ACommandProcessorAsync {
             {
                 if (id.equals(context.serverId))
                 {
-                    ICommand cmd = new C_ConnectionLost(new MetaInfo(0,0,context.localPlayerId));
-                    cmd.scheduleOn(ContextType.Client);
+                    ICommand cmd = new C_ConnectionLost();
+                    Services.get(IContextProvider.class).getContext(ContextType.Client).commandProcessor.schedule(cmd);
                 }
             }
         }
@@ -88,8 +89,9 @@ class CommandProcessorClient extends ACommandProcessorAsync {
      * @param command
      */
     @Override
-    protected void execute(ICommand command)
+    protected void execute(CommandEnvelope envelope)
     {
+        ICommand command = envelope.command;
         Services.get(ILogManager.class).log("Processing command '" + command.getClass().getSimpleName() +"'");
         Preconditions.checkState(Thread.currentThread().getName().equals(THREAD_NAME));
         
@@ -99,14 +101,14 @@ class CommandProcessorClient extends ACommandProcessorAsync {
         UUID localId = context.getLocalId();
         if (command instanceof C_Move || command instanceof C_Composite)
         {
-            if (localId.equals(command.getMetaInfo().requestingParty))
+            if (localId.equals(envelope.getMetaInfo().requestingParty))
             {
                 TCP_Connection connection = connPool.getConnection(context.getServerId());
-                connection.send(command.serialize());
+                connection.send(envelope.serialize());
             }
             else 
             {
-                command.scheduleOn(ContextType.UI);
+                envelope.reschedule(ContextType.UI);
             }
         }
         
@@ -135,6 +137,6 @@ class CommandProcessorClient extends ACommandProcessorAsync {
             return;
         }
         
-        env_in.command.scheduleOn(ContextType.Client);
+        env_in.reschedule(ContextType.Client);
     }
 }

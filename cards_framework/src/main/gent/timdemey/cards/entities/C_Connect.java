@@ -9,17 +9,17 @@ import gent.timdemey.cards.multiplayer.io.TCP_ConnectionPool;
 class C_Connect extends ACommandPill 
 {
 
-    static class CompactConverter extends ACommandSerializer<C_Connect>
+    static class CompactConverter extends ASerializer<C_Connect>
     {
         @Override
-        protected void writeCommand(SerializationContext<C_Connect> sc) {
+        protected void write(SerializationContext<C_Connect> sc) {
             writeString(sc, PROPERTY_SERVER_INETADDRESS, sc.src.srvInetAddress.getHostAddress());
             writeInt(sc, PROPERTY_SERVER_TCPPORT, sc.src.tcpport);
             writeString(sc, PROPERTY_CLIENT_NAME, sc.src.playerName);
         }
 
         @Override
-        protected C_Connect readCommand(DeserializationContext dc, MetaInfo metaInfo) {
+        protected C_Connect read(DeserializationContext dc) {
             InetAddress srvInetAddress = null;
             try {
                 srvInetAddress = InetAddress.getByName(readString(dc, PROPERTY_SERVER_INETADDRESS));
@@ -30,7 +30,7 @@ class C_Connect extends ACommandPill
             int tcpport = readInt(dc, PROPERTY_SERVER_TCPPORT);
             String playerName = readString(dc, PROPERTY_CLIENT_NAME);
                        
-            return new C_Connect(metaInfo,srvInetAddress, tcpport, playerName);
+            return new C_Connect(srvInetAddress, tcpport, playerName);
         }        
     }
     
@@ -38,9 +38,8 @@ class C_Connect extends ACommandPill
     final int tcpport;
     final String playerName;
         
-    C_Connect (MetaInfo metaInfo, InetAddress srvInetAddress, int tcpport, String playerName)
+    C_Connect (InetAddress srvInetAddress, int tcpport, String playerName)
     {
-        super(metaInfo);
        // this.clientName = clientName;
        // this.clientId = clientId;
         this.srvInetAddress = srvInetAddress;
@@ -61,7 +60,7 @@ class C_Connect extends ACommandPill
         {
             getThreadContext().setLocalName(playerName);
             
-            scheduleOn(ContextType.Client);
+            reschedule(ContextType.Client);
         }
         else if (contextType == ContextType.Client)
         {

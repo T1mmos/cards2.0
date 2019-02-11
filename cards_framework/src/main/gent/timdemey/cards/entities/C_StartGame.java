@@ -8,28 +8,25 @@ import com.google.gson.reflect.TypeToken;
 
 class C_StartGame extends ACommand {
     
-    static class CompactConverter extends ACommandSerializer<C_StartGame>
+    static class CompactConverter extends ASerializer<C_StartGame>
     {
-
         @Override
-        protected void writeCommand(SerializationContext<C_StartGame> sc) {            
+        protected void write(SerializationContext<C_StartGame> sc) {
             sc.obj.add(PROPERTY_CARDDECK, sc.context.serialize(sc.src.playerStacks));
         }
 
         @Override
-        protected C_StartGame readCommand(DeserializationContext dc, MetaInfo metaInfo) {
+        protected C_StartGame read(DeserializationContext dc) {
             Map<UUID, List<E_CardStack>> stacks = dc.context.deserialize(dc.obj.get(PROPERTY_CARDDECK), new TypeToken<Map<UUID, List<E_CardStack>>>() {}.getType());
-         
-            return new C_StartGame(metaInfo, stacks);
-        }
-    
+            
+            return new C_StartGame(stacks);
+        }    
     }
     
     private final Map<UUID, List<E_CardStack>> playerStacks;
     
-    C_StartGame(MetaInfo metaInfo, Map<UUID, List<E_CardStack>> playerStacks)
+    C_StartGame(Map<UUID, List<E_CardStack>> playerStacks)
     {
-        super(metaInfo);
         this.playerStacks = playerStacks;
     }
     
@@ -60,7 +57,8 @@ class C_StartGame extends ACommand {
         {            
             // make a full copy of objects first, so they are not shared with UI layer
             try {
-                Map<UUID, List<E_CardStack>> playerStacksCopy = ((C_StartGame) Json.receive(this.serialize()).command).playerStacks;
+                C_StartGame commandCopy = (C_StartGame) Json.receive(this.getCommandEnvelope().serialize()).command;
+                Map<UUID, List<E_CardStack>> playerStacksCopy = commandCopy.playerStacks;
                 E_CardGame game = new E_CardGame(playerStacksCopy);
                 cf.getCardGameState().cardGame = game;
             } catch (Exception e) {
@@ -68,14 +66,14 @@ class C_StartGame extends ACommand {
                 e.printStackTrace();
             }            
             
-            scheduleOn(ContextType.UI);
+            reschedule(ContextType.UI);
         }
         else 
         {          
             E_CardGame game = new E_CardGame(playerStacks);
             cf.getCardGameState().cardGame = game;
             
-            getProcessorServer().srv_tcp_connpool.broadcast(cf.getPlayerIds(), this.serialize());
+            getProcessorServer().srv_tcp_connpool.broadcast(cf.getPlayerIds(), getCommandEnvelope().serialize());
         }
     }
    

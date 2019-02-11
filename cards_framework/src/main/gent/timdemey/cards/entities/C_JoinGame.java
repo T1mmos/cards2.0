@@ -10,30 +10,28 @@ import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.multiplayer.io.TCP_Connection;
 
 class C_JoinGame extends ACommandPill  {
-    static class CompactConverter extends ACommandSerializer<C_JoinGame>
+    static class CompactConverter extends ASerializer<C_JoinGame>
     {
         @Override
-        protected void writeCommand(SerializationContext<C_JoinGame> sc) {
+        protected void write(SerializationContext<C_JoinGame> sc) 
+        {
             writeString(sc, PROPERTY_CLIENT_NAME, sc.src.clientName);
             writeString(sc, PROPERTY_CLIENT_ID, sc.src.clientId.toString());
         }
 
-        @Override   
-        protected C_JoinGame readCommand(DeserializationContext dc, MetaInfo metaInfo) {
+        @Override
+        protected C_JoinGame read(DeserializationContext dc) {
             String clientName = readString(dc, PROPERTY_CLIENT_NAME);
-            UUID clientId = UUID.fromString(readString(dc, PROPERTY_CLIENT_ID));
-           
+            UUID clientId = UUID.fromString(readString(dc, PROPERTY_CLIENT_ID));           
                        
-            return new C_JoinGame(metaInfo, clientName, clientId);
+            return new C_JoinGame(clientName, clientId);
         }        
     }
     
     final String clientName;
     final UUID clientId;
     
-    C_JoinGame(MetaInfo info, String clientName, UUID clientId) {
-        super(info);
-
+    C_JoinGame(String clientName, UUID clientId) {
         this.clientName = clientName;
         this.clientId = clientId;
     }
@@ -50,7 +48,7 @@ class C_JoinGame extends ACommandPill  {
         if (contextType == ContextType.Client)
         {
             TCP_Connection tcpConnection = (TCP_Connection) getVolatileData();
-            tcpConnection.send(Json.send(new CommandEnvelope(this)));
+            tcpConnection.send(Json.send(CommandEnvelope.createCommandEnvelope(this)));
         }
         else if (contextType == ContextType.Server)
         {
@@ -63,22 +61,23 @@ class C_JoinGame extends ACommandPill  {
             context.addPlayer(clientId, clientName);
             
             // send unicast to new client
-            ICommand answer = new C_WelcomeClient(
-                    new MetaInfo(0,0, context.getLocalId()), 
+            ICommand answer = new C_WelcomeClient( 
                     context.getLocalId(), 
                     context.getServerMessage(),
                     context.getParties());
             
-            getProcessorServer().srv_tcp_connpool.getConnection(clientId).send(answer.serialize());
+            getProcessorServer().srv_tcp_connpool.getConnection(clientId).send(Json.send(CommandEnvelope.createCommandEnvelope(answer)));
             
             // send update to already connected clients
             List<Player> others = context.getPlayersExcept(clientId);
             if (others.size() > 0)
             {
-                ICommand update = new C_PlayerJoined(new MetaInfo(0, 0, context.getLocalId()), context.getPlayer(clientId));                
+                ACommand updateCmd = new C_PlayerJoined(context.getPlayer(clientId));       
+                CommandEnvelope envelope = CommandEnvelope.createCommandEnvelope(updateCmd);
+                String serializedEnv = envelope.serialize();
                 for (Player player : others)
                 {
-                    getProcessorServer().srv_tcp_connpool.getConnection(player.id).send(update.serialize());
+                    getProcessorServer().srv_tcp_connpool.getConnection(player.id).send(serializedEnv);
                 }
             }
             
@@ -90,8 +89,8 @@ class C_JoinGame extends ACommandPill  {
                 List<UUID> playerIds = getThreadContext().getPlayerIds();
                 Map<UUID, List<E_CardStack>> playerStacks = creator.createStacks(playerIds, allCards);
                               
-                C_StartGame cmd = new C_StartGame(new MetaInfo(0,0,getThreadContext().getServerId()), playerStacks);
-                cmd.scheduleOn(ContextType.Server);
+                C_StartGame cmd = new C_StartGame(playerStacks);
+                cmd.schedule(ContextType.Server);
             }
         }
         else

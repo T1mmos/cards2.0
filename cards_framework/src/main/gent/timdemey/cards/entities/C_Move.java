@@ -7,10 +7,10 @@ import java.util.UUID;
 
 class C_Move extends ACommand {
     
-    static class CompactConverter extends ACommandSerializer<C_Move>
+    static class CompactConverter extends ASerializer<C_Move>
     {
         @Override
-        protected void writeCommand(SerializationContext<C_Move> sc) {    
+        protected void write(SerializationContext<C_Move> sc) {
             writeUUID(sc, PROPERTY_SRC_CARDSTACK_ID, sc.src.srcCardStackId);
             writeUUID(sc, PROPERTY_DST_CARDSTACK_ID, sc.src.dstCardStackId);
             writeUUID(sc, PROPERTY_CARD_ID, sc.src.cardId);
@@ -18,13 +18,13 @@ class C_Move extends ACommand {
         }
 
         @Override
-        protected C_Move readCommand(DeserializationContext dc, MetaInfo metaInfo) {
+        protected C_Move read(DeserializationContext dc) {
             UUID srcCardStackId = readUUID(dc, PROPERTY_SRC_CARDSTACK_ID);
             UUID dstCardStackId = readUUID(dc, PROPERTY_DST_CARDSTACK_ID);
             UUID cardId = readUUID(dc, PROPERTY_CARD_ID);
             boolean flipOrder = readBoolean(dc, PROPERTY_FLIPORDER);
             
-            return new C_Move(metaInfo, srcCardStackId, dstCardStackId, cardId, flipOrder);
+            return new C_Move(srcCardStackId, dstCardStackId, cardId, flipOrder);
         }        
     }
     
@@ -36,15 +36,14 @@ class C_Move extends ACommand {
     private List<E_Card> transferCards;
     private List<E_Card> flippedTransferCards;
    
-    C_Move (MetaInfo metaInfo, UUID srcCardStackId, UUID dstCardStackId, UUID cardId, boolean flipOrder)
+    C_Move (UUID srcCardStackId, UUID dstCardStackId, UUID cardId, boolean flipOrder)
     {
-        super(metaInfo);
         this.srcCardStackId = srcCardStackId;
         this.dstCardStackId = dstCardStackId;
         this.cardId = cardId;
         this.flipOrder = flipOrder;
     }
-
+    
     @Override
     public CommandType getCommandType()
     {
@@ -140,4 +139,5 @@ class C_Move extends ACommand {
         
         listener.onCardsMoved(dstCardStack, srcCardStack, transferCards);
     }
+
 }

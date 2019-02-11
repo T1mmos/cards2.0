@@ -9,8 +9,8 @@ import gent.timdemey.cards.Services;
  */
 final class C_Redo extends ACommandPill
 {  
-    C_Redo(MetaInfo info) {
-        super(info);
+    C_Redo() 
+    {
     }
     
     @Override

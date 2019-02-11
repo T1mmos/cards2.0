@@ -10,23 +10,23 @@ import gent.timdemey.cards.multiplayer.io.UDP_ServiceRequester;
  */
 class C_UDP_HelloServer extends ACommandPill {
 
-    static class CompactConverter extends ACommandSerializer<C_UDP_HelloServer>
+    static class CompactConverter extends ASerializer<C_UDP_HelloServer>
     {
+
         @Override
-        protected void writeCommand(SerializationContext<C_UDP_HelloServer> sc) 
-        {
+        protected void write(SerializationContext<C_UDP_HelloServer> sc) 
+        {            
         }
 
         @Override
-        protected C_UDP_HelloServer readCommand(DeserializationContext dc, MetaInfo metaInfo) 
+        protected C_UDP_HelloServer read(DeserializationContext dc) 
         {
-            return new C_UDP_HelloServer(metaInfo);
+            return new C_UDP_HelloServer();
         }        
     }
     
-    C_UDP_HelloServer(MetaInfo info) 
+    C_UDP_HelloServer() 
     {
-        super(info);
     }
 
     @Override
@@ -49,10 +49,10 @@ class C_UDP_HelloServer extends ACommandPill {
                 throw new IllegalStateException("Already a requesting service running. Stop the current one first.");
             }
             
-            new C_ClearServerList(new MetaInfo()).scheduleOn(ContextType.UI);
+            new C_ClearServerList().schedule(ContextType.UI);
             
-            C_UDP_HelloServer cmd = new C_UDP_HelloServer(new MetaInfo());
-            CommandEnvelope env_out = new CommandEnvelope(cmd);
+            C_UDP_HelloServer cmd = new C_UDP_HelloServer();
+            CommandEnvelope env_out = CommandEnvelope.createCommandEnvelope(cmd);
             String json_out = Json.send(env_out);            
             
             cProcessor.serviceRequester = new UDP_ServiceRequester(json_out, cProcessor::onUdpReceived);

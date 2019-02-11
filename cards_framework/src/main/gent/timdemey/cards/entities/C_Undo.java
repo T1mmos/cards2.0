@@ -9,8 +9,8 @@ import gent.timdemey.cards.Services;
  */
 final class C_Undo extends ACommandPill 
 {
-    C_Undo(MetaInfo info) {
-        super(info);
+    C_Undo() 
+    {
     }
 
     @Override

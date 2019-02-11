@@ -4,10 +4,25 @@ import java.util.UUID;
 
 public class C_DropPlayer extends ACommandPill {
 
+    static class CompactConverter extends ASerializer<C_DropPlayer>
+    {
+        @Override
+        protected void write(SerializationContext<C_DropPlayer> sc) {
+            writeUUID(sc, PROPERTY_PLAYER_ID, sc.src.id);
+        }
+
+        @Override
+        protected C_DropPlayer read(DeserializationContext dc) 
+        {
+            UUID id = readUUID(dc, PROPERTY_PLAYER_ID);
+            return new C_DropPlayer(id);
+        }
+                
+    }
+    
     final UUID id;
     
-    C_DropPlayer(MetaInfo info, UUID id) {
-        super(info);
+    C_DropPlayer(UUID id) {
         this.id = id;
     }
 
@@ -27,13 +42,13 @@ public class C_DropPlayer extends ACommandPill {
         else if (contextType == ContextType.Client)
         {
             getThreadContext().removePlayer(id);
-            scheduleOn(ContextType.UI);
+            reschedule(ContextType.UI);
         }
         else 
         {
             getThreadContext().removePlayer(id);
             
-            String ser = Json.send(new CommandEnvelope(this));
+            String ser = Json.send(CommandEnvelope.createCommandEnvelope(this));
             getThreadContext().getRemotePlayers().stream().forEach(c -> getProcessorServer().srv_tcp_connpool.getConnection(c.id).send(ser));
         }
     }

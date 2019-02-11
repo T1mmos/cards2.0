@@ -2,8 +2,8 @@ package gent.timdemey.cards.entities;
 
 class C_UDP_HelloServerStop extends ACommandPill {
 
-    C_UDP_HelloServerStop(MetaInfo info) {
-        super(info);
+    C_UDP_HelloServerStop() 
+    {
     }
 
     @Override

@@ -1,7 +1,10 @@
 package gent.timdemey.cards.entities;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.google.common.base.Preconditions;
-import com.google.gson.JsonArray;
 
 /**
  * A composite command bundles multiple commands in one atomic command.
@@ -18,42 +21,31 @@ import com.google.gson.JsonArray;
  */
 class C_Composite extends ACommand {
         
-    static class CompactConverter extends ACommandSerializer<C_Composite>
+    static class CompactConverter extends ASerializer<C_Composite>
     {
         @Override
-        protected void writeCommand(SerializationContext<C_Composite> sc)
-        {
-            CommandEnvelope [] envelopes = new CommandEnvelope[sc.src.commands.length];
-            for (int i = 0; i < sc.src.commands.length; i++)
-            {
-                envelopes[i] = new CommandEnvelope(sc.src.commands[i]);
-            }
-            sc.obj.add(PROPERTY_SUBCOMMANDS, sc.context.serialize(envelopes));
+        protected void write(SerializationContext<C_Composite> sc) {
+            List<CommandDto> cmdDtos = sc.src.commands.stream().map(c->new CommandDto(c)).collect(Collectors.toList());
+            writeList(sc, PROPERTY_SUBCOMMANDS, cmdDtos);
         }
 
         @Override
-        protected C_Composite readCommand(DeserializationContext dc, MetaInfo metaInfo) {
-                                    
-            JsonArray commandArray = dc.obj.get(PROPERTY_SUBCOMMANDS).getAsJsonArray();
-            ICommand[] commands = new ICommand[commandArray.size()];
-            for (int i = 0; i < commandArray.size(); i++)
-            {
-                CommandEnvelope envelope = dc.context.deserialize(commandArray.get(i), CommandEnvelope.class);
-                commands[i] = envelope.command;
-            }
-            
-            return new C_Composite(metaInfo, commands);
+        protected C_Composite read(DeserializationContext dc) 
+        {
+            List<CommandDto> cmdDtos = readList(dc, PROPERTY_SUBCOMMANDS, CommandDto.class);
+            List<ICommand> commands = cmdDtos.stream().map(c->c.command).collect(Collectors.toList());
+            return new C_Composite(commands);
         }
                 
     }
     
-    private final ICommand [] commands;
+    private final List<ICommand> commands;
     private final CommandType commandType;
 
-    C_Composite(MetaInfo metaInfo, ICommand ... commands) {
-        super(metaInfo);         
-        Preconditions.checkArgument(metaInfo.minor == 0); // composite should always be major so minor == 0
+    private C_Composite(List<ICommand> commands)
+    {
         Preconditions.checkNotNull(commands);
+        Preconditions.checkArgument(commands.size() > 0);
         
         CommandType type = null;
         for (ICommand cmd : commands)
@@ -71,6 +63,11 @@ class C_Composite extends ACommand {
         this.commands = commands;
         this.commandType = type;
     }
+    
+    C_Composite(ICommand ... commands)
+    {
+        this(Arrays.asList(commands));
+    }
 
     @Override
     public CommandType getCommandType() {
@@ -81,13 +78,13 @@ class C_Composite extends ACommand {
     public boolean canExecute() {
         boolean canExecute = true;
         int i = 0;
-        while (canExecute && i < commands.length)
+        while (canExecute && i < commands.size())
         {
-            if (commands[i].canExecute())
+            if (commands.get(i).canExecute())
             {
                 try 
                 {
-                    commands[i++].execute();
+                    commands.get(i).execute();
                 }
                 catch (Exception e)
                 {
@@ -103,9 +100,9 @@ class C_Composite extends ACommand {
         // unexecute
         while (i > 0)
         {
-            if (commands[--i].canUndo())
+            if (commands.get(--i).canUndo())
             {
-                commands[i].undo();
+                commands.get(i).undo();
             }
             else
             {
@@ -117,9 +114,9 @@ class C_Composite extends ACommand {
     
     @Override
     public void execute() {
-        for (int i = 0 ; i < commands.length; i++)
+        for (int i = 0 ; i < commands.size(); i++)
         {
-            commands[i].execute();
+            commands.get(i).execute();
         }
     }
 
@@ -130,11 +127,11 @@ class C_Composite extends ACommand {
     
     @Override
     public void undo() {
-        for (int i = commands.length - 1 ; i >= 0; i--)
+        for (int i = commands.size() - 1 ; i >= 0; i--)
         {
-            if (commands[i].canUndo())
+            if (commands.get(i).canUndo())
             {
-                commands[i].undo();
+                commands.get(i).undo();
             }
             else
             {
@@ -145,17 +142,17 @@ class C_Composite extends ACommand {
 
     @Override
     public void visitExecuted(IGameEventListener listener) {
-        for (int i = 0 ; i < commands.length; i++)
+        for (int i = 0 ; i < commands.size(); i++)
         {
-            commands[i].visitExecuted(listener);
+            commands.get(i).visitExecuted(listener);
         }
     }
 
     @Override
     public void visitUndone(IGameEventListener listener) {
-        for (int i = commands.length - 1 ; i >= 0; i--)
+        for (int i = commands.size() - 1 ; i >= 0; i--)
         {
-            commands[i].visitUndone(listener);
+            commands.get(i).visitUndone(listener);
         }
     }
 }

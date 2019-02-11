@@ -28,7 +28,7 @@ public class SolShowGameOperations extends AGameOperations {
         List<UUID> playerIds = Arrays.asList(getThreadContext().getLocalId(), UUID.fromString("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"));
         Map<UUID, List<E_CardStack>> playerStacks = creator.createStacks(playerIds, cards);
                 
-        C_StartGame command = new C_StartGame(new MetaInfo(), playerStacks);
+        C_StartGame command = new C_StartGame(playerStacks);
         getCommandProcessor().schedule(command);
     }
     
@@ -235,19 +235,13 @@ public class SolShowGameOperations extends AGameOperations {
         int major = Services.get(IContextProvider.class).getThreadContext().getCardGameState().history.newCommandMajorId();
         MetaInfo fullCmdMetaInfo = new MetaInfo(major);
         
-        C_Move moveCmd = new C_Move(
-                depotInvolved ? new MetaInfo(major) : fullCmdMetaInfo,
-                srcCardStack.getCardStackId(), 
-                dstCardStack.getCardStackId(),
-                card.getCardId(), 
-                flipOrder); 
+        C_Move moveCmd = new C_Move(srcCardStack.getCardStackId(), dstCardStack.getCardStackId(), card.getCardId(), flipOrder); 
         
         ICommand fullCmd;
         if (depotInvolved)
         {
-            C_SetVisible visCmd = new C_SetVisible(new MetaInfo(major), localId, srcCardStack.getCardsFrom(card), !card.isVisible());
-            
-            fullCmd = new C_Composite(fullCmdMetaInfo, moveCmd, visCmd);
+            C_SetVisible visCmd = new C_SetVisible(localId, srcCardStack.getCardsFrom(card), !card.isVisible());
+            fullCmd = new C_Composite(moveCmd, visCmd);
         }
         else 
         {
@@ -273,7 +267,8 @@ public class SolShowGameOperations extends AGameOperations {
         }
         else if (move.operation == Operation.ChangeVisibility)
         {
-            getCommandProcessor().schedule(new C_SetVisible(new MetaInfo(), localId, Arrays.asList(move.card), true));
+            C_SetVisible cmd = new C_SetVisible(localId, Arrays.asList(move.card), true);
+            getCommandProcessor().schedule(cmd);
         } 
     }
     
@@ -282,7 +277,6 @@ public class SolShowGameOperations extends AGameOperations {
     {
         Services.get(IContextProvider.class).installContext(ContextType.Server, UUID.randomUUID(), srvinfo.srvname);
         C_CreateGame cmd = new C_CreateGame(srvinfo);
-        
         Services.get(IContextProvider.class).getContext(ContextType.Server).commandProcessor.schedule(cmd);
     }
     

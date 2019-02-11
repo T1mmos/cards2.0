@@ -56,16 +56,19 @@ class Json {
         builder.registerTypeAdapter(Player.class, new Player.CompactConverter());
         
         // commands
-        builder.registerTypeAdapter(CommandEnvelope.class, new CommandEnvelope.CompactConverter());
-        builder.registerTypeAdapter(MetaInfo.class, new MetaInfo.CompactConverter());
         builder.registerTypeAdapter(C_Composite.class, new C_Composite.CompactConverter());
+        builder.registerTypeAdapter(C_DropPlayer.class, new C_DropPlayer.CompactConverter());
         builder.registerTypeAdapter(C_JoinGame.class, new C_JoinGame.CompactConverter());
         builder.registerTypeAdapter(C_Move.class, new C_Move.CompactConverter());
         builder.registerTypeAdapter(C_PlayerJoined.class, new C_PlayerJoined.CompactConverter());
         builder.registerTypeAdapter(C_StartGame.class, new C_StartGame.CompactConverter());
+        builder.registerTypeAdapter(C_NotWelcomeClient.class, new C_NotWelcomeClient.CompactConverter());
         builder.registerTypeAdapter(C_UDP_HelloServer.class, new C_UDP_HelloServer.CompactConverter());
         builder.registerTypeAdapter(C_UDP_HelloClient.class, new C_UDP_HelloClient.CompactConverter());
-        builder.registerTypeAdapter(C_WelcomeClient.class, new C_WelcomeClient.CompactConverter());        
+        builder.registerTypeAdapter(C_WelcomeClient.class, new C_WelcomeClient.CompactConverter()); 
+        builder.registerTypeAdapter(CommandEnvelope.class, new CommandEnvelope.CompactConverter());
+        builder.registerTypeAdapter(CommandDto.class, new CommandDto.CompactConverter());
+        builder.registerTypeAdapter(MetaInfo.class, new MetaInfo.CompactConverter());       
     }
     
     private static void ConfigurePretty(GsonBuilder builder)

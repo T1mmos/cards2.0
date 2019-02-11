@@ -7,9 +7,8 @@ package gent.timdemey.cards.entities;
  */
 abstract class ACommandPill extends ACommand {
     
-    ACommandPill (MetaInfo info)
+    ACommandPill ()
     {
-        super(info);
     }
     
     @Override

@@ -10,9 +10,15 @@ package gent.timdemey.cards.entities;
 interface ICommandProcessor {
     
     /**
+     * Reschedules a wrapped command.
+     * @param envelope
+     */
+    void reschedule (CommandEnvelope envelope);
+    
+    /**
      * Adds a new command to command list, for execution somewhere in 
-     * the near future.
+     * the near future. The command will be wrapped in a CommandEnvelope.
      * @param command
      */
-    void schedule(ICommand command);
+    void schedule (ICommand command);
 }

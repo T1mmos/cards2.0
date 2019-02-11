@@ -1,25 +1,24 @@
 package gent.timdemey.cards.entities;
 
 class C_PlayerJoined extends ACommandPill {
-    static class CompactConverter extends ACommandSerializer<C_PlayerJoined>
+    static class CompactConverter extends ASerializer<C_PlayerJoined>
     {
         @Override
-        protected void writeCommand(SerializationContext<C_PlayerJoined> sc) {
+        protected void write(SerializationContext<C_PlayerJoined> sc) {
             writeObject(sc, PROPERTY_PLAYER, sc.src.player);
         }
 
         @Override
-        protected C_PlayerJoined readCommand(DeserializationContext dc, MetaInfo metaInfo) {
+        protected C_PlayerJoined read(DeserializationContext dc) {
             Player player = readObject(dc, PROPERTY_PLAYER, Player.class);
             
-            return new C_PlayerJoined(metaInfo, player);
+            return new C_PlayerJoined(player);
         }        
     }
     
     final Player player;
     
-    C_PlayerJoined(MetaInfo info, Player player) {
-        super(info);
+    C_PlayerJoined(Player player) {
         this.player = player;
     }
 
@@ -40,7 +39,7 @@ class C_PlayerJoined extends ACommandPill {
         else if  (contextType == ContextType.Client)
         {
             context.addPlayer(player.id, player.name);
-            scheduleOn(ContextType.UI);
+            reschedule(ContextType.UI);
         }
         else 
         {

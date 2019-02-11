@@ -5,25 +5,25 @@ import gent.timdemey.cards.services.dialogs.IDialogService;
 
 class C_NotWelcomeClient extends ACommandPill {
 
-    static class CompactConverter extends ACommandSerializer<C_NotWelcomeClient>
+    static class CompactConverter extends ASerializer<C_NotWelcomeClient>
     {
         @Override
-        protected void writeCommand(SerializationContext<C_NotWelcomeClient> sc) {
+        protected void write(SerializationContext<C_NotWelcomeClient> sc) {
             writeString(sc, PROPERTY_SERVER_MESSAGE, sc.src.serverMessage);
         }
 
         @Override
-        protected C_NotWelcomeClient readCommand(DeserializationContext dc, MetaInfo metaInfo) {
+        protected C_NotWelcomeClient read(DeserializationContext dc) {
             String serverMessage = readString(dc, PROPERTY_SERVER_MESSAGE);
             
-            return new C_NotWelcomeClient(metaInfo, serverMessage);
+            return new C_NotWelcomeClient(serverMessage);
         }        
     }
     
     String serverMessage;
     
-    C_NotWelcomeClient(MetaInfo info, String serverMessage) {
-        super(info);
+    C_NotWelcomeClient(String serverMessage) 
+    {
         this.serverMessage = serverMessage;
     }
 
@@ -37,7 +37,7 @@ class C_NotWelcomeClient extends ACommandPill {
     {
         if (getContextType() == ContextType.Client)
         {
-            scheduleOn(ContextType.UI);
+            reschedule(ContextType.UI);
         }
         else if (getContextType() == ContextType.UI)
         {

@@ -2,9 +2,8 @@ package gent.timdemey.cards.entities;
 
 abstract class ACommandPillUnexecutable extends ACommandPill {
     
-    ACommandPillUnexecutable (MetaInfo info)
+    ACommandPillUnexecutable ()
     {
-        super(info);
     }
     
     @Override

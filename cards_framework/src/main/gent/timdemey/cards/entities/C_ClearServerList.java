@@ -4,8 +4,8 @@ import gent.timdemey.cards.Services;
 
 class C_ClearServerList extends ACommandPill{
 
-    C_ClearServerList(MetaInfo info) {
-        super(info);
+    C_ClearServerList() 
+    {
     }
 
     @Override

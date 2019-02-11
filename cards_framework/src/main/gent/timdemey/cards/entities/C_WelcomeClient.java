@@ -14,23 +14,23 @@ import gent.timdemey.cards.ui.dialogs.LobbyDialogContent;
 
 class C_WelcomeClient extends ACommandPill
 {
-    static class CompactConverter extends ACommandSerializer<C_WelcomeClient>
+    static class CompactConverter extends ASerializer<C_WelcomeClient>
     {
         @Override
-        protected void writeCommand(SerializationContext<C_WelcomeClient> sc) {
+        protected void write(SerializationContext<C_WelcomeClient> sc) {
             writeString(sc, PROPERTY_SERVER_ID, sc.src.serverId.toString());
             writeString(sc, PROPERTY_SERVER_MESSAGE, sc.src.serverMessage);
             writeList(sc, LIST_PLAYERS, sc.src.connected);
         }
 
         @Override
-        protected C_WelcomeClient readCommand(DeserializationContext dc, MetaInfo metaInfo) {
+        protected C_WelcomeClient read(DeserializationContext dc) {
             String str_serverId = readString(dc, PROPERTY_SERVER_ID);
             UUID serverId = UUID.fromString(str_serverId);
             String serverMessage = readString(dc, PROPERTY_SERVER_MESSAGE);
             List<Player> connected = readList(dc, LIST_PLAYERS, Player.class);
             
-            return new C_WelcomeClient(metaInfo, serverId, serverMessage, connected);
+            return new C_WelcomeClient(serverId, serverMessage, connected);
         }        
     }
     
@@ -38,9 +38,8 @@ class C_WelcomeClient extends ACommandPill
     final String serverMessage;
     final List<Player> connected;
         
-    C_WelcomeClient(MetaInfo info, UUID serverId, String serverMessage, List<Player> connected) 
+    C_WelcomeClient(UUID serverId, String serverMessage, List<Player> connected) 
     {        
-        super(info);
         this.serverId = serverId;
         this.serverMessage = serverMessage;
         this.connected = connected;
@@ -68,7 +67,7 @@ class C_WelcomeClient extends ACommandPill
                 }
                 getThreadContext().addPlayer(player.id, player.name);
             }
-            scheduleOn(ContextType.UI);    
+            reschedule(ContextType.UI);    
         }
         else if (contextType == ContextType.UI)
         {
@@ -89,7 +88,7 @@ class C_WelcomeClient extends ACommandPill
             if (data.closeType == DialogButtonType.Cancel)
             {
                 // must drop connections
-                new C_Disconnect(new MetaInfo(0,0,getThreadContext().getLocalId())).scheduleOn(ContextType.UI);
+                new C_Disconnect().schedule(ContextType.UI);
             }
         }
         else

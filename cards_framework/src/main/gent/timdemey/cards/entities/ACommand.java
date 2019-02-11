@@ -10,12 +10,7 @@ public abstract class ACommand implements ICommand {
     /**
      * Set by the client processor to let this command complete the connection.
      */
-    private volatile Object vd_tcpConnection = null;
     
-    /**
-     * Meta information about the command (count, who created it, ...).
-     */
-    private final MetaInfo metaInfo;
 
     /**
      * Re-creates a command using the supplied meta info. This is useful when constructing commands that 
@@ -23,22 +18,33 @@ public abstract class ACommand implements ICommand {
      * be extracted from the different form, and injected in this "new" command. A good example is 
      * where commands arrive over the wire, where the "different form" is the serialized form.
      */
-    protected ACommand (MetaInfo metaInfo)
+    protected ACommand ()
     {
-        Preconditions.checkNotNull(metaInfo);
+    }
+    
+    private volatile Object volatileData = null;    
+    private volatile CommandEnvelope commandEnvelope = null;
         
-        this.metaInfo = metaInfo;
-    }
-    
-    @Override
-    public void setVolatileData(Object obj) 
+    public void setVolatileData (Object obj)
     {
-        vd_tcpConnection = obj; 
+        volatileData = obj;
+    }
+    
+    public Object getVolatileData()
+    {
+        return volatileData;
     }
     
     @Override
-    public Object getVolatileData() {
-        return vd_tcpConnection;
+    public void setCommandEnvelope(CommandEnvelope envelope) 
+    {
+        commandEnvelope = envelope; 
+    }
+    
+    @Override
+    public CommandEnvelope getCommandEnvelope() 
+    {
+        return commandEnvelope;
     }
     
     protected final CommandProcessorUI getProcessorUI()
@@ -69,20 +75,22 @@ public abstract class ACommand implements ICommand {
     {
         return getThreadContext().getContextType();
     }
-    
-    @Override
-    public void scheduleOn(ContextType contextType)
+    /*
+    final CommandEnvelope toNewEnvelope()
     {
+        return new CommandEnvelope(this);
+    }   
+    */
+    final void schedule (ContextType contextType)
+    {
+        Preconditions.checkState(commandEnvelope == null);
         Services.get(IContextProvider.class).getContext(contextType).commandProcessor.schedule(this);
     }
     
-    @Override
-    public MetaInfo getMetaInfo() {
-        return metaInfo;
+    protected final void reschedule (ContextType contextType)
+    {
+        Preconditions.checkNotNull(commandEnvelope);
+        commandEnvelope.reschedule(contextType);
     }
     
-    @Override
-    public String serialize() {
-        return Json.send(new CommandEnvelope(this));
-    }
 }

@@ -2,9 +2,8 @@ package gent.timdemey.cards.entities;
 
 class C_StopGame extends ACommand {
 
-    C_StopGame(MetaInfo metaInfo) 
+    C_StopGame() 
     {    
-        super(metaInfo);
     }
     
     @Override

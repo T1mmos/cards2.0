@@ -210,27 +210,20 @@ public class SolitaireGameOperations extends AGameOperations {
                 
         // request major nr before creating commands
         int major = Services.get(IContextProvider.class).getThreadContext().getCardGameState().history.newCommandMajorId();
-        MetaInfo fullCmdMetaInfo = new MetaInfo(major);
         
-        C_Move moveCmd = new C_Move(
-                depotInvolved ? new MetaInfo(major) : fullCmdMetaInfo,
-                srcCardStack.getCardStackId(), 
-                dstCardStack.getCardStackId(),
-                card.getCardId(), 
-                flipOrder); 
+        C_Move moveCmd = new C_Move( srcCardStack.getCardStackId(), dstCardStack.getCardStackId(), card.getCardId(), flipOrder); 
         
         ICommand fullCmd;
         if (depotInvolved)
         {
-            C_SetVisible visCmd = new C_SetVisible(new MetaInfo(major), localId, srcCardStack.getCardsFrom(card), !card.isVisible());
+            C_SetVisible visCmd = new C_SetVisible(localId, srcCardStack.getCardsFrom(card), !card.isVisible());
             
-            fullCmd = new C_Composite(fullCmdMetaInfo, moveCmd, visCmd);
+            fullCmd = new C_Composite(moveCmd, visCmd);
         }
         else 
         {
             fullCmd = moveCmd;
         }
-        
         getCommandProcessor().schedule(fullCmd);
     }  
     
@@ -251,7 +244,8 @@ public class SolitaireGameOperations extends AGameOperations {
         }
         else if (move.operation == Operation.ChangeVisibility)
         {
-            getCommandProcessor().schedule(new C_SetVisible(new MetaInfo(), localId, Arrays.asList(move.card), true));
+            C_SetVisible cmd = new C_SetVisible(localId, Arrays.asList(move.card), true);
+            getCommandProcessor().schedule(cmd);            
         } 
     }
 

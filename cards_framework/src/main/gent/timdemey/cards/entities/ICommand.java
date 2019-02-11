@@ -20,31 +20,19 @@ package gent.timdemey.cards.entities;
  */
 interface ICommand  
 {  
-    CommandType getCommandType();    
-    
-    /**
-     * Get the meta properties of this command.
-     * @return
-     */
-    MetaInfo getMetaInfo();    
-    
-    void setVolatileData(Object obj);
-    
-    Object getVolatileData();
+    CommandType getCommandType();
     
     boolean canExecute ();
-    
     void execute ();
-    
-    void scheduleOn(ContextType contextType);
-    
-    boolean canUndo ();
-    
-    void undo ();
-    
     void visitExecuted (IGameEventListener listener);
     
+    boolean canUndo ();    
+    void undo ();
     void visitUndone (IGameEventListener listener);    
     
-    String serialize();
+    void setCommandEnvelope(CommandEnvelope envelope);    
+    CommandEnvelope getCommandEnvelope();
+    
+    void setVolatileData (Object obj);    
+    Object getVolatileData();
 }

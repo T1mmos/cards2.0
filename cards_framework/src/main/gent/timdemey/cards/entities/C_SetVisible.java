@@ -7,23 +7,22 @@ import com.google.common.base.Preconditions;
 
 class C_SetVisible extends ACommand {
 
-    static class CompactConverter extends ACommandSerializer<C_SetVisible>
+    static class CompactConverter extends ASerializer<C_SetVisible>
     {
-
         @Override
-        protected void writeCommand(SerializationContext<C_SetVisible> sc) {      
+        protected void write(SerializationContext<C_SetVisible> sc) {
             writeString(sc, PROPERTY_PLAYER, sc.src.playerId.toString());
             writeList(sc, PROPERTY_CARDS, sc.src.cards);
             writeBoolean(sc, PROPERTY_VISIBLE, sc.src.visible);
         }
 
         @Override
-        protected C_SetVisible readCommand(DeserializationContext dc, MetaInfo metaInfo) {
+        protected C_SetVisible read(DeserializationContext dc) {
             UUID playerId = UUID.fromString(readString(dc, PROPERTY_PLAYER));
             List<E_Card> cards = readList(dc, PROPERTY_CARDS, E_Card.class);
             boolean visible = readBoolean(dc, PROPERTY_VISIBLE);
             
-            return new C_SetVisible(metaInfo, playerId, cards, visible);
+            return new C_SetVisible(playerId, cards, visible);
         }
     
     }
@@ -32,9 +31,8 @@ class C_SetVisible extends ACommand {
     private final List<E_Card> cards;
     private final boolean visible;
     
-    C_SetVisible (MetaInfo metaInfo, UUID playerId, List<E_Card> cards, boolean visible)
+    C_SetVisible (UUID playerId, List<E_Card> cards, boolean visible)
     {
-        super(metaInfo);
         Preconditions.checkNotNull(cards);
         for (E_Card card : cards)
         {

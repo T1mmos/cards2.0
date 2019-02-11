@@ -7,8 +7,8 @@ package gent.timdemey.cards.entities;
  */
 abstract class ACommandServer extends ACommand {
 
-    protected ACommandServer() {
-        super(new MetaInfo());
+    protected ACommandServer() 
+    {
     }
 
     @Override

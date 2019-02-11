@@ -7,29 +7,55 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.base.Preconditions;
+
 abstract class ACommandProcessorAsync implements ICommandProcessor 
 {
     protected static final Charset UDP_CHARSET = Charset.forName("UTF8");
     
-    protected final class CommandTask implements Runnable, Comparable<CommandTask>
+    private final class CommandTask implements Runnable, Comparable<CommandTask>
     {
+        private final CommandEnvelope envelope;
         private final ICommand command;
         private final long time_issued;
         
-        protected CommandTask(ICommand command)
+        private CommandTask(CommandEnvelope envelope)
         {
+            Preconditions.checkNotNull(envelope);            
+            
+            this.envelope = envelope;
+            this.command = envelope.command;
+            this.time_issued = System.currentTimeMillis();
+        }
+        
+        private CommandTask(ICommand command)
+        {
+            Preconditions.checkNotNull(command);
+            
+            this.envelope = null;
             this.command = command;
             this.time_issued = System.currentTimeMillis();
         }
 
         @Override
         public void run() {
-            execute(command);
+            CommandEnvelope env;
+            if (envelope == null) // it's a schedule
+            {
+                 env = CommandEnvelope.createCommandEnvelope(command);
+            }
+            else
+            {
+                 env = envelope;
+            }
+            execute(env);            
         }
 
         @Override
         public int compareTo(CommandTask o) {
-            int typediff =  this.command.getCommandType().ordinal() - o.command.getCommandType().ordinal();
+            ICommand localCmd = this.envelope != null ? this.envelope.command : command;
+            ICommand otherCmd = o.envelope != null ? o.envelope.command : o.command;
+            int typediff =  localCmd.getCommandType().ordinal() - otherCmd.getCommandType().ordinal();
             if (typediff != 0)
             {
                 return typediff;
@@ -43,24 +69,35 @@ abstract class ACommandProcessorAsync implements ICommandProcessor
     private final ThreadPoolExecutor executor;
     private final BlockingQueue<Runnable> incomingCommandQueue;
     
-    protected ACommandProcessorAsync() {
+    protected ACommandProcessorAsync() 
+    {
         this.incomingCommandQueue = new PriorityBlockingQueue<>();
-        this.executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.SECONDS, incomingCommandQueue, new ThreadFactory() {
+        this.executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.SECONDS, incomingCommandQueue, new ThreadFactory() 
+        {
             
             @Override
-            public Thread newThread(Runnable r) {
+            public Thread newThread(Runnable r) 
+            {
                 return new Thread(r, getThreadName());
             }
         });
     }
-    
+
     @Override
-    public final void schedule(ICommand command) 
+    public void reschedule(CommandEnvelope envelope)
     {
-        executor.execute(new CommandTask(command));
+        CommandTask task = new CommandTask(envelope);
+        executor.execute(task);
+    }
+
+    @Override
+    public void schedule(ICommand command) 
+    {
+        CommandTask task = new CommandTask(command);
+        executor.execute(task);
     }
     
-    protected abstract void execute(ICommand command);
+    protected abstract void execute(CommandEnvelope envelope);
         
     protected abstract String getThreadName();  
 }

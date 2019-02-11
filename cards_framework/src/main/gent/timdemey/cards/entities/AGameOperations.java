@@ -55,8 +55,8 @@ public abstract class AGameOperations implements IGameOperations {
         List<UUID> playerIds = Arrays.asList(getThreadContext().getLocalId());
         Map<UUID, List<E_CardStack>> playerStacks = creator.createStacks(playerIds, cards);
                 
-        C_StartGame command = new C_StartGame(new MetaInfo(), playerStacks);
-        getCommandProcessor().schedule(command);
+        C_StartGame command = new C_StartGame(playerStacks);
+        command.schedule(ContextType.UI);
     }
     
     @Override
@@ -78,8 +78,8 @@ public abstract class AGameOperations implements IGameOperations {
     @Override
     public final void stopGame()
     {
-        C_StopGame command = new C_StopGame(new MetaInfo());
-        getCommandProcessor().schedule(command);
+        C_StopGame command = new C_StopGame();
+        command.schedule(ContextType.UI);
     }
     
     @Override
@@ -91,8 +91,8 @@ public abstract class AGameOperations implements IGameOperations {
     @Override
     public void undo() 
     {
-        C_Undo command = new C_Undo(new MetaInfo());
-        getCommandProcessor().schedule(command);
+        C_Undo command = new C_Undo();
+        command.schedule(ContextType.UI);
     }
     
     @Override
@@ -102,8 +102,8 @@ public abstract class AGameOperations implements IGameOperations {
     
     @Override
     public void redo() {
-        C_Redo command = new C_Redo(new MetaInfo());
-        getCommandProcessor().schedule(command);
+        C_Redo command = new C_Redo();
+        command.schedule(ContextType.UI);
     }
     
     public final boolean canUse (E_CardStack cardStack)
@@ -116,19 +116,19 @@ public abstract class AGameOperations implements IGameOperations {
     @Override
     public void joinGame(InetAddress srvInetAddress, int tcpport, String playerName) 
     {
-        C_Connect cmd = new C_Connect(new MetaInfo(), srvInetAddress, tcpport, playerName);
-        Services.get(IContextProvider.class).getContext(ContextType.UI).commandProcessor.schedule(cmd);
+        C_Connect cmd = new C_Connect(srvInetAddress, tcpport, playerName);
+        cmd.schedule(ContextType.UI);
     }
     
     @Override
     public void helloServerStart() {
-        C_UDP_HelloServer cmd = new C_UDP_HelloServer(new MetaInfo());
-        Services.get(IContextProvider.class).getContext(ContextType.Client).commandProcessor.schedule(cmd);
+        C_UDP_HelloServer cmd = new C_UDP_HelloServer();
+        cmd.schedule(ContextType.Client);
     }
     
     public void helloServerStop() {
-        C_UDP_HelloServerStop cmd = new C_UDP_HelloServerStop(new MetaInfo());
-        Services.get(IContextProvider.class).getContext(ContextType.Client).commandProcessor.schedule(cmd);
+        C_UDP_HelloServerStop cmd = new C_UDP_HelloServerStop();
+        cmd.schedule(ContextType.Client);
     }
     
     @Override

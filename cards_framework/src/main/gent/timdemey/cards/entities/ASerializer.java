@@ -9,9 +9,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+
+import gent.timdemey.cards.Services;
+import gent.timdemey.cards.logging.ILogManager;
 
 /**
  * An abstract implementation for both JsonSerializer and JsonDeserializer that abstractifies 
@@ -35,6 +39,7 @@ abstract class ASerializer<T> implements JsonSerializer<T>, JsonDeserializer<T>{
     static final String PROPERTY_REQUESTINGPARTY = "requestingParty";
     static final String PROPERTY_COMMAND_NAME = "commandName";
     static final String PROPERTY_COMMAND = "command";
+    static final String PROPERTY_COMMAND_DTO = "commandDto";
     static final String PROPERTY_COMMAND_TYPE = "commandType";
     static final String PROPERTY_SUBCOMMANDS = "subcommands";
     static final String PROPERTY_VISIBLE = "visible";    
@@ -64,8 +69,16 @@ abstract class ASerializer<T> implements JsonSerializer<T>, JsonDeserializer<T>{
     @Override
     public final JsonElement serialize(T src, Type typeOfSrc, JsonSerializationContext context) {
         SerializationContext<T> sc = new SerializationContext<>(src, context);
-          
-        write(sc);
+        
+        try 
+        {
+            write(sc);
+        }
+        catch (Exception | StackOverflowError ex)
+        {
+            Services.get(ILogManager.class).log("Failed to write an object of type %s, given type is %s", src == null ? "<null>" : src.getClass(), typeOfSrc);
+        }
+        
         
         return sc.obj;
     }
@@ -158,12 +171,14 @@ abstract class ASerializer<T> implements JsonSerializer<T>, JsonDeserializer<T>{
     
     protected final void writeCommand(SerializationContext<T> sc, String propertyName, ICommand cmd)
     {
-        sc.obj.add(propertyName, sc.context.serialize(cmd, cmd.getClass()));
+        CommandDto cmdDto = new CommandDto(cmd);
+        writeObject(sc, propertyName, cmdDto);
     }
     
-    protected final <S extends ICommand> S readCommand (DeserializationContext dc, String propertyName, Class<S> cmdClazz)
+    protected final ICommand readCommand (DeserializationContext dc, String propertyName)
     {
-        return readObject(dc, propertyName, cmdClazz);
+        CommandDto cmdDto = readObject(dc, propertyName, CommandDto.class);
+        return cmdDto.command;
     }
             
     protected final void writeObject(SerializationContext<T> sc, String propertyName, Object obj)

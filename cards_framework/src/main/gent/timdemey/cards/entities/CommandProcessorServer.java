@@ -37,7 +37,8 @@ class CommandProcessorServer extends ACommandProcessorAsync {
     }
 
     @Override
-    protected void execute(ICommand command) {
+    protected void execute(CommandEnvelope envelope) {
+        ICommand command = envelope.command;
         Services.get(ILogManager.class).log("Processing command '" + command.getClass().getSimpleName() +"'");
         command.execute();
         
@@ -45,8 +46,8 @@ class CommandProcessorServer extends ACommandProcessorAsync {
         // UUID localId = context.getLocalId();
         if (command instanceof C_Move || command instanceof C_Composite)
         {
-            List<UUID> idsToSend = context.getPlayerIdsExcept(command.getMetaInfo().requestingParty);
-            srv_tcp_connpool.broadcast(idsToSend, command.serialize());
+            List<UUID> idsToSend = context.getPlayerIdsExcept(envelope.getMetaInfo().requestingParty);
+            srv_tcp_connpool.broadcast(idsToSend, envelope.serialize());
         }
         
     }  
@@ -70,9 +71,8 @@ class CommandProcessorServer extends ACommandProcessorAsync {
         }
         
         UUID serverId = Services.get(IContextProvider.class).getContext(ContextType.Server).localPlayerId;
-        MetaInfo metaInfo = new MetaInfo(0, 0, serverId);
-        C_UDP_HelloClient cmd_out = new C_UDP_HelloClient(metaInfo, info.srvname, addr, info.tcpport, major, minor);
-        CommandEnvelope env_out = new CommandEnvelope(cmd_out);
+        C_UDP_HelloClient cmd_out = new C_UDP_HelloClient(info.srvname, addr, info.tcpport, major, minor);
+        CommandEnvelope env_out = CommandEnvelope.createCommandEnvelope(cmd_out);
         
         // envelope to json
         String json_out = Json.send(env_out);
@@ -81,8 +81,8 @@ class CommandProcessorServer extends ACommandProcessorAsync {
         srv_udp_announcer.start();
         
         int playerCount = Services.get(ICardPlugin.class).getPlayerCount();
-        C_NotWelcomeClient cmdOnFull = new C_NotWelcomeClient(new MetaInfo(), "Server is full");
-        String msgOnFull = Json.send(new CommandEnvelope(cmdOnFull));
+        C_NotWelcomeClient cmdOnFull = new C_NotWelcomeClient("Server is full");
+        String msgOnFull = Json.send(CommandEnvelope.createCommandEnvelope(cmdOnFull));
         
         srv_tcp_connpool = new TCP_ConnectionPool(playerCount, new ConnListener());
         srv_tcp_accepter = new TCP_ConnectionAccepter(srv_tcp_connpool, info, msgOnFull);
@@ -95,11 +95,12 @@ class CommandProcessorServer extends ACommandProcessorAsync {
         @Override
         public void onTcpMessageReceived(TCP_Connection connection, String message) {
             try {
-                ICommand cmd = Json.receive(message).command;
+                CommandEnvelope envelope = Json.receive(message);
+                ICommand cmd = envelope.command; 
                 cmd.setVolatileData(connection);
                 
                 Services.get(ILogManager.class).log("Received command '" + cmd.getClass().getSimpleName() + "' from " + connection.getRemote());
-                cmd.scheduleOn(ContextType.Server);
+                envelope.reschedule(ContextType.Server);
             } catch (Exception e) {
                 Services.get(ILogManager.class).log(e);
             }
@@ -125,9 +126,8 @@ class CommandProcessorServer extends ACommandProcessorAsync {
         public void onTcpConnectionRemotelyClosed(TCP_Connection connection, UUID id) {
             if (id != null)
             {
-                ContextLimited context = Services.get(IContextProvider.class).getContext(ContextType.Server); 
-                UUID serverId = context.localPlayerId;
-                ICommand cmd = new C_DropPlayer(new MetaInfo(0,0,serverId), id);
+                ContextLimited context = Services.get(IContextProvider.class).getContext(ContextType.Server);
+                ICommand cmd = new C_DropPlayer(id);
                 context.commandProcessor.schedule(cmd);
             }
         }

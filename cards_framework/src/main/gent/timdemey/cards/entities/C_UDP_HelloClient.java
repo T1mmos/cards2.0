@@ -13,10 +13,10 @@ import gent.timdemey.cards.multiplayer.HelloClientInfo;
  *
  */
 class C_UDP_HelloClient extends ACommandPill {
-    static class CompactConverter extends ACommandSerializer<C_UDP_HelloClient>
+    static class CompactConverter extends ASerializer<C_UDP_HelloClient>
     {
         @Override
-        protected void writeCommand(SerializationContext<C_UDP_HelloClient> sc) {
+        protected void write(SerializationContext<C_UDP_HelloClient> sc) {
             writeString(sc, PROPERTY_SERVER_NAME, sc.src.serverName);
             writeString(sc, PROPERTY_SERVER_INETADDRESS, sc.src.inetAddress.getHostAddress());
             writeInt(sc, PROPERTY_SERVER_TCPPORT, sc.src.tcpport);
@@ -25,7 +25,7 @@ class C_UDP_HelloClient extends ACommandPill {
         }
 
         @Override
-        protected C_UDP_HelloClient readCommand(DeserializationContext dc, MetaInfo metaInfo) {
+        protected C_UDP_HelloClient read(DeserializationContext dc) {
             String serverName = readString(dc, PROPERTY_SERVER_NAME);
             InetAddress inetAddress = null;
             try {
@@ -38,7 +38,7 @@ class C_UDP_HelloClient extends ACommandPill {
             int majorVersion = readInt(dc, PROPERTY_MAJOR);
             int minorVersion = readInt(dc, PROPERTY_MINOR);
             
-            return new C_UDP_HelloClient(metaInfo, serverName, inetAddress, tcpport, majorVersion, minorVersion);
+            return new C_UDP_HelloClient(serverName, inetAddress, tcpport, majorVersion, minorVersion);
         }        
     }
     
@@ -48,9 +48,8 @@ class C_UDP_HelloClient extends ACommandPill {
     final int majorVersion;
     final int minorVersion;
     
-    C_UDP_HelloClient(MetaInfo info, String serverName, InetAddress inetAddress, int tcpport, int majorVersion, int minorVersion)
+    C_UDP_HelloClient(String serverName, InetAddress inetAddress, int tcpport, int majorVersion, int minorVersion)
     {
-        super(info);
         this.serverName = serverName;
         this.inetAddress = inetAddress;
         this.tcpport = tcpport;
@@ -75,7 +74,7 @@ class C_UDP_HelloClient extends ACommandPill {
         ContextType type = getContextType();
         if (type == ContextType.Client)
         {
-            scheduleOn(ContextType.UI);
+            reschedule(ContextType.UI);
         }
         else if (type == ContextType.UI)
         {

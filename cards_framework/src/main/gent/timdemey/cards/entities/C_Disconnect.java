@@ -2,9 +2,8 @@ package gent.timdemey.cards.entities;
 
 public class C_Disconnect extends ACommandPill {
 
-    C_Disconnect(MetaInfo info) {
-        super(info);
-        // TODO Auto-generated constructor stub
+    C_Disconnect() 
+    {
     }
 
     @Override
@@ -28,7 +27,7 @@ public class C_Disconnect extends ACommandPill {
             getThreadContext().removeRemotes();
             getThreadContext().setServerId(null);
             
-            scheduleOn(ContextType.Client);
+            reschedule(ContextType.Client);
         }
         else
         {
