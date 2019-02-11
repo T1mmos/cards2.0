@@ -23,11 +23,13 @@ still a lot of stuff that must be fixed or added, or stuff I'd really like to se
 - Decent dialogs. 
 - Decent UI.
 - Support for when a player leaves the game mid-game.
+- Better handling client-side when the server goes down. (There is a message dialog but resources are not cleaned up, e.g. the game stays visible)
 - End of game support.
 - Score system.
 - Configuration (e.g. remembering your name).
 - Plug & play: framework detecting plugins, so an automatic discovery of games that can be played. Currently a startup parameter
   controls what game is loaded in the framework, I hope to move this into a full runtime discovery thing.
+
 
 This is the list of currently supported features:
 - A framework that can support a card game implemented in a plugin.
@@ -46,4 +48,4 @@ This is the list of currently supported features:
   executed on the UI layer which the player would also see visually (e.g. cards being moved back to original positions, a dialog telling
   that the last move was rejected, ...).
 - LAN server discovery by UDP broadcasting.
-  
+- Clients are notified when the server goes down and do clean up the connections.
