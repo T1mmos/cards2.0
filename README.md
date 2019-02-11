@@ -52,3 +52,5 @@ This is the list of currently supported features:
 - LAN server discovery by UDP broadcasting.
 - Clients are notified when the server goes down and do clean up the connections.
 - Sound effects
+- Plugin: Solitaire. 
+- Plugin: Solitaire Showdown.
