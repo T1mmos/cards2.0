@@ -15,7 +15,7 @@ support for it. Don't waste time on improving the architecture when it won't be 
 
 Development started somewhere mid-2018 and was initially focused at making a standard, single-player Solitaire game in order to have most of the UI stuff working. Starting late 2018, network support was added, after which the work on the actual game, Solitaire Showdown, was started.
 
-At the time of writing I did my first commmit which includes a working Solitaire and a partially working Solitaire Showdown. There's
+At the time of writing this README I did my first commmit which includes a working Solitaire and a partially working Solitaire Showdown. There's
 still a lot of stuff that must be fixed or added, or stuff I'd really like to see in there but isn't really necessary at this moment:
 - Support for concurrent card stack updates. Right now the game will go into an invalid state if both players try to manipulate the same
   stack. There is support for undo/redo, but it's the server that must control it. This is what I'm currently working on; a client-side
