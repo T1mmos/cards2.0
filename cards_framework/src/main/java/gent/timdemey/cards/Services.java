@@ -9,9 +9,9 @@ import com.google.common.base.Preconditions;
 
 public final class Services {
     
-    private Services()
+    private Services() 
     {
-        
+         
     }
     
     // accessing from multiple threads should be thread safe, as all 

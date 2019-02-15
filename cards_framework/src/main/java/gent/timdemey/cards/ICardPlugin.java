@@ -7,6 +7,6 @@ public interface ICardPlugin {
     
     public String getName();
     public int getMajorVersion(); 
-    public int getMinorVersion();
+    public int getMinorVersion(); 
 
 }

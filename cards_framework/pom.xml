@@ -8,8 +8,6 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
   <build>
-    <sourceDirectory>src/main</sourceDirectory>
-    <outputDirectory>target/classes</outputDirectory>   
     <plugins>      
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>

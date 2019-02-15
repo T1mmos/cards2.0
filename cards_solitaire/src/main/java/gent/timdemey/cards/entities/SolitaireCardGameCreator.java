@@ -17,7 +17,7 @@ public class SolitaireCardGameCreator implements ICardGameCreator {
         Preconditions.checkNotNull(playerCards);
         Preconditions.checkArgument(playerCards.size() == 1);
         Preconditions.checkArgument(playerCards.size() == 1);
-        
+         
         UUID playerId = playerIds.get(0);
         List<E_Card> allCards = playerCards.get(0);
                 
