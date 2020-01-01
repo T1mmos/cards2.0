@@ -7,15 +7,15 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.entities.AGameEventAdapter;
-import gent.timdemey.cards.entities.E_Card;
-import gent.timdemey.cards.entities.E_CardStack;
-import gent.timdemey.cards.entities.IGameOperations;
-import gent.timdemey.cards.services.dialogs.IDialogService;
-import gent.timdemey.cards.services.gamepanel.IGamePanelManager;
-import gent.timdemey.cards.services.scaleman.IScalableImageManager;
+import gent.timdemey.cards.readonlymodel.AGameEventAdapter;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
+import gent.timdemey.cards.services.IDialogService;
+import gent.timdemey.cards.services.IGameOperationsService;
+import gent.timdemey.cards.services.IGamePanelManager;
+import gent.timdemey.cards.services.IScalableImageManager;
+import gent.timdemey.cards.services.ISoundManager;
 import gent.timdemey.cards.services.scaleman.ImageDefinition;
-import gent.timdemey.cards.services.soundman.ISoundManager;
 
 public class GameStarter extends AGameEventAdapter {
 
@@ -26,7 +26,7 @@ public class GameStarter extends AGameEventAdapter {
     }
 
     @Override
-    public void onCardsMoved(E_CardStack srcCardStack, E_CardStack dstCardStack, List<E_Card> cards) {
+    public void onCardsMoved(ReadOnlyCardStack srcCardStack, ReadOnlyCardStack dstCardStack, List<ReadOnlyCard> cards) {
         ISoundManager sndman = Services.get(ISoundManager.class);
         sndman.playSound("putdown");
     }
@@ -47,7 +47,7 @@ public class GameStarter extends AGameEventAdapter {
         if (success == null || !success)
         {
             Services.get(IDialogService.class).ShowInternalError();
-            Services.get(IGameOperations.class).stopGame();
+            Services.get(IGameOperationsService.class).stopGame();
         }
         else
         {

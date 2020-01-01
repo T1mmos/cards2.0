@@ -1,10 +1,10 @@
 package gent.timdemey.cards.ui.actions;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.entities.ContextType;
-import gent.timdemey.cards.entities.IContextProvider;
-import gent.timdemey.cards.entities.IContextProviderListener;
 import gent.timdemey.cards.localization.Loc;
+import gent.timdemey.cards.readonlymodel.IContextProviderListener;
+import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.context.ContextType;
 
 /**
  * Action to start hosting / creating a server.
@@ -28,6 +28,6 @@ public class ActionCreateGame extends AAction {
         
     public ActionCreateGame() {
         super(AAction.ACTION_CREATE, Loc.get("menuitem_creategame"));
-        Services.get(IContextProvider.class).addContextListener(new ContextListener());        
+        Services.get(IContextService.class).addContextListener(new ContextListener());        
     }
 }

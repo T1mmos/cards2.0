@@ -2,22 +2,22 @@ package gent.timdemey.cards;
 
 import javax.swing.SwingUtilities;
 
-import gent.timdemey.cards.entities.ContextProvider;
-import gent.timdemey.cards.entities.IContextProvider;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.logging.LogManager;
+import gent.timdemey.cards.services.IConfigManager;
+import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.IGamePanelManager;
+import gent.timdemey.cards.services.IImageService;
+import gent.timdemey.cards.services.IResourceManager;
+import gent.timdemey.cards.services.IScalableImageManager;
+import gent.timdemey.cards.services.ISoundManager;
 import gent.timdemey.cards.services.configman.ConfigManager;
-import gent.timdemey.cards.services.configman.IConfigManager;
+import gent.timdemey.cards.services.context.StateService;
 import gent.timdemey.cards.services.gamepanel.GamePanelManager;
-import gent.timdemey.cards.services.gamepanel.IGamePanelManager;
-import gent.timdemey.cards.services.images.IImageService;
 import gent.timdemey.cards.services.images.ImageService;
-import gent.timdemey.cards.services.resman.IResourceManager;
 import gent.timdemey.cards.services.resman.ResourceManager;
-import gent.timdemey.cards.services.scaleman.IScalableImageManager;
 import gent.timdemey.cards.services.scaleman.ScalableImageManager;
-import gent.timdemey.cards.services.soundman.ISoundManager;
 import gent.timdemey.cards.services.soundman.SoundManager;
 import gent.timdemey.cards.ui.StartFrame;
 
@@ -94,10 +94,10 @@ public class Start {
             ISoundManager sndMan = new SoundManager();
             Services.install(ISoundManager.class, sndMan);
         }
-        if (!Services.isInstalled(IContextProvider.class))
+        if (!Services.isInstalled(IContextService.class))
         {
-            IContextProvider ctxtProv = new ContextProvider();
-            Services.install(IContextProvider.class, ctxtProv);
+            IContextService ctxtProv = new StateService();
+            Services.install(IContextService.class, ctxtProv);
         }
     }
     

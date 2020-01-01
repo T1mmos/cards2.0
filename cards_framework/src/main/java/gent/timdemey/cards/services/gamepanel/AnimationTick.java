@@ -14,10 +14,11 @@ import javax.swing.Timer;
 import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.entities.E_Card;
-import gent.timdemey.cards.entities.E_CardGame;
-import gent.timdemey.cards.entities.IContextProvider;
-import gent.timdemey.cards.services.scaleman.IScalableImageManager;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
+import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.IGamePanelManager;
+import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.scaleman.JScalableImage;
 
 class AnimationTick implements ActionListener {
@@ -57,7 +58,7 @@ class AnimationTick implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         Preconditions.checkArgument(e.getSource() instanceof Timer);
         
-        E_CardGame cardGame = Services.get(IContextProvider.class).getThreadContext().getCardGameState().getCardGame();
+        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getCardGame();
         
         long currTickTime = System.currentTimeMillis();
         for (JScalableImage jcard : new HashSet<>(animations.keySet()))
@@ -74,7 +75,7 @@ class AnimationTick implements ActionListener {
             {
                 animations.remove(jcard);
                 UUID id = Services.get(IScalableImageManager.class).getUUID(jcard);
-                E_Card card = cardGame.getCard(id);
+                ReadOnlyCard card = cardGame.getCard(id);
                 Services.get(IGamePanelManager.class).updatePosition(card);
             }
         }

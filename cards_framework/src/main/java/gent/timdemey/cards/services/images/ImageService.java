@@ -11,7 +11,8 @@ import javax.imageio.ImageIO;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
-import gent.timdemey.cards.services.resman.IResourceManager;
+import gent.timdemey.cards.services.IImageService;
+import gent.timdemey.cards.services.IResourceManager;
 
 public class ImageService implements IImageService {
 

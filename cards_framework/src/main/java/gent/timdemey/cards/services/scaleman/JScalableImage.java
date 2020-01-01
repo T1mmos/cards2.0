@@ -16,9 +16,10 @@ import javax.swing.SwingUtilities;
 import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.entities.E_CardGame;
-import gent.timdemey.cards.entities.IContextProvider;
-import gent.timdemey.cards.services.gamepanel.IGamePanelManager;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
+import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.IGamePanelManager;
+import gent.timdemey.cards.services.IScalableImageManager;
 
 public class JScalableImage extends JPanel  {
     
@@ -113,7 +114,7 @@ public class JScalableImage extends JPanel  {
         
         if (Services.get(IGamePanelManager.class).getDrawDebug())
         {
-            E_CardGame cardGame = Services.get(IContextProvider.class).getThreadContext().getCardGameState().getCardGame();
+            ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getCardGameState().getCardGame();
             
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2.setColor(new Color(50, 50, 50, 200));

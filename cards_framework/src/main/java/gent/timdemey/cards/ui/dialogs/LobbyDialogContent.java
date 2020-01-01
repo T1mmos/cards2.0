@@ -7,13 +7,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.entities.AGameEventAdapter;
-import gent.timdemey.cards.entities.ContextFull;
-import gent.timdemey.cards.entities.IContextListener;
-import gent.timdemey.cards.entities.IContextProvider;
-import gent.timdemey.cards.entities.IGameEventListener;
-import gent.timdemey.cards.entities.IGameOperations;
-import gent.timdemey.cards.entities.Player;
+import gent.timdemey.cards.readonlymodel.AGameEventAdapter;
+import gent.timdemey.cards.readonlymodel.IGameEventListener;
+import gent.timdemey.cards.readonlymodel.ReadOnlyPlayer;
+import gent.timdemey.cards.services.IContextListener;
+import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.IGameOperationsService;
+import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogContent;
 import net.miginfocom.swing.MigLayout;
@@ -23,7 +23,7 @@ public class LobbyDialogContent extends DialogContent<Void, Void>
     private final JLabel l_serverMsg;
     private final JLabel l_localPlayer;
     private final JLabel l_remotePlayer;
-    private final ContextFull context;
+    private final Context context;
     
     private ContextListener contextListener = null;
     private IGameEventListener gameEventListener = null;
@@ -32,7 +32,7 @@ public class LobbyDialogContent extends DialogContent<Void, Void>
     {
 
         @Override
-        public void onPlayerAdded(Player player) 
+        public void onPlayerAdded(ReadOnlyPlayer player) 
         {
             JLabel jlabel = context.isLocal(player.id) ? l_localPlayer : l_remotePlayer;
             jlabel.setText(player.name);
@@ -55,7 +55,7 @@ public class LobbyDialogContent extends DialogContent<Void, Void>
 
 
         @Override
-        public void onPlayerRemoved(Player player) 
+        public void onPlayerRemoved(ReadOnlyPlayer player) 
         {
             l_remotePlayer.setText(null);
         }
@@ -82,11 +82,11 @@ public class LobbyDialogContent extends DialogContent<Void, Void>
     }
     
     public LobbyDialogContent() {
-        this.context = Services.get(IContextProvider.class).getThreadContext();
+        this.context = Services.get(IContextService.class).getThreadContext();
         this.l_serverMsg = new JLabel(context.getServerMessage());    
         this.l_localPlayer = new JLabel(context.getLocalName());
         
-        List<Player> otherPlayers = context.getRemotePlayers();
+        List<ReadOnlyPlayer> otherPlayers = context.getRemotePlayers();
         if (otherPlayers.size() > 0)
         {
             this.l_remotePlayer = new JLabel(otherPlayers.get(0).name);
@@ -115,7 +115,7 @@ public class LobbyDialogContent extends DialogContent<Void, Void>
         this.context.addContextListener(contextListener);
         
         this.gameEventListener = new GameEventListener();
-        Services.get(IGameOperations.class).addGameEventListener(gameEventListener);
+        Services.get(IGameOperationsService.class).addGameEventListener(gameEventListener);
     }
 
     @Override
@@ -123,7 +123,7 @@ public class LobbyDialogContent extends DialogContent<Void, Void>
         this.context.removeContextListener(contextListener);
         this.contextListener = null;
         
-        Services.get(IGameOperations.class).removeGameEventListener(gameEventListener);
+        Services.get(IGameOperationsService.class).removeGameEventListener(gameEventListener);
         this.gameEventListener = null;
         
         return null;

@@ -16,12 +16,12 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.entities.AGameEventAdapter;
-import gent.timdemey.cards.entities.IContextProvider;
-import gent.timdemey.cards.entities.IGameOperations;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.multiplayer.ConnectInfo;
 import gent.timdemey.cards.multiplayer.HelloClientInfo;
+import gent.timdemey.cards.readonlymodel.AGameEventAdapter;
+import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.IGameOperationsService;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogContent;
 import net.miginfocom.swing.MigLayout;
@@ -80,7 +80,7 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, Connec
         @Override
         public void onHelloClient() {
             serverInfos.clear();
-            serverInfos.addAll(Services.get(IContextProvider.class).getThreadContext().getCardGameState().getServers());
+            serverInfos.addAll(Services.get(IContextService.class).getThreadContext().getCardGameState().getServers());
             tableModel.fireTableDataChanged();
         }
     }
@@ -90,10 +90,10 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, Connec
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            Services.get(IGameOperations.class).helloServerStop();
+            Services.get(IGameOperationsService.class).helloServerStop();
             serverInfos.clear();
             tableModel.fireTableDataChanged();            
-            Services.get(IGameOperations.class).helloServerStart();
+            Services.get(IGameOperationsService.class).helloServerStart();
         }
     }
     
@@ -153,8 +153,8 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, Connec
     
     @Override
     protected ConnectInfo onClose(DialogButtonType dbType) {
-        Services.get(IGameOperations.class).helloServerStop();
-        Services.get(IGameOperations.class).removeGameEventListener(serverInfoListener);    
+        Services.get(IGameOperationsService.class).helloServerStop();
+        Services.get(IGameOperationsService.class).removeGameEventListener(serverInfoListener);    
         button_refresh.removeActionListener(refreshListener);
         table_servers.getSelectionModel().removeListSelectionListener(selectionListener);        
         
@@ -173,10 +173,10 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, Connec
     @Override
     protected void onShow() 
     {   
-        Services.get(IGameOperations.class).addGameEventListener(serverInfoListener);
+        Services.get(IGameOperationsService.class).addGameEventListener(serverInfoListener);
         button_refresh.addActionListener(refreshListener);
         table_servers.getSelectionModel().addListSelectionListener(selectionListener);
         
-        Services.get(IGameOperations.class).helloServerStart();
+        Services.get(IGameOperationsService.class).helloServerStart();
     }
 }

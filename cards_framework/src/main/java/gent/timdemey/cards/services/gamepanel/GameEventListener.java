@@ -7,14 +7,15 @@ import javax.swing.SwingUtilities;
 import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.entities.AGameEventAdapter;
-import gent.timdemey.cards.entities.E_Card;
-import gent.timdemey.cards.entities.E_CardStack;
+import gent.timdemey.cards.readonlymodel.AGameEventAdapter;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
+import gent.timdemey.cards.services.IGamePanelManager;
 
 class GameEventListener extends AGameEventAdapter {
  
     @Override
-    public void onCardVisibilityChanged(E_Card card) {
+    public void onCardVisibilityChanged(ReadOnlyCard card) {
         IGamePanelManager gamePanelManager = Services.get(IGamePanelManager.class);
         SwingUtilities.invokeLater(() -> 
         {
@@ -23,13 +24,13 @@ class GameEventListener extends AGameEventAdapter {
     }
 
     @Override
-    public void onCardsMoved(E_CardStack srcCardStack, E_CardStack dstCardStack, List<E_Card> cards) {
+    public void onCardsMoved(ReadOnlyCardStack srcCardStack, ReadOnlyCardStack dstCardStack, List<ReadOnlyCard> cards) {
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
         
         IGamePanelManager gamePanelMan = Services.get(IGamePanelManager.class); 
         for (int i = 0; i < cards.size(); i++)
         {
-            E_Card card = cards.get(i);
+            ReadOnlyCard card = cards.get(i);
             gamePanelMan.updatePosition(card);
         }
     }

@@ -24,15 +24,15 @@ import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.entities.ContextType;
-import gent.timdemey.cards.entities.IContextProvider;
-import gent.timdemey.cards.entities.IGameOperations;
 import gent.timdemey.cards.localization.Loc;
+import gent.timdemey.cards.services.IConfigManager;
+import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.IDialogService;
+import gent.timdemey.cards.services.IGameOperationsService;
+import gent.timdemey.cards.services.IImageService;
 import gent.timdemey.cards.services.configman.ConfigKey;
-import gent.timdemey.cards.services.configman.IConfigManager;
+import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.dialogs.DialogService;
-import gent.timdemey.cards.services.dialogs.IDialogService;
-import gent.timdemey.cards.services.images.IImageService;
 import gent.timdemey.cards.ui.actions.ActionCreateGame;
 import gent.timdemey.cards.ui.actions.ActionDebugDrawDebugLines;
 import gent.timdemey.cards.ui.actions.ActionDebugGC;
@@ -82,11 +82,11 @@ public class StartFrame {
             int playerNr = rg.nextInt(10000);
             String name = "Player " + playerNr;
             
-            Services.get(IContextProvider.class).installContext(ContextType.UI, id, name);
+            Services.get(IContextService.class).initialize(ContextType.UI, id, name);
             
             if (plugin.getPlayerCount() > 1)
             {
-                Services.get(IContextProvider.class).installContext(ContextType.Client, id, name); 
+                Services.get(IContextService.class).initialize(ContextType.Client, id, name); 
             }
             
             buildMenu(frame, plugin);
@@ -101,7 +101,7 @@ public class StartFrame {
             frame.setIconImages(getFrameIcons());            
             frame.setVisible(true);
             
-            Services.get(IGameOperations.class).addGameEventListener(new GameStarter(frame));
+            Services.get(IGameOperationsService.class).addGameEventListener(new GameStarter(frame));
         });
     }
     

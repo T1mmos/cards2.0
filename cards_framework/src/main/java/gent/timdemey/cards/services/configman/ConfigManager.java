@@ -1,5 +1,7 @@
 package gent.timdemey.cards.services.configman;
 
+import gent.timdemey.cards.services.IConfigManager;
+
 public class ConfigManager implements IConfigManager {
 
     @Override

@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 
+import gent.timdemey.cards.services.IResourceManager;
+
 public class ResourceManager implements IResourceManager {
 
     private final ClassLoader resourceClassLoader;

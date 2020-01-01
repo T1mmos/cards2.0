@@ -26,7 +26,8 @@ import com.google.common.collect.HashBiMap;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
-import gent.timdemey.cards.services.images.IImageService;
+import gent.timdemey.cards.services.IImageService;
+import gent.timdemey.cards.services.IScalableImageManager;
 
 public class ScalableImageManager implements IScalableImageManager {
         

@@ -8,12 +8,12 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
-import gent.timdemey.cards.multiplayer.CreateServerInfo;
+import gent.timdemey.cards.model.commands.C_CreateServer;
 
 public final class TCP_ConnectionAccepter 
 {
     private final TCP_ConnectionPool connectionPool;
-    private final CreateServerInfo info;
+    private final C_CreateServer info;
     private final String messageOnFull;
     
     private final Executor rejectedExecutor;
@@ -28,7 +28,7 @@ public final class TCP_ConnectionAccepter
      * @param connPool
      * @param info
      */
-    public TCP_ConnectionAccepter(TCP_ConnectionPool connPool, CreateServerInfo info, String messageOnFull)
+    public TCP_ConnectionAccepter(TCP_ConnectionPool connPool, C_CreateServer info, String messageOnFull)
     {
         this.connectionPool = connPool;
         this.info = info;

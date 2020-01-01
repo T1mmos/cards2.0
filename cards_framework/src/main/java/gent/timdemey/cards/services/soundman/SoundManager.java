@@ -10,7 +10,8 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.services.resman.IResourceManager;
+import gent.timdemey.cards.services.IResourceManager;
+import gent.timdemey.cards.services.ISoundManager;
 
 public class SoundManager implements ISoundManager {
 

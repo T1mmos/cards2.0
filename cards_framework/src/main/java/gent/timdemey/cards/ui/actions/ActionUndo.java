@@ -1,9 +1,9 @@
 package gent.timdemey.cards.ui.actions;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.entities.AGameEventAdapter;
-import gent.timdemey.cards.entities.IGameOperations;
 import gent.timdemey.cards.localization.Loc;
+import gent.timdemey.cards.readonlymodel.AGameEventAdapter;
+import gent.timdemey.cards.services.IGameOperationsService;
 
 public class ActionUndo extends AAction  {            
     
@@ -17,7 +17,7 @@ public class ActionUndo extends AAction  {
         
     public ActionUndo() {
         super(ACTION_UNDO, Loc.get("menuitem_undo"));
-        Services.get(IGameOperations.class).addGameEventListener(new GameStartListener());
+        Services.get(IGameOperationsService.class).addGameEventListener(new GameStartListener());
         checkEnabled();
     }
 }

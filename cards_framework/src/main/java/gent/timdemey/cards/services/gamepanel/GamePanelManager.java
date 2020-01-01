@@ -10,15 +10,16 @@ import javax.swing.Timer;
 import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.entities.ContextFull;
-import gent.timdemey.cards.entities.E_Card;
-import gent.timdemey.cards.entities.E_CardGame;
-import gent.timdemey.cards.entities.E_CardStack;
-import gent.timdemey.cards.entities.IContextProvider;
-import gent.timdemey.cards.entities.IGameEventListener;
-import gent.timdemey.cards.entities.IGameOperations;
-import gent.timdemey.cards.services.plugin.IPositionManager;
-import gent.timdemey.cards.services.scaleman.IScalableImageManager;
+import gent.timdemey.cards.readonlymodel.IGameEventListener;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
+import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.IGameOperationsService;
+import gent.timdemey.cards.services.IGamePanelManager;
+import gent.timdemey.cards.services.IPositionManager;
+import gent.timdemey.cards.services.IScalableImageManager;
+import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.scaleman.ImageDefinition;
 import gent.timdemey.cards.services.scaleman.JScalableImage;
 
@@ -58,7 +59,7 @@ public class GamePanelManager implements IGamePanelManager {
             gamePanel.addComponentListener(resizeListener);
             gamePanel.addMouseMotionListener(dragListener);
             gamePanel.addMouseListener(dragListener);
-            Services.get(IGameOperations.class).addGameEventListener(gameEventListener);
+            Services.get(IGameOperationsService.class).addGameEventListener(gameEventListener);
             Services.get(IPositionManager.class).calculate(gamePanel.getWidth(), gamePanel.getHeight());
             relayout();
             
@@ -72,11 +73,11 @@ public class GamePanelManager implements IGamePanelManager {
     protected void addScalableImages()
     {
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
-        E_CardGame cardGame = Services.get(IContextProvider.class).getThreadContext().getCardGameState().getCardGame();        
+        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getCardGameState().getCardGame();        
         
-        List<E_Card> cards = cardGame.getUniqueCards();
+        List<ReadOnlyCard> cards = cardGame.getUniqueCards();
         for (int i = 0; i < cards.size(); i++) {
-            E_Card card = cards.get(i);             
+            ReadOnlyCard card = cards.get(i);             
             JScalableImage jscalable = Services.get(IScalableImageManager.class).getJScalableImage(card.getCardId());
             
             String filename = card.isVisible() ? getFilename(card) : FILENAME_BACKSIDE;
@@ -97,7 +98,7 @@ public class GamePanelManager implements IGamePanelManager {
             gamePanel.removeMouseListener(dragListener);
         }
         
-        Services.get(IGameOperations.class).removeGameEventListener(gameEventListener);        
+        Services.get(IGameOperationsService.class).removeGameEventListener(gameEventListener);        
         Services.get(IScalableImageManager.class).clearManagedObjects();
         resizeListener = null;
         dragListener = null;
@@ -107,16 +108,16 @@ public class GamePanelManager implements IGamePanelManager {
 
     @Override
     public void relayout() {
-        ContextFull context = Services.get(IContextProvider.class).getThreadContext();
-        E_CardGame cardGame = context.getCardGameState().getCardGame();
+        Context context = Services.get(IContextService.class).getThreadContext();
+        ReadOnlyCardGame cardGame = context.getCardGameState().getCardGame();
         IPositionManager posMan = Services.get(IPositionManager.class);
         posMan.calculate(gamePanel.getWidth(), gamePanel.getHeight());
          
-        for (E_CardStack cardStack : cardGame.getCardStacks())
+        for (ReadOnlyCardStack cardStack : cardGame.getCardStacks())
         {
             updatePosition(cardStack);
         }
-        for (E_Card card : cardGame.getUniqueCards())
+        for (ReadOnlyCard card : cardGame.getUniqueCards())
         {
             updatePosition(card);
         }
@@ -158,7 +159,7 @@ public class GamePanelManager implements IGamePanelManager {
             }
         }
         
-        E_CardGame cardGame = Services.get(IContextProvider.class).getThreadContext().getCardGameState().getCardGame(); 
+        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getCardGameState().getCardGame(); 
         
         for (String cardStackType : cardGame.getCardStackTypes())
         {
@@ -173,15 +174,15 @@ public class GamePanelManager implements IGamePanelManager {
 
     @Override
     public List<ImageDefinition> getScalableImageDefinitions() {
-        ContextFull context = Services.get(IContextProvider.class).getThreadContext();
-        E_CardGame cardGame = context.getCardGameState().getCardGame();
+        Context context = Services.get(IContextService.class).getThreadContext();
+        ReadOnlyCardGame cardGame = context.getCardGameState().getCardGame();
         List<ImageDefinition> imgDefs = new ArrayList<>();
 
         // add card fronts
         
-        List<E_Card> cards = cardGame.getUniqueCards();
+        List<ReadOnlyCard> cards = cardGame.getUniqueCards();
         
-        for (E_Card card : cards) {
+        for (ReadOnlyCard card : cards) {
             String filename = getFilename(card);
             
             ImageDefinition def = new ImageDefinition(filename, SCALEGROUP_CARDS);
@@ -194,28 +195,28 @@ public class GamePanelManager implements IGamePanelManager {
     }
     
     
-    private String getFilename(E_Card card)
+    private String getFilename(ReadOnlyCard card)
     {
-        String suit = card.getCardSuit().name().substring(0, 1);
-        String value = card.getCardValue().getTextual();
+        String suit = card.getSuit().name().substring(0, 1);
+        String value = card.getValue().getTextual();
         String full = suit + "_" + value + ".png";
         
         return full;
     }
 
     @Override
-    public void setVisible(E_Card card, boolean visible) {
+    public void setVisible(ReadOnlyCard card, boolean visible) {
         String whatToShow = visible ? getFilename(card) : FILENAME_BACKSIDE;
         Services.get(IScalableImageManager.class).setImage(card.getCardId(), whatToShow);
     }
     
     @Override
-    public void updatePosition(E_Card card) 
+    public void updatePosition(ReadOnlyCard card) 
     {            
         JScalableImage jcard = Services.get(IScalableImageManager.class).getJScalableImage(card.getCardId());
         Rectangle rect_dst = Services.get(IPositionManager.class).getBounds(card);
         
-        E_CardStack cardStack = card.getCardStack();
+        ReadOnlyCardStack cardStack = card.getCardStack();
        
         int layerIndex = 200 + 20*cardStack.getCardTypeNumber() + card.getCardIndex();
         gamePanel.setLayer(jcard, layerIndex);   
@@ -224,7 +225,7 @@ public class GamePanelManager implements IGamePanelManager {
     }
 
     @Override
-    public void updatePosition(E_CardStack cardStack) 
+    public void updatePosition(ReadOnlyCardStack cardStack) 
     {    
         JScalableImage jcardstack = Services.get(IScalableImageManager.class).getJScalableImage(cardStack.getCardStackId());
         Rectangle rect_dst = Services.get(IPositionManager.class).getBounds(cardStack);
@@ -237,7 +238,7 @@ public class GamePanelManager implements IGamePanelManager {
     }
     
     @Override
-    public void animatePosition(E_Card card) {
+    public void animatePosition(ReadOnlyCard card) {
         JScalableImage jcard = Services.get(IScalableImageManager.class).getJScalableImage(card.getCardId());
         Rectangle rect_dst = Services.get(IPositionManager.class).getBounds(card);
        

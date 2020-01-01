@@ -7,12 +7,12 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import gent.timdemey.cards.localization.Loc;
-import gent.timdemey.cards.multiplayer.CreateServerInfo;
+import gent.timdemey.cards.model.commands.C_CreateServer;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogContent;
 import net.miginfocom.swing.MigLayout;
 
-public class CreateMultiplayerGameDialogContent extends DialogContent<Void, CreateServerInfo> implements DocumentListener{
+public class CreateMultiplayerGameDialogContent extends DialogContent<Void, C_CreateServer> implements DocumentListener{
 
     private final JTextField tf_srvname = new JTextField(30);
     private final JTextField tf_srvmsg = new JTextField(30);
@@ -35,10 +35,10 @@ public class CreateMultiplayerGameDialogContent extends DialogContent<Void, Crea
     }
 
     @Override
-    protected CreateServerInfo onClose(DialogButtonType dbType) {
+    protected C_CreateServer onClose(DialogButtonType dbType) {
         if (dbType == DialogButtonType.Ok)
         {
-            return new CreateServerInfo(tf_srvname.getText(), tf_srvmsg.getText(), 9000, 9010, 2, 2); // should override this class to specify other stuff
+            return new C_CreateServer(tf_srvname.getText(), tf_srvmsg.getText(), 9000, 9010, 2, 2); // should override this class to specify other stuff
         }
         else
         {
