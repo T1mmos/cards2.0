@@ -2,7 +2,7 @@ package gent.timdemey.cards.model.commands;
 
 import java.net.InetAddress;
 
-import gent.timdemey.cards.model.State;
+import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.multiplayer.io.TCP_ConnectionCreator;
 import gent.timdemey.cards.multiplayer.io.TCP_ConnectionPool;
 import gent.timdemey.cards.readonlymodel.IGameEventListener;
@@ -17,8 +17,6 @@ public class C_Connect extends CommandBase
         
     C_Connect (InetAddress srvInetAddress, int tcpport, String playerName)
     {
-       // this.clientName = clientName;
-       // this.clientId = clientId;
         this.srvInetAddress = srvInetAddress;
         this.tcpport = tcpport;
         this.playerName = playerName;
@@ -28,14 +26,13 @@ public class C_Connect extends CommandBase
     public void execute(Context context, ContextType type, State state) {        
         if (type == ContextType.UI)
         {
-            state. setLocalName(playerName);
+            state.setLocalName(playerName);
             
             reschedule(ContextType.Client);
         }
         else if (type == ContextType.Client)
-        {
-            
-            getThreadContext().setLocalName(playerName);
+        {            
+        	state.setLocalName(playerName);
             ClientCommandProcessor cProcessor = getProcessorClient();
                         
             cProcessor.connPool = new TCP_ConnectionPool(1, new ClientCommandProcessor.ConnListener());
@@ -51,7 +48,7 @@ public class C_Connect extends CommandBase
     @Override
     protected boolean canExecute(Context context, ContextType type, State state)
     {
-        
+        return true;
     }
 
     @Override

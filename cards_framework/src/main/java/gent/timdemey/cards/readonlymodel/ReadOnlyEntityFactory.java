@@ -7,9 +7,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import gent.timdemey.cards.model.EntityBase;
-import gent.timdemey.cards.model.State;
 import gent.timdemey.cards.model.cards.Card;
 import gent.timdemey.cards.model.cards.CardStack;
+import gent.timdemey.cards.model.state.State;
 
 public class ReadOnlyEntityFactory
 {

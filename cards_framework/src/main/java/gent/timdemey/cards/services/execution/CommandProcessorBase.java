@@ -9,8 +9,8 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Preconditions;
 
-import gent.timdemey.cards.model.State;
 import gent.timdemey.cards.model.commands.CommandBase;
+import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.ICommandExecutionService;
 import gent.timdemey.cards.services.context.ContextType;
 
