@@ -17,4 +17,31 @@ public abstract class EntityBase
     {
         this.id = id;
     }
+    
+    @Override
+    public final boolean equals(Object obj)
+    {
+        if (obj == null)
+        {
+            return false;
+        }
+        if (!this.getClass().isAssignableFrom(obj.getClass()))
+        {
+            return false;
+        }
+        EntityBase other = (EntityBase) obj;
+        
+        if (!this.id.equals(other.id))
+        {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    @Override
+    public final int hashCode()
+    {
+        return id.hashCode();
+    }
 }

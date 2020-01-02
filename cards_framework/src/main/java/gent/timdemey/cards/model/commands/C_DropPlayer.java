@@ -2,6 +2,7 @@ package gent.timdemey.cards.model.commands;
 
 import java.util.UUID;
 
+import gent.timdemey.cards.model.Player;
 import gent.timdemey.cards.model.commands.CommandEnvelope;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
@@ -25,19 +26,15 @@ public class C_DropPlayer extends CommandBase {
     @Override
     public void execute(Context context, ContextType contextType, State state) 
     {
-        if (contextType == ContextType.UI)
+        Player toRemove = state.getPlayers().stream().filter(p -> p.id.equals(playerId)).findFirst().get();
+        state.removePlayer(toRemove);            
+        
+        if (contextType == ContextType.Client)
         {
-            getThreadContext().removePlayer(playerId);            
-        }
-        else if (contextType == ContextType.Client)
-        {
-            getThreadContext().removePlayer(playerId);
             reschedule(ContextType.UI);
         }
         else 
         {
-            getThreadContext().removePlayer(playerId);
-            
             String ser = Json.send(CommandEnvelope.createCommandEnvelope(this));
             getThreadContext().getRemotePlayers().stream().forEach(c -> getProcessorServer().srv_tcp_connpool.getConnection(c.id).send(ser));
         }

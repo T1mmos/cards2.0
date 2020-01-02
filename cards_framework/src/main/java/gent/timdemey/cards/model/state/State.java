@@ -24,13 +24,15 @@ public class State extends EntityBase
 	private final StateDelta stateDelta;
 	private final CommandHistory history;
 
-	// state
-	private StateRef<CardGame> cardGameRef;
-	private StateRef<UUID> localIdRef;
-	private StateRef<String> localNameRef;
-	private StateList<Player> playersRef;
-	private StateRef<UUID> serverIdRef;
-	private StateRef<String> serverMsgRef;
+	// state lists
+    private StateListRef<Player> playersRef;
+	
+	// state values
+	private StateValueRef<CardGame> cardGameRef;
+	private StateValueRef<UUID> localIdRef;
+	private StateValueRef<String> localNameRef;
+	private StateValueRef<UUID> serverIdRef;
+	private StateValueRef<String> serverMsgRef;
 
 	private State()
 	{
@@ -45,12 +47,12 @@ public class State extends EntityBase
 		State state = new State();
 		
 
-		state.cardGameRef = StateRef.create(state);
-		state.localIdRef = StateRef.create(state);
-		state.localNameRef = StateRef.create(state);
-		state.playersRef = StateList.create(state, new ArrayList<>());
-		state.serverIdRef = StateRef.create(state);
-		state.serverMsgRef = StateRef.create(state);
+		state.cardGameRef = StateValueRef.create(state);
+		state.localIdRef = StateValueRef.create(state);
+		state.localNameRef = StateValueRef.create(state);
+		state.playersRef = StateListRef.create(state, new ArrayList<>());
+		state.serverIdRef = StateValueRef.create(state);
+		state.serverMsgRef = StateValueRef.create(state);
 		
 		return state;
 	}
@@ -90,11 +92,45 @@ public class State extends EntityBase
 		return Collections.unmodifiableList(playersRef);
 	}
 	
+	public Player getPlayer(UUID id)
+	{
+	    for (Player p : playersRef)
+	    {
+	        if (p.id.equals(id))
+	        {
+	            return p;
+	        }
+	    }
+	    return null;
+	}
+	
+	public List<Player> getRemotePlayers()
+	{
+	    List<Player> excluded = new ArrayList<>();
+	    
+	    if (serverIdRef.get() != null)
+	    {
+	        excluded.add(getPlayer(serverIdRef.get()));
+	    }
+	    if (localIdRef.get() != null)
+	    {
+	        excluded.add(getPlayer(localIdRef.get()));
+	    }
+	    List<Player> remotePlayers = new ArrayList<>(playersRef);
+	    remotePlayers.removeAll(excluded);
+	    return remotePlayers;
+	}
+	
 	public void addPlayer(Player player)
 	{
 		playersRef.add(player);
 	}
 	
+    public void removePlayer(Player player)
+    {
+        playersRef.remove(player);
+    }
+    
 	public UUID getServerId()
 	{
 		return serverIdRef.get();

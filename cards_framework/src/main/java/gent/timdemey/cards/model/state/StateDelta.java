@@ -14,10 +14,9 @@ public class StateDelta
 		this.changes = new ArrayList<Change<?>>();
 	}
 	
-	private <X> Change<X> getChange(StateRef<X> stateRef)
+	private <X> Change<X> getChange(StateValueRef<X> stateRef)
 	{
 		// look for a previous change for the given reference
-        Change<X> prevChangeX = null;
         for (int i = 0; i < changes.size(); i++)
         {
         	Change<?> chng = changes.get(i);
@@ -26,16 +25,15 @@ public class StateDelta
         		continue;
         	}
         	
-        	prevChangeX = (Change<X>) chng;
-        	break;
+        	return (Change<X>) chng;
         }
-        return prevChangeX;
+        
+        return null;
 	}
 	
-	private <X> List<Change<X>> getChanges(StateList<X> stateList)
+	private <X> Change<X> getChange(StateListRef<X> stateList, X element)
 	{
 		// look for a previous change for the given reference
-		List<Change<X>> changesX = new ArrayList<Change<X>>();
         for (int i = 0; i < changes.size(); i++)
         {
         	Change<?> chng = changes.get(i);
@@ -45,13 +43,20 @@ public class StateDelta
         	}
         	
         	Change<X> chngX = (Change<X>) chng;
-        	changesX.add(chngX);
-        	break;
+        	
+        	// only need the changes to the list that relate to the given element
+        	if (!chngX.addedValue.equals(element) && !chngX.removedValue.equals(element))
+        	{
+        	    continue;
+        	}
+        	
+        	return chngX;
         }
-        return changesX;
+        
+        return null;
 	}
 	
-    <X> void recordRefSet (StateRef<X> reference, X oldValue, X newValue)
+    <X> void recordRefSet (StateValueRef<X> reference, X oldValue, X newValue)
     {
     	// look for a previous change for the given reference
         Change<X> prevChangeX = getChange(reference);        
@@ -93,13 +98,59 @@ public class StateDelta
         
     }
 
-	<X> void recordListAdd(StateList<X> stateList, X e)
+	<X> void recordListAdd(StateListRef<X> ref, X e)
 	{
-		getChanges(stateList);
+		Change<X> prevChange = getChange(ref, e);
+				
+		if (prevChange != null)
+		{
+		    // if the same element is already in the list, then no change can't be recorded
+	        if (prevChange.changeType == ChangeType.Add)
+	        {
+	            throw new IllegalStateException("Can't record the same element in a list twice for operation Add: " + ref + " -> " + e);
+	        }
+	        
+	        if (prevChange.changeType != ChangeType.Remove)
+	        {
+	            throw new IllegalStateException("Unsupported previous change type for list Add: " + ref + " -> " + e);
+	        }
+	        
+	        // remove the Remove record, as Remove + Add leads to no-op
+	        changes.remove(prevChange);
+		}
+		else
+		{
+		    // add the Add record
+		    Change<X> change = Change.forAdd(ref, e);
+		    changes.add(change);
+		}
 	}
 
-    <X> void recordListRemove(StateList<X> stateList, X e)
+    <X> void recordListRemove(StateListRef<X> ref, X e)
     {
-    	
+        Change<X> prevChange = getChange(ref, e);
+        
+        if (prevChange != null)
+        {
+            // if the same element is already in the list, then no change can't be recorded
+            if (prevChange.changeType == ChangeType.Remove)
+            {
+                throw new IllegalStateException("Can't record the same element in a list twice for operation Remove: " + ref + " -> " + e);
+            }
+            
+            if (prevChange.changeType != ChangeType.Add)
+            {
+                throw new IllegalStateException("Unsupported previous change type for list Remove: " + ref + " -> " + e);
+            }
+            
+            // remove the Add record, as Add + Remove leads to no-op
+            changes.remove(prevChange);
+        }
+        else
+        {
+            // add the Remove record
+            Change<X> change = Change.forRemove(ref, e);
+            changes.add(change);
+        }
     }
 }

@@ -184,21 +184,4 @@ public class CardGame extends EntityBase
         ReadOnlyCardStack cardStack = getCardStackPriv(cardStackId);
         return cardStack != null;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof ReadOnlyCardGame)) {
-            return false;
-        }
-        
-        CardGame other = (CardGame) obj;
-
-        return Objects.equals(playerStacks, other.playerStacks) 
-                && Objects.equals(cardStacks, other.cardStacks);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(playerStacks, cardStacks);
-    }
 }
