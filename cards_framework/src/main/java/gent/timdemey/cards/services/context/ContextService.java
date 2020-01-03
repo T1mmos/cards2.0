@@ -1,7 +1,6 @@
 package gent.timdemey.cards.services.context;
 
 import java.util.ConcurrentModificationException;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -75,12 +74,12 @@ public final class ContextService implements IContextService
     }
 
     @Override
-    public void initialize(ContextType type, String name, ICommandExecutionService executor)
+    public void initialize(ContextType type, ICommandExecutionService cmdExecService)
     {
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
-
-
-        Context context = new Context(type, executor);
+        Preconditions.checkState(type == cmdExecService.getContextType());
+        
+        Context context = new Context(type, cmdExecService);
 
         Context prev = fullContexts.putIfAbsent(type, context);
         if (prev != null)

@@ -29,12 +29,6 @@ public class C_SetVisible extends CommandBase
         this.cards = cards;
         this.visible = visible;
     }
-    
-    @Override
-    public CommandType getCommandType()
-    {
-        return CommandType.Gameplay;
-    } 
 
     @Override
     public boolean canExecute() {

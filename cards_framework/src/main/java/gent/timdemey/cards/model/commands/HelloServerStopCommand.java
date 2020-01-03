@@ -26,7 +26,7 @@ class HelloServerStopCommand extends CommandBase
             throw new IllegalStateException();
         }        
         
-        ClientCommandProcessor cProcessor = getProcessorClient();
+        ClientCommandExecutionService cProcessor = getProcessorClient();
         if (cProcessor.serviceRequester == null)
         {
             throw new IllegalStateException("Already stopped the requesting service.");

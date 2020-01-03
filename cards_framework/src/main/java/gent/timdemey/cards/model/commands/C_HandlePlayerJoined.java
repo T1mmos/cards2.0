@@ -1,30 +1,36 @@
 package gent.timdemey.cards.model.commands;
 
+import gent.timdemey.cards.model.Player;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.readonlymodel.IGameEventListener;
-import gent.timdemey.cards.readonlymodel.ReadOnlyPlayer;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
 public class C_HandlePlayerJoined extends CommandBase
 {    
-    final ReadOnlyPlayer player;
+    final Player player;
     
-    C_HandlePlayerJoined(ReadOnlyPlayer player) 
+    C_HandlePlayerJoined(Player player) 
     {
         this.player = player;
     }
 
+
+	@Override
+	protected boolean canExecute(Context context, ContextType type, State state)
+	{
+		return true;
+	}
+	
     @Override
     public void execute(Context context, ContextType contextType, State state) 
     {
         if (contextType == ContextType.UI)
-        {
-            context.addPlayer(player.id, player.name);
+        {        	
+            state.addPlayer(player);
         } 
         else if  (contextType == ContextType.Client)
         {
-            context.addPlayer(player.id, player.name);
+            state.addPlayer(player);
             reschedule(ContextType.UI);
         }
         else 

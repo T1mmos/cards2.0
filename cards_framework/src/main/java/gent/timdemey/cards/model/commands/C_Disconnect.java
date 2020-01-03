@@ -1,8 +1,7 @@
 package gent.timdemey.cards.model.commands;
 
+import gent.timdemey.cards.model.Player;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.readonlymodel.CommandType;
-import gent.timdemey.cards.readonlymodel.IGameEventListener;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
@@ -17,15 +16,21 @@ public class C_Disconnect extends CommandBase
     {
         if (type == ContextType.Client)
         {
-            getProcessorClient().connPool.closeAllConnections();
+        	state.getTcpConnectionPool().closeAllConnections();
             
-            getThreadContext().removeRemotes();
-            getThreadContext().setServerId(null);
+        	for (Player player : state.getRemotePlayers())
+        	{
+        		state.removePlayer(player);
+        	}
+            state.setServerId(null);
         }
         else if (type == ContextType.UI)
         {
-            getThreadContext().removeRemotes();
-            getThreadContext().setServerId(null);
+        	for (Player player : state.getRemotePlayers())
+        	{
+        		state.removePlayer(player);
+        	}
+            state.setServerId(null);
             
             reschedule(ContextType.Client);
         }

@@ -3,14 +3,13 @@ package gent.timdemey.cards.services.context;
 import java.util.ArrayList;
 import java.util.List;
 
-import gent.timdemey.cards.model.commands.CommandBase;
 import gent.timdemey.cards.readonlymodel.IGameEventListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityFactory;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.ICommandExecutionService;
 import gent.timdemey.cards.services.IContextListener;
 
-public class Context
+public final class Context implements IContextBase
 {
     final LimitedContext limitedContext;
     
@@ -35,18 +34,14 @@ public class Context
         this.contextListeners.remove(contextListener);
     }
     
-    public void schedule (CommandBase command)
+    public ReadOnlyState getReadOnlyState() 
     {
-        limitedContext.schedule(command);
+       return ReadOnlyEntityFactory.getOrCreateState(limitedContext.getState());
     }
-    
+
+    @Override
     public ContextType getContextType()
     {
         return limitedContext.getContextType();
-    }
-   
-    public ReadOnlyState getState() 
-    {
-       return ReadOnlyEntityFactory.getOrCreateState(limitedContext.getState());
     }
 }

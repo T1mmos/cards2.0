@@ -2,7 +2,7 @@ package gent.timdemey.cards.multiplayer.io;
 
 import java.util.UUID;
 
-public interface IConnectionListener
+public interface ITcpConnectionListener
 {
     public void onTcpMessageReceived (TCP_Connection connection, String message);
     public void onTcpConnectionAdded (TCP_Connection connection);

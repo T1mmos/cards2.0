@@ -1,16 +1,20 @@
 package gent.timdemey.cards.model.commands;
 
+import java.util.UUID;
+
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.multiplayer.io.TCP_Connection;
 import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
 public class C_HandleConnectionLoss extends CommandBase
 {
-    C_HandleConnectionLoss()
+    public C_HandleConnectionLoss(TCP_Connection connection, UUID id)
     {        
+    	// todo
     }
 
     @Override

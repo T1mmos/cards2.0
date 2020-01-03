@@ -5,13 +5,16 @@ import java.util.UUID;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.EntityBase;
 import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.multiplayer.io.TCP_Connection;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.context.LimitedContext;
 
 public abstract class CommandBase extends EntityBase
-{   
+{   	
+	private volatile TCP_Connection sourceTcpConnection;
+	
     protected CommandBase ()
     {
         super();
@@ -70,8 +73,33 @@ public abstract class CommandBase extends EntityBase
     
     protected final void reschedule (ContextType type)
     {
+    	schedulePriv(type, this);
+    }
+    
+    protected final void schedule (ContextType type, CommandBase cmd)
+    {
+    	if (cmd == this)
+    	{
+    		throw new UnsupportedOperationException("To reschedule the current command, use reschedule - schedule is only for launching new commands.");
+    	}
+    	schedulePriv(type, cmd);
+    }
+    
+    private void schedulePriv (ContextType type, CommandBase cmd)
+    {
+
         IContextService contextServ = Services.get(IContextService.class);
         LimitedContext context = contextServ.getContext(type);
-        context.schedule(this);
+        context.schedule(cmd);
+    }
+    
+    public void setSourceTcpConnection(TCP_Connection tcpConnection)
+    {
+    	this.sourceTcpConnection = tcpConnection;
+    }
+    
+    protected final TCP_Connection getSourceTcpConnection()
+    {
+    	return sourceTcpConnection;
     }
 }

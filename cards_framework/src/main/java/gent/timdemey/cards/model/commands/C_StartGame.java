@@ -25,16 +25,6 @@ public class C_StartGame extends CommandBase
         this.playerStacks = playerStacks;
     }
     
-    @Override
-    public CommandType getCommandType()
-    {
-        return CommandType.Gameplay;
-    } 
-    
-    @Override
-    public boolean canExecute() {
-        return true;
-    }
     
     @Override
     public void execute() {

@@ -6,11 +6,11 @@ import gent.timdemey.cards.model.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.ICommandExecutionService;
 
-public class LimitedContext
+public final class LimitedContext implements IContextBase
 {
     private final ContextType contextType;
     private ICommandExecutionService cmdExecServ;    
-    private final State state;  
+    private final State state;
     
     public LimitedContext (ContextType contextType, ICommandExecutionService cmdExecServ)
     {
@@ -19,18 +19,18 @@ public class LimitedContext
         
         this.contextType = contextType;
         this.cmdExecServ = cmdExecServ;
-        this.state = new State();
+        this.state = State.create(contextType);
     }    
-    
-    public void schedule (CommandBase command)
-    {
-        cmdExecServ.schedule(command, state);
-    }
     
     public ContextType getContextType()
     {
         return contextType;
     }
+
+	public void schedule(CommandBase command)
+	{
+		cmdExecServ.schedule(command, state);
+	}
 
     State getState()
     {

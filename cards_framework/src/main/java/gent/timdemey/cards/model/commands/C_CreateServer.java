@@ -1,8 +1,20 @@
 package gent.timdemey.cards.model.commands;
 
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+
 import com.google.common.base.Preconditions;
 
+import gent.timdemey.cards.ICardPlugin;
+import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.multiplayer.io.CommandSchedulingTcpConnectionListener;
+import gent.timdemey.cards.multiplayer.io.TCP_ConnectionAccepter;
+import gent.timdemey.cards.multiplayer.io.TCP_ConnectionPool;
+import gent.timdemey.cards.multiplayer.io.UDP_ServiceAnnouncer;
+import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
@@ -45,7 +57,74 @@ public class C_CreateServer extends CommandBase
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
-        // TODO Auto-generated method stub
-        
+    	if (type == ContextType.UI)
+    	{
+    		reschedule(ContextType.Server);
+    		return;
+    	}
+    	
+    	if (type == ContextType.Client)
+    	{
+    		throw new IllegalStateException();
+    	}
+    	// construct answer envelope
+		int major = Services.get(ICardPlugin.class).getMajorVersion();
+		int minor = Services.get(ICardPlugin.class).getMinorVersion();
+
+		InetAddress addr = null;
+		try (final DatagramSocket socket = new DatagramSocket())
+		{
+			socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
+			addr = socket.getLocalAddress();
+		} catch (SocketException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnknownHostException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	//	UUID serverId = state.getServerId();
+		HelloClientCommand cmd_hello = new HelloClientCommand(srvname, addr, tcpport, major, minor);		
+		String json_hello = CommandDtoMapper.toJson(cmd_hello);
+
+		UDP_ServiceAnnouncer udpServAnnouncer = new UDP_ServiceAnnouncer(udpport, this::canAcceptUdpMessage, json_hello);
+		
+		int playerCount = Services.get(ICardPlugin.class).getPlayerCount();
+		C_DenyClient cmd_reject = new C_DenyClient("Server is full");
+		String json_reject = CommandDtoMapper.toJson(cmd_reject);
+
+		CommandSchedulingTcpConnectionListener tcpConnListener = new CommandSchedulingTcpConnectionListener(ContextType.Server);		
+		TCP_ConnectionPool tcpConnPool = new TCP_ConnectionPool(playerCount, tcpConnListener);		
+		TCP_ConnectionAccepter tcpConnAccepter = new TCP_ConnectionAccepter(tcpConnPool, this, json_reject);	
+		
+		state.setUdpServiceAnnouncer(udpServAnnouncer);
+		state.setTcpConnectionAccepter(tcpConnAccepter);
+		state.setTcpConnectionListener(tcpConnListener);		
+		state.setTcpConnectionPool(tcpConnPool);
+
+		udpServAnnouncer.start();
+		tcpConnAccepter.start();
     }
+    
+    private Boolean canAcceptUdpMessage(String json)
+	{
+    	try 
+    	{
+    		CommandBase command = CommandDtoMapper.toCommand(json);	
+    		if (!(command instanceof HelloServerCommand))
+    		{
+    			return false;
+    		}
+    	}
+    	catch (Exception ex)
+    	{
+    		return false;
+    	}
+		
+		return true;
+	}
+
 }

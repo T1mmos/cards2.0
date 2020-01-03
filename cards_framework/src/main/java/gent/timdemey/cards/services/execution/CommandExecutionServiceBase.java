@@ -14,7 +14,7 @@ import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.ICommandExecutionService;
 import gent.timdemey.cards.services.context.ContextType;
 
-abstract class CommandProcessorBase implements ICommandExecutionService 
+abstract class CommandExecutionServiceBase implements ICommandExecutionService 
 {
     protected static final Charset UDP_CHARSET = Charset.forName("UTF8");
     
@@ -47,17 +47,13 @@ abstract class CommandProcessorBase implements ICommandExecutionService
     }
     
     private final BlockingQueue<Runnable> incomingCommandQueue;
-    private ThreadPoolExecutor executor;
+    private final ThreadPoolExecutor executor;
+    private final ContextType contextType;
     
-    protected CommandProcessorBase() 
+    protected CommandExecutionServiceBase(ContextType contextType) 
     {
+    	this.contextType = contextType;
         this.incomingCommandQueue = new PriorityBlockingQueue<>();
-        this.executor = null;
-    }
-    
-    @Override
-    public void initialize(ContextType contextType)
-    {
         this.executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.SECONDS, incomingCommandQueue, new ThreadFactory() 
         {
             @Override
@@ -67,7 +63,13 @@ abstract class CommandProcessorBase implements ICommandExecutionService
             }
         });
     }
-
+    
+    @Override
+    public final ContextType getContextType()
+    {
+    	return contextType;
+    }
+    
     @Override
     public void schedule(CommandBase command, State state) 
     {

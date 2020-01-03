@@ -33,6 +33,7 @@ import gent.timdemey.cards.services.IImageService;
 import gent.timdemey.cards.services.configman.ConfigKey;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.dialogs.DialogService;
+import gent.timdemey.cards.services.execution.UICommandExecutionService;
 import gent.timdemey.cards.ui.actions.ActionCreateGame;
 import gent.timdemey.cards.ui.actions.ActionDebugDrawDebugLines;
 import gent.timdemey.cards.ui.actions.ActionDebugGC;
@@ -82,12 +83,7 @@ public class StartFrame {
             int playerNr = rg.nextInt(10000);
             String name = "Player " + playerNr;
             
-            Services.get(IContextService.class).initialize(ContextType.UI, id, name);
-            
-            if (plugin.getPlayerCount() > 1)
-            {
-                Services.get(IContextService.class).initialize(ContextType.Client, id, name); 
-            }
+            Services.get(IContextService.class).initialize(ContextType.UI, name, new UICommandExecutionService());            
             
             buildMenu(frame, plugin);
             

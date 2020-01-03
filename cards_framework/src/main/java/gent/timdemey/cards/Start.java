@@ -13,7 +13,7 @@ import gent.timdemey.cards.services.IResourceManager;
 import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.ISoundManager;
 import gent.timdemey.cards.services.configman.ConfigManager;
-import gent.timdemey.cards.services.context.StateService;
+import gent.timdemey.cards.services.context.ContextService;
 import gent.timdemey.cards.services.gamepanel.GamePanelManager;
 import gent.timdemey.cards.services.images.ImageService;
 import gent.timdemey.cards.services.resman.ResourceManager;
@@ -96,7 +96,7 @@ public class Start {
         }
         if (!Services.isInstalled(IContextService.class))
         {
-            IContextService ctxtProv = new StateService();
+            IContextService ctxtProv = new ContextService();
             Services.install(IContextService.class, ctxtProv);
         }
     }

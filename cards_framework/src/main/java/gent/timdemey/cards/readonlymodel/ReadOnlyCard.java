@@ -1,9 +1,9 @@
 package gent.timdemey.cards.readonlymodel;
 
-import gent.timdemey.cards.dto.IMapper;
 import gent.timdemey.cards.model.cards.Card;
 import gent.timdemey.cards.model.cards.Suit;
 import gent.timdemey.cards.model.cards.Value;
+import gent.timdemey.cards.serialization.mappers.IMapper;
 
 public final class ReadOnlyCard extends ReadOnlyEntityBase<Card> 
 {

@@ -12,12 +12,9 @@ import gent.timdemey.cards.services.context.ContextType;
  * @author Timmos
  */
 public interface ICommandExecutionService 
-{
-    /**
-     * Become ready to process incoming commands.
-     */
-    void initialize(ContextType contextType);
-        
+{   
+	ContextType getContextType();
+	
     /**
      * Adds a new command to command list, for execution somewhere in 
      * the near future. The command will be wrapped in a CommandEnvelope.

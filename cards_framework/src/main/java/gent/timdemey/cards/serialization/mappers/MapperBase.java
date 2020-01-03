@@ -1,10 +1,10 @@
-package gent.timdemey.cards.dto;
+package gent.timdemey.cards.serialization.mappers;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public final class MapperBase implements IMapper
+final class MapperBase implements IMapper
 {
     private static class MappersKey
     {
@@ -56,7 +56,12 @@ public final class MapperBase implements IMapper
         }
     }
     
-    private Map<MappersKey, MappingFunction> _mappers = new HashMap<>();
+    MapperBase()
+    {
+    	
+    }
+    
+    private Map<MappersKey, MappingFunction<?,?>> _mappers = new HashMap<>();
 
     @Override
     public final <SRC,DST> DST map(SRC src, Class<DST> dstClazz)
@@ -66,8 +71,29 @@ public final class MapperBase implements IMapper
             return null;
         }
         Class<?> srcClazz = src.getClass();
-        MappersKey key = new MappersKey(srcClazz, dstClazz);
-        MappingFunction<SRC, DST> func = (MappingFunction<SRC,DST>) _mappers.get(key);
+        
+        MappersKey bestKey = null;
+        for (MappersKey key : _mappers.keySet())
+        {
+        	if (!key.srcClazz.equals(srcClazz))
+        	{
+        		continue;
+        	}
+        	if (key.dstClazz.equals(dstClazz))
+        	{
+        		bestKey = key;
+        		break;
+        	}
+        	if (key.dstClazz.isAssignableFrom(dstClazz))
+        	{
+        		if (bestKey == null || bestKey.dstClazz.isAssignableFrom(key.dstClazz))
+        		{
+        			bestKey = key;
+        		}
+        	}
+        }
+        
+        MappingFunction<SRC, DST> func = (MappingFunction<SRC,DST>) _mappers.get(bestKey);
         DST dst = func.map(src);
         return dst;
     }
@@ -81,7 +107,7 @@ public final class MapperBase implements IMapper
     private <SRC, DST> MappingFunction<SRC, DST> getMapping (Class<SRC> src, Class<DST> dst)
     {
         MappersKey key = new MappersKey(src, dst);
-        MappingFunction<SRC, DST> mappingFunc = _mappers.get(key);
+        MappingFunction<SRC, DST> mappingFunc = (MappingFunction<SRC, DST>) _mappers.get(key);
         return mappingFunc;
     }
 }

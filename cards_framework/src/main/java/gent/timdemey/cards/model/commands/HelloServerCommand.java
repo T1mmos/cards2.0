@@ -1,62 +1,84 @@
 package gent.timdemey.cards.model.commands;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.dto.ASerializer;
-import gent.timdemey.cards.dto.DeserializationContext;
-import gent.timdemey.cards.dto.Json;
-import gent.timdemey.cards.dto.SerializationContext;
+import gent.timdemey.cards.logging.ILogManager;
+import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.multiplayer.io.UDP_ServiceRequester;
-import gent.timdemey.cards.services.ICommandExecutionService;
+import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.execution.ClientCommandProcessor;
+import gent.timdemey.cards.services.context.LimitedContext;
 
 /**
  * Command sent over UDP broadcast to the network in order to detect servers.
+ * 
  * @author Timmos
  *
  */
-public class HelloServerCommand {
+public class HelloServerCommand extends CommandBase
+{
 
-    
-    
-    HelloServerCommand() 
-    {
-    }
+	public HelloServerCommand()
+	{
+	}
 
-    @Override
-    public CommandType getCommandType() 
-    {
-        return CommandType.Meta;
-    }
+	@Override
+	protected boolean canExecute(Context context, ContextType type, State state)
+	{
+		return true;
+	}
 
-    @Override
-    public void execute() {
-        Context context = Services.get(IContextService.class).getThreadContext();
-        ContextType contextType = getContextType();
-        
-        if (contextType == ContextType.Client)
+	@Override
+	protected void execute(Context context, ContextType type, State state)
+	{
+		if (type == ContextType.Client)
+		{
+			if (state.getUdpServiceRequester() != null)
+			{
+				throw new IllegalStateException("Already a requesting service running. Stop the current one first.");
+			}
+
+			// clear the server list shown in the UI
+			CommandBase clrServList = new C_ClearServerList();
+			IContextService contextServ = Services.get(IContextService.class);
+			contextServ.getContext(ContextType.UI).schedule(clrServList);
+
+			// prepare UDP broadcast
+			HelloServerCommand cmd = new HelloServerCommand();
+			String json = CommandDtoMapper.toJson(cmd);
+			
+
+			UDP_ServiceRequester udpServRequester = new UDP_ServiceRequester(json, HelloServerCommand::onUdpReceived);
+			state.setUdpServiceRequester(udpServRequester);
+			
+			udpServRequester.start();
+		} 
+		else
+		{
+			throw new IllegalStateException("Not meant to run in a processor in context " + type);
+		}
+	}
+	
+	public static void onUdpReceived (String json)
+	{		
+        try 
         {
-            ICommandExecutionService commandProcessor = context.getCommandProcessor();
-            ClientCommandProcessor cProcessor = (ClientCommandProcessor) commandProcessor;
-            if (cProcessor.serviceRequester != null)
+            CommandBase command = CommandDtoMapper.toCommand(json);
+            if (!(command instanceof HelloClientCommand))
             {
-                throw new IllegalStateException("Already a requesting service running. Stop the current one first.");
-            }
+                Services.get(ILogManager.class).log("Unexpected command on UDP datagram, class: " + command.getClass().getSimpleName());
+                return;
+            }            
             
-            new C_ClearServerList().schedule(ContextType.UI);
-            
-            HelloServerCommand cmd = new HelloServerCommand();
-            CommandEnvelope env_out = CommandEnvelope.createCommandEnvelope(cmd);
-            String json_out = Json.send(env_out);            
-            
-            cProcessor.serviceRequester = new UDP_ServiceRequester(json_out, cProcessor::onUdpReceived);
-            cProcessor.serviceRequester.start();
-        }
-        else 
+            IContextService contextServ = Services.get(IContextService.class);
+            LimitedContext context = contextServ.getContext(ContextType.Client);
+            context.schedule(command);
+        } 
+        catch (Exception e)
         {
-            throw new IllegalStateException("Not meant to run in a processor in context " + contextType);
+            Services.get(ILogManager.class).log("Failed to deserialize UDP datagram, ignoring");
+            return;
         }
-    }
+	}
 }

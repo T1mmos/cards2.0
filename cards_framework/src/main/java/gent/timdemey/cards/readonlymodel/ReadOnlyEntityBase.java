@@ -2,8 +2,8 @@ package gent.timdemey.cards.readonlymodel;
 
 import java.util.UUID;
 
-import gent.timdemey.cards.dto.IMapper;
 import gent.timdemey.cards.model.EntityBase;
+import gent.timdemey.cards.serialization.mappers.IMapper;
 
 public abstract class ReadOnlyEntityBase<T extends EntityBase>
 {

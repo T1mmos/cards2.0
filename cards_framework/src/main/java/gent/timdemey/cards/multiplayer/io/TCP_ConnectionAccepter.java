@@ -108,8 +108,7 @@ public final class TCP_ConnectionAccepter
                 Socket socket = ssocket.accept();
                 if (connectionPool.isFull())
                 {
-                    rejectedExecutor.execute(new RejectedConnectionTask(socket));
-                   
+                    rejectedExecutor.execute(new RejectedConnectionTask(socket));                   
                 }
                 else 
                 {

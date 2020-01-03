@@ -17,7 +17,7 @@ public class TCP_ConnectionPool
     /// fully established connections that are associated to a UUID.
     private final ConcurrentMap<UUID, TCP_Connection> uuid2conn;
     private final List<UUID> locallyClosed;
-    private final IConnectionListener externalConnListener;
+    private final ITcpConnectionListener externalConnListener;
     private final int maxConnections;
     
     
@@ -79,7 +79,7 @@ public class TCP_ConnectionPool
         return idToFind;
     }
     
-    public TCP_ConnectionPool(int maxConnections, IConnectionListener connListener) 
+    public TCP_ConnectionPool(int maxConnections, ITcpConnectionListener connListener) 
     {
         Preconditions.checkNotNull(connListener);
         

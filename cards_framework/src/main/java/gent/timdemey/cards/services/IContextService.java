@@ -1,7 +1,5 @@
 package gent.timdemey.cards.services;
 
-import java.util.UUID;
-
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.context.LimitedContext;
@@ -43,7 +41,7 @@ public interface IContextService {
      * Starts a context for the given context type (e.g. UI, server).
      * @param connection
      */
-    public void initialize (ContextType type, String name, ICommandExecutionService executor);
+    public void initialize (ContextType type, ICommandExecutionService executor);
     
     /**
      * Drops a context.

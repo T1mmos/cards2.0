@@ -1,4 +1,4 @@
-package gent.timdemey.cards.dto;
+package gent.timdemey.cards.serialization.mappers;
 
 public interface IMapper
 {
