@@ -5,12 +5,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import gent.timdemey.cards.readonlymodel.ACommand;
-import gent.timdemey.cards.readonlymodel.CommandType;
-import gent.timdemey.cards.readonlymodel.IGameEventListener;
-import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
-import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
-import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
+import gent.timdemey.cards.model.cards.Card;
+import gent.timdemey.cards.model.cards.CardGame;
+import gent.timdemey.cards.model.cards.CardStack;
+import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.services.context.Context;
+import gent.timdemey.cards.services.context.ContextType;
 
 public class C_Move extends CommandBase
 {
@@ -19,8 +19,8 @@ public class C_Move extends CommandBase
     public final UUID cardId;
     public final boolean flipOrder; 
         
-    private List<ReadOnlyCard> transferCards;
-    private List<ReadOnlyCard> flippedTransferCards;
+    private List<Card> transferCards;
+    private List<Card> flippedTransferCards;
    
     C_Move (UUID srcCardStackId, UUID dstCardStackId, UUID cardId, boolean flipOrder)
     {
@@ -29,26 +29,24 @@ public class C_Move extends CommandBase
         this.cardId = cardId;
         this.flipOrder = flipOrder;
     }
-    
     @Override
-    public boolean canExecute() {
-        ReadOnlyCardGame cardGame = getThreadContext().getCardGameState().cardGame;
-        
-        ReadOnlyCardStack srcCardStack = cardGame.getCardStack(srcCardStackId);
-        return srcCardStack.getCards().contains(cardId);        
+    protected boolean canExecute(Context context, ContextType type, State state)
+    {
+        CardStack srcCardStack = state.getCardGame().getCardStacks().get(srcCardStackId);
+        return srcCardStack.getCards().contains(cardId);     
     }
     
     @Override
-    public void execute() 
+    protected void execute(Context context, ContextType type, State state)
     {
-        ReadOnlyCardGame cardGame = getThreadContext().getCardGameState().cardGame;
-        ReadOnlyCardStack srcCardStack = cardGame.getCardStack(srcCardStackId);
-        ReadOnlyCardStack dstCardStack = cardGame.getCardStack(dstCardStackId);
+    	CardGame cardGame = state.getCardGame();
+        CardStack srcCardStack = cardGame.getCardStacks().get(srcCardStackId);
+        CardStack dstCardStack = cardGame.getCardStacks().get(dstCardStackId);
         
         if (transferCards == null)
         {
-            List<ReadOnlyCard> cards = srcCardStack.getCards();
-            ReadOnlyCard card = srcCardStack.getCard(cardId);
+            List<Card> cards = srcCardStack.getCards();
+            Card card = srcCardStack.getCards().get(cardId);
             transferCards = new ArrayList<>(cards.subList(cards.indexOf(card), cards.size()));
             
             if (flipOrder)
@@ -58,7 +56,7 @@ public class C_Move extends CommandBase
             }
         }
         
-        srcCardStack.removeAll(transferCards);
+        srcCardStack.getCards().removeAll(transferCards);
         
         if (flipOrder)
         {
@@ -69,36 +67,35 @@ public class C_Move extends CommandBase
             dstCardStack.addAll(transferCards);
         }
         
-        transferCards.forEach(card -> card.setCardStack(dstCardStack));    
-        
-        
+        transferCards.forEach(card -> card.cardStackRef.set(dstCardStack));    
     }
     
     @Override
-    public boolean canUndo() {
-        ReadOnlyCardStack dstCardStack = getThreadContext().getCardGameState().cardGame.getCardStack(dstCardStackId);
-        
-        return dstCardStack.contains(cardId);
-    }
-
-    @Override
-    public void undo() 
+    protected boolean canUndo(Context context, ContextType type, State state)
     {
-        ReadOnlyCardGame cardGame = getThreadContext().getCardGameState().cardGame;
-        ReadOnlyCardStack srcCardStack = cardGame.getCardStack(srcCardStackId);
-        ReadOnlyCardStack dstCardStack = cardGame.getCardStack(dstCardStackId);
+    	 CardStack dstCardStack = state.getCardGame().getCardStacks().get(dstCardStackId);
+         
+         return dstCardStack.getCards().contains(cardId);
+    }
+    
+    @Override
+    protected void undo(Context context, ContextType type, State state)
+    {
+    	CardGame cardGame = state.getCardGame();
+        CardStack srcCardStack = cardGame.getCardStacks().get(srcCardStackId);
+        CardStack dstCardStack = cardGame.getCardStacks().get(dstCardStackId);
         
         // for removal, it doesn't really mather which list we take
         if (flipOrder)
         {
-            dstCardStack.removeAll(flippedTransferCards);
+            dstCardStack.getCards().removeAll(flippedTransferCards);
         }
         else
         {
-            dstCardStack.removeAll(transferCards);
+            dstCardStack.getCards().removeAll(transferCards);
         } 
         
         srcCardStack.addAll(transferCards);
-        transferCards.forEach(card -> card.setCardStack(srcCardStack));    
+        transferCards.forEach(card -> card.cardStackRef.set(srcCardStack));    
     }
 }

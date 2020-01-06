@@ -1,7 +1,6 @@
 package gent.timdemey.cards.model.state;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,7 +34,7 @@ public class State extends EntityBase
 	private StateValueRef<String> serverMsgRef;
 
 	// context specific
-	//private StateValueRef<TCP_ConnectionCreator> tcpConnectionCreatorRef;
+	// private StateValueRef<TCP_ConnectionCreator> tcpConnectionCreatorRef;
 	private StateValueRef<TCP_ConnectionAccepter> tcpConnectionAccepterRef;
 	private StateValueRef<TCP_ConnectionPool> tcpConnectionPoolRef;
 	private StateValueRef<ITcpConnectionListener> tcpConnectionListenerRef;
@@ -62,7 +61,7 @@ public class State extends EntityBase
 		state.serverMsgRef = StateValueRef.create(state);
 		state.serversRef = StateListRef.create(state, new ArrayList<>());
 
-		//state.tcpConnectionCreatorRef = StateValueRef.create(state);
+		// state.tcpConnectionCreatorRef = StateValueRef.create(state);
 		state.tcpConnectionAccepterRef = StateValueRef.create(state);
 		state.tcpConnectionPoolRef = StateValueRef.create(state);
 		state.tcpConnectionListenerRef = StateValueRef.create(state);
@@ -82,16 +81,14 @@ public class State extends EntityBase
 		cardGameRef.set(cardGame);
 	}
 
-/*	public TCP_ConnectionCreator getTcpConnectionCreator()
-	{
-		return tcpConnectionCreatorRef.get();
-	}
+	/*
+	 * public TCP_ConnectionCreator getTcpConnectionCreator() { return
+	 * tcpConnectionCreatorRef.get(); }
+	 * 
+	 * public void setTcpConnectionCreator(TCP_ConnectionCreator
+	 * tcpConnectionCreator) { tcpConnectionCreatorRef.set(tcpConnectionCreator); }
+	 */
 
-	public void setTcpConnectionCreator(TCP_ConnectionCreator tcpConnectionCreator)
-	{
-		tcpConnectionCreatorRef.set(tcpConnectionCreator);
-	}*/
-	
 	public TCP_ConnectionAccepter getTcpConnectionAccepter()
 	{
 		return tcpConnectionAccepterRef.get();
@@ -162,58 +159,14 @@ public class State extends EntityBase
 		localNameRef.set(name);
 	}
 
-	public List<Player> getPlayers()
+	public StateListRef<Player> getPlayers()
 	{
-		return Collections.unmodifiableList(playersRef);
-	}
-
-	public Player getPlayer(UUID id)
-	{
-		for (Player p : playersRef)
-		{
-			if (p.id.equals(id))
-			{
-				return p;
-			}
-		}
-		return null;
-	}
-	
-
-
-	public List<Player> getPlayersExcept(UUID clientId)
-	{
-		List<Player> players = getRemotePlayers();
-		Player excluded = getPlayer(clientId);
-		players.remove(excluded);
-		return players;
+		return playersRef;
 	}
 
 	public List<Player> getRemotePlayers()
 	{
-		List<Player> excluded = new ArrayList<>();
-
-		if (serverIdRef.get() != null)
-		{
-			excluded.add(getPlayer(serverIdRef.get()));
-		}
-		if (localIdRef.get() != null)
-		{
-			excluded.add(getPlayer(localIdRef.get()));
-		}
-		List<Player> remotePlayers = new ArrayList<>(playersRef);
-		remotePlayers.removeAll(excluded);
-		return remotePlayers;
-	}
-
-	public void addPlayer(Player player)
-	{
-		playersRef.add(player);
-	}
-
-	public void removePlayer(Player player)
-	{
-		playersRef.remove(player);
+		return playersRef.getExcept(serverIdRef, localIdRef);
 	}
 
 	public UUID getServerId()
@@ -226,16 +179,11 @@ public class State extends EntityBase
 		serverIdRef.set(serverId);
 	}
 
-	public void addServer(Server server)
+	public StateListRef<Server> getServers()
 	{
-		serversRef.add(server);
+		return serversRef;
 	}
-	
-	public void clearServers()
-	{
-		serversRef.clear();
-	}
-	
+
 	public String getServerMessage()
 	{
 		return serverMsgRef.get();

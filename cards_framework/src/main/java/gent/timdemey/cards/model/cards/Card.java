@@ -3,32 +3,35 @@ package gent.timdemey.cards.model.cards;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.EntityBase;
+import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.state.StateValueRef;
 
 public class Card extends EntityBase
 {
     public final Suit suit;
     public final Value value;
     
-    public boolean visible;
-    public CardStack cardStack;    
+    public StateValueRef<Boolean> visibleRef;
+    public StateValueRef<CardStack> cardStackRef;    
     
-    public Card (UUID id, Suit suit, Value value, boolean visible)
+    public Card (State state, UUID id, Suit suit, Value value, boolean visible)
     {
         super(id);
         
         this.suit = suit;
         this.value = value;        
-        this.visible = visible;
+        this.visibleRef = StateValueRef.create(state);
+        this.cardStackRef = StateValueRef.create(state);
     }
     
-    public Card (Suit suit, Value value, boolean visible)
+    public Card (State state, Suit suit, Value value, boolean visible)
     {
-        this(UUID.randomUUID(), suit, value, visible);
+        this(state, UUID.randomUUID(), suit, value, visible);
     }
     
     public int getCardIndex()
     {
-        return cardStack.indexOf(this);
+        return cardStackRef.get().getCards().indexOf(this);
     }    
     
     @Override

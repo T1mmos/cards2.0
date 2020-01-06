@@ -8,13 +8,10 @@ import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.model.Player;
-import gent.timdemey.cards.model.commands.CommandEnvelope;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.multiplayer.io.TCP_Connection;
-import gent.timdemey.cards.readonlymodel.ACommand;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
-import gent.timdemey.cards.readonlymodel.ReadOnlyPlayer;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.ICardGameCreatorService;
 import gent.timdemey.cards.services.context.Context;
@@ -94,12 +91,12 @@ public class C_JoinGame extends CommandBase
             {
                 // ready to kick off. Generate some cards for the current game type.
                 ICardGameCreatorService creator = Services.get(ICardGameCreatorService.class);
-                List<List<ReadOnlyCard>> allCards = creator.getCards();
+                List<List<ReadOnlyCard>> allCards = creator.getCards();                
                 List<UUID> playerIds = state.getPlayerIds();
                 Map<UUID, List<ReadOnlyCardStack>> playerStacks = creator.createStacks(playerIds, allCards);
                               
                 C_StartGame cmd = new C_StartGame(playerStacks);
-                cmd.schedule(ContextType.Server);
+                schedule(ContextType.Server, cmd);
             }
         }
         else

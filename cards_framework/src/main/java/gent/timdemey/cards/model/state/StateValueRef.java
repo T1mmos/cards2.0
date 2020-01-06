@@ -10,12 +10,12 @@ public final class StateValueRef<X> extends StateRef
         this.x = null;
     }
     
-    static <X> StateValueRef<X> create (State state)
+    public static <X> StateValueRef<X> create (State state)
     {
     	return new StateValueRef<X>(state);
     }
     
-    void set(X x)
+    public void set(X x)
     {
     	// update the delta
     	state.getStateDelta().recordRefSet(this, this.x, x);
@@ -23,7 +23,7 @@ public final class StateValueRef<X> extends StateRef
         this.x = x;
     }
     
-    X get()
+    public X get()
     {
         return x;
     }
