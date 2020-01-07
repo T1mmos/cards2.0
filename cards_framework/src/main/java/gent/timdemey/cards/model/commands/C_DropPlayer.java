@@ -30,7 +30,7 @@ public class C_DropPlayer extends CommandBase {
     	{
     		if (player.id.equals(playerId))
     		{
-    			state.removePlayer(player);         
+    			state.getPlayers().remove(player);         
     		}
     	}
         

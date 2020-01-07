@@ -20,7 +20,7 @@ public class C_Disconnect extends CommandBase
             
         	for (Player player : state.getRemotePlayers())
         	{
-        		state.removePlayer(player);
+        		state.getPlayers().remove(player);
         	}
             state.setServerId(null);
         }
@@ -28,7 +28,7 @@ public class C_Disconnect extends CommandBase
         {
         	for (Player player : state.getRemotePlayers())
         	{
-        		state.removePlayer(player);
+        		state.getPlayers().remove(player);
         	}
             state.setServerId(null);
             

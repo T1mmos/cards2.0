@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
-import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
+import gent.timdemey.cards.model.cards.Card;
+import gent.timdemey.cards.model.cards.CardStack;
 
 public interface ICardGameCreatorService {
     /**
@@ -17,7 +17,7 @@ public interface ICardGameCreatorService {
      * deck into createStacks, e.g. when loading from a file or debugging a fixed game, ...
      * @return
      */
-    public List<List<ReadOnlyCard>> getCards();
+    public List<List<Card>> getCards();
     
     /**
      * Deals a shuffled deck into the different stacks. This is a
@@ -27,5 +27,5 @@ public interface ICardGameCreatorService {
      * @param shuffled
      * @return
      */
-    public Map<UUID, List<ReadOnlyCardStack>> createStacks(List<UUID> playerIds, List<List<ReadOnlyCard>> playerCards);
+    public Map<UUID, List<CardStack>> createStacks(List<UUID> playerIds, List<List<Card>> playerCards);
 }

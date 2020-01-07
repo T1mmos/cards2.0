@@ -4,74 +4,58 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.google.gson.reflect.TypeToken;
-
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.readonlymodel.ACommand;
-import gent.timdemey.cards.readonlymodel.CommandType;
-import gent.timdemey.cards.readonlymodel.IGameEventListener;
-import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
-import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
+import gent.timdemey.cards.model.cards.CardGame;
+import gent.timdemey.cards.model.cards.CardStack;
+import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.ICommandExecutionService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
 public class C_StartGame extends CommandBase
 {
-    private final Map<UUID, List<ReadOnlyCardStack>> playerStacks;
+    private final Map<UUID, List<CardStack>> playerStacks;
     
-    public C_StartGame(Map<UUID, List<ReadOnlyCardStack>> playerStacks)
+    public C_StartGame(Map<UUID, List<CardStack>> playerStacks)
     {
         this.playerStacks = playerStacks;
     }
     
+    @Override
+    protected boolean canExecute(Context context, ContextType type, State state)
+    {
+    	return true;
+    }
     
     @Override
-    public void execute() {
-        Context cf = getThreadContext();
-        ContextType contextType = getContextType();
-        
-        
-        
-        if (contextType == ContextType.UI)
+    protected void execute(Context context, ContextType type, State state)
+    {    
+        if (type == ContextType.UI)
         {
-            ReadOnlyCardGame game = new ReadOnlyCardGame(playerStacks);
-            cf.getCardGameState().cardGame = game;
+            CardGame game = new CardGame(state, playerStacks);
+            state.setCardGame(game);
         }
-        else if (contextType == ContextType.Client)
+        else if (type == ContextType.Client)
         {            
-            // make a full copy of objects first, so they are not shared with UI layer
-            try {
-                C_StartGame commandCopy = (C_StartGame) Json.receive(this.getCommandEnvelope().serialize()).command;
-                Map<UUID, List<ReadOnlyCardStack>> playerStacksCopy = commandCopy.playerStacks;
-                ReadOnlyCardGame game = new ReadOnlyCardGame(playerStacksCopy);
-                cf.getCardGameState().cardGame = game;
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }            
-            
+            // make a full copy of objects first, so they are not shared with UI layer            
+        	String json = CommandDtoMapper.toJson(this);
+        	C_StartGame commandCopy = (C_StartGame) CommandDtoMapper.toCommand(json);
+            Map<UUID, List<CardStack>> playerStacksCopy = commandCopy.playerStacks;
+            CardGame game = new CardGame(state, playerStacksCopy);
+            state.setCardGame(game);
+                
             reschedule(ContextType.UI);
         }
         else 
         {          
-            ReadOnlyCardGame game = new ReadOnlyCardGame(playerStacks);
-            cf.getCardGameState().cardGame = game;
+            CardGame game = new CardGame(state, playerStacks);
+            state.setCardGame(game);
             
             ICommandExecutionService execServ = Services.get(ICommandExecutionService.class, ContextType.Server);
-            
-            execServ.srv_tcp_connpool.broadcast(cf.getPlayerIds(), getCommandEnvelope().serialize());
+            String json = CommandDtoMapper.toJson(this);
+            List<UUID> remoteIds = state.getPlayers().getExceptUUID(state.getServerId());
+            state.getTcpConnectionPool().broadcast(remoteIds, json);
         }
-    }
-   
-    
-    @Override
-    public boolean canUndo() {
-        return false;
-    }
-
-    @Override
-    public void undo() {
-        throw new IllegalStateException("Cannot undo this command");
     }
 }

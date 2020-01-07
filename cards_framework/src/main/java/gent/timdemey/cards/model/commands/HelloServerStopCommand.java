@@ -6,47 +6,31 @@ import gent.timdemey.cards.services.context.ContextType;
 
 class HelloServerStopCommand extends CommandBase
 {
-    HelloServerStopCommand() 
-    {
-    }
+	HelloServerStopCommand()
+	{
+	}
 
+	@Override
+	protected boolean canExecute(Context context, ContextType type, State state)
+	{
+		return true;
+	}
 
-    @Override
-    protected boolean canExecuteCore(State state)
-    {
-        return true;
-    }
-    
-    @Override
-    public void executeCore (State state)
-    {
-        ContextType type = getContextType();
-        if (type != ContextType.Client)
-        {
-            throw new IllegalStateException();
-        }        
-        
-        ClientCommandExecutionService cProcessor = getProcessorClient();
-        if (cProcessor.serviceRequester == null)
-        {
-            throw new IllegalStateException("Already stopped the requesting service.");
-        }
-        
-        cProcessor.serviceRequester.stop();
-        cProcessor.serviceRequester = null;
-    }
+	@Override
+	protected void execute(Context context, ContextType type, State state)
+	{
+		if (type != ContextType.Client)
+		{
+			throw new IllegalStateException();
+		}
 
-    @Override
-    protected void executeCore(Context state)
-    {
-        // TODO Auto-generated method stub
-        
-    }
+		if (state.getUdpServiceRequester() == null)
+		{
+			throw new IllegalStateException("Already stopped the requesting service.");
+		}
 
-    @Override
-    protected void rollbackCore(Context state)
-    {
-        // TODO Auto-generated method stub
-        
-    }
+		state.getUdpServiceRequester().stop();
+		state.setUdpServiceRequester(null);
+	}
+
 }

@@ -8,10 +8,10 @@ import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.model.Player;
+import gent.timdemey.cards.model.cards.Card;
+import gent.timdemey.cards.model.cards.CardStack;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.multiplayer.io.TCP_Connection;
-import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
-import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.ICardGameCreatorService;
 import gent.timdemey.cards.services.context.Context;
@@ -66,7 +66,7 @@ public class C_JoinGame extends CommandBase
             state.getTcpConnectionPool().bindUUID(clientId, tcpConnection);
             
             Player player = new Player(clientId, clientName);
-            state.addPlayer(player);
+            state.getPlayers().add(player);
             
             // send unicast to new client
             {
@@ -76,7 +76,7 @@ public class C_JoinGame extends CommandBase
             }
             
             // send update to already connected clients
-            List<Player> others = state.getPlayersExcept(clientId);
+            List<Player> others = state.getPlayers().getExcept(clientId);
             if (others.size() > 0)
             {
                 CommandBase cmd_update = new C_HandlePlayerJoined(player);       
@@ -91,9 +91,9 @@ public class C_JoinGame extends CommandBase
             {
                 // ready to kick off. Generate some cards for the current game type.
                 ICardGameCreatorService creator = Services.get(ICardGameCreatorService.class);
-                List<List<ReadOnlyCard>> allCards = creator.getCards();                
-                List<UUID> playerIds = state.getPlayerIds();
-                Map<UUID, List<ReadOnlyCardStack>> playerStacks = creator.createStacks(playerIds, allCards);
+                List<List<Card>> allCards = creator.getCards();                
+                List<UUID> playerIds = state.getPlayers().getIds();
+                Map<UUID, List<CardStack>> playerStacks = creator.createStacks(playerIds, allCards);
                               
                 C_StartGame cmd = new C_StartGame(playerStacks);
                 schedule(ContextType.Server, cmd);

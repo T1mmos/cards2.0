@@ -22,7 +22,7 @@ public class C_ClearServerList extends CommandBase
 	{
 		if (type == ContextType.UI)
 		{
-			state.clearServers();
+			state.getServers().clear();
 		}
 	}
 }

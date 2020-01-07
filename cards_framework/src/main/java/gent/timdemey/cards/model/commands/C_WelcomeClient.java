@@ -48,7 +48,7 @@ public class C_WelcomeClient extends CommandBase
                  {
                      continue;
                  }
-                 state.addPlayer(player);
+                 state.getPlayers().add(player);
              }
              reschedule(ContextType.UI);    
          }
@@ -64,7 +64,7 @@ public class C_WelcomeClient extends CommandBase
                  {
                      continue;
                  }
-                 state.addPlayer(player);
+                 state.getPlayers().add(player);
              }
              String title = Loc.get("dialog_title_lobby", serverName);
              DialogData<Void> data = Services.get(IDialogService.class).ShowAdvanced(title, null, new LobbyDialogContent(), EnumSet.of(DialogButtonType.Cancel));

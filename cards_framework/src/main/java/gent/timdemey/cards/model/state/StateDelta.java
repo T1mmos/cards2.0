@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.google.common.base.Objects;
 
+import gent.timdemey.cards.model.EntityBase;
+
 public class StateDelta
 {
 	private List<Change<?>> changes;
@@ -31,7 +33,7 @@ public class StateDelta
         return null;
 	}
 	
-	private <X> Change<X> getChange(StateListRef<X> stateList, X element)
+	private <X extends EntityBase> Change<X> getChange(StateListRef<X> stateList, X element)
 	{
 		// look for a previous change for the given reference
         for (int i = 0; i < changes.size(); i++)
@@ -56,7 +58,7 @@ public class StateDelta
         return null;
 	}
 	
-    <X> void recordRefSet (StateValueRef<X> reference, X oldValue, X newValue)
+	<X> void recordRefSet (StateValueRef<X> reference, X oldValue, X newValue)
     {
     	// look for a previous change for the given reference
         Change<X> prevChangeX = getChange(reference);        
@@ -98,7 +100,7 @@ public class StateDelta
         
     }
 
-	<X> void recordListAdd(StateListRef<X> ref, X e)
+	<X extends EntityBase> void recordListAdd(StateListRef<X> ref, X e)
 	{
 		Change<X> prevChange = getChange(ref, e);
 				
@@ -126,7 +128,7 @@ public class StateDelta
 		}
 	}
 
-    <X> void recordListRemove(StateListRef<X> ref, X e)
+	<X extends EntityBase> void recordListRemove(StateListRef<X> ref, X e)
     {
         Change<X> prevChange = getChange(ref, e);
         

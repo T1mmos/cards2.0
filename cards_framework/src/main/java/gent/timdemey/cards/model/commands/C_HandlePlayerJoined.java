@@ -26,11 +26,11 @@ public class C_HandlePlayerJoined extends CommandBase
     {
         if (contextType == ContextType.UI)
         {        	
-            state.addPlayer(player);
+            state.getPlayers().add(player);
         } 
         else if  (contextType == ContextType.Client)
         {
-            state.addPlayer(player);
+        	state.getPlayers().add(player);
             reschedule(ContextType.UI);
         }
         else 

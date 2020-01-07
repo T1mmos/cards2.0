@@ -1,58 +1,59 @@
 package gent.timdemey.cards.model.commands;
 
 import java.util.List;
-import java.util.UUID;
 
 import com.google.common.base.Preconditions;
 
-import gent.timdemey.cards.readonlymodel.ACommand;
-import gent.timdemey.cards.readonlymodel.CommandType;
-import gent.timdemey.cards.readonlymodel.IGameEventListener;
-import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
+import gent.timdemey.cards.model.cards.Card;
+import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.services.context.Context;
+import gent.timdemey.cards.services.context.ContextType;
 
 public class C_SetVisible extends CommandBase
 {
-    private final UUID playerId;
-    private final List<ReadOnlyCard> cards;
+    private final List<Card> cards;
     private final boolean visible;
     
-    C_SetVisible (UUID playerId, List<ReadOnlyCard> cards, boolean visible)
+    C_SetVisible (List<Card> cards, boolean visible)
     {
         Preconditions.checkNotNull(cards);
-        for (ReadOnlyCard card : cards)
+        for (Card card : cards)
         {
             Preconditions.checkNotNull(card);
-            Preconditions.checkArgument(card.isVisible() != visible);
+            Preconditions.checkArgument(card.visibleRef.get() != visible);
         }        
         
-        this.playerId = playerId;
         this.cards = cards;
         this.visible = visible;
     }
-
+    
     @Override
-    public boolean canExecute() {
-        return true;
+    protected boolean canExecute(Context context, ContextType type, State state)
+    {
+    	return true;
     }
 
     @Override
-    public void execute() {
-        for (ReadOnlyCard card : cards)
-        {
-            card.setVisible(visible);
-        } 
+    protected void execute(Context context, ContextType type, State state)
+    {
+    	 for (Card card : cards)
+         {
+             card.visibleRef.set(visible);
+         } 
     }
 
     @Override
-    public boolean canUndo() {
-        return true;
+    protected boolean canUndo(Context context, ContextType type, State state)
+    {
+    	return true;
     }
     
     @Override
-    public void undo() {
-        for (ReadOnlyCard card : cards)
+    protected void undo(Context context, ContextType type, State state)
+    {
+    	for (Card card : cards)
         {
-            card.setVisible(!visible);
+            card.visibleRef.set(!visible);
         } 
     }
 }

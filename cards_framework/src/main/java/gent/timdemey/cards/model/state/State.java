@@ -20,7 +20,7 @@ public class State extends EntityBase
 {
 	// calculated
 	private final StateDelta stateDelta;
-	private final CommandHistory history;
+	private final CommandHistory commandHistory;
 
 	// state lists
 	private StateListRef<Player> playersRef;
@@ -46,7 +46,7 @@ public class State extends EntityBase
 		super(null);
 
 		this.stateDelta = new StateDelta();
-		this.history = new CommandHistory();
+		this.commandHistory = new CommandHistory();
 	}
 
 	public static State create(ContextType contextType)
@@ -81,6 +81,11 @@ public class State extends EntityBase
 		cardGameRef.set(cardGame);
 	}
 
+	public CommandHistory getCommandHistory()
+	{
+		return commandHistory;
+	}
+	
 	/*
 	 * public TCP_ConnectionCreator getTcpConnectionCreator() { return
 	 * tcpConnectionCreatorRef.get(); }

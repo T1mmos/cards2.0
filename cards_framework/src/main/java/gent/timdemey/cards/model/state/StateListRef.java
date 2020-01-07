@@ -61,6 +61,20 @@ public class StateListRef<X extends EntityBase> extends StateRef implements List
 		}
 		return xs;
 	}
+	
+	public List<UUID> getExceptUUID(UUID... excluded)
+	{
+		List<UUID> exclIds = Arrays.asList(excluded);
+		List<UUID> xs = new ArrayList<>();
+		for (X x : list)
+		{
+			if (!exclIds.contains(x.id))
+			{
+				xs.add(x.id);
+			}
+		}
+		return xs;
+	}
 
 	public List<X> getExcept(StateValueRef<UUID>... excluded)
 	{

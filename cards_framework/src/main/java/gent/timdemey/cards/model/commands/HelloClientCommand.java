@@ -57,7 +57,7 @@ public final class HelloClientCommand extends CommandBase
 		else if (type == ContextType.UI)
 		{
 			Server server = new Server(serverName, inetAddress, tcpport);
-			state.addServer(server);
+			state.getServers().add(server);
 		} 
 		else
 		{
