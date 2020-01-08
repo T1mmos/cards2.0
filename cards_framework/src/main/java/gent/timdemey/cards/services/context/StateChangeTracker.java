@@ -1,17 +1,18 @@
-package gent.timdemey.cards.model.state;
+package gent.timdemey.cards.services.context;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Objects;
 
-import gent.timdemey.cards.model.EntityBase;
+import gent.timdemey.cards.model.state.StateListRef;
+import gent.timdemey.cards.model.state.StateValueRef;
 
-public class StateDelta
+public class StateChangeTracker implements IChangeTracker
 {
 	private List<Change<?>> changes;
 	
-	StateDelta()
+	StateChangeTracker()
 	{
 		this.changes = new ArrayList<Change<?>>();
 	}
@@ -33,7 +34,7 @@ public class StateDelta
         return null;
 	}
 	
-	private <X extends EntityBase> Change<X> getChange(StateListRef<X> stateList, X element)
+	private <X> Change<X> getChange(StateListRef<X> stateList, X element)
 	{
 		// look for a previous change for the given reference
         for (int i = 0; i < changes.size(); i++)
@@ -58,7 +59,8 @@ public class StateDelta
         return null;
 	}
 	
-	<X> void recordRefSet (StateValueRef<X> reference, X oldValue, X newValue)
+	@Override
+	public <X> void recordRefSet (StateValueRef<X> reference, X oldValue, X newValue)
     {
     	// look for a previous change for the given reference
         Change<X> prevChangeX = getChange(reference);        
@@ -100,7 +102,8 @@ public class StateDelta
         
     }
 
-	<X extends EntityBase> void recordListAdd(StateListRef<X> ref, X e)
+	@Override
+	public <X> void recordListAdd(StateListRef<X> ref, X e)
 	{
 		Change<X> prevChange = getChange(ref, e);
 				
@@ -128,7 +131,8 @@ public class StateDelta
 		}
 	}
 
-	<X extends EntityBase> void recordListRemove(StateListRef<X> ref, X e)
+	@Override
+	public <X> void recordListRemove(StateListRef<X> ref, X e)
     {
         Change<X> prevChange = getChange(ref, e);
         

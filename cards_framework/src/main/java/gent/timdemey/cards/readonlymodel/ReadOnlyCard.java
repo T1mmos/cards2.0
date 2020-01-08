@@ -3,11 +3,9 @@ package gent.timdemey.cards.readonlymodel;
 import gent.timdemey.cards.model.cards.Card;
 import gent.timdemey.cards.model.cards.Suit;
 import gent.timdemey.cards.model.cards.Value;
-import gent.timdemey.cards.serialization.mappers.IMapper;
 
 public final class ReadOnlyCard extends ReadOnlyEntityBase<Card> 
 {
-    
     ReadOnlyCard (Card card)
     {
         super(card);
@@ -25,12 +23,12 @@ public final class ReadOnlyCard extends ReadOnlyEntityBase<Card>
         
     public boolean isVisible()
     {
-        return entity.visible;
+        return entity.visibleRef.get();
     }
     
     public ReadOnlyCardStack getCardStack()
     {
-        return ReadOnlyEntityFactory.getOrCreateCardStack(entity.cardStack);
+        return ReadOnlyEntityFactory.getOrCreateCardStack(entity.cardStackRef.get());
     }
     
     public int getCardIndex()

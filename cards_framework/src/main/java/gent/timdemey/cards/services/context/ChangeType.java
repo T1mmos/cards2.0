@@ -1,4 +1,4 @@
-package gent.timdemey.cards.model.state;
+package gent.timdemey.cards.services.context;
 
 public enum ChangeType
 {

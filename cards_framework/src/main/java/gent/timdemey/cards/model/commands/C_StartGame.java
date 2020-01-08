@@ -33,7 +33,7 @@ public class C_StartGame extends CommandBase
     {    
         if (type == ContextType.UI)
         {
-            CardGame game = new CardGame(state, playerStacks);
+            CardGame game = new CardGame(playerStacks);
             state.setCardGame(game);
         }
         else if (type == ContextType.Client)
@@ -42,14 +42,14 @@ public class C_StartGame extends CommandBase
         	String json = CommandDtoMapper.toJson(this);
         	C_StartGame commandCopy = (C_StartGame) CommandDtoMapper.toCommand(json);
             Map<UUID, List<CardStack>> playerStacksCopy = commandCopy.playerStacks;
-            CardGame game = new CardGame(state, playerStacksCopy);
+            CardGame game = new CardGame(playerStacksCopy);
             state.setCardGame(game);
                 
             reschedule(ContextType.UI);
         }
         else 
         {          
-            CardGame game = new CardGame(state, playerStacks);
+            CardGame game = new CardGame(playerStacks);
             state.setCardGame(game);
             
             ICommandExecutionService execServ = Services.get(ICommandExecutionService.class, ContextType.Server);

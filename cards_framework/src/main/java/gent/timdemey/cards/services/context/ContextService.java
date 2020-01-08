@@ -79,7 +79,8 @@ public final class ContextService implements IContextService
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
         Preconditions.checkState(type == cmdExecService.getContextType());
         
-        Context context = new Context(type, cmdExecService);
+        boolean trackChanges = type == ContextType.UI;
+        Context context = new Context(type, cmdExecService, trackChanges);
 
         Context prev = fullContexts.putIfAbsent(type, context);
         if (prev != null)

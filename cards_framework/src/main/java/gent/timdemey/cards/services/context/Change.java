@@ -1,6 +1,7 @@
-package gent.timdemey.cards.model.state;
+package gent.timdemey.cards.services.context;
 
-import gent.timdemey.cards.model.EntityBase;
+import gent.timdemey.cards.model.state.StateListRef;
+import gent.timdemey.cards.model.state.StateValueRef;
 
 public class Change<X>
 {
@@ -34,7 +35,7 @@ public class Change<X>
 		this.removedValue = removedValue;
 	}
 	
-	static <X extends EntityBase> Change<X> forSet(StateValueRef<X> stateRef, X oldValue, X newValue)
+	static <X> Change<X> forSet(StateValueRef<X> stateRef, X oldValue, X newValue)
 	{
 		Change<X> change = new Change<>(
 				ChangeType.Set,
@@ -44,7 +45,7 @@ public class Change<X>
 		return change;
 	}
 	
-	static <X extends EntityBase> Change<X> forAdd(StateListRef<X> stateList, X added)
+	static <X> Change<X> forAdd(StateListRef<X> stateList, X added)
 	{
 		Change<X> change = new Change<>(
 				ChangeType.Add,
@@ -55,7 +56,7 @@ public class Change<X>
 	}
 	
 
-	static <X extends EntityBase> Change<X> forRemove(StateListRef<X> stateList, X removed)
+	static <X> Change<X> forRemove(StateListRef<X> stateList, X removed)
 	{
 		Change<X> change = new Change<>(
 				ChangeType.Remove,

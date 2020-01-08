@@ -18,12 +18,10 @@ import gent.timdemey.cards.services.context.ContextType;
 
 public class State extends EntityBase
 {
-	// calculated
-	private final StateDelta stateDelta;
 	private final CommandHistory commandHistory;
 
 	// state lists
-	private StateListRef<Player> playersRef;
+	private EntityStateListRef<Player> playersRef;
 	private StateListRef<Server> serversRef;
 
 	// state values
@@ -45,7 +43,6 @@ public class State extends EntityBase
 	{
 		super(null);
 
-		this.stateDelta = new StateDelta();
 		this.commandHistory = new CommandHistory();
 	}
 
@@ -53,20 +50,20 @@ public class State extends EntityBase
 	{
 		State state = new State();
 
-		state.cardGameRef = StateValueRef.create(state);
-		state.localIdRef = StateValueRef.create(state);
-		state.localNameRef = StateValueRef.create(state);
-		state.playersRef = StateListRef.create(state, new ArrayList<>());
-		state.serverIdRef = StateValueRef.create(state);
-		state.serverMsgRef = StateValueRef.create(state);
-		state.serversRef = StateListRef.create(state, new ArrayList<>());
+		state.cardGameRef = new StateValueRef<>();
+		state.localIdRef = new StateValueRef<>();
+		state.localNameRef = new StateValueRef<>();
+		state.playersRef = new EntityStateListRef<>(new ArrayList<>());
+		state.serverIdRef = new StateValueRef<>();
+		state.serverMsgRef = new StateValueRef<>();
+		state.serversRef = new StateListRef<>(new ArrayList<>());
 
 		// state.tcpConnectionCreatorRef = StateValueRef.create(state);
-		state.tcpConnectionAccepterRef = StateValueRef.create(state);
-		state.tcpConnectionPoolRef = StateValueRef.create(state);
-		state.tcpConnectionListenerRef = StateValueRef.create(state);
-		state.udpServiceAnnouncerRef = StateValueRef.create(state);
-		state.udpServiceRequesterRef = StateValueRef.create(state);
+		state.tcpConnectionAccepterRef = new StateValueRef<>();
+		state.tcpConnectionPoolRef = new StateValueRef<>();
+		state.tcpConnectionListenerRef = new StateValueRef<>();
+		state.udpServiceAnnouncerRef = new StateValueRef<>();
+		state.udpServiceRequesterRef = new StateValueRef<>();
 
 		return state;
 	}
@@ -164,7 +161,7 @@ public class State extends EntityBase
 		localNameRef.set(name);
 	}
 
-	public StateListRef<Player> getPlayers()
+	public EntityStateListRef<Player> getPlayers()
 	{
 		return playersRef;
 	}
@@ -197,10 +194,5 @@ public class State extends EntityBase
 	public void setServerMessage(String serverMsg)
 	{
 		serverMsgRef.set(serverMsg);
-	}
-
-	StateDelta getStateDelta()
-	{
-		return stateDelta;
 	}
 }

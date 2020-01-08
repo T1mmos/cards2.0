@@ -86,7 +86,7 @@ class CardDragListener extends MouseAdapter {
         
         JScalableImage jscalable = (JScalableImage) comp;        
         UUID id = Services.get(IScalableImageManager.class).getUUID(jscalable);
-        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getCardGameState().getCardGame();
+        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getState().getCardGame();
         
         
         if (cardGame.isCard(id))
@@ -110,7 +110,7 @@ class CardDragListener extends MouseAdapter {
                 for (int i = 0 ; i < cards.size(); i++)
                 {
                     ReadOnlyCard currentCard = cards.get(i);
-                    JScalableImage currentJcard = Services.get(IScalableImageManager.class).getJScalableImage(currentCard.getCardId());
+                    JScalableImage currentJcard = Services.get(IScalableImageManager.class).getJScalableImage(currentCard.getId());
                     int card_xstart = currentJcard.getLocation().x;
                     int card_ystart = currentJcard.getLocation().y;
                     
@@ -146,7 +146,7 @@ class CardDragListener extends MouseAdapter {
     @Override
     public void mouseReleased(MouseEvent e) {
         
-        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getCardGameState().getCardGame();
+        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getState().getCardGame();
         
         if (!draggedImages.isEmpty())       
         {

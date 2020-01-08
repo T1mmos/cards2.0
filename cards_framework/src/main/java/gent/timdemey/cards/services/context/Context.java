@@ -9,19 +9,23 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.ICommandExecutionService;
 import gent.timdemey.cards.services.IContextListener;
 
-public final class Context implements IContextBase
+public final class Context
 {
+    // calculated
+    private final IChangeTracker changeTracker;
+    
     final LimitedContext limitedContext;
     
     private final List<IGameEventListener> gameEventListeners;        
     private final List<IContextListener> contextListeners;
     
-    Context(ContextType contextType, ICommandExecutionService cmdExecService) 
+    Context(ContextType contextType, ICommandExecutionService cmdExecService, boolean trackChanges) 
     {        
         limitedContext = new LimitedContext(contextType, cmdExecService);
                 
         this.contextListeners = new ArrayList<>();
         this.gameEventListeners = new ArrayList<>();
+        this.changeTracker = trackChanges ? new StateChangeTracker() : new NopChangeTracker();
     }
     
     public void addContextListener(IContextListener contextListener)
@@ -34,14 +38,18 @@ public final class Context implements IContextBase
         this.contextListeners.remove(contextListener);
     }
     
-    public ReadOnlyState getReadOnlyState() 
+    public ReadOnlyState getState() 
     {
        return ReadOnlyEntityFactory.getOrCreateState(limitedContext.getState());
     }
 
-    @Override
     public ContextType getContextType()
     {
         return limitedContext.getContextType();
+    }
+
+    public IChangeTracker getChangeTracker()
+    {
+        return changeTracker;
     }
 }

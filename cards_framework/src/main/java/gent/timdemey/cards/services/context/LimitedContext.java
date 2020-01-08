@@ -6,7 +6,7 @@ import gent.timdemey.cards.model.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.ICommandExecutionService;
 
-public final class LimitedContext implements IContextBase
+public final class LimitedContext
 {
     private final ContextType contextType;
     private ICommandExecutionService cmdExecServ;    

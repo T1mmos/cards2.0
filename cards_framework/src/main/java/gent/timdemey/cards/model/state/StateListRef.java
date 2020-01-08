@@ -1,96 +1,18 @@
 package gent.timdemey.cards.model.state;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.UUID;
 
-import gent.timdemey.cards.model.EntityBase;
-
-public class StateListRef<X extends EntityBase> extends StateRef implements List<X>
+public class StateListRef<X> extends StateRef implements List<X>
 {
-	private final List<X> list;
+	protected final List<X> list;
 
-	private StateListRef(State state, List<X> wrappee)
+	public StateListRef(List<X> wrappee)
 	{
-		super(state);
 		this.list = wrappee;
-	}
-
-	public static <X extends EntityBase> StateListRef<X> create(State state, List<X> wrappee)
-	{
-		StateListRef<X> stateList = new StateListRef<>(state, wrappee);
-		return stateList;
-	}
-
-	public X get(UUID id)
-	{
-		for (X x : list)
-		{
-			if (x.id.equals(id))
-			{
-				return x;
-			}
-		}
-		throw new IllegalArgumentException("No entity found in this list for id=" + id);
-	}
-
-	public List<UUID> getIds()
-	{
-		List<UUID> ids = new ArrayList<>();
-		for (X x : list)
-		{
-			ids.add(x.id);
-		}
-		return ids;
-	}
-
-	public List<X> getExcept(UUID... excluded)
-	{
-		List<UUID> exclIds = Arrays.asList(excluded);
-		List<X> xs = new ArrayList<>();
-		for (X x : list)
-		{
-			if (!exclIds.contains(x.id))
-			{
-				xs.add(x);
-			}
-		}
-		return xs;
-	}
-	
-	public List<UUID> getExceptUUID(UUID... excluded)
-	{
-		List<UUID> exclIds = Arrays.asList(excluded);
-		List<UUID> xs = new ArrayList<>();
-		for (X x : list)
-		{
-			if (!exclIds.contains(x.id))
-			{
-				xs.add(x.id);
-			}
-		}
-		return xs;
-	}
-
-	public List<X> getExcept(StateValueRef<UUID>... excluded)
-	{
-		UUID[] exclIds = new UUID[excluded.length];
-		for (int i = 0; i < excluded.length; i++)
-		{
-			StateValueRef<UUID> ref = excluded[i];
-			UUID id = ref.get();
-			exclIds[i] = id;
-		}
-		return getExcept(exclIds);
-	}
-
-	public boolean contains(UUID id)
-	{
-		return list.stream().anyMatch(x -> x.id.equals(id));
 	}
 
 	@Override
@@ -100,7 +22,7 @@ public class StateListRef<X extends EntityBase> extends StateRef implements List
 
 		if (added)
 		{
-			state.getStateDelta().recordListAdd(this, e);
+			getChangeTracker().recordListAdd(this, e);
 		}
 
 		return added;
@@ -110,7 +32,7 @@ public class StateListRef<X extends EntityBase> extends StateRef implements List
 	public void add(int index, X element)
 	{
 		list.add(index, element);
-		state.getStateDelta().recordListAdd(this, element);
+		getChangeTracker().recordListAdd(this, element);
 	}
 
 	@Override
@@ -121,7 +43,7 @@ public class StateListRef<X extends EntityBase> extends StateRef implements List
 		{
 			for (X x : c)
 			{
-				state.getStateDelta().recordListAdd(this, x);
+			    getChangeTracker().recordListAdd(this, x);
 			}
 		}
 		return added;
@@ -135,7 +57,7 @@ public class StateListRef<X extends EntityBase> extends StateRef implements List
 		{
 			for (X x : c)
 			{
-				state.getStateDelta().recordListAdd(this, x);
+			    getChangeTracker().recordListAdd(this, x);
 			}
 		}
 		return added;
@@ -148,7 +70,7 @@ public class StateListRef<X extends EntityBase> extends StateRef implements List
 		list.clear();
 		for (X x : copy)
 		{
-			state.getStateDelta().recordListRemove(this, x);
+		    getChangeTracker().recordListRemove(this, x);
 		}
 	}
 
@@ -213,7 +135,7 @@ public class StateListRef<X extends EntityBase> extends StateRef implements List
 		if (removed)
 		{
 			X x = (X) o;
-			state.getStateDelta().recordListRemove(this, x);
+			getChangeTracker().recordListRemove(this, x);
 		}
 		return removed;
 	}
@@ -224,7 +146,7 @@ public class StateListRef<X extends EntityBase> extends StateRef implements List
 		X x = list.remove(index);
 		if (x != null)
 		{
-			state.getStateDelta().recordListRemove(this, x);
+		    getChangeTracker().recordListRemove(this, x);
 		}
 		return x;
 	}
@@ -238,7 +160,7 @@ public class StateListRef<X extends EntityBase> extends StateRef implements List
 			for (Object o : c)
 			{
 				X x = (X) o;
-				state.getStateDelta().recordListRemove(this, x);
+				getChangeTracker().recordListRemove(this, x);
 			}
 		}
 		return removed;
@@ -250,7 +172,7 @@ public class StateListRef<X extends EntityBase> extends StateRef implements List
 		boolean removed = false;
 		removeIf(x -> {
 			boolean remove = !c.contains(x);
-			state.getStateDelta().recordListRemove(this, x);
+			getChangeTracker().recordListRemove(this, x);
 			return remove;
 		});
 
@@ -263,9 +185,9 @@ public class StateListRef<X extends EntityBase> extends StateRef implements List
 		X xPrev = list.set(index, element);
 		if (xPrev != null)
 		{
-			state.getStateDelta().recordListRemove(this, xPrev);
+		    getChangeTracker().recordListRemove(this, xPrev);
 		}
-		state.getStateDelta().recordListAdd(this, element);
+		getChangeTracker().recordListAdd(this, element);
 		return xPrev;
 	}
 

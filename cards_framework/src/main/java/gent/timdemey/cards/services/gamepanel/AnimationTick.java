@@ -58,7 +58,7 @@ class AnimationTick implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         Preconditions.checkArgument(e.getSource() instanceof Timer);
         
-        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getCardGame();
+        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState().getCardGame();
         
         long currTickTime = System.currentTimeMillis();
         for (JScalableImage jcard : new HashSet<>(animations.keySet()))

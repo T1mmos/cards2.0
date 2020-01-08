@@ -4,37 +4,66 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import gent.timdemey.cards.model.EntityBase;
+import gent.timdemey.cards.model.Player;
 import gent.timdemey.cards.model.cards.Card;
+import gent.timdemey.cards.model.cards.CardGame;
 import gent.timdemey.cards.model.cards.CardStack;
+import gent.timdemey.cards.model.state.EntityStateListRef;
 import gent.timdemey.cards.model.state.State;
 
 public class ReadOnlyEntityFactory
 {
     private static final Map<Class<?>, Map<UUID, ? extends ReadOnlyEntityBase<?>>> entities = new HashMap<>();
-       
-    public static ReadOnlyCard getOrCreateCard (Card card)
-    {
-        return GetOrCreateEntity(card, c -> new ReadOnlyCard(c));
-    }
-    
-    public static List<ReadOnlyCard> getOrCreateCards (List<Card> cards)
-    {
-        return cards.stream().map(ReadOnlyEntityFactory::getOrCreateCard).collect(Collectors.toList());
-    }
-    
-    public static ReadOnlyCardStack getOrCreateCardStack (CardStack cardStack)
-    {
-        return GetOrCreateEntity(cardStack, cs -> new ReadOnlyCardStack(cs));
-    }
     
     public static ReadOnlyState getOrCreateState(State state)
     {
         return GetOrCreateEntity(state, s -> new ReadOnlyState(state));
     }
 
+    public static ReadOnlyCard getOrCreateCard (Card card)
+    {
+        return GetOrCreateEntity(card, c -> new ReadOnlyCard(c));
+    }
+    public static ReadOnlyList<ReadOnlyCard> getOrCreateCardList(List<Card> list)
+    {
+        return getOrCreateList(list, ReadOnlyEntityFactory::getOrCreateCard);
+    }
+    
+    public static ReadOnlyCardStack getOrCreateCardStack (CardStack cardStack)
+    {
+        return GetOrCreateEntity(cardStack, cs -> new ReadOnlyCardStack(cs));
+    }
+    public static ReadOnlyList<ReadOnlyCardStack> getOrCreateCardStackList(EntityStateListRef<CardStack> list)
+    {
+        return getOrCreateList(list, ReadOnlyEntityFactory::getOrCreateCardStack);
+    }
+
+    public static ReadOnlyCardGame getOrCreateCardGame(CardGame cardGame)
+    {
+        return GetOrCreateEntity(cardGame, cg -> new ReadOnlyCardGame(cg));
+    }
+    
+
+    public static ReadOnlyPlayer getOrCreatePlayer (Player player)
+    {
+        return GetOrCreateEntity(player, p -> new ReadOnlyPlayer(p));
+    }
+    public static ReadOnlyList<ReadOnlyPlayer> getOrCreatePlayerList(EntityStateListRef<Player> players)
+    {
+        return getOrCreateList(players, ReadOnlyEntityFactory::getOrCreatePlayer);
+    }
+    
+    private static <SRC, DST> ReadOnlyList<DST> getOrCreateList (List<SRC> srcList, Function<? super SRC, ? extends DST> mapperFunc)
+    {
+        List<DST> wrappee = srcList.stream().map(mapperFunc).collect(Collectors.toList());
+        ReadOnlyList<DST> roList = new ReadOnlyList<DST>(wrappee);
+        return roList;
+    }
+    
     public static <T extends ReadOnlyEntityBase<?>> T getEntity(Class<T> clazz, UUID id) 
     {
         Map<UUID, ReadOnlyEntityBase<?>> typedEntities = (Map<UUID, ReadOnlyEntityBase<?>>) entities.get(clazz);

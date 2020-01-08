@@ -1,13 +1,12 @@
 package gent.timdemey.cards.readonlymodel;
 
 import java.util.List;
-import java.util.UUID;
 
+import gent.timdemey.cards.model.cards.Card;
 import gent.timdemey.cards.model.cards.CardStack;
 
 public final class ReadOnlyCardStack extends ReadOnlyEntityBase<CardStack>
 {  
-
     ReadOnlyCardStack (CardStack cardStack)
     {
         super(cardStack);
@@ -35,12 +34,12 @@ public final class ReadOnlyCardStack extends ReadOnlyEntityBase<CardStack>
     
     public List<ReadOnlyCard> getCardsFrom(ReadOnlyCard card)
     {
-        return ReadOnlyEntityFactory.getOrCreateCards(entity.getCardsFrom(card.entity));
+        return ReadOnlyEntityFactory.getOrCreateCardList(entity.getCardsFrom(card.entity));
     }
     
     public List<ReadOnlyCard> getHighestCards(int count)
     {
-        return ReadOnlyEntityFactory.getOrCreateCards(entity.getHighestCards(count));
+        return ReadOnlyEntityFactory.getOrCreateCardList(entity.getHighestCards(count));
     }
     
     public int getCardCountFrom(ReadOnlyCard card)
@@ -53,33 +52,8 @@ public final class ReadOnlyCardStack extends ReadOnlyEntityBase<CardStack>
         return entity.getInvisibleCardCount();
     }
     
-    public boolean isEmpty()
+    public ReadOnlyList<ReadOnlyCard> getCards()
     {
-        return entity.isEmpty();
-    }    
-    
-    public List<ReadOnlyCard> getCards()
-    {
-        return ReadOnlyEntityFactory.getOrCreateCards(entity.getCards());
-    }
-    
-    public int indexOf(ReadOnlyCard card)
-    {
-        return entity.indexOf(card.entity);
-    }
-    
-    public boolean contains (ReadOnlyCard card)
-    {
-        return entity.contains(card.entity);
-    }
-    
-    public boolean contains (UUID cardId)
-    {
-        return entity.contains(cardId);
-    }    
-    
-    public int getSize()
-    {
-        return entity.getSize();
+        return ReadOnlyEntityFactory.getOrCreateCardList(entity.getCards());
     }
 }

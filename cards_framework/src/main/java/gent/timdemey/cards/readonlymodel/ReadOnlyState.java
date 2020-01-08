@@ -8,4 +8,14 @@ public class ReadOnlyState extends ReadOnlyEntityBase<State>
     {
         super(state);
     }
+    
+    public ReadOnlyCardGame getCardGame()
+    {
+        return ReadOnlyEntityFactory.getOrCreateCardGame(entity.getCardGame());
+    }
+    
+    public ReadOnlyList<ReadOnlyPlayer> getPlayers()
+    {
+        return ReadOnlyEntityFactory.getOrCreatePlayerList(entity.getPlayers());
+    }
 }

@@ -9,138 +9,155 @@ import java.util.UUID;
 import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.model.EntityBase;
-import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.model.state.StateListRef;
+import gent.timdemey.cards.model.state.EntityStateListRef;
 
 public class CardGame extends EntityBase
 {
-	private final StateListRef<CardStack> cardStacksRef;
-	private final Map<UUID, List<UUID>> playerStacks;
+    private final EntityStateListRef<CardStack> cardStacksRef;
+    private final Map<UUID, List<UUID>> playerStacks;
 
-	public CardGame(State state, Map<UUID, List<CardStack>> playerStacks)
-	{
-		this.cardStacksRef = StateListRef.create(state, new ArrayList<>());
-		this.playerStacks = new HashMap<>();
+    public CardGame(Map<UUID, List<CardStack>> playerStacks)
+    {
+        this.cardStacksRef = new EntityStateListRef<>(new ArrayList<>());
+        this.playerStacks = new HashMap<>();
 
-		for (UUID playerId : playerStacks.keySet())
-		{
-			List<UUID> cardStackIds = new ArrayList<>();
-			List<CardStack> cardStacks = playerStacks.get(playerId);
-			for (int i = 0; i < cardStacks.size(); i++)
-			{
-				CardStack cardStack = cardStacks.get(i);
-				UUID cardStackId = cardStack.id;
+        for (UUID playerId : playerStacks.keySet())
+        {
+            List<UUID> cardStackIds = new ArrayList<>();
+            List<CardStack> cardStacks = playerStacks.get(playerId);
+            for (int i = 0; i < cardStacks.size(); i++)
+            {
+                CardStack cardStack = cardStacks.get(i);
+                UUID cardStackId = cardStack.id;
 
-				cardStackIds.add(cardStackId);
-			}
-			this.playerStacks.put(playerId, cardStackIds);
-		}
-	}
+                cardStackIds.add(cardStackId);
+            }
+            this.playerStacks.put(playerId, cardStackIds);
+        }
+    }
 
-	private Card getCardPriv(UUID cardId)
-	{
-		for (CardStack cs : cardStacksRef)
-		{
-			if (cs.getCards().contains(cardId))
-			{
-				return cs.getCards().get(cardId);
-			}
-		}
-		throw new IllegalArgumentException("No CardStack in the game contains a card with CardId=" + cardId);
-	}
+    private Card getCardPriv(UUID cardId)
+    {
+        for (CardStack cs : cardStacksRef)
+        {
+            if (cs.getCards().contains(cardId))
+            {
+                return cs.getCards().get(cardId);
+            }
+        }
+        throw new IllegalArgumentException("No CardStack in the game contains a card with CardId=" + cardId);
+    }
 
-	public Card getCard(UUID cardId)
-	{
-		Card card = getCardPriv(cardId);
-		if (card == null)
-		{
-			throw new IllegalArgumentException("No such card ID in the current game: " + cardId);
-		}
-		return card;
-	}
+    public Card getCard(UUID cardId)
+    {
+        Card card = getCardPriv(cardId);
+        if (card == null)
+        {
+            throw new IllegalArgumentException("No such card ID in the current game: " + cardId);
+        }
+        return card;
+    }
 
-	public boolean isCard(UUID cardId)
-	{
-		Card card = getCardPriv(cardId);
-		return card != null;
-	}
+    public boolean isCard(UUID cardId)
+    {
+        Card card = getCardPriv(cardId);
+        return card != null;
+    }
 
-	public StateListRef<CardStack> getCardStacks()
-	{
-		return cardStacksRef;
-	}
+    public boolean isCardStack(UUID id)
+    {
+        return cardStacksRef.stream().anyMatch(cs -> cs.id.equals(id));
+    }
 
-	public List<String> getCardStackTypes()
-	{
-		List<String> csTypes = new ArrayList<>();
-		for (CardStack cs : cardStacksRef)
-		{
-			if (!csTypes.contains(cs.cardStackType))
-			{
-				csTypes.add(cs.cardStackType);
-			}
-		}
-		return csTypes;
-	}
+    public EntityStateListRef<CardStack> getCardStacks()
+    {
+        return cardStacksRef;
+    }
 
-	public List<CardStack> getCardStacks(UUID playerId, String cardStackType)
-	{
-		Preconditions.checkNotNull(playerId);
-		Preconditions.checkNotNull(cardStackType);
+    public List<String> getCardStackTypes()
+    {
+        List<String> csTypes = new ArrayList<>();
+        for (CardStack cs : cardStacksRef)
+        {
+            if (!csTypes.contains(cs.cardStackType))
+            {
+                csTypes.add(cs.cardStackType);
+            }
+        }
+        return csTypes;
+    }
 
-		List<CardStack> cardStacks = new ArrayList<>();
+    public List<CardStack> getCardStacks(UUID playerId, String cardStackType)
+    {
+        Preconditions.checkNotNull(playerId);
+        Preconditions.checkNotNull(cardStackType);
 
-		List<UUID> stackIds = playerStacks.get(playerId);
-		for (UUID csId : stackIds)
-		{
-			CardStack cs = cardStacksRef.get(csId);
-			if (cs.cardStackType.equals(cardStackType))
-			{
-				cardStacks.add(cs);
-			}
-		}
+        List<CardStack> cardStacks = new ArrayList<>();
 
-		return cardStacks;
-	}
+        List<UUID> stackIds = playerStacks.get(playerId);
+        for (UUID csId : stackIds)
+        {
+            CardStack cs = cardStacksRef.get(csId);
+            if (cs.cardStackType.equals(cardStackType))
+            {
+                cardStacks.add(cs);
+            }
+        }
 
-	public CardStack getCardStack(UUID playerId, String cardStackType, int typeNumber)
-	{
-		Preconditions.checkNotNull(playerId);
-		Preconditions.checkNotNull(cardStackType);
+        return cardStacks;
+    }
 
-		List<UUID> stackIds = playerStacks.get(playerId);
-		for (UUID csId : stackIds)
-		{
-			CardStack cs = cardStacksRef.get(csId);
-			if (cs.cardStackType.equals(cardStackType) && cs.typeNumber == typeNumber)
-			{
-				return cs;
-			}
-		}
+    public CardStack getCardStack(UUID id)
+    {
+        for (CardStack cs : cardStacksRef)
+        {
+            if (cs.id.equals(id))
+            {
+                return cs;
+            }
+        }
 
-		throw new IllegalArgumentException(
-		        "Player " + playerId + " has no CardStack of type " + cardStackType + " numbered " + typeNumber);
-	}
+        throw new IllegalArgumentException("No CardStack in this CardGame with id=" + id);
+    }
 
-	public UUID getPlayerId(CardStack cardStack)
-	{
-		return getPlayerId(cardStack.id);
-	}
+    public CardStack getCardStack(UUID playerId, String cardStackType, int typeNumber)
+    {
+        Preconditions.checkNotNull(playerId);
+        Preconditions.checkNotNull(cardStackType);
 
-	public UUID getPlayerId(Card card)
-	{
-		return getPlayerId(card.cardStackRef.get());
-	}
+        List<UUID> stackIds = playerStacks.get(playerId);
+        for (UUID csId : stackIds)
+        {
+            CardStack cs = cardStacksRef.get(csId);
+            if (cs.cardStackType.equals(cardStackType) && cs.typeNumber == typeNumber)
+            {
+                return cs;
+            }
+        }
 
-	public UUID getPlayerId(UUID cardStackId)
-	{
-		for (UUID playerId : playerStacks.keySet())
-		{
-			if (playerStacks.get(playerId).contains(cardStackId))
-			{
-				return playerId;
-			}
-		}
-		throw new IllegalArgumentException("No such card stack ID in the game: " + cardStackId);
-	}
+        throw new IllegalArgumentException(
+                "Player " + playerId + " has no CardStack of type " + cardStackType + " numbered " + typeNumber);
+    }
+
+    public UUID getPlayerId(CardStack cardStack)
+    {
+        return getPlayerId(cardStack.id);
+    }
+
+    public UUID getPlayerId(Card card)
+    {
+        return getPlayerId(card.cardStackRef.get());
+    }
+
+    public UUID getPlayerId(UUID cardStackId)
+    {
+        for (UUID playerId : playerStacks.keySet())
+        {
+            if (playerStacks.get(playerId).contains(cardStackId))
+            {
+                return playerId;
+            }
+        }
+        throw new IllegalArgumentException("No such card stack ID in the game: " + cardStackId);
+    }
 }

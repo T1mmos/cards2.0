@@ -53,16 +53,13 @@ class EntityDtoMapper
 	static CardStack toDomainObject(CardStackDto dto)
 	{
 		UUID id = CommonMapper.toUuid(dto.id);
-		CardStack cardStack = new CardStack(id);
-		cardStack.cardStackType = dto.cardStackType;
-		cardStack.typeNumber = dto.typeNumber;
-		cardStack.cards = new ArrayList<Card>();
+		CardStack cardStack = new CardStack(id, dto.cardStackType, dto.typeNumber);
 		for (CardDto cardDto : dto.cards)
 		{
 			Card card = mapper.map(cardDto, Card.class);
 
 			// domain model link
-			card.cardStack = cardStack;
+			card.cardStackRef.set(cardStack);
 
 			cardStack.cards.add(card);
 		}
@@ -76,7 +73,7 @@ class EntityDtoMapper
 		cardDto.id = CommonMapper.toDto(card.id);
 		cardDto.suit = mapper.map(card.suit, String.class);
 		cardDto.value = mapper.map(card.value, String.class);
-		cardDto.visible = card.visible;
+		cardDto.visible = card.visibleRef.get();
 
 		return cardDto;
 	}

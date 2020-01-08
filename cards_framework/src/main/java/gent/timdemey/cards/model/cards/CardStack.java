@@ -8,27 +8,26 @@ import java.util.UUID;
 import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.model.EntityBase;
-import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.model.state.StateListRef;
+import gent.timdemey.cards.model.state.EntityStateListRef;
 
 public class CardStack extends EntityBase
 {
-	public StateListRef<Card> cards;
+	public final EntityStateListRef<Card> cards;
 	public final String cardStackType;
 	public final int typeNumber;
 
-	public CardStack(State state, String cardStackType, int typeNumber)
+	public CardStack(String cardStackType, int typeNumber)
 	{
-		this(state, UUID.randomUUID(), cardStackType, typeNumber);
+		this(UUID.randomUUID(), cardStackType, typeNumber);
 	}
 
-	public CardStack(State state, UUID id, String cardStackType, int typeNumber)
+	public CardStack(UUID id, String cardStackType, int typeNumber)
 	{
 		super(id);
 		
 		this.cardStackType = cardStackType;
 		this.typeNumber = typeNumber;
-		this.cards = StateListRef.create(state, new ArrayList<>());
+		this.cards = new EntityStateListRef<>(new ArrayList<>());
 	}
 
 	public Card getLowestCard()
@@ -83,7 +82,7 @@ public class CardStack extends EntityBase
 		return idx;
 	}
 
-	public StateListRef<Card> getCards()
+	public EntityStateListRef<Card> getCards()
 	{
 		return cards;
 	}

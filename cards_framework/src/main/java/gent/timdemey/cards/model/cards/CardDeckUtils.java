@@ -15,9 +15,9 @@ public final class CardDeckUtils {
      * Creates a deck of all 52 cards.
      * @return
      */
-    public static Card[] createFullDeck(State state)
+    public static Card[] createFullDeck()
     {
-        return createDeck(state, Suit.values(), Value.values());
+        return createDeck(Suit.values(), Value.values());
     }
     
     /**
@@ -25,7 +25,7 @@ public final class CardDeckUtils {
      * J, Q, K and A. Can be used with Manillen.
      * @return
      */
-    public static Card[] create7toADeck(State state)
+    public static Card[] create7toADeck()
     {
         Value [] values = new Value[8];
         values[0] = Value.V_7;
@@ -36,10 +36,10 @@ public final class CardDeckUtils {
         values[5] = Value.V_Q;
         values[6] = Value.V_K;
         values[7] = Value.V_A;
-        return createDeck(state, Suit.values(), values);
+        return createDeck(Suit.values(), values);
     }
     
-    public static Card[] createDeck(State state, Suit [] suits, Value [] values)
+    public static Card[] createDeck(Suit [] suits, Value [] values)
     {
         Card[] cards = new Card[values.length * suits.length];
         int i = 0;
@@ -47,7 +47,7 @@ public final class CardDeckUtils {
         {
             for (Value value : values)
             {
-                Card card = new Card(state, suit, value, true);
+                Card card = new Card(suit, value, true);
                 cards[i++] = card;
             }
         }
