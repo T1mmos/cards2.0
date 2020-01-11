@@ -67,7 +67,13 @@ public class C_Move extends CommandBase
             dstCardStack.addAll(transferCards);
         }
         
-        transferCards.forEach(card -> card.cardStackRef.set(dstCardStack));    
+        transferCards.forEach(card -> card.cardStackRef.set(dstCardStack));   
+        
+        if (type == ContextType.Server)
+        {
+            List<UUID> idsToUpdate = state.getPlayers().getExceptUUID(getSourceId());
+            state.getTcpConnectionPool().broadcast(idsToUpdate, getSerialized());
+        }
     }
     
     @Override

@@ -86,8 +86,7 @@ class CardDragListener extends MouseAdapter {
         
         JScalableImage jscalable = (JScalableImage) comp;        
         UUID id = Services.get(IScalableImageManager.class).getUUID(jscalable);
-        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getState().getCardGame();
-        
+        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState().getCardGame();        
         
         if (cardGame.isCard(id))
         {
@@ -146,7 +145,7 @@ class CardDragListener extends MouseAdapter {
     @Override
     public void mouseReleased(MouseEvent e) {
         
-        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getState().getCardGame();
+        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState().getCardGame();
         
         if (!draggedImages.isEmpty())       
         {

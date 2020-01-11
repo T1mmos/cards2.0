@@ -25,7 +25,7 @@ public class C_StartGame extends CommandBase
     @Override
     protected boolean canExecute(Context context, ContextType type, State state)
     {
-    	return true;
+    	return state.getCardGame() == null;
     }
     
     @Override

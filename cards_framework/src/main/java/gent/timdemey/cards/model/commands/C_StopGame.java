@@ -7,7 +7,7 @@ import gent.timdemey.cards.services.context.ContextType;
 public class C_StopGame extends CommandBase
 {
 
-    C_StopGame() 
+    public C_StopGame() 
     {    
     }
 
@@ -15,8 +15,7 @@ public class C_StopGame extends CommandBase
 	@Override
 	protected boolean canExecute(Context context, ContextType type, State state)
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return state.getCardGame() != null;
 	}
 
 

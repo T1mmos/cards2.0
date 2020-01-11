@@ -12,8 +12,10 @@ import gent.timdemey.cards.model.Player;
 import gent.timdemey.cards.model.cards.Card;
 import gent.timdemey.cards.model.cards.CardGame;
 import gent.timdemey.cards.model.cards.CardStack;
+import gent.timdemey.cards.model.multiplayer.Server;
 import gent.timdemey.cards.model.state.EntityStateListRef;
 import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.state.StateListRef;
 
 public class ReadOnlyEntityFactory
 {
@@ -28,7 +30,7 @@ public class ReadOnlyEntityFactory
     {
         return GetOrCreateEntity(card, c -> new ReadOnlyCard(c));
     }
-    public static ReadOnlyList<ReadOnlyCard> getOrCreateCardList(List<Card> list)
+    public static ReadOnlyEntityList<ReadOnlyCard> getOrCreateCardList(List<Card> list)
     {
         return getOrCreateList(list, ReadOnlyEntityFactory::getOrCreateCard);
     }
@@ -37,7 +39,7 @@ public class ReadOnlyEntityFactory
     {
         return GetOrCreateEntity(cardStack, cs -> new ReadOnlyCardStack(cs));
     }
-    public static ReadOnlyList<ReadOnlyCardStack> getOrCreateCardStackList(EntityStateListRef<CardStack> list)
+    public static ReadOnlyEntityList<ReadOnlyCardStack> getOrCreateCardStackList(EntityStateListRef<CardStack> list)
     {
         return getOrCreateList(list, ReadOnlyEntityFactory::getOrCreateCardStack);
     }
@@ -52,15 +54,25 @@ public class ReadOnlyEntityFactory
     {
         return GetOrCreateEntity(player, p -> new ReadOnlyPlayer(p));
     }
-    public static ReadOnlyList<ReadOnlyPlayer> getOrCreatePlayerList(EntityStateListRef<Player> players)
+    public static ReadOnlyEntityList<ReadOnlyPlayer> getOrCreatePlayerList(EntityStateListRef<Player> players)
     {
         return getOrCreateList(players, ReadOnlyEntityFactory::getOrCreatePlayer);
     }
     
-    private static <SRC, DST> ReadOnlyList<DST> getOrCreateList (List<SRC> srcList, Function<? super SRC, ? extends DST> mapperFunc)
+
+    public static ReadOnlyServer getOrCreateServer (Server server)
+    {
+        return GetOrCreateEntity(server, s -> new ReadOnlyServer(s));
+    }
+    public static ReadOnlyEntityList<ReadOnlyServer> getOrCreateServerList(StateListRef<Server> servers)
+    {
+        return getOrCreateList(servers, ReadOnlyEntityFactory::getOrCreateServer);
+    }
+    
+    private static <SRC extends EntityBase, DST extends ReadOnlyEntityBase<SRC>> ReadOnlyEntityList<DST> getOrCreateList (List<SRC> srcList, Function<? super SRC, ? extends DST> mapperFunc)
     {
         List<DST> wrappee = srcList.stream().map(mapperFunc).collect(Collectors.toList());
-        ReadOnlyList<DST> roList = new ReadOnlyList<DST>(wrappee);
+        ReadOnlyEntityList<DST> roList = new ReadOnlyEntityList<DST>(wrappee);
         return roList;
     }
     

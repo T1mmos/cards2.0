@@ -28,7 +28,8 @@ public class TCP_ConnectionPool
     
     void onTcpMessageReceived(TCP_Connection connection, String str_in)
     {
-        externalConnListener.onTcpMessageReceived(connection, str_in);
+        UUID id = findId(connection);        
+        externalConnListener.onTcpMessageReceived(id, connection, str_in);
     }
     
     void onTcpConnectionEnded(TCP_Connection connection)
@@ -51,12 +52,12 @@ public class TCP_ConnectionPool
             
             if (local)
             {
-                externalConnListener.onTcpConnectionLocallyClosed(connection, id);
+                externalConnListener.onTcpConnectionLocallyClosed(id, connection);
                 locallyClosed.remove(id);                
             }
             else
             {
-                externalConnListener.onTcpConnectionRemotelyClosed(connection, id);
+                externalConnListener.onTcpConnectionRemotelyClosed(id, connection);
             }            
         }
     }
@@ -81,7 +82,7 @@ public class TCP_ConnectionPool
     
     public TCP_ConnectionPool(int maxConnections, ITcpConnectionListener connListener) 
     {
-        Preconditions.checkNotNull(connListener);
+        Preconditions.checkNotNull(connListener, "You cannot use a TCP_ConnectionPool if you do not specify a callback to be invoked upon new incoming connections");
         
         this.halfConns = Collections.synchronizedList(new ArrayList<>());
         this.uuid2conn = new ConcurrentHashMap<>();

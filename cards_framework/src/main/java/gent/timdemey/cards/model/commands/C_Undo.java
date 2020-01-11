@@ -12,7 +12,7 @@ import gent.timdemey.cards.services.context.ContextType;
  */
 public final class C_Undo extends CommandBase
 {
-	C_Undo()
+	public C_Undo()
 	{
 	}
 

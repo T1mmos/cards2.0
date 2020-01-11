@@ -17,7 +17,7 @@ class AAction extends AbstractAction {
     public static final String ACTION_DEBUG = "action.debug";
     public static final String ACTION_UNDO = "action.undo";
     public static final String ACTION_REDO = "action.redo";
-        
+            
     private final String action;
     
     protected AAction(String action, String title)

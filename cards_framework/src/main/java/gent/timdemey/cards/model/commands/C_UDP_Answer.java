@@ -3,9 +3,8 @@ package gent.timdemey.cards.model.commands;
 import java.net.InetAddress;
 import java.util.UUID;
 
-import gent.timdemey.cards.model.other.Server;
+import gent.timdemey.cards.model.multiplayer.Server;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
@@ -17,7 +16,7 @@ import gent.timdemey.cards.services.context.ContextType;
  * @author Timmos
  *
  */
-public final class HelloClientCommand extends CommandBase
+public final class C_UDP_Answer extends CommandBase
 {
 	public final String serverName;
 	public final InetAddress inetAddress;
@@ -25,12 +24,12 @@ public final class HelloClientCommand extends CommandBase
 	public final int majorVersion;
 	public final int minorVersion;
 
-	public HelloClientCommand(String serverName, InetAddress inetAddress, int tcpport, int majorVersion, int minorVersion)
+	public C_UDP_Answer(String serverName, InetAddress inetAddress, int tcpport, int majorVersion, int minorVersion)
 	{
 		this(UUID.randomUUID(), serverName, inetAddress, tcpport, majorVersion, minorVersion);
 	}
 	
-	public HelloClientCommand(UUID id, String serverName, InetAddress inetAddress, int tcpport, int majorVersion, int minorVersion)
+	public C_UDP_Answer(UUID id, String serverName, InetAddress inetAddress, int tcpport, int majorVersion, int minorVersion)
 	{
 		super(id);
 		

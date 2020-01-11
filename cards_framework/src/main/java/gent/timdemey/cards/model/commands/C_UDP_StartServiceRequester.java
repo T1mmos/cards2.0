@@ -16,10 +16,10 @@ import gent.timdemey.cards.services.context.LimitedContext;
  * @author Timmos
  *
  */
-public class HelloServerCommand extends CommandBase
+public class C_UDP_StartServiceRequester extends CommandBase
 {
 
-	public HelloServerCommand()
+	public C_UDP_StartServiceRequester()
 	{
 	}
 
@@ -32,6 +32,14 @@ public class HelloServerCommand extends CommandBase
 	@Override
 	protected void execute(Context context, ContextType type, State state)
 	{
+	    CheckNotContext(type, ContextType.Server);
+	    
+	    if (type == ContextType.UI)
+	    {
+	        reschedule(ContextType.Client);
+	        return;
+	    }
+	    
 		if (type == ContextType.Client)
 		{
 			if (state.getUdpServiceRequester() != null)
@@ -45,18 +53,14 @@ public class HelloServerCommand extends CommandBase
 			contextServ.getContext(ContextType.UI).schedule(clrServList);
 
 			// prepare UDP broadcast
-			HelloServerCommand cmd = new HelloServerCommand();
+			C_UDP_StartServiceRequester cmd = new C_UDP_StartServiceRequester();
 			String json = CommandDtoMapper.toJson(cmd);
 			
 
-			UDP_ServiceRequester udpServRequester = new UDP_ServiceRequester(json, HelloServerCommand::onUdpReceived);
+			UDP_ServiceRequester udpServRequester = new UDP_ServiceRequester(json, C_UDP_StartServiceRequester::onUdpReceived);
 			state.setUdpServiceRequester(udpServRequester);
 			
 			udpServRequester.start();
-		} 
-		else
-		{
-			throw new IllegalStateException("Not meant to run in a processor in context " + type);
 		}
 	}
 	
@@ -65,7 +69,7 @@ public class HelloServerCommand extends CommandBase
         try 
         {
             CommandBase command = CommandDtoMapper.toCommand(json);
-            if (!(command instanceof HelloClientCommand))
+            if (!(command instanceof C_UDP_Answer))
             {
                 Services.get(ILogManager.class).log("Unexpected command on UDP datagram, class: " + command.getClass().getSimpleName());
                 return;

@@ -73,15 +73,15 @@ public class GamePanelManager implements IGamePanelManager {
     protected void addScalableImages()
     {
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
-        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getState().getCardGame();        
+        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState().getCardGame();        
         
-        List<ReadOnlyCard> cards = cardGame.getUniqueCards();
+        List<ReadOnlyCard> cards = cardGame.getCards();
         for (int i = 0; i < cards.size(); i++) {
             ReadOnlyCard card = cards.get(i);             
             JScalableImage jscalable = Services.get(IScalableImageManager.class).getJScalableImage(card.getId());
             
             String filename = card.isVisible() ? getFilename(card) : FILENAME_BACKSIDE;
-            Services.get(IScalableImageManager.class).setImage(card.getCardId(), filename);
+            Services.get(IScalableImageManager.class).setImage(card.getId(), filename);
             
             gamePanel.add(jscalable);
         }
@@ -109,7 +109,7 @@ public class GamePanelManager implements IGamePanelManager {
     @Override
     public void relayout() {
         Context context = Services.get(IContextService.class).getThreadContext();
-        ReadOnlyCardGame cardGame = context.getState().getCardGame();
+        ReadOnlyCardGame cardGame = context.getReadOnlyState().getCardGame();
         IPositionManager posMan = Services.get(IPositionManager.class);
         posMan.calculate(gamePanel.getWidth(), gamePanel.getHeight());
          
@@ -117,7 +117,7 @@ public class GamePanelManager implements IGamePanelManager {
         {
             updatePosition(cardStack);
         }
-        for (ReadOnlyCard card : cardGame.getUniqueCards())
+        for (ReadOnlyCard card : cardGame.getCards())
         {
             updatePosition(card);
         }
@@ -159,7 +159,7 @@ public class GamePanelManager implements IGamePanelManager {
             }
         }
         
-        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getState().getCardGame(); 
+        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState().getCardGame(); 
         
         for (String cardStackType : cardGame.getCardStackTypes())
         {
@@ -175,12 +175,12 @@ public class GamePanelManager implements IGamePanelManager {
     @Override
     public List<ImageDefinition> getScalableImageDefinitions() {
         Context context = Services.get(IContextService.class).getThreadContext();
-        ReadOnlyCardGame cardGame = context.getState().getCardGame();
+        ReadOnlyCardGame cardGame = context.getReadOnlyState().getCardGame();
         List<ImageDefinition> imgDefs = new ArrayList<>();
 
         // add card fronts
         
-        List<ReadOnlyCard> cards = cardGame.getUniqueCards();
+        List<ReadOnlyCard> cards = cardGame.getCards();
         
         for (ReadOnlyCard card : cards) {
             String filename = getFilename(card);

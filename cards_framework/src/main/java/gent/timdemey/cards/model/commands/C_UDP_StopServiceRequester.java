@@ -4,9 +4,9 @@ import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
-class HelloServerStopCommand extends CommandBase
+public class C_UDP_StopServiceRequester extends CommandBase
 {
-	HelloServerStopCommand()
+	public C_UDP_StopServiceRequester()
 	{
 	}
 

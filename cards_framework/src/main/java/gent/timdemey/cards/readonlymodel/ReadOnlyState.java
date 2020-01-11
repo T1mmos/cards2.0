@@ -1,5 +1,6 @@
 package gent.timdemey.cards.readonlymodel;
 
+import gent.timdemey.cards.model.commands.CommandHistory;
 import gent.timdemey.cards.model.state.State;
 
 public class ReadOnlyState extends ReadOnlyEntityBase<State>
@@ -14,8 +15,18 @@ public class ReadOnlyState extends ReadOnlyEntityBase<State>
         return ReadOnlyEntityFactory.getOrCreateCardGame(entity.getCardGame());
     }
     
-    public ReadOnlyList<ReadOnlyPlayer> getPlayers()
+    public ReadOnlyEntityList<ReadOnlyPlayer> getPlayers()
     {
         return ReadOnlyEntityFactory.getOrCreatePlayerList(entity.getPlayers());
+    }
+    
+    public CommandHistory getCommandHistory()
+    {
+        return entity.getCommandHistory();
+    }
+    
+    public ReadOnlyEntityList<ReadOnlyServer> getServers()
+    {
+        return ReadOnlyEntityFactory.getOrCreateServerList(entity.getServers());
     }
 }

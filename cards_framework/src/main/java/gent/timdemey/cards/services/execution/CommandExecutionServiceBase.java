@@ -36,6 +36,14 @@ abstract class CommandExecutionServiceBase implements ICommandExecutionService
         @Override
         public void run() 
         {            
+            // if the command has no source id set yet, it means 
+            // it is incoming from the local context and not from 
+            // a TCP connection.
+            if (command.getSourceId() == null)
+            {
+                command.setSourceId(state.getLocalId());
+            }            
+            
             execute(command, state);            
         }
 
@@ -62,12 +70,6 @@ abstract class CommandExecutionServiceBase implements ICommandExecutionService
                 return new CommandExecutionThread(contextType);
             }
         });
-    }
-    
-    @Override
-    public final ContextType getContextType()
-    {
-    	return contextType;
     }
     
     @Override

@@ -5,6 +5,11 @@ import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
+/**
+ * Let a player disconnect from the current online game.
+ * @author Tim
+ *
+ */
 public class C_Disconnect extends CommandBase
 {
     C_Disconnect() 
@@ -14,6 +19,8 @@ public class C_Disconnect extends CommandBase
     @Override
     public void execute(Context context, ContextType type, State state) 
     {
+        CheckNotContext(type, ContextType.Server);
+        
         if (type == ContextType.Client)
         {
         	state.getTcpConnectionPool().closeAllConnections();
@@ -33,10 +40,6 @@ public class C_Disconnect extends CommandBase
             state.setServerId(null);
             
             reschedule(ContextType.Client);
-        }
-        else
-        {
-            throw new IllegalStateException();
         }
     }
 

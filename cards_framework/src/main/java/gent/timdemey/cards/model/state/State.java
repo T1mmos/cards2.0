@@ -8,7 +8,7 @@ import gent.timdemey.cards.model.EntityBase;
 import gent.timdemey.cards.model.Player;
 import gent.timdemey.cards.model.cards.CardGame;
 import gent.timdemey.cards.model.commands.CommandHistory;
-import gent.timdemey.cards.model.other.Server;
+import gent.timdemey.cards.model.multiplayer.Server;
 import gent.timdemey.cards.multiplayer.io.ITcpConnectionListener;
 import gent.timdemey.cards.multiplayer.io.TCP_ConnectionAccepter;
 import gent.timdemey.cards.multiplayer.io.TCP_ConnectionPool;

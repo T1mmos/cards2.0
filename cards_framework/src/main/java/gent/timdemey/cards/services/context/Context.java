@@ -3,6 +3,7 @@ package gent.timdemey.cards.services.context;
 import java.util.ArrayList;
 import java.util.List;
 
+import gent.timdemey.cards.model.commands.CommandBase;
 import gent.timdemey.cards.readonlymodel.IGameEventListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityFactory;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
@@ -38,7 +39,7 @@ public final class Context
         this.contextListeners.remove(contextListener);
     }
     
-    public ReadOnlyState getState() 
+    public ReadOnlyState getReadOnlyState() 
     {
        return ReadOnlyEntityFactory.getOrCreateState(limitedContext.getState());
     }
@@ -51,5 +52,10 @@ public final class Context
     public IChangeTracker getChangeTracker()
     {
         return changeTracker;
+    }
+
+    public boolean canExecute(CommandBase command)
+    {
+        return command.canExecute(limitedContext.getState());
     }
 }

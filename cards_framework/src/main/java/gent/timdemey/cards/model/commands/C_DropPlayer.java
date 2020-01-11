@@ -12,7 +12,7 @@ public class C_DropPlayer extends CommandBase {
 
     private final UUID playerId;
     
-    C_DropPlayer(UUID playerId) 
+    public C_DropPlayer(UUID playerId) 
     {
         this.playerId = playerId;
     }

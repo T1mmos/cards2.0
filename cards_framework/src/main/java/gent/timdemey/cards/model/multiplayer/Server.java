@@ -1,4 +1,4 @@
-package gent.timdemey.cards.model.other;
+package gent.timdemey.cards.model.multiplayer;
 
 import java.net.InetAddress;
 import java.util.UUID;

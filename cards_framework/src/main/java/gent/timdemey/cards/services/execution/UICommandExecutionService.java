@@ -5,19 +5,12 @@ import javax.swing.SwingUtilities;
 import gent.timdemey.cards.model.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.ICommandExecutionService;
-import gent.timdemey.cards.services.context.ContextType;
 
 public class UICommandExecutionService implements ICommandExecutionService {    
     
     public UICommandExecutionService ()
     {
     }
-
-	@Override
-	public void initialize(ContextType contextType)
-	{
-		
-	}
 
 	@Override
 	public void schedule(CommandBase command, State state)

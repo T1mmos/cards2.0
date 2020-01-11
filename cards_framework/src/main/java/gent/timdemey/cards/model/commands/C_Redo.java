@@ -12,7 +12,7 @@ import gent.timdemey.cards.services.context.ContextType;
  */
 public final class C_Redo extends CommandBase
 {
-	C_Redo()
+	public C_Redo()
 	{
 	}
 

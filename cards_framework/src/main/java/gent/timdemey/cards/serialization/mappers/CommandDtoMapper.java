@@ -5,7 +5,7 @@ import java.net.UnknownHostException;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.commands.CommandBase;
-import gent.timdemey.cards.model.commands.HelloClientCommand;
+import gent.timdemey.cards.model.commands.C_UDP_Answer;
 import gent.timdemey.cards.serialization.dto.commands.CommandDto;
 import gent.timdemey.cards.serialization.dto.commands.HelloClientCommandDto;
 
@@ -14,10 +14,10 @@ public class CommandDtoMapper
 	private static MapperBase mapper = new MapperBase();
 	{
 		// domain objects to DTO
-		mapper.addMapping(HelloClientCommand.class, HelloClientCommandDto.class, CommandDtoMapper::toDto);
+		mapper.addMapping(C_UDP_Answer.class, HelloClientCommandDto.class, CommandDtoMapper::toDto);
 
 		// DTO to domain object
-		mapper.addMapping(HelloClientCommandDto.class, HelloClientCommand.class, CommandDtoMapper::toCommand);
+		mapper.addMapping(HelloClientCommandDto.class, C_UDP_Answer.class, CommandDtoMapper::toCommand);
 	}
 	
 	public static String toJson (CommandBase cmd)
@@ -34,7 +34,7 @@ public class CommandDtoMapper
 		return command;
 	}
 		
-	private static HelloClientCommandDto toDto(HelloClientCommand cmd)
+	private static HelloClientCommandDto toDto(C_UDP_Answer cmd)
 	{
 		HelloClientCommandDto dto = new HelloClientCommandDto();
 
@@ -49,7 +49,7 @@ public class CommandDtoMapper
 		return dto;
 	}
 
-	private static HelloClientCommand toCommand(HelloClientCommandDto dto)
+	private static C_UDP_Answer toCommand(HelloClientCommandDto dto)
 	{
 		UUID id = CommonMapper.toUuid(dto.id);
 		InetAddress inetAddress = null;
@@ -66,7 +66,7 @@ public class CommandDtoMapper
 		String serverName = dto.serverName;
 		int tcpport = dto.tcpport;
 
-		HelloClientCommand cmd = new HelloClientCommand(id, serverName, inetAddress, tcpport, majorVersion, minorVersion);
+		C_UDP_Answer cmd = new C_UDP_Answer(id, serverName, inetAddress, tcpport, majorVersion, minorVersion);
 
 		return cmd;
 	}

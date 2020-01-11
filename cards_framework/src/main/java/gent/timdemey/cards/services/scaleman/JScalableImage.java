@@ -114,7 +114,7 @@ public class JScalableImage extends JPanel  {
         
         if (Services.get(IGamePanelManager.class).getDrawDebug())
         {
-            ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getState().getCardGame();
+            ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState().getCardGame();
             
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2.setColor(new Color(50, 50, 50, 200));

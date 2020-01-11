@@ -1,33 +1,58 @@
 package gent.timdemey.cards.ui.actions;
 
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.localization.Loc;
-import gent.timdemey.cards.model.commands.C_CreateServer;
-import gent.timdemey.cards.multiplayer.ConnectInfo;
-import gent.timdemey.cards.services.IDialogService;
-import gent.timdemey.cards.services.IGameOperationsService;
+import gent.timdemey.cards.model.cards.Card;
+import gent.timdemey.cards.model.cards.CardStack;
+import gent.timdemey.cards.model.commands.C_Redo;
+import gent.timdemey.cards.model.commands.C_StartGame;
+import gent.timdemey.cards.model.commands.C_StopGame;
+import gent.timdemey.cards.model.commands.C_Undo;
+import gent.timdemey.cards.model.commands.CommandBase;
+import gent.timdemey.cards.model.commands.D_CreateGame;
+import gent.timdemey.cards.model.commands.D_JoinGame;
+import gent.timdemey.cards.readonlymodel.ReadOnlyState;
+import gent.timdemey.cards.services.ICardGameCreatorService;
+import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IGamePanelManager;
-import gent.timdemey.cards.services.dialogs.DialogButtonType;
-import gent.timdemey.cards.services.dialogs.DialogData;
-import gent.timdemey.cards.ui.dialogs.CreateMultiplayerGameDialogContent;
-import gent.timdemey.cards.ui.dialogs.JoinMultiplayerGameDialogContent;
+import gent.timdemey.cards.services.context.ContextType;
 
-public class ActionService implements IActionService {
+public class ActionService implements IActionService
+{
 
+    private ReadOnlyState getReadOnlyState()
+    {
+        return Services.get(IContextService.class).getThreadContext().getReadOnlyState(); 
+    }
+    
+    private boolean canExecute(CommandBase command)
+    {
+        return Services.get(IContextService.class).getThreadContext().canExecute(command);
+    }
+    
+    private void execute(CommandBase command)
+    {
+        Services.get(IContextService.class).getContext(ContextType.UI).schedule(command);
+    }
+    
     @Override
-    public boolean canExecuteAction(String id) {
+    public boolean canExecuteAction(String id)
+    {
         switch (id)
         {
-        case AAction.ACTION_UNDO:
-            return Services.get(IGameOperationsService.class).canUndo();
+        case AAction.ACTION_UNDO:            
+            return canExecute(new C_Undo());
         case AAction.ACTION_REDO:
-            return Services.get(IGameOperationsService.class).canRedo();
+            return canExecute(new C_Redo());
         case AAction.ACTION_CREATE:
-            return Services.get(IGameOperationsService.class).canCreateGame();
+            return canExecute(new D_CreateGame());
         case AAction.ACTION_START:
-            return Services.get(IGameOperationsService.class).canStartGame();     
+            return true;
         case AAction.ACTION_STOP:
-            return Services.get(IGameOperationsService.class).canStopGame();
+            return canExecute(new C_StopGame());
         case AAction.ACTION_QUIT:
             return true;
         case AAction.ACTION_DEBUG:
@@ -40,50 +65,43 @@ public class ActionService implements IActionService {
             throw new UnsupportedOperationException("No such action id: " + id);
         }
     }
-    
+
     @Override
-    public void executeAction(String id) {
+    public void executeAction(String id)
+    {
         switch (id)
         {
         case AAction.ACTION_UNDO:
-            Services.get(IGameOperationsService.class).undo();
+            execute(new C_Undo());
             break;
         case AAction.ACTION_REDO:
-            Services.get(IGameOperationsService.class).redo();
+            execute(new C_Redo());
             break;
         case AAction.ACTION_CREATE:
-        {
-            CreateMultiplayerGameDialogContent content = new CreateMultiplayerGameDialogContent();
-            DialogData<C_CreateServer> data = Services.get(IDialogService.class).ShowAdvanced(Loc.get("dialog_title_creategame"), null, content, DialogButtonType.BUTTONS_OK_CANCEL);
-            
-            if (data.closeType == DialogButtonType.Ok)
-            {
-                Services.get(IGameOperationsService.class).createGame(data.payload);
-            }
+            execute(new D_CreateGame());
             break;
-        }            
         case AAction.ACTION_JOIN:
-        {
-            JoinMultiplayerGameDialogContent content = new JoinMultiplayerGameDialogContent();
-            DialogData<ConnectInfo> data = Services.get(IDialogService.class).ShowAdvanced(Loc.get("dialog_title_joingame"), null, content, DialogButtonType.BUTTONS_OK_CANCEL);
-            
-            if (data.closeType == DialogButtonType.Ok)
-            {
-                Services.get(IGameOperationsService.class).joinGame(data.payload.serverInfo.address, data.payload.serverInfo.tcpport, data.payload.playerName);
-            }
+            execute (new D_JoinGame());
             break;
-        }            
         case AAction.ACTION_START:
-            Services.get(IGameOperationsService.class).startGame();        
+            ICardGameCreatorService creator = Services.get(ICardGameCreatorService.class);
+            List<List<Card>> cards = creator.getCards();
+
+            List<UUID> playerIds = getReadOnlyState().getPlayers().getIds();
+            Map<UUID, List<CardStack>> playerStacks = creator.createStacks(playerIds, cards);
+
+            C_StartGame command = new C_StartGame(playerStacks);
+            IContextService contextServ = Services.get(IContextService.class);
+            contextServ.getContext(ContextType.Server).schedule(command);
             break;
         case AAction.ACTION_STOP:
-            Services.get(IGameOperationsService.class).stopGame();
+            execute(new C_StopGame());
             break;
         case AAction.ACTION_QUIT:
             System.exit(0);
             break;
         case AAction.ACTION_DEBUG:
-            IGamePanelManager manager = Services.get(IGamePanelManager.class);            
+            IGamePanelManager manager = Services.get(IGamePanelManager.class);
             manager.setDrawDebug(!manager.getDrawDebug());
             break;
         default:

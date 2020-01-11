@@ -1,6 +1,7 @@
 package gent.timdemey.cards.model.commands;
 
 import java.net.InetAddress;
+import java.util.UUID;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
@@ -17,13 +18,18 @@ import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.context.LimitedContext;
 import gent.timdemey.cards.services.execution.ClientCommandExecutionService;
 
+/**
+ * Let a player connect to an online game.
+ * @author Tim
+ *
+ */
 public class C_Connect extends CommandBase
 {
 	final InetAddress srvInetAddress;
 	final int tcpport;
 	final String playerName;
 
-	C_Connect(InetAddress srvInetAddress, int tcpport, String playerName)
+	public C_Connect(InetAddress srvInetAddress, int tcpport, String playerName)
 	{
 		this.srvInetAddress = srvInetAddress;
 		this.tcpport = tcpport;
@@ -94,6 +100,17 @@ public class C_Connect extends CommandBase
 			IContextService contextServ = Services.get(IContextService.class);
 			LimitedContext context = contextServ.getContext(ContextType.Client);
 			context.schedule(cmd);
+		}
+		
+		@Override
+		public void onTcpConnectionRemotelyClosed(UUID id, TCP_Connection connection)
+		{
+		    LimitedContext context = Services.get(IContextService.class).getContext(ContextType.Client);
+	        if (id != null)
+	        {           
+	            CommandBase cmd = new C_HandleConnectionLoss(connection, id);
+	            context.schedule(cmd);
+	        }
 		}
 	}
 }

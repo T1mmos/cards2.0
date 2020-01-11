@@ -4,7 +4,6 @@ import java.util.UUID;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
-import gent.timdemey.cards.model.commands.C_HandleConnectionLoss;
 import gent.timdemey.cards.model.commands.CommandBase;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.IContextService;
@@ -27,14 +26,16 @@ public class CommandSchedulingTcpConnectionListener implements ITcpConnectionLis
 	}
 	
 	@Override
-	public void onTcpMessageReceived(TCP_Connection tcpConnection, String message)
+	public void onTcpMessageReceived(UUID id, TCP_Connection tcpConnection, String message)
 	{
 		try
 		{
 			CommandBase command = CommandDtoMapper.toCommand(message);
 			
-			// attach the tcp connection on which the command was received
+			// attach metadata to the command
 			command.setSourceTcpConnection(tcpConnection);
+			command.setSourceId(id);
+			command.setSerialized(message);
 			
 			Services.get(ILogManager.class).log("Received command '" + command.getClass().getSimpleName() + "' from " + tcpConnection.getRemote());
 			
@@ -48,19 +49,14 @@ public class CommandSchedulingTcpConnectionListener implements ITcpConnectionLis
 
 
 	@Override
-	public void onTcpConnectionLocallyClosed(TCP_Connection connection, UUID id)
+	public void onTcpConnectionLocallyClosed(UUID id, TCP_Connection connection)
 	{
 		
 	}
 
 	@Override
-	public void onTcpConnectionRemotelyClosed(TCP_Connection connection, UUID id)
+	public void onTcpConnectionRemotelyClosed(UUID id, TCP_Connection connection)
 	{
-		LimitedContext context = Services.get(IContextService.class).getContext(contextType);
-		if (id != null)
-		{			
-			CommandBase cmd = new C_HandleConnectionLoss(connection, id);
-			context.schedule(cmd);
-		}
+		
 	}
 }

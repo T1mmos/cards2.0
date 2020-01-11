@@ -34,7 +34,7 @@ public final class ReadOnlyCardGame extends ReadOnlyEntityBase<CardGame>
         return ReadOnlyEntityFactory.getOrCreateCardStack(entity.getCardStack(id));
     }
 
-    public List<ReadOnlyCardStack> getCardStacks()
+    public ReadOnlyEntityList<ReadOnlyCardStack> getCardStacks()
     {
         return ReadOnlyEntityFactory.getOrCreateCardStackList(entity.getCardStacks());
     }
@@ -42,5 +42,10 @@ public final class ReadOnlyCardGame extends ReadOnlyEntityBase<CardGame>
     public List<String> getCardStackTypes()
     {
         return entity.getCardStackTypes();
+    }
+
+    public ReadOnlyEntityList<ReadOnlyCard> getCards()
+    {
+        return ReadOnlyEntityFactory.getOrCreateCardList(entity.getCards());
     }
 }

@@ -2,7 +2,6 @@ package gent.timdemey.cards.services;
 
 import gent.timdemey.cards.model.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.context.ContextType;
 
 /**
  * Processes a command, a unit of work. Keeps track of the sequence of 
@@ -12,9 +11,7 @@ import gent.timdemey.cards.services.context.ContextType;
  * @author Timmos
  */
 public interface ICommandExecutionService 
-{   
-	ContextType getContextType();
-	
+{   	
     /**
      * Adds a new command to command list, for execution somewhere in 
      * the near future. The command will be wrapped in a CommandEnvelope.

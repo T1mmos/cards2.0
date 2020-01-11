@@ -15,6 +15,7 @@ import gent.timdemey.cards.multiplayer.io.TCP_ConnectionAccepter;
 import gent.timdemey.cards.multiplayer.io.TCP_ConnectionPool;
 import gent.timdemey.cards.multiplayer.io.UDP_ServiceAnnouncer;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
+import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
@@ -28,7 +29,7 @@ public class C_CreateServer extends CommandBase
     public final int minconns;  // minimal connections required to start a game
     public final int maxconns;  // maximal connections allowed to the server
     
-    C_CreateServer (String srvname, String srvmsg, int udpport, int tcpport, int minconns, int maxconns)
+    public C_CreateServer (String srvname, String srvmsg, int udpport, int tcpport, int minconns, int maxconns)
     {
         Preconditions.checkArgument(srvname != null && !srvname.isEmpty());
         Preconditions.checkArgument(udpport > 1024);
@@ -50,8 +51,7 @@ public class C_CreateServer extends CommandBase
     @Override
     protected boolean canExecute(Context context, ContextType type, State state)
     {
-        // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
     @Override
@@ -87,7 +87,7 @@ public class C_CreateServer extends CommandBase
 		}
 
 	//	UUID serverId = state.getServerId();
-		HelloClientCommand cmd_hello = new HelloClientCommand(srvname, addr, tcpport, major, minor);		
+		C_UDP_Answer cmd_hello = new C_UDP_Answer(srvname, addr, tcpport, major, minor);		
 		String json_hello = CommandDtoMapper.toJson(cmd_hello);
 
 		UDP_ServiceAnnouncer udpServAnnouncer = new UDP_ServiceAnnouncer(udpport, this::canAcceptUdpMessage, json_hello);
@@ -114,7 +114,7 @@ public class C_CreateServer extends CommandBase
     	try 
     	{
     		CommandBase command = CommandDtoMapper.toCommand(json);	
-    		if (!(command instanceof HelloServerCommand))
+    		if (!(command instanceof C_UDP_StartServiceRequester))
     		{
     			return false;
     		}
