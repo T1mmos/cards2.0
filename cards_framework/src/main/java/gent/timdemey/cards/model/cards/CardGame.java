@@ -161,13 +161,14 @@ public class CardGame extends EntityBase
         throw new IllegalArgumentException("No such card stack ID in the game: " + cardStackId);
     }
 
-    public List<Card> getCards()
+    public EntityStateListRef<Card> getCards()
     {
         List<Card> cards = new ArrayList<>();
         for (CardStack cs : cardStacksRef)
         {
             cards.addAll(cs.getCards());
         }
-        return cards;
+        EntityStateListRef<Card> list = EntityStateListRef.asReadOnly(cards);
+        return list;
     }
 }

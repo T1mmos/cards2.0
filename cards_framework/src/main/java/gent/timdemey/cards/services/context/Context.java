@@ -3,12 +3,14 @@ package gent.timdemey.cards.services.context;
 import java.util.ArrayList;
 import java.util.List;
 
+import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.commands.CommandBase;
 import gent.timdemey.cards.readonlymodel.IGameEventListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityFactory;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.ICommandExecutionService;
 import gent.timdemey.cards.services.IContextListener;
+import gent.timdemey.cards.services.IContextService;
 
 public final class Context
 {
@@ -57,5 +59,17 @@ public final class Context
     public boolean canExecute(CommandBase command)
     {
         return command.canExecute(limitedContext.getState());
+    }
+
+    public void schedule(CommandBase command)
+    {
+        IContextService contextServ = Services.get(IContextService.class);
+        boolean isCurrentContext = contextServ.isCurrentContext(getContextType());
+        if (!isCurrentContext)
+        {
+            throw new IllegalStateException("You can only schedule on the Context on the correct thread, expected context type = " + getContextType());
+        }
+        
+        limitedContext.schedule(command);
     }
 }

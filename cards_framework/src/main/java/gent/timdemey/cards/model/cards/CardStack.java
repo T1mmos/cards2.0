@@ -45,12 +45,12 @@ public class CardStack extends EntityBase
 		return cards.get(cards.size() - 1);
 	}
 
-	public List<Card> getCardsFrom(Card card)
+	public EntityStateListRef<Card> getCardsFrom(Card card)
 	{
 		Preconditions.checkArgument(cards.contains(card));
 
 		int idx = cards.indexOf(card);
-		return new ArrayList<>(cards.subList(idx, cards.size()));
+		return EntityStateListRef.asReadOnly(cards.subList(idx, cards.size()));
 	}
 
 	public List<Card> getHighestCards(int count)
@@ -104,5 +104,4 @@ public class CardStack extends EntityBase
 	{
 		return "[" + cardStackType + "#" + typeNumber + ", #cards=" + cards.size() + ", id=" + id + "]";
 	}
-
 }

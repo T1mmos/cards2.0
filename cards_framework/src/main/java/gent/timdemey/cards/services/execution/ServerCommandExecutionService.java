@@ -1,22 +1,17 @@
 package gent.timdemey.cards.services.execution;
 
-import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
-import gent.timdemey.cards.model.commands.C_Composite;
 import gent.timdemey.cards.model.commands.C_DropPlayer;
-import gent.timdemey.cards.model.commands.C_Move;
 import gent.timdemey.cards.model.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.multiplayer.io.CommandSchedulingTcpConnectionListener;
 import gent.timdemey.cards.multiplayer.io.TCP_Connection;
 import gent.timdemey.cards.multiplayer.io.TCP_ConnectionAccepter;
-import gent.timdemey.cards.multiplayer.io.TCP_ConnectionPool;
 import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.context.LimitedContext;
 

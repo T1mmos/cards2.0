@@ -11,7 +11,7 @@ public class Card extends EntityBase
     public final Value value;
     
     public final StateValueRef<Boolean> visibleRef;
-    public final StateValueRef<CardStack> cardStackRef;    
+    public final StateValueRef<CardStack> cardStackRef;   
     
     public Card (UUID id, Suit suit, Value value, boolean visible)
     {
