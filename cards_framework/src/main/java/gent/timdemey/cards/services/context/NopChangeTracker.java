@@ -1,5 +1,8 @@
 package gent.timdemey.cards.services.context;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import gent.timdemey.cards.model.state.StateListRef;
 import gent.timdemey.cards.model.state.StateValueRef;
 
@@ -24,4 +27,15 @@ public class NopChangeTracker implements IChangeTracker
         
     }
 
+    @Override
+    public List<Change<?>> getChangeList()
+    {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public void reset()
+    {
+        // nothing to do
+    }
 }

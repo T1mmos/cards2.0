@@ -1,6 +1,7 @@
 package gent.timdemey.cards.services.context;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.base.Objects;
@@ -158,5 +159,17 @@ public class StateChangeTracker implements IChangeTracker
             Change<X> change = Change.forRemove(ref, e);
             changes.add(change);
         }
+    }
+
+    @Override
+    public List<Change<?>> getChangeList()
+    {
+        return Collections.unmodifiableList(changes);
+    }
+
+    @Override
+    public void reset()
+    {
+        changes.clear();
     }
 }

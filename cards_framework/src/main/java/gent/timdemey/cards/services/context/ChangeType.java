@@ -11,7 +11,7 @@ public enum ChangeType
 	 */
 	Add,
 	/**
-	 * An item was removed from a list
+	 * An item was removed from a list.
 	 */
 	Remove
 }

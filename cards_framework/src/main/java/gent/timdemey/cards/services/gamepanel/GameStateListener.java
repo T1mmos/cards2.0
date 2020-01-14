@@ -7,12 +7,13 @@ import javax.swing.SwingUtilities;
 import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.readonlymodel.AGameEventAdapter;
+import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.IGamePanelManager;
+import gent.timdemey.cards.services.context.Change;
 
-class GameEventListener extends AGameEventAdapter {
+class GameStateListener implements IStateListener {
  
     @Override
     public void onCardVisibilityChanged(ReadOnlyCard card) {
@@ -32,6 +33,15 @@ class GameEventListener extends AGameEventAdapter {
         {
             ReadOnlyCard card = cards.get(i);
             gamePanelMan.updatePosition(card);
+        }
+    }
+
+    @Override
+    public void onChange(List<Change<?>> changes)
+    {
+        for (Change<?> change : changes)
+        {
+            if (change.)
         }
     }
 }

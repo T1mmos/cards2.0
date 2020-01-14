@@ -10,7 +10,7 @@ import javax.swing.Timer;
 import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.readonlymodel.IGameEventListener;
+import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
@@ -20,6 +20,7 @@ import gent.timdemey.cards.services.IGamePanelManager;
 import gent.timdemey.cards.services.IPositionManager;
 import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.context.Context;
+import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.scaleman.ImageDefinition;
 import gent.timdemey.cards.services.scaleman.JScalableImage;
 
@@ -30,7 +31,7 @@ public class GamePanelManager implements IGamePanelManager {
     
     private GamePanelResizeListener resizeListener;
     private CardDragListener dragListener;
-    private IGameEventListener gameEventListener;
+    private IStateListener gameEventListener;
 
     private boolean drawDebug = false;    
     protected GamePanel gamePanel;
@@ -38,7 +39,7 @@ public class GamePanelManager implements IGamePanelManager {
     private Timer timer;
     private AnimationTick animationTick;
         
-    public GamePanelManager() 
+    private GamePanelManager() 
     {
     }
 
@@ -54,12 +55,12 @@ public class GamePanelManager implements IGamePanelManager {
                                     
             resizeListener = new GamePanelResizeListener();
             dragListener = new CardDragListener();
-            gameEventListener = new GameEventListener();
+            gameEventListener = new GameStateListener();
             
             gamePanel.addComponentListener(resizeListener);
             gamePanel.addMouseMotionListener(dragListener);
             gamePanel.addMouseListener(dragListener);
-            Services.get(IGameOperationsService.class).addGameEventListener(gameEventListener);
+            Services.get(IContextService.class).getThreadContext().getReadOnlyState().addStateListener(gameEventListener); 
             Services.get(IPositionManager.class).calculate(gamePanel.getWidth(), gamePanel.getHeight());
             relayout();
             

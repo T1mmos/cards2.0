@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.AGameEventAdapter;
-import gent.timdemey.cards.readonlymodel.IGameEventListener;
+import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyPlayer;
 import gent.timdemey.cards.services.IContextListener;
 import gent.timdemey.cards.services.IContextService;
@@ -26,7 +26,7 @@ public class LobbyDialogContent extends DialogContent<Void, Void>
     private final Context context;
     
     private ContextListener contextListener = null;
-    private IGameEventListener gameEventListener = null;
+    private IStateListener gameEventListener = null;
 
     private class ContextListener implements IContextListener
     {

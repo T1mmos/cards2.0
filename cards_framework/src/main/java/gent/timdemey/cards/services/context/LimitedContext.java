@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import gent.timdemey.cards.model.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.ICommandExecutionService;
+import gent.timdemey.cards.services.execution.IExecutionListener;
 
 public final class LimitedContext
 {
@@ -30,6 +31,11 @@ public final class LimitedContext
 	public void schedule(CommandBase command)
 	{
 		cmdExecServ.schedule(command, state);
+	}
+	
+	void setExecutionListener(IExecutionListener executionListener)
+	{
+	    cmdExecServ.setExecutionListener(executionListener);
 	}
 
     State getState()

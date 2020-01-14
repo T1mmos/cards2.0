@@ -5,11 +5,10 @@ import java.util.List;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.commands.CommandBase;
-import gent.timdemey.cards.readonlymodel.IGameEventListener;
+import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityFactory;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.ICommandExecutionService;
-import gent.timdemey.cards.services.IContextListener;
 import gent.timdemey.cards.services.IContextService;
 
 public final class Context
@@ -19,26 +18,19 @@ public final class Context
     
     final LimitedContext limitedContext;
     
-    private final List<IGameEventListener> gameEventListeners;        
-    private final List<IContextListener> contextListeners;
+    private final List<IStateListener> stateListeners;  
     
     Context(ContextType contextType, ICommandExecutionService cmdExecService, boolean trackChanges) 
     {        
         limitedContext = new LimitedContext(contextType, cmdExecService);
                 
-        this.contextListeners = new ArrayList<>();
-        this.gameEventListeners = new ArrayList<>();
+        if (trackChanges)
+        {
+            limitedContext.setExecutionListener(this::onExecuted);
+        }
+        
+        this.stateListeners = new ArrayList<>();
         this.changeTracker = trackChanges ? new StateChangeTracker() : new NopChangeTracker();
-    }
-    
-    public void addContextListener(IContextListener contextListener)
-    {
-        this.contextListeners.add(contextListener);
-    }
-    
-    public void removeContextListener(IContextListener contextListener)
-    {
-        this.contextListeners.remove(contextListener);
     }
     
     public ReadOnlyState getReadOnlyState() 
@@ -71,5 +63,26 @@ public final class Context
         }
         
         limitedContext.schedule(command);
+    }
+    
+    public void addStateListener(IStateListener stateListener)
+    {
+        stateListeners.add(stateListener);
+    }
+    
+    // Callback from execution service that lets us know that a command or a chain of commands was executed.
+    // We can therefore now update the state listeners.
+    private void onExecuted()
+    {
+        // get a list of all changes since the last reset()
+        List<Change<?>> changes = changeTracker.getChangeList();
+        
+        for (IStateListener sl : stateListeners)
+        {
+            sl.onChange(changes);
+        }
+        
+        // reset the tracker as we updated all listeners
+        changeTracker.reset();
     }
 }
