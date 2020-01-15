@@ -78,4 +78,10 @@ public class ServerCommandExecutionService extends CommandExecutionServiceBase
         }
 
     }
+    
+    @Override
+    public void setExecutionListener(IExecutionListener executionListener)
+    {
+        throw new UnsupportedOperationException("Currently executionlisteners are not supported in the Server execution service.");
+    }
 }

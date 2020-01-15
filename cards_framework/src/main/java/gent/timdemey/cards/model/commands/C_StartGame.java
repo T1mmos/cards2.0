@@ -15,10 +15,12 @@ import gent.timdemey.cards.services.context.ContextType;
 
 public class C_StartGame extends CommandBase
 {
+    private final UUID cardGameId;
     private final Map<UUID, List<CardStack>> playerStacks;
     
-    public C_StartGame(Map<UUID, List<CardStack>> playerStacks)
+    public C_StartGame(UUID cardGameId, Map<UUID, List<CardStack>> playerStacks)
     {
+        this.cardGameId = cardGameId;
         this.playerStacks = playerStacks;
     }
     
@@ -33,7 +35,7 @@ public class C_StartGame extends CommandBase
     {    
         if (type == ContextType.UI)
         {
-            CardGame game = new CardGame(playerStacks);
+            CardGame game = new CardGame(cardGameId, playerStacks);
             state.setCardGame(game);
         }
         else if (type == ContextType.Client)
@@ -42,14 +44,14 @@ public class C_StartGame extends CommandBase
         	String json = CommandDtoMapper.toJson(this);
         	C_StartGame commandCopy = (C_StartGame) CommandDtoMapper.toCommand(json);
             Map<UUID, List<CardStack>> playerStacksCopy = commandCopy.playerStacks;
-            CardGame game = new CardGame(playerStacksCopy);
+            CardGame game = new CardGame(cardGameId, playerStacksCopy);
             state.setCardGame(game);
                 
             reschedule(ContextType.UI);
         }
         else 
         {          
-            CardGame game = new CardGame(playerStacks);
+            CardGame game = new CardGame(cardGameId, playerStacks);
             state.setCardGame(game);
             
             ICommandExecutionService execServ = Services.get(ICommandExecutionService.class, ContextType.Server);

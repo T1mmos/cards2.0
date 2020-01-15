@@ -28,7 +28,7 @@ public final class ReadOnlyCard extends ReadOnlyEntityBase<Card>
     
     public ReadOnlyCardStack getCardStack()
     {
-        return ReadOnlyEntityFactory.getOrCreateCardStack(entity.cardStackRef.get());
+        return ReadOnlyEntityFactory.getOrCreateCardStack(entity.cardStack);
     }
     
     public int getCardIndex()

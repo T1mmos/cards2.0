@@ -7,13 +7,12 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.EntityBase;
-import gent.timdemey.cards.model.cards.Card;
 
 public class EntityStateListRef<X extends EntityBase> extends StateListRef<X> 
 {
-    public EntityStateListRef(List<X> wrappee)
+    public EntityStateListRef(Property property, UUID entityId, List<X> wrappee)
     {
-        super(wrappee);
+        super(property, entityId, wrappee);
     }
 
     public X get(UUID id)
@@ -98,7 +97,7 @@ public class EntityStateListRef<X extends EntityBase> extends StateListRef<X>
 
     public static <X extends EntityBase> EntityStateListRef<X> asReadOnly(List<X> subList)
     {
-        return new EntityStateListRef<X>(Collections.unmodifiableList(subList));
+        return new EntityStateListRef<X>(null, null, Collections.unmodifiableList(subList));
     }
 
 }

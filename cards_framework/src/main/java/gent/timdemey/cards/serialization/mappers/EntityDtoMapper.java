@@ -59,7 +59,7 @@ class EntityDtoMapper
 			Card card = mapper.map(cardDto, Card.class);
 
 			// domain model link
-			card.cardStackRef.set(cardStack);
+			card.cardStack = cardStack;
 
 			cardStack.cards.add(card);
 		}

@@ -41,7 +41,7 @@ public class StateChangeTracker implements IChangeTracker
         for (int i = 0; i < changes.size(); i++)
         {
         	Change<?> chng = changes.get(i);
-        	if (chng.stateList != stateList)
+        	if (chng.stateRef != stateList)
         	{
         		continue;
         	}

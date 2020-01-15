@@ -15,12 +15,10 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.services.IGameOperationsService;
 import gent.timdemey.cards.services.IGamePanelManager;
 import gent.timdemey.cards.services.IPositionManager;
 import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.context.Context;
-import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.scaleman.ImageDefinition;
 import gent.timdemey.cards.services.scaleman.JScalableImage;
 
@@ -60,7 +58,7 @@ public class GamePanelManager implements IGamePanelManager {
             gamePanel.addComponentListener(resizeListener);
             gamePanel.addMouseMotionListener(dragListener);
             gamePanel.addMouseListener(dragListener);
-            Services.get(IContextService.class).getThreadContext().getReadOnlyState().addStateListener(gameEventListener); 
+            Services.get(IContextService.class).getThreadContext().addStateListener(gameEventListener); 
             Services.get(IPositionManager.class).calculate(gamePanel.getWidth(), gamePanel.getHeight());
             relayout();
             
@@ -99,7 +97,7 @@ public class GamePanelManager implements IGamePanelManager {
             gamePanel.removeMouseListener(dragListener);
         }
         
-        Services.get(IGameOperationsService.class).removeGameEventListener(gameEventListener);        
+        Services.get(IContextService.class).getThreadContext().removeStateListener(gameEventListener);        
         Services.get(IScalableImageManager.class).clearManagedObjects();
         resizeListener = null;
         dragListener = null;

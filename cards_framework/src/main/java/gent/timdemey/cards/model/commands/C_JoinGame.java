@@ -95,7 +95,8 @@ public class C_JoinGame extends CommandBase
                 List<UUID> playerIds = state.getPlayers().getIds();
                 Map<UUID, List<CardStack>> playerStacks = creator.createStacks(playerIds, allCards);
                               
-                C_StartGame cmd = new C_StartGame(playerStacks);
+                UUID cardGameId = UUID.randomUUID();
+                C_StartGame cmd = new C_StartGame(cardGameId, playerStacks);
                 schedule(ContextType.Server, cmd);
             }
         }

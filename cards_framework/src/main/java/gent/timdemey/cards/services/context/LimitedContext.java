@@ -20,7 +20,7 @@ public final class LimitedContext
         
         this.contextType = contextType;
         this.cmdExecServ = cmdExecServ;
-        this.state = State.create(contextType);
+        this.state = new State();
     }    
     
     public ContextType getContextType()

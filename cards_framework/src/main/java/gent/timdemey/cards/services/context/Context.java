@@ -70,6 +70,11 @@ public final class Context
         stateListeners.add(stateListener);
     }
     
+    public void removeStateListener(IStateListener stateListener)
+    {
+        stateListeners.remove(stateListener);
+    }
+    
     // Callback from execution service that lets us know that a command or a chain of commands was executed.
     // We can therefore now update the state listeners.
     private void onExecuted()

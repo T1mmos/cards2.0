@@ -52,4 +52,10 @@ public class ClientCommandExecutionService extends CommandExecutionServiceBase
             // todo
         }        
     }
+
+    @Override
+    public void setExecutionListener(IExecutionListener executionListener)
+    {
+        throw new UnsupportedOperationException("Currently executionlisteners are not supported in the Client execution service.");
+    }
 }

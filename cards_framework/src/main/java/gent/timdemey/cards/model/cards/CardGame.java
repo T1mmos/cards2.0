@@ -10,15 +10,18 @@ import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.model.EntityBase;
 import gent.timdemey.cards.model.state.EntityStateListRef;
+import gent.timdemey.cards.model.state.Property;
 
 public class CardGame extends EntityBase
 {
+    public static final Property CardStacks = Property.of(CardGame.class, "CardStacks");
+    
     private final EntityStateListRef<CardStack> cardStacksRef;
     private final Map<UUID, List<UUID>> playerStacks;
 
-    public CardGame(Map<UUID, List<CardStack>> playerStacks)
+    public CardGame(UUID id, Map<UUID, List<CardStack>> playerStacks)
     {
-        this.cardStacksRef = new EntityStateListRef<>(new ArrayList<>());
+        this.cardStacksRef = new EntityStateListRef<>(CardStacks, id, new ArrayList<>());
         this.playerStacks = new HashMap<>();
 
         for (UUID playerId : playerStacks.keySet())
@@ -146,7 +149,7 @@ public class CardGame extends EntityBase
 
     public UUID getPlayerId(Card card)
     {
-        return getPlayerId(card.cardStackRef.get());
+        return getPlayerId(card.cardStack);
     }
 
     public UUID getPlayerId(UUID cardStackId)

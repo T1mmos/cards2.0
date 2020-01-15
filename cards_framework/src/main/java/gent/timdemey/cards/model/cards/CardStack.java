@@ -9,9 +9,12 @@ import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.model.EntityBase;
 import gent.timdemey.cards.model.state.EntityStateListRef;
+import gent.timdemey.cards.model.state.Property;
 
 public class CardStack extends EntityBase
 {
+    public static final Property Cards = Property.of(CardStack.class, "Cards");
+    
 	public final EntityStateListRef<Card> cards;
 	public final String cardStackType;
 	public final int typeNumber;
@@ -27,7 +30,7 @@ public class CardStack extends EntityBase
 		
 		this.cardStackType = cardStackType;
 		this.typeNumber = typeNumber;
-		this.cards = new EntityStateListRef<>(new ArrayList<>());
+		this.cards = new EntityStateListRef<>(Cards, id, new ArrayList<>());
 	}
 
 	public Card getLowestCard()

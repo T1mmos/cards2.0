@@ -1,45 +1,42 @@
 package gent.timdemey.cards.services.context;
 
+import java.util.UUID;
+
+import gent.timdemey.cards.model.state.Property;
 import gent.timdemey.cards.model.state.StateListRef;
+import gent.timdemey.cards.model.state.StateRef;
 import gent.timdemey.cards.model.state.StateValueRef;
 
 public class Change<X>
 {
-	final ChangeType changeType;
-	final StateValueRef<X> stateRef;
-	final StateListRef<X> stateList;
+	public final ChangeType changeType;
+	public final Property property;
+	public final UUID entityId;
+	final StateRef stateRef;
 	final X oldValue;
 	final X newValue;
 	final X addedValue;
 	final X removedValue;
 	
-	private Change(ChangeType changeType, StateValueRef<X> stateRef, X oldValue, X newValue)
+	private Change(ChangeType changeType, StateRef stateRef, Property property, UUID entityId, X oldValue, X newValue)
 	{
 		this.changeType = changeType;
 		this.stateRef = stateRef;
-		this.stateList = null;
+		this.property = property;
+		this.entityId = entityId;
 		this.oldValue = oldValue;
 		this.newValue = newValue;
 		this.addedValue = null;
 		this.removedValue = null;
 	}
-	
-	private Change(ChangeType changeType, StateListRef<X> stateList, X addedValue, X removedValue)
-	{
-		this.changeType = changeType;
-		this.stateRef = null;
-		this.stateList = stateList;
-		this.oldValue = null;
-		this.newValue = null;
-		this.addedValue = addedValue;
-		this.removedValue = removedValue;
-	}
-	
-	static <X> Change<X> forSet(StateValueRef<X> stateRef, X oldValue, X newValue)
+		
+	static <X> Change forSet(StateValueRef<X> stateRef, X oldValue, X newValue)
 	{
 		Change<X> change = new Change<>(
 				ChangeType.Set,
 				stateRef,
+				stateRef.property,
+				stateRef.entityId,
 				oldValue, 
 				newValue);
 		return change;
@@ -50,6 +47,8 @@ public class Change<X>
 		Change<X> change = new Change<>(
 				ChangeType.Add,
 				stateList,
+				stateList.property,
+				stateList.entityId,
 				added, 
 				null);
 		return change;
@@ -61,6 +60,8 @@ public class Change<X>
 		Change<X> change = new Change<>(
 				ChangeType.Remove,
 				stateList,
+				stateList.property,
+				stateList.entityId,
 				null, 
 				removed);
 		return change;
