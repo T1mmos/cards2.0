@@ -24,8 +24,8 @@ public class D_CreateGame extends CommandBase
     protected void execute(Context context, ContextType type, State state)
     {
         CreateMultiplayerGameDialogContent content = new CreateMultiplayerGameDialogContent();
-        DialogData<C_CreateServer> data = Services.get(IDialogService.class).ShowAdvanced(
-                Loc.get("dialog_title_creategame"), null, content, DialogButtonType.BUTTONS_OK_CANCEL);
+        DialogData<C_CreateServer> data = Services.get(IDialogService.class)
+                .ShowAdvanced(Loc.get("dialog_title_creategame"), null, content, DialogButtonType.BUTTONS_OK_CANCEL);
 
         if (data.closeType == DialogButtonType.Ok)
         {

@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.model.state.StateValueRef;
 
-public class ReadOnlyEntityList<T extends ReadOnlyEntityBase<?>> extends ReadOnlyList<T> 
+public class ReadOnlyEntityList<T extends ReadOnlyEntityBase<?>> extends ReadOnlyList<T>
 {
 
     public ReadOnlyEntityList(List<T> roList)

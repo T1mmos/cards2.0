@@ -17,53 +17,57 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
 
 /**
- * Broadcast a string on the network via UDP and listens for string answers.
- * The thread created runs until no more answers are received after a timeout period. 
- * Users of this class receive answers (in string form) via a callback.
+ * Broadcast a string on the network via UDP and listens for string answers. The
+ * thread created runs until no more answers are received after a timeout
+ * period. Users of this class receive answers (in string form) via a callback.
+ * 
  * @author Timmos
  */
-public final class UDP_ServiceRequester 
-{                
+public final class UDP_ServiceRequester
+{
     private static String UDP_SERVICE_REQUEST_THREAD_NAME = "UDP Service Requester";
     private static int UDP_SERVICE_REQUEST_TIMEOUT = 10000;
-    
+
     private DatagramSocket dsocket = null;
     private Thread thread = null;
     private final Consumer<String> callback;
-    private final String message;   
-    
+    private final String message;
+
     public UDP_ServiceRequester(String message, Consumer<String> callback)
-    {            
+    {
         this.message = message;
         this.callback = callback;
     }
-    
-    private List<InetAddress> listAllBroadcastAddresses() throws SocketException {
+
+    private List<InetAddress> listAllBroadcastAddresses() throws SocketException
+    {
         List<InetAddress> broadcastList = new ArrayList<>();
-        Enumeration<NetworkInterface> interfaces 
-          = NetworkInterface.getNetworkInterfaces();
-        while (interfaces.hasMoreElements()) {
+        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+        while (interfaces.hasMoreElements())
+        {
             NetworkInterface networkInterface = interfaces.nextElement();
-     
-            if (networkInterface.isLoopback() || !networkInterface.isUp()) {
+
+            if (networkInterface.isLoopback() || !networkInterface.isUp())
+            {
                 continue;
             }
-     
-            networkInterface.getInterfaceAddresses().stream() 
-              .map(a -> a.getBroadcast())
-              .filter(Objects::nonNull)
-              .forEach(broadcastList::add);
+
+            networkInterface.getInterfaceAddresses().stream().map(a -> a.getBroadcast()).filter(Objects::nonNull)
+                    .forEach(broadcastList::add);
         }
         return broadcastList;
     }
-    
-    public void start() 
+
+    public void start()
     {
-        try {
+        try
+        {
             dsocket = new DatagramSocket();
-            dsocket.setBroadcast(true);                    
+            dsocket.setBroadcast(true);
             dsocket.setSoTimeout(UDP_SERVICE_REQUEST_TIMEOUT);
-        } catch (SocketException e) {
+        }
+        catch (SocketException e)
+        {
             // TODO Auto-generated catch block
             e.printStackTrace();
             return;
@@ -72,7 +76,7 @@ public final class UDP_ServiceRequester
         thread.start();
         Services.get(ILogManager.class).log("Thread '" + UDP_SERVICE_REQUEST_THREAD_NAME + "' started.");
     }
-    
+
     public void stop()
     {
         if (dsocket != null)
@@ -85,14 +89,15 @@ public final class UDP_ServiceRequester
             thread = null;
         }
     }
-    
+
     private void requestLoop()
     {
         Services.get(ILogManager.class).log("This thread has started.");
-        try {
+        try
+        {
             // json to raw
-            byte [] buffer_out = message.getBytes(IoConstants.UDP_CHARSET);
-            
+            byte[] buffer_out = message.getBytes(IoConstants.UDP_CHARSET);
+
             // send on each broadcast address
             Services.get(ILogManager.class).log("Sending UDP broadcast messages...");
             for (InetAddress inetAddress : listAllBroadcastAddresses())
@@ -100,10 +105,10 @@ public final class UDP_ServiceRequester
                 DatagramPacket packet_out = new DatagramPacket(buffer_out, buffer_out.length, inetAddress, 9000);
                 dsocket.send(packet_out);
             }
-            
+
             // now keep reading answers, after 60 seconds of nothing, socket will close
-            while(true)
-            { 
+            while (true)
+            {
                 // receive raw
                 byte[] buffer_in = new byte[2000];
                 DatagramPacket packet_in = new DatagramPacket(buffer_in, buffer_in.length);
@@ -111,24 +116,31 @@ public final class UDP_ServiceRequester
                 Services.get(ILogManager.class).log("Waiting for answers...");
                 dsocket.receive(packet_in);
                 Services.get(ILogManager.class).log("Received some UDP data");
-                
+
                 // raw to json
                 byte[] received = packet_in.getData();
                 String rcvd = new String(received, 0, packet_in.getLength(), IoConstants.UDP_CHARSET);
-                                               
+
                 callback.accept(rcvd);
-            }                
-        } catch (SocketException e) {
+            }
+        }
+        catch (SocketException e)
+        {
             // this is normal when the socket is closed.
             Services.get(ILogManager.class).log("Socket closed: ending this thread.");
-        } catch (SocketTimeoutException e) {
+        }
+        catch (SocketTimeoutException e)
+        {
             // this is normal when no more servers response in the limited time window
-            Services.get(ILogManager.class).log("No more servers have responded after %s seconds, ending this thread.", UDP_SERVICE_REQUEST_TIMEOUT / 1000);
-            
-        } catch (IOException e) {
+            Services.get(ILogManager.class).log("No more servers have responded after %s seconds, ending this thread.",
+                    UDP_SERVICE_REQUEST_TIMEOUT / 1000);
+
+        }
+        catch (IOException e)
+        {
             Services.get(ILogManager.class).log(e);
-        } 
-        finally 
+        }
+        finally
         {
             dsocket.close();
         }

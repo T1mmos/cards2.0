@@ -6,7 +6,8 @@ import javax.swing.AbstractAction;
 
 import gent.timdemey.cards.Services;
 
-class AAction extends AbstractAction {
+class AAction extends AbstractAction
+{
 
     public static final String ACTION_QUIT = "action.quit";
     public static final String ACTION_CREATE = "action.create";
@@ -17,24 +18,24 @@ class AAction extends AbstractAction {
     public static final String ACTION_DEBUG = "action.debug";
     public static final String ACTION_UNDO = "action.undo";
     public static final String ACTION_REDO = "action.redo";
-            
+
     private final String action;
-    
+
     protected AAction(String action, String title)
     {
         super(title);
         this.action = action;
         checkEnabled();
     }
-    
+
     @Override
     public final void actionPerformed(ActionEvent e)
     {
         Services.get(IActionService.class).executeAction(action);
     }
-    
+
     protected final void checkEnabled()
     {
         setEnabled(Services.get(IActionService.class).canExecuteAction(action));
-    }    
+    }
 }

@@ -12,19 +12,19 @@ public class NopChangeTracker implements IChangeTracker
     @Override
     public <X> void recordRefSet(StateValueRef<X> reference, X oldValue, X newValue)
     {
-        
+
     }
 
     @Override
     public <X> void recordListAdd(StateListRef<X> ref, X e)
     {
-        
+
     }
 
     @Override
     public <X> void recordListRemove(StateListRef<X> ref, X e)
     {
-        
+
     }
 
     @Override

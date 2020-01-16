@@ -6,12 +6,16 @@ import javax.swing.AbstractAction;
 
 import gent.timdemey.cards.localization.Loc;
 
-public class ActionDebugGC extends AbstractAction {
-    public ActionDebugGC() {
+public class ActionDebugGC extends AbstractAction
+{
+    public ActionDebugGC()
+    {
         super(Loc.get("debug_menuitem_gc"));
     }
+
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent e)
+    {
         System.gc();
     }
 

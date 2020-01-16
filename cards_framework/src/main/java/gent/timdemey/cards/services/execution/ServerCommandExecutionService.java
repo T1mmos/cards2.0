@@ -36,7 +36,7 @@ public class ServerCommandExecutionService extends CommandExecutionServiceBase
         {
             if (command.getSourceId() == state.getServerId())
             {
-                // wtf? 
+                // wtf?
             }
             // send reject command if command.SourceId != server
         }
@@ -55,7 +55,7 @@ public class ServerCommandExecutionService extends CommandExecutionServiceBase
         public void onTcpConnectionAdded(TCP_Connection connection)
         {
             super.onTcpConnectionAdded(connection);
-            
+
             int requiredPlayerCount = Services.get(ICardPlugin.class).getPlayerCount();
 
         }
@@ -78,10 +78,11 @@ public class ServerCommandExecutionService extends CommandExecutionServiceBase
         }
 
     }
-    
+
     @Override
     public void setExecutionListener(IExecutionListener executionListener)
     {
-        throw new UnsupportedOperationException("Currently executionlisteners are not supported in the Server execution service.");
+        throw new UnsupportedOperationException(
+                "Currently executionlisteners are not supported in the Server execution service.");
     }
 }

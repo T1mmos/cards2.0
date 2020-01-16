@@ -1,5 +1,6 @@
 package gent.timdemey.cards.services.configman;
 
-enum ConfigStringKey {
+enum ConfigStringKey
+{
     Debug
 }

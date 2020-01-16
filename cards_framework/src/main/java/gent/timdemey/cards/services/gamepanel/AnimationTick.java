@@ -21,24 +21,26 @@ import gent.timdemey.cards.services.IGamePanelManager;
 import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.scaleman.JScalableImage;
 
-class AnimationTick implements ActionListener {
+class AnimationTick implements ActionListener
+{
 
     private static final long ANIMATION_TIME = 150; // time in ms to have a card placed in position
-    
-    private static final class AnimInfo 
+
+    private static final class AnimInfo
     {
         private long tickStart;
         private Point startPos;
         private Point endPos;
     }
-    
+
     private final Map<JScalableImage, AnimInfo> animations;
     private Timer timer;
-    
-    AnimationTick() {
+
+    AnimationTick()
+    {
         animations = new HashMap<>();
     }
-    
+
     void setTimer(Timer timer)
     {
         Preconditions.checkNotNull(timer);
@@ -55,23 +57,25 @@ class AnimationTick implements ActionListener {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent e)
+    {
         Preconditions.checkArgument(e.getSource() instanceof Timer);
-        
-        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState().getCardGame();
-        
+
+        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState()
+                .getCardGame();
+
         long currTickTime = System.currentTimeMillis();
         for (JScalableImage jcard : new HashSet<>(animations.keySet()))
         {
             AnimInfo animInfo = animations.get(jcard);
             long dt = Math.min(ANIMATION_TIME, currTickTime - animInfo.tickStart);
-            
-            int x = animInfo.startPos.x + (int) (1.0*dt * (animInfo.endPos.x - animInfo.startPos.x) / ANIMATION_TIME);
-            int y = animInfo.startPos.y + (int) (1.0*dt * (animInfo.endPos.y - animInfo.startPos.y) / ANIMATION_TIME);
-            
+
+            int x = animInfo.startPos.x + (int) (1.0 * dt * (animInfo.endPos.x - animInfo.startPos.x) / ANIMATION_TIME);
+            int y = animInfo.startPos.y + (int) (1.0 * dt * (animInfo.endPos.y - animInfo.startPos.y) / ANIMATION_TIME);
+
             jcard.setBounds(x, y, jcard.getWidth(), jcard.getHeight());
-            
-            if (x == animInfo.endPos.x && y == animInfo.endPos.y) 
+
+            if (x == animInfo.endPos.x && y == animInfo.endPos.y)
             {
                 animations.remove(jcard);
                 UUID id = Services.get(IScalableImageManager.class).getUUID(jcard);
@@ -79,11 +83,11 @@ class AnimationTick implements ActionListener {
                 Services.get(IGamePanelManager.class).updatePosition(card);
             }
         }
-        
+
         if (animations.isEmpty())
         {
             timer.stop();
-        }        
+        }
     }
 
 }

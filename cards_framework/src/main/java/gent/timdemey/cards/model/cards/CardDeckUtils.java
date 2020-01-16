@@ -5,29 +5,33 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import gent.timdemey.cards.model.state.State;
 
-public final class CardDeckUtils {
+public final class CardDeckUtils
+{
 
-    private CardDeckUtils() {
+    private CardDeckUtils()
+    {
 
     }
 
     /**
      * Creates a deck of all 52 cards.
+     * 
      * @return
      */
     public static Card[] createFullDeck()
     {
         return createDeck(Suit.values(), Value.values());
     }
-    
+
     /**
-     * Creates a deck with 32 cards - all suits with values 7, 8, 9, 10, 
-     * J, Q, K and A. Can be used with Manillen.
+     * Creates a deck with 32 cards - all suits with values 7, 8, 9, 10, J, Q, K and
+     * A. Can be used with Manillen.
+     * 
      * @return
      */
     public static Card[] create7toADeck()
     {
-        Value [] values = new Value[8];
+        Value[] values = new Value[8];
         values[0] = Value.V_7;
         values[1] = Value.V_8;
         values[2] = Value.V_9;
@@ -38,8 +42,8 @@ public final class CardDeckUtils {
         values[7] = Value.V_A;
         return createDeck(Suit.values(), values);
     }
-    
-    public static Card[] createDeck(Suit [] suits, Value [] values)
+
+    public static Card[] createDeck(Suit[] suits, Value[] values)
     {
         Card[] cards = new Card[values.length * suits.length];
         int i = 0;
@@ -52,14 +56,15 @@ public final class CardDeckUtils {
             }
         }
         return cards;
-    }    
-    
+    }
+
     // Implementing Fisher-Yates shuffle
     public static void shuffleDeck(Card[] deck)
     {
         // If running on Java 6 or older, use `new Random()` on RHS here
         Random rnd = ThreadLocalRandom.current();
-        for (int i = deck.length - 1; i > 0; i--) {
+        for (int i = deck.length - 1; i > 0; i--)
+        {
             int index = rnd.nextInt(i + 1);
             // Simple swap
             Card a = deck[index];

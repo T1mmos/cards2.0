@@ -10,7 +10,7 @@ final class MapperBase implements IMapper
     {
         private Class<?> srcClazz;
         private Class<?> dstClazz;
-        
+
         private MappersKey(Class<?> srcClazz, Class<?> dstClazz)
         {
             if (srcClazz == null)
@@ -24,7 +24,7 @@ final class MapperBase implements IMapper
             this.srcClazz = srcClazz;
             this.dstClazz = dstClazz;
         }
-        
+
         @Override
         public boolean equals(Object obj)
         {
@@ -36,7 +36,7 @@ final class MapperBase implements IMapper
             {
                 return false;
             }
-            
+
             MappersKey other = (MappersKey) obj;
             if (!srcClazz.equals(other.srcClazz))
             {
@@ -48,63 +48,63 @@ final class MapperBase implements IMapper
             }
             return true;
         }
-        
+
         @Override
         public int hashCode()
         {
             return Objects.hash(srcClazz, dstClazz);
         }
     }
-    
+
     MapperBase()
     {
-    	
+
     }
-    
-    private Map<MappersKey, MappingFunction<?,?>> _mappers = new HashMap<>();
+
+    private Map<MappersKey, MappingFunction<?, ?>> _mappers = new HashMap<>();
 
     @Override
-    public final <SRC,DST> DST map(SRC src, Class<DST> dstClazz)
+    public final <SRC, DST> DST map(SRC src, Class<DST> dstClazz)
     {
         if (src == null)
         {
             return null;
         }
         Class<?> srcClazz = src.getClass();
-        
+
         MappersKey bestKey = null;
         for (MappersKey key : _mappers.keySet())
         {
-        	if (!key.srcClazz.equals(srcClazz))
-        	{
-        		continue;
-        	}
-        	if (key.dstClazz.equals(dstClazz))
-        	{
-        		bestKey = key;
-        		break;
-        	}
-        	if (key.dstClazz.isAssignableFrom(dstClazz))
-        	{
-        		if (bestKey == null || bestKey.dstClazz.isAssignableFrom(key.dstClazz))
-        		{
-        			bestKey = key;
-        		}
-        	}
+            if (!key.srcClazz.equals(srcClazz))
+            {
+                continue;
+            }
+            if (key.dstClazz.equals(dstClazz))
+            {
+                bestKey = key;
+                break;
+            }
+            if (key.dstClazz.isAssignableFrom(dstClazz))
+            {
+                if (bestKey == null || bestKey.dstClazz.isAssignableFrom(key.dstClazz))
+                {
+                    bestKey = key;
+                }
+            }
         }
-        
-        MappingFunction<SRC, DST> func = (MappingFunction<SRC,DST>) _mappers.get(bestKey);
+
+        MappingFunction<SRC, DST> func = (MappingFunction<SRC, DST>) _mappers.get(bestKey);
         DST dst = func.map(src);
         return dst;
     }
-    
-    public <SRC, DST> void addMapping (Class<SRC> srcClazz, Class<DST> dstClazz, MappingFunction<SRC, DST> mappingFunc)
+
+    public <SRC, DST> void addMapping(Class<SRC> srcClazz, Class<DST> dstClazz, MappingFunction<SRC, DST> mappingFunc)
     {
         MappersKey key = new MappersKey(srcClazz, dstClazz);
         _mappers.put(key, mappingFunc);
     }
-    
-    private <SRC, DST> MappingFunction<SRC, DST> getMapping (Class<SRC> src, Class<DST> dst)
+
+    private <SRC, DST> MappingFunction<SRC, DST> getMapping(Class<SRC> src, Class<DST> dst)
     {
         MappersKey key = new MappersKey(src, dst);
         MappingFunction<SRC, DST> mappingFunc = (MappingFunction<SRC, DST>) _mappers.get(key);

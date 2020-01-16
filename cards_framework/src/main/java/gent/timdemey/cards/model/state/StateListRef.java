@@ -22,7 +22,7 @@ public class StateListRef<X> extends StateRef implements List<X>
     {
         boolean added = list.add(e);
 
-        if(added)
+        if (added)
         {
             getChangeTracker().recordListAdd(this, e);
         }
@@ -41,7 +41,7 @@ public class StateListRef<X> extends StateRef implements List<X>
     public boolean addAll(Collection<? extends X> c)
     {
         boolean added = list.addAll(c);
-        if(added)
+        if (added)
         {
             for (X x : c)
             {
@@ -55,7 +55,7 @@ public class StateListRef<X> extends StateRef implements List<X>
     public boolean addAll(int index, Collection<? extends X> c)
     {
         boolean added = list.addAll(index, c);
-        if(added)
+        if (added)
         {
             for (X x : c)
             {
@@ -134,7 +134,7 @@ public class StateListRef<X> extends StateRef implements List<X>
     public boolean remove(Object o)
     {
         boolean removed = list.remove(o);
-        if(removed)
+        if (removed)
         {
             X x = (X) o;
             getChangeTracker().recordListRemove(this, x);
@@ -146,7 +146,7 @@ public class StateListRef<X> extends StateRef implements List<X>
     public X remove(int index)
     {
         X x = list.remove(index);
-        if(x != null)
+        if (x != null)
         {
             getChangeTracker().recordListRemove(this, x);
         }
@@ -157,7 +157,7 @@ public class StateListRef<X> extends StateRef implements List<X>
     public boolean removeAll(Collection<?> c)
     {
         boolean removed = list.removeAll(c);
-        if(removed)
+        if (removed)
         {
             for (Object o : c)
             {
@@ -172,8 +172,7 @@ public class StateListRef<X> extends StateRef implements List<X>
     public boolean retainAll(Collection<?> c)
     {
         boolean removed = false;
-        removeIf(x ->
-        {
+        removeIf(x -> {
             boolean remove = !c.contains(x);
             getChangeTracker().recordListRemove(this, x);
             return remove;
@@ -186,7 +185,7 @@ public class StateListRef<X> extends StateRef implements List<X>
     public X set(int index, X element)
     {
         X xPrev = list.set(index, element);
-        if(xPrev != null)
+        if (xPrev != null)
         {
             getChangeTracker().recordListRemove(this, xPrev);
         }

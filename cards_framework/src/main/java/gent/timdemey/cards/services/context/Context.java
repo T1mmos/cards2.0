@@ -15,27 +15,27 @@ public final class Context
 {
     // calculated
     private final IChangeTracker changeTracker;
-    
+
     final LimitedContext limitedContext;
-    
-    private final List<IStateListener> stateListeners;  
-    
-    Context(ContextType contextType, ICommandExecutionService cmdExecService, boolean trackChanges) 
-    {        
+
+    private final List<IStateListener> stateListeners;
+
+    Context(ContextType contextType, ICommandExecutionService cmdExecService, boolean trackChanges)
+    {
         limitedContext = new LimitedContext(contextType, cmdExecService);
-                
+
         if (trackChanges)
         {
             limitedContext.setExecutionListener(this::onExecuted);
         }
-        
+
         this.stateListeners = new ArrayList<>();
         this.changeTracker = trackChanges ? new StateChangeTracker() : new NopChangeTracker();
     }
-    
-    public ReadOnlyState getReadOnlyState() 
+
+    public ReadOnlyState getReadOnlyState()
     {
-       return ReadOnlyEntityFactory.getOrCreateState(limitedContext.getState());
+        return ReadOnlyEntityFactory.getOrCreateState(limitedContext.getState());
     }
 
     public ContextType getContextType()
@@ -59,34 +59,37 @@ public final class Context
         boolean isCurrentContext = contextServ.isCurrentContext(getContextType());
         if (!isCurrentContext)
         {
-            throw new IllegalStateException("You can only schedule on the Context on the correct thread, expected context type = " + getContextType());
+            throw new IllegalStateException(
+                    "You can only schedule on the Context on the correct thread, expected context type = "
+                            + getContextType());
         }
-        
+
         limitedContext.schedule(command);
     }
-    
+
     public void addStateListener(IStateListener stateListener)
     {
         stateListeners.add(stateListener);
     }
-    
+
     public void removeStateListener(IStateListener stateListener)
     {
         stateListeners.remove(stateListener);
     }
-    
-    // Callback from execution service that lets us know that a command or a chain of commands was executed.
+
+    // Callback from execution service that lets us know that a command or a chain
+    // of commands was executed.
     // We can therefore now update the state listeners.
     private void onExecuted()
     {
         // get a list of all changes since the last reset()
         List<Change<?>> changes = changeTracker.getChangeList();
-        
+
         for (IStateListener sl : stateListeners)
         {
             sl.onChange(changes);
         }
-        
+
         // reset the tracker as we updated all listeners
         changeTracker.reset();
     }

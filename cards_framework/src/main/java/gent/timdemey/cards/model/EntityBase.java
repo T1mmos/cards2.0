@@ -5,17 +5,17 @@ import java.util.UUID;
 public abstract class EntityBase
 {
     public final UUID id;
-    
+
     protected EntityBase()
     {
         this(UUID.randomUUID());
     }
-    
+
     protected EntityBase(UUID id)
     {
         this.id = id;
     }
-    
+
     @Override
     public final boolean equals(Object obj)
     {
@@ -28,15 +28,15 @@ public abstract class EntityBase
             return false;
         }
         EntityBase other = (EntityBase) obj;
-        
+
         if (!this.id.equals(other.id))
         {
             return false;
         }
-        
+
         return true;
     }
-    
+
     @Override
     public final int hashCode()
     {

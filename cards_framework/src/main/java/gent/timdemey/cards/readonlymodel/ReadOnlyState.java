@@ -11,44 +11,44 @@ public class ReadOnlyState extends ReadOnlyEntityBase<State>
     {
         super(state);
     }
-    
+
     public ReadOnlyCardGame getCardGame()
     {
         return ReadOnlyEntityFactory.getOrCreateCardGame(entity.getCardGame());
     }
-    
+
     public ReadOnlyEntityList<ReadOnlyPlayer> getPlayers()
     {
-    	return ReadOnlyEntityFactory.getOrCreatePlayerList(entity.getPlayers());
+        return ReadOnlyEntityFactory.getOrCreatePlayerList(entity.getPlayers());
     }
-    
+
     public ReadOnlyEntityList<ReadOnlyPlayer> getRemotePlayers()
     {
-    	return ReadOnlyEntityFactory.getOrCreatePlayerList(entity.getRemotePlayers());
+        return ReadOnlyEntityFactory.getOrCreatePlayerList(entity.getRemotePlayers());
     }
-    
+
     public CommandHistory getCommandHistory()
     {
         return entity.getCommandHistory();
     }
-    
+
     public ReadOnlyEntityList<ReadOnlyServer> getServers()
     {
         return ReadOnlyEntityFactory.getOrCreateServerList(entity.getServers());
     }
-    
+
     public UUID getLocalId()
     {
         return entity.getLocalId();
     }
 
-	public String getServerMessage()
-	{
-		return entity.getServerMessage();
-	}
+    public String getServerMessage()
+    {
+        return entity.getServerMessage();
+    }
 
-	public UUID getServerId()
-	{
-		return entity.getServerId();
-	}
+    public UUID getServerId()
+    {
+        return entity.getServerId();
+    }
 }

@@ -34,10 +34,12 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMu
             if (column == 0)
             {
                 return Loc.get("columntitle_servername");
-            } else if (column == 1)
+            }
+            else if (column == 1)
             {
                 return Loc.get("columntitle_ipaddress");
-            } else
+            }
+            else
             {
                 throw new UnsupportedOperationException("Table only has 2 columns");
             }
@@ -46,15 +48,17 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMu
         @Override
         public Object getValueAt(int rowIndex, int columnIndex)
         {
-            IContextService contextServ = Services.get(IContextService.class);            
+            IContextService contextServ = Services.get(IContextService.class);
             ReadOnlyServer server = contextServ.getThreadContext().getReadOnlyState().getServers().get(rowIndex);
             if (columnIndex == 0)
             {
                 return server.getServerName();
-            } else if (columnIndex == 1)
+            }
+            else if (columnIndex == 1)
             {
                 return server.getInetAddress().getHostAddress() + ":" + server.getTcpPort();
-            } else
+            }
+            else
             {
                 throw new UnsupportedOperationException("Table only has 2 columns");
             }
@@ -63,7 +67,7 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMu
         @Override
         public int getRowCount()
         {
-            IContextService contextServ = Services.get(IContextService.class);            
+            IContextService contextServ = Services.get(IContextService.class);
             int size = contextServ.getThreadContext().getReadOnlyState().getServers().size();
             return size;
         }
@@ -161,10 +165,12 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMu
         if (dbType == DialogButtonType.Ok)
         {
             int row = table_servers.getSelectedRow();
-            ReadOnlyServer server = Services.get(IContextService.class).getThreadContext().getReadOnlyState().getServers().get(row);            
+            ReadOnlyServer server = Services.get(IContextService.class).getThreadContext().getReadOnlyState()
+                    .getServers().get(row);
             String playerName = tf_name.getText();
             return new JoinMultiplayerGameData(server, playerName);
-        } else
+        }
+        else
         {
             return null;
         }

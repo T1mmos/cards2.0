@@ -7,26 +7,26 @@ import java.awt.image.BufferedImage;
 
 import com.google.common.base.Preconditions;
 
-class BufferedImageScaler {
-    
+class BufferedImageScaler
+{
+
     private final BufferedImage srcImage;
     private final int targetWidth;
     private final int targetHeight;
     private final boolean higherQuality = true;
-    
-    BufferedImageScaler (BufferedImage srcImage, int targetWidth, int targetHeight)
+
+    BufferedImageScaler(BufferedImage srcImage, int targetWidth, int targetHeight)
     {
         Preconditions.checkNotNull(srcImage);
         Preconditions.checkArgument(targetWidth > 0);
         Preconditions.checkNotNull(targetHeight > 0);
-        
+
         int maxWidth = srcImage.getWidth();
         int maxHeight = srcImage.getHeight();
-        
+
         double ratioW = 1.0 * targetWidth / maxWidth;
         double ratioH = 1.0 * targetHeight / maxHeight;
-        
-        
+
         if (ratioW > 1.0 && ratioH > 1.0)
         {
             double ratio = Math.max(ratioW, ratioH);
@@ -48,39 +48,48 @@ class BufferedImageScaler {
             this.targetWidth = targetWidth;
             this.targetHeight = targetHeight;
         }
-            
+
         this.srcImage = srcImage;
     }
-    
-    BufferedImage getScaledInstance() {
+
+    BufferedImage getScaledInstance()
+    {
         int type = (srcImage.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB
                 : BufferedImage.TYPE_INT_ARGB;
         BufferedImage ret = (BufferedImage) srcImage;
         int w, h;
-        if (higherQuality) {
+        if (higherQuality)
+        {
             // Use multi-step technique: start with original size, then
             // scale down in multiple passes with drawImage()
             // until the target size is reached
             w = srcImage.getWidth();
             h = srcImage.getHeight();
-        } else {
+        }
+        else
+        {
             // Use one-step technique: scale directly from original
             // size to target size with a single drawImage() call
             w = targetWidth;
             h = targetHeight;
         }
 
-        do {
-            if (higherQuality && w > targetWidth) {
+        do
+        {
+            if (higherQuality && w > targetWidth)
+            {
                 w /= 2;
-                if (w < targetWidth) {
+                if (w < targetWidth)
+                {
                     w = targetWidth;
                 }
             }
 
-            if (higherQuality && h > targetHeight) {
+            if (higherQuality && h > targetHeight)
+            {
                 h /= 2;
-                if (h < targetHeight) {
+                if (h < targetHeight)
+                {
                     h = targetHeight;
                 }
             }
@@ -92,7 +101,8 @@ class BufferedImageScaler {
             g2.dispose();
 
             ret = tmp;
-        } while (w != targetWidth || h != targetHeight);
+        }
+        while (w != targetWidth || h != targetHeight);
 
         return ret;
     }

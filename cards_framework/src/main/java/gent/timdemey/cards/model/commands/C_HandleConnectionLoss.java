@@ -13,8 +13,8 @@ import gent.timdemey.cards.services.context.ContextType;
 public class C_HandleConnectionLoss extends CommandBase
 {
     public C_HandleConnectionLoss(TCP_Connection connection, UUID id)
-    {        
-    	// todo
+    {
+        // todo
     }
 
     @Override
@@ -22,25 +22,27 @@ public class C_HandleConnectionLoss extends CommandBase
     {
         return contextType == ContextType.Client || contextType == ContextType.UI;
     }
-    
+
     @Override
-    public void execute(Context context, ContextType contextType, State state) {
-        
+    public void execute(Context context, ContextType contextType, State state)
+    {
+
         if (contextType == ContextType.UI)
         {
             state.getPlayers().removeAll(state.getRemotePlayers());
             state.setServerId(null);
-            
-            Services.get(IDialogService.class).ShowMessage(Loc.get("dialog_title_connectionLost"), Loc.get("msg_connectionLost"));
+
+            Services.get(IDialogService.class).ShowMessage(Loc.get("dialog_title_connectionLost"),
+                    Loc.get("msg_connectionLost"));
         }
         else if (contextType == ContextType.Client)
         {
-        	state.getPlayers().removeAll(state.getRemotePlayers());
+            state.getPlayers().removeAll(state.getRemotePlayers());
             state.setServerId(null);
-            
+
             reschedule(ContextType.UI);
         }
-        else 
+        else
         {
             throw new IllegalStateException();
         }

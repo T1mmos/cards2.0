@@ -36,10 +36,10 @@ public final class ContextService implements IContextService
         if (SwingUtilities.isEventDispatchThread())
         {
             type = ContextType.UI;
-        } 
+        }
         else if (Thread.currentThread() instanceof CommandExecutionThread)
         {
-            CommandExecutionThread cmdExecThread = (CommandExecutionThread) Thread.currentThread();            
+            CommandExecutionThread cmdExecThread = (CommandExecutionThread) Thread.currentThread();
             type = cmdExecThread.contextType;
         }
         else
@@ -77,7 +77,7 @@ public final class ContextService implements IContextService
     public void initialize(ContextType type, ICommandExecutionService cmdExecService)
     {
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
-        
+
         boolean trackChanges = type == ContextType.UI;
         Context context = new Context(type, cmdExecService, trackChanges);
 

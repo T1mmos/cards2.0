@@ -11,17 +11,18 @@ public class ReadOnlyServer extends ReadOnlyEntityBase<Server>
     {
         super(entity);
     }
-    
-    public String getServerName() {
+
+    public String getServerName()
+    {
         return entity.serverName;
     }
-    
-    public InetAddress getInetAddress ()
+
+    public InetAddress getInetAddress()
     {
         return entity.inetAddress;
     }
-    
-    public int getTcpPort ()
+
+    public int getTcpPort()
     {
         return entity.tcpport;
     }

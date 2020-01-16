@@ -9,14 +9,14 @@ import gent.timdemey.cards.services.context.ContextType;
 public class C_DenyClient extends CommandBase
 {
     String serverMessage;
-    
-    C_DenyClient(String serverMessage) 
+
+    C_DenyClient(String serverMessage)
     {
         this.serverMessage = serverMessage;
     }
 
     @Override
-    public void execute(Context context, ContextType type, State state) 
+    public void execute(Context context, ContextType type, State state)
     {
         if (type == ContextType.Client)
         {
@@ -24,9 +24,9 @@ public class C_DenyClient extends CommandBase
         }
         else if (type == ContextType.UI)
         {
-            Services.get(IDialogService.class).ShowMessage("test", "not welcome: "+serverMessage);
+            Services.get(IDialogService.class).ShowMessage("test", "not welcome: " + serverMessage);
         }
-        else 
+        else
         {
             throw new IllegalStateException();
         }

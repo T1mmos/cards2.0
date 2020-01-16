@@ -53,7 +53,7 @@ class CardDragListener extends MouseAdapter
     public void mouseDragged(MouseEvent e)
     {
 
-        if(!dragStates.isEmpty())
+        if (!dragStates.isEmpty())
         {
             int mouse_x = e.getX();
             int mouse_y = e.getY();
@@ -86,7 +86,7 @@ class CardDragListener extends MouseAdapter
         GamePanel gpMan = (GamePanel) e.getComponent();
 
         Component comp = gpMan.getComponentAt(e.getPoint());
-        if(!(comp instanceof JScalableImage))
+        if (!(comp instanceof JScalableImage))
         {
             return;
         }
@@ -97,7 +97,7 @@ class CardDragListener extends MouseAdapter
         IOperationsService operations = Services.get(IOperationsService.class);
         ReadOnlyCardGame cardGame = context.getReadOnlyState().getCardGame();
 
-        if(cardGame.isCard(id))
+        if (cardGame.isCard(id))
         {
             ReadOnlyCard card = cardGame.getCard(id);
             ReadOnlyCardStack stack = card.getCardStack();
@@ -110,7 +110,7 @@ class CardDragListener extends MouseAdapter
             boolean pull = pullable && (!useable || useable && e.getClickCount() % 2 == 1);
             boolean use = useable && (!pullable || pullable && e.getClickCount() % 2 == 0);
 
-            if(pull)
+            if (pull)
             {
                 List<ReadOnlyCard> cards = stack.getCardsFrom(card);
 
@@ -120,7 +120,8 @@ class CardDragListener extends MouseAdapter
                 for (int i = 0; i < cards.size(); i++)
                 {
                     ReadOnlyCard currentCard = cards.get(i);
-                    JScalableImage currentJcard = Services.get(IScalableImageManager.class).getJScalableImage(currentCard.getId());
+                    JScalableImage currentJcard = Services.get(IScalableImageManager.class)
+                            .getJScalableImage(currentCard.getId());
                     int card_xstart = currentJcard.getLocation().x;
                     int card_ystart = currentJcard.getLocation().y;
 
@@ -131,7 +132,7 @@ class CardDragListener extends MouseAdapter
                     draggedImages.add(currentJcard);
                 }
             }
-            else if(use)
+            else if (use)
             {
                 context.schedule(cmdUse);
             }
@@ -140,13 +141,13 @@ class CardDragListener extends MouseAdapter
             mouse_ystart = e.getY();
 
         }
-        else if(cardGame.isCardStack(id))
+        else if (cardGame.isCardStack(id))
         {
             ReadOnlyCardStack cardStack = Services.get(IPositionManager.class).getCardStackAt(e.getPoint());
-            if(cardStack != null)
+            if (cardStack != null)
             {
                 CommandBase cmdUse = operations.getCardStackUseCommand(id);
-                if(context.canExecute(cmdUse))
+                if (context.canExecute(cmdUse))
                 {
                     context.schedule(cmdUse);
                 }
@@ -160,7 +161,7 @@ class CardDragListener extends MouseAdapter
         Context context = Services.get(IContextService.class).getThreadContext();
         ReadOnlyCardGame cardGame = context.getReadOnlyState().getCardGame();
 
-        if(!draggedImages.isEmpty())
+        if (!draggedImages.isEmpty())
         {
             // check if first card is over another card or an empty card stack
             boolean pushed = false;
@@ -169,16 +170,16 @@ class CardDragListener extends MouseAdapter
 
             for (Component comp : rootJCard.getParent().getComponents()) // inefficient?
             {
-                if(!(comp instanceof JScalableImage))
+                if (!(comp instanceof JScalableImage))
                 {
                     continue;
                 }
                 JScalableImage otherScalable = (JScalableImage) comp;
-                if(draggedImages.contains(otherScalable))
+                if (draggedImages.contains(otherScalable))
                 {
                     continue;
                 }
-                if(!rootJCard.getBounds().intersects(otherScalable.getBounds()))
+                if (!rootJCard.getBounds().intersects(otherScalable.getBounds()))
                 {
                     continue;
                 }
@@ -186,11 +187,11 @@ class CardDragListener extends MouseAdapter
                 // intersection with a JScalableImage
                 UUID id = Services.get(IScalableImageManager.class).getUUID(otherScalable);
                 ReadOnlyCardStack dstCardStack;
-                if(cardGame.isCard(id))
+                if (cardGame.isCard(id))
                 {
                     dstCardStack = cardGame.getCard(id).getCardStack();
                 }
-                else if(cardGame.isCardStack(id))
+                else if (cardGame.isCardStack(id))
                 {
                     dstCardStack = cardGame.getCardStack(id);
                 }
@@ -199,15 +200,17 @@ class CardDragListener extends MouseAdapter
                     continue;
                 }
 
-                List<ReadOnlyCard> cards = draggedImages.stream().map(jcard -> Services.get(IScalableImageManager.class).getUUID(jcard)).map(cardId -> cardGame
-                    .getCard(cardId)).collect(Collectors.toList());
+                List<ReadOnlyCard> cards = draggedImages.stream()
+                        .map(jcard -> Services.get(IScalableImageManager.class).getUUID(jcard))
+                        .map(cardId -> cardGame.getCard(cardId)).collect(Collectors.toList());
                 ReadOnlyEntityList<ReadOnlyCard> roCards = new ReadOnlyEntityList<>(cards);
 
                 IOperationsService operationsServ = Services.get(IOperationsService.class);
                 CommandBase cmdPush = operationsServ.getPushCommand(dstCardStack.getId(), roCards.getIds());
-                if(context.canExecute(cmdPush))
+                if (context.canExecute(cmdPush))
                 {
-                    CommandBase cmdMove = operationsServ.getMoveCommand(cards.get(0).getCardStack().getId(), dstCardStack.getId(), cards.get(0).getId());
+                    CommandBase cmdMove = operationsServ.getMoveCommand(cards.get(0).getCardStack().getId(),
+                            dstCardStack.getId(), cards.get(0).getId());
                     context.schedule(cmdMove);
                     pushed = true;
                     break;
@@ -225,7 +228,7 @@ class CardDragListener extends MouseAdapter
              * Services.get(IGameOperations.class).move(cards.get(0).getCardStack(),
              * cardStack, cards.get(0)); pushed = true; break; } } }
              */
-            if(!pushed)
+            if (!pushed)
             {
                 for (int i = 0; i < draggedImages.size(); i++)
                 {

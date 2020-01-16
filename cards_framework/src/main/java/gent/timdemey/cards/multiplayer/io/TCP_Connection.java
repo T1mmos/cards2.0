@@ -11,47 +11,53 @@ import java.net.Socket;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
 
-public final class TCP_Connection {
-    
+public final class TCP_Connection
+{
+
     private final Socket socket;
     private final Thread thread;
     private final TCP_ConnectionPool pool;
-    
-    TCP_Connection (Socket socket, TCP_ConnectionPool pool)
+
+    TCP_Connection(Socket socket, TCP_ConnectionPool pool)
     {
         this.socket = socket;
         this.thread = new Thread(() -> listen(), "TCP Connection to " + getRemote());
         this.pool = pool;
     }
-    
+
     public String getRemote()
     {
         return ((InetSocketAddress) socket.getRemoteSocketAddress()).getAddress().getHostAddress();
     }
-    
+
     void start()
     {
         this.thread.start();
     }
-    
-    void stop ()
+
+    void stop()
     {
-        try {
+        try
+        {
             this.socket.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
         this.thread.interrupt();
     }
-    
+
     private void listen()
     {
         pool.onTcpConnectionStarted(this);
-        try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), IoConstants.TCP_CHARSET));
-            
-            while(true)
+        try
+        {
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(socket.getInputStream(), IoConstants.TCP_CHARSET));
+
+            while (true)
             {
                 String str_in = reader.readLine();
                 if (str_in == null)
@@ -60,21 +66,27 @@ public final class TCP_Connection {
                 }
                 pool.onTcpMessageReceived(this, str_in);
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             pool.onTcpConnectionEnded(this);
             Services.get(ILogManager.class).log("Following exception may be expected (connection closing):");
             Services.get(ILogManager.class).log(e);
         }
     }
-    
-    public void send (String s)
+
+    public void send(String s)
     {
-        try {
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), IoConstants.TCP_CHARSET));
+        try
+        {
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(socket.getOutputStream(), IoConstants.TCP_CHARSET));
             writer.write(s);
             writer.newLine();
             writer.flush();
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

@@ -8,7 +8,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.model.EntityBase;
 
-public class EntityStateListRef<X extends EntityBase> extends StateListRef<X> 
+public class EntityStateListRef<X extends EntityBase> extends StateListRef<X>
 {
     public EntityStateListRef(Property property, UUID entityId, List<X> wrappee)
     {

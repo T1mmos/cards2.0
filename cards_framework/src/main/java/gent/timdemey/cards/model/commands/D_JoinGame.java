@@ -29,7 +29,8 @@ public class D_JoinGame extends CommandBase
 
         if (data.closeType == DialogButtonType.Ok)
         {
-            schedule(ContextType.UI, new C_Connect(data.payload.server.getInetAddress(), data.payload.server.getTcpPort(), data.payload.playerName));
+            schedule(ContextType.UI, new C_Connect(data.payload.server.getInetAddress(),
+                    data.payload.server.getTcpPort(), data.payload.playerName));
         }
     }
 

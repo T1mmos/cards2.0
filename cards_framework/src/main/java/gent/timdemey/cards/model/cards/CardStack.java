@@ -14,97 +14,97 @@ import gent.timdemey.cards.model.state.Property;
 public class CardStack extends EntityBase
 {
     public static final Property Cards = Property.of(CardStack.class, "Cards");
-    
-	public final EntityStateListRef<Card> cards;
-	public final String cardStackType;
-	public final int typeNumber;
 
-	public CardStack(String cardStackType, int typeNumber)
-	{
-		this(UUID.randomUUID(), cardStackType, typeNumber);
-	}
+    public final EntityStateListRef<Card> cards;
+    public final String cardStackType;
+    public final int typeNumber;
 
-	public CardStack(UUID id, String cardStackType, int typeNumber)
-	{
-		super(id);
-		
-		this.cardStackType = cardStackType;
-		this.typeNumber = typeNumber;
-		this.cards = new EntityStateListRef<>(Cards, id, new ArrayList<>());
-	}
+    public CardStack(String cardStackType, int typeNumber)
+    {
+        this(UUID.randomUUID(), cardStackType, typeNumber);
+    }
 
-	public Card getLowestCard()
-	{
-		Preconditions.checkState(!cards.isEmpty());
+    public CardStack(UUID id, String cardStackType, int typeNumber)
+    {
+        super(id);
 
-		Card card = cards.get(0);
-		return card;
-	}
+        this.cardStackType = cardStackType;
+        this.typeNumber = typeNumber;
+        this.cards = new EntityStateListRef<>(Cards, id, new ArrayList<>());
+    }
 
-	public Card getHighestCard()
-	{
-		Preconditions.checkState(!cards.isEmpty());
+    public Card getLowestCard()
+    {
+        Preconditions.checkState(!cards.isEmpty());
 
-		return cards.get(cards.size() - 1);
-	}
+        Card card = cards.get(0);
+        return card;
+    }
 
-	public EntityStateListRef<Card> getCardsFrom(Card card)
-	{
-		Preconditions.checkArgument(cards.contains(card));
+    public Card getHighestCard()
+    {
+        Preconditions.checkState(!cards.isEmpty());
 
-		int idx = cards.indexOf(card);
-		return EntityStateListRef.asReadOnly(cards.subList(idx, cards.size()));
-	}
+        return cards.get(cards.size() - 1);
+    }
 
-	public List<Card> getHighestCards(int count)
-	{
-		Preconditions.checkArgument(0 < count && count <= cards.size());
+    public EntityStateListRef<Card> getCardsFrom(Card card)
+    {
+        Preconditions.checkArgument(cards.contains(card));
 
-		return new ArrayList<>(cards.subList(cards.size() - count, cards.size()));
-	}
+        int idx = cards.indexOf(card);
+        return EntityStateListRef.asReadOnly(cards.subList(idx, cards.size()));
+    }
 
-	public int getCardCountFrom(Card card)
-	{
-		Preconditions.checkArgument(cards.contains(card));
+    public List<Card> getHighestCards(int count)
+    {
+        Preconditions.checkArgument(0 < count && count <= cards.size());
 
-		int idx = cards.indexOf(card);
-		return cards.size() - idx;
-	}
+        return new ArrayList<>(cards.subList(cards.size() - count, cards.size()));
+    }
 
-	public int getInvisibleCardCount()
-	{
-		if (cards.size() == 0)
-		{
-			return 0;
-		}
-		int idx = 0;
-		while (idx < cards.size() && !cards.get(idx).visibleRef.get())
-		{
-			idx++;
-		}
-		return idx;
-	}
+    public int getCardCountFrom(Card card)
+    {
+        Preconditions.checkArgument(cards.contains(card));
 
-	public EntityStateListRef<Card> getCards()
-	{
-		return cards;
-	}
+        int idx = cards.indexOf(card);
+        return cards.size() - idx;
+    }
 
-	public void addAll(List<Card> cards)
-	{
-		List<Card> intersect = new ArrayList<>(this.cards);
-		intersect.retainAll(cards);
-		if (intersect.size() > 0)
-		{
-			throw new IllegalStateException("Attempted to add cards " + Arrays.toString(intersect.toArray())
-			        + ", that are already in this stack: " + toString());
-		}
-		this.cards.addAll(cards);
-	}
+    public int getInvisibleCardCount()
+    {
+        if (cards.size() == 0)
+        {
+            return 0;
+        }
+        int idx = 0;
+        while (idx < cards.size() && !cards.get(idx).visibleRef.get())
+        {
+            idx++;
+        }
+        return idx;
+    }
 
-	@Override
-	public String toString()
-	{
-		return "[" + cardStackType + "#" + typeNumber + ", #cards=" + cards.size() + ", id=" + id + "]";
-	}
+    public EntityStateListRef<Card> getCards()
+    {
+        return cards;
+    }
+
+    public void addAll(List<Card> cards)
+    {
+        List<Card> intersect = new ArrayList<>(this.cards);
+        intersect.retainAll(cards);
+        if (intersect.size() > 0)
+        {
+            throw new IllegalStateException("Attempted to add cards " + Arrays.toString(intersect.toArray())
+                    + ", that are already in this stack: " + toString());
+        }
+        this.cards.addAll(cards);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "[" + cardStackType + "#" + typeNumber + ", #cards=" + cards.size() + ", id=" + id + "]";
+    }
 }

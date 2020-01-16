@@ -8,32 +8,33 @@ import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
-public class C_DropPlayer extends CommandBase {
+public class C_DropPlayer extends CommandBase
+{
 
     private final UUID playerId;
-    
-    public C_DropPlayer(UUID playerId) 
+
+    public C_DropPlayer(UUID playerId)
     {
         this.playerId = playerId;
     }
-    
+
     @Override
     protected boolean canExecute(Context context, ContextType type, State state)
     {
         return true;
     }
-    
+
     @Override
-    public void execute(Context context, ContextType contextType, State state) 
+    public void execute(Context context, ContextType contextType, State state)
     {
-    	for (Player player : state.getPlayers())
-    	{
-    		if (player.id.equals(playerId))
-    		{
-    			state.getPlayers().remove(player);         
-    		}
-    	}
-        
+        for (Player player : state.getPlayers())
+        {
+            if (player.id.equals(playerId))
+            {
+                state.getPlayers().remove(player);
+            }
+        }
+
         if (contextType == ContextType.Client)
         {
             reschedule(ContextType.UI);
@@ -42,9 +43,9 @@ public class C_DropPlayer extends CommandBase {
         {
             String json = CommandDtoMapper.toJson(this);
             for (Player player : state.getRemotePlayers())
-        	{
-        		state.getTcpConnectionPool().getConnection(player.id).send(json);
-        	}
+            {
+                state.getTcpConnectionPool().getConnection(player.id).send(json);
+            }
         }
     }
 

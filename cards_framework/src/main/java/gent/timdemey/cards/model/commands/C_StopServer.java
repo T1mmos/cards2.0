@@ -13,25 +13,25 @@ public class C_StopServer extends CommandBase
     {
         return true;
     }
-    
+
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
         CheckNotContext(type, ContextType.Client);
-        
+
         if (type == ContextType.UI)
         {
             reschedule(ContextType.Server);
             return;
         }
-        
+
         UDP_ServiceAnnouncer udpServAnnouncer = state.getUdpServiceAnnouncer();
         if (udpServAnnouncer != null)
         {
             udpServAnnouncer.stop();
             state.setUdpServiceAnnouncer(null);
         }
-        
+
         TCP_ConnectionAccepter tcpConnAccepter = state.getTcpConnectionAccepter();
         if (tcpConnAccepter != null)
         {

@@ -19,19 +19,18 @@ public class TCP_ConnectionPool
     private final List<UUID> locallyClosed;
     private final ITcpConnectionListener externalConnListener;
     private final int maxConnections;
-    
-    
+
     void onTcpConnectionStarted(TCP_Connection connection)
     {
         externalConnListener.onTcpConnectionAdded(connection);
     }
-    
+
     void onTcpMessageReceived(TCP_Connection connection, String str_in)
     {
-        UUID id = findId(connection);        
+        UUID id = findId(connection);
         externalConnListener.onTcpMessageReceived(id, connection, str_in);
     }
-    
+
     void onTcpConnectionEnded(TCP_Connection connection)
     {
         if (halfConns.contains(connection))
@@ -42,27 +41,26 @@ public class TCP_ConnectionPool
         {
             UUID id = findId(connection);
             boolean local = false;
-            
+
             if (id != null)
             {
                 local = locallyClosed.contains(id);
                 uuid2conn.remove(id);
                 halfConns.remove(connection);
             }
-            
+
             if (local)
             {
                 externalConnListener.onTcpConnectionLocallyClosed(id, connection);
-                locallyClosed.remove(id);                
+                locallyClosed.remove(id);
             }
             else
             {
                 externalConnListener.onTcpConnectionRemotelyClosed(id, connection);
-            }            
+            }
         }
     }
-        
-    
+
     UUID findId(TCP_Connection connection)
     {
         UUID idToFind = null;
@@ -79,51 +77,56 @@ public class TCP_ConnectionPool
         }
         return idToFind;
     }
-    
-    public TCP_ConnectionPool(int maxConnections, ITcpConnectionListener connListener) 
+
+    public TCP_ConnectionPool(int maxConnections, ITcpConnectionListener connListener)
     {
-        Preconditions.checkNotNull(connListener, "You cannot use a TCP_ConnectionPool if you do not specify a callback to be invoked upon new incoming connections");
-        
+        Preconditions.checkNotNull(connListener,
+                "You cannot use a TCP_ConnectionPool if you do not specify a callback to be invoked upon new incoming connections");
+
         this.halfConns = Collections.synchronizedList(new ArrayList<>());
         this.uuid2conn = new ConcurrentHashMap<>();
         this.externalConnListener = connListener;
         this.maxConnections = maxConnections;
         this.locallyClosed = new ArrayList<>();
     }
-    
+
     int getMaxConnections()
     {
         return maxConnections;
     }
-    
+
     boolean isFull()
     {
         return maxConnections == halfConns.size() + uuid2conn.size();
     }
-    
-    void addConnection(Socket socket) {
+
+    void addConnection(Socket socket)
+    {
         Preconditions.checkNotNull(socket);
         Preconditions.checkState(!isFull(), "Connection pool is full with " + maxConnections + " connections");
-        
+
         TCP_Connection connection = new TCP_Connection(socket, this);
-        
+
         halfConns.add(connection);
-               
+
         connection.start();
     }
-    
+
     /**
-     * Only after the connection has been established, a client can send its UUID. This is how to bind a UUID to a
-     * connection.
+     * Only after the connection has been established, a client can send its UUID.
+     * This is how to bind a UUID to a connection.
+     * 
      * @param remote
      * @param inetAddress
      */
-    public void bindUUID(UUID remote, TCP_Connection connection) {
+    public void bindUUID(UUID remote, TCP_Connection connection)
+    {
         if (!halfConns.contains(connection))
         {
-            throw new IllegalStateException("The given connection is not found in the pool, so it cannot be bound to a UUID");
+            throw new IllegalStateException(
+                    "The given connection is not found in the pool, so it cannot be bound to a UUID");
         }
-        
+
         TCP_Connection prev = uuid2conn.putIfAbsent(remote, connection);
         if (prev != null)
         {
@@ -131,21 +134,21 @@ public class TCP_ConnectionPool
         }
         halfConns.remove(connection);
     }
-    
+
     public TCP_Connection getConnection(UUID remote)
     {
-        Preconditions.checkNotNull(remote);        
+        Preconditions.checkNotNull(remote);
         TCP_Connection conn = uuid2conn.get(remote);
         Preconditions.checkNotNull(conn, "No connection in the pool for UUID: " + remote);
-        
+
         return conn;
     }
-    
-    public void broadcast (List<UUID> ids, String msg)
+
+    public void broadcast(List<UUID> ids, String msg)
     {
         ids.stream().map(id -> getConnection(id)).forEach(conn -> conn.send(msg));
     }
-    
+
     public void closeAllConnections()
     {
         for (UUID id : uuid2conn.keySet())
@@ -153,13 +156,13 @@ public class TCP_ConnectionPool
             closeConnection(id);
         }
     }
-    
+
     public void closeConnection(UUID remote)
     {
-        Preconditions.checkNotNull(remote);        
+        Preconditions.checkNotNull(remote);
         TCP_Connection conn = uuid2conn.get(remote);
         Preconditions.checkNotNull(conn, "No connection in the pool for UUID: " + remote);
-        
+
         TCP_Connection tcpConnection = uuid2conn.get(remote);
         locallyClosed.add(remote);
         tcpConnection.stop();

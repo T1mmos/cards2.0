@@ -21,54 +21,61 @@ import gent.timdemey.cards.services.scaleman.ScalableImageManager;
 import gent.timdemey.cards.services.soundman.SoundManager;
 import gent.timdemey.cards.ui.StartFrame;
 
-public class Start {
-    private static ICardPlugin getCardPlugin(String [] args) 
+public class Start
+{
+    private static ICardPlugin getCardPlugin(String[] args)
     {
         if (args.length != 1)
         {
             System.err.println("A single argument is expected, but " + args.length + " were given.");
             return null;
         }
-        
+
         String clazzName = args[0];
         Class<?> clazz;
-        try {
+        try
+        {
             clazz = Class.forName(clazzName);
-        } catch (ClassNotFoundException e) {
+        }
+        catch (ClassNotFoundException e)
+        {
             System.err.println("The given class " + clazzName + " is not found in the classpath.");
             return null;
         }
-        
+
         if (!ICardPlugin.class.isAssignableFrom(clazz))
         {
-            System.err.println("Should provide a card plugin. The given class does not derive from " + ICardPlugin.class.getSimpleName() + ".");
+            System.err.println("Should provide a card plugin. The given class does not derive from "
+                    + ICardPlugin.class.getSimpleName() + ".");
             return null;
         }
-        
+
         Class<? extends ICardPlugin> pluginClazz = (Class<? extends ICardPlugin>) clazz;
         ICardPlugin plugin = null;
-        try {
+        try
+        {
             plugin = pluginClazz.newInstance();
         }
-        catch (InstantiationException | IllegalAccessException e) {
+        catch (InstantiationException | IllegalAccessException e)
+        {
             System.err.println("The given plugin class cannot be instantiated.");
             return null;
         }
 
         return plugin;
     }
-    
+
     private static void installBaseServices()
     {
         ILogManager logMan = new LogManager();
         Services.install(ILogManager.class, logMan);
-   
+
         IResourceManager resMan = new ResourceManager();
-        Services.install(IResourceManager.class, resMan);    
+        Services.install(IResourceManager.class, resMan);
     }
-    
+
     private static void installServices()
-    {        
+    {
         if (!Services.isInstalled(IConfigManager.class))
         {
             IConfigManager configManager = new ConfigManager();
@@ -100,14 +107,13 @@ public class Start {
             Services.install(IContextService.class, ctxtProv);
         }
     }
-    
-    public static void main(String[] args) 
-    {        
-        SwingUtilities.invokeLater(() -> 
-        {
+
+    public static void main(String[] args)
+    {
+        SwingUtilities.invokeLater(() -> {
             Start.installBaseServices();
             Loc.setLocale(Loc.AVAILABLE_LOCALES[0]);
-            
+
             // determine plugin
             ICardPlugin plugin = getCardPlugin(args);
             if (plugin == null)
@@ -115,14 +121,14 @@ public class Start {
                 System.err.println("Cannot load plugin class. Terminating.");
                 return;
             }
-            
+
             Services.install(ICardPlugin.class, plugin);
             plugin.installServices();
-                        
+
             Start.installServices();
             StartFrame.installUiServices();
 
             StartFrame.StartUI(plugin);
-        });        
+        });
     }
 }

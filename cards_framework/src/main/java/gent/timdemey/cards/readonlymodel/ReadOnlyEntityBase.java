@@ -12,12 +12,12 @@ public abstract class ReadOnlyEntityBase<T extends EntityBase>
     {
         this.entity = entity;
     }
-    
-    public final UUID getId ()
+
+    public final UUID getId()
     {
         return entity.id;
     }
-    
+
     @Override
     public final boolean equals(Object obj)
     {
@@ -29,19 +29,20 @@ public abstract class ReadOnlyEntityBase<T extends EntityBase>
         {
             return false;
         }
-        
+
         ReadOnlyEntityBase<?> other = (ReadOnlyEntityBase<?>) obj;
         return entity.equals(other.entity);
     }
-    
+
     @Override
     public final int hashCode()
     {
         return entity.hashCode();
     }
-    
+
     @Override
-    public final String toString() {
-        return "[R/O] " + entity.toString(); 
+    public final String toString()
+    {
+        return "[R/O] " + entity.toString();
     }
 }

@@ -8,12 +8,12 @@ import gent.timdemey.cards.model.commands.CommandBase;
 public interface IOperationsService
 {
     public CommandBase getMoveCommand(UUID srcCardStackId, UUID dstCardStackId, UUID cardId);
-    
+
     public CommandBase getCardUseCommand(UUID srcCardId);
-    
-    public CommandBase getCardStackUseCommand (UUID srcCardStackId);
+
+    public CommandBase getCardStackUseCommand(UUID srcCardStackId);
 
     public CommandBase getPullCommand(UUID srcCardStackId, UUID cardId);
 
-    public CommandBase getPushCommand(UUID dstCardStackId, List<UUID> srcCardIds); 
+    public CommandBase getPushCommand(UUID dstCardStackId, List<UUID> srcCardIds);
 }

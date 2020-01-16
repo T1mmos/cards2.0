@@ -18,49 +18,50 @@ import gent.timdemey.cards.services.context.ContextType;
  */
 public final class C_UDP_Answer extends CommandBase
 {
-	public final String serverName;
-	public final InetAddress inetAddress;
-	public final int tcpport;
-	public final int majorVersion;
-	public final int minorVersion;
+    public final String serverName;
+    public final InetAddress inetAddress;
+    public final int tcpport;
+    public final int majorVersion;
+    public final int minorVersion;
 
-	public C_UDP_Answer(String serverName, InetAddress inetAddress, int tcpport, int majorVersion, int minorVersion)
-	{
-		this(UUID.randomUUID(), serverName, inetAddress, tcpport, majorVersion, minorVersion);
-	}
-	
-	public C_UDP_Answer(UUID id, String serverName, InetAddress inetAddress, int tcpport, int majorVersion, int minorVersion)
-	{
-		super(id);
-		
-		this.serverName = serverName;
-		this.inetAddress = inetAddress;
-		this.tcpport = tcpport;
-		this.majorVersion = majorVersion;
-		this.minorVersion = minorVersion;
-	}
+    public C_UDP_Answer(String serverName, InetAddress inetAddress, int tcpport, int majorVersion, int minorVersion)
+    {
+        this(UUID.randomUUID(), serverName, inetAddress, tcpport, majorVersion, minorVersion);
+    }
 
-	@Override
-	protected boolean canExecute(Context context, ContextType type, State state)
-	{
-		return true;
-	}
+    public C_UDP_Answer(UUID id, String serverName, InetAddress inetAddress, int tcpport, int majorVersion,
+            int minorVersion)
+    {
+        super(id);
 
-	@Override
-	protected void execute(Context context, ContextType type, State state)
-	{
-		if (type == ContextType.Client)
-		{
-			reschedule(ContextType.UI);
-		} 
-		else if (type == ContextType.UI)
-		{
-			Server server = new Server(serverName, inetAddress, tcpport);
-			state.getServers().add(server);
-		} 
-		else
-		{
-			// this command is sent over the wire by UDP_ServiceAnnouncer 
-		}
-	}
+        this.serverName = serverName;
+        this.inetAddress = inetAddress;
+        this.tcpport = tcpport;
+        this.majorVersion = majorVersion;
+        this.minorVersion = minorVersion;
+    }
+
+    @Override
+    protected boolean canExecute(Context context, ContextType type, State state)
+    {
+        return true;
+    }
+
+    @Override
+    protected void execute(Context context, ContextType type, State state)
+    {
+        if (type == ContextType.Client)
+        {
+            reschedule(ContextType.UI);
+        }
+        else if (type == ContextType.UI)
+        {
+            Server server = new Server(serverName, inetAddress, tcpport);
+            state.getServers().add(server);
+        }
+        else
+        {
+            // this command is sent over the wire by UDP_ServiceAnnouncer
+        }
+    }
 }

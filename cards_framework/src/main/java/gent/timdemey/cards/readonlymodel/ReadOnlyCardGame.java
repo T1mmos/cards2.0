@@ -8,12 +8,11 @@ import gent.timdemey.cards.model.cards.CardGame;
 public final class ReadOnlyCardGame extends ReadOnlyEntityBase<CardGame>
 {
 
-
-    ReadOnlyCardGame(CardGame cardGame) 
+    ReadOnlyCardGame(CardGame cardGame)
     {
         super(cardGame);
     }
-    
+
     public ReadOnlyCard getCard(UUID cardId)
     {
         return ReadOnlyEntityFactory.getOrCreateCard(entity.getCard(cardId));
@@ -33,7 +32,7 @@ public final class ReadOnlyCardGame extends ReadOnlyEntityBase<CardGame>
     {
         return ReadOnlyEntityFactory.getOrCreateCardStack(entity.getCardStack(id));
     }
-    
+
     public ReadOnlyCardStack getCardStack(UUID playerId, String cardStackType, int typeNumber)
     {
         return ReadOnlyEntityFactory.getOrCreateCardStack(entity.getCardStack(playerId, cardStackType, typeNumber));

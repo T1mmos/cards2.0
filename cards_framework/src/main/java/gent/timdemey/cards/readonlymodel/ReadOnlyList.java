@@ -8,12 +8,12 @@ import java.util.ListIterator;
 public class ReadOnlyList<T> implements List<T>
 {
     protected final List<T> wrappee;
-    
-    public ReadOnlyList ( List<T> roList)
+
+    public ReadOnlyList(List<T> roList)
     {
         this.wrappee = roList;
     }
-    
+
     @Override
     public int size()
     {
@@ -71,13 +71,13 @@ public class ReadOnlyList<T> implements List<T>
     @Override
     public boolean addAll(Collection<? extends T> c)
     {
-       return wrappee.addAll(c);
+        return wrappee.addAll(c);
     }
 
     @Override
     public boolean addAll(int index, Collection<? extends T> c)
     {
-       return wrappee.addAll(index, c);
+        return wrappee.addAll(index, c);
     }
 
     @Override

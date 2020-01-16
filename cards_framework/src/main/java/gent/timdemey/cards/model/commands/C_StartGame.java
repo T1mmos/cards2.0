@@ -17,43 +17,43 @@ public class C_StartGame extends CommandBase
 {
     private final UUID cardGameId;
     private final Map<UUID, List<CardStack>> playerStacks;
-    
+
     public C_StartGame(UUID cardGameId, Map<UUID, List<CardStack>> playerStacks)
     {
         this.cardGameId = cardGameId;
         this.playerStacks = playerStacks;
     }
-    
+
     @Override
     protected boolean canExecute(Context context, ContextType type, State state)
     {
-    	return state.getCardGame() == null;
+        return state.getCardGame() == null;
     }
-    
+
     @Override
     protected void execute(Context context, ContextType type, State state)
-    {    
+    {
         if (type == ContextType.UI)
         {
             CardGame game = new CardGame(cardGameId, playerStacks);
             state.setCardGame(game);
         }
         else if (type == ContextType.Client)
-        {            
-            // make a full copy of objects first, so they are not shared with UI layer            
-        	String json = CommandDtoMapper.toJson(this);
-        	C_StartGame commandCopy = (C_StartGame) CommandDtoMapper.toCommand(json);
+        {
+            // make a full copy of objects first, so they are not shared with UI layer
+            String json = CommandDtoMapper.toJson(this);
+            C_StartGame commandCopy = (C_StartGame) CommandDtoMapper.toCommand(json);
             Map<UUID, List<CardStack>> playerStacksCopy = commandCopy.playerStacks;
             CardGame game = new CardGame(cardGameId, playerStacksCopy);
             state.setCardGame(game);
-                
+
             reschedule(ContextType.UI);
         }
-        else 
-        {          
+        else
+        {
             CardGame game = new CardGame(cardGameId, playerStacks);
             state.setCardGame(game);
-            
+
             ICommandExecutionService execServ = Services.get(ICommandExecutionService.class, ContextType.Server);
             String json = CommandDtoMapper.toJson(this);
             List<UUID> remoteIds = state.getPlayers().getExceptUUID(state.getServerId());

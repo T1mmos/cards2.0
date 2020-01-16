@@ -5,17 +5,20 @@ import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.readonlymodel.AGameEventAdapter;
 import gent.timdemey.cards.services.IGameOperationsService;
 
-public class ActionUndo extends AAction  {            
-    
+public class ActionUndo extends AAction
+{
+
     private class GameStartListener extends AGameEventAdapter
     {
         @Override
-        public void onUndoRedoChanged() {
+        public void onUndoRedoChanged()
+        {
             checkEnabled();
         }
     }
-        
-    public ActionUndo() {
+
+    public ActionUndo()
+    {
         super(ACTION_UNDO, Loc.get("menuitem_undo"));
         Services.get(IGameOperationsService.class).addGameEventListener(new GameStartListener());
         checkEnabled();

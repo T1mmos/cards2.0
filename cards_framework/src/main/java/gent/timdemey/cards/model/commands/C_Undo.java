@@ -12,28 +12,28 @@ import gent.timdemey.cards.services.context.ContextType;
  */
 public final class C_Undo extends CommandBase
 {
-	public C_Undo()
-	{
-	}
+    public C_Undo()
+    {
+    }
 
-	@Override
-	protected boolean canExecute(Context context, ContextType type, State state)
-	{
-		return true;
-	}
+    @Override
+    protected boolean canExecute(Context context, ContextType type, State state)
+    {
+        return true;
+    }
 
-	@Override
-	protected void execute(Context context, ContextType type, State state)
-	{
-		CommandHistory history = state.getCommandHistory();
+    @Override
+    protected void execute(Context context, ContextType type, State state)
+    {
+        CommandHistory history = state.getCommandHistory();
 
-		if (!history.canUndo())
-		{
-			throw new IllegalStateException("Not in the redoable state");
-		}
+        if (!history.canUndo())
+        {
+            throw new IllegalStateException("Not in the redoable state");
+        }
 
-		CommandBase cmdToUndo = history.execLine.get(history.current).getCommand();
-		cmdToUndo.undo(context, type, state);
-		history.current--;
-	}
+        CommandBase cmdToUndo = history.execLine.get(history.current).getCommand();
+        cmdToUndo.undo(context, type, state);
+        history.current--;
+    }
 }

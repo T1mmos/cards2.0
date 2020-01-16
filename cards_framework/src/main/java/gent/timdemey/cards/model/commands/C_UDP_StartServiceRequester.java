@@ -19,70 +19,71 @@ import gent.timdemey.cards.services.context.LimitedContext;
 public class C_UDP_StartServiceRequester extends CommandBase
 {
 
-	public C_UDP_StartServiceRequester()
-	{
-	}
+    public C_UDP_StartServiceRequester()
+    {
+    }
 
-	@Override
-	protected boolean canExecute(Context context, ContextType type, State state)
-	{
-		return true;
-	}
+    @Override
+    protected boolean canExecute(Context context, ContextType type, State state)
+    {
+        return true;
+    }
 
-	@Override
-	protected void execute(Context context, ContextType type, State state)
-	{
-	    CheckNotContext(type, ContextType.Server);
-	    
-	    if (type == ContextType.UI)
-	    {
-	        reschedule(ContextType.Client);
-	        return;
-	    }
-	    
-		if (type == ContextType.Client)
-		{
-			if (state.getUdpServiceRequester() != null)
-			{
-				throw new IllegalStateException("Already a requesting service running. Stop the current one first.");
-			}
+    @Override
+    protected void execute(Context context, ContextType type, State state)
+    {
+        CheckNotContext(type, ContextType.Server);
 
-			// clear the server list shown in the UI
-			CommandBase clrServList = new C_ClearServerList();
-			IContextService contextServ = Services.get(IContextService.class);
-			contextServ.getContext(ContextType.UI).schedule(clrServList);
+        if (type == ContextType.UI)
+        {
+            reschedule(ContextType.Client);
+            return;
+        }
 
-			// prepare UDP broadcast
-			C_UDP_StartServiceRequester cmd = new C_UDP_StartServiceRequester();
-			String json = CommandDtoMapper.toJson(cmd);
-			
+        if (type == ContextType.Client)
+        {
+            if (state.getUdpServiceRequester() != null)
+            {
+                throw new IllegalStateException("Already a requesting service running. Stop the current one first.");
+            }
 
-			UDP_ServiceRequester udpServRequester = new UDP_ServiceRequester(json, C_UDP_StartServiceRequester::onUdpReceived);
-			state.setUdpServiceRequester(udpServRequester);
-			
-			udpServRequester.start();
-		}
-	}
-	
-	public static void onUdpReceived (String json)
-	{		
-        try 
+            // clear the server list shown in the UI
+            CommandBase clrServList = new C_ClearServerList();
+            IContextService contextServ = Services.get(IContextService.class);
+            contextServ.getContext(ContextType.UI).schedule(clrServList);
+
+            // prepare UDP broadcast
+            C_UDP_StartServiceRequester cmd = new C_UDP_StartServiceRequester();
+            String json = CommandDtoMapper.toJson(cmd);
+
+            UDP_ServiceRequester udpServRequester = new UDP_ServiceRequester(json,
+                    C_UDP_StartServiceRequester::onUdpReceived);
+            state.setUdpServiceRequester(udpServRequester);
+
+            udpServRequester.start();
+        }
+    }
+
+    public static void onUdpReceived(String json)
+    {
+        try
         {
             CommandBase command = CommandDtoMapper.toCommand(json);
             if (!(command instanceof C_UDP_Answer))
             {
-                Services.get(ILogManager.class).log("Unexpected command on UDP datagram, class: " + command.getClass().getSimpleName());
+                Services.get(ILogManager.class)
+                        .log("Unexpected command on UDP datagram, class: " + command.getClass().getSimpleName());
                 return;
-            }            
-            
+            }
+
             IContextService contextServ = Services.get(IContextService.class);
             LimitedContext context = contextServ.getContext(ContextType.Client);
             context.schedule(command);
-        } 
+        }
         catch (Exception e)
         {
             Services.get(ILogManager.class).log("Failed to deserialize UDP datagram, ignoring");
             return;
         }
-	}
+    }
 }

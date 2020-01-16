@@ -8,22 +8,22 @@ import gent.timdemey.cards.services.context.ContextType;
 public class C_ClearServerList extends CommandBase
 {
 
-    public C_ClearServerList() 
+    public C_ClearServerList()
     {
     }
 
-	@Override
-	protected boolean canExecute(Context context, ContextType type, State state)
-	{
-		return true;
-	}
+    @Override
+    protected boolean canExecute(Context context, ContextType type, State state)
+    {
+        return true;
+    }
 
-	@Override
-	protected void execute(Context context, ContextType type, State state)
-	{
-		if (type == ContextType.UI)
-		{
-			state.getServers().clear();
-		}
-	}
+    @Override
+    protected void execute(Context context, ContextType type, State state)
+    {
+        if (type == ContextType.UI)
+        {
+            state.getServers().clear();
+        }
+    }
 }

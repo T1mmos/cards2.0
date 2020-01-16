@@ -25,25 +25,25 @@ public class ActionService implements IActionService
 
     private ReadOnlyState getReadOnlyState()
     {
-        return Services.get(IContextService.class).getThreadContext().getReadOnlyState(); 
+        return Services.get(IContextService.class).getThreadContext().getReadOnlyState();
     }
-    
+
     private boolean canExecute(CommandBase command)
     {
         return Services.get(IContextService.class).getThreadContext().canExecute(command);
     }
-    
+
     private void execute(CommandBase command)
     {
         Services.get(IContextService.class).getContext(ContextType.UI).schedule(command);
     }
-    
+
     @Override
     public boolean canExecuteAction(String id)
     {
         switch (id)
         {
-        case AAction.ACTION_UNDO:            
+        case AAction.ACTION_UNDO:
             return canExecute(new C_Undo());
         case AAction.ACTION_REDO:
             return canExecute(new C_Redo());
@@ -81,7 +81,7 @@ public class ActionService implements IActionService
             execute(new D_CreateGame());
             break;
         case AAction.ACTION_JOIN:
-            execute (new D_JoinGame());
+            execute(new D_JoinGame());
             break;
         case AAction.ACTION_START:
             ICardGameCreatorService creator = Services.get(ICardGameCreatorService.class);

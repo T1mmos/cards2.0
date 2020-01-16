@@ -26,14 +26,16 @@ import gent.timdemey.cards.services.context.ChangeType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.scaleman.ImageDefinition;
 
-public class GameBootListener implements IStateListener {
+public class GameBootListener implements IStateListener
+{
 
     private final JFrame frame;
-        
-    GameBootListener(JFrame frame) {
+
+    GameBootListener(JFrame frame)
+    {
         this.frame = frame;
     }
-    
+
     private void onScalableImagesLoaded(Boolean success)
     {
         if (success == null || !success)
@@ -43,51 +45,51 @@ public class GameBootListener implements IStateListener {
         }
         else
         {
-            SwingUtilities.invokeLater(() -> {            
+            SwingUtilities.invokeLater(() -> {
                 int w = frame.getContentPane().getWidth();
                 int h = frame.getContentPane().getHeight();
-                Services.get(IGamePanelManager.class).createGamePanel(w, h, this::onGamePanelCreated);            
+                Services.get(IGamePanelManager.class).createGamePanel(w, h, this::onGamePanelCreated);
             });
         }
     }
-    
+
     private void onGamePanelCreated(JComponent component)
     {
         frame.getContentPane().add(component, "push, grow");
         component.repaint();
-        frame.validate();   
+        frame.validate();
     }
 
-	@Override
-	public void onChange(List<Change<?>> changes)
-	{
-		IGamePanelManager gamePanelManager = Services.get(IGamePanelManager.class);
+    @Override
+    public void onChange(List<Change<?>> changes)
+    {
+        IGamePanelManager gamePanelManager = Services.get(IGamePanelManager.class);
         IContextService contextService = Services.get(IContextService.class);
-        Context context = contextService.getThreadContext();        
+        Context context = contextService.getThreadContext();
         ReadOnlyState state = context.getReadOnlyState();
-        
+
         for (Change<?> change : changes)
         {
             Property property = change.property;
-            
-            if(property == State.CardGame)
+
+            if (property == State.CardGame)
             {
                 ReadOnlyCardGame cardGame = state.getCardGame();
                 if (cardGame == null)
                 {
-                	Services.get(IGamePanelManager.class).destroyGamePanel();
+                    Services.get(IGamePanelManager.class).destroyGamePanel();
                     frame.getContentPane().removeAll();
                     frame.repaint();
                 }
                 else
                 {
                     List<ImageDefinition> imgDefs = Services.get(IGamePanelManager.class).getScalableImageDefinitions();
-                    Services.get(IScalableImageManager.class).loadImages(imgDefs, this::onScalableImagesLoaded);                   
+                    Services.get(IScalableImageManager.class).loadImages(imgDefs, this::onScalableImagesLoaded);
 
                     ISoundManager sndman = Services.get(ISoundManager.class);
                     sndman.playSound("shuffle");
                 }
-            }   
+            }
         }
-	}
+    }
 }

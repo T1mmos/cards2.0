@@ -2,6 +2,7 @@ package gent.timdemey.cards.serialization.mappers;
 
 /**
  * Functional interface providing one method to map a SRC type to a DST type.
+ * 
  * @author Tim
  *
  * @param <SRC>
@@ -9,5 +10,5 @@ package gent.timdemey.cards.serialization.mappers;
  */
 interface MappingFunction<SRC, DST>
 {
-    DST map (SRC src);
+    DST map(SRC src);
 }
