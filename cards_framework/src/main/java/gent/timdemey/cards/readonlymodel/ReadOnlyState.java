@@ -19,7 +19,12 @@ public class ReadOnlyState extends ReadOnlyEntityBase<State>
     
     public ReadOnlyEntityList<ReadOnlyPlayer> getPlayers()
     {
-        return ReadOnlyEntityFactory.getOrCreatePlayerList(entity.getPlayers());
+    	return ReadOnlyEntityFactory.getOrCreatePlayerList(entity.getPlayers());
+    }
+    
+    public ReadOnlyEntityList<ReadOnlyPlayer> getRemotePlayers()
+    {
+    	return ReadOnlyEntityFactory.getOrCreatePlayerList(entity.getRemotePlayers());
     }
     
     public CommandHistory getCommandHistory()
@@ -36,4 +41,14 @@ public class ReadOnlyState extends ReadOnlyEntityBase<State>
     {
         return entity.getLocalId();
     }
+
+	public String getServerMessage()
+	{
+		return entity.getServerMessage();
+	}
+
+	public UUID getServerId()
+	{
+		return entity.getServerId();
+	}
 }

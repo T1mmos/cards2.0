@@ -83,7 +83,7 @@ public class StartFrame {
             int playerNr = rg.nextInt(10000);
             String name = "Player " + playerNr;
             
-            Services.get(IContextService.class).initialize(ContextType.UI, name, new UICommandExecutionService());            
+            Services.get(IContextService.class).initialize(ContextType.UI, new UICommandExecutionService());            
             
             buildMenu(frame, plugin);
             
@@ -97,7 +97,7 @@ public class StartFrame {
             frame.setIconImages(getFrameIcons());            
             frame.setVisible(true);
             
-            Services.get(IGameOperationsService.class).addGameEventListener(new GameStarter(frame));
+            Services.get(IContextService.class).getThreadContext().addStateListener(new GameBootListener(frame));
         });
     }
     

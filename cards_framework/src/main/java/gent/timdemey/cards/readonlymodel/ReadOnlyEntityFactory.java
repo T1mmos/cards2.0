@@ -13,7 +13,6 @@ import gent.timdemey.cards.model.cards.Card;
 import gent.timdemey.cards.model.cards.CardGame;
 import gent.timdemey.cards.model.cards.CardStack;
 import gent.timdemey.cards.model.multiplayer.Server;
-import gent.timdemey.cards.model.state.EntityStateListRef;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.model.state.StateListRef;
 
@@ -39,7 +38,7 @@ public class ReadOnlyEntityFactory
     {
         return GetOrCreateEntity(cardStack, cs -> new ReadOnlyCardStack(cs));
     }
-    public static ReadOnlyEntityList<ReadOnlyCardStack> getOrCreateCardStackList(EntityStateListRef<CardStack> list)
+    public static ReadOnlyEntityList<ReadOnlyCardStack> getOrCreateCardStackList(List<CardStack> list)
     {
         return getOrCreateList(list, ReadOnlyEntityFactory::getOrCreateCardStack);
     }
@@ -54,7 +53,7 @@ public class ReadOnlyEntityFactory
     {
         return GetOrCreateEntity(player, p -> new ReadOnlyPlayer(p));
     }
-    public static ReadOnlyEntityList<ReadOnlyPlayer> getOrCreatePlayerList(EntityStateListRef<Player> players)
+    public static ReadOnlyEntityList<ReadOnlyPlayer> getOrCreatePlayerList(List<Player> players)
     {
         return getOrCreateList(players, ReadOnlyEntityFactory::getOrCreatePlayer);
     }
