@@ -7,7 +7,7 @@ public class CommandHistory
 {
     private final List<CommandExecution> execLine = new ArrayList<>();
     private int firstUndoIdx = -1;
-    private int currIdx = -1;
+    private int lastRedoIdx = -1;
     private int unconfirmedIdx = -1;
 
     public int getFirstUndoIndex()
