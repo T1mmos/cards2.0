@@ -46,7 +46,7 @@ public interface IContextService
      * 
      * @param connection
      */
-    public void initialize(ContextType type, ICommandExecutionService executor);
+    public void initialize(ContextType type);
 
     /**
      * Drops a context.

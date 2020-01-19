@@ -7,7 +7,6 @@ import java.util.UUID;
 import gent.timdemey.cards.model.EntityBase;
 import gent.timdemey.cards.model.Player;
 import gent.timdemey.cards.model.cards.CardGame;
-import gent.timdemey.cards.model.commands.CommandHistory;
 import gent.timdemey.cards.model.multiplayer.Server;
 import gent.timdemey.cards.multiplayer.io.ITcpConnectionListener;
 import gent.timdemey.cards.multiplayer.io.TCP_ConnectionAccepter;
@@ -30,7 +29,6 @@ public class State extends EntityBase
     public static final Property UdpServiceAnnouncer = Property.of(State.class, "UdpServiceAnnouncer");
     public static final Property UdpServiceRequester = Property.of(State.class, "UdpServiceRequester");
 
-    private final CommandHistory commandHistory;
 
     // state lists
     private EntityStateListRef<Player> playersRef;
@@ -69,8 +67,6 @@ public class State extends EntityBase
         tcpConnectionListenerRef = new StateValueRef<>(TcpConnectionListener, id);
         udpServiceAnnouncerRef = new StateValueRef<>(UdpServiceAnnouncer, id);
         udpServiceRequesterRef = new StateValueRef<>(UdpServiceRequester, id);
-
-        this.commandHistory = new CommandHistory();
     }
 
     public CardGame getCardGame()
@@ -81,11 +77,6 @@ public class State extends EntityBase
     public void setCardGame(CardGame cardGame)
     {
         cardGameRef.set(cardGame);
-    }
-
-    public CommandHistory getCommandHistory()
-    {
-        return commandHistory;
     }
 
     /*

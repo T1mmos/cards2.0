@@ -1,6 +1,4 @@
-package gent.timdemey.cards.services.execution;
-
-import gent.timdemey.cards.services.context.ContextType;
+package gent.timdemey.cards.services.context;
 
 public class CommandExecutionThread extends Thread
 {

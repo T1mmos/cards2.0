@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.execution;
+package gent.timdemey.cards.services.context;
 
 import java.nio.charset.Charset;
 import java.util.concurrent.BlockingQueue;
@@ -11,10 +11,8 @@ import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.model.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.ICommandExecutionService;
-import gent.timdemey.cards.services.context.ContextType;
 
-abstract class CommandExecutionServiceBase implements ICommandExecutionService
+abstract class CommandExecutorBase implements ICommandExecutor
 {
     protected static final Charset UDP_CHARSET = Charset.forName("UTF8");
 
@@ -39,7 +37,7 @@ abstract class CommandExecutionServiceBase implements ICommandExecutionService
             // if the command has no source id set yet, it means
             // it is incoming from the local context and not from
             // a TCP connection.
-            if (command.getSourceId() == null)
+            if(command.getSourceId() == null)
             {
                 command.setSourceId(state.getLocalId());
             }
@@ -56,11 +54,9 @@ abstract class CommandExecutionServiceBase implements ICommandExecutionService
 
     private final BlockingQueue<Runnable> incomingCommandQueue;
     private final ThreadPoolExecutor executor;
-    private final ContextType contextType;
 
-    protected CommandExecutionServiceBase(ContextType contextType)
+    protected CommandExecutorBase(ContextType contextType)
     {
-        this.contextType = contextType;
         this.incomingCommandQueue = new PriorityBlockingQueue<>();
         this.executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.SECONDS, incomingCommandQueue, new ThreadFactory()
         {
@@ -80,4 +76,16 @@ abstract class CommandExecutionServiceBase implements ICommandExecutionService
     }
 
     protected abstract void execute(CommandBase command, State state);
+
+    @Override
+    public final void addExecutionListener(IExecutionListener executionListener)
+    {
+        throw new UnsupportedOperationException("Currently ExecutionListeners are not supported in the this executor");
+    }
+
+    @Override
+    public final void removeExecutionListener(IExecutionListener executionListener)
+    {
+        throw new UnsupportedOperationException("Currently ExecutionListeners are not supported in the this executor");
+    }
 }

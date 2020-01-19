@@ -11,12 +11,10 @@ import gent.timdemey.cards.multiplayer.io.ITcpConnectionListener;
 import gent.timdemey.cards.multiplayer.io.TCP_Connection;
 import gent.timdemey.cards.multiplayer.io.TCP_ConnectionCreator;
 import gent.timdemey.cards.multiplayer.io.TCP_ConnectionPool;
-import gent.timdemey.cards.services.ICommandExecutionService;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.context.LimitedContext;
-import gent.timdemey.cards.services.execution.ClientCommandExecutionService;
 
 /**
  * Let a player connect to an online game.
@@ -54,10 +52,7 @@ public class C_Connect extends CommandBase
             if (plugin.getPlayerCount() == 1)
             {
                 throw new UnsupportedOperationException();
-            }
-
-            ICommandExecutionService cmdExecServ = new ClientCommandExecutionService();
-            Services.get(IContextService.class).initialize(ContextType.Client, cmdExecServ);
+            }         
 
             ITcpConnectionListener tcpConnListener = new ClientCommandSchedulingTcpConnectionListener();
             TCP_ConnectionPool tcpConnPool = new TCP_ConnectionPool(1, tcpConnListener);

@@ -1,8 +1,7 @@
-package gent.timdemey.cards.services;
+package gent.timdemey.cards.services.context;
 
 import gent.timdemey.cards.model.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.execution.IExecutionListener;
 
 /**
  * Processes a command, a unit of work. Keeps track of the sequence of commands
@@ -12,15 +11,19 @@ import gent.timdemey.cards.services.execution.IExecutionListener;
  * 
  * @author Timmos
  */
-public interface ICommandExecutionService
+public interface ICommandExecutor
 {
     /**
      * Adds a new command to command list, for execution somewhere in the near
-     * future. The command will be wrapped in a CommandEnvelope.
+     * future.
      * 
      * @param command
      */
     void schedule(CommandBase command, State state);
+    
+    CommandHistory getCommandHistory();
 
-    void setExecutionListener(IExecutionListener executionListener);
+    void addExecutionListener(IExecutionListener executionListener);
+    
+    void removeExecutionListener(IExecutionListener executionListener);
 }

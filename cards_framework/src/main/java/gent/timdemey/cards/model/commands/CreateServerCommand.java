@@ -4,11 +4,9 @@ import java.util.UUID;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.ICommandExecutionService;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.execution.ServerCommandExecutionService;
 
 public class CreateServerCommand extends CommandBase
 {
@@ -34,8 +32,7 @@ public class CreateServerCommand extends CommandBase
     {
         if (type == ContextType.UI)
         {
-            ICommandExecutionService cmdExecServ = new ServerCommandExecutionService();
-            Services.get(IContextService.class).initialize(ContextType.Server, cmdExecServ);
+            Services.get(IContextService.class).initialize(ContextType.Server);
 
             reschedule(ContextType.Server);
         }

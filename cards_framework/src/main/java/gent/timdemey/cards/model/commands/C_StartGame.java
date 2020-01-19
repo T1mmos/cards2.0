@@ -9,9 +9,9 @@ import gent.timdemey.cards.model.cards.CardGame;
 import gent.timdemey.cards.model.cards.CardStack;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
-import gent.timdemey.cards.services.ICommandExecutionService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.context.ICommandExecutor;
 
 public class C_StartGame extends CommandBase
 {
@@ -54,7 +54,7 @@ public class C_StartGame extends CommandBase
             CardGame game = new CardGame(cardGameId, playerStacks);
             state.setCardGame(game);
 
-            ICommandExecutionService execServ = Services.get(ICommandExecutionService.class, ContextType.Server);
+            ICommandExecutor execServ = Services.get(ICommandExecutor.class, ContextType.Server);
             String json = CommandDtoMapper.toJson(this);
             List<UUID> remoteIds = state.getPlayers().getExceptUUID(state.getServerId());
             state.getTcpConnectionPool().broadcast(remoteIds, json);

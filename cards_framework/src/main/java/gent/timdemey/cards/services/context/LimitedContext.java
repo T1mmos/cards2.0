@@ -4,16 +4,14 @@ import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.model.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.ICommandExecutionService;
-import gent.timdemey.cards.services.execution.IExecutionListener;
 
 public final class LimitedContext
 {
     private final ContextType contextType;
-    private ICommandExecutionService cmdExecServ;
+    private final ICommandExecutor cmdExecServ;
     private final State state;
 
-    public LimitedContext(ContextType contextType, ICommandExecutionService cmdExecServ)
+    public LimitedContext(ContextType contextType, ICommandExecutor cmdExecServ)
     {
         Preconditions.checkNotNull(contextType);
         Preconditions.checkNotNull(cmdExecServ);
@@ -33,13 +31,23 @@ public final class LimitedContext
         cmdExecServ.schedule(command, state);
     }
 
-    void setExecutionListener(IExecutionListener executionListener)
+    void addExecutionListener(IExecutionListener executionListener)
     {
-        cmdExecServ.setExecutionListener(executionListener);
+        cmdExecServ.addExecutionListener(executionListener);
+    }
+    
+    void removeExecutionListener(IExecutionListener executionListener)
+    {
+        cmdExecServ.removeExecutionListener(executionListener);
     }
 
     State getState()
     {
         return state;
+    }
+
+    public CommandHistory getCommandHistory()
+    {
+        return cmdExecServ.getCommandHistory();
     }
 }

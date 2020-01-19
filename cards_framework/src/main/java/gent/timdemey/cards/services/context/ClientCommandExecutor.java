@@ -1,23 +1,9 @@
-package gent.timdemey.cards.services.execution;
-
-import java.util.UUID;
-
-import com.google.common.base.Preconditions;
-import com.google.gson.Gson;
+package gent.timdemey.cards.services.context;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
-import gent.timdemey.cards.model.commands.C_HandleConnectionLoss;
-import gent.timdemey.cards.model.commands.C_JoinGame;
 import gent.timdemey.cards.model.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.multiplayer.io.ITcpConnectionListener;
-import gent.timdemey.cards.multiplayer.io.TCP_Connection;
-import gent.timdemey.cards.multiplayer.io.TCP_ConnectionPool;
-import gent.timdemey.cards.multiplayer.io.UDP_ServiceRequester;
-import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.context.LimitedContext;
 
 /**
  * Asynchronously processes commands. This is where all commands, from UI and
@@ -28,9 +14,9 @@ import gent.timdemey.cards.services.context.LimitedContext;
  * 
  * @author Timmos
  */
-public class ClientCommandExecutionService extends CommandExecutionServiceBase
+class ClientCommandExecutor extends CommandExecutorBase
 {
-    public ClientCommandExecutionService()
+    public ClientCommandExecutor()
     {
         super(ContextType.Client);
     }
@@ -57,9 +43,9 @@ public class ClientCommandExecutionService extends CommandExecutionServiceBase
     }
 
     @Override
-    public void setExecutionListener(IExecutionListener executionListener)
+    public CommandHistory getCommandHistory()
     {
-        throw new UnsupportedOperationException(
-                "Currently executionlisteners are not supported in the Client execution service.");
+        // TODO Auto-generated method stub
+        return null;
     }
 }

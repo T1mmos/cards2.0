@@ -8,9 +8,7 @@ import javax.swing.SwingUtilities;
 
 import com.google.common.base.Preconditions;
 
-import gent.timdemey.cards.services.ICommandExecutionService;
 import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.services.execution.CommandExecutionThread;
 
 /**
  * The thread-local context provider.
@@ -33,23 +31,22 @@ public final class ContextService implements IContextService
     {
         ContextType type;
 
-        if (SwingUtilities.isEventDispatchThread())
+        if(SwingUtilities.isEventDispatchThread())
         {
             type = ContextType.UI;
         }
-        else if (Thread.currentThread() instanceof CommandExecutionThread)
+        else if(Thread.currentThread() instanceof CommandExecutionThread)
         {
             CommandExecutionThread cmdExecThread = (CommandExecutionThread) Thread.currentThread();
             type = cmdExecThread.contextType;
         }
         else
         {
-            throw new IllegalThreadStateException(
-                    "This thread has no access to context: " + Thread.currentThread().getName());
+            throw new IllegalThreadStateException("This thread has no access to context: " + Thread.currentThread().getName());
         }
 
         Context context = fullContexts.get(type);
-        if (context == null)
+        if(context == null)
         {
             throw new IllegalStateException("No context installed for context type: " + type);
         }
@@ -66,7 +63,7 @@ public final class ContextService implements IContextService
     public LimitedContext getContext(ContextType ctxtType)
     {
         Context context = fullContexts.get(ctxtType);
-        if (context == null)
+        if(context == null)
         {
             throw new IllegalStateException("No context installed for context type: " + ctxtType);
         }
@@ -74,18 +71,35 @@ public final class ContextService implements IContextService
     }
 
     @Override
-    public void initialize(ContextType type, ICommandExecutionService cmdExecService)
+    public void initialize(ContextType type)
     {
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
 
         boolean trackChanges = type == ContextType.UI;
-        Context context = new Context(type, cmdExecService, trackChanges);
+        ICommandExecutor cmdExecutor = null;
+        if(type == ContextType.UI)
+        {
+            cmdExecutor = new UICommandExecutor();
+        }
+        else if(type == ContextType.Client)
+        {
+            cmdExecutor = new ClientCommandExecutor();
+        }
+        else if(type == ContextType.Server)
+        {
+            cmdExecutor = new ServerCommandExecutor();
+        }
+        else
+        {
+            throw new IllegalArgumentException("Unknown ContextType: " + type);
+        }
+
+        Context context = new Context(type, cmdExecutor, trackChanges);
 
         Context prev = fullContexts.putIfAbsent(type, context);
-        if (prev != null)
+        if(prev != null)
         {
-            throw new ConcurrentModificationException(
-                    "Context concurrently installed by different thread for type " + type);
+            throw new ConcurrentModificationException("Context concurrently installed by different thread for type " + type);
         }
     }
 
@@ -93,10 +107,9 @@ public final class ContextService implements IContextService
     public void drop(ContextType type)
     {
         Context curr = fullContexts.remove(type);
-        if (curr == null)
+        if(curr == null)
         {
-            throw new IllegalStateException(
-                    "Async processor currently unavailable, so cannot drop processor for type " + type);
+            throw new IllegalStateException("Async processor currently unavailable, so cannot drop processor for type " + type);
         }
     }
 

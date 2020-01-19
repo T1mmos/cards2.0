@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.execution;
+package gent.timdemey.cards.services.context;
 
 import java.util.UUID;
 
@@ -12,14 +12,12 @@ import gent.timdemey.cards.multiplayer.io.CommandSchedulingTcpConnectionListener
 import gent.timdemey.cards.multiplayer.io.TCP_Connection;
 import gent.timdemey.cards.multiplayer.io.TCP_ConnectionAccepter;
 import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.context.LimitedContext;
 
-public class ServerCommandExecutionService extends CommandExecutionServiceBase
+public class ServerCommandExecutor extends CommandExecutorBase
 {
     private TCP_ConnectionAccepter srv_tcp_accepter = null;
 
-    public ServerCommandExecutionService()
+    public ServerCommandExecutor()
     {
         super(ContextType.Server);
     }
@@ -80,9 +78,8 @@ public class ServerCommandExecutionService extends CommandExecutionServiceBase
     }
 
     @Override
-    public void setExecutionListener(IExecutionListener executionListener)
+    public CommandHistory getCommandHistory()
     {
-        throw new UnsupportedOperationException(
-                "Currently executionlisteners are not supported in the Server execution service.");
+        throw new IllegalStateException("The server command executor does not track the command history");
     }
 }

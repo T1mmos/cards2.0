@@ -4,9 +4,11 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.model.multiplayer.JoinMultiplayerGameData;
 import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.context.ICommandExecutor;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogData;
 import gent.timdemey.cards.ui.dialogs.JoinMultiplayerGameDialogContent;
@@ -29,6 +31,8 @@ public class D_JoinGame extends CommandBase
 
         if (data.closeType == DialogButtonType.Ok)
         {
+            Services.get(IContextService.class).initialize(ContextType.Client);
+            
             schedule(ContextType.UI, new C_Connect(data.payload.server.getInetAddress(),
                     data.payload.server.getTcpPort(), data.payload.playerName));
         }

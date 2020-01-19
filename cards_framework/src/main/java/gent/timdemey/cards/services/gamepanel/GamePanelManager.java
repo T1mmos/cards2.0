@@ -38,7 +38,7 @@ public class GamePanelManager implements IGamePanelManager
     private Timer timer;
     private AnimationTick animationTick;
 
-    private GamePanelManager()
+    public GamePanelManager()
     {
     }
 

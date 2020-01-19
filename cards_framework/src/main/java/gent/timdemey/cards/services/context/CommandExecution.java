@@ -1,11 +1,13 @@
-package gent.timdemey.cards.model.commands;
+package gent.timdemey.cards.services.context;
 
-public final class CommandEntry
+import gent.timdemey.cards.model.commands.CommandBase;
+
+public final class CommandExecution
 {
     private final CommandBase command;
     private CommandExecutionState state;
 
-    CommandEntry(CommandBase command)
+    CommandExecution(CommandBase command)
     {
         this.command = command;
         this.state = CommandExecutionState.Created;
