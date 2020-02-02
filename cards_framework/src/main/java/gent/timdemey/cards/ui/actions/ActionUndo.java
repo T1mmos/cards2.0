@@ -2,25 +2,33 @@ package gent.timdemey.cards.ui.actions;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
-import gent.timdemey.cards.readonlymodel.AGameEventAdapter;
-import gent.timdemey.cards.services.IGameOperationsService;
+import gent.timdemey.cards.readonlymodel.IStateListener;
+import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCommandHistory;
+import gent.timdemey.cards.services.IContextService;
 
 public class ActionUndo extends AAction
 {
 
-    private class GameStartListener extends AGameEventAdapter
+    private class UndoListener implements IStateListener
     {
+
         @Override
-        public void onUndoRedoChanged()
+        public void onChange(ReadOnlyChange change)
         {
-            checkEnabled();
+            if (change.property == ReadOnlyCommandHistory.CurrentIndex)
+            {
+                checkEnabled();
+            }
         }
     }
 
     public ActionUndo()
     {
         super(ACTION_UNDO, Loc.get("menuitem_undo"));
-        Services.get(IGameOperationsService.class).addGameEventListener(new GameStartListener());
+        checkEnabled();
+        
+        Services.get(IContextService.class).getThreadContext().addStateListener(new UndoListener());
         checkEnabled();
     }
 }

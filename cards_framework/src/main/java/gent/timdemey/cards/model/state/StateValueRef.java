@@ -2,14 +2,19 @@ package gent.timdemey.cards.model.state;
 
 import java.util.UUID;
 
-public final class StateValueRef<X> extends StateRef
+public final class StateValueRef<X> extends StateRef<X>
 {
     private X x;
 
-    public StateValueRef(Property property, UUID entityId)
+    public StateValueRef(Property<X> property, UUID entityId)
+    {
+        this(property, entityId, null);
+    }
+    
+    public StateValueRef(Property<X> property, UUID entityId, X initialValue)
     {
         super(property, entityId);
-        this.x = null;
+        this.x = initialValue;
     }
 
     public void set(X x)

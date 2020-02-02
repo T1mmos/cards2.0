@@ -90,7 +90,7 @@ public class ActionService implements IActionService
             List<UUID> playerIds = getReadOnlyState().getPlayers().getIds();
             Map<UUID, List<CardStack>> playerStacks = creator.createStacks(playerIds, cards);
 
-            C_StartGame command = new C_StartGame(playerStacks);
+            C_StartGame command = new C_StartGame(UUID.randomUUID(), playerStacks);
             IContextService contextServ = Services.get(IContextService.class);
             contextServ.getContext(ContextType.Server).schedule(command);
             break;

@@ -15,6 +15,7 @@ import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
+import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IDialogService;
@@ -61,35 +62,30 @@ public class GameBootListener implements IStateListener
     }
 
     @Override
-    public void onChange(List<Change<?>> changes)
+    public void onChange(ReadOnlyChange change)
     {
         IGamePanelManager gamePanelManager = Services.get(IGamePanelManager.class);
         IContextService contextService = Services.get(IContextService.class);
         Context context = contextService.getThreadContext();
         ReadOnlyState state = context.getReadOnlyState();
 
-        for (Change<?> change : changes)
+        if (change.property == ReadOnlyState.CardGame)
         {
-            Property property = change.property;
-
-            if (property == State.CardGame)
+            ReadOnlyCardGame cardGame = state.getCardGame();
+            if (cardGame == null)
             {
-                ReadOnlyCardGame cardGame = state.getCardGame();
-                if (cardGame == null)
-                {
-                    Services.get(IGamePanelManager.class).destroyGamePanel();
-                    frame.getContentPane().removeAll();
-                    frame.repaint();
-                }
-                else
-                {
-                    List<ImageDefinition> imgDefs = Services.get(IGamePanelManager.class).getScalableImageDefinitions();
-                    Services.get(IScalableImageManager.class).loadImages(imgDefs, this::onScalableImagesLoaded);
-
-                    ISoundManager sndman = Services.get(ISoundManager.class);
-                    sndman.playSound("shuffle");
-                }
+                Services.get(IGamePanelManager.class).destroyGamePanel();
+                frame.getContentPane().removeAll();
+                frame.repaint();
             }
-        }
+            else
+            {
+                List<ImageDefinition> imgDefs = Services.get(IGamePanelManager.class).getScalableImageDefinitions();
+                Services.get(IScalableImageManager.class).loadImages(imgDefs, this::onScalableImagesLoaded);
+
+                ISoundManager sndman = Services.get(ISoundManager.class);
+                sndman.playSound("shuffle");
+            }
+        }        
     }
 }

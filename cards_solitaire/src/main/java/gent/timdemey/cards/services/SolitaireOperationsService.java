@@ -9,7 +9,7 @@ import gent.timdemey.cards.model.commands.C_Push;
 import gent.timdemey.cards.model.commands.C_Use;
 import gent.timdemey.cards.model.commands.CommandBase;
 
-public class SolitaireOperationsService implements IOperationsService
+public class SolitaireOperationsService implements ICommandService
 {
     @Override
     public C_Move getMoveCommand(UUID srcCardStackId, UUID dstCardStackId, UUID cardId)

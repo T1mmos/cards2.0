@@ -15,11 +15,14 @@ import javax.swing.table.AbstractTableModel;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
+import gent.timdemey.cards.model.commands.C_UDP_StartServiceRequester;
+import gent.timdemey.cards.model.commands.C_UDP_StopServiceRequester;
 import gent.timdemey.cards.model.multiplayer.JoinMultiplayerGameData;
-import gent.timdemey.cards.readonlymodel.AGameEventAdapter;
+import gent.timdemey.cards.readonlymodel.IStateListener;
+import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyServer;
+import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.services.IGameOperationsService;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogContent;
 import net.miginfocom.swing.MigLayout;
@@ -79,12 +82,15 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMu
         }
     }
 
-    private class ServerInfoListener extends AGameEventAdapter
+    private class ServersStateListener implements IStateListener
     {
         @Override
-        public void onHelloClient()
+        public void onChange(ReadOnlyChange change)
         {
-            tableModel.fireTableDataChanged();
+            if (change.property == ReadOnlyState.Servers)
+            {
+                tableModel.fireTableDataChanged();
+            }
         }
     }
 
@@ -93,9 +99,9 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMu
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            Services.get(IGameOperationsService.class).helloServerStop();
+            stopRequester();
             tableModel.fireTableDataChanged();
-            Services.get(IGameOperationsService.class).helloServerStart();
+            startRequester();
         }
     }
 
@@ -112,7 +118,7 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMu
     private final JTable table_servers;
     private final ServersTableModel tableModel;
     private final JButton button_refresh;
-    private final ServerInfoListener serverInfoListener;
+    private final ServersStateListener serversStateListener;
     private final ActionListener refreshListener;
     private final SelectionListener selectionListener;
     private final JTextField tf_name;
@@ -123,7 +129,7 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMu
         this.tableModel = new ServersTableModel();
         this.table_servers = new JTable(tableModel);
         this.button_refresh = new JButton(Loc.get("button_refresh"));
-        this.serverInfoListener = new ServerInfoListener();
+        this.serversStateListener = new ServersStateListener();
         this.refreshListener = new RefreshListener();
         this.selectionListener = new SelectionListener();
         this.tf_name = new JTextField(20);
@@ -153,12 +159,27 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMu
         int row = table_servers.getSelectedRow();
         return row != -1;
     }
+    
+    private void stopRequester()
+    {
+        C_UDP_StopServiceRequester command = new C_UDP_StopServiceRequester();
+        IContextService contextServ = Services.get(IContextService.class);
+        contextServ.getThreadContext().schedule(command);
+    }
+    
+    private void startRequester()
+    {
+        C_UDP_StartServiceRequester command = new C_UDP_StartServiceRequester();
+        IContextService contextServ = Services.get(IContextService.class);
+        contextServ.getThreadContext().schedule(command);
+    }
 
     @Override
     protected JoinMultiplayerGameData onClose(DialogButtonType dbType)
     {
-        Services.get(IGameOperationsService.class).helloServerStop();
-        Services.get(IGameOperationsService.class).removeGameEventListener(serverInfoListener);
+        stopRequester();        
+                
+        Services.get(IContextService.class).getThreadContext().removeStateListener(serversStateListener);
         button_refresh.removeActionListener(refreshListener);
         table_servers.getSelectionModel().removeListSelectionListener(selectionListener);
 
@@ -179,10 +200,11 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMu
     @Override
     protected void onShow()
     {
-        Services.get(IGameOperationsService.class).addGameEventListener(serverInfoListener);
+        Services.get(IContextService.class).getThreadContext().addStateListener(serversStateListener);
+        
         button_refresh.addActionListener(refreshListener);
         table_servers.getSelectionModel().addListSelectionListener(selectionListener);
 
-        Services.get(IGameOperationsService.class).helloServerStart();
+        startRequester();
     }
 }

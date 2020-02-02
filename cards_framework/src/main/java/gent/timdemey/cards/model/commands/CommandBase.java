@@ -50,7 +50,7 @@ public abstract class CommandBase extends EntityBase
 
     protected abstract void execute(Context context, ContextType type, State state);
 
-    protected final boolean canUndo(State state)
+    public final boolean canUndo(State state)
     {
         Context context = getContext();
         return canUndo(context, context.getContextType(), state);

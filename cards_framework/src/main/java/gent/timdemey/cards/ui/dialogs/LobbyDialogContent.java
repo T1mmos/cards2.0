@@ -9,8 +9,11 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.state.Property;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.readonlymodel.IStateListener;
+import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyPlayer;
+import gent.timdemey.cards.readonlymodel.ReadOnlyProperty;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
+import gent.timdemey.cards.readonlymodel.TypedChange;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IGamePanelManager;
 import gent.timdemey.cards.services.context.Change;
@@ -31,48 +34,49 @@ public class LobbyDialogContent extends DialogContent<Void, Void>
     private class LobbyDialogStateListener implements IStateListener
     {
         @Override
-        public void onChange(List<Change<?>> changes)
+        public void onChange(ReadOnlyChange change)
         {
             IGamePanelManager gamePanelManager = Services.get(IGamePanelManager.class);
             IContextService contextService = Services.get(IContextService.class);
             Context context = contextService.getThreadContext();
             ReadOnlyState state = context.getReadOnlyState();
 
-            for (Change<?> change : changes)
-            {
-                Property property = change.property;
+           
+            ReadOnlyProperty<?> property = change.property;
 
-                if (property == State.Players)
+            if (property == ReadOnlyState.Players)
+            {
+                TypedChange<ReadOnlyPlayer> typed = ReadOnlyState.Players.cast(change);
+                if (typed.changeType == ChangeType.Add)
                 {
-                    if (change.changeType == ChangeType.Add)
-                    {
-                        // find out which ones are added...
-                        JLabel jlabel = context.isLocal(player.id) ? l_localPlayer : l_remotePlayer;
-                        jlabel.setText(player.name);
-                    }
-                    else if (change.changeType == ChangeType.Remove)
-                    {
-                        // find out which ones are removed...
-                        // TODO
-                        l_remotePlayer.setText(null);
-                    }
+                    ReadOnlyPlayer addedPlayer = typed.addedValue;                    
+                    JLabel jlabel = state.getLocalId().equals(addedPlayer.getId()) ? l_localPlayer : l_remotePlayer;
+                    jlabel.setText(addedPlayer.getName());
                 }
-                else if (property == State.ServerMsg && change.changeType == ChangeType.Set)
+                else if (typed.changeType == ChangeType.Remove)
                 {
-                    l_serverMsg.setText(state.getServerMessage());
+                    ReadOnlyPlayer removedPlayer = typed.removedValue;
+                    
+                    l_remotePlayer.setText(null);
                 }
-                else if (property == State.ServerId)
-                {
-                    if (state.getServerId() == null)
-                    {
-                        close();
-                    }
-                }
-                else if (property == State.CardGame)
+            }
+            else if (property == ReadOnlyState.ServerMsg && change.changeType == ChangeType.Set)
+            {
+                TypedChange<String> typed = ReadOnlyState.ServerMsg.cast(change);
+                l_serverMsg.setText(typed.newValue);
+            }
+            else if (property == ReadOnlyState.ServerId)
+            {
+                if (change.newValue == null)
                 {
                     close();
                 }
             }
+            else if (property == ReadOnlyState.CardGame)
+            {
+                close();
+            }
+            
         }
     }
 

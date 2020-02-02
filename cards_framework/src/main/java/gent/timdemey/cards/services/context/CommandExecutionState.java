@@ -8,17 +8,34 @@ enum CommandExecutionState
     Created,
 
     /**
-     * Unexecuted after having been executed.
+     * Unexecuted after having been executed - single player only.
      */
     Unexecuted,
-
+    
     /**
-     * Executed, not yet locally confirmed.
+     * Executed - single player only.
      */
     Executed,
+    
+    /**
+     * The command could not be reexecuted. This indicates that a command was either erased or inserted
+     * in the command chain, and this command is now no longer executable.
+     */
+    Fail,
+    
+    /**
+     * Executed, but awaiting confirmation from the server. A command in this state
+     * cannot be undone by the user, but only by the server that doesn't accept the command.
+     */
+    AwaitingConfirmation,
 
     /**
-     * Executed, locally confirmed, and externally confirmed by the server.
+     * Executed and accepted by the server.
      */
-    Confirmed
+    Accepted,
+    
+    /**
+     * Unexecuted because the server didn't accept the command. This is a final state.
+     */
+    Rejected,
 }

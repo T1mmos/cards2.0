@@ -13,7 +13,7 @@ import gent.timdemey.cards.model.state.Property;
 
 public class CardStack extends EntityBase
 {
-    public static final Property Cards = Property.of(CardStack.class, "Cards");
+    public static final Property<Card> Cards = Property.of(CardStack.class, Card.class, "Cards");
 
     public final EntityStateListRef<Card> cards;
     public final String cardStackType;

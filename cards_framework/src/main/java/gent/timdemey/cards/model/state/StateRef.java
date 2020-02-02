@@ -6,12 +6,12 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.context.IChangeTracker;
 
-public abstract class StateRef
+public abstract class StateRef<X>
 {
-    public final Property property;
+    public final Property<X> property;
     public final UUID entityId;
 
-    protected StateRef(Property property, UUID entityId)
+    protected StateRef(Property<X> property, UUID entityId)
     {
         this.property = property;
         this.entityId = entityId;

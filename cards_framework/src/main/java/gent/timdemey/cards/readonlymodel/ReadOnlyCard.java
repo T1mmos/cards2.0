@@ -6,6 +6,8 @@ import gent.timdemey.cards.model.cards.Value;
 
 public final class ReadOnlyCard extends ReadOnlyEntityBase<Card>
 {
+    public static final ReadOnlyProperty<Boolean> Visible = ReadOnlyProperty.of(Card.Visible);
+    
     ReadOnlyCard(Card card)
     {
         super(card);

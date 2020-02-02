@@ -14,7 +14,7 @@ import gent.timdemey.cards.model.state.Property;
 
 public class CardGame extends EntityBase
 {
-    public static final Property CardStacks = Property.of(CardGame.class, "CardStacks");
+    public static final Property<CardStack> CardStacks = Property.of(CardGame.class, CardStack.class, "CardStacks");
 
     private final EntityStateListRef<CardStack> cardStacksRef;
     private final Map<UUID, List<UUID>> playerStacks;

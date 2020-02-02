@@ -7,10 +7,10 @@ public final class CommandExecution
     private final CommandBase command;
     private CommandExecutionState state;
 
-    CommandExecution(CommandBase command)
+    CommandExecution(CommandBase command, CommandExecutionState state)
     {
         this.command = command;
-        this.state = CommandExecutionState.Created;
+        this.state = state;
     }
 
     CommandBase getCommand()

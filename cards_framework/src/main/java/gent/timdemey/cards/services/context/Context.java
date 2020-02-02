@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.model.EntityBase;
 import gent.timdemey.cards.model.commands.CommandBase;
 import gent.timdemey.cards.readonlymodel.IStateListener;
+import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
+import gent.timdemey.cards.readonlymodel.ReadOnlyEntityBase;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityFactory;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.IContextService;
@@ -33,11 +36,6 @@ public final class Context
     public ReadOnlyState getReadOnlyState()
     {
         return ReadOnlyEntityFactory.getOrCreateState(limitedContext.getState());
-    }
-
-    public CommandHistory getCommandHistory()
-    {
-        return limitedContext.getCommandHistory();
     }
 
     public void addExecutionListener(IExecutionListener executionListener)
@@ -112,10 +110,21 @@ public final class Context
     {
         // get a list of all changes since the last reset()
         List<Change<?>> changes = changeTracker.getChangeList();
+        
+        // do not leak EntityBase objects, convert to readonly counterparts
+        List<ReadOnlyChange> roChanges = new ArrayList<>();
+        for (Change<?> change : changes)
+        {
+            ReadOnlyChange roChange = ReadOnlyEntityFactory.getReadOnlyChange(change);
+            roChanges.add(roChange);
+        }
 
         for (IStateListener sl : stateListeners)
         {
-            sl.onChange(changes);
+            for (ReadOnlyChange roChange : roChanges)
+            {
+                sl.onChange(roChange);
+            }
         }
 
         // reset the tracker as we updated all listeners

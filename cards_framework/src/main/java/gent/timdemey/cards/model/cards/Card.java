@@ -8,7 +8,7 @@ import gent.timdemey.cards.model.state.StateValueRef;
 
 public class Card extends EntityBase
 {
-    public static final Property Visible = Property.of(Card.class, "Visible");
+    public static final Property<Boolean> Visible = Property.of(Card.class, Boolean.class, "Visible");
 
     public final Suit suit;
     public final Value value;

@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.UUID;
 
-public class StateListRef<X> extends StateRef implements List<X>
+public class StateListRef<X> extends StateRef<X> implements List<X>
 {
     protected final List<X> list;
 
-    public StateListRef(Property property, UUID entityId, List<X> wrappee)
+    public StateListRef(Property<X> property, UUID entityId, List<X> wrappee)
     {
         super(property, entityId);
         this.list = wrappee;

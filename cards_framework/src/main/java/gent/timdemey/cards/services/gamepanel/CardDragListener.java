@@ -16,7 +16,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityList;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IGamePanelManager;
-import gent.timdemey.cards.services.IOperationsService;
+import gent.timdemey.cards.services.ICommandService;
 import gent.timdemey.cards.services.IPositionManager;
 import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.context.Context;
@@ -94,7 +94,7 @@ class CardDragListener extends MouseAdapter
         JScalableImage jscalable = (JScalableImage) comp;
         UUID id = Services.get(IScalableImageManager.class).getUUID(jscalable);
         Context context = Services.get(IContextService.class).getThreadContext();
-        IOperationsService operations = Services.get(IOperationsService.class);
+        ICommandService operations = Services.get(ICommandService.class);
         ReadOnlyCardGame cardGame = context.getReadOnlyState().getCardGame();
 
         if (cardGame.isCard(id))
@@ -205,7 +205,7 @@ class CardDragListener extends MouseAdapter
                         .map(cardId -> cardGame.getCard(cardId)).collect(Collectors.toList());
                 ReadOnlyEntityList<ReadOnlyCard> roCards = new ReadOnlyEntityList<>(cards);
 
-                IOperationsService operationsServ = Services.get(IOperationsService.class);
+                ICommandService operationsServ = Services.get(ICommandService.class);
                 CommandBase cmdPush = operationsServ.getPushCommand(dstCardStack.getId(), roCards.getIds());
                 if (context.canExecute(cmdPush))
                 {

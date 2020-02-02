@@ -10,43 +10,41 @@ import gent.timdemey.cards.model.state.StateValueRef;
 public class Change<X>
 {
     public final ChangeType changeType;
-    public final Property property;
+    public final Property<X> property;
     public final UUID entityId;
-    final StateRef stateRef;
-    final X oldValue;
-    final X newValue;
-    final X addedValue;
-    final X removedValue;
+    public final StateRef<X> stateRef;
+    public final X oldValue;
+    public final X newValue;
+    public final X addedValue;
+    public final X removedValue;
 
-    private Change(ChangeType changeType, StateRef stateRef, Property property, UUID entityId, X oldValue, X newValue)
-    {
+    private Change(ChangeType changeType, StateRef<X> stateRef, X oldValue, X newValue, X addedValue, X removedValue)
+    {        
         this.changeType = changeType;
         this.stateRef = stateRef;
-        this.property = property;
-        this.entityId = entityId;
+        this.property = stateRef.property;
+        this.entityId = stateRef.entityId;
         this.oldValue = oldValue;
         this.newValue = newValue;
-        this.addedValue = null;
-        this.removedValue = null;
+        this.addedValue = addedValue;
+        this.removedValue = removedValue;
     }
 
-    static <X> Change forSet(StateValueRef<X> stateRef, X oldValue, X newValue)
+    static <X> Change<X> forSet(StateValueRef<X> stateRef, X oldValue, X newValue)
     {
-        Change<X> change = new Change<>(ChangeType.Set, stateRef, stateRef.property, stateRef.entityId, oldValue,
-                newValue);
+        Change<X> change = new Change<>(ChangeType.Set, stateRef, oldValue, newValue, null, null);
         return change;
     }
 
     static <X> Change<X> forAdd(StateListRef<X> stateList, X added)
     {
-        Change<X> change = new Change<>(ChangeType.Add, stateList, stateList.property, stateList.entityId, added, null);
+        Change<X> change = new Change<>(ChangeType.Add, stateList, null, null, added, null);
         return change;
     }
 
     static <X> Change<X> forRemove(StateListRef<X> stateList, X removed)
     {
-        Change<X> change = new Change<>(ChangeType.Remove, stateList, stateList.property, stateList.entityId, null,
-                removed);
+        Change<X> change = new Change<>(ChangeType.Remove, stateList, null, null, null, removed);
         return change;
     }
 }

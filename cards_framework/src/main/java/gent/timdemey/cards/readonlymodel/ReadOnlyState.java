@@ -6,6 +6,12 @@ import gent.timdemey.cards.model.state.State;
 
 public class ReadOnlyState extends ReadOnlyEntityBase<State>
 {
+    public static final ReadOnlyProperty<UUID> ServerId = ReadOnlyProperty.of(State.ServerId);
+    public static final ReadOnlyProperty<String> ServerMsg = ReadOnlyProperty.of(State.ServerMsg);
+    public static final ReadOnlyProperty<ReadOnlyServer> Servers = ReadOnlyProperty.of(ReadOnlyServer.class, State.Servers);
+    public static final ReadOnlyProperty<ReadOnlyPlayer> Players = ReadOnlyProperty.of(ReadOnlyPlayer.class, State.Players);
+    public static final ReadOnlyProperty<ReadOnlyCardGame> CardGame = ReadOnlyProperty.of(ReadOnlyCardGame.class, State.CardGame);
+    
     public ReadOnlyState(State state)
     {
         super(state);
@@ -29,6 +35,11 @@ public class ReadOnlyState extends ReadOnlyEntityBase<State>
     public ReadOnlyEntityList<ReadOnlyServer> getServers()
     {
         return ReadOnlyEntityFactory.getOrCreateServerList(entity.getServers());
+    }
+    
+    public ReadOnlyCommandHistory getCommandHistory()
+    {
+        return ReadOnlyEntityFactory.getOrCreateCommandHistory(entity.getCommandHistory());
     }
 
     public UUID getLocalId()

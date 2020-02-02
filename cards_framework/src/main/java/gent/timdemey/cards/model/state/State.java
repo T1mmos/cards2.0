@@ -13,22 +13,26 @@ import gent.timdemey.cards.multiplayer.io.TCP_ConnectionAccepter;
 import gent.timdemey.cards.multiplayer.io.TCP_ConnectionPool;
 import gent.timdemey.cards.multiplayer.io.UDP_ServiceAnnouncer;
 import gent.timdemey.cards.multiplayer.io.UDP_ServiceRequester;
+import gent.timdemey.cards.services.context.CommandHistory;
 
 public class State extends EntityBase
 {
-    public static final Property CardGame = Property.of(State.class, "CardGame");
-    public static final Property LocalId = Property.of(State.class, "LocalId");
-    public static final Property LocalName = Property.of(State.class, "LocalName");
-    public static final Property Players = Property.of(State.class, "Players");
-    public static final Property ServerId = Property.of(State.class, "ServerId");
-    public static final Property ServerMsg = Property.of(State.class, "ServerMsg");
-    public static final Property Servers = Property.of(State.class, "Servers");
-    public static final Property TcpConnectionAccepter = Property.of(State.class, "TcpConnectionAccepter");
-    public static final Property TcpConnectionPool = Property.of(State.class, "TcpConnectionPool");
-    public static final Property TcpConnectionListener = Property.of(State.class, "TcpConnectionListener");
-    public static final Property UdpServiceAnnouncer = Property.of(State.class, "UdpServiceAnnouncer");
-    public static final Property UdpServiceRequester = Property.of(State.class, "UdpServiceRequester");
+    private CommandHistory commandHistory;
 
+    public static final Property<CardGame> CardGame = Property.of(State.class, CardGame.class, "CardGame");
+    public static final Property<UUID> LocalId = Property.of(State.class, UUID.class, "LocalId");
+    public static final Property<String> LocalName = Property.of(State.class, String.class, "LocalName");
+    public static final Property<Player> Players = Property.of(State.class, Player.class, "Players");
+    public static final Property<UUID> ServerId = Property.of(State.class, UUID.class, "ServerId");
+    public static final Property<String> ServerMsg = Property.of(State.class, String.class, "ServerMsg");
+    public static final Property<Server> Servers = Property.of(State.class, Server.class, "Servers");
+    public static final Property<TCP_ConnectionAccepter> TcpConnectionAccepter = Property.of(State.class, TCP_ConnectionAccepter.class,
+        "TcpConnectionAccepter");
+    public static final Property<TCP_ConnectionPool> TcpConnectionPool = Property.of(State.class, TCP_ConnectionPool.class, "TcpConnectionPool");
+    public static final Property<ITcpConnectionListener> TcpConnectionListener = Property.of(State.class, ITcpConnectionListener.class,
+        "TcpConnectionListener");
+    public static final Property<UDP_ServiceAnnouncer> UdpServiceAnnouncer = Property.of(State.class, UDP_ServiceAnnouncer.class, "UdpServiceAnnouncer");
+    public static final Property<UDP_ServiceRequester> UdpServiceRequester = Property.of(State.class, UDP_ServiceRequester.class, "UdpServiceRequester");
 
     // state lists
     private EntityStateListRef<Player> playersRef;
@@ -190,5 +194,15 @@ public class State extends EntityBase
     public void setServerMessage(String serverMsg)
     {
         serverMsgRef.set(serverMsg);
+    }
+
+    public void setCommandHistory(CommandHistory commandHistory)
+    {
+        this.commandHistory = commandHistory;
+    }
+
+    public CommandHistory getCommandHistory()
+    {
+        return commandHistory;
     }
 }

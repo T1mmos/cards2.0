@@ -3,27 +3,29 @@ package gent.timdemey.cards.model.state;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Property
+public class Property<X>
 {
-    private static List<Property> properties = new ArrayList<>();
+    private static List<Property<?>> properties = new ArrayList<>();
 
-    private final String fullname;
-    private final String shortname;
+    public final Class<X> propertyClazz;
+    public final String fullname;
+    public final String shortname;
 
-    private Property(String fullname, String shortname)
+    private Property(Class<X> propertyClazz, String fullname, String shortname)
     {
+        this.propertyClazz = propertyClazz;
         this.fullname = fullname;
         this.shortname = shortname;
     }
 
-    public static Property of(Class<?> containingClazz, String propertyName)
+    public static <X> Property<X> of(Class<?> containingClazz, Class<X> propertyClazz, String propertyName)
     {
         String clazzfullname = containingClazz.getName();
         String clazzshortname = containingClazz.getSimpleName();
         String fullname = clazzfullname + "::" + propertyName;
         String shortname = clazzshortname + "::" + propertyName;
 
-        Property property = new Property(fullname, shortname);
+        Property<X> property = new Property<>(propertyClazz, fullname, shortname);
         if (properties.contains(property))
         {
             throw new IllegalArgumentException(
@@ -42,8 +44,18 @@ public class Property
             return false;
         }
 
-        Property other = (Property) obj;
-        return this.fullname.equals(other.fullname);
+        Property<?> other = (Property<?>) obj;
+
+        if (propertyClazz != other.propertyClazz)
+        {
+            return false;
+        }
+        if (!this.fullname.equals(other.fullname))
+        {
+            return false;
+        }
+        
+        return true;
     }
 
     @Override

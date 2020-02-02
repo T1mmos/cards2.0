@@ -8,7 +8,6 @@ import gent.timdemey.cards.Services;
 
 class AAction extends AbstractAction
 {
-
     public static final String ACTION_QUIT = "action.quit";
     public static final String ACTION_CREATE = "action.create";
     public static final String ACTION_START = "action.start";

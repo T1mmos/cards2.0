@@ -5,9 +5,11 @@ import java.util.List;
 
 import javax.swing.SwingUtilities;
 
+import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.services.ICommandService;
 import gent.timdemey.cards.services.IContextService;
 
 public class UICommandExecutor implements ICommandExecutor
@@ -18,7 +20,12 @@ public class UICommandExecutor implements ICommandExecutor
 
     public UICommandExecutor()
     {
-        this.commandHistory = new CommandHistory();
+        ICardPlugin plugin = Services.get(ICardPlugin.class);
+        boolean isMultiplayer = plugin.getPlayerCount() > 1;
+        boolean undoable = !isMultiplayer;
+        boolean erasable = isMultiplayer;
+        
+        this.commandHistory = new CommandHistory(undoable, erasable);
         this.executionListeners = new ArrayList<>();
     }
 
@@ -35,39 +42,58 @@ public class UICommandExecutor implements ICommandExecutor
     }
 
     private void execute(CommandBase command, State state)
-    {
-        if (command.getSourceId() == state.getLocalId())
+    {        
+        ICommandService cmdServ = Services.get(ICommandService.class);
+        boolean addToHistory = cmdServ.isSyncedCommand(command);
+        
+        boolean local = command.getSourceId() == state.getLocalId();
+        boolean server = command.getSourceId() == state.getServerId();
+        
+        if (!local && !server)
+        {
+            throw new IllegalArgumentException("A command's source must either be local or the server");
+        }
+        if (local && !command.canExecute(state))
         {
             // if the command is locally created then it is supposed to be able to execute
-            if (!command.canExecute(state))
+            throw new IllegalStateException("The command '" + command.getClass().getSimpleName() + " cannot be executed");
+        }
+        
+        if (addToHistory)
+        {
+            // delegate command execution to the command history
+            if (local)
             {
-                throw new IllegalStateException("The command '" + command.getClass().getSimpleName() + " cannot be executed");
+                CommandExecution cmdExecution = new CommandExecution(command, CommandExecutionState.Executed);
+                commandHistory.add(cmdExecution);
+            }
+            else
+            {
+                CommandExecution cmdExecution = new CommandExecution(command, CommandExecutionState.Accepted);
+                List<CommandExecution> fails = commandHistory.inject(cmdExecution, state);
+                HandleReexecutionFails(fails);
             }
         }
-        else if (command.getSourceId() == state.getServerId())
+        else
         {
-            // a server command must always execute, and therefore we must rollback all 
-            // unconfirmed command in order to insert this command in the command history 
-            // at the correct location, to detect subsequent commands that become now invalid.
-            
-            commandHistory.getCommands(CommandExecutionState.Executed);
+            // execute the command here
+            command.execute(state);
         }
         
-        
-        if(!command.canExecute(state))
-        {
-            
-        }
-
-        CommandExecution cmdExecution = new CommandExecution(command);
-        command.execute(state);
-
-        commandHistory.addCommandExecution(cmdExecution);
-
+        // update the listeners
         for (IExecutionListener execListener : executionListeners)
         {
             execListener.onExecuted();
         }
+    }
+    
+    private void HandleReexecutionFails(List<CommandExecution> fails)
+    {
+        // TODO show a dialog telling the user some of his command were revoked because
+        // the server inserted a command in the history, that now renders some of his 
+        // commands invalid, given the changed state
+        
+        
     }
 
     @Override

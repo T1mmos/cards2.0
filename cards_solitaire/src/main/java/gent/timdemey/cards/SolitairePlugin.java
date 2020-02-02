@@ -5,7 +5,7 @@ import gent.timdemey.cards.entities.SolitaireCardGameCreator;
 import gent.timdemey.cards.gamepanel.SolitaireGamePanelManager;
 import gent.timdemey.cards.position.SolitairePositionManager;
 import gent.timdemey.cards.services.IGamePanelManager;
-import gent.timdemey.cards.services.IOperationsService;
+import gent.timdemey.cards.services.ICommandService;
 import gent.timdemey.cards.services.IPositionManager;
 import gent.timdemey.cards.services.SolitaireOperationsService;
 
@@ -13,7 +13,7 @@ public class SolitairePlugin implements ICardPlugin {
 
     @Override
     public void installServices() {
-        Services.install(IOperationsService.class, new SolitaireOperationsService());
+        Services.install(ICommandService.class, new SolitaireOperationsService());
         Services.install(IPositionManager.class, new SolitairePositionManager());
         Services.install(ICardGameCreator.class, new SolitaireCardGameCreator());
         Services.install(IGamePanelManager.class, new SolitaireGamePanelManager());

@@ -1,46 +1,31 @@
 package gent.timdemey.cards.ui.actions;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
-
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
-import gent.timdemey.cards.readonlymodel.AGameEventAdapter;
-import gent.timdemey.cards.services.IGameOperationsService;
+import gent.timdemey.cards.readonlymodel.IStateListener;
+import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
+import gent.timdemey.cards.readonlymodel.ReadOnlyState;
+import gent.timdemey.cards.services.IContextService;
 
-public class ActionStopGame extends AbstractAction
+public class ActionStopGame extends AAction
 {
-    private class GameStartListener extends AGameEventAdapter
+    private class GameStopListener implements IStateListener
     {
-        @Override
-        public void onStartGame()
-        {
-            check();
-        }
 
         @Override
-        public void onStopGame()
+        public void onChange(ReadOnlyChange change)
         {
-            check();
+            if (change.property == ReadOnlyState.CardGame)
+            {
+                checkEnabled();
+            }
         }
     }
 
     public ActionStopGame()
     {
-        super(Loc.get("menuitem_stopgame"));
-        Services.get(IGameOperationsService.class).addGameEventListener(new GameStartListener());
-        check();
-    }
-
-    private void check()
-    {
-        setEnabled(Services.get(IGameOperationsService.class).canStopGame());
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e)
-    {
-        Services.get(IGameOperationsService.class).stopGame();
+        super(AAction.ACTION_STOP, Loc.get("menuitem_stopgame"));
+        Services.get(IContextService.class).getThreadContext().addStateListener(new GameStopListener());
+        checkEnabled();
     }
 }
