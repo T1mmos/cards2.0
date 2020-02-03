@@ -1,16 +1,14 @@
 package gent.timdemey.cards.gamepanel;
 
-import java.awt.Rectangle;
 import java.util.List;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.entities.E_CardGame;
-import gent.timdemey.cards.entities.E_CardStack;
-import gent.timdemey.cards.entities.IContextProvider;
 import gent.timdemey.cards.entities.SolitaireCardStackType;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
+import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.gamepanel.GamePanelManager;
-import gent.timdemey.cards.services.plugin.IPositionManager;
-import gent.timdemey.cards.services.scaleman.IScalableImageManager;
 import gent.timdemey.cards.services.scaleman.ImageDefinition;
 import gent.timdemey.cards.services.scaleman.JScalableImage;
 
@@ -32,28 +30,28 @@ public class SolitaireGamePanelManager extends GamePanelManager {
     protected void addScalableImages() {
         super.addScalableImages();
         
-        E_CardGame cardGame = Services.get(IContextProvider.class).getThreadContext().getCardGameState().getCardGame();
+        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState().getCardGame();
         
         IScalableImageManager scaleMan = Services.get(IScalableImageManager.class);
-        for (E_CardStack cardStack : cardGame.getCardStacks()) {
+        for (ReadOnlyCardStack cardStack : cardGame.getCardStacks()) {
             
-            JScalableImage jscalable = scaleMan.getJScalableImage(cardStack.getCardStackId());
+            JScalableImage jscalable = scaleMan.getJScalableImage(cardStack.getId());
             
             if (cardStack.getCardStackType().equals( SolitaireCardStackType.MIDDLE))
             {
-                scaleMan.setImage(cardStack.getCardStackId(), "stack_long_green.png");
+                scaleMan.setImage(cardStack.getId(), "stack_long_green.png");
             }
             else if (cardStack.getCardStackType().equals(SolitaireCardStackType.LAYDOWN))
             {
-                scaleMan.setImage(cardStack.getCardStackId(), "stack_short_green_filled.png");
+                scaleMan.setImage(cardStack.getId(), "stack_short_green_filled.png");
             } 
             else if (cardStack.getCardStackType().equals(SolitaireCardStackType.DEPOT))
             {
-                scaleMan.setImage(cardStack.getCardStackId(), "stack_short_arrow.png");
+                scaleMan.setImage(cardStack.getId(), "stack_short_arrow.png");
             }  
             else
             {
-                scaleMan.setImage(cardStack.getCardStackId(), "stack_short_green.png");
+                scaleMan.setImage(cardStack.getId(), "stack_short_green.png");
             }
             
             jscalable.setSize(100,100);

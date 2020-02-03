@@ -15,7 +15,7 @@ import gent.timdemey.cards.model.commands.CommandBase;
 import gent.timdemey.cards.model.commands.D_CreateGame;
 import gent.timdemey.cards.model.commands.D_JoinGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
-import gent.timdemey.cards.services.ICardGameCreatorService;
+import gent.timdemey.cards.services.ICardGameCreationService;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IGamePanelManager;
 import gent.timdemey.cards.services.context.ContextType;
@@ -84,7 +84,7 @@ public class ActionService implements IActionService
             execute(new D_JoinGame());
             break;
         case AAction.ACTION_START:
-            ICardGameCreatorService creator = Services.get(ICardGameCreatorService.class);
+            ICardGameCreationService creator = Services.get(ICardGameCreationService.class);
             List<List<Card>> cards = creator.getCards();
 
             List<UUID> playerIds = getReadOnlyState().getPlayers().getIds();

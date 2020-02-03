@@ -43,6 +43,11 @@ public final class ReadOnlyCardGame extends ReadOnlyEntityBase<CardGame>
         return ReadOnlyEntityFactory.getOrCreateCardStackList(entity.getCardStacks());
     }
 
+    public List<ReadOnlyCardStack> getCardStacks(UUID playerId, String cardStackType)
+    {
+        return ReadOnlyEntityFactory.getOrCreateCardStackList(entity.getCardStacks(playerId, cardStackType));
+    }
+
     public List<String> getCardStackTypes()
     {
         return entity.getCardStackTypes();

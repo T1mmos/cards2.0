@@ -13,7 +13,7 @@ import gent.timdemey.cards.model.cards.CardStack;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.multiplayer.io.TCP_Connection;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
-import gent.timdemey.cards.services.ICardGameCreatorService;
+import gent.timdemey.cards.services.ICardGameCreationService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
@@ -91,7 +91,7 @@ public class C_JoinGame extends CommandBase
             if (others.size() + 1 == Services.get(ICardPlugin.class).getPlayerCount())
             {
                 // ready to kick off. Generate some cards for the current game type.
-                ICardGameCreatorService creator = Services.get(ICardGameCreatorService.class);
+                ICardGameCreationService creator = Services.get(ICardGameCreationService.class);
                 List<List<Card>> allCards = creator.getCards();
                 List<UUID> playerIds = state.getPlayers().getIds();
                 Map<UUID, List<CardStack>> playerStacks = creator.createStacks(playerIds, allCards);

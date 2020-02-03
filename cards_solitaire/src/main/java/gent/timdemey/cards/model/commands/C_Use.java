@@ -31,13 +31,13 @@ public class C_Use extends CommandBase
     {
         CardGame cardGame = state.getCardGame();
         List<CommandBase> eligible = new ArrayList<>();
+        UUID localId = context.getReadOnlyState().getLocalId();
 
         if(initiatorStackId != null)
         {
             CardStack initiatorStack = cardGame.getCardStack(initiatorStackId);
 
             String cardStackType = initiatorStack.cardStackType;
-            UUID localId = context.getReadOnlyState().getLocalId();
 
             if(cardStackType.equals(SolitaireCardStackType.DEPOT))
             {
@@ -63,7 +63,7 @@ public class C_Use extends CommandBase
         else
         {
             Card initiatorCard = cardGame.getCard(initiatorCardId);
-            CardStack initiatorStack = initiatorCard.cardStackRef.get();
+            CardStack initiatorStack = initiatorCard.cardStack;
             String cardStackType = initiatorStack.cardStackType;
 
             if(cardStackType.equals(SolitaireCardStackType.TURNOVER) || cardStackType.equals(SolitaireCardStackType.MIDDLE))

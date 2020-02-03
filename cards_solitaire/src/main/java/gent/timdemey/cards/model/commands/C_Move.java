@@ -112,7 +112,7 @@ public class C_Move extends CommandBase
             dstCardStack.addAll(transferCards);
         }
 
-        transferCards.forEach(card -> card.cardStackRef.set(dstCardStack));
+        transferCards.forEach(card -> card.cardStack = dstCardStack);
 
         if(type == ContextType.Server)
         {
@@ -151,6 +151,6 @@ public class C_Move extends CommandBase
         }
 
         srcCardStack.addAll(transferCards);
-        transferCards.forEach(card -> card.cardStackRef.set(srcCardStack));
+        transferCards.forEach(card -> card.cardStack = srcCardStack);
     }
 }

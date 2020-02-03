@@ -7,7 +7,7 @@ import java.util.UUID;
 import gent.timdemey.cards.model.cards.Card;
 import gent.timdemey.cards.model.cards.CardStack;
 
-public interface ICardGameCreatorService
+public interface ICardGameCreationService
 {
     /**
      * Returns a random deck that includes all cards per player necessary to play a
