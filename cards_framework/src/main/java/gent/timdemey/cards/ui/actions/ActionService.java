@@ -8,6 +8,7 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.cards.Card;
 import gent.timdemey.cards.model.cards.CardStack;
 import gent.timdemey.cards.model.commands.C_Redo;
+import gent.timdemey.cards.model.commands.C_SetPlayer;
 import gent.timdemey.cards.model.commands.C_StartGame;
 import gent.timdemey.cards.model.commands.C_StopGame;
 import gent.timdemey.cards.model.commands.C_Undo;
@@ -19,6 +20,7 @@ import gent.timdemey.cards.services.ICardGameCreationService;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IGamePanelManager;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.context.LimitedContext;
 
 public class ActionService implements IActionService
 {
@@ -86,13 +88,18 @@ public class ActionService implements IActionService
         case AAction.ACTION_START:
             ICardGameCreationService creator = Services.get(ICardGameCreationService.class);
             List<List<Card>> cards = creator.getCards();
+            
+            IContextService contextServ = Services.get(IContextService.class);
+            LimitedContext context = contextServ.getContext(ContextType.UI);
 
+            C_SetPlayer cmdSetPlayer = new C_SetPlayer("DUMMY-PLAYER");
+            context.schedule(cmdSetPlayer);
+            
             List<UUID> playerIds = getReadOnlyState().getPlayers().getIds();
             Map<UUID, List<CardStack>> playerStacks = creator.createStacks(playerIds, cards);
 
-            C_StartGame command = new C_StartGame(UUID.randomUUID(), playerStacks);
-            IContextService contextServ = Services.get(IContextService.class);
-            contextServ.getContext(ContextType.Server).schedule(command);
+            C_StartGame command = new C_StartGame(UUID.randomUUID(), playerStacks);            
+            contextServ.getContext(ContextType.UI).schedule(command);
             break;
         case AAction.ACTION_STOP:
             execute(new C_StopGame());

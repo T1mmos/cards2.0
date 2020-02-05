@@ -12,12 +12,15 @@ public final class Services
 
     private static class EntryKey
     {
-        Class<?> clazz;
-        Object param;
+        final Class<?> clazz;
+        final Object param;
 
         private EntryKey(Class<?> clazz, Object param)
         {
             Preconditions.checkNotNull(clazz);
+            
+            this.clazz = clazz;
+            this.param = param;
         }
 
         @Override
@@ -104,13 +107,14 @@ public final class Services
     {
         EntryKey entryKey = new EntryKey(iface, param);
 
-        if (!serviceMap.containsKey(entryKey))
+        T value = (T) serviceMap.get(entryKey);
+        if (value == null)
         {
             throw new IllegalStateException("Requested a service of type " + iface
                     + (param != null ? "(parameter=" + param + ")" : "") + ", but none is set.");
         }
 
-        return (T) serviceMap.get(iface);
+        return value;
 
     }
 }

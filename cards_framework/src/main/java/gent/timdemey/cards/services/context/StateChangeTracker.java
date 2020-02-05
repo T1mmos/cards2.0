@@ -49,7 +49,7 @@ public class StateChangeTracker implements IChangeTracker
             Change<X> chngX = (Change<X>) chng;
 
             // only need the changes to the list that relate to the given element
-            if (!chngX.addedValue.equals(element) && !chngX.removedValue.equals(element))
+            if ((chngX.addedValue == null || !chngX.addedValue.equals(element)) && (chngX.removedValue == null || !chngX.removedValue.equals(element)))
             {
                 continue;
             }

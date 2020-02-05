@@ -12,7 +12,7 @@ import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.ICommandService;
 import gent.timdemey.cards.services.IContextService;
 
-public class UICommandExecutor implements ICommandExecutor
+class UICommandExecutor implements ICommandExecutor
 {
     private final CommandHistory commandHistory;
 
@@ -99,11 +99,6 @@ public class UICommandExecutor implements ICommandExecutor
     @Override
     public void addExecutionListener(IExecutionListener executionListener)
     {
-        // check that the execution listener is installed on the UI thread
-        if(!Services.get(IContextService.class).isCurrentContext(ContextType.UI))
-        {
-            throw new IllegalStateException("Execution listener should be set on the UI thread");
-        }
         if(executionListeners.contains(executionListener))
         {
             throw new IllegalStateException("This Execution Listener is already registered"); 

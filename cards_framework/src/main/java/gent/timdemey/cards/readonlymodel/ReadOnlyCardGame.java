@@ -7,6 +7,7 @@ import gent.timdemey.cards.model.cards.CardGame;
 
 public final class ReadOnlyCardGame extends ReadOnlyEntityBase<CardGame>
 {
+    public static ReadOnlyProperty<ReadOnlyCardStack> CardStacks = ReadOnlyProperty.of(ReadOnlyCardStack.class, CardGame.CardStacks);
 
     ReadOnlyCardGame(CardGame cardGame)
     {

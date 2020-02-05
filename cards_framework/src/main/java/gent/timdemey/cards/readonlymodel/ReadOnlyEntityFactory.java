@@ -129,6 +129,11 @@ public class ReadOnlyEntityFactory
 
     public static Object toReadOnly(Object wrappee)
     {
+        if (wrappee == null)
+        {
+            return null;
+        }
+        
         Class<?> srcClazz = wrappee.getClass();
 
         if(wrappee instanceof EntityBase)

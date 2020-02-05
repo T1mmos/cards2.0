@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.model.EntityBase;
 import gent.timdemey.cards.model.commands.CommandBase;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
-import gent.timdemey.cards.readonlymodel.ReadOnlyEntityBase;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityFactory;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.IContextService;
@@ -19,18 +17,24 @@ public final class Context
     private final IChangeTracker changeTracker;
     final LimitedContext limitedContext;
     private final List<IStateListener> stateListeners;
+    private final boolean allowStateListeners;
 
-    Context(ContextType contextType, ICommandExecutor cmdExecService, boolean allowStateListeners)
+    private Context(ContextType contextType, ICommandExecutor cmdExecService, boolean allowStateListeners)
     {
         limitedContext = new LimitedContext(contextType, cmdExecService);
-
-        if(allowStateListeners)
-        {
-            limitedContext.addExecutionListener(this::onExecuted);
-        }
-
-        this.stateListeners = new ArrayList<>();
+        
+        this.allowStateListeners = allowStateListeners;
+        this.stateListeners = allowStateListeners ? new ArrayList<>() : null;
         this.changeTracker = allowStateListeners ? new StateChangeTracker() : new NopChangeTracker();
+    }
+    
+    static Context createContext(ContextType contextType, ICommandExecutor cmdExecService, boolean allowStateListeners)
+    {
+        Context context = new Context(contextType, cmdExecService, allowStateListeners);
+        
+        context.addExecutionListener(context::onExecuted);
+        
+        return context;
     }
 
     public ReadOnlyState getReadOnlyState()
@@ -38,7 +42,7 @@ public final class Context
         return ReadOnlyEntityFactory.getOrCreateState(limitedContext.getState());
     }
 
-    public void addExecutionListener(IExecutionListener executionListener)
+    void addExecutionListener(IExecutionListener executionListener)
     {
         limitedContext.addExecutionListener(executionListener);
     }
@@ -77,7 +81,7 @@ public final class Context
 
     public void addStateListener(IStateListener stateListener)
     {
-        if (changeTracker == null)
+        if (!allowStateListeners)
         {
             throw new IllegalStateException("This context isn't configured to track changes, therefore you cannot add a state listener.");
         }

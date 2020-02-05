@@ -1,6 +1,8 @@
 package gent.timdemey.cards.readonlymodel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import gent.timdemey.cards.model.EntityBase;
@@ -9,6 +11,22 @@ import gent.timdemey.cards.model.state.Property;
 public class ReadOnlyProperty<T>
 {
     private static Map<Property<?>, ReadOnlyProperty<?>> KNOWN_PROPERTIES = new HashMap<>();
+    
+    
+    
+    static 
+    {
+        // trigger static initialization of the root class
+        String name = ReadOnlyState.class.getName();
+        try
+        {
+            Class.forName(name);
+        }
+        catch (Exception e)
+        {
+            // TODO: handle exception
+        }
+    }
     
     public final Class<T> propertyClazz;
     private final Property<?> wrappee;
@@ -27,6 +45,16 @@ public class ReadOnlyProperty<T>
      */
     public static <S extends EntityBase, T extends ReadOnlyEntityBase<S>> ReadOnlyProperty<T> of (Class<T> propertyClazz, Property<S> property)
     {
+        // ensure the static initializer has run for the class where the ReadOnlyProperty is declared, to ensure
+        // the full hierarchy of statically declared ReadOnlyProperties will register themselves to this class.
+        // The only class that must be triggered to statically initialize is then ReadOnlyState.
+        try {
+            Class.forName(propertyClazz.getName());
+        }
+        catch (Exception ex)
+        {
+            throw new IllegalStateException("Expected " + propertyClazz + " to be an available class!");
+        }
         return create(propertyClazz, property);
     }
     

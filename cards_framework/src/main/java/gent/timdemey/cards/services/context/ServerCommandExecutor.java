@@ -13,7 +13,7 @@ import gent.timdemey.cards.multiplayer.io.TCP_Connection;
 import gent.timdemey.cards.multiplayer.io.TCP_ConnectionAccepter;
 import gent.timdemey.cards.services.IContextService;
 
-public class ServerCommandExecutor extends CommandExecutorBase
+class ServerCommandExecutor extends CommandExecutorBase
 {
     private TCP_ConnectionAccepter srv_tcp_accepter = null;
 

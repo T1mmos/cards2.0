@@ -27,7 +27,8 @@ public class Loc
 
         LOCALE = locale;
 
-        ClassLoader resClassLoader = Services.get(IResourceManager.class).getResourceClassLoader();
+        IResourceManager resourceManager = Services.get(IResourceManager.class);
+        ClassLoader resClassLoader = resourceManager.getResourceClassLoader();
         ResourceBundle rb = ResourceBundle.getBundle(FILENAME_BASE, LOCALE, resClassLoader);
 
         BUNDLE = rb;

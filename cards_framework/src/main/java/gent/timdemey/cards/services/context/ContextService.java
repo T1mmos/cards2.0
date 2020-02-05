@@ -8,6 +8,8 @@ import javax.swing.SwingUtilities;
 
 import com.google.common.base.Preconditions;
 
+import gent.timdemey.cards.ICardPlugin;
+import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.IContextService;
 
 /**
@@ -75,7 +77,6 @@ public final class ContextService implements IContextService
     {
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
 
-        boolean trackChanges = type == ContextType.UI;
         ICommandExecutor cmdExecutor = null;
         if(type == ContextType.UI)
         {
@@ -94,7 +95,18 @@ public final class ContextService implements IContextService
             throw new IllegalArgumentException("Unknown ContextType: " + type);
         }
 
-        Context context = new Context(type, cmdExecutor, trackChanges);
+        boolean allowStateListeners = type == ContextType.UI;
+        Context context = Context.createContext(type, cmdExecutor, allowStateListeners);
+
+        if(type == ContextType.UI)
+        {
+            ICardPlugin plugin = Services.get(ICardPlugin.class);
+            boolean multiplayer = plugin.getPlayerCount() > 1;
+            boolean undoable = !multiplayer;
+            boolean erasable = multiplayer;
+            CommandHistory commandHistory = new CommandHistory(undoable, erasable);
+            context.limitedContext.getState().setCommandHistory(commandHistory);
+        }
 
         Context prev = fullContexts.putIfAbsent(type, context);
         if(prev != null)

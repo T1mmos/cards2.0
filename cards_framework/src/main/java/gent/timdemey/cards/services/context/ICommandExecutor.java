@@ -11,7 +11,7 @@ import gent.timdemey.cards.model.state.State;
  * 
  * @author Timmos
  */
-public interface ICommandExecutor
+interface ICommandExecutor
 {
     /**
      * Adds a new command to command list, for execution somewhere in the near
