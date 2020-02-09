@@ -1,6 +1,8 @@
-package gent.timdemey.cards.model;
+package gent.timdemey.cards.model.other;
 
 import java.util.UUID;
+
+import gent.timdemey.cards.model.EntityBase;
 
 public class Player extends EntityBase
 {
@@ -16,5 +18,11 @@ public class Player extends EntityBase
     {
         super(id);
         this.name = name;
+    }
+
+    @Override
+    public String toDebugString()
+    {
+        return name;
     }
 }

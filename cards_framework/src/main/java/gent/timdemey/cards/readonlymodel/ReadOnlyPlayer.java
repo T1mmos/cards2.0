@@ -1,6 +1,6 @@
 package gent.timdemey.cards.readonlymodel;
 
-import gent.timdemey.cards.model.Player;
+import gent.timdemey.cards.model.other.Player;
 
 public class ReadOnlyPlayer extends ReadOnlyEntityBase<Player>
 {
@@ -13,4 +13,6 @@ public class ReadOnlyPlayer extends ReadOnlyEntityBase<Player>
     {
         return entity.name;
     }
+    
+    
 }

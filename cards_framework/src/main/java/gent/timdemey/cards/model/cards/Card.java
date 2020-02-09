@@ -22,7 +22,7 @@ public class Card extends EntityBase
 
         this.suit = suit;
         this.value = value;
-        this.visibleRef = new StateValueRef<>(Visible, id);
+        this.visibleRef = new StateValueRef<>(Visible, id, visible);
         this.cardStack = null;
     }
 
@@ -37,8 +37,8 @@ public class Card extends EntityBase
     }
 
     @Override
-    public String toString()
+    public String toDebugString()
     {
-        return "" + value + suit;
+        return String.format("Value=%s,Suit=%s", value, suit);
     }
 }

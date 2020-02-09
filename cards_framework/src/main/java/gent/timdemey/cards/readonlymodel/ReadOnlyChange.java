@@ -24,4 +24,12 @@ public class ReadOnlyChange
         this.addedValue = addedValue;
         this.removedValue = removedValue;
     }
+    
+    @Override
+    public String toString()
+    {
+        String str = String.format("ChangeType=%s,\nProperty=%s,\nOldValue=%s,\nNewValue=%s,\nAddedValue=%s,\nRemovedValue=%s",
+            changeType, property, oldValue, newValue, addedValue, removedValue);
+        return str;
+    }
 }

@@ -516,4 +516,11 @@ public class CommandHistory extends EntityBase
     {
         
     }
+    
+    @Override
+    public String toDebugString()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

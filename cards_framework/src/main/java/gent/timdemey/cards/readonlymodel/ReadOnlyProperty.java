@@ -107,4 +107,10 @@ public class ReadOnlyProperty<T>
         TypedChange<T> changeT = new TypedChange<T>(change.changeType, this, change.entityId, oldValue, newValue, addedValue, removedValue);
         return changeT;
     }
+    
+    @Override
+    public String toString()
+    {
+        return wrappee.shortname + " [" + propertyClazz.getSimpleName() + "]";
+    }
 }

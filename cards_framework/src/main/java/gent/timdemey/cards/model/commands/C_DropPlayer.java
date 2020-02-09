@@ -2,7 +2,7 @@ package gent.timdemey.cards.model.commands;
 
 import java.util.UUID;
 
-import gent.timdemey.cards.model.Player;
+import gent.timdemey.cards.model.other.Player;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.context.Context;

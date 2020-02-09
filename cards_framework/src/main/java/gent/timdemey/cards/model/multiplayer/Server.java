@@ -23,4 +23,10 @@ public class Server extends EntityBase
         this.inetAddress = inetAddress;
         this.tcpport = tcpport;
     }
+    
+    @Override
+    public String toDebugString()
+    {
+        return String.format("ServerName=%s,InetAddress=%s,TcpPort=%s", serverName, inetAddress.getHostAddress(), tcpport);
+    }
 }

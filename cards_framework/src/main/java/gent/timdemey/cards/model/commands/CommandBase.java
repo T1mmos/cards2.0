@@ -140,4 +140,10 @@ public abstract class CommandBase extends EntityBase
         }
         return serialized;
     }
+    
+    @Override
+    public String toDebugString()
+    {
+        return "no info";
+    }
 }

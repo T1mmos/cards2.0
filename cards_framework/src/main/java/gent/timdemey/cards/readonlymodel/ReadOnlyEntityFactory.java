@@ -9,11 +9,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import gent.timdemey.cards.model.EntityBase;
-import gent.timdemey.cards.model.Player;
 import gent.timdemey.cards.model.cards.Card;
 import gent.timdemey.cards.model.cards.CardGame;
 import gent.timdemey.cards.model.cards.CardStack;
 import gent.timdemey.cards.model.multiplayer.Server;
+import gent.timdemey.cards.model.other.Player;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.model.state.StateListRef;
 import gent.timdemey.cards.services.context.Change;

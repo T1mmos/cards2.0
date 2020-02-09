@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.EntityBase;
-import gent.timdemey.cards.model.Player;
 import gent.timdemey.cards.model.cards.CardGame;
 import gent.timdemey.cards.model.multiplayer.Server;
+import gent.timdemey.cards.model.other.Player;
 import gent.timdemey.cards.multiplayer.io.ITcpConnectionListener;
 import gent.timdemey.cards.multiplayer.io.TCP_ConnectionAccepter;
 import gent.timdemey.cards.multiplayer.io.TCP_ConnectionPool;
@@ -204,5 +204,11 @@ public class State extends EntityBase
     public CommandHistory getCommandHistory()
     {
         return commandHistory;
+    }
+    
+    @Override
+    public final String toDebugString()
+    {
+        return "State"; 
     }
 }

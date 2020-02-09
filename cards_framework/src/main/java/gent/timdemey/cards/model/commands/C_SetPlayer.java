@@ -1,6 +1,6 @@
 package gent.timdemey.cards.model.commands;
 
-import gent.timdemey.cards.model.Player;
+import gent.timdemey.cards.model.other.Player;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;

@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
-import gent.timdemey.cards.model.Player;
+import gent.timdemey.cards.model.other.Player;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.context.Context;

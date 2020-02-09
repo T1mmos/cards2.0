@@ -34,6 +34,7 @@ public class CardGame extends EntityBase
                 UUID cardStackId = cardStack.id;
 
                 cardStackIds.add(cardStackId);
+                cardStacksRef.add(cardStack);
             }
             this.playerStacks.put(playerId, cardStackIds);
         }
@@ -173,5 +174,11 @@ public class CardGame extends EntityBase
         }
         EntityStateListRef<Card> list = EntityStateListRef.asReadOnly(cards);
         return list;
+    }
+    
+    @Override
+    public String toDebugString()
+    {
+        return "no info";
     }
 }

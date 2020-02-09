@@ -42,4 +42,12 @@ public abstract class EntityBase
     {
         return id.hashCode();
     }
+    
+    @Override
+    public final String toString()
+    {
+        return getClass().getSimpleName() + " [ " + toDebugString() + " ] ";
+    }
+    
+    public abstract String toDebugString();
 }

@@ -103,8 +103,8 @@ public class CardStack extends EntityBase
     }
 
     @Override
-    public String toString()
+    public String toDebugString()
     {
-        return "[" + cardStackType + "#" + typeNumber + ", #cards=" + cards.size() + ", id=" + id + "]";
+        return String.format("CardStackType=%s, TypeNumber=%s, CardCount=%s", cardStackType, typeNumber, getCards().size());
     }
 }

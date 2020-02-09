@@ -43,6 +43,6 @@ public abstract class ReadOnlyEntityBase<T extends EntityBase>
     @Override
     public final String toString()
     {
-        return "[R/O] " + entity.toString();
+        return  getClass().getSimpleName() + " [ "  + entity.toDebugString() + " ]";
     }
 }

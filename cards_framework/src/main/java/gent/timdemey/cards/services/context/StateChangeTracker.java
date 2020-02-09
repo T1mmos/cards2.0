@@ -66,7 +66,7 @@ public class StateChangeTracker implements IChangeTracker
         // look for a previous change for the given reference
         Change<X> prevChangeX = getChange(reference);
 
-        if (prevChangeX != null && !prevChangeX.newValue.equals(oldValue) || prevChangeX == null && oldValue != null)
+        if (prevChangeX != null && !prevChangeX.newValue.equals(oldValue))
         {
             throw new IllegalStateException("Delta can't add a new change: oldvalue != prevChange.newValue");
         }
