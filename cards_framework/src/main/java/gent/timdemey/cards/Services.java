@@ -81,7 +81,8 @@ public final class Services
 
     public static boolean isInstalled(Class<?> iface)
     {
-        return serviceMap.containsKey(iface);
+        EntryKey entryKey = new EntryKey(iface, null);
+        return serviceMap.containsKey(entryKey);
     }
 
     public static <T> void install(Class<T> iface, T implementation)
@@ -92,9 +93,10 @@ public final class Services
     public static <T> void install(Class<T> iface, Object param, T implementation)
     {
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
-        Preconditions.checkState(!serviceMap.containsKey(iface));
-
+        
         EntryKey entryKey = new EntryKey(iface, param);
+        Preconditions.checkState(!serviceMap.containsKey(entryKey));
+
         serviceMap.put(entryKey, implementation);
     }
 

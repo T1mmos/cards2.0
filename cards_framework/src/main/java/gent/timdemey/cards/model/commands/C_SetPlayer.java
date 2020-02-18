@@ -23,8 +23,14 @@ public final class C_SetPlayer extends CommandBase
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
+        if (type != ContextType.UI)
+        {
+            throw new IllegalStateException("This is a single player command which can only execute in the UI layer");
+        }
+        
         Player player = new Player(name);
         state.getPlayers().add(player);
+        state.setLocalId(player.id);
     }
 
 }

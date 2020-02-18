@@ -49,7 +49,7 @@ public class CardGame extends EntityBase
                 return cs.getCards().get(cardId);
             }
         }
-        throw new IllegalArgumentException("No CardStack in the game contains a card with CardId=" + cardId);
+        return null;
     }
 
     public Card getCard(UUID cardId)

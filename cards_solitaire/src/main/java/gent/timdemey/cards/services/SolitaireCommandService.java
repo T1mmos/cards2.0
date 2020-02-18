@@ -1,6 +1,5 @@
 package gent.timdemey.cards.services;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -14,9 +13,7 @@ import gent.timdemey.cards.model.commands.CommandBase;
 public class SolitaireCommandService implements ICommandService
 {
     private static List<Class<?>> SYNCED_COMMANDS = Arrays.asList(C_Move.class, C_Use.class);
-   
-    
-    
+      
     @Override
     public C_Move getMoveCommand(UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
     {

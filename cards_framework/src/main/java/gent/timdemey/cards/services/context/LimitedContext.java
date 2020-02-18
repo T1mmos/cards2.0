@@ -28,6 +28,10 @@ public final class LimitedContext
 
     public void schedule(CommandBase command)
     {
+        if (command.getSourceId() == null)
+        {
+            command.setSourceId(state.getLocalId());
+        }
         cmdExecServ.schedule(command, state);
     }
 

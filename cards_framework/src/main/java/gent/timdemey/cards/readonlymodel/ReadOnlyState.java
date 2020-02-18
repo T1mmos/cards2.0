@@ -6,6 +6,7 @@ import gent.timdemey.cards.model.state.State;
 
 public class ReadOnlyState extends ReadOnlyEntityBase<State>
 {
+    public static final ReadOnlyProperty<UUID> LocalId = ReadOnlyProperty.of(State.LocalId);
     public static final ReadOnlyProperty<UUID> ServerId = ReadOnlyProperty.of(State.ServerId);
     public static final ReadOnlyProperty<String> ServerMsg = ReadOnlyProperty.of(State.ServerMsg);
     public static final ReadOnlyProperty<ReadOnlyServer> Servers = ReadOnlyProperty.of(ReadOnlyServer.class, State.Servers);

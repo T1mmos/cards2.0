@@ -34,6 +34,10 @@ public class SolitaireCardGameCreationService implements ICardGameCreationServic
             cards.forEach(c -> c.visibleRef.set(false));
             CardStack stack = new CardStack(SolitaireCardStackType.DEPOT, 0);
             stack.cards.addAll(cards);
+            for(Card card : cards)
+            {
+                card.cardStack = stack;
+            }
             stacks.add(stack);
         }
         { // middle stacks - 1,2,...,7 cards so 1+2+...+7 = 7 * 8 / 2 = 28 cards in total
@@ -46,6 +50,10 @@ public class SolitaireCardGameCreationService implements ICardGameCreationServic
                 allCards.subList(start, end - 1).forEach(c -> c.visibleRef.set(false));
                 CardStack stack = new CardStack(SolitaireCardStackType.MIDDLE, i);
                 stack.cards.addAll(cards);
+                for(Card card : cards)
+                {
+                    card.cardStack = stack;
+                }
                 stacks.add(stack);
             }
         }
