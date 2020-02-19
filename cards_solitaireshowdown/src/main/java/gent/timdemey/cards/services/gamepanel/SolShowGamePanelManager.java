@@ -1,4 +1,4 @@
-package gent.timdemey.cards.gamepanel;
+package gent.timdemey.cards.services.gamepanel;
 
 import java.util.List;
 
@@ -7,9 +7,9 @@ import gent.timdemey.cards.entities.ContextFull;
 import gent.timdemey.cards.entities.E_CardGame;
 import gent.timdemey.cards.entities.E_CardStack;
 import gent.timdemey.cards.entities.IContextProvider;
-import gent.timdemey.cards.entities.SolShowCardStackType;
+import gent.timdemey.cards.services.IScalableImageManager;
+import gent.timdemey.cards.services.boot.SolShowCardStackType;
 import gent.timdemey.cards.services.gamepanel.GamePanelManager;
-import gent.timdemey.cards.services.scaleman.IScalableImageManager;
 import gent.timdemey.cards.services.scaleman.ImageDefinition;
 import gent.timdemey.cards.services.scaleman.JScalableImage;
 

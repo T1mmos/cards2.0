@@ -1,5 +1,6 @@
-package gent.timdemey.cards.entities;
+package gent.timdemey.cards.services.commands;
 
+import java.rmi.server.Operation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,10 +11,15 @@ import java.util.UUID;
 import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.entities.GameMove.Operation;
+import gent.timdemey.cards.model.commands.C_Composite;
+import gent.timdemey.cards.model.commands.C_SetVisible;
+import gent.timdemey.cards.model.commands.C_StartGame;
 import gent.timdemey.cards.multiplayer.CreateServerInfo;
+import gent.timdemey.cards.services.ICommandService;
+import gent.timdemey.cards.services.boot.SolShowCardStackType;
+import gent.timdemey.cards.services.context.ContextType;
 
-public class SolShowGameOperations extends AGameOperations {
+public class SolShowCommandService implements ICommandService {
 
     /**
      * Mocks a server connection by allowing immediately to start a game without joining a server lobby.

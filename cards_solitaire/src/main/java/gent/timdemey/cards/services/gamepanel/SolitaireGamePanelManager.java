@@ -1,13 +1,13 @@
-package gent.timdemey.cards.gamepanel;
+package gent.timdemey.cards.services.gamepanel;
 
 import java.util.List;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.entities.SolitaireCardStackType;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IScalableImageManager;
+import gent.timdemey.cards.services.boot.SolitaireCardStackType;
 import gent.timdemey.cards.services.gamepanel.GamePanelManager;
 import gent.timdemey.cards.services.scaleman.ImageDefinition;
 import gent.timdemey.cards.services.scaleman.JScalableImage;

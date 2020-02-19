@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services;
+package gent.timdemey.cards.services.commands;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +9,7 @@ import gent.timdemey.cards.model.commands.C_SolPull;
 import gent.timdemey.cards.model.commands.C_SolPush;
 import gent.timdemey.cards.model.commands.C_SolUse;
 import gent.timdemey.cards.model.commands.CommandBase;
+import gent.timdemey.cards.services.ICommandService;
 
 public class SolitaireCommandService implements ICommandService
 {

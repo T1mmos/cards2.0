@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import gent.timdemey.cards.entities.SolitaireCardStackType;
 import gent.timdemey.cards.model.cards.Card;
 import gent.timdemey.cards.model.cards.CardGame;
 import gent.timdemey.cards.model.cards.CardStack;
 import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.services.boot.SolitaireCardStackType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 

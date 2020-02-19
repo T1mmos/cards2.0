@@ -1,6 +1,6 @@
-package gent.timdemey.cards.position;
+package gent.timdemey.cards.services.position;
 
-final class SolShowGameLayout {
+final class SolitaireGameLayout {
 
     public int act_twidth;
     public int act_theight;
@@ -15,8 +15,10 @@ final class SolShowGameLayout {
     public int act_scoffsety;
     public int act_coffsetvisx;
     public int act_coffsetvisy;
-    public int act_soffsetx; 
-    public int act_soffsety;
+    public int act_coffsetinvisx;
+    public int act_coffsetinvisy;
+    public int act_spadx;
+    public int act_spady;
         
-    SolShowGameLayout (){}
+    SolitaireGameLayout (){}
 }

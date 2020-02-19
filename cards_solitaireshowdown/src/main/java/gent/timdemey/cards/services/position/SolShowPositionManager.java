@@ -1,4 +1,4 @@
-package gent.timdemey.cards.position;
+package gent.timdemey.cards.services.position;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -16,9 +16,9 @@ import gent.timdemey.cards.entities.E_Card;
 import gent.timdemey.cards.entities.E_CardGame;
 import gent.timdemey.cards.entities.E_CardStack;
 import gent.timdemey.cards.entities.IContextProvider;
-import gent.timdemey.cards.entities.Player;
-import gent.timdemey.cards.entities.SolShowCardStackType;
-import gent.timdemey.cards.services.plugin.IPositionManager;
+import gent.timdemey.cards.model.other.Player;
+import gent.timdemey.cards.services.IPositionManager;
+import gent.timdemey.cards.services.boot.SolShowCardStackType;
 
 public class SolShowPositionManager  implements IPositionManager  { 
 

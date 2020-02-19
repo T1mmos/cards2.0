@@ -1,4 +1,4 @@
-package gent.timdemey.cards.entities;
+package gent.timdemey.cards.services.boot;
 
 import java.util.ArrayList;
 import java.util.Arrays;

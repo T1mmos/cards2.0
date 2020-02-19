@@ -1,4 +1,4 @@
-package gent.timdemey.cards.entities;
+package gent.timdemey.cards.services.boot;
 
 public class SolShowCardStackType {
     

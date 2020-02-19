@@ -1,4 +1,4 @@
-package gent.timdemey.cards.position;
+package gent.timdemey.cards.services.position;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -11,13 +11,13 @@ import javax.swing.SwingUtilities;
 import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.entities.SolitaireCardStackType;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IPositionManager;
+import gent.timdemey.cards.services.boot.SolitaireCardStackType;
 
 public class SolitairePositionManager implements IPositionManager
 {
