@@ -65,7 +65,7 @@ class UICommandExecutor implements ICommandExecutor
             if (local)
             {
                 CommandExecution cmdExecution = new CommandExecution(command, CommandExecutionState.Executed);
-                commandHistory.add(cmdExecution);
+                commandHistory.add(cmdExecution, state);
             }
             else
             {

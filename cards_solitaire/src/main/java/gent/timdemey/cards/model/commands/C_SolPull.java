@@ -12,12 +12,12 @@ import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
-public class C_Pull extends CommandBase
+public class C_SolPull extends CommandBase
 {
     private final UUID srcCardStackId;
     private final UUID cardId;
 
-    public C_Pull(UUID srcCardStackId, UUID cardId)
+    public C_SolPull(UUID srcCardStackId, UUID cardId)
     {
         this.srcCardStackId = srcCardStackId;
         this.cardId = cardId;

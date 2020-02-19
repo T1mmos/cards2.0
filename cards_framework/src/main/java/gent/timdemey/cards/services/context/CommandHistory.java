@@ -336,10 +336,10 @@ public class CommandHistory extends EntityBase
         return fails;
     }
     
-    void add (CommandExecution cmdExecution)
+    void add (CommandExecution cmdExecution, State state)
     {
-        CommandExecutionState state = cmdExecution.getExecutionState();
-        if (state != CommandExecutionState.Executed && state != CommandExecutionState.AwaitingConfirmation)
+        CommandExecutionState execState = cmdExecution.getExecutionState();
+        if (execState != CommandExecutionState.Executed && execState != CommandExecutionState.AwaitingConfirmation)
         {
             throw new IllegalStateException("To add a CommandExecution, the state must either indicate that the command has been executed or that it awaits server-side confirmation");
         }
@@ -349,14 +349,14 @@ public class CommandHistory extends EntityBase
         {
             CommandExecutionState prevState = execLine.get(getCurrentIndex()).getExecutionState();
             
-            if (state == CommandExecutionState.Executed)
+            if (execState == CommandExecutionState.Executed)
             {
                 if (prevState != CommandExecutionState.Executed)
                 {
                     throw new IllegalStateException("Attempted to add a command with state Executed, but the previous command isn't of that state");
                 }
             }
-            else if (state == CommandExecutionState.AwaitingConfirmation)
+            else if (execState == CommandExecutionState.AwaitingConfirmation)
             {
                 if (prevState != CommandExecutionState.Accepted && prevState != CommandExecutionState.AwaitingConfirmation)
                 {
@@ -378,6 +378,7 @@ public class CommandHistory extends EntityBase
        
        
         // now add the command execution
+        cmdExecution.getCommand().execute(state);
         execLine.add(cmdExecution);
         setCurrentIndex(getLastIndex());
     }

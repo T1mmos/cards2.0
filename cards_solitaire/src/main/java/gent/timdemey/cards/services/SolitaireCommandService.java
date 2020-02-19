@@ -4,44 +4,44 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import gent.timdemey.cards.model.commands.C_Move;
-import gent.timdemey.cards.model.commands.C_Pull;
-import gent.timdemey.cards.model.commands.C_Push;
-import gent.timdemey.cards.model.commands.C_Use;
+import gent.timdemey.cards.model.commands.C_SolMove;
+import gent.timdemey.cards.model.commands.C_SolPull;
+import gent.timdemey.cards.model.commands.C_SolPush;
+import gent.timdemey.cards.model.commands.C_SolUse;
 import gent.timdemey.cards.model.commands.CommandBase;
 
 public class SolitaireCommandService implements ICommandService
 {
-    private static List<Class<?>> SYNCED_COMMANDS = Arrays.asList(C_Move.class, C_Use.class);
+    private static List<Class<?>> SYNCED_COMMANDS = Arrays.asList(C_SolMove.class, C_SolUse.class);
       
     @Override
-    public C_Move getMoveCommand(UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
+    public C_SolMove getMoveCommand(UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
     {
-        return new C_Move(srcCardStackId, dstCardStackId, cardId);
+        return new C_SolMove(srcCardStackId, dstCardStackId, cardId);
     }
 
     @Override
-    public C_Use getCardUseCommand(UUID srcCardId)
+    public C_SolUse getCardUseCommand(UUID srcCardId)
     {
-        return new C_Use(null, srcCardId);
+        return new C_SolUse(null, srcCardId);
     }
     
     @Override
     public CommandBase getCardStackUseCommand(UUID srcCardStackId)
     {
-        return new C_Use(srcCardStackId, null);
+        return new C_SolUse(srcCardStackId, null);
     }
 
     @Override
-    public C_Pull getPullCommand(UUID srcCardStackId, UUID cardId)
+    public C_SolPull getPullCommand(UUID srcCardStackId, UUID cardId)
     {
-        return new C_Pull(srcCardStackId, cardId);
+        return new C_SolPull(srcCardStackId, cardId);
     }
 
     @Override
-    public C_Push getPushCommand(UUID dstCardStackId, List<UUID> srcCardIds)
+    public C_SolPush getPushCommand(UUID dstCardStackId, List<UUID> srcCardIds)
     {
-        return new C_Push(dstCardStackId, srcCardIds);
+        return new C_SolPush(dstCardStackId, srcCardIds);
     }
 
     @Override

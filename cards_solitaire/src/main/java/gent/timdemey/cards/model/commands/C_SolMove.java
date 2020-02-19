@@ -18,7 +18,7 @@ import gent.timdemey.cards.services.context.ContextType;
  * 
  * @author Tim
  */
-public class C_Move extends CommandBase
+public class C_SolMove extends CommandBase
 {
     public final UUID srcCardStackId;
     public final UUID dstCardStackId;
@@ -29,7 +29,7 @@ public class C_Move extends CommandBase
     private boolean depotInvolved;
     private boolean visible;
 
-    public C_Move(UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
+    public C_SolMove(UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
     {
         this.srcCardStackId = srcCardStackId;
         this.dstCardStackId = dstCardStackId;
@@ -44,8 +44,8 @@ public class C_Move extends CommandBase
         Card card = state.getCardGame().getCard(cardId);
 
         List<UUID> toTransferIds = srcCardStack.getCardsFrom(card).getIds();
-        C_Pull cmdPull = new C_Pull(srcCardStackId, cardId);
-        C_Push cmdPush = new C_Push(dstCardStackId, toTransferIds);
+        C_SolPull cmdPull = new C_SolPull(srcCardStackId, cardId);
+        C_SolPush cmdPush = new C_SolPush(dstCardStackId, toTransferIds);
         if(cmdPull.canExecute(context, type, state) && cmdPush.canExecute(context, type, state)) // user action
         {
             return true;

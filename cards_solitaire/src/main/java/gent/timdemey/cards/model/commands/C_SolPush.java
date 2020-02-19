@@ -12,12 +12,12 @@ import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
-public class C_Push extends CommandBase
+public class C_SolPush extends CommandBase
 {
     public final UUID dstCardStackId;
     public final List<UUID> srcCardIds;
 
-    public C_Push(UUID dstCardStackId, List<UUID> srcCardIds)
+    public C_SolPush(UUID dstCardStackId, List<UUID> srcCardIds)
     {
         this.dstCardStackId = dstCardStackId;
         this.srcCardIds = Collections.unmodifiableList(srcCardIds);
