@@ -141,6 +141,11 @@ public class State extends EntityBase
         udpServiceAnnouncerRef.set(udpServiceAnnouncer);
     }
 
+    public boolean isLocalId(UUID id)
+    {
+        return getLocalId().equals(id);
+    }
+    
     public UUID getLocalId()
     {
         return localIdRef.get();

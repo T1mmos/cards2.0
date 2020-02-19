@@ -43,6 +43,11 @@ public class ReadOnlyState extends ReadOnlyEntityBase<State>
         return ReadOnlyEntityFactory.getOrCreateCommandHistory(entity.getCommandHistory());
     }
 
+    public boolean isLocalId(UUID id)
+    {
+        return entity.isLocalId(id);
+    }
+    
     public UUID getLocalId()
     {
         return entity.getLocalId();

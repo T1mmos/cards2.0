@@ -11,16 +11,17 @@ import javax.swing.SwingUtilities;
 import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.entities.ContextFull;
-import gent.timdemey.cards.entities.E_Card;
-import gent.timdemey.cards.entities.E_CardGame;
-import gent.timdemey.cards.entities.E_CardStack;
-import gent.timdemey.cards.entities.IContextProvider;
-import gent.timdemey.cards.model.other.Player;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
+import gent.timdemey.cards.readonlymodel.ReadOnlyPlayer;
+import gent.timdemey.cards.readonlymodel.ReadOnlyState;
+import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IPositionManager;
 import gent.timdemey.cards.services.boot.SolShowCardStackType;
+import gent.timdemey.cards.services.context.Context;
 
-public class SolShowPositionManager  implements IPositionManager  { 
+public class SolShowPositionManager implements IPositionManager  { 
 
     private SolShowGameLayout gameLayout;
     
@@ -102,15 +103,15 @@ public class SolShowPositionManager  implements IPositionManager  {
     }
 
     @Override
-    public Rectangle getBounds(E_Card card) 
+    public Rectangle getBounds(ReadOnlyCard card) 
     {       
-        ContextFull context = Services.get(IContextProvider.class).getThreadContext();
-        E_CardGame cardGame = context.getCardGameState().getCardGame();
+        Context context = Services.get(IContextService.class).getThreadContext();
+        ReadOnlyCardGame cardGame = context.getReadOnlyState().getCardGame();
         
         Rectangle rect = getBounds(card.getCardStack());
         
         boolean isOffsetY = card.getCardStack().getCardStackType().equals(SolShowCardStackType.MIDDLE);
-        boolean local = context.isLocal(cardGame.getPlayerId(card));
+        boolean local = context.getReadOnlyState().isLocalId(cardGame.getPlayerId(card));
         
         if (local)
         {
@@ -131,11 +132,11 @@ public class SolShowPositionManager  implements IPositionManager  {
     }
 
     @Override
-    public Rectangle getBounds(E_CardStack cardStack) {
-        ContextFull context = Services.get(IContextProvider.class).getThreadContext();
+    public Rectangle getBounds(ReadOnlyCardStack cardStack) {
+        Context context = Services.get(IContextService.class).getThreadContext();
         
-        UUID localId = context.getLocalId();
-        UUID playerId = context.getCardGameState().getCardGame().getPlayerId(cardStack);
+        UUID localId = context.getReadOnlyState().getLocalId();
+        UUID playerId = context.getReadOnlyState().getCardGame().getPlayerId(cardStack);
         boolean isLocal = localId.equals(playerId);
         
         int stackNr = cardStack.getCardTypeNumber();
@@ -178,16 +179,15 @@ public class SolShowPositionManager  implements IPositionManager  {
     }
 
     @Override
-    public E_CardStack getCardStackAt(Point p) {
-        ContextFull context = Services.get(IContextProvider.class).getThreadContext();
+    public ReadOnlyCardStack getCardStackAt(Point p) {
+        Context context = Services.get(IContextService.class).getThreadContext();
+        ReadOnlyState state = context.getReadOnlyState();
         
-        E_CardGame cardGame = context.getCardGameState().getCardGame();
-        UUID localId = context.getLocalId();
-        List<Player> otherPlayers = context.getRemotePlayers();
+        ReadOnlyCardGame cardGame = state.getCardGame();
+        UUID localId = state.getLocalId();
+        List<ReadOnlyPlayer> otherPlayers = state.getPlayers().getExcept(state.getLocalId());
         Preconditions.checkState(otherPlayers != null && otherPlayers.size() == 1);
-        UUID remoteId = otherPlayers.get(0).id;
-        
-        
+        UUID remoteId = otherPlayers.get(0).getId();
         
         int x = p.x;
         int y = p.y;
@@ -234,7 +234,7 @@ public class SolShowPositionManager  implements IPositionManager  {
         
         // middles
         {
-            List<E_CardStack> middleStacks = cardGame.getCardStacks(id, SolShowCardStackType.MIDDLE);
+            List<ReadOnlyCardStack> middleStacks = cardGame.getCardStacks(id, SolShowCardStackType.MIDDLE);
             for (int i = 0; i < middleStacks.size(); i++)
             {
                 int x1_mid = (4+i)*(gameLayout.act_swidth + gameLayout.act_soffsetx);
@@ -251,7 +251,7 @@ public class SolShowPositionManager  implements IPositionManager  {
         
         // laydown
         {
-            List<E_CardStack> laydownStacks = cardGame.getCardStacks(id, SolShowCardStackType.LAYDOWN);
+            List<ReadOnlyCardStack> laydownStacks = cardGame.getCardStacks(id, SolShowCardStackType.LAYDOWN);
             for (int i = 0; i < laydownStacks.size(); i++)
             {
                 int x1_lay = (4+i)*(gameLayout.act_swidth + gameLayout.act_soffsetx);
@@ -270,8 +270,8 @@ public class SolShowPositionManager  implements IPositionManager  {
     }
 
     @Override
-    public List<E_CardStack> getCardStacksIn(Rectangle rect) {
-        List<E_CardStack> cardStacks = new ArrayList<>();
+    public List<ReadOnlyCardStack> getCardStacksIn(Rectangle rect) {
+        List<ReadOnlyCardStack> cardStacks = new ArrayList<>();
         Point[] points = new Point[]
         {
             new Point(rect.x, rect.y),
@@ -282,7 +282,7 @@ public class SolShowPositionManager  implements IPositionManager  {
         
         for (Point point : points)
         {
-            E_CardStack cardStack = getCardStackAt(point);
+            ReadOnlyCardStack cardStack = getCardStackAt(point);
             if (cardStack != null)
             {
                 cardStacks.add(cardStack);

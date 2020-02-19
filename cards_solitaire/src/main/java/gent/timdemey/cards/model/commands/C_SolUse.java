@@ -100,7 +100,6 @@ public class C_SolUse extends CommandBase
             }
         }
         return null;
-
     }
 
     @Override
