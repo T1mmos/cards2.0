@@ -36,7 +36,7 @@ public class State extends EntityBase
 
     // state lists
     private EntityStateListRef<Player> playersRef;
-    private StateListRef<Server> serversRef;
+    private EntityStateListRef<Server> serversRef;
 
     // state values
     private StateValueRef<CardGame> cardGameRef;
@@ -63,7 +63,7 @@ public class State extends EntityBase
         playersRef = new EntityStateListRef<>(Players, id, new ArrayList<>());
         serverIdRef = new StateValueRef<>(ServerId, id);
         serverMsgRef = new StateValueRef<>(ServerMsg, id);
-        serversRef = new StateListRef<>(Servers, id, new ArrayList<>());
+        serversRef = new EntityStateListRef<>(Servers, id, new ArrayList<>());
 
         // state.tcpConnectionCreatorRef = StateValueRef.create(state);
         tcpConnectionAccepterRef = new StateValueRef<>(TcpConnectionAccepter, id);
@@ -186,7 +186,7 @@ public class State extends EntityBase
         serverIdRef.set(serverId);
     }
 
-    public StateListRef<Server> getServers()
+    public EntityStateListRef<Server> getServers()
     {
         return serversRef;
     }

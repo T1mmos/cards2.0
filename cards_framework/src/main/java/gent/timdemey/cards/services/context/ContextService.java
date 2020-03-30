@@ -95,8 +95,8 @@ public final class ContextService implements IContextService
             throw new IllegalArgumentException("Unknown ContextType: " + type);
         }
 
-        boolean allowStateListeners = type == ContextType.UI;
-        Context context = Context.createContext(type, cmdExecutor, allowStateListeners);
+        boolean allowListeners = type == ContextType.UI;
+        Context context = Context.createContext(type, cmdExecutor, allowListeners);
 
         if(type == ContextType.UI)
         {

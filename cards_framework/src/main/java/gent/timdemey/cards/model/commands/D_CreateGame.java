@@ -17,7 +17,7 @@ public class D_CreateGame extends CommandBase
     @Override
     protected boolean canExecute(Context context, ContextType type, State state)
     {
-        return Services.get(IContextService.class).isInitialized(ContextType.Server);
+        return !Services.get(IContextService.class).isInitialized(ContextType.Server);
     }
 
     @Override

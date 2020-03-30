@@ -24,6 +24,9 @@ public class D_JoinGame extends CommandBase
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
+        IContextService ctxtServ = Services.get(IContextService.class);
+        ctxtServ.initialize(ContextType.Client);
+        
         JoinMultiplayerGameDialogContent content = new JoinMultiplayerGameDialogContent();
         DialogData<JoinMultiplayerGameData> data = Services.get(IDialogService.class)
                 .ShowAdvanced(Loc.get("dialog_title_joingame"), null, content, DialogButtonType.BUTTONS_OK_CANCEL);

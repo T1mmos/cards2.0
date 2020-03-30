@@ -6,6 +6,7 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.EntityBase;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.multiplayer.io.TCP_Connection;
+import gent.timdemey.cards.multiplayer.io.UDP_Source;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -14,6 +15,7 @@ import gent.timdemey.cards.services.context.LimitedContext;
 public abstract class CommandBase extends EntityBase
 {
     private volatile TCP_Connection sourceTcpConnection;
+    private volatile UDP_Source sourceUdp;
     private volatile UUID sourceId;
     private volatile String serialized;
 
@@ -114,6 +116,16 @@ public abstract class CommandBase extends EntityBase
     protected final TCP_Connection getSourceTcpConnection()
     {
         return sourceTcpConnection;
+    }
+    
+    public void setSourceUdp (UDP_Source udpSource)
+    {
+        this.sourceUdp = udpSource;
+    }
+    
+    protected final UDP_Source getSourceUdp ()
+    {
+        return sourceUdp;
     }
 
     public void setSourceId(UUID sourceId)

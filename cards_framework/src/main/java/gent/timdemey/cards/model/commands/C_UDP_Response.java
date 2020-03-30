@@ -16,7 +16,7 @@ import gent.timdemey.cards.services.context.ContextType;
  * @author Timmos
  *
  */
-public final class C_UDP_Answer extends CommandBase
+public final class C_UDP_Response extends CommandBase
 {
     public final String serverName;
     public final InetAddress inetAddress;
@@ -24,12 +24,7 @@ public final class C_UDP_Answer extends CommandBase
     public final int majorVersion;
     public final int minorVersion;
 
-    public C_UDP_Answer(String serverName, InetAddress inetAddress, int tcpport, int majorVersion, int minorVersion)
-    {
-        this(UUID.randomUUID(), serverName, inetAddress, tcpport, majorVersion, minorVersion);
-    }
-
-    public C_UDP_Answer(UUID id, String serverName, InetAddress inetAddress, int tcpport, int majorVersion,
+    public C_UDP_Response(UUID id, String serverName, InetAddress inetAddress, int tcpport, int majorVersion,
             int minorVersion)
     {
         super(id);

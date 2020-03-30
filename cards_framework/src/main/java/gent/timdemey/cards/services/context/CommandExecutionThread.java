@@ -4,9 +4,9 @@ public class CommandExecutionThread extends Thread
 {
     public final ContextType contextType;
 
-    CommandExecutionThread(ContextType contextType)
+    CommandExecutionThread(Runnable r, ContextType contextType)
     {
-        super("CommandExecutionThread-" + contextType.toString());
+        super(r, "CommandExecutionThread-" + contextType.toString());
         this.contextType = contextType;
     }
 }

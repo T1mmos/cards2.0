@@ -11,16 +11,16 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-import gent.timdemey.cards.serialization.dto.commands.CommandDto;
+import gent.timdemey.cards.serialization.dto.commands.CommandBaseDto;
 
-public class CommandDtoAdapter implements JsonSerializer<CommandDto>, JsonDeserializer<CommandDto>
+public class CommandDtoAdapter implements JsonSerializer<CommandBaseDto>, JsonDeserializer<CommandBaseDto>
 {
 
     private static final String CLASSNAME = "CLASSNAME";
     private static final String INSTANCE = "INSTANCE";
 
     @Override
-    public JsonElement serialize(CommandDto src, Type typeOfSrc, JsonSerializationContext context)
+    public JsonElement serialize(CommandBaseDto src, Type typeOfSrc, JsonSerializationContext context)
     {
 
         JsonObject retValue = new JsonObject();
@@ -32,7 +32,7 @@ public class CommandDtoAdapter implements JsonSerializer<CommandDto>, JsonDeseri
     }
 
     @Override
-    public CommandDto deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+    public CommandBaseDto deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException
     {
         JsonObject jsonObject = json.getAsJsonObject();

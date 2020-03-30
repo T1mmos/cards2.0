@@ -1,12 +1,12 @@
 package gent.timdemey.cards.serialization.dto.commands;
 
-public abstract class CommandDto
+public abstract class CommandBaseDto
 {
     public final String commandClass;
 
     public String id;
 
-    protected CommandDto()
+    protected CommandBaseDto()
     {
         commandClass = getClass().getName();
     }

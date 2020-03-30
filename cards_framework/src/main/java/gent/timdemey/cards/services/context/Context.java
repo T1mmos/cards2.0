@@ -17,22 +17,25 @@ public final class Context
     private final IChangeTracker changeTracker;
     final LimitedContext limitedContext;
     private final List<IStateListener> stateListeners;
-    private final boolean allowStateListeners;
+    private final boolean allowListeners;
 
-    private Context(ContextType contextType, ICommandExecutor cmdExecService, boolean allowStateListeners)
+    private Context(ContextType contextType, ICommandExecutor cmdExecService, boolean allowListeners)
     {
         limitedContext = new LimitedContext(contextType, cmdExecService);
         
-        this.allowStateListeners = allowStateListeners;
-        this.stateListeners = allowStateListeners ? new ArrayList<>() : null;
-        this.changeTracker = allowStateListeners ? new StateChangeTracker() : new NopChangeTracker();
+        this.allowListeners = allowListeners;
+        this.stateListeners = allowListeners ? new ArrayList<>() : null;
+        this.changeTracker = allowListeners ? new StateChangeTracker() : new NopChangeTracker();
     }
     
-    static Context createContext(ContextType contextType, ICommandExecutor cmdExecService, boolean allowStateListeners)
+    static Context createContext(ContextType contextType, ICommandExecutor cmdExecService, boolean allowListeners)
     {
-        Context context = new Context(contextType, cmdExecService, allowStateListeners);
+        Context context = new Context(contextType, cmdExecService, allowListeners);
         
-        context.addExecutionListener(context::onExecuted);
+        if (allowListeners)
+        {
+            context.addExecutionListener(context::onExecuted);
+        }
         
         return context;
     }
@@ -81,7 +84,7 @@ public final class Context
 
     public void addStateListener(IStateListener stateListener)
     {
-        if (!allowStateListeners)
+        if (!allowListeners)
         {
             throw new IllegalStateException("This context isn't configured to track changes, therefore you cannot add a state listener.");
         }

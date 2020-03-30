@@ -1,6 +1,6 @@
 package gent.timdemey.cards.serialization.dto.commands;
 
-public class HelloClientCommandDto extends CommandDto
+public class C_UDP_ResponseDto extends CommandBaseDto
 {
     public String serverName;
     public String inetAddress;

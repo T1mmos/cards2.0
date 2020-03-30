@@ -53,11 +53,10 @@ public class C_UDP_StartServiceRequester extends CommandBase
             contextServ.getContext(ContextType.UI).schedule(clrServList);
 
             // prepare UDP broadcast
-            C_UDP_StartServiceRequester cmd = new C_UDP_StartServiceRequester();
+            C_UDP_Request cmd = new C_UDP_Request();
             String json = CommandDtoMapper.toJson(cmd);
 
-            UDP_ServiceRequester udpServRequester = new UDP_ServiceRequester(json,
-                    C_UDP_StartServiceRequester::onUdpReceived);
+            UDP_ServiceRequester udpServRequester = new UDP_ServiceRequester(json, C_UDP_StartServiceRequester::onUdpReceived);
             state.setUdpServiceRequester(udpServRequester);
 
             udpServRequester.start();
@@ -69,7 +68,7 @@ public class C_UDP_StartServiceRequester extends CommandBase
         try
         {
             CommandBase command = CommandDtoMapper.toCommand(json);
-            if (!(command instanceof C_UDP_Answer))
+            if (!(command instanceof C_UDP_Response))
             {
                 Services.get(ILogManager.class)
                         .log("Unexpected command on UDP datagram, class: " + command.getClass().getSimpleName());

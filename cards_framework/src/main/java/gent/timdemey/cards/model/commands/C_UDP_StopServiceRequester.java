@@ -19,9 +19,10 @@ public class C_UDP_StopServiceRequester extends CommandBase
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
-        if (type != ContextType.Client)
+        CheckNotContext(type, ContextType.Server);
+        if (type == ContextType.UI)
         {
-            throw new IllegalStateException();
+            reschedule(ContextType.Client);
         }
 
         if (state.getUdpServiceRequester() == null)

@@ -4,6 +4,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.UUID;
 
 import com.google.common.base.Preconditions;
 
@@ -51,7 +52,7 @@ public class C_CreateServer extends CommandBase
     @Override
     protected boolean canExecute(Context context, ContextType type, State state)
     {
-        return true;
+        return !Services.get(IContextService.class).isInitialized(ContextType.Server);
     }
 
     @Override
@@ -59,6 +60,8 @@ public class C_CreateServer extends CommandBase
     {
         if (type == ContextType.UI)
         {
+            Services.get(IContextService.class).initialize(ContextType.Server);
+            
             reschedule(ContextType.Server);
             return;
         }
@@ -88,13 +91,11 @@ public class C_CreateServer extends CommandBase
             e.printStackTrace();
         }
 
-        // UUID serverId = state.getServerId();
-        C_UDP_Answer cmd_hello = new C_UDP_Answer(srvname, addr, tcpport, major, minor);
-        String json_hello = CommandDtoMapper.toJson(cmd_hello);
+        UUID serverId = state.getServerId();
+       
 
-        UDP_ServiceAnnouncer udpServAnnouncer = new UDP_ServiceAnnouncer(udpport, this::canAcceptUdpMessage,
-                json_hello);
-
+        UDP_ServiceAnnouncer udpServAnnouncer = new UDP_ServiceAnnouncer(udpport);
+        
         int playerCount = Services.get(ICardPlugin.class).getPlayerCount();
         C_DenyClient cmd_reject = new C_DenyClient("Server is full");
         String json_reject = CommandDtoMapper.toJson(cmd_reject);
@@ -111,24 +112,6 @@ public class C_CreateServer extends CommandBase
 
         udpServAnnouncer.start();
         tcpConnAccepter.start();
-    }
-
-    private Boolean canAcceptUdpMessage(String json)
-    {
-        try
-        {
-            CommandBase command = CommandDtoMapper.toCommand(json);
-            if (!(command instanceof C_UDP_StartServiceRequester))
-            {
-                return false;
-            }
-        }
-        catch (Exception ex)
-        {
-            return false;
-        }
-
-        return true;
     }
 
 }

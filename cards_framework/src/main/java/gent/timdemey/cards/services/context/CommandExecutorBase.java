@@ -2,7 +2,12 @@ package gent.timdemey.cards.services.context;
 
 import java.nio.charset.Charset;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -16,7 +21,7 @@ abstract class CommandExecutorBase implements ICommandExecutor
 {
     protected static final Charset UDP_CHARSET = Charset.forName("UTF8");
 
-    private final class CommandTask implements Runnable, Comparable<CommandTask>
+    private final class CommandTask implements Runnable
     {
         private final CommandBase command;
         private final State state;
@@ -44,26 +49,20 @@ abstract class CommandExecutorBase implements ICommandExecutor
 
             execute(command, state);
         }
-
-        @Override
-        public int compareTo(CommandTask o)
-        {
-            return (int) (o.time_issued - this.time_issued);
-        }
     }
 
     private final BlockingQueue<Runnable> incomingCommandQueue;
-    private final ThreadPoolExecutor executor;
+    private final Executor executor;
 
     protected CommandExecutorBase(ContextType contextType)
     {
         this.incomingCommandQueue = new PriorityBlockingQueue<>();
-        this.executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.SECONDS, incomingCommandQueue, new ThreadFactory()
+        this.executor = new ThreadPoolExecutor(1, 1, 60L, TimeUnit.SECONDS, incomingCommandQueue, new ThreadFactory()
         {
             @Override
             public Thread newThread(Runnable r)
             {
-                return new CommandExecutionThread(contextType);
+                return new CommandExecutionThread(r, contextType);
             }
         });
     }

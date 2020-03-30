@@ -84,7 +84,7 @@ final class MapperBase implements IMapper
                 bestKey = key;
                 break;
             }
-            if (key.dstClazz.isAssignableFrom(dstClazz))
+            if (dstClazz.isAssignableFrom(key.dstClazz))
             {
                 if (bestKey == null || bestKey.dstClazz.isAssignableFrom(key.dstClazz))
                 {
@@ -94,6 +94,12 @@ final class MapperBase implements IMapper
         }
 
         MappingFunction<SRC, DST> func = (MappingFunction<SRC, DST>) _mappers.get(bestKey);
+        
+        if (func == null)
+        {
+            throw new UnsupportedOperationException("No mapper installed to map from " + src.getClass().getSimpleName() + " to " + dstClazz.getSimpleName());
+        }
+        
         DST dst = func.map(src);
         return dst;
     }
