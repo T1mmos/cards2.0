@@ -53,9 +53,11 @@ public final class UDP_ServiceAnnouncer
         }
         ThreadFactory thrFactRcv = new ThreadFactoryBuilder().setNameFormat("UDP ServiceAnnouncer Receive %d").build();
         ThreadFactory thrFactSnd = new ThreadFactoryBuilder().setNameFormat("UDP ServiceAnnouncer Send %d").build();
+
+        execServSend = Executors.newSingleThreadExecutor(thrFactSnd);
         
         execServReceive = thrFactRcv.newThread(() -> receiveLoop());
-        execServSend = Executors.newSingleThreadExecutor(thrFactSnd);
+        execServReceive.start();
     }
 
     public void stop()

@@ -1,5 +1,7 @@
 package gent.timdemey.cards.model.commands;
 
+import java.util.UUID;
+
 import gent.timdemey.cards.model.multiplayer.Server;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.multiplayer.io.UDP_Source;
@@ -11,6 +13,12 @@ public class C_UDP_Request extends CommandBase
 {    
     public C_UDP_Request ()
     {
+        super();
+    }
+    
+    public C_UDP_Request(UUID id)
+    {
+        super(id);
     }
     
     @Override

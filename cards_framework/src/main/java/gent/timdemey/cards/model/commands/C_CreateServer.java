@@ -10,6 +10,7 @@ import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.model.multiplayer.Server;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.multiplayer.io.CommandSchedulingTcpConnectionListener;
 import gent.timdemey.cards.multiplayer.io.TCP_ConnectionAccepter;
@@ -52,12 +53,28 @@ public class C_CreateServer extends CommandBase
     @Override
     protected boolean canExecute(Context context, ContextType type, State state)
     {
-        return !Services.get(IContextService.class).isInitialized(ContextType.Server);
+        boolean srvCtxtInit = Services.get(IContextService.class).isInitialized(ContextType.Server);
+        if (type == ContextType.UI)
+        {
+            return !srvCtxtInit;
+        }
+        else if (type == ContextType.Client)
+        {
+            return false;
+        }
+        else if (type == ContextType.Server)
+        {
+            return srvCtxtInit;
+        }
+
+        return false;
     }
 
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
+        CheckNotContext(type, ContextType.Client);
+        
         if (type == ContextType.UI)
         {
             Services.get(IContextService.class).initialize(ContextType.Server);
@@ -66,18 +83,16 @@ public class C_CreateServer extends CommandBase
             return;
         }
 
-        if (type == ContextType.Client)
-        {
-            throw new IllegalStateException();
-        }
+        
         // construct answer envelope
         int major = Services.get(ICardPlugin.class).getMajorVersion();
         int minor = Services.get(ICardPlugin.class).getMinorVersion();
 
         InetAddress addr = null;
+        int tcpport = 10002;
         try (final DatagramSocket socket = new DatagramSocket())
         {
-            socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
+            socket.connect(InetAddress.getByName("8.8.8.8"), tcpport);
             addr = socket.getLocalAddress();
         }
         catch (SocketException e)
@@ -90,18 +105,21 @@ public class C_CreateServer extends CommandBase
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        
 
-        UUID serverId = state.getServerId();
-       
+        // create the server
+        Server server = new Server(srvname, addr, tcpport);
+        state.getServers().add(server);
+        state.setServerId(server.id);
 
+        // create web services to announce the presence over UDP and to accept TCP connections
         UDP_ServiceAnnouncer udpServAnnouncer = new UDP_ServiceAnnouncer(udpport);
         
         int playerCount = Services.get(ICardPlugin.class).getPlayerCount();
-        C_DenyClient cmd_reject = new C_DenyClient("Server is full");
+        C_DenyClient cmd_reject = new C_DenyClient(UUID.randomUUID(), "Server is full");
         String json_reject = CommandDtoMapper.toJson(cmd_reject);
 
-        CommandSchedulingTcpConnectionListener tcpConnListener = new CommandSchedulingTcpConnectionListener(
-                ContextType.Server);
+        CommandSchedulingTcpConnectionListener tcpConnListener = new CommandSchedulingTcpConnectionListener(ContextType.Server);
         TCP_ConnectionPool tcpConnPool = new TCP_ConnectionPool(playerCount, tcpConnListener);
         TCP_ConnectionAccepter tcpConnAccepter = new TCP_ConnectionAccepter(tcpConnPool, this, json_reject);
 

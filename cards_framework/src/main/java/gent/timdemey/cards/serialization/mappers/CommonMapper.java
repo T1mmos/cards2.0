@@ -31,7 +31,7 @@ class CommonMapper
 
     static String toDto(InetAddress obj)
     {
-        String str = obj.toString();
+        String str = obj.getHostAddress();
         return str;
     }
 

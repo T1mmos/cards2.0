@@ -32,6 +32,7 @@ class ServerCommandExecutor extends CommandExecutorBase
         }
         else
         {
+            Services.get(ILogManager.class).log("Can't execute this command: '" + command.getClass().getSimpleName() + "'");
             if (command.getSourceId() == state.getServerId())
             {
                 // wtf?

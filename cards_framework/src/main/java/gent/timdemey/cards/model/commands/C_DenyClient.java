@@ -1,5 +1,7 @@
 package gent.timdemey.cards.model.commands;
 
+import java.util.UUID;
+
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.IDialogService;
@@ -8,10 +10,11 @@ import gent.timdemey.cards.services.context.ContextType;
 
 public class C_DenyClient extends CommandBase
 {
-    String serverMessage;
+    public final String serverMessage;
 
-    C_DenyClient(String serverMessage)
+    public C_DenyClient(UUID id, String serverMessage)
     {
+        super(id);
         this.serverMessage = serverMessage;
     }
 

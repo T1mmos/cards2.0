@@ -21,7 +21,7 @@ abstract class CommandExecutorBase implements ICommandExecutor
 {
     protected static final Charset UDP_CHARSET = Charset.forName("UTF8");
 
-    private final class CommandTask implements Runnable
+    private final class CommandTask implements Runnable, Comparable<CommandTask>
     {
         private final CommandBase command;
         private final State state;
@@ -48,6 +48,12 @@ abstract class CommandExecutorBase implements ICommandExecutor
             }
 
             execute(command, state);
+        }
+
+        @Override
+        public int compareTo(CommandTask o)
+        {
+            return (int) (time_issued - o.time_issued);
         }
     }
 

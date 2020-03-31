@@ -15,7 +15,6 @@ import gent.timdemey.cards.serialization.dto.commands.CommandBaseDto;
 
 public class CommandDtoAdapter implements JsonSerializer<CommandBaseDto>, JsonDeserializer<CommandBaseDto>
 {
-
     private static final String CLASSNAME = "CLASSNAME";
     private static final String INSTANCE = "INSTANCE";
 
