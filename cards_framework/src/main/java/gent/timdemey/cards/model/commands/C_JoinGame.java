@@ -19,25 +19,28 @@ import gent.timdemey.cards.services.context.ContextType;
 
 public class C_JoinGame extends CommandBase
 {
-    String clientName;
-    UUID clientId;
+    public String clientName;
+    public UUID clientId;
+    public UUID serverId;
 
-    C_JoinGame()
+    public C_JoinGame(UUID serverId)
     {
         this.clientName = null;
         this.clientId = null;
+        this.serverId = serverId;
     }
 
-    C_JoinGame(String clientName, UUID clientId)
+    public C_JoinGame(UUID serverId, String clientName, UUID clientId)
     {
         this.clientName = clientName;
         this.clientId = clientId;
+        this.serverId = serverId;
     }
 
     @Override
     protected boolean canExecute(Context context, ContextType type, State state)
     {
-        return true;
+        return state.getCardGame() == null;
     }
 
     @Override
@@ -53,6 +56,8 @@ public class C_JoinGame extends CommandBase
             {
                 clientId = state.getLocalId();
             }
+            
+            state.setServerId(serverId);
             String json = CommandDtoMapper.toJson(this);
             TCP_Connection tcpConnection = state.getTcpConnectionPool().getConnection(state.getServerId());
             tcpConnection.send(json);

@@ -32,11 +32,13 @@ public class D_JoinGame extends CommandBase
                 .ShowAdvanced(Loc.get("dialog_title_joingame"), null, content, DialogButtonType.BUTTONS_OK_CANCEL);
 
         if (data.closeType == DialogButtonType.Ok)
+        {            
+            C_Connect cmd = new C_Connect(data.payload.server, data.payload.playerName);
+            schedule(ContextType.UI, cmd);
+        }
+        else if (data.closeType == DialogButtonType.Cancel)
         {
-            Services.get(IContextService.class).initialize(ContextType.Client);
-            
-            schedule(ContextType.UI, new C_Connect(data.payload.server.getInetAddress(),
-                    data.payload.server.getTcpPort(), data.payload.playerName));
+            ctxtServ.drop(ContextType.Client);
         }
     }
 

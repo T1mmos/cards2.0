@@ -44,6 +44,7 @@ public final class UDP_ServiceAnnouncer
         try
         {
             dsocket = new DatagramSocket(udpport);
+            Services.get(ILogManager.class).log("Created UDP socket at port " + udpport);
         }
         catch (SocketException e)
         {

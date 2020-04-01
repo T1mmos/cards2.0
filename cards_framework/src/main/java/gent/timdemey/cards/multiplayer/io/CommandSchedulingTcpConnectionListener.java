@@ -20,7 +20,7 @@ public class CommandSchedulingTcpConnectionListener implements ITcpConnectionLis
     }
 
     @Override
-    public void onTcpConnectionAdded(TCP_Connection connection)
+    public void onTcpConnectionAdded(TCP_Connection connection, TCP_ConnectionPool connectionPool)
     {
         Services.get(ILogManager.class).log("A TCP connection was added to " + connection.getRemote());
     }

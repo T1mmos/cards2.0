@@ -8,6 +8,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
+import gent.timdemey.cards.Services;
+import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.model.commands.C_CreateServer;
 
 public final class TCP_ConnectionAccepter
@@ -49,6 +51,7 @@ public final class TCP_ConnectionAccepter
         try
         {
             this.ssocket = new ServerSocket(info.tcpport);
+            Services.get(ILogManager.class).log("Created TCP server socket on port " + info.tcpport);
         }
         catch (IOException e)
         {

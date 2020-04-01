@@ -23,6 +23,7 @@ public class C_UDP_StopServiceRequester extends CommandBase
         if (type == ContextType.UI)
         {
             reschedule(ContextType.Client);
+            return;
         }
 
         if (state.getUdpServiceRequester() == null)

@@ -18,7 +18,12 @@ public class TCP_ConnectionCreator
         Socket socket;
         try
         {
+            String hostAddr = address.getHostAddress();
+            Services.get(ILogManager.class).log("Connecting to %s:%s", hostAddr, port);
             socket = new Socket(address, port);
+            String localAddr = socket.getLocalAddress().getHostAddress();
+            int localPort = socket.getLocalPort();
+            Services.get(ILogManager.class).log("Connected to %s:%s, local address is %s:%s", hostAddr, port, localAddr, localPort);
             tcpConnPool.addConnection(socket);
         }
         catch (IOException e)

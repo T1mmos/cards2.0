@@ -1,8 +1,6 @@
 package gent.timdemey.cards.readonlymodel;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import gent.timdemey.cards.model.EntityBase;

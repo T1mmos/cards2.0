@@ -7,6 +7,8 @@ import java.util.UUID;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.cards.Card;
 import gent.timdemey.cards.model.cards.CardStack;
+import gent.timdemey.cards.model.commands.C_JoinGame;
+import gent.timdemey.cards.model.commands.C_LeaveGame;
 import gent.timdemey.cards.model.commands.C_Redo;
 import gent.timdemey.cards.model.commands.C_SetPlayer;
 import gent.timdemey.cards.model.commands.C_StartGame;
@@ -60,9 +62,9 @@ public class ActionService implements IActionService
         case AAction.ACTION_DEBUG:
             return true;
         case AAction.ACTION_JOIN:
-            return true;
+            return canExecute(new C_JoinGame(UUID.randomUUID()));
         case AAction.ACTION_LEAVE:
-            return true;
+            return canExecute(new C_LeaveGame());
         default:
             throw new UnsupportedOperationException("No such action id: " + id);
         }

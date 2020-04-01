@@ -6,10 +6,12 @@ import java.util.UUID;
 
 import gent.timdemey.cards.model.commands.CommandBase;
 import gent.timdemey.cards.model.commands.C_DenyClient;
+import gent.timdemey.cards.model.commands.C_JoinGame;
 import gent.timdemey.cards.model.commands.C_UDP_Request;
 import gent.timdemey.cards.model.commands.C_UDP_Response;
 import gent.timdemey.cards.serialization.dto.commands.CommandBaseDto;
 import gent.timdemey.cards.serialization.dto.commands.C_DenyClientDto;
+import gent.timdemey.cards.serialization.dto.commands.C_JoinGameDto;
 import gent.timdemey.cards.serialization.dto.commands.C_UDP_RequestDto;
 import gent.timdemey.cards.serialization.dto.commands.C_UDP_ResponseDto;
 
@@ -22,11 +24,13 @@ public class CommandDtoMapper
         mapper.addMapping(C_UDP_Request.class, C_UDP_RequestDto.class, CommandDtoMapper::toDto);
         mapper.addMapping(C_UDP_Response.class, C_UDP_ResponseDto.class, CommandDtoMapper::toDto);
         mapper.addMapping(C_DenyClient.class, C_DenyClientDto.class, CommandDtoMapper::toDto);
-
+        mapper.addMapping(C_JoinGame.class, C_JoinGameDto.class, CommandDtoMapper::toDto);
+        
         // DTO to domain object
         mapper.addMapping(C_UDP_RequestDto.class, C_UDP_Request.class, CommandDtoMapper::toCommand);
         mapper.addMapping(C_UDP_ResponseDto.class, C_UDP_Response.class, CommandDtoMapper::toCommand);
         mapper.addMapping(C_DenyClientDto.class, C_DenyClient.class, CommandDtoMapper::toCommand);
+        mapper.addMapping(C_JoinGameDto.class, C_JoinGame.class, CommandDtoMapper::toCommand);
     }
 
     public static String toJson(CommandBase cmd)
@@ -99,6 +103,24 @@ public class CommandDtoMapper
     {
         UUID id = CommonMapper.toUuid(dto.id);
         C_DenyClient cmd = new C_DenyClient(id, dto.serverMessage);
+        return cmd;
+    }
+
+    private static C_JoinGameDto toDto(C_JoinGame cmd)
+    {
+        C_JoinGameDto dto = new C_JoinGameDto();
+        dto.clientId = CommonMapper.toDto(cmd.clientId);
+        dto.clientName = cmd.clientName;
+        dto.serverId = CommonMapper.toDto(cmd.serverId);
+        return dto;
+    }
+    
+    private static C_JoinGame toCommand(C_JoinGameDto dto)
+    {
+        String clientName = dto.clientName;
+        UUID clientId = CommonMapper.toUuid(dto.clientId);
+        UUID serverId = CommonMapper.toUuid(dto.serverId);
+        C_JoinGame cmd = new C_JoinGame(serverId, clientName, clientId);
         return cmd;
     }
 }

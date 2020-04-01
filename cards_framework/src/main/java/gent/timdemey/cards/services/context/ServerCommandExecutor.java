@@ -11,6 +11,7 @@ import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.multiplayer.io.CommandSchedulingTcpConnectionListener;
 import gent.timdemey.cards.multiplayer.io.TCP_Connection;
 import gent.timdemey.cards.multiplayer.io.TCP_ConnectionAccepter;
+import gent.timdemey.cards.multiplayer.io.TCP_ConnectionPool;
 import gent.timdemey.cards.services.IContextService;
 
 class ServerCommandExecutor extends CommandExecutorBase
@@ -51,9 +52,9 @@ class ServerCommandExecutor extends CommandExecutorBase
         }
 
         @Override
-        public void onTcpConnectionAdded(TCP_Connection connection)
+        public void onTcpConnectionAdded(TCP_Connection connection, TCP_ConnectionPool connectionPool)
         {
-            super.onTcpConnectionAdded(connection);
+            super.onTcpConnectionAdded(connection, connectionPool);
 
             int requiredPlayerCount = Services.get(ICardPlugin.class).getPlayerCount();
 

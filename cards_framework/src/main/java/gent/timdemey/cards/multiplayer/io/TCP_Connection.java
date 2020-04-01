@@ -27,7 +27,11 @@ public final class TCP_Connection
 
     public String getRemote()
     {
-        return ((InetSocketAddress) socket.getRemoteSocketAddress()).getAddress().getHostAddress();
+        InetSocketAddress isAddr = ((InetSocketAddress) socket.getRemoteSocketAddress());
+        String ip = isAddr.getAddress().getHostAddress();
+        int port = isAddr.getPort();
+        String formatted = String.format("%s:%s", ip, port);
+        return formatted;
     }
 
     void start()

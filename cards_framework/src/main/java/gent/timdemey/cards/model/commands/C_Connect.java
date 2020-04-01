@@ -1,6 +1,5 @@
 package gent.timdemey.cards.model.commands;
 
-import java.net.InetAddress;
 import java.util.UUID;
 
 import gent.timdemey.cards.ICardPlugin;
@@ -11,6 +10,7 @@ import gent.timdemey.cards.multiplayer.io.ITcpConnectionListener;
 import gent.timdemey.cards.multiplayer.io.TCP_Connection;
 import gent.timdemey.cards.multiplayer.io.TCP_ConnectionCreator;
 import gent.timdemey.cards.multiplayer.io.TCP_ConnectionPool;
+import gent.timdemey.cards.readonlymodel.ReadOnlyServer;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -24,14 +24,14 @@ import gent.timdemey.cards.services.context.LimitedContext;
  */
 public class C_Connect extends CommandBase
 {
-    final InetAddress srvInetAddress;
-    final int tcpport;
+    final ReadOnlyServer server;
     final String playerName;
-
-    public C_Connect(InetAddress srvInetAddress, int tcpport, String playerName)
+    final UUID localId;
+    
+    public C_Connect(ReadOnlyServer server, String playerName)
     {
-        this.srvInetAddress = srvInetAddress;
-        this.tcpport = tcpport;
+        this.localId = UUID.randomUUID();
+        this.server = server;
         this.playerName = playerName;
     }
 
@@ -41,12 +41,14 @@ public class C_Connect extends CommandBase
         if (type == ContextType.UI)
         {
             state.setLocalName(playerName);
+            state.setLocalId(localId);
 
             reschedule(ContextType.Client);
         }
         else if (type == ContextType.Client)
         {
             state.setLocalName(playerName);
+            state.setLocalId(localId);
             ICardPlugin plugin = Services.get(ICardPlugin.class);
 
             if (plugin.getPlayerCount() == 1)
@@ -54,14 +56,13 @@ public class C_Connect extends CommandBase
                 throw new UnsupportedOperationException();
             }         
 
-            ITcpConnectionListener tcpConnListener = new ClientCommandSchedulingTcpConnectionListener();
+            ITcpConnectionListener tcpConnListener = new ClientCommandSchedulingTcpConnectionListener(server.getId());
             TCP_ConnectionPool tcpConnPool = new TCP_ConnectionPool(1, tcpConnListener);
 
-            // state.setTcpConnectionCreator(tcpConnectionCreator);
             state.setTcpConnectionPool(tcpConnPool);
             state.setTcpConnectionListener(tcpConnListener);
 
-            TCP_ConnectionCreator.connect(tcpConnPool, srvInetAddress, tcpport);
+            TCP_ConnectionCreator.connect(tcpConnPool, server.getInetAddress(), server.getTcpPort());
         }
         else
         {
@@ -83,18 +84,22 @@ public class C_Connect extends CommandBase
 
     private static class ClientCommandSchedulingTcpConnectionListener extends CommandSchedulingTcpConnectionListener
     {
-        private ClientCommandSchedulingTcpConnectionListener()
+        final UUID idToBind;
+        
+        private ClientCommandSchedulingTcpConnectionListener(UUID idToBind)
         {
             super(ContextType.Client);
+            this.idToBind = idToBind;
         }
 
         @Override
-        public void onTcpConnectionAdded(TCP_Connection connection)
+        public void onTcpConnectionAdded(TCP_Connection connection, TCP_ConnectionPool connectionPool)
         {
-            super.onTcpConnectionAdded(connection);
-
+            super.onTcpConnectionAdded(connection, connectionPool);
+            connectionPool.bindUUID(idToBind, connection);
+            
             // if the connection is complete then we can join the game
-            CommandBase cmd = new C_JoinGame();
+            CommandBase cmd = new C_JoinGame(idToBind);
             IContextService contextServ = Services.get(IContextService.class);
             LimitedContext context = contextServ.getContext(ContextType.Client);
             context.schedule(cmd);

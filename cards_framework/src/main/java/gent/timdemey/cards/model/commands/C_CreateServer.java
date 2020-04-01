@@ -89,7 +89,6 @@ public class C_CreateServer extends CommandBase
         int minor = Services.get(ICardPlugin.class).getMinorVersion();
 
         InetAddress addr = null;
-        int tcpport = 10002;
         try (final DatagramSocket socket = new DatagramSocket())
         {
             socket.connect(InetAddress.getByName("8.8.8.8"), tcpport);

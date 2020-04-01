@@ -22,7 +22,7 @@ public class TCP_ConnectionPool
 
     void onTcpConnectionStarted(TCP_Connection connection)
     {
-        externalConnListener.onTcpConnectionAdded(connection);
+        externalConnListener.onTcpConnectionAdded(connection, this);
     }
 
     void onTcpMessageReceived(TCP_Connection connection, String str_in)
