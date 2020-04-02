@@ -1,9 +1,9 @@
 package gent.timdemey.cards.serialization.dto.commands;
 
-public abstract class CommandBaseDto
-{
-    public String id;
+import gent.timdemey.cards.serialization.dto.EntityBaseDto;
 
+public abstract class CommandBaseDto extends EntityBaseDto
+{
     protected CommandBaseDto()
     {
     }

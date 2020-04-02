@@ -8,7 +8,6 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.boot.SolitaireCardStackType;
-import gent.timdemey.cards.services.gamepanel.GamePanelManager;
 import gent.timdemey.cards.services.scaleman.ImageDefinition;
 import gent.timdemey.cards.services.scaleman.JScalableImage;
 

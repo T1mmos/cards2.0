@@ -2,7 +2,7 @@ package gent.timdemey.cards.readonlymodel;
 
 import java.net.InetAddress;
 
-import gent.timdemey.cards.model.multiplayer.Server;
+import gent.timdemey.cards.model.entities.game.Server;
 
 public class ReadOnlyServer extends ReadOnlyEntityBase<Server>
 {

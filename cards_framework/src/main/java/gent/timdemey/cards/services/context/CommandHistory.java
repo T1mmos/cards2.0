@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import gent.timdemey.cards.model.EntityBase;
-import gent.timdemey.cards.model.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.CommandBase;
+import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.state.Property;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.model.state.StateValueRef;

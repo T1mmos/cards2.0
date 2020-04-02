@@ -2,7 +2,7 @@ package gent.timdemey.cards.services.context;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
-import gent.timdemey.cards.model.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
 
 /**

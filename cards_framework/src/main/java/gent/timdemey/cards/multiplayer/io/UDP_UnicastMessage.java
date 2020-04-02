@@ -2,7 +2,7 @@ package gent.timdemey.cards.multiplayer.io;
 
 import java.net.InetAddress;
 
-import gent.timdemey.cards.model.commands.C_UDP_Response;
+import gent.timdemey.cards.model.entities.commands.C_UDP_Response;
 
 public class UDP_UnicastMessage
 {

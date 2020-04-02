@@ -5,18 +5,18 @@ import java.util.Map;
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.model.cards.Card;
-import gent.timdemey.cards.model.cards.CardStack;
-import gent.timdemey.cards.model.commands.C_JoinGame;
-import gent.timdemey.cards.model.commands.C_LeaveGame;
-import gent.timdemey.cards.model.commands.C_Redo;
-import gent.timdemey.cards.model.commands.C_SetPlayer;
-import gent.timdemey.cards.model.commands.C_StartGame;
-import gent.timdemey.cards.model.commands.C_StopGame;
-import gent.timdemey.cards.model.commands.C_Undo;
-import gent.timdemey.cards.model.commands.CommandBase;
-import gent.timdemey.cards.model.commands.D_CreateGame;
-import gent.timdemey.cards.model.commands.D_JoinGame;
+import gent.timdemey.cards.model.entities.cards.Card;
+import gent.timdemey.cards.model.entities.cards.CardGame;
+import gent.timdemey.cards.model.entities.cards.CardStack;
+import gent.timdemey.cards.model.entities.commands.C_LeaveGame;
+import gent.timdemey.cards.model.entities.commands.C_Redo;
+import gent.timdemey.cards.model.entities.commands.C_SetPlayer;
+import gent.timdemey.cards.model.entities.commands.C_StartGame;
+import gent.timdemey.cards.model.entities.commands.C_StopGame;
+import gent.timdemey.cards.model.entities.commands.C_Undo;
+import gent.timdemey.cards.model.entities.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.D_CreateGame;
+import gent.timdemey.cards.model.entities.commands.D_JoinGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.ICardGameCreationService;
 import gent.timdemey.cards.services.IContextService;
@@ -62,7 +62,7 @@ public class ActionService implements IActionService
         case AAction.ACTION_DEBUG:
             return true;
         case AAction.ACTION_JOIN:
-            return canExecute(new C_JoinGame(UUID.randomUUID()));
+            return canExecute(new D_JoinGame());
         case AAction.ACTION_LEAVE:
             return canExecute(new C_LeaveGame());
         default:
@@ -99,8 +99,9 @@ public class ActionService implements IActionService
             
             List<UUID> playerIds = getReadOnlyState().getPlayers().getIds();
             Map<UUID, List<CardStack>> playerStacks = creator.createStacks(playerIds, cards);
-
-            C_StartGame command = new C_StartGame(UUID.randomUUID(), playerStacks);            
+            CardGame cardGame = new CardGame(playerStacks);
+            
+            C_StartGame command = new C_StartGame(cardGame);            
             contextServ.getContext(ContextType.UI).schedule(command);
             break;
         case AAction.ACTION_STOP:

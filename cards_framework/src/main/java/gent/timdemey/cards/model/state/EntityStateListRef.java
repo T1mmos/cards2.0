@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import gent.timdemey.cards.model.EntityBase;
+import gent.timdemey.cards.model.entities.common.EntityBase;
 
 public class EntityStateListRef<X extends EntityBase> extends StateListRef<X>
 {

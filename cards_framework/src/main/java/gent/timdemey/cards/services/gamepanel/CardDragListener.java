@@ -9,7 +9,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.model.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;

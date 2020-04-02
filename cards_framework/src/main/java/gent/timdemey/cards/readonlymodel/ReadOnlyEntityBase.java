@@ -2,7 +2,7 @@ package gent.timdemey.cards.readonlymodel;
 
 import java.util.UUID;
 
-import gent.timdemey.cards.model.EntityBase;
+import gent.timdemey.cards.model.entities.common.EntityBase;
 
 public abstract class ReadOnlyEntityBase<T extends EntityBase>
 {

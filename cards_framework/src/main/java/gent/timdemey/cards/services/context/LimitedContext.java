@@ -2,7 +2,7 @@ package gent.timdemey.cards.services.context;
 
 import com.google.common.base.Preconditions;
 
-import gent.timdemey.cards.model.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
 
 public final class LimitedContext

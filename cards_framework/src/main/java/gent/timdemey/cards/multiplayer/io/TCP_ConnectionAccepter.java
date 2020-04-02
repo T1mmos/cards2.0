@@ -10,7 +10,7 @@ import java.util.concurrent.ThreadFactory;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
-import gent.timdemey.cards.model.commands.C_CreateServer;
+import gent.timdemey.cards.model.entities.commands.C_CreateServer;
 
 public final class TCP_ConnectionAccepter
 {

@@ -15,8 +15,8 @@ import javax.swing.table.AbstractTableModel;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
-import gent.timdemey.cards.model.commands.C_UDP_StartServiceRequester;
-import gent.timdemey.cards.model.commands.C_UDP_StopServiceRequester;
+import gent.timdemey.cards.model.entities.commands.C_UDP_StartServiceRequester;
+import gent.timdemey.cards.model.entities.commands.C_UDP_StopServiceRequester;
 import gent.timdemey.cards.model.multiplayer.JoinMultiplayerGameData;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;

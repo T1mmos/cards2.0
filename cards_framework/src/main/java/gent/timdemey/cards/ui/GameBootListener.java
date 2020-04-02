@@ -7,14 +7,9 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.model.cards.CardStack;
-import gent.timdemey.cards.model.commands.C_StopGame;
-import gent.timdemey.cards.model.state.Property;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.commands.C_StopGame;
 import gent.timdemey.cards.readonlymodel.IStateListener;
-import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
-import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.IContextService;
@@ -22,8 +17,6 @@ import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.IGamePanelManager;
 import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.ISoundManager;
-import gent.timdemey.cards.services.context.Change;
-import gent.timdemey.cards.services.context.ChangeType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.scaleman.ImageDefinition;
 

@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
-import gent.timdemey.cards.model.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.context.ContextType;

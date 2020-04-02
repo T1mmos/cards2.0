@@ -1,49 +1,54 @@
 package gent.timdemey.cards.serialization.mappers;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
-import gent.timdemey.cards.model.cards.Card;
-import gent.timdemey.cards.model.cards.CardStack;
-import gent.timdemey.cards.model.cards.Suit;
-import gent.timdemey.cards.model.cards.Value;
+import gent.timdemey.cards.model.entities.cards.Card;
+import gent.timdemey.cards.model.entities.cards.CardStack;
+import gent.timdemey.cards.model.entities.cards.Suit;
+import gent.timdemey.cards.model.entities.cards.Value;
+import gent.timdemey.cards.model.entities.cards.payload.P_Card;
+import gent.timdemey.cards.model.entities.cards.payload.P_CardStack;
+import gent.timdemey.cards.model.entities.game.Player;
+import gent.timdemey.cards.model.entities.game.payload.P_Player;
 import gent.timdemey.cards.serialization.dto.entities.CardDto;
 import gent.timdemey.cards.serialization.dto.entities.CardStackDto;
+import gent.timdemey.cards.serialization.dto.entities.PlayerDto;
 
-class EntityDtoMapper
+class EntityDtoMapper extends EntityBaseDtoMapper
 {
-    private static MapperBase mapper = new MapperBase();
+    static MapperDefs mapperDefs = new MapperDefs();
     {
         // domain objects to DTO
-        mapper.addMapping(CardStack.class, CardStackDto.class, EntityDtoMapper::toDto);
-        mapper.addMapping(Card.class, CardDto.class, EntityDtoMapper::toDto);
-        mapper.addMapping(Suit.class, String.class, suit -> suit.toString());
-        mapper.addMapping(Value.class, String.class, value -> value.toString());
+        mapperDefs.addMapping(CardStack.class, CardStackDto.class, EntityDtoMapper::toDto);
+        mapperDefs.addMapping(Card.class, CardDto.class, EntityDtoMapper::toDto);
+        mapperDefs.addMapping(Suit.class, String.class, suit -> suit.toString());
+        mapperDefs.addMapping(Value.class, String.class, value -> value.toString());
+        mapperDefs.addMapping(Player.class, PlayerDto.class, EntityDtoMapper::toDto);
 
         // DTO to domain object
-        mapper.addMapping(CardStackDto.class, CardStack.class, EntityDtoMapper::toDomainObject);
-        mapper.addMapping(CardDto.class, Card.class, EntityDtoMapper::toDomainObject);
-        mapper.addMapping(String.class, Suit.class, str -> Suit.valueOf(str));
-        mapper.addMapping(String.class, Value.class, str -> Value.valueOf(str));
+        mapperDefs.addMapping(CardStackDto.class, CardStack.class, EntityDtoMapper::toDomainObject);
+        mapperDefs.addMapping(CardDto.class, Card.class, EntityDtoMapper::toDomainObject);
+        mapperDefs.addMapping(String.class, Suit.class, str -> Suit.valueOf(str));
+        mapperDefs.addMapping(String.class, Value.class, str -> Value.valueOf(str));
+        mapperDefs.addMapping(PlayerDto.class, Player.class, EntityDtoMapper::toDomainObject);
     }
 
     private EntityDtoMapper()
     {
-
     }
 
     static CardStackDto toDto(CardStack cardStack)
     {
         CardStackDto dto = new CardStackDto();
 
-        dto.id = mapper.map(cardStack.id, String.class);
+        dto.id = mapperDefs.map(cardStack.id, String.class);
         dto.cardStackType = cardStack.cardStackType;
         dto.typeNumber = cardStack.typeNumber;
 
         dto.cards = new ArrayList<CardDto>(cardStack.cards.size());
         for (Card card : cardStack.cards)
         {
-            CardDto cardDto = mapper.map(card, CardDto.class);
+            CardDto cardDto = mapperDefs.map(card, CardDto.class);
             dto.cards.add(cardDto);
         }
 
@@ -52,16 +57,20 @@ class EntityDtoMapper
 
     static CardStack toDomainObject(CardStackDto dto)
     {
-        UUID id = CommonMapper.toUuid(dto.id);
-        CardStack cardStack = new CardStack(id, dto.cardStackType, dto.typeNumber);
-        for (CardDto cardDto : dto.cards)
+        P_CardStack pl = new P_CardStack();
         {
-            Card card = mapper.map(cardDto, Card.class);
+            mergeDtoBaseToPayload(dto, pl);
 
-            // domain model link
+            pl.cards = mapList(mapperDefs, dto.cards, Card.class);
+            pl.cardStackType = dto.cardStackType;
+            pl.typeNumber = dto.typeNumber;
+        }
+        CardStack cardStack = new CardStack(pl);
+        
+        // domain model link
+        for (Card card : cardStack.cards)
+        {
             card.cardStack = cardStack;
-
-            cardStack.cards.add(card);
         }
         return cardStack;
     }
@@ -69,24 +78,46 @@ class EntityDtoMapper
     static CardDto toDto(Card card)
     {
         CardDto cardDto = new CardDto();
-
-        cardDto.id = CommonMapper.toDto(card.id);
-        cardDto.suit = mapper.map(card.suit, String.class);
-        cardDto.value = mapper.map(card.value, String.class);
-        cardDto.visible = card.visibleRef.get();
-
+        {
+            cardDto.id = CommonMapper.toDto(card.id);
+            cardDto.suit = mapperDefs.map(card.suit, String.class);
+            cardDto.value = mapperDefs.map(card.value, String.class);
+            cardDto.visible = card.visibleRef.get();
+        }
         return cardDto;
     }
 
     static Card toDomainObject(CardDto dto)
     {
-        UUID id = mapper.map(dto.id, UUID.class);
-        Suit suit = mapper.map(dto.suit, Suit.class);
-        Value value = mapper.map(dto.value, Value.class);
-        boolean visible = dto.visible;
-
-        Card card = new Card(id, suit, value, visible);
-        return card;
+        P_Card pl = new P_Card();
+        {
+            mergeDtoBaseToPayload(dto, pl);
+            
+            pl.suit = mapperDefs.map(dto.suit, Suit.class);
+            pl.value = mapperDefs.map(dto.value, Value.class);
+            pl.visible = dto.visible;            
+        }      
+        return new Card(pl);
     }
 
+    static PlayerDto toDto(Player player)
+    {
+        PlayerDto dto = new PlayerDto();
+        {
+            mergeEntityBaseToDto(player, dto);
+            
+            dto.name = player.name;
+        }
+        return dto;
+    }
+
+    static Player toDomainObject(PlayerDto dto)
+    {
+        P_Player pl = new P_Player();
+        {
+            mergeDtoBaseToPayload(dto, pl);
+            pl.name = dto.name;
+        }        
+        return new Player(pl);
+    }
 }

@@ -3,7 +3,7 @@ package gent.timdemey.cards.readonlymodel;
 import java.util.List;
 import java.util.UUID;
 
-import gent.timdemey.cards.model.cards.CardGame;
+import gent.timdemey.cards.model.entities.cards.CardGame;
 
 public final class ReadOnlyCardGame extends ReadOnlyEntityBase<CardGame>
 {

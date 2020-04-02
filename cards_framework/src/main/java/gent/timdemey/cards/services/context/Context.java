@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.model.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityFactory;

@@ -7,7 +7,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import gent.timdemey.cards.localization.Loc;
-import gent.timdemey.cards.model.commands.C_CreateServer;
+import gent.timdemey.cards.model.entities.commands.C_CreateServer;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogContent;
 import net.miginfocom.swing.MigLayout;

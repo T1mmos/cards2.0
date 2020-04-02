@@ -1,8 +1,9 @@
 package gent.timdemey.cards.serialization.dto.entities;
 
-public final class CardDto
+import gent.timdemey.cards.serialization.dto.EntityBaseDto;
+
+public final class CardDto extends EntityBaseDto
 {
-    public String id;
     public String suit;
     public String value;
     public boolean visible;

@@ -2,9 +2,10 @@ package gent.timdemey.cards.serialization.dto.entities;
 
 import java.util.List;
 
-public final class CardStackDto
+import gent.timdemey.cards.serialization.dto.EntityBaseDto;
+
+public final class CardStackDto extends EntityBaseDto
 {
-    public String id;
     public List<CardDto> cards;
     public String cardStackType;
     public int typeNumber;

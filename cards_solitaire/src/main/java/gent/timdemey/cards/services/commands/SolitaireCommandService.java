@@ -8,7 +8,7 @@ import gent.timdemey.cards.model.commands.C_SolMove;
 import gent.timdemey.cards.model.commands.C_SolPull;
 import gent.timdemey.cards.model.commands.C_SolPush;
 import gent.timdemey.cards.model.commands.C_SolUse;
-import gent.timdemey.cards.model.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.services.ICommandService;
 
 public class SolitaireCommandService implements ICommandService

@@ -7,7 +7,7 @@ import javax.swing.SwingUtilities;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.model.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.ICommandService;
 import gent.timdemey.cards.services.IContextService;

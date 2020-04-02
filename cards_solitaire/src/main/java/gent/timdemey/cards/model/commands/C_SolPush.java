@@ -4,9 +4,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import gent.timdemey.cards.model.cards.Card;
-import gent.timdemey.cards.model.cards.CardStack;
-import gent.timdemey.cards.model.cards.Value;
+import gent.timdemey.cards.model.entities.cards.Card;
+import gent.timdemey.cards.model.entities.cards.CardStack;
+import gent.timdemey.cards.model.entities.cards.Value;
+import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.boot.SolitaireCardStackType;
 import gent.timdemey.cards.services.context.Context;

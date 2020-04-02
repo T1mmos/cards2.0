@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import gent.timdemey.cards.model.cards.Card;
-import gent.timdemey.cards.model.cards.CardStack;
+import gent.timdemey.cards.model.entities.cards.Card;
+import gent.timdemey.cards.model.entities.cards.CardStack;
 
 public interface ICardGameCreationService
 {

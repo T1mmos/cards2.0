@@ -2,11 +2,13 @@ package gent.timdemey.cards.serialization.mappers;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 class CommonMapper
 {
-    private static MapperBase mapper = new MapperBase();
+    private static MapperDefs mapper = new MapperDefs();
     {
         // domain objects to DTO
         mapper.addMapping(UUID.class, String.class, CommonMapper::toDto);
@@ -46,5 +48,17 @@ class CommonMapper
         {
             throw new IllegalArgumentException("Cannot map into InetAddress: " + dto);
         }
+    }
+
+    static <SRC, DST> List<DST> mapList(MapperDefs mapDefs, List<SRC> srcList, Class<DST> dstClazz)
+    {
+        List<DST> destList = new ArrayList<>();
+        
+        for (SRC src : srcList)
+        {
+            DST dst = mapDefs.map(src, dstClazz);
+            destList.add(dst);
+        }
+        return destList;
     }
 }

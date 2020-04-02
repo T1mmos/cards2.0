@@ -3,7 +3,7 @@ package gent.timdemey.cards.services;
 import java.util.List;
 import java.util.UUID;
 
-import gent.timdemey.cards.model.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.CommandBase;
 
 public interface ICommandService
 {

@@ -12,9 +12,9 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
-import gent.timdemey.cards.model.commands.C_UDP_Request;
-import gent.timdemey.cards.model.commands.C_UDP_Response;
-import gent.timdemey.cards.model.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.C_UDP_Request;
+import gent.timdemey.cards.model.entities.commands.C_UDP_Response;
+import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.context.ContextType;

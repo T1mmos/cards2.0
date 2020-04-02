@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import gent.timdemey.cards.model.cards.Card;
-import gent.timdemey.cards.model.cards.CardDeckUtils;
-import gent.timdemey.cards.model.cards.CardStack;
+import gent.timdemey.cards.model.entities.cards.Card;
+import gent.timdemey.cards.model.entities.cards.CardDeckUtils;
+import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.services.ICardGameCreationService;
 
 public class SolShowCardGameCreationService implements ICardGameCreationService
@@ -60,7 +60,7 @@ public class SolShowCardGameCreationService implements ICardGameCreationService
     
     private void addCardStack(List<CardStack> listToAdd, String cardStackType, int typeNumber, List<Card> cards, boolean visible)
     {
-        CardStack cs = new CardStack(UUID.randomUUID(), cardStackType, typeNumber);
+        CardStack cs = new CardStack(cardStackType, typeNumber);
         cs.cards.addAll(cards);
         for (Card card : cards)
         {
