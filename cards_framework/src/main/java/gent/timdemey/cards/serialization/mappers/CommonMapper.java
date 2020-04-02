@@ -9,6 +9,8 @@ import java.util.UUID;
 class CommonMapper
 {
     private static MapperDefs mapper = new MapperDefs();
+   
+    static 
     {
         // domain objects to DTO
         mapper.addMapping(UUID.class, String.class, CommonMapper::toDto);

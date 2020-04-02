@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.commands.payload.P_UDP_Response;
 import gent.timdemey.cards.model.entities.game.Server;
+import gent.timdemey.cards.model.entities.game.payload.P_Server;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -19,15 +20,17 @@ import gent.timdemey.cards.services.context.ContextType;
  */
 public final class C_UDP_Response extends CommandBase
 {
+    public final UUID serverId;
     public final String serverName;
     public final InetAddress inetAddress;
     public final int tcpport;
     public final int majorVersion;
     public final int minorVersion;
 
-    public C_UDP_Response(String serverName, InetAddress inetAddress, int tcpport, int majorVersion,
+    public C_UDP_Response(UUID serverId, String serverName, InetAddress inetAddress, int tcpport, int majorVersion,
             int minorVersion)
     {
+        this.serverId = serverId;
         this.serverName = serverName;
         this.inetAddress = inetAddress;
         this.tcpport = tcpport;
@@ -39,6 +42,7 @@ public final class C_UDP_Response extends CommandBase
     {
         super(pl);
 
+        this.serverId = pl.serverId;
         this.serverName = pl.serverName;
         this.inetAddress = pl.inetAddress;
         this.tcpport = pl.tcpport;
@@ -61,7 +65,14 @@ public final class C_UDP_Response extends CommandBase
         }
         else if (type == ContextType.UI)
         {
-            Server server = new Server(serverName, inetAddress, tcpport);
+            P_Server pl = new P_Server();
+            {
+                pl.id = serverId;
+                pl.inetAddress = inetAddress;
+                pl.tcpport = tcpport;
+                pl.serverName = serverName;
+            }
+            Server server = new Server(pl);
             state.getServers().add(server);
         }
         else

@@ -2,6 +2,7 @@ package gent.timdemey.cards.serialization.dto.commands;
 
 public class C_UDP_ResponseDto extends CommandBaseDto
 {
+    public String serverId;
     public String serverName;
     public String inetAddress;
     public int tcpport;

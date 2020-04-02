@@ -17,6 +17,7 @@ import gent.timdemey.cards.serialization.dto.entities.PlayerDto;
 class EntityDtoMapper extends EntityBaseDtoMapper
 {
     static MapperDefs mapperDefs = new MapperDefs();
+    static 
     {
         // domain objects to DTO
         mapperDefs.addMapping(CardStack.class, CardStackDto.class, EntityDtoMapper::toDto);

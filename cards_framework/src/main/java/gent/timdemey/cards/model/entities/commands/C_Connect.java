@@ -42,6 +42,7 @@ public class C_Connect extends CommandBase
         {
             state.setLocalName(playerName);
             state.setLocalId(localId);
+            state.setServerId(server.getId());
 
             reschedule(ContextType.Client);
         }
@@ -49,6 +50,8 @@ public class C_Connect extends CommandBase
         {
             state.setLocalName(playerName);
             state.setLocalId(localId);
+            state.setServerId(server.getId());
+            
             ICardPlugin plugin = Services.get(ICardPlugin.class);
 
             if (plugin.getPlayerCount() == 1)

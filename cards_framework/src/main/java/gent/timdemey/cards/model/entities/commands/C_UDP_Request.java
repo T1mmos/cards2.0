@@ -32,7 +32,7 @@ public class C_UDP_Request extends CommandBase
         CheckNotContext(type, ContextType.UI, ContextType.Client);
         
         Server server = state.getServers().get(state.getServerId());
-        C_UDP_Response udpResponseCmd = new C_UDP_Response(server.serverName, server.inetAddress, server.tcpport, 1, 0);
+        C_UDP_Response udpResponseCmd = new C_UDP_Response(server.id, server.serverName, server.inetAddress, server.tcpport, 1, 0);
         
         UDP_Source udpSource = getSourceUdp();
         UDP_UnicastMessage msg = new UDP_UnicastMessage(udpSource.inetAddress, udpSource.tcpPort, udpResponseCmd);

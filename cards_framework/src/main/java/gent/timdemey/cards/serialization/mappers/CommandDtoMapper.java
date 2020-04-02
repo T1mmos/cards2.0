@@ -18,13 +18,15 @@ import gent.timdemey.cards.serialization.dto.commands.C_UDP_RequestDto;
 import gent.timdemey.cards.serialization.dto.commands.C_UDP_ResponseDto;
 import gent.timdemey.cards.serialization.dto.commands.C_WelcomeClientDto;
 import gent.timdemey.cards.serialization.dto.commands.CommandBaseDto;
+import gent.timdemey.cards.serialization.dto.entities.PlayerDto;
 
 public class CommandDtoMapper extends EntityBaseDtoMapper
 {
     static final MapperDefs mapperDefs = new MapperDefs();
 
     static
-    {        // domain objects to DTO
+    {        
+        // domain objects to DTO
         mapperDefs.addMapping(C_UDP_Request.class, C_UDP_RequestDto.class, CommandDtoMapper::toDto);
         mapperDefs.addMapping(C_UDP_Response.class, C_UDP_ResponseDto.class, CommandDtoMapper::toDto);
         mapperDefs.addMapping(C_DenyClient.class, C_DenyClientDto.class, CommandDtoMapper::toDto);
@@ -77,7 +79,8 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         {
             mergeEntityBaseToDto(cmd, dto);  
             
-            dto.inetAddress = CommonMapper.toDto(cmd.inetAddress);
+            dto.serverId = toDto(cmd.serverId);
+            dto.inetAddress = toDto(cmd.inetAddress);
             dto.tcpport = cmd.tcpport;
             dto.majorVersion = cmd.majorVersion;
             dto.minorVersion = cmd.minorVersion;
@@ -92,7 +95,8 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         {
             mergeDtoBaseToPayload(dto, pl);
             
-            pl.inetAddress = CommonMapper.toInetAddress(dto.inetAddress);
+            pl.serverId = toUuid(dto.serverId);
+            pl.inetAddress = toInetAddress(dto.inetAddress);
             pl.tcpport = dto.tcpport;       
             pl.majorVersion = dto.majorVersion;
             pl.minorVersion = dto.minorVersion;
@@ -152,7 +156,10 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         C_WelcomeClientDto dto = new C_WelcomeClientDto();
         {
-            mergeEntityBaseToDto(cmd, dto);             
+            mergeEntityBaseToDto(cmd, dto);       
+            dto.serverId = toDto(cmd.serverId);
+            dto.serverMessage = cmd.serverMessage;
+            dto.connected = mapList(EntityDtoMapper.mapperDefs, cmd.connected, PlayerDto.class);
         }        
         return dto;
     }
