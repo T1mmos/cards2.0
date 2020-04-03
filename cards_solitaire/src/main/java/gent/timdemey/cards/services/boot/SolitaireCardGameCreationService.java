@@ -2,9 +2,7 @@ package gent.timdemey.cards.services.boot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import com.google.common.base.Preconditions;
@@ -12,12 +10,13 @@ import com.google.common.base.Preconditions;
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardDeckUtils;
 import gent.timdemey.cards.model.entities.cards.CardStack;
+import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
 import gent.timdemey.cards.services.ICardGameCreationService;
 
 public class SolitaireCardGameCreationService implements ICardGameCreationService
 {
     @Override
-    public Map<UUID, List<CardStack>> createStacks(List<UUID> playerIds, List<List<Card>> playerCards)
+    public List<PlayerConfiguration> createStacks(List<UUID> playerIds, List<List<Card>> playerCards)
     {
         Preconditions.checkNotNull(playerCards);
         Preconditions.checkNotNull(playerCards);
@@ -69,9 +68,10 @@ public class SolitaireCardGameCreationService implements ICardGameCreationServic
             }
         }
 
-        Map<UUID, List<CardStack>> playerMap = new HashMap<>();
-        playerMap.put(playerId, stacks);
-        return playerMap;
+        PlayerConfiguration pc = new PlayerConfiguration(playerId, stacks);
+        List<PlayerConfiguration> pcs = new ArrayList<>();
+        pcs.add(pc);
+        return pcs;
     }
 
     @Override

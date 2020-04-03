@@ -1,13 +1,13 @@
 package gent.timdemey.cards.model.entities.cards;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import com.google.common.base.Preconditions;
 
+import gent.timdemey.cards.model.entities.cards.payload.P_CardGame;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.state.EntityStateListRef;
 import gent.timdemey.cards.model.state.Property;
@@ -16,37 +16,44 @@ public class CardGame extends EntityBase
 {
     public static final Property<CardStack> CardStacks = Property.of(CardGame.class, CardStack.class, "CardStacks");
 
+    public final List<PlayerConfiguration> playerConfigurations;
+    
     private final EntityStateListRef<CardStack> cardStacksRef;
-    private final Map<UUID, List<UUID>> playerStacks;
 
-    public CardGame(Map<UUID, List<CardStack>> playerStacks)
+    public CardGame(List<PlayerConfiguration> playerConfigurations)
     {
-        this.cardStacksRef = new EntityStateListRef<>(CardStacks, id, new ArrayList<>());
-        this.playerStacks = new HashMap<>();
-
-        for (UUID playerId : playerStacks.keySet())
+        List<CardStack> cardStacks = new ArrayList<>();
+        for (PlayerConfiguration pc : playerConfigurations)
         {
-            List<UUID> cardStackIds = new ArrayList<>();
-            List<CardStack> cardStacks = playerStacks.get(playerId);
-            for (int i = 0; i < cardStacks.size(); i++)
-            {
-                CardStack cardStack = cardStacks.get(i);
-                UUID cardStackId = cardStack.id;
-
-                cardStackIds.add(cardStackId);
-                cardStacksRef.add(cardStack);
-            }
-            this.playerStacks.put(playerId, cardStackIds);
+            cardStacks.addAll(pc.cardStacks);
         }
+        this.cardStacksRef = new EntityStateListRef<>(CardStacks, id, cardStacks);
+        this.playerConfigurations = Collections.unmodifiableList(new ArrayList<>(playerConfigurations));
+    }
+    
+    public CardGame(P_CardGame pl)
+    {
+        super(pl);
+        
+        List<CardStack> cardStacks = new ArrayList<>();
+        for (PlayerConfiguration pc : pl.playerConfigurations)
+        {
+            cardStacks.addAll(pc.cardStacks);
+        }
+        this.cardStacksRef = new EntityStateListRef<>(CardStacks, id, cardStacks);
+        this.playerConfigurations = Collections.unmodifiableList(new ArrayList<>(pl.playerConfigurations));
     }
 
     private Card getCardPriv(UUID cardId)
     {
-        for (CardStack cs : cardStacksRef)
+        for (PlayerConfiguration pc : playerConfigurations)
         {
-            if (cs.getCards().contains(cardId))
+            for (CardStack cs : pc.cardStacks)
             {
-                return cs.getCards().get(cardId);
+                if (cs.getCards().contains(cardId))
+                {
+                    return cs.getCards().get(cardId);
+                }
             }
         }
         return null;
@@ -70,7 +77,17 @@ public class CardGame extends EntityBase
 
     public boolean isCardStack(UUID id)
     {
-        return cardStacksRef.stream().anyMatch(cs -> cs.id.equals(id));
+        for (PlayerConfiguration pc : playerConfigurations)
+        {
+            for (CardStack cs : pc.cardStacks)
+            {
+                if (cs.id.equals(id))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public EntityStateListRef<CardStack> getCardStacks()
@@ -98,17 +115,28 @@ public class CardGame extends EntityBase
 
         List<CardStack> cardStacks = new ArrayList<>();
 
-        List<UUID> stackIds = playerStacks.get(playerId);
-        for (UUID csId : stackIds)
+        List<CardStack> playerStacks = getCardStacksForPlayer(playerId);
+        for (CardStack cs : playerStacks)
         {
-            CardStack cs = cardStacksRef.get(csId);
             if (cs.cardStackType.equals(cardStackType))
             {
                 cardStacks.add(cs);
             }
         }
-
+       
         return cardStacks;
+    }
+    
+    public List<CardStack> getCardStacksForPlayer(UUID playerId)
+    {
+        for (PlayerConfiguration pc : playerConfigurations)
+        {
+            if (pc.playerId.equals(playerId))
+            {
+                return pc.cardStacks;
+            }
+        }
+        return null;
     }
 
     public CardStack getCardStack(UUID id)
@@ -129,11 +157,10 @@ public class CardGame extends EntityBase
         Preconditions.checkNotNull(playerId);
         Preconditions.checkNotNull(cardStackType);
 
-        List<UUID> stackIds = playerStacks.get(playerId);
-        for (UUID csId : stackIds)
+        List<CardStack> cardStacks = getCardStacks(playerId, cardStackType);
+        for (CardStack cs : cardStacks)
         {
-            CardStack cs = cardStacksRef.get(csId);
-            if (cs.cardStackType.equals(cardStackType) && cs.typeNumber == typeNumber)
+            if (cs.typeNumber == typeNumber)
             {
                 return cs;
             }
@@ -154,14 +181,18 @@ public class CardGame extends EntityBase
     }
 
     public UUID getPlayerId(UUID cardStackId)
-    {
-        for (UUID playerId : playerStacks.keySet())
+    {        
+        for (PlayerConfiguration pc : playerConfigurations)
         {
-            if (playerStacks.get(playerId).contains(cardStackId))
+            for (CardStack cs : pc.cardStacks)
             {
-                return playerId;
+                if (cs.id.equals(cardStackId))
+                {
+                    return pc.playerId;
+                }
             }
         }
+        
         throw new IllegalArgumentException("No such card stack ID in the game: " + cardStackId);
     }
 

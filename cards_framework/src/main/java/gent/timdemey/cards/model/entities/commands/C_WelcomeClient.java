@@ -19,12 +19,14 @@ import gent.timdemey.cards.ui.dialogs.LobbyDialogContent;
 
 public class C_WelcomeClient extends CommandBase
 {
+    public final UUID clientId;
     public final UUID serverId;
     public final String serverMessage;
     public final List<Player> connected;
 
-    public C_WelcomeClient(UUID serverId, String serverMessage, List<Player> connected)
+    public C_WelcomeClient(UUID clientId, UUID serverId, String serverMessage, List<Player> connected)
     {
+        this.clientId = clientId;
         this.serverId = serverId;
         this.serverMessage = serverMessage;
         this.connected = connected;
@@ -33,6 +35,7 @@ public class C_WelcomeClient extends CommandBase
     public C_WelcomeClient(P_WelcomeClient pl)
     {
         super(pl);
+        this.clientId = pl.clientId;
         this.serverId = pl.serverId;
         this.serverMessage = pl.serverMessage;
         this.connected = pl.connected;
@@ -47,35 +50,28 @@ public class C_WelcomeClient extends CommandBase
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
+        CheckNotContext(type, ContextType.Server);
+                
         if (type == ContextType.Client)
         {
-            // connection already established in C_Connect callback
-           // state.getTcpConnectionPool().bindUUID(serverId, getSourceTcpConnection());
-            state.setServerId(serverId);
-            for (Player player : connected)
+            // safety checks: returned clientId == localId
+            if (!state.getLocalId().equals(clientId))
             {
-                if (player.id.equals(state.getLocalId()))
-                {
-                    continue;
-                }
-                state.getPlayers().add(player);
+                throw new IllegalArgumentException("Server returned a WelcomeClient with a clientId not matching the localId");
             }
+            if (!state.getServerId().equals(serverId))
+            {
+                throw new IllegalArgumentException("Server returned a WelcomeClient with a serverId not matching the serverId");
+            }
+            
+            updateState(state);
+            
             reschedule(ContextType.UI);
         }
         else if (type == ContextType.UI)
         {
+            updateState(state);
             Server server = state.getServers().get(serverId);
-
-            state.setServerMessage(serverMessage);
-            state.setServerId(serverId);
-            for (Player player : connected)
-            {
-                if (player.id.equals(state.getLocalId()))
-                {
-                    continue;
-                }
-                state.getPlayers().add(player);
-            }
             String title = Loc.get("dialog_title_lobby", server.serverName);
             DialogData<Void> data = Services.get(IDialogService.class).ShowAdvanced(title, null,
                     new LobbyDialogContent(), EnumSet.of(DialogButtonType.Cancel));
@@ -86,9 +82,16 @@ public class C_WelcomeClient extends CommandBase
                 schedule(ContextType.UI, cmd);
             }
         }
-        else
+    }
+    
+    private void updateState(State state)
+    {
+        state.setServerMessage(serverMessage);
+                
+        // "connected" enlists all players including yourself              
+        for (Player player : connected)
         {
-            throw new IllegalStateException();
+            state.getPlayers().add(player);
         }
     }
 }

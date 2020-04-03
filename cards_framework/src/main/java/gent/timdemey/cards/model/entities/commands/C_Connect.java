@@ -38,19 +38,16 @@ public class C_Connect extends CommandBase
     @Override
     public void execute(Context context, ContextType type, State state)
     {
+        CheckNotContext(type, ContextType.Server);
         if (type == ContextType.UI)
         {
-            state.setLocalName(playerName);
-            state.setLocalId(localId);
-            state.setServerId(server.getId());
+            updateState(state);
 
             reschedule(ContextType.Client);
         }
         else if (type == ContextType.Client)
         {
-            state.setLocalName(playerName);
-            state.setLocalId(localId);
-            state.setServerId(server.getId());
+            updateState(state);
             
             ICardPlugin plugin = Services.get(ICardPlugin.class);
 
@@ -67,10 +64,13 @@ public class C_Connect extends CommandBase
 
             TCP_ConnectionCreator.connect(tcpConnPool, server.getInetAddress(), server.getTcpPort());
         }
-        else
-        {
-            throw new IllegalStateException();
-        }
+    }
+    
+    private void updateState(State state)
+    {
+        state.setLocalName(playerName);
+        state.setLocalId(localId);
+        state.setServerId(server.getId());
     }
 
     @Override
@@ -106,7 +106,7 @@ public class C_Connect extends CommandBase
             connectionPool.bindUUID(serverId, connection);
             
             // if the connection is complete then we can join the game
-            CommandBase cmd = new C_JoinGame(serverId, clientName, clientId);
+            CommandBase cmd = new C_JoinGame(clientName, clientId);
             IContextService contextServ = Services.get(IContextService.class);
             LimitedContext context = contextServ.getContext(ContextType.Client);
             context.schedule(cmd);
@@ -118,7 +118,7 @@ public class C_Connect extends CommandBase
             LimitedContext context = Services.get(IContextService.class).getContext(ContextType.Client);
             if (id != null)
             {
-                CommandBase cmd = new C_HandleConnectionLoss(connection, id);
+                CommandBase cmd = new C_OnConnectionLoss(connection, id);
                 context.schedule(cmd);
             }
         }

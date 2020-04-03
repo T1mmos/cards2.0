@@ -10,9 +10,9 @@ import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
-public class C_HandleConnectionLoss extends CommandBase
+public class C_OnConnectionLoss extends CommandBase
 {
-    public C_HandleConnectionLoss(TCP_Connection connection, UUID id)
+    public C_OnConnectionLoss(TCP_Connection connection, UUID id)
     {
         // todo
     }

@@ -12,7 +12,7 @@ import gent.timdemey.cards.services.context.ContextType;
 
 public class C_StartGame extends CommandBase
 {
-    private final CardGame cardGame;
+    public final CardGame cardGame;
 
     public C_StartGame(CardGame cardGame)
     {

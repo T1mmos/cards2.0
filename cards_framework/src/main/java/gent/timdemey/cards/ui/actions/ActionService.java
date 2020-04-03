@@ -1,13 +1,12 @@
 package gent.timdemey.cards.ui.actions;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardGame;
-import gent.timdemey.cards.model.entities.cards.CardStack;
+import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
 import gent.timdemey.cards.model.entities.commands.C_LeaveGame;
 import gent.timdemey.cards.model.entities.commands.C_Redo;
 import gent.timdemey.cards.model.entities.commands.C_SetPlayer;
@@ -98,8 +97,8 @@ public class ActionService implements IActionService
             context.schedule(cmdSetPlayer);
             
             List<UUID> playerIds = getReadOnlyState().getPlayers().getIds();
-            Map<UUID, List<CardStack>> playerStacks = creator.createStacks(playerIds, cards);
-            CardGame cardGame = new CardGame(playerStacks);
+            List<PlayerConfiguration> playerConfigurations = creator.createStacks(playerIds, cards);
+            CardGame cardGame = new CardGame(playerConfigurations);
             
             C_StartGame command = new C_StartGame(cardGame);            
             contextServ.getContext(ContextType.UI).schedule(command);

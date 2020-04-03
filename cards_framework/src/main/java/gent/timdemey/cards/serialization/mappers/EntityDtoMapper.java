@@ -3,15 +3,21 @@ package gent.timdemey.cards.serialization.mappers;
 import java.util.ArrayList;
 
 import gent.timdemey.cards.model.entities.cards.Card;
+import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;
+import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
 import gent.timdemey.cards.model.entities.cards.Suit;
 import gent.timdemey.cards.model.entities.cards.Value;
 import gent.timdemey.cards.model.entities.cards.payload.P_Card;
+import gent.timdemey.cards.model.entities.cards.payload.P_CardGame;
 import gent.timdemey.cards.model.entities.cards.payload.P_CardStack;
+import gent.timdemey.cards.model.entities.cards.payload.P_PlayerConfiguration;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.payload.P_Player;
 import gent.timdemey.cards.serialization.dto.entities.CardDto;
+import gent.timdemey.cards.serialization.dto.entities.CardGameDto;
 import gent.timdemey.cards.serialization.dto.entities.CardStackDto;
+import gent.timdemey.cards.serialization.dto.entities.PlayerConfigurationDto;
 import gent.timdemey.cards.serialization.dto.entities.PlayerDto;
 
 class EntityDtoMapper extends EntityBaseDtoMapper
@@ -20,18 +26,22 @@ class EntityDtoMapper extends EntityBaseDtoMapper
     static 
     {
         // domain objects to DTO
+        mapperDefs.addMapping(CardGame.class, CardGameDto.class, EntityDtoMapper::toDto);
         mapperDefs.addMapping(CardStack.class, CardStackDto.class, EntityDtoMapper::toDto);
         mapperDefs.addMapping(Card.class, CardDto.class, EntityDtoMapper::toDto);
-        mapperDefs.addMapping(Suit.class, String.class, suit -> suit.toString());
-        mapperDefs.addMapping(Value.class, String.class, value -> value.toString());
+        mapperDefs.addMapping(Suit.class, String.class, suit -> suit.getTextual());
+        mapperDefs.addMapping(Value.class, String.class, value -> value.getTextual());
         mapperDefs.addMapping(Player.class, PlayerDto.class, EntityDtoMapper::toDto);
+        mapperDefs.addMapping(PlayerConfiguration.class, PlayerConfigurationDto.class, EntityDtoMapper::toDto);
 
         // DTO to domain object
+        mapperDefs.addMapping(CardGameDto.class, CardGame.class, EntityDtoMapper::toDomainObject);
         mapperDefs.addMapping(CardStackDto.class, CardStack.class, EntityDtoMapper::toDomainObject);
         mapperDefs.addMapping(CardDto.class, Card.class, EntityDtoMapper::toDomainObject);
-        mapperDefs.addMapping(String.class, Suit.class, str -> Suit.valueOf(str));
-        mapperDefs.addMapping(String.class, Value.class, str -> Value.valueOf(str));
+        mapperDefs.addMapping(String.class, Suit.class, str -> Suit.fromCharacter(str));
+        mapperDefs.addMapping(String.class, Value.class, str -> Value.fromCharacter(str));
         mapperDefs.addMapping(PlayerDto.class, Player.class, EntityDtoMapper::toDomainObject);
+        mapperDefs.addMapping(PlayerConfigurationDto.class, PlayerConfiguration.class, EntityDtoMapper::toDomainObject);
     }
 
     private EntityDtoMapper()
@@ -41,30 +51,26 @@ class EntityDtoMapper extends EntityBaseDtoMapper
     static CardStackDto toDto(CardStack cardStack)
     {
         CardStackDto dto = new CardStackDto();
-
-        dto.id = mapperDefs.map(cardStack.id, String.class);
-        dto.cardStackType = cardStack.cardStackType;
-        dto.typeNumber = cardStack.typeNumber;
-
-        dto.cards = new ArrayList<CardDto>(cardStack.cards.size());
-        for (Card card : cardStack.cards)
         {
-            CardDto cardDto = mapperDefs.map(card, CardDto.class);
-            dto.cards.add(cardDto);
+            mergeEntityBaseToDto(cardStack, dto);
+            
+            dto.cardStackType = cardStack.cardStackType;
+            dto.typeNumber = cardStack.typeNumber;
+            dto.cards = mapList(mapperDefs, cardStack.cards, CardDto.class);
         }
-
+       
         return dto;
     }
-
+    
     static CardStack toDomainObject(CardStackDto dto)
     {
         P_CardStack pl = new P_CardStack();
         {
             mergeDtoBaseToPayload(dto, pl);
 
-            pl.cards = mapList(mapperDefs, dto.cards, Card.class);
             pl.cardStackType = dto.cardStackType;
             pl.typeNumber = dto.typeNumber;
+            pl.cards = mapList(mapperDefs, dto.cards, Card.class);
         }
         CardStack cardStack = new CardStack(pl);
         
@@ -76,6 +82,28 @@ class EntityDtoMapper extends EntityBaseDtoMapper
         return cardStack;
     }
 
+    static CardGameDto toDto(CardGame cardGame)
+    {
+        CardGameDto  dto = new CardGameDto ();
+        {
+            mergeEntityBaseToDto(cardGame, dto);
+            
+            dto.playerConfigurations = mapList(mapperDefs, cardGame.playerConfigurations, PlayerConfigurationDto.class);
+        }
+        return dto;
+    }
+    
+    static CardGame toDomainObject(CardGameDto dto)
+    {
+        P_CardGame pl = new P_CardGame();
+        {
+            mergeDtoBaseToPayload(dto, pl);
+
+            pl.playerConfigurations = mapList(mapperDefs, dto.playerConfigurations, PlayerConfiguration.class);
+        }
+        return new CardGame(pl);        
+    }
+    
     static CardDto toDto(Card card)
     {
         CardDto cardDto = new CardDto();
@@ -120,5 +148,29 @@ class EntityDtoMapper extends EntityBaseDtoMapper
             pl.name = dto.name;
         }        
         return new Player(pl);
+    }
+    
+    static PlayerConfigurationDto toDto(PlayerConfiguration player)
+    {
+        PlayerConfigurationDto dto = new PlayerConfigurationDto();
+        {
+            mergeEntityBaseToDto(player, dto);
+            
+            dto.playerId = toDto(player.playerId);
+            dto.cardStacks = mapList(mapperDefs, player.cardStacks, CardStackDto.class);
+        }
+        return dto;
+    }
+
+    static PlayerConfiguration toDomainObject(PlayerConfigurationDto dto)
+    {
+        P_PlayerConfiguration pl = new P_PlayerConfiguration();
+        {
+            mergeDtoBaseToPayload(dto, pl);
+            
+            pl.playerId = toUuid(dto.playerId);
+            pl.cardStacks = mapList(mapperDefs, dto.cardStacks, CardStack.class);
+        }        
+        return new PlayerConfiguration(pl);
     }
 }

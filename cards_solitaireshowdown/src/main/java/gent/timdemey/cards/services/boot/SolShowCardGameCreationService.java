@@ -2,14 +2,13 @@ package gent.timdemey.cards.services.boot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardDeckUtils;
 import gent.timdemey.cards.model.entities.cards.CardStack;
+import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
 import gent.timdemey.cards.services.ICardGameCreationService;
 
 public class SolShowCardGameCreationService implements ICardGameCreationService
@@ -32,9 +31,9 @@ public class SolShowCardGameCreationService implements ICardGameCreationService
     }
 
     @Override
-    public Map<UUID, List<CardStack>> createStacks(List<UUID> playerIds, List<List<Card>> playerCards)
+    public List<PlayerConfiguration> createStacks(List<UUID> playerIds, List<List<Card>> playerCards)
     {
-        Map<UUID, List<CardStack>> playersCardConfig = new HashMap<>();
+        List<PlayerConfiguration> playersConfiguration = new ArrayList<>();
         for (int i = 0; i < playerCards.size(); i++)
         {
             UUID id = playerIds.get(i);
@@ -53,9 +52,10 @@ public class SolShowCardGameCreationService implements ICardGameCreationService
             addCardStack(cardStacks, SolShowCardStackType.LAYDOWN, 2, new ArrayList<>(), false);
             addCardStack(cardStacks, SolShowCardStackType.LAYDOWN, 3, new ArrayList<>(), false);
 
-            playersCardConfig.put(id, cardStacks);
+            PlayerConfiguration pc = new PlayerConfiguration(id, cardStacks);
+            playersConfiguration.add(pc);
         }
-        return playersCardConfig;
+        return playersConfiguration;
     }
     
     private void addCardStack(List<CardStack> listToAdd, String cardStackType, int typeNumber, List<Card> cards, boolean visible)

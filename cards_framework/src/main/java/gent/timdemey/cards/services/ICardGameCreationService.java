@@ -1,11 +1,10 @@
 package gent.timdemey.cards.services;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.cards.Card;
-import gent.timdemey.cards.model.entities.cards.CardStack;
+import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
 
 public interface ICardGameCreationService
 {
@@ -33,5 +32,5 @@ public interface ICardGameCreationService
      * @param shuffled
      * @return
      */
-    public Map<UUID, List<CardStack>> createStacks(List<UUID> playerIds, List<List<Card>> playerCards);
+    public List<PlayerConfiguration> createStacks(List<UUID> playerIds, List<List<Card>> playerCards);
 }
