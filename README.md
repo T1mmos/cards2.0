@@ -12,7 +12,7 @@ Development started somewhere in october 2018 and was initially focused at makin
 
 At april 2020, the game looks like this but is not yet finished:
 
-![Screenshot](screenshots/solshow_2players.png)
+![Screenshot](screenshots/solshow_2players_792x342.png)
 
 All in-game sprites were made by me. For example, all cards were made in Paint.NET, using a bunch of layers to switch between red and black colored card elements, to switch the card value, to add a gloss etc. Then, I saved 52 times to a PNG file, each time with different layers switched on and off, resulting in 52 cards in PNG format. Infact, this was the first thing done before writing any code.
 
