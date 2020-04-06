@@ -6,8 +6,6 @@ import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.UUID;
 
 import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
@@ -47,12 +45,10 @@ import gent.timdemey.cards.ui.actions.IActionService;
 
 public class StartFrame
 {
-
     private static JFrame frame;
 
     private StartFrame()
     {
-
     }
 
     public static void installUiServices()
@@ -74,13 +70,8 @@ public class StartFrame
 
     public static void StartUI(ICardPlugin plugin)
     {
-
         SwingUtilities.invokeLater(() -> {
             WebLookAndFeel.install();
-            UUID id = UUID.randomUUID();
-            Random rg = new Random();
-            int playerNr = rg.nextInt(10000);
-            String name = "Player " + playerNr;
 
             Services.get(IContextService.class).initialize(ContextType.UI);
 

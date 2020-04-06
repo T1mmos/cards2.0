@@ -10,6 +10,10 @@ support for it. Don't waste time on improving the architecture when it won't be 
 
 Development started somewhere in october 2018 and was initially focused at making a standard, single-player Solitaire game in order to have most of the UI stuff working. Starting late 2018, that was done, and I continued with adding netcode, after which the work on the actual game, Solitaire Showdown, was started. 
 
+At april 2020, the game looks like this but is not yet finished:
+
+[Screenshot](screenshot/solshow_2players.png)
+
 All in-game sprites were made by me. For example, all cards were made in Paint.NET, using a bunch of layers to switch between red and black colored card elements, to switch the card value, to add a gloss etc. Then, I saved 52 times to a PNG file, each time with different layers switched on and off, resulting in 52 cards in PNG format. Infact, this was the first thing done before writing any code.
 
 At the time of writing this README I did my first commmit which includes a working Solitaire and a partially working Solitaire Showdown. There's
