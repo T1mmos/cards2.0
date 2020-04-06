@@ -28,12 +28,12 @@ public class SolShowPlugin implements ICardPlugin {
 
     @Override
     public int getMajorVersion() {
-        return 0;
+        return 2;
     }
 
     @Override
     public int getMinorVersion() {
-        return 1;
+        return 0;
     }
 
     @Override
