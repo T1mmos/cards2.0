@@ -20,7 +20,6 @@ public class C_SolPull extends C_Pull
     @Override
     protected boolean canPull(CardStack srcCardStack, Card srcCard)
     {
-
         String srcType = srcCardStack.cardStackType;
         List<Card> cards = srcCardStack.getCards();        
 

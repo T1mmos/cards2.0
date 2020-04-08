@@ -30,7 +30,7 @@ public class CommandHistory extends EntityBase
      * @param erasable Indicates whether the history will support the undoing of specific commands that are surrounded by 
      * other commands
      */
-    CommandHistory (boolean undoable, boolean erasable)
+    public CommandHistory (boolean undoable, boolean erasable)
     {
         if (undoable == erasable)
         {
@@ -336,7 +336,7 @@ public class CommandHistory extends EntityBase
         return fails;
     }
     
-    void add (CommandExecution cmdExecution, State state)
+    public void add (CommandExecution cmdExecution, State state)
     {
         CommandExecutionState execState = cmdExecution.getExecutionState();
         if (execState != CommandExecutionState.Executed && execState != CommandExecutionState.AwaitingConfirmation)

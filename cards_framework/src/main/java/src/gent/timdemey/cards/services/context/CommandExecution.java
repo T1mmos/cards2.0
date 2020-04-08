@@ -7,7 +7,7 @@ public final class CommandExecution
     private final CommandBase command;
     private CommandExecutionState state;
 
-    CommandExecution(CommandBase command, CommandExecutionState state)
+    public CommandExecution(CommandBase command, CommandExecutionState state)
     {
         this.command = command;
         this.state = state;
