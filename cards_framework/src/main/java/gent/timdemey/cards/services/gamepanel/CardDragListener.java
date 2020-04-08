@@ -103,7 +103,7 @@ class CardDragListener extends MouseAdapter
             ReadOnlyCardStack stack = card.getCardStack();
 
             CommandBase cmdPull = operations.getPullCommand(stack.getId(), card.getId());
-            CommandBase cmdUse = operations.getCardUseCommand(id);
+            CommandBase cmdUse = operations.getUseCommand(null, id);
             boolean pullable = context.canExecute(cmdPull);
             boolean useable = context.canExecute(cmdUse);
 
@@ -146,7 +146,7 @@ class CardDragListener extends MouseAdapter
             ReadOnlyCardStack cardStack = Services.get(IPositionManager.class).getCardStackAt(e.getPoint());
             if (cardStack != null)
             {
-                CommandBase cmdUse = operations.getCardStackUseCommand(id);
+                CommandBase cmdUse = operations.getUseCommand(id, null);
                 if (context.canExecute(cmdUse))
                 {
                     context.schedule(cmdUse);

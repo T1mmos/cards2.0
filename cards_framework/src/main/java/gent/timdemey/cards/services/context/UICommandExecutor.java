@@ -5,27 +5,19 @@ import java.util.List;
 
 import javax.swing.SwingUtilities;
 
-import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.model.entities.commands.C_Accept;
+import gent.timdemey.cards.model.entities.commands.C_Reject;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.ICommandService;
 import gent.timdemey.cards.services.IContextService;
 
 class UICommandExecutor implements ICommandExecutor
 {
-    private final CommandHistory commandHistory;
-
     private final List<IExecutionListener> executionListeners;
 
     public UICommandExecutor()
     {
-        ICardPlugin plugin = Services.get(ICardPlugin.class);
-        boolean isMultiplayer = plugin.getPlayerCount() > 1;
-        boolean undoable = !isMultiplayer;
-        boolean erasable = isMultiplayer;
-        
-        this.commandHistory = new CommandHistory(undoable, erasable);
         this.executionListeners = new ArrayList<>();
     }
 
@@ -43,38 +35,58 @@ class UICommandExecutor implements ICommandExecutor
 
     private void execute(CommandBase command, State state)
     {        
-        ICommandService cmdServ = Services.get(ICommandService.class);
-        boolean addToHistory = cmdServ.isSyncedCommand(command);
+        boolean syncable = command.isSyncable();        
+        boolean src_local = command.getSourceId() == state.getLocalId();
+        boolean src_server = command.getSourceId() == state.getServerId();
+        boolean hasServer = state.getServerId() != null;
         
-        boolean local = command.getSourceId() == state.getLocalId();
-        boolean server = command.getSourceId() == state.getServerId();
-        
-        if (!local && !server)
+        if (!src_local && !src_server)
         {
             throw new IllegalArgumentException("A command's source must either be local or the server");
         }
-        if (local && !command.canExecute(state))
+        if (src_local && !command.canExecute(state))
         {
             // if the command is locally created then it is supposed to be able to execute
             throw new IllegalStateException("The command '" + command.getClass().getSimpleName() + " cannot be executed");
         }
         
-        if (addToHistory)
+        if (syncable)
         {
             // delegate command execution to the command history
-            if (local)
+            if (src_local && hasServer)
             {
+                // multiplayer
+                CommandExecution cmdExecution = new CommandExecution(command, CommandExecutionState.AwaitingConfirmation);
+                state.getCommandHistory().add(cmdExecution, state);
+            }
+            else if (src_local && !hasServer)
+            {
+                // single player
                 CommandExecution cmdExecution = new CommandExecution(command, CommandExecutionState.Executed);
-                commandHistory.add(cmdExecution, state);
+                state.getCommandHistory().add(cmdExecution, state);
             }
             else
             {
+                // this command comes from the server
                 CommandExecution cmdExecution = new CommandExecution(command, CommandExecutionState.Accepted);
-                List<CommandExecution> fails = commandHistory.inject(cmdExecution, state);
+                List<CommandExecution> fails = state.getCommandHistory().inject(cmdExecution, state);
                 HandleReexecutionFails(fails);
             }
         }
-        else
+        else if (command instanceof C_Reject)
+        {
+            // this command comes from the server and indicates that another command is rejected
+            C_Reject rejectCmd = (C_Reject) command;
+            List<CommandExecution> fails = state.getCommandHistory().erase(rejectCmd.rejectedCommandId, state);
+            HandleReexecutionFails(fails);
+        }
+        else if (command instanceof C_Accept)
+        {
+            // this command comes from the server and indicates that another command is rejected
+            C_Accept acceptCmd = (C_Accept) command;
+            state.getCommandHistory().accept(acceptCmd.acceptedCommandId);            
+        }
+        else 
         {
             // execute the command here
             command.execute(state);
@@ -121,11 +133,5 @@ class UICommandExecutor implements ICommandExecutor
         }
         
         this.executionListeners.remove(executionListener);
-    }
-
-    @Override
-    public CommandHistory getCommandHistory()
-    {
-        return commandHistory;
     }
 }

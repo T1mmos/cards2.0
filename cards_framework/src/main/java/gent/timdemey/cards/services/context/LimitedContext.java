@@ -52,6 +52,6 @@ public final class LimitedContext
 
     public CommandHistory getCommandHistory()
     {
-        return cmdExecServ.getCommandHistory();
+        return state.getCommandHistory();
     }
 }

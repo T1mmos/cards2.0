@@ -1,24 +1,33 @@
 package gent.timdemey.cards.serialization.mappers;
 
+import gent.timdemey.cards.model.entities.commands.C_Accept;
 import gent.timdemey.cards.model.entities.commands.C_DenyClient;
 import gent.timdemey.cards.model.entities.commands.C_JoinGame;
+import gent.timdemey.cards.model.entities.commands.C_Move;
 import gent.timdemey.cards.model.entities.commands.C_OnPlayerJoined;
+import gent.timdemey.cards.model.entities.commands.C_Reject;
 import gent.timdemey.cards.model.entities.commands.C_StartGame;
 import gent.timdemey.cards.model.entities.commands.C_UDP_Request;
 import gent.timdemey.cards.model.entities.commands.C_UDP_Response;
 import gent.timdemey.cards.model.entities.commands.C_WelcomeClient;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.payload.P_Accept;
 import gent.timdemey.cards.model.entities.commands.payload.P_DenyClient;
 import gent.timdemey.cards.model.entities.commands.payload.P_JoinGame;
+import gent.timdemey.cards.model.entities.commands.payload.P_Move;
 import gent.timdemey.cards.model.entities.commands.payload.P_OnPlayerJoined;
+import gent.timdemey.cards.model.entities.commands.payload.P_Reject;
 import gent.timdemey.cards.model.entities.commands.payload.P_StartGame;
 import gent.timdemey.cards.model.entities.commands.payload.P_UDP_Request;
 import gent.timdemey.cards.model.entities.commands.payload.P_UDP_Response;
 import gent.timdemey.cards.model.entities.commands.payload.P_WelcomeClient;
 import gent.timdemey.cards.model.entities.game.Player;
+import gent.timdemey.cards.serialization.dto.commands.C_AcceptDto;
 import gent.timdemey.cards.serialization.dto.commands.C_DenyClientDto;
 import gent.timdemey.cards.serialization.dto.commands.C_JoinGameDto;
+import gent.timdemey.cards.serialization.dto.commands.C_MoveDto;
 import gent.timdemey.cards.serialization.dto.commands.C_OnPlayerJoinedDto;
+import gent.timdemey.cards.serialization.dto.commands.C_RejectDto;
 import gent.timdemey.cards.serialization.dto.commands.C_StartGameDto;
 import gent.timdemey.cards.serialization.dto.commands.C_UDP_RequestDto;
 import gent.timdemey.cards.serialization.dto.commands.C_UDP_ResponseDto;
@@ -28,9 +37,7 @@ import gent.timdemey.cards.serialization.dto.entities.PlayerDto;
 
 public class CommandDtoMapper extends EntityBaseDtoMapper
 {
-    static final MapperDefs mapperDefs = new MapperDefs();
-
-    static
+    protected final MapperDefs mapperDefs = new MapperDefs();
     {        
         // domain objects to DTO
         mapperDefs.addMapping(C_UDP_Request.class, C_UDP_RequestDto.class, CommandDtoMapper::toDto);
@@ -40,6 +47,8 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         mapperDefs.addMapping(C_WelcomeClient.class, C_WelcomeClientDto.class, CommandDtoMapper::toDto);
         mapperDefs.addMapping(C_OnPlayerJoined.class, C_OnPlayerJoinedDto.class, CommandDtoMapper::toDto);
         mapperDefs.addMapping(C_StartGame.class, C_StartGameDto.class, CommandDtoMapper::toDto);
+        mapperDefs.addMapping(C_Reject.class, C_RejectDto.class, CommandDtoMapper::toDto);
+        mapperDefs.addMapping(C_Accept.class, C_AcceptDto.class, CommandDtoMapper::toDto);
         
         // DTO to domain object
         mapperDefs.addMapping(C_UDP_RequestDto.class, C_UDP_Request.class, CommandDtoMapper::toCommand);
@@ -49,16 +58,18 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         mapperDefs.addMapping(C_WelcomeClientDto.class, C_WelcomeClient.class, CommandDtoMapper::toCommand);
         mapperDefs.addMapping(C_OnPlayerJoinedDto.class, C_OnPlayerJoined.class, CommandDtoMapper::toCommand);
         mapperDefs.addMapping(C_StartGameDto.class, C_StartGame.class, CommandDtoMapper::toCommand);
+        mapperDefs.addMapping(C_RejectDto.class, C_Reject.class, CommandDtoMapper::toCommand);
+        mapperDefs.addMapping(C_AcceptDto.class, C_Accept.class, CommandDtoMapper::toCommand);
     }
 
-    public static String toJson(CommandBase cmd)
+    public String toJson(CommandBase cmd)
     {
         CommandBaseDto dto = mapperDefs.map(cmd, CommandBaseDto.class);
         String json = JsonMapper.toJson(dto);
         return json;
     }
 
-    public static CommandBase toCommand(String json)
+    public CommandBase toCommand(String json)
     {
         CommandBaseDto dto = JsonMapper.toCommandDto(json);
         CommandBase command = mapperDefs.map(dto, CommandBase.class);
@@ -228,5 +239,63 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
             pl.cardGame = EntityDtoMapper.toDomainObject(dto.cardGame);
         }        
         return new C_StartGame(pl);
+    }
+    
+    private static C_RejectDto toDto(C_Reject cmd)
+    {
+        C_RejectDto dto = new C_RejectDto();
+        {
+            mergeEntityBaseToDto(cmd, dto);    
+            
+            dto.rejectedCommandId = toDto(cmd.rejectedCommandId);
+        }        
+        return dto;
+    }
+    
+    private static C_Reject toCommand(C_RejectDto dto)
+    {
+        P_Reject pl = new P_Reject();
+        {
+            mergeDtoBaseToPayload(dto, pl);
+            
+            pl.rejectedCommandId = toUuid(dto.rejectedCommandId);
+        }        
+        return new C_Reject(pl);
+    }
+    
+    private static C_AcceptDto toDto(C_Accept cmd)
+    {
+        C_AcceptDto dto = new C_AcceptDto();
+        {
+            mergeEntityBaseToDto(cmd, dto);    
+            
+            dto.acceptedCommandId = toDto(cmd.acceptedCommandId);
+        }        
+        return dto;
+    }
+    
+    private static C_Accept toCommand(C_AcceptDto dto)
+    {
+        P_Accept pl = new P_Accept();
+        {
+            mergeDtoBaseToPayload(dto, pl);
+            
+            pl.acceptedCommandId = toUuid(dto.acceptedCommandId);
+        }        
+        return new C_Accept(pl);
+    }
+    
+    protected static void mergeMoveBaseToDto(C_Move cmd, C_MoveDto dto)
+    {
+        dto.cardId = toDto(cmd.cardId);
+        dto.dstCardStackId = toDto(cmd.dstCardStackId);
+        dto.srcCardStackId = toDto(cmd.srcCardStackId);
+    }
+    
+    protected static void mergeMoveDtoToPayload(C_MoveDto dto, P_Move pl)
+    {
+        pl.cardId = toUuid(dto.cardId);
+        pl.dstCardStackId = toUuid(dto.dstCardStackId);
+        pl.srcCardStackId = toUuid(dto.srcCardStackId);
     }
 }

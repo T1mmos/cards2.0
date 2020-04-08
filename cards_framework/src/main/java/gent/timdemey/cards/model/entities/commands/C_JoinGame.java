@@ -47,7 +47,7 @@ public class C_JoinGame extends CommandBase
     {
         if (type == ContextType.Client)
         {
-            String json = CommandDtoMapper.toJson(this);
+            String json =  getCommandDtoMapper().toJson(this);
             TCP_Connection tcpConnection = state.getTcpConnectionPool().getConnection(state.getServerId());
             tcpConnection.send(json);
         }
@@ -71,7 +71,7 @@ public class C_JoinGame extends CommandBase
             {
                 CommandBase cmd_answer = new C_WelcomeClient(clientId, state.getServerId(), state.getServerMessage(),
                         state.getRemotePlayers());
-                String json_answer = CommandDtoMapper.toJson(cmd_answer);
+                String json_answer =  getCommandDtoMapper().toJson(cmd_answer);
                 state.getTcpConnectionPool().getConnection(clientId).send(json_answer);
             }
 
@@ -80,7 +80,7 @@ public class C_JoinGame extends CommandBase
             if (others.size() > 0)
             {
                 CommandBase cmd_update = new C_OnPlayerJoined(player);
-                String json_update = CommandDtoMapper.toJson(cmd_update);
+                String json_update =  getCommandDtoMapper().toJson(cmd_update);
                 for (Player other : others)
                 {
                     state.getTcpConnectionPool().getConnection(other.id).send(json_update);

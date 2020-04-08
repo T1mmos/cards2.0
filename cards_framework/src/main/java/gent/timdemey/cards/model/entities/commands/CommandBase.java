@@ -8,7 +8,9 @@ import gent.timdemey.cards.model.entities.common.PayloadBase;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.multiplayer.io.TCP_Connection;
 import gent.timdemey.cards.multiplayer.io.UDP_Source;
+import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.ISerializationService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.context.LimitedContext;
@@ -28,6 +30,42 @@ public abstract class CommandBase extends EntityBase
     protected CommandBase(PayloadBase pl)
     {
         super(pl);
+    }
+    
+    protected final void forward(ContextType type, State state)
+    {
+        if (type == ContextType.Server)
+        {
+            throw new IllegalStateException("To forward, we need to be in the UI or Client layer");
+        }
+        if (getSourceId() == null)
+        {
+            throw new IllegalStateException("To forward, we need to know the source ID of this command: " + this.getClass().getCanonicalName());
+        }
+        
+        if (type == ContextType.Client)
+        {
+            if (getSourceId().equals(state.getServerId()))
+            {
+                // to UI
+                reschedule(ContextType.UI);
+            }
+            else if (getSourceId().equals(state.getLocalId()))
+            {
+                // to Server
+                String serialized = getCommandDtoMapper().toJson(this);            
+                state.getTcpConnectionPool().getConnection(state.getServerId()).send(serialized);
+            }
+        }
+        else if (type == ContextType.UI)
+        {
+            
+            if (getSourceId().equals(state.getLocalId()))
+            {
+                // to server
+                reschedule(ContextType.Client);
+            }
+        }
     }
 
     private final Context getContext()
@@ -158,5 +196,21 @@ public abstract class CommandBase extends EntityBase
     public String toDebugString()
     {
         return "no info";
+    }
+
+    /**
+     * Indicates if this command should be added to the undo/redo list.
+     * By default, this returns false, so commands will by default not be
+     * undoable/redoable unless you override this method. 
+     * @return
+     */
+    public boolean isSyncable()
+    {
+        return false;
+    }
+    
+    protected static CommandDtoMapper getCommandDtoMapper()
+    {
+        return Services.get(ISerializationService.class).getCommandDtoMapper();
     }
 }

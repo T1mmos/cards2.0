@@ -1,6 +1,5 @@
 package gent.timdemey.cards.services.context;
 
-import java.nio.charset.Charset;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.PriorityBlockingQueue;
@@ -15,8 +14,6 @@ import gent.timdemey.cards.model.state.State;
 
 abstract class CommandExecutorBase implements ICommandExecutor
 {
-    protected static final Charset UDP_CHARSET = Charset.forName("UTF8");
-
     private final class CommandTask implements Runnable, Comparable<CommandTask>
     {
         private final CommandBase command;
@@ -41,7 +38,7 @@ abstract class CommandExecutorBase implements ICommandExecutor
             if(command.getSourceId() == null)
             {
                 command.setSourceId(state.getLocalId());
-            }
+            }           
 
             execute(command, state);
         }

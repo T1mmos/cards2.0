@@ -41,7 +41,7 @@ public class C_DropPlayer extends CommandBase
         }
         else if (contextType == ContextType.Server)
         {
-            String json = CommandDtoMapper.toJson(this);
+            String json = getCommandDtoMapper().toJson(this);
             for (Player player : state.getRemotePlayers())
             {
                 state.getTcpConnectionPool().getConnection(player.id).send(json);

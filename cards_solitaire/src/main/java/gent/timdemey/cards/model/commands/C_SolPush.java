@@ -1,35 +1,24 @@
 package gent.timdemey.cards.model.commands;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.cards.Value;
-import gent.timdemey.cards.model.entities.commands.CommandBase;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.commands.C_Push;
 import gent.timdemey.cards.services.boot.SolitaireCardStackType;
-import gent.timdemey.cards.services.context.Context;
-import gent.timdemey.cards.services.context.ContextType;
 
-public class C_SolPush extends CommandBase
+public class C_SolPush extends C_Push
 {
-    public final UUID dstCardStackId;
-    public final List<UUID> srcCardIds;
-
     public C_SolPush(UUID dstCardStackId, List<UUID> srcCardIds)
     {
-        this.dstCardStackId = dstCardStackId;
-        this.srcCardIds = Collections.unmodifiableList(srcCardIds);
+        super(dstCardStackId, srcCardIds);
     }
 
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected boolean canPush(CardStack dstCardStack, List<Card> srcCards)
     {
-        CardStack dstCardStack = state.getCardGame().getCardStack(dstCardStackId);
-        List<Card> srcCards = state.getCardGame().getCards().getOnly(srcCardIds);
-
         String dstType = dstCardStack.cardStackType;
 
         if(dstType.equals(SolitaireCardStackType.MIDDLE))
@@ -59,12 +48,6 @@ public class C_SolPush extends CommandBase
 
         }
         return false;
-    }
-
-    @Override
-    protected void execute(Context context, ContextType type, State state)
-    {
-        throw new UnsupportedOperationException("Use a C_Move command instead!");
     }
 
 }

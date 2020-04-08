@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-final class MapperDefs implements IMapper
+public final class MapperDefs implements IMapper
 {
     private static class MappersKey
     {

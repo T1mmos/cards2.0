@@ -5,19 +5,19 @@ import java.util.UUID;
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
+import gent.timdemey.cards.model.entities.commands.C_Accept;
 import gent.timdemey.cards.model.entities.commands.C_DropPlayer;
+import gent.timdemey.cards.model.entities.commands.C_Reject;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.multiplayer.io.CommandSchedulingTcpConnectionListener;
 import gent.timdemey.cards.multiplayer.io.TCP_Connection;
-import gent.timdemey.cards.multiplayer.io.TCP_ConnectionAccepter;
 import gent.timdemey.cards.multiplayer.io.TCP_ConnectionPool;
 import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.ISerializationService;
 
 class ServerCommandExecutor extends CommandExecutorBase
 {
-    private TCP_ConnectionAccepter srv_tcp_accepter = null;
-
     public ServerCommandExecutor()
     {
         super(ContextType.Server);
@@ -30,22 +30,32 @@ class ServerCommandExecutor extends CommandExecutorBase
         if (command.canExecute(state))
         {
             command.execute(state);
+            
+            if (command.isSyncable())
+            {
+                C_Accept acceptCmd = new C_Accept(command.id);                
+                ISerializationService serServ = Services.get(ISerializationService.class);
+                String answer = serServ.getCommandDtoMapper().toJson(acceptCmd);
+                state.getTcpConnectionPool().getConnection(command.getSourceId()).send(answer);
+            }
+            
         }
         else
         {
             Services.get(ILogManager.class).log("Can't execute this command: '" + command.getClass().getSimpleName() + "'");
-            if (command.getSourceId() == state.getServerId())
+            if (command.isSyncable())
             {
-                // wtf?
+                C_Reject rejectCmd = new C_Reject(command.id);                
+                ISerializationService serServ = Services.get(ISerializationService.class);
+                String answer = serServ.getCommandDtoMapper().toJson(rejectCmd);
+                state.getTcpConnectionPool().getConnection(command.getSourceId()).send(answer);
             }
-            // send reject command if command.SourceId != server
         }
 
     }
 
     private class ConnListener extends CommandSchedulingTcpConnectionListener
     {
-
         public ConnListener()
         {
             super(ContextType.Server);
@@ -76,12 +86,5 @@ class ServerCommandExecutor extends CommandExecutorBase
                 context.schedule(cmd);
             }
         }
-
-    }
-
-    @Override
-    public CommandHistory getCommandHistory()
-    {
-        throw new IllegalStateException("The server command executor does not track the command history");
     }
 }

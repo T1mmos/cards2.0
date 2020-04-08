@@ -20,8 +20,6 @@ interface ICommandExecutor
      * @param command
      */
     void schedule(CommandBase command, State state);
-    
-    CommandHistory getCommandHistory();
 
     void addExecutionListener(IExecutionListener executionListener);
     

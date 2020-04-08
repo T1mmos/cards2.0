@@ -8,7 +8,7 @@ import java.util.UUID;
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;
-import gent.timdemey.cards.model.entities.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.C_Move;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.boot.SolitaireCardStackType;
 import gent.timdemey.cards.services.context.Context;
@@ -19,12 +19,8 @@ import gent.timdemey.cards.services.context.ContextType;
  * 
  * @author Tim
  */
-public class C_SolMove extends CommandBase
+public class C_SolMove extends C_Move
 {
-    public final UUID srcCardStackId;
-    public final UUID dstCardStackId;
-    public final UUID cardId;
-
     private List<Card> transferCards;
     private List<Card> flippedTransferCards;
     private boolean depotInvolved;
@@ -32,9 +28,7 @@ public class C_SolMove extends CommandBase
 
     public C_SolMove(UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
     {
-        this.srcCardStackId = srcCardStackId;
-        this.dstCardStackId = dstCardStackId;
-        this.cardId = cardId;
+        super(srcCardStackId, dstCardStackId, cardId);
     }
 
     @Override
@@ -68,7 +62,6 @@ public class C_SolMove extends CommandBase
             }
         }
         return false;
-
     }
 
     @Override

@@ -1,7 +1,5 @@
 package gent.timdemey.cards.serialization.mappers;
 
-import java.util.ArrayList;
-
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;

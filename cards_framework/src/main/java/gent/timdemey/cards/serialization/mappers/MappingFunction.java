@@ -8,7 +8,7 @@ package gent.timdemey.cards.serialization.mappers;
  * @param <SRC>
  * @param <DST>
  */
-interface MappingFunction<SRC, DST>
+public interface MappingFunction<SRC, DST>
 {
     DST map(SRC src);
 }

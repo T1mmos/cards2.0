@@ -17,7 +17,7 @@ import gent.timdemey.cards.services.context.CommandHistory;
 
 public class State extends EntityBase
 {
-    private CommandHistory commandHistory;
+    
 
     public static final Property<CardGame> CardGame = Property.of(State.class, CardGame.class, "CardGame");
     public static final Property<UUID> LocalId = Property.of(State.class, UUID.class, "LocalId");
@@ -34,6 +34,8 @@ public class State extends EntityBase
     public static final Property<UDP_ServiceAnnouncer> UdpServiceAnnouncer = Property.of(State.class, UDP_ServiceAnnouncer.class, "UdpServiceAnnouncer");
     public static final Property<UDP_ServiceRequester> UdpServiceRequester = Property.of(State.class, UDP_ServiceRequester.class, "UdpServiceRequester");
 
+    private CommandHistory commandHistory;
+    
     // state lists
     private EntityStateListRef<Player> playersRef;
     private EntityStateListRef<Server> serversRef;
@@ -80,14 +82,6 @@ public class State extends EntityBase
     {
         cardGameRef.set(cardGame);
     }
-
-    /*
-     * public TCP_ConnectionCreator getTcpConnectionCreator() { return
-     * tcpConnectionCreatorRef.get(); }
-     * 
-     * public void setTcpConnectionCreator(TCP_ConnectionCreator
-     * tcpConnectionCreator) { tcpConnectionCreatorRef.set(tcpConnectionCreator); }
-     */
 
     public TCP_ConnectionAccepter getTcpConnectionAccepter()
     {

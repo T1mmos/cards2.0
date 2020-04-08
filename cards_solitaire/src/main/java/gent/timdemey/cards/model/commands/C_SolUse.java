@@ -8,28 +8,22 @@ import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.commands.C_SetVisible;
+import gent.timdemey.cards.model.entities.commands.C_Use;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.boot.SolitaireCardStackType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
-public class C_SolUse extends CommandBase
+public class C_SolUse extends C_Use
 {
-    public final UUID initiatorStackId;
-    public final UUID initiatorCardId;
-
     public C_SolUse(UUID initiatorStackId, UUID initiatorCardId)
     {
-        if((initiatorStackId == null && initiatorCardId == null) || (initiatorStackId != null && initiatorCardId != null))
-        {
-            throw new IllegalArgumentException("Choose exactly one initator for a Use command: a card, or a card stack, but not both.");
-        }
-        this.initiatorStackId = initiatorStackId;
-        this.initiatorCardId = initiatorCardId;
+        super(initiatorStackId, initiatorCardId);
     }
 
-    private CommandBase getUseCommand(Context context, ContextType type, State state)
+    @Override
+    protected CommandBase resolveCommand(Context context, ContextType type, State state)
     {
         CardGame cardGame = state.getCardGame();
         List<CommandBase> eligible = new ArrayList<>();
@@ -103,21 +97,4 @@ public class C_SolUse extends CommandBase
         }
         return null;
     }
-
-    @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
-    {
-        CheckNotContext(type, ContextType.Client, ContextType.Server);
-
-        CommandBase cmd = getUseCommand(context, type, state);
-        return cmd != null;
-    }
-
-    protected void execute(Context context, ContextType type, State state)
-    {
-        CheckNotContext(type, ContextType.Client, ContextType.Server);
-
-        CommandBase cmd = getUseCommand(context, type, state);
-        schedule(ContextType.UI, cmd);
-    };
 }

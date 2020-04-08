@@ -7,47 +7,38 @@ import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardStack;
-import gent.timdemey.cards.model.entities.commands.CommandBase;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.commands.C_Pull;
 import gent.timdemey.cards.services.boot.SolitaireCardStackType;
-import gent.timdemey.cards.services.context.Context;
-import gent.timdemey.cards.services.context.ContextType;
 
-public class C_SolPull extends CommandBase
+public class C_SolPull extends C_Pull
 {
-    private final UUID srcCardStackId;
-    private final UUID cardId;
-
     public C_SolPull(UUID srcCardStackId, UUID cardId)
     {
-        this.srcCardStackId = srcCardStackId;
-        this.cardId = cardId;
+        super(srcCardStackId, cardId);
     }
     
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected boolean canPull(CardStack srcCardStack, Card srcCard)
     {
-        CardStack srcCardStack = state.getCardGame().getCardStack(srcCardStackId);
-        Card card = state.getCardGame().getCard(cardId);
-        
+
         String srcType = srcCardStack.cardStackType;
         List<Card> cards = srcCardStack.getCards();        
 
-        Preconditions.checkArgument(cards.contains(card));
+        Preconditions.checkArgument(cards.contains(srcCard));
         
         // Can only pull visible cards
-        if (!card.visibleRef.get())
+        if (!srcCard.visibleRef.get())
         {
             return false;
         }
         
         if (srcType.equals(SolitaireCardStackType.TURNOVER) || srcType.equals(SolitaireCardStackType.LAYDOWN))
         {
-            return cards.get(cards.size() - 1) == card; // 1 card
+            return cards.get(cards.size() - 1) == srcCard; // 1 card
         }
         else if (srcType.equals(SolitaireCardStackType.MIDDLE))
         {
-            int cardIndex = cards.indexOf(card);
+            int cardIndex = cards.indexOf(srcCard);
             for (int i = cardIndex; i < cards.size() - 1; i++)
             {
                 Card lowerCard = cards.get(i);
@@ -75,15 +66,6 @@ public class C_SolPull extends CommandBase
             return true;            
         }
         
-        
         return false;
     }
-
-    @Override
-    protected void execute(Context context, ContextType type, State state)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
 }

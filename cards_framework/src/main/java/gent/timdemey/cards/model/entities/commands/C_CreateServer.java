@@ -17,6 +17,7 @@ import gent.timdemey.cards.multiplayer.io.TCP_ConnectionPool;
 import gent.timdemey.cards.multiplayer.io.UDP_ServiceAnnouncer;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.ISerializationService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
@@ -115,7 +116,7 @@ public class C_CreateServer extends CommandBase
         
         int playerCount = Services.get(ICardPlugin.class).getPlayerCount();
         C_DenyClient cmd_reject = new C_DenyClient("Server is full");
-        String json_reject = CommandDtoMapper.toJson(cmd_reject);
+        String json_reject = getCommandDtoMapper().toJson(cmd_reject);
 
         CommandSchedulingTcpConnectionListener tcpConnListener = new CommandSchedulingTcpConnectionListener(ContextType.Server);
         TCP_ConnectionPool tcpConnPool = new TCP_ConnectionPool(playerCount, tcpConnListener);

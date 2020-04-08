@@ -5,12 +5,14 @@ import javax.swing.SwingUtilities;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.logging.LogManager;
+import gent.timdemey.cards.serialization.SerializationService;
 import gent.timdemey.cards.services.IConfigManager;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IGamePanelManager;
 import gent.timdemey.cards.services.IImageService;
 import gent.timdemey.cards.services.IResourceManager;
 import gent.timdemey.cards.services.IScalableImageManager;
+import gent.timdemey.cards.services.ISerializationService;
 import gent.timdemey.cards.services.ISoundManager;
 import gent.timdemey.cards.services.configman.ConfigManager;
 import gent.timdemey.cards.services.context.ContextService;
@@ -105,7 +107,12 @@ public class Start
         {
             IContextService ctxtProv = new ContextService();
             Services.install(IContextService.class, ctxtProv);
-        }
+        } 
+        if (!Services.isInstalled(ISerializationService.class))
+        {
+            ISerializationService serServ = new SerializationService();
+            Services.install(ISerializationService.class, serServ);
+        } 
     }
 
     public static void main(String[] args)

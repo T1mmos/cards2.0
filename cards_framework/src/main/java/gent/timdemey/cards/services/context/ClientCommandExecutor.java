@@ -41,11 +41,4 @@ class ClientCommandExecutor extends CommandExecutorBase
             // todo
         }
     }
-
-    @Override
-    public CommandHistory getCommandHistory()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
 }

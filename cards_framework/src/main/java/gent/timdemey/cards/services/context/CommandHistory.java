@@ -419,7 +419,7 @@ public class CommandHistory extends EntityBase
      * @return the list of command executions that followed the erased command that could not be reexecuted,
      * starting from the state right before the erased command would have executed
      */
-    List<CommandExecution> erase (UUID commandId, State state)
+    public List<CommandExecution> erase (UUID commandId, State state)
     {
         if (!canErase())
         {
@@ -488,7 +488,7 @@ public class CommandHistory extends EntityBase
                 
         // find all CommandExecutions that are not yet accepted and currently executed
         int idx = getAcceptedIndex() + 1;
-        List<CommandExecution> list = execLine.subList(idx, getLastIndex() + 1);
+        List<CommandExecution> list = new ArrayList<>(execLine.subList(idx, getLastIndex() + 1));
         
         // undo all these commands
         undo(list, state);
@@ -513,7 +513,7 @@ public class CommandHistory extends EntityBase
      * Set the state of a CommandExecution that is currently awaiting confirmation as being accepted by the server.
      * @param id
      */
-    void accept(UUID id)
+    public void accept(UUID commandId)
     {
         
     }

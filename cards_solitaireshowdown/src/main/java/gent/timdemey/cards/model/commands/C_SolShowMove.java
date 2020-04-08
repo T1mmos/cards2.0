@@ -7,21 +7,18 @@ import java.util.UUID;
 
 import com.google.common.base.Preconditions;
 
+import gent.timdemey.cards.model.commands.payload.P_SolShowMove;
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;
-import gent.timdemey.cards.model.entities.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.C_Move;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.boot.SolShowCardStackType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
-public class C_SolShowMove extends CommandBase
-{
-    private final UUID srcCardStackId;
-    private final UUID dstCardStackId;
-    private final UUID cardId;
-
+public class C_SolShowMove extends C_Move
+{    
     private List<Card> transferCards;
     private List<Card> flippedTransferCards;
     private boolean depotInvolved;
@@ -29,14 +26,22 @@ public class C_SolShowMove extends CommandBase
     
     public C_SolShowMove(UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
     {
-        this.srcCardStackId = srcCardStackId;
-        this.dstCardStackId = dstCardStackId;
-        this.cardId = cardId;
+        super(srcCardStackId, dstCardStackId, cardId);
+    }
+    
+    public C_SolShowMove (P_SolShowMove pl)
+    {
+        super(pl);
     }
 
     @Override
     protected boolean canExecute(Context context, ContextType type, State state)
     {
+        if (type == ContextType.Client)
+        {
+            return true;
+        }
+        
         CardGame cardGame = state.getCardGame();
         CardStack srcCardStack = cardGame.getCardStack(srcCardStackId);
         CardStack dstCardStack = cardGame.getCardStack(dstCardStackId);
@@ -65,7 +70,7 @@ public class C_SolShowMove extends CommandBase
             String dstCardStackType = dstCardStack.cardStackType;
             if(srcCardStackType.equals(SolShowCardStackType.DEPOT) && dstCardStackType.equals(SolShowCardStackType.TURNOVER))
             {
-                return !srcCardStack.getCards().isEmpty() && srcCardStack.getHighestCard() == card;
+                return !srcCardStack.getCards().isEmpty() && srcCardStack.cards.indexOf(card) >= srcCardStack.cards.size() - 3;
             }
             else if(srcCardStackType.equals(SolShowCardStackType.TURNOVER) && dstCardStackType.equals(SolShowCardStackType.DEPOT))
             {
@@ -79,58 +84,69 @@ public class C_SolShowMove extends CommandBase
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
-        UUID localId = state.getLocalId();
-        CardGame cardGame = state.getCardGame();
-        CardStack srcCardStack = cardGame.getCardStack(srcCardStackId);
-        CardStack dstCardStack = cardGame.getCardStack(dstCardStackId);
-        
-        if(transferCards == null)
+        if (type == ContextType.UI || type == ContextType.Server)
         {
-            depotInvolved = (srcCardStack.cardStackType.equals(SolShowCardStackType.DEPOT)
-                    && dstCardStack.cardStackType.equals(SolShowCardStackType.TURNOVER))
-                    || (srcCardStack.cardStackType.equals(SolShowCardStackType.TURNOVER)
-                            && dstCardStack.cardStackType.equals(SolShowCardStackType.DEPOT));
-            visible = depotInvolved && dstCardStack.cardStackType.equals(SolShowCardStackType.TURNOVER);
-            List<Card> cards = srcCardStack.getCards();
-            Card card = srcCardStack.getCards().get(cardId);
-            transferCards = new ArrayList<>(cards.subList(cards.indexOf(card), cards.size()));
+            CardGame cardGame = state.getCardGame();
+            CardStack srcCardStack = cardGame.getCardStack(srcCardStackId);
+            CardStack dstCardStack = cardGame.getCardStack(dstCardStackId);
+            
+            if(transferCards == null)
+            {
+                depotInvolved = (srcCardStack.cardStackType.equals(SolShowCardStackType.DEPOT)
+                        && dstCardStack.cardStackType.equals(SolShowCardStackType.TURNOVER))
+                        || (srcCardStack.cardStackType.equals(SolShowCardStackType.TURNOVER)
+                                && dstCardStack.cardStackType.equals(SolShowCardStackType.DEPOT));
+                visible = depotInvolved && dstCardStack.cardStackType.equals(SolShowCardStackType.TURNOVER);
+                List<Card> cards = srcCardStack.getCards();
+                Card card = srcCardStack.getCards().get(cardId);
+                transferCards = new ArrayList<>(cards.subList(cards.indexOf(card), cards.size()));
 
+                if(depotInvolved)
+                {
+                    flippedTransferCards = new ArrayList<>(transferCards);
+                    Collections.reverse(flippedTransferCards);
+                }
+            }
+            
             if(depotInvolved)
             {
-                flippedTransferCards = new ArrayList<>(transferCards);
-                Collections.reverse(flippedTransferCards);
+                srcCardStack.removeAll(flippedTransferCards);
+                dstCardStack.addAll(flippedTransferCards);
+                // transfering to depot -> cards become invisible, transfering to turnover ->
+                // cards become visible
+                for (Card card : transferCards)
+                {
+                    card.visibleRef.set(visible);
+                }
             }
+            else
+            {
+                srcCardStack.removeAll(transferCards);
+                dstCardStack.addAll(transferCards);
+            }
+
+            transferCards.forEach(card -> card.cardStack = dstCardStack);
         }
         
-        if(depotInvolved)
+        if (type == ContextType.UI)
         {
-            dstCardStack.addAll(flippedTransferCards);
-            // transfering to depot -> cards become invisible, transfering to turnover ->
-            // cards become visible
-            for (Card card : transferCards)
-            {
-                card.visibleRef.set(visible);
-            }
+            forward(type, state);
         }
-        else
+        else if (type == ContextType.Client)
         {
-            dstCardStack.addAll(transferCards);
+            forward(type, state);
         }
-
-        transferCards.forEach(card -> card.cardStack = dstCardStack);
-
         if(type == ContextType.Server)
         {
             List<UUID> idsToUpdate = state.getPlayers().getExceptUUID(getSourceId());
             state.getTcpConnectionPool().broadcast(idsToUpdate, getSerialized());
         }
     }
-    
+
     @Override
     protected boolean canUndo(Context context, ContextType type, State state)
     {
-        // TODO Auto-generated method stub
-        return super.canUndo(context, type, state);
+        return false;
     }
     
     @Override
@@ -157,5 +173,4 @@ public class C_SolShowMove extends CommandBase
         srcCardStack.addAll(transferCards);
         transferCards.forEach(card -> card.cardStack = srcCardStack);
     }
-
 }

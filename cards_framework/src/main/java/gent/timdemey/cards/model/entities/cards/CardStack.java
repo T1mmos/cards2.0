@@ -102,6 +102,11 @@ public class CardStack extends EntityBase
         }
         this.cards.addAll(cards);
     }
+    
+    public void removeAll(List<Card> cards)
+    {
+        this.cards.removeAll(cards);
+    }
 
     @Override
     public String toDebugString()

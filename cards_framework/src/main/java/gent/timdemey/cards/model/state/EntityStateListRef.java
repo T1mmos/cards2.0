@@ -10,7 +10,7 @@ import gent.timdemey.cards.model.entities.common.EntityBase;
 
 public class EntityStateListRef<X extends EntityBase> extends StateListRef<X>
 {
-    public EntityStateListRef(Property property, UUID entityId, List<X> wrappee)
+    public EntityStateListRef(Property<X> property, UUID entityId, List<X> wrappee)
     {
         super(property, entityId, wrappee);
     }
@@ -93,6 +93,30 @@ public class EntityStateListRef<X extends EntityBase> extends StateListRef<X>
             }
         }
         return xs;
+    }
+    
+    public X getFirst()
+    {
+        if (list.isEmpty())
+        {
+            return null;
+        }
+        else
+        {
+            return list.get(0);
+        }  
+    }
+    
+    public X getLast()
+    {
+        if (list.isEmpty())
+        {
+            return null;
+        }
+        else
+        {
+            return list.get(list.size() - 1);
+        }        
     }
 
     public static <X extends EntityBase> EntityStateListRef<X> asReadOnly(List<X> subList)

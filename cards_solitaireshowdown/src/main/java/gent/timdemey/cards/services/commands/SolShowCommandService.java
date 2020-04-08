@@ -3,57 +3,39 @@ package gent.timdemey.cards.services.commands;
 import java.util.List;
 import java.util.UUID;
 
-import gent.timdemey.cards.model.entities.commands.CommandBase;
+import gent.timdemey.cards.model.commands.C_SolShowMove;
+import gent.timdemey.cards.model.commands.C_SolShowPull;
+import gent.timdemey.cards.model.commands.C_SolShowPush;
+import gent.timdemey.cards.model.commands.C_SolShowUse;
+import gent.timdemey.cards.model.entities.commands.C_Move;
+import gent.timdemey.cards.model.entities.commands.C_Pull;
+import gent.timdemey.cards.model.entities.commands.C_Push;
+import gent.timdemey.cards.model.entities.commands.C_Use;
 import gent.timdemey.cards.services.ICommandService;
 
 public class SolShowCommandService implements ICommandService
 {
     @Override
-    public CommandBase getMoveCommand(UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
+    public C_Move getMoveCommand(UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
     {
-        // TODO Auto-generated method stub
-        return null;
+        return new C_SolShowMove(srcCardStackId, dstCardStackId, cardId);
     }
 
     @Override
-    public CommandBase getCardUseCommand(UUID srcCardId)
+    public C_Use getUseCommand(UUID srcCardStackId, UUID srcCardId)
     {
-        // TODO Auto-generated method stub
-        return null;
+        return new C_SolShowUse(srcCardStackId, srcCardId);
     }
 
     @Override
-    public CommandBase getCardStackUseCommand(UUID srcCardStackId)
+    public C_Pull getPullCommand(UUID srcCardStackId, UUID cardId)
     {
-        // TODO Auto-generated method stub
-        return null;
+        return new C_SolShowPull(srcCardStackId, cardId);
     }
 
     @Override
-    public CommandBase getPullCommand(UUID srcCardStackId, UUID cardId)
+    public C_Push getPushCommand(UUID dstCardStackId, List<UUID> srcCardIds)
     {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public CommandBase getPushCommand(UUID dstCardStackId, List<UUID> srcCardIds)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public boolean isSyncedCommand(CommandBase command)
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean isSyncedCommand(Class<? extends CommandBase> clazz)
-    {
-        // TODO Auto-generated method stub
-        return false;
+        return new C_SolShowPush(dstCardStackId, srcCardIds);
     }
 }

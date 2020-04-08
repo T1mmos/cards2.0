@@ -54,7 +54,7 @@ public class C_UDP_StartServiceRequester extends CommandBase
 
             // prepare UDP broadcast
             C_UDP_Request cmd = new C_UDP_Request();
-            String json = CommandDtoMapper.toJson(cmd);
+            String json = getCommandDtoMapper().toJson(cmd);
 
             UDP_ServiceRequester udpServRequester = new UDP_ServiceRequester(json, C_UDP_StartServiceRequester::onUdpReceived);
             state.setUdpServiceRequester(udpServRequester);
@@ -67,7 +67,7 @@ public class C_UDP_StartServiceRequester extends CommandBase
     {
         try
         {
-            CommandBase command = CommandDtoMapper.toCommand(json);
+            CommandBase command = getCommandDtoMapper().toCommand(json);
             if (!(command instanceof C_UDP_Response))
             {
                 Services.get(ILogManager.class)

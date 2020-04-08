@@ -36,7 +36,7 @@ public class C_StartGame extends CommandBase
     {
         if (type == ContextType.UI)
         {
-            state.setCardGame(cardGame);
+            state.setCardGame(cardGame);            
         }
         else if (type == ContextType.Client)
         {
@@ -46,7 +46,7 @@ public class C_StartGame extends CommandBase
         {
             state.setCardGame(cardGame);
 
-            String json = CommandDtoMapper.toJson(this);
+            String json = getCommandDtoMapper().toJson(this);
             List<UUID> remoteIds = state.getPlayers().getExceptUUID(state.getServerId());
             state.getTcpConnectionPool().broadcast(remoteIds, json);
         }

@@ -15,8 +15,8 @@ import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.model.entities.commands.C_UDP_Request;
 import gent.timdemey.cards.model.entities.commands.C_UDP_Response;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
-import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.ISerializationService;
 import gent.timdemey.cards.services.context.ContextType;
 
 public final class UDP_ServiceAnnouncer
@@ -102,7 +102,8 @@ public final class UDP_ServiceAnnouncer
                 CommandBase command = null;
                 try 
                 {
-                    command = CommandDtoMapper.toCommand(rcvd);
+                    ISerializationService serServ = Services.get(ISerializationService.class);
+                    command = serServ.getCommandDtoMapper().toCommand(rcvd);
                 }
                 catch (Exception ex)
                 {
@@ -149,7 +150,8 @@ public final class UDP_ServiceAnnouncer
         try
         {            
             C_UDP_Response responseCmd = msg.responseCmd;
-            String json = CommandDtoMapper.toJson(responseCmd);
+            ISerializationService serServ = Services.get(ISerializationService.class);
+            String json = serServ.getCommandDtoMapper().toJson(responseCmd);
             byte[] buffer_out = json.getBytes(IoConstants.UDP_CHARSET);
             DatagramPacket packet_out = new DatagramPacket(buffer_out, buffer_out.length, msg.destination, msg.port);
             dsocket.send(packet_out);            
