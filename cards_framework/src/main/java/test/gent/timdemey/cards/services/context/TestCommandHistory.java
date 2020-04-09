@@ -1,4 +1,4 @@
-package test.gent.timdemey.cards.services.context;
+package gent.timdemey.cards.services.context;
 
 import static org.junit.Assert.fail;
 
