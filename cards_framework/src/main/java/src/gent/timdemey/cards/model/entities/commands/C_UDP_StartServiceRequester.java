@@ -4,7 +4,6 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.multiplayer.io.UDP_ServiceRequester;
-import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -18,7 +17,6 @@ import gent.timdemey.cards.services.context.LimitedContext;
  */
 public class C_UDP_StartServiceRequester extends CommandBase
 {
-
     public C_UDP_StartServiceRequester()
     {
     }
@@ -84,5 +82,11 @@ public class C_UDP_StartServiceRequester extends CommandBase
             Services.get(ILogManager.class).log("Failed to deserialize UDP datagram, ignoring");
             return;
         }
+    }
+
+    @Override
+    public String toDebugString()
+    {
+        return "";
     }
 }

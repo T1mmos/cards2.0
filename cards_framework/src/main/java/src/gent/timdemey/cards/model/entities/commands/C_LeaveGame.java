@@ -23,4 +23,10 @@ public class C_LeaveGame extends CommandBase
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public String toDebugString()
+    {
+        return "";
+    }
+
 }

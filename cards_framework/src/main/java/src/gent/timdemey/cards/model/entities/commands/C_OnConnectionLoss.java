@@ -47,4 +47,10 @@ public class C_OnConnectionLoss extends CommandBase
             throw new IllegalStateException();
         }
     }
+
+    @Override
+    public String toDebugString()
+    {
+        return "";
+    }
 }

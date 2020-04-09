@@ -27,4 +27,10 @@ public final class C_Redo extends CommandBase
     {
         state.getCommandHistory().redo(state);
     }
+
+    @Override
+    public String toDebugString()
+    {
+        return "";
+    }
 }

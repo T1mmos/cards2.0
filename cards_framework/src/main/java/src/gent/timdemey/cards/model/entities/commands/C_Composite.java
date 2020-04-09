@@ -1,5 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.utils.Debug;
 
 /**
  * A composite command bundles multiple commands in one atomic command.
@@ -94,5 +96,16 @@ public class C_Composite extends CommandBase
         {
             commands.get(i).undo(context, type, state);
         }
+    }
+
+    @Override
+    public String toDebugString()
+    {
+        List<String> names = new ArrayList<String>();
+        for (CommandBase cmd : commands)
+        {
+            names.add(cmd.getClass().getSimpleName());
+        }
+        return Debug.listString("commands", names);
     }
 }

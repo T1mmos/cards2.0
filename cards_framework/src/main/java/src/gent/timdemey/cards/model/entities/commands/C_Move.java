@@ -1,11 +1,14 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import java.util.List;
 import java.util.UUID;
 
+import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.commands.payload.P_Move;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.utils.Debug;
 
 public abstract class C_Move extends CommandBase
 {
@@ -39,4 +42,12 @@ public abstract class C_Move extends CommandBase
     
     @Override
     protected abstract boolean canUndo(Context context, ContextType type, State state);
+    
+    @Override
+    public String toDebugString()
+    {        
+        return Debug.getKeyValue("srcCardStackId", srcCardStackId) +
+               Debug.getKeyValue("dstCardStackId", dstCardStackId) +
+               Debug.getKeyValue("cardId", cardId);
+    }
 }

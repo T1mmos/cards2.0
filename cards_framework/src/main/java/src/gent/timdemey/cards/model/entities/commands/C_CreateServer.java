@@ -20,6 +20,7 @@ import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.ISerializationService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.utils.Debug;
 
 public class C_CreateServer extends CommandBase
 {
@@ -131,4 +132,14 @@ public class C_CreateServer extends CommandBase
         tcpConnAccepter.start();
     }
 
+    @Override
+    public String toDebugString()
+    {
+        return Debug.getKeyValue("srvname", srvname) + 
+               Debug.getKeyValue("srvmsg", srvmsg) + 
+               Debug.getKeyValue("udpport", udpport) + 
+               Debug.getKeyValue("tcpport", tcpport) + 
+               Debug.getKeyValue("minconns", minconns) + 
+               Debug.getKeyValue("maxconns", maxconns);
+    }
 }

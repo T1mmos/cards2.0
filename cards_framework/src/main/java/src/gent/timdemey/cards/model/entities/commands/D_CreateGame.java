@@ -34,4 +34,10 @@ public class D_CreateGame extends CommandBase
         }
     }
 
+    @Override
+    public String toDebugString()
+    {
+        return "";
+    }
+
 }

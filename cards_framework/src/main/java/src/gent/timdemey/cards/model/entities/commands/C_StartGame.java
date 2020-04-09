@@ -6,9 +6,9 @@ import java.util.UUID;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.commands.payload.P_StartGame;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.utils.Debug;
 
 public class C_StartGame extends CommandBase
 {
@@ -50,5 +50,11 @@ public class C_StartGame extends CommandBase
             List<UUID> remoteIds = state.getPlayers().getExceptUUID(state.getServerId());
             state.getTcpConnectionPool().broadcast(remoteIds, json);
         }
+    }
+
+    @Override
+    public String toDebugString()
+    {
+        return Debug.getKeyValue("game", cardGame.toDebugString());
     }
 }

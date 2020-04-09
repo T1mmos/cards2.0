@@ -7,6 +7,7 @@ import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.utils.Debug;
 
 public class C_DropPlayer extends CommandBase
 {
@@ -47,6 +48,12 @@ public class C_DropPlayer extends CommandBase
                 state.getTcpConnectionPool().getConnection(player.id).send(json);
             }
         }
+    }
+
+    @Override
+    public String toDebugString()
+    {
+        return Debug.getKeyValue("playerId", playerId);
     }
 
 }

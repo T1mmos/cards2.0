@@ -9,6 +9,7 @@ import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.utils.Debug;
 
 public abstract class C_Push extends CommandBase
 {
@@ -56,5 +57,12 @@ public abstract class C_Push extends CommandBase
     protected final void undo(Context context, ContextType type, State state)
     {
         throw new UnsupportedOperationException("This command should not be executed directly");
+    }
+    
+    @Override
+    public String toDebugString()
+    {
+        return Debug.getKeyValue("dstCardStackId", dstCardStackId) +
+               Debug.listAny("srcCardIds", srcCardIds);
     }
 }

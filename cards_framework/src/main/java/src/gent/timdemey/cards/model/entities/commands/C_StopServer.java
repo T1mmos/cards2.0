@@ -39,4 +39,10 @@ public class C_StopServer extends CommandBase
             state.setTcpConnectionAccepter(null);
         }
     }
+
+    @Override
+    public String toDebugString()
+    {
+        return "";
+    }
 }

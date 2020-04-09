@@ -2,6 +2,8 @@ package gent.timdemey.cards.model.entities.common;
 
 import java.util.UUID;
 
+import gent.timdemey.cards.utils.Debug;
+
 public abstract class EntityBase
 {
     public final UUID id;
@@ -46,7 +48,11 @@ public abstract class EntityBase
     @Override
     public final String toString()
     {
-        return getClass().getSimpleName() + " [ " + toDebugString() + " ] ";
+        return getClass().getSimpleName() +
+              "\n{" + 
+              Debug.getKeyValue("id", id) +              
+              toDebugString() + 
+              "\n}";
     }
     
     public abstract String toDebugString();

@@ -6,6 +6,7 @@ import gent.timdemey.cards.model.entities.commands.payload.P_Reject;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.utils.Debug;
 
 public class C_Reject extends CommandBase
 {
@@ -35,5 +36,11 @@ public class C_Reject extends CommandBase
         CheckNotContext(type, ContextType.UI, ContextType.Server);
         
         forward(type, state);
+    }
+
+    @Override
+    public String toDebugString()
+    {
+        return Debug.getKeyValue("rejectedCommandId", rejectedCommandId);
     }
 }

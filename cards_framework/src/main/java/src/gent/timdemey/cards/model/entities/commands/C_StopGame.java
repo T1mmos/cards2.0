@@ -23,4 +23,10 @@ public class C_StopGame extends CommandBase
         state.setCardGame(null);
     }
 
+    @Override
+    public String toDebugString()
+    {
+        return "";
+    }
+
 }

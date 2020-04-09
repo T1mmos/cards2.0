@@ -16,6 +16,7 @@ import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogData;
 import gent.timdemey.cards.ui.dialogs.LobbyDialogContent;
+import gent.timdemey.cards.utils.Debug;
 
 public class C_WelcomeClient extends CommandBase
 {
@@ -93,5 +94,14 @@ public class C_WelcomeClient extends CommandBase
         {
             state.getPlayers().add(player);
         }
+    }
+
+    @Override
+    public String toDebugString()
+    {
+        return Debug.getKeyValue("clientId", clientId) + 
+               Debug.getKeyValue("serverId", serverId) + 
+               Debug.getKeyValue("serverMessage", serverMessage) + 
+               Debug.listEntity("connected", connected);
     }
 }

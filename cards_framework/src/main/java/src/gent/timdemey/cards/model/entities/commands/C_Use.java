@@ -5,6 +5,7 @@ import java.util.UUID;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.utils.Debug;
 
 public abstract class C_Use extends CommandBase
 {
@@ -46,4 +47,11 @@ public abstract class C_Use extends CommandBase
      * @return
      */
     protected abstract CommandBase resolveCommand(Context context, ContextType type, State state);
+    
+    @Override
+    public String toDebugString()
+    {
+        return Debug.getKeyValue("initiatorStackId", initiatorStackId) + 
+               Debug.getKeyValue("initiatorCardId", initiatorCardId);
+    }
 }

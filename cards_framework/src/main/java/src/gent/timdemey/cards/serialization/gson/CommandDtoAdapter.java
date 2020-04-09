@@ -21,7 +21,6 @@ public class CommandDtoAdapter implements JsonSerializer<CommandBaseDto>, JsonDe
     @Override
     public JsonElement serialize(CommandBaseDto src, Type typeOfSrc, JsonSerializationContext context)
     {
-
         JsonObject retValue = new JsonObject();
         String className = src.getClass().getName();
         retValue.addProperty(CLASSNAME, className);

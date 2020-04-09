@@ -6,6 +6,7 @@ import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.utils.Debug;
 
 public class C_DenyClient extends CommandBase
 {
@@ -43,5 +44,11 @@ public class C_DenyClient extends CommandBase
     protected boolean canExecute(Context context, ContextType type, State state)
     {
         return type == ContextType.Client || type == ContextType.UI;
+    }
+
+    @Override
+    public String toDebugString()
+    {
+        return Debug.getKeyValue("serverMessage", serverMessage);
     }
 }

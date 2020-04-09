@@ -15,6 +15,7 @@ import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.context.LimitedContext;
+import gent.timdemey.cards.utils.Debug;
 
 /**
  * Let a player connect to an online game.
@@ -122,5 +123,15 @@ public class C_Connect extends CommandBase
                 context.schedule(cmd);
             }
         }
+    }
+
+    @Override
+    public String toDebugString()
+    {
+        return Debug.getKeyValue("serverName", server.getServerName()) +
+               Debug.getKeyValue("serverAddress", server.getInetAddress()) + 
+               Debug.getKeyValue("serverPort", server.getTcpPort()) +
+               Debug.getKeyValue("playerName", playerName) +
+               Debug.getKeyValue("localId", localId);
     }
 }

@@ -8,6 +8,7 @@ import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.utils.Debug;
 
 public class C_SetVisible extends CommandBase
 {
@@ -55,5 +56,12 @@ public class C_SetVisible extends CommandBase
         {
             card.visibleRef.set(!visible);
         }
+    }
+
+    @Override
+    public String toDebugString()
+    {
+        return Debug.getKeyValue("visible", visible) + 
+               Debug.listEntity("cards", cards);
     }
 }

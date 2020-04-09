@@ -42,4 +42,10 @@ public class D_JoinGame extends CommandBase
         }
     }
 
+    @Override
+    public String toDebugString()
+    {
+        return "";
+    }
+
 }

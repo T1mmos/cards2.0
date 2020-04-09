@@ -191,12 +191,6 @@ public abstract class CommandBase extends EntityBase
         }
         return serialized;
     }
-    
-    @Override
-    public String toDebugString()
-    {
-        return "no info";
-    }
 
     /**
      * Indicates if this command should be added to the undo/redo list.

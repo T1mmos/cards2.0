@@ -5,6 +5,7 @@ import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.utils.Debug;
 
 public class C_OnPlayerJoined extends CommandBase
 {
@@ -45,5 +46,12 @@ public class C_OnPlayerJoined extends CommandBase
     private void updateState(State state)
     {
         state.getPlayers().add(player);
+    }
+
+    @Override
+    public String toDebugString()
+    {
+        return Debug.getKeyValue("playerName", player.name) + 
+               Debug.getKeyValue("playerId", player.id);
     }
 }

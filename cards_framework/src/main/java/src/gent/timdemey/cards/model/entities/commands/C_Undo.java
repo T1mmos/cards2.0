@@ -27,4 +27,10 @@ public final class C_Undo extends CommandBase
     {
         state.getCommandHistory().undo(state);
     }
+
+    @Override
+    public String toDebugString()
+    {
+        return "";
+    }
 }

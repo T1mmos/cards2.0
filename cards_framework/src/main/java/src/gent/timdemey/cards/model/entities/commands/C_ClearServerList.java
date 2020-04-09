@@ -1,7 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
@@ -25,5 +24,11 @@ public class C_ClearServerList extends CommandBase
         {
             state.getServers().clear();
         }
+    }
+
+    @Override
+    public String toDebugString()
+    {
+        return "";
     }
 }

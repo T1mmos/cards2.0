@@ -35,4 +35,10 @@ public class C_UDP_StopServiceRequester extends CommandBase
         state.setUdpServiceRequester(null);
     }
 
+    @Override
+    public String toDebugString()
+    {
+        return "";
+    }
+
 }

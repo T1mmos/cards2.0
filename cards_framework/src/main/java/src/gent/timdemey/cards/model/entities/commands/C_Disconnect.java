@@ -49,4 +49,10 @@ public class C_Disconnect extends CommandBase
     {
         return type == ContextType.Client || type == ContextType.UI;
     }
+
+    @Override
+    public String toDebugString()
+    {
+        return "";
+    }
 }

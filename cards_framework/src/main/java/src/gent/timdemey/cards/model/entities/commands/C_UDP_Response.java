@@ -9,6 +9,7 @@ import gent.timdemey.cards.model.entities.game.payload.P_Server;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.utils.Debug;
 
 /**
  * Command sent over UDP to a client in order to let it know that a server is
@@ -79,5 +80,16 @@ public final class C_UDP_Response extends CommandBase
         {
             // this command is sent over the wire by UDP_ServiceAnnouncer
         }
+    }
+
+    @Override
+    public String toDebugString()
+    {
+        return Debug.getKeyValue("serverId", serverId) + 
+               Debug.getKeyValue("serverName", serverName) + 
+               Debug.getKeyValue("inetAddress", inetAddress.getHostAddress()) + 
+               Debug.getKeyValue("tcpport", tcpport) + 
+               Debug.getKeyValue("majorVersion", majorVersion) + 
+               Debug.getKeyValue("minorVersion", minorVersion);
     }
 }

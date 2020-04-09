@@ -18,6 +18,7 @@ import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.ICardGameCreationService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.utils.Debug;
 
 public class C_JoinGame extends CommandBase
 {
@@ -103,5 +104,12 @@ public class C_JoinGame extends CommandBase
         {
             throw new IllegalStateException();
         }
+    }
+
+    @Override
+    public String toDebugString()
+    {
+        return Debug.getKeyValue("clientName", clientName) + 
+               Debug.getKeyValue("clientId", clientId);
     }
 }

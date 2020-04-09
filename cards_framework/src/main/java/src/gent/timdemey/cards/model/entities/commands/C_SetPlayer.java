@@ -4,6 +4,7 @@ import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.utils.Debug;
 
 public final class C_SetPlayer extends CommandBase
 {
@@ -31,6 +32,12 @@ public final class C_SetPlayer extends CommandBase
         Player player = new Player(name);
         state.getPlayers().add(player);
         state.setLocalId(player.id);
+    }
+
+    @Override
+    public String toDebugString()
+    {
+        return Debug.getKeyValue("name", name);
     }
 
 }

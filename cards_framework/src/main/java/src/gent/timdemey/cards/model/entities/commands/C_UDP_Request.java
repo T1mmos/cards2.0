@@ -38,4 +38,10 @@ public class C_UDP_Request extends CommandBase
         UDP_UnicastMessage msg = new UDP_UnicastMessage(udpSource.inetAddress, udpSource.tcpPort, udpResponseCmd);
         state.getUdpServiceAnnouncer().sendUnicast(msg);
     }
+
+    @Override
+    public String toDebugString()
+    {
+        return "";
+    }
 }
