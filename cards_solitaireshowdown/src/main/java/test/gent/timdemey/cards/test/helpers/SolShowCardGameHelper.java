@@ -18,14 +18,11 @@ import gent.timdemey.cards.services.boot.SolShowCardGameCreationService;
 
 public class SolShowCardGameHelper
 {    
-    public static CardGame createFixedSolShowCardGame()
+    public static CardGame createFixedSolShowCardGame(Player player1, Player player2)
     {        
         Card[] fixedShuffledDeck1 = CardDeckHelper.createFixedDeck1();
         Card[] fixedShuffledDeck2 = CardDeckHelper.createFixedDeck2();
-        
-        Player player1 = PlayerHelper.getFixedPlayer(0);
-        Player player2 = PlayerHelper.getFixedPlayer(1);
-        
+                
         List<UUID> playerIds = Arrays.asList(player1.id, player2.id);
         List<Card> cards1 = Arrays.asList(fixedShuffledDeck1);
         List<Card> cards2 = Arrays.asList(fixedShuffledDeck2);
@@ -60,9 +57,10 @@ public class SolShowCardGameHelper
                     cardsFixed.add(cardFixed);
                 }
                 
+                UUID id = SolShowCardStackIdHelper.getFixedId(pcNr, cs.cardStackType, cs.typeNumber);
                 P_CardStack csPl = new P_CardStack();
                 {
-                    csPl.id = IdHelper.createFixedCardStackId(pcNr, csNr);
+                    csPl.id = id;
                     csPl.cardStackType = cs.cardStackType;
                     csPl.typeNumber = cs.typeNumber;
                     csPl.cards = cardsFixed;
