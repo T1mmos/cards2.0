@@ -20,7 +20,7 @@ import gent.timdemey.cards.services.IContextService;
  */
 public class ContextService implements IContextService
 {
-    private final ConcurrentMap<ContextType, Context> fullContexts;
+    protected final ConcurrentMap<ContextType, Context> fullContexts;
 
     public ContextService()
     {
@@ -34,7 +34,7 @@ public class ContextService implements IContextService
     }
     
     @Override
-    public final Context getThreadContext()
+    public Context getThreadContext()
     {
         ContextType type;
 

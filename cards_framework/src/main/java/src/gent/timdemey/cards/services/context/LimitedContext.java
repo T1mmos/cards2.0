@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
 
-public final class LimitedContext
+public class LimitedContext
 {
     private final ContextType contextType;
     private final ICommandExecutor cmdExecServ;

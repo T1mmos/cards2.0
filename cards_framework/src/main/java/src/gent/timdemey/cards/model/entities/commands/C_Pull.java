@@ -31,7 +31,16 @@ public abstract class C_Pull extends CommandBase
         return canPull(srcCardStack, srcCard);
     }
 
-    protected abstract boolean canPull(CardStack srcCardStack, Card srcCard);
+    /**
+     * Override this method to implement plugin/game specific business rules.
+     * @param srcCardStack
+     * @param srcCard
+     * @return
+     */
+    protected boolean canPull(CardStack srcCardStack, Card srcCard)
+    {
+        return true;
+    }
     
     @Override
     public final void execute(Context context, ContextType type, State state)

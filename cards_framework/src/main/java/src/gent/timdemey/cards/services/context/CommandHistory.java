@@ -189,28 +189,42 @@ public class CommandHistory extends EntityBase
         {
             CommandExecution cmdExecution = list.get(i);
             CommandBase command = cmdExecution.getCommand();
-            CommandExecutionState execState = cmdExecution.getExecutionState();             
-            
-            if (execState != CommandExecutionState.Executed)
+            CommandExecutionState execState = cmdExecution.getExecutionState();      
+            CommandExecutionState nextState;
+            if (execState == CommandExecutionState.Executed)
             {
-                // e.g. if the state is Accepted then this implies multiplayer, and we cannot 
-                // undo a command that is accepted server-side. Other states are self-explanatory
+                nextState = CommandExecutionState.Unexecuted;
+            }
+            else if (execState == CommandExecutionState.AwaitingConfirmation)
+            {
+                nextState = CommandExecutionState.UnexecutedAwaitingConfirmation;
+            }
+            else if (execState == CommandExecutionState.Quarantained)
+            {
+                nextState = CommandExecutionState.Quarantained;
+            }
+            else
+            {
                 throw new IllegalStateException("Cannot undo a CommandExecution in state " + execState);
             }
-           
-            if (!command.canUndo(state))
+            
+            if (execState != CommandExecutionState.Quarantained)
             {
-                // should not happen: either there is a bug in the command or the command 
-                // should never have been added to the history
-                throw new IllegalStateException("Cannot undo this CommandExecution: the command cannot be undone given the current state - " + command.getClass().getSimpleName());
+                if (!command.canUndo(state))
+                {
+                    // should not happen: either there is a bug in the command or the command 
+                    // should never have been added to the history
+                    throw new IllegalStateException("Cannot undo this CommandExecution: the command cannot be undone given the current state - " + command.getClass().getSimpleName());    
+                }
+                
+                // undo the command and set the execution state
+                command.undo(state);
             }
             
-            // undo the command and set the execution state
-            command.undo(state);
-            cmdExecution.setExecutionState(CommandExecutionState.Unexecuted);
+            cmdExecution.setExecutionState(nextState);
+            setCurrentIndex(getCurrentIndex() - 1);
         }
        
-        setCurrentIndex(getCurrentIndex());
     }
     
     /**
@@ -303,23 +317,49 @@ public class CommandHistory extends EntityBase
         {
             CommandExecution cmdExecution = list.get(i);
             CommandBase command = cmdExecution.getCommand();
-            CommandExecutionState execState = cmdExecution.getExecutionState();             
-            
-            if (execState != CommandExecutionState.Unexecuted)
+            CommandExecutionState execState = cmdExecution.getExecutionState();
+            boolean canExecute = command.canExecute(state);
+            CommandExecutionState nextState;
+            if (execState == CommandExecutionState.Unexecuted)
+            {
+                if (!canExecute)
+                {
+                    // in single player it should not occur that a command that was undone, 
+                    // can not be redone.
+                    throw new IllegalStateException("Must be able to reexecute a command in Unexecuted state, but failed!");                    
+                }
+                
+                nextState = CommandExecutionState.Executed;
+            }
+            else if (execState == CommandExecutionState.UnexecutedAwaitingConfirmation)
+            {
+                if (!canExecute) 
+                {
+                    // UnexecutedAwaitingConfirmation
+                    // in this case the command goes in quarantaine as we cannot exclude the rare case where the command
+                    // will still be accepted by the server, e.g. this can happen when yet another command needs to be inserted 
+                    // before the quarantained one, which would re-enable the command's execution.
+                    fails.add(cmdExecution);
+                    nextState = CommandExecutionState.Quarantained; 
+                }
+                else
+                {
+                    nextState = CommandExecutionState.AwaitingConfirmation;
+                }
+            }
+            else if (execState == CommandExecutionState.Quarantained)
+            {
+                nextState = CommandExecutionState.Quarantained;
+            }
+            else
             {
                 throw new IllegalStateException("Cannot redo a CommandExecution in state " + execState);
             }
            
-            if (!command.canExecute(state))
+            cmdExecution.setExecutionState(nextState);
+            if (execState != CommandExecutionState.Quarantained && canExecute)
             {
-                fails.add(cmdExecution);
-                cmdExecution.setExecutionState(CommandExecutionState.Quarantained);
-            }
-            else
-            {
-                // execute the command and set the execution state
                 command.execute(state);
-                cmdExecution.setExecutionState(CommandExecutionState.Executed);
             }
         }
        
@@ -441,10 +481,13 @@ public class CommandHistory extends EntityBase
         undo(commandId, state);
         
         // enlist all unexecuted commands except the one to erase
-        List<CommandExecution> list = new ArrayList<>(execLine.subList(getCurrentIndex() + 2, getLastIndex()));
+        List<CommandExecution> list = new ArrayList<>(execLine.subList(getCurrentIndex() + 2, getLastIndex() + 1));
                 
+        // remove the rejected command
+        execLine.remove(getCurrentIndex() + 1);
+        
         // redo all the unexecuted commands, failures are allowed
-        List<CommandExecution> fails = redo(list, state, false);
+        List<CommandExecution> fails = redo(list, state, false);        
         return fails;
     }
     
@@ -524,16 +567,30 @@ public class CommandHistory extends EntityBase
      * Set the state of a CommandExecution that is currently awaiting confirmation as being accepted by the server.
      * @param id
      */
-    public void accept(UUID commandId)
+    public void accept(UUID commandId, State state)
     {
         // accepts must arrive in order.
         int currAcptIdx = getAcceptedIndex();
         CommandExecution cmdExecution = execLine.get(currAcptIdx + 1);
-        if (cmdExecution.getExecutionState() != CommandExecutionState.AwaitingConfirmation)
+        CommandExecutionState execState = cmdExecution.getExecutionState();
+        CommandBase cmd = cmdExecution.getCommand();
+        if (execState != CommandExecutionState.AwaitingConfirmation && execState != CommandExecutionState.Quarantained)
         {
             String msg = "This commandId cannot be accepted because its current ExecutionState is %s: %s";
-            String formatted = String.format(msg, cmdExecution.getExecutionState(), commandId);
+            String formatted = String.format(msg, execState, commandId);
             throw new IllegalStateException(formatted);
+        }
+        
+        if (execState == CommandExecutionState.Quarantained)
+        {
+            // a quarantained command is unexecuted. as it is accepted, it must be redoable
+            if (!cmd.canExecute(state))
+            {
+                throw new IllegalStateException("A Quarantained command that gets accepted must be reexecutable, but it isn't: " + cmd.getClass().getSimpleName());
+            }
+            
+            cmd.execute(state);
+            setCurrentIndex(getCurrentIndex() + 1);
         }
         
         cmdExecution.setExecutionState(CommandExecutionState.Accepted);
@@ -544,6 +601,8 @@ public class CommandHistory extends EntityBase
     public String toDebugString()
     {
         return Debug.getKeyValue("CurrentIndex", currentIdxRef.get()) + 
-               Debug.getKeyValue("AcceptedIdx", acceptedIdxRef.get());
+               Debug.getKeyValue("AcceptedIdx", acceptedIdxRef.get()) + 
+               Debug.getKeyValue("LastIndex", getLastIndex()) +
+               Debug.getKeyValue("Size", execLine.size());
     }
 }

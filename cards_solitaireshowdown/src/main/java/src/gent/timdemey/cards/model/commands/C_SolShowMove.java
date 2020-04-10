@@ -146,7 +146,7 @@ public class C_SolShowMove extends C_Move
     @Override
     protected boolean canUndo(Context context, ContextType type, State state)
     {
-        return false;
+        return true;
     }
     
     @Override

@@ -14,18 +14,17 @@ import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.boot.SolShowCardStackType;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.context.MockContextService;
 import gent.timdemey.cards.test.helpers.CardGameHelper;
 import gent.timdemey.cards.test.helpers.PlayerHelper;
 import gent.timdemey.cards.test.helpers.SolShowCardGameHelper;
 import gent.timdemey.cards.test.helpers.SolShowTestIds;
-import gent.timdemey.cards.test.mocks.MockContextService;
 
 public class SolShowCardGameHelperUnitTest
 {
     @BeforeClass
     public static void init()
     {
-
         Services.install(ICardPlugin.class, new SolShowPlugin());
         
         MockContextService ctxtService = new MockContextService();

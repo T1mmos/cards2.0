@@ -41,13 +41,22 @@ enum CommandExecutionState
     Quarantained,
     
     /**
+     * Unexecuted while awaiting confirmation from the server. This is a temporary state. When redoing the command, 
+     * two things can happen: it can execute successfully or it can't. In the former case we'll transition to AwaitingConfirmation,
+     * in the latter case we'll go to Quarantained.
+     */
+    UnexecutedAwaitingConfirmation,
+    
+    /**
      * Executed, but awaiting confirmation from the server. A command in this state
-     * cannot be undone by the user, but only by the server that doesn't accept the command.
+     * cannot be undone by the user, but only by the server that doesn't accept the command. It may 
+     * also be temporarily undone when other commands need to be injected or rejected in the history,
+     * in which case it will transition to UnexecutedAwaitingConfirmation.
      */
     AwaitingConfirmation,
 
     /**
-     * Executed and accepted by the server.
+     * Executed and accepted by the server. This is a final state.
      */
     Accepted,
     

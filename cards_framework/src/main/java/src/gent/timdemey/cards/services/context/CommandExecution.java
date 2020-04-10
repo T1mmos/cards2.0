@@ -38,7 +38,8 @@ public final class CommandExecution extends EntityBase
     public String toDebugString()
     {
         return Debug.getKeyValue("command", command.getClass().getSimpleName()) +
-               Debug.getKeyValue("cmdExecutionState", cmdExecutionState);
+               Debug.getKeyValue("commandId", command.id) + 
+               Debug.getKeyValue("cmdExecutionState", cmdExecutionState.get());
             
     }
 }

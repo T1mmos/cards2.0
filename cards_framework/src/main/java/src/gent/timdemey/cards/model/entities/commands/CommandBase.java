@@ -59,7 +59,6 @@ public abstract class CommandBase extends EntityBase
         }
         else if (type == ContextType.UI)
         {
-            
             if (getSourceId().equals(state.getLocalId()))
             {
                 // to server

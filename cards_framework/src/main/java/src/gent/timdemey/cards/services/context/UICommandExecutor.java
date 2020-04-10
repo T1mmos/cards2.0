@@ -83,7 +83,7 @@ class UICommandExecutor implements ICommandExecutor
         {
             // this command comes from the server and references another command that got accepted
             C_Accept acceptCmd = (C_Accept) command;
-            state.getCommandHistory().accept(acceptCmd.acceptedCommandId);            
+            state.getCommandHistory().accept(acceptCmd.acceptedCommandId, state);            
         }
         else 
         {

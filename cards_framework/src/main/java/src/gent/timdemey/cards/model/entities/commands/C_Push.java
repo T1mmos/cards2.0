@@ -39,7 +39,16 @@ public abstract class C_Push extends CommandBase
         return canPush(dstCardStack, srcCards);
     }
     
-    protected abstract boolean canPush(CardStack dstCardStack, List<Card> srcCards);
+    /**
+     * Override this method to implement plugin/game specific business rules.
+     * @param dstCardStack
+     * @param srcCards
+     * @return
+     */
+    protected boolean canPush(CardStack dstCardStack, List<Card> srcCards)
+    {
+        return true;
+    }
     
     @Override
     protected final boolean canUndo(Context context, ContextType type, State state)
