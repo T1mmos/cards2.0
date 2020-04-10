@@ -17,7 +17,7 @@ import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.test.helpers.CardGameHelper;
 import gent.timdemey.cards.test.helpers.PlayerHelper;
 import gent.timdemey.cards.test.helpers.SolShowCardGameHelper;
-import gent.timdemey.cards.test.helpers.SolShowCardStackIdHelper;
+import gent.timdemey.cards.test.helpers.SolShowTestIds;
 import gent.timdemey.cards.test.mocks.MockContextService;
 
 public class SolShowCardGameHelperUnitTest
@@ -47,18 +47,18 @@ public class SolShowCardGameHelperUnitTest
         
         // check some card stacks, they should have the fixed ID's from SolShowCardStackIdHelper
         {            
-            CardStack cs = cg1.getCardStack(SolShowCardStackIdHelper.P1_DEPOT);
+            CardStack cs = cg1.getCardStack(SolShowTestIds.P1_DEPOT);
             assertEquals(SolShowCardStackType.DEPOT, cs.cardStackType);
             assertEquals(0, cs.typeNumber);
-            assertEquals(SolShowCardStackIdHelper.P1_DEPOT, cs.id);
+            assertEquals(SolShowTestIds.P1_DEPOT, cs.id);
             
             cg1.playerConfigurations.get(0).cardStacks.contains(cs);
         }
         {
-            CardStack cs = cg1.getCardStack(SolShowCardStackIdHelper.P2_LAYDOWN1);
+            CardStack cs = cg1.getCardStack(SolShowTestIds.P2_LAYDOWN1);
             assertEquals(SolShowCardStackType.LAYDOWN, cs.cardStackType);
             assertEquals(0, cs.typeNumber);
-            assertEquals(SolShowCardStackIdHelper.P2_LAYDOWN1, cs.id);
+            assertEquals(SolShowTestIds.P2_LAYDOWN1, cs.id);
             
             cg1.playerConfigurations.get(1).cardStacks.contains(cs);
         }

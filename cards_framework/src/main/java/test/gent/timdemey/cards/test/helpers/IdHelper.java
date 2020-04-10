@@ -9,6 +9,7 @@ public class IdHelper
     public static final String IDPREFIX_CARD = "CA2D0000";
     public static final String IDPREFIX_CARDSTACK = "57ACC000";
     public static final String IDPREFIX_CARDGAME = "BA5EBA11";
+    public static final String IDPREFIX_SERVER = "B0BB1E00";
     
     public static UUID createFixedPlayerId(int playerNr)
     {
@@ -33,6 +34,11 @@ public class IdHelper
     public static UUID createFixedCardId(int playerNr, int cardStackNr, int cardNr)
     {
         return create(IDPREFIX_CARD, playerNr, cardStackNr, cardNr, false);
+    }
+    
+    public static UUID createFixedServerId()
+    {
+        return create(IDPREFIX_SERVER, -1, -1, -1, false);
     }
     
     public static UUID createTestPlayerId(int playerNr)
@@ -60,6 +66,10 @@ public class IdHelper
         return create(IDPREFIX_CARD, playerNr, cardStackNr, cardNr, true);
     }
 
+    public static UUID createTestServerId()
+    {
+        return create(IDPREFIX_SERVER, -1, -1, -1, true);
+    }
     
     private static UUID create(String prefix, int playerNr, int cardStackNr, int cardNr, boolean random)
     {        

@@ -4,6 +4,7 @@ import gent.timdemey.cards.model.entities.cards.payload.P_Card;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.state.Property;
 import gent.timdemey.cards.model.state.StateValueRef;
+import gent.timdemey.cards.utils.Debug;
 
 public class Card extends EntityBase
 {
@@ -40,6 +41,7 @@ public class Card extends EntityBase
     @Override
     public String toDebugString()
     {
-        return String.format("Value=%s,Suit=%s", value, suit);
+        return Debug.getKeyValue("value", value) + 
+               Debug.getKeyValue("suit", suit);
     }
 }

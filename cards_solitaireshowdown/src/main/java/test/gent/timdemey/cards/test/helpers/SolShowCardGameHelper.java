@@ -48,7 +48,7 @@ public class SolShowCardGameHelper
                     
                     P_Card cPl = new P_Card();
                     {
-                        cPl.id = IdHelper.createFixedCardId(pcNr, csNr, cNr);
+                        cPl.id = SolShowTestIds.getFixedCardId(pcNr, cs.cardStackType, cs.typeNumber, cNr);
                         cPl.suit = card.suit;
                         cPl.value = card.value;
                         cPl.visible = card.visibleRef.get();
@@ -57,7 +57,7 @@ public class SolShowCardGameHelper
                     cardsFixed.add(cardFixed);
                 }
                 
-                UUID id = SolShowCardStackIdHelper.getFixedId(pcNr, cs.cardStackType, cs.typeNumber);
+                UUID id = SolShowTestIds.getFixedCardStackId(pcNr, cs.cardStackType, cs.typeNumber);
                 P_CardStack csPl = new P_CardStack();
                 {
                     csPl.id = id;
