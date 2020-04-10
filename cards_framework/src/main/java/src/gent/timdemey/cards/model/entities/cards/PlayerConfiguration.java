@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.cards.payload.P_PlayerConfiguration;
 import gent.timdemey.cards.model.entities.common.EntityBase;
+import gent.timdemey.cards.utils.Debug;
 
 public class PlayerConfiguration extends EntityBase
 {
@@ -29,6 +30,6 @@ public class PlayerConfiguration extends EntityBase
     @Override
     public String toDebugString()
     {
-        return "PlayerConfiguration for player " + playerId.toString();
+        return Debug.getKeyValue("playerId", playerId);               
     }
 }

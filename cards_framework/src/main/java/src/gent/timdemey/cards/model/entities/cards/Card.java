@@ -29,7 +29,7 @@ public class Card extends EntityBase
         this.suit = pl.suit;
         this.value = pl.value;
         this.visibleRef = new StateValueRef<>(Visible, id, pl.visible);
-        this.cardStack = pl.cardStack;
+        this.cardStack = null;
     }
 
     public int getCardIndex()

@@ -12,13 +12,15 @@ public class TestCommandHistory
     @Test
     public void test()
     {
-        CommandExecution commandExecution = new CommandExecution(, null);
-        State state = new State();
+       /* state = new State();
+        state.setCardGame(cardGame);
         
         CommandHistory cmdHistory = new CommandHistory(false, true);
-        cmdHistory.add(commandExecution, state);
         
-        fail("Not yet implemented");
+        cmdHistory.addAwaiting(cmd, state);
+        cmdHistory.accept(commandId);(commandExecution, state);
+        
+        fail("Not yet implemented");*/
     }
 
 }

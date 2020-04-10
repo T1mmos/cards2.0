@@ -1,9 +1,11 @@
-package gent.timdemey.cards.model.entities.cards;
+package gent.timdemey.cards.utils;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.cards.Card;
+import gent.timdemey.cards.model.entities.cards.Suit;
+import gent.timdemey.cards.model.entities.cards.Value;
 
 public final class CardDeckUtils
 {

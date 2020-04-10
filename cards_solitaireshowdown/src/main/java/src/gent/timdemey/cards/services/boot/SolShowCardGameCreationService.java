@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.cards.Card;
-import gent.timdemey.cards.model.entities.cards.CardDeckUtils;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
 import gent.timdemey.cards.services.ICardGameCreationService;
+import gent.timdemey.cards.utils.CardDeckUtils;
 
 public class SolShowCardGameCreationService implements ICardGameCreationService
 {

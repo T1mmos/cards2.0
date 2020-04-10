@@ -9,7 +9,15 @@ import com.google.common.base.Preconditions;
 
 public final class Services
 {
-
+    public static final class UnavailableServiceException extends RuntimeException
+    {
+        private UnavailableServiceException (Class<?> iface, Object param)
+        {
+            super ("Requested a service of type " + iface
+            + (param != null ? "(parameter=" + param + ")" : "") + ", but none is set.");
+        }
+    }
+    
     private static class EntryKey
     {
         final Class<?> clazz;
@@ -92,8 +100,6 @@ public final class Services
 
     public static <T> void install(Class<T> iface, Object param, T implementation)
     {
-        Preconditions.checkState(SwingUtilities.isEventDispatchThread());
-        
         EntryKey entryKey = new EntryKey(iface, param);
         Preconditions.checkState(!serviceMap.containsKey(entryKey));
 
@@ -112,8 +118,7 @@ public final class Services
         T value = (T) serviceMap.get(entryKey);
         if (value == null)
         {
-            throw new IllegalStateException("Requested a service of type " + iface
-                    + (param != null ? "(parameter=" + param + ")" : "") + ", but none is set.");
+            throw new UnavailableServiceException(iface, param);
         }
 
         return value;

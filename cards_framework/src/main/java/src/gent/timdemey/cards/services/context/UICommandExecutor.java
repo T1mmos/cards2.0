@@ -25,7 +25,8 @@ class UICommandExecutor implements ICommandExecutor
     @Override
     public void schedule(CommandBase command, State state)
     {
-        if(!SwingUtilities.isEventDispatchThread())
+        IContextService ctxtServ = Services.get(IContextService.class);
+        if(!ctxtServ.isUiThread())
         {
             SwingUtilities.invokeLater(() -> schedule(command, state));
             return;

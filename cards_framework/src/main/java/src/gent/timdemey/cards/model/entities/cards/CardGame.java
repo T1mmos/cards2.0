@@ -210,6 +210,6 @@ public class CardGame extends EntityBase
     @Override
     public String toDebugString()
     {
-        return "no info";
+        return "";
     }
 }

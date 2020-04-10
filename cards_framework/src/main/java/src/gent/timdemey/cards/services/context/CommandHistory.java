@@ -18,7 +18,7 @@ public class CommandHistory extends EntityBase
     
     private final List<CommandExecution> execLine = new ArrayList<>();
     private final boolean undoable;
-    private final boolean erasable;
+    private final boolean removable;
     
     //private int firstUndoIdx = -1;
 
@@ -28,17 +28,17 @@ public class CommandHistory extends EntityBase
     /**
      * Creates a new command history.
      * @param undoable Indicates whether the history will support undo/redo of commands
-     * @param erasable Indicates whether the history will support the undoing of specific commands that are surrounded by 
-     * other commands
+     * @param removable Indicates whether the history will support the undoing of a command and removing it from the chain, while
+     * the command is not necessarily the last command in the chain 
      */
-    public CommandHistory (boolean undoable, boolean erasable)
+    public CommandHistory (boolean undoable, boolean removable)
     {
-        if (undoable == erasable)
+        if (undoable == removable)
         {
             throw new UnsupportedOperationException("Currently only undoable or erasable is supported, but not both simultaneously");
         }
         this.undoable = undoable;
-        this.erasable = erasable;
+        this.removable = removable;
         this.currentIdxRef = new StateValueRef<>(CurrentIndex, id, -1);
         this.acceptedIdxRef = new StateValueRef<>(AcceptedIndex, id, -1);
     }
@@ -313,7 +313,7 @@ public class CommandHistory extends EntityBase
             if (!command.canExecute(state))
             {
                 fails.add(cmdExecution);
-                cmdExecution.setExecutionState(CommandExecutionState.Fail);
+                cmdExecution.setExecutionState(CommandExecutionState.Quarantained);
             }
             else
             {
@@ -403,7 +403,7 @@ public class CommandHistory extends EntityBase
      */
     boolean canReject ()
     {
-        if (!erasable)
+        if (!removable)
         {
             return false;
         }
@@ -457,7 +457,7 @@ public class CommandHistory extends EntityBase
      */
     boolean canInject ()
     {
-        if (!erasable)
+        if (!removable)
         {
             return false;
         }

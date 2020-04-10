@@ -8,10 +8,10 @@ import java.util.UUID;
 import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.model.entities.cards.Card;
-import gent.timdemey.cards.model.entities.cards.CardDeckUtils;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
 import gent.timdemey.cards.services.ICardGameCreationService;
+import gent.timdemey.cards.utils.CardDeckUtils;
 
 public class SolitaireCardGameCreationService implements ICardGameCreationService
 {

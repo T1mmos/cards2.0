@@ -14,6 +14,14 @@ import gent.timdemey.cards.services.context.LimitedContext;
  */
 public interface IContextService
 {
+    /**
+     * Checks if the current thread is the UI thread. The base implementation 
+     * checks if the current thread is the EDT. Test implementations may override
+     * this method and always return true, or return true in case the thread
+     * is the same one that started a unit test, etc. 
+     * @return
+     */
+    public boolean isUiThread();
 
     /**
      * Returns the context based on the current thread. A thread has always full

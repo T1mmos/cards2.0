@@ -18,9 +18,8 @@ import gent.timdemey.cards.services.IContextService;
  * @author Timmos
  *
  */
-public final class ContextService implements IContextService
+public class ContextService implements IContextService
 {
-
     private final ConcurrentMap<ContextType, Context> fullContexts;
 
     public ContextService()
@@ -29,11 +28,17 @@ public final class ContextService implements IContextService
     }
 
     @Override
-    public Context getThreadContext()
+    public boolean isUiThread()
+    {
+        return SwingUtilities.isEventDispatchThread();
+    }
+    
+    @Override
+    public final Context getThreadContext()
     {
         ContextType type;
 
-        if(SwingUtilities.isEventDispatchThread())
+        if(isUiThread())
         {
             type = ContextType.UI;
         }
@@ -75,7 +80,7 @@ public final class ContextService implements IContextService
     @Override
     public void initialize(ContextType type)
     {
-        Preconditions.checkState(SwingUtilities.isEventDispatchThread());
+        Preconditions.checkState(isUiThread());
 
         ICommandExecutor cmdExecutor = null;
         if(type == ContextType.UI)

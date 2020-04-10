@@ -10,6 +10,7 @@ import gent.timdemey.cards.model.entities.cards.payload.P_CardStack;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.state.EntityStateListRef;
 import gent.timdemey.cards.model.state.Property;
+import gent.timdemey.cards.utils.Debug;
 
 public class CardStack extends EntityBase
 {
@@ -111,6 +112,8 @@ public class CardStack extends EntityBase
     @Override
     public String toDebugString()
     {
-        return String.format("CardStackType=%s, TypeNumber=%s, CardCount=%s", cardStackType, typeNumber, getCards().size());
+        return Debug.getKeyValue("cardStackType", cardStackType) + 
+               Debug.getKeyValue("typeNumber", typeNumber) + 
+               Debug.getKeyValue("cardsCount", getCards().size());
     }
 }
