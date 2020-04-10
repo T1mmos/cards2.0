@@ -23,6 +23,7 @@ import com.google.common.base.Preconditions;
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
+import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.services.IConfigManager;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IDialogService;
@@ -111,7 +112,7 @@ public class StartFrame
 
         // start menu
         {
-            JMenu menu = new JMenu(Loc.get("menu_game"));
+            JMenu menu = new JMenu(Loc.get(LocKey.Menu_game));
 
             if (plugin.getPlayerCount() > 1)
             {
@@ -143,7 +144,7 @@ public class StartFrame
 
         // Edit menu
         {
-            JMenu menu = new JMenu(Loc.get("menu_edit"));
+            JMenu menu = new JMenu(Loc.get(LocKey.Menu_edit));
 
             Action actionUndo = new ActionUndo();
             JMenuItem menu_undo = new JMenuItem(actionUndo);
@@ -161,7 +162,7 @@ public class StartFrame
         // Debug menu
         if (Services.get(IConfigManager.class).get(ConfigKey.DEBUG))
         {
-            JMenu menu = new JMenu(Loc.get("debug_menu_debug"));
+            JMenu menu = new JMenu(Loc.get(LocKey.DebugMenu_debug));
 
             JMenuItem menu_drawdebug = new JCheckBoxMenuItem(new ActionDebugDrawDebugLines());
             menu.add(menu_drawdebug);

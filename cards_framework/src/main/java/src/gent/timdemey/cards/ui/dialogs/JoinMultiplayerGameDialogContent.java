@@ -15,6 +15,7 @@ import javax.swing.table.AbstractTableModel;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
+import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.commands.C_UDP_StartServiceRequester;
 import gent.timdemey.cards.model.entities.commands.C_UDP_StopServiceRequester;
 import gent.timdemey.cards.model.multiplayer.JoinMultiplayerGameData;
@@ -36,11 +37,11 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMu
         {
             if (column == 0)
             {
-                return Loc.get("columntitle_servername");
+                return Loc.get(LocKey.TableColumnTitle_servername);
             }
             else if (column == 1)
             {
-                return Loc.get("columntitle_ipaddress");
+                return Loc.get(LocKey.TableColumnTitle_ipaddress);
             }
             else
             {
@@ -128,7 +129,7 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMu
         this.scroll_server = new JScrollPane();
         this.tableModel = new ServersTableModel();
         this.table_servers = new JTable(tableModel);
-        this.button_refresh = new JButton(Loc.get("button_refresh"));
+        this.button_refresh = new JButton(Loc.get(LocKey.Button_refresh));
         this.serversStateListener = new ServersStateListener();
         this.refreshListener = new RefreshListener();
         this.selectionListener = new SelectionListener();
@@ -139,8 +140,8 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMu
     protected JPanel createContent(Void parameter)
     {
         JPanel panel = new JPanel(new MigLayout("insets 0"));
-        JLabel lb_srvname = new JLabel(Loc.get("label_serversOnNetwork"));
-        JLabel lb_playerName = new JLabel(Loc.get("label_enterPlayerName"));
+        JLabel lb_srvname = new JLabel(Loc.get(LocKey.Label_serversfound));
+        JLabel lb_playerName = new JLabel(Loc.get(LocKey.Label_playername));
 
         scroll_server.setViewportView(table_servers);
 

@@ -10,12 +10,12 @@ import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
+import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.services.IDialogService;
 
 public final class DialogService implements IDialogService
 {
-
     private final JFrame frame;
 
     public DialogService(JFrame frame)
@@ -40,8 +40,8 @@ public final class DialogService implements IDialogService
     public DialogData<Void> ShowInternalError()
     {
         MessageDialogContent dialogContent = new MessageDialogContent();
-        String title = Loc.get("general_internal_error_title");
-        String msg = Loc.get("general_internal_error_msg");
+        String title = Loc.get(LocKey.DialogTitle_generalerror);
+        String msg = Loc.get(LocKey.DialogMessage_generalerror);
         return ShowAdvanced(title, msg, dialogContent, DialogButtonType.Ok);
     }
 

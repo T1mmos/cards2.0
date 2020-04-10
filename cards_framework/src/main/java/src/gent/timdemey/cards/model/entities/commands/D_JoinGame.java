@@ -2,6 +2,7 @@ package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
+import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.multiplayer.JoinMultiplayerGameData;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.IContextService;
@@ -26,17 +27,18 @@ public class D_JoinGame extends CommandBase
     {
         IContextService ctxtServ = Services.get(IContextService.class);
         ctxtServ.initialize(ContextType.Client);
-        
-        JoinMultiplayerGameDialogContent content = new JoinMultiplayerGameDialogContent();
-        DialogData<JoinMultiplayerGameData> data = Services.get(IDialogService.class)
-                .ShowAdvanced(Loc.get("dialog_title_joingame"), null, content, DialogButtonType.BUTTONS_OK_CANCEL);
 
-        if (data.closeType == DialogButtonType.Ok)
-        {            
+        JoinMultiplayerGameDialogContent content = new JoinMultiplayerGameDialogContent();
+        IDialogService diagServ = Services.get(IDialogService.class);
+        String title = Loc.get(LocKey.DialogTitle_joingame);
+        DialogData<JoinMultiplayerGameData> data = diagServ.ShowAdvanced(title, null, content, DialogButtonType.BUTTONS_OK_CANCEL);
+
+        if(data.closeType == DialogButtonType.Ok)
+        {
             C_Connect cmd = new C_Connect(data.payload.server, data.payload.playerName);
             schedule(ContextType.UI, cmd);
         }
-        else if (data.closeType == DialogButtonType.Cancel)
+        else if(data.closeType == DialogButtonType.Cancel)
         {
             ctxtServ.drop(ContextType.Client);
         }

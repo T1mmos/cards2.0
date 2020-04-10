@@ -14,13 +14,13 @@ public class TestCommandHistory
     @Test
     public void test()
     {
-        CommandExecution commandExecution = new CommandExecution(null, null);
+       /* CommandExecution commandExecution = new CommandExecution(, null);
         State state = new State();
         
         CommandHistory cmdHistory = new CommandHistory(false, true);
         cmdHistory.add(commandExecution, state);
         
-        fail("Not yet implemented");
+        fail("Not yet implemented");*/
     }
 
 }

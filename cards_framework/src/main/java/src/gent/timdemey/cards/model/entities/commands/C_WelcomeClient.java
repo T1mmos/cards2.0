@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
+import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.commands.payload.P_WelcomeClient;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.Server;
@@ -73,7 +74,8 @@ public class C_WelcomeClient extends CommandBase
         {
             updateState(state);
             Server server = state.getServers().get(serverId);
-            String title = Loc.get("dialog_title_lobby", server.serverName);
+            
+            String title = Loc.get(LocKey.DialogTitle_lobby, server.serverName);
             DialogData<Void> data = Services.get(IDialogService.class).ShowAdvanced(title, null,
                     new LobbyDialogContent(), EnumSet.of(DialogButtonType.Cancel));
             if (data.closeType == DialogButtonType.Cancel)

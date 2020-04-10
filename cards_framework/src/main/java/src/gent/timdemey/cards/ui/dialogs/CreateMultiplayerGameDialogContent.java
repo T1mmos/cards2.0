@@ -7,6 +7,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import gent.timdemey.cards.localization.Loc;
+import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.commands.C_CreateServer;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogContent;
@@ -23,8 +24,8 @@ public class CreateMultiplayerGameDialogContent extends DialogContent<Void, C_Cr
     {
         JPanel panel = new JPanel(new MigLayout("insets 0"));
 
-        JLabel lb_srvname = new JLabel(Loc.get("label_enterServerName"));
-        JLabel lb_srvmsg = new JLabel(Loc.get("label_enterServerMessage"));
+        JLabel lb_srvname = new JLabel(Loc.get(LocKey.Label_servername));
+        JLabel lb_srvmsg = new JLabel(Loc.get(LocKey.Label_servermsg));
 
         panel.add(lb_srvname, "");
         panel.add(tf_srvname, "wrap");

@@ -39,22 +39,11 @@ public class Loc
         return LOCALE;
     }
 
-    public static String get(String key)
-    {
-        String value = getPriv(key);
-
-        if (value == null)
-        {
-            return "[MISSING] " + key;
-        }
-
-        return value;
-    }
-
-    private static String getPriv(String key)
+    private static String getPriv(LocKey key, Object... params)
     {
         Preconditions.checkNotNull(key);
-
+        String full = key.full;
+        
         if (LOCALE == null)
         {
             if (AVAILABLE_LOCALES.length > 0)
@@ -64,13 +53,13 @@ public class Loc
         }
         if (BUNDLE == null)
         {
-            return key;
+            return full;
         }
 
         String value;
         try
         {
-            value = BUNDLE.getString(key);
+            value = BUNDLE.getString(full);
         }
         catch (MissingResourceException ex)
         {
@@ -78,25 +67,35 @@ public class Loc
             // checked exception io unchecked
             value = null;
         }
-        return value;
-    }
-
-    public static String get(String key, Object... params)
-    {
-        String value = getPriv(key);
-
+        
         if (value == null)
         {
-            return "[MISSING] " + key;
+            return "[MISSING] " + full;
         }
+        
+        if (params != null && params.length > 0)
+        {
+            try
+            {
+                return String.format(value, params);
+            }
+            catch (IllegalFormatException e)
+            {
+                return "[FORMAT ERROR] " + key.full;
+            }
+        }
+        
+        return value;
+    }
+    
 
-        try
-        {
-            return String.format(value, params);
-        }
-        catch (IllegalFormatException e)
-        {
-            return "[FORMAT ERROR] " + key;
-        }
+    public static String get(LocKey key)
+    {
+        return getPriv(key, (Object[]) null);
+    }
+    
+    public static String get(LocKey key, Object... params)
+    {
+        return getPriv(key, params);
     }
 }

@@ -2,6 +2,7 @@ package gent.timdemey.cards.ui.actions;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
+import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
@@ -24,7 +25,7 @@ public class ActionStopGame extends AAction
 
     public ActionStopGame()
     {
-        super(AAction.ACTION_STOP, Loc.get("menuitem_stopgame"));
+        super(AAction.ACTION_STOP, Loc.get(LocKey.Menu_stopgame));
         Services.get(IContextService.class).getThreadContext().addStateListener(new GameStopListener());
         checkEnabled();
     }

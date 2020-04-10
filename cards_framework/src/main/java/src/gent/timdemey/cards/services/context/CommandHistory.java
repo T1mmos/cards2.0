@@ -9,6 +9,7 @@ import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.state.Property;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.model.state.StateValueRef;
+import gent.timdemey.cards.utils.Debug;
 
 public class CommandHistory extends EntityBase
 {
@@ -335,10 +336,25 @@ public class CommandHistory extends EntityBase
         
         return fails;
     }
-    
-    public void add (CommandExecution cmdExecution, State state)
+        
+    public void addExecuted(CommandBase cmd, State state)
     {
-        CommandExecutionState execState = cmdExecution.getExecutionState();
+        add(cmd, CommandExecutionState.Executed, state);
+    }
+    
+    public void addAwaiting(CommandBase cmd, State state)
+    {
+        add(cmd, CommandExecutionState.AwaitingConfirmation, state);
+    }
+    
+    public List<CommandExecution> addAccepted(CommandBase cmd, State state)
+    {
+        CommandExecution commandExec = new CommandExecution(cmd, CommandExecutionState.Accepted);
+        return inject(commandExec, state);
+    }
+    
+    private void add (CommandBase cmd, CommandExecutionState execState, State state)
+    {        
         if (execState != CommandExecutionState.Executed && execState != CommandExecutionState.AwaitingConfirmation)
         {
             throw new IllegalStateException("To add a CommandExecution, the state must either indicate that the command has been executed or that it awaits server-side confirmation");
@@ -370,14 +386,9 @@ public class CommandHistory extends EntityBase
                 execLine.subList(getCurrentIndex() + 1, getLastIndex() + 1).clear();
             }
         }
-        else
-        {
-            
-        }
         
-       
-       
         // now add the command execution
+        CommandExecution cmdExecution = new CommandExecution(cmd, execState);
         cmdExecution.getCommand().execute(state);
         execLine.add(cmdExecution);
         setCurrentIndex(getLastIndex());
@@ -390,7 +401,7 @@ public class CommandHistory extends EntityBase
      * be erased as well. 
      * @return
      */
-    boolean canErase ()
+    boolean canReject ()
     {
         if (!erasable)
         {
@@ -398,7 +409,7 @@ public class CommandHistory extends EntityBase
         }
         if (getCurrentIndex() != getLastIndex())
         {
-            // currently we do not support erasing if there are unexecuted commands, because we would 
+            // currently we do not support rejecting if there are unexecuted commands, because we would 
             // need to check all these commands too after erasing the command.
             return false;
         }
@@ -419,11 +430,11 @@ public class CommandHistory extends EntityBase
      * @return the list of command executions that followed the erased command that could not be reexecuted,
      * starting from the state right before the erased command would have executed
      */
-    public List<CommandExecution> erase (UUID commandId, State state)
+    public List<CommandExecution> reject (UUID commandId, State state)
     {
-        if (!canErase())
+        if (!canReject())
         {
-            throw new IllegalStateException("Cannot erase!");
+            throw new IllegalStateException("Cannot remove!");
         }
         
         // undo all the commands [idx(commandId) <---- currentIdx]
@@ -473,7 +484,7 @@ public class CommandHistory extends EntityBase
      * @return the list of command executions that would follow the inserted command but that could 
      * not be reexecuted, starting from the state right after the inserted command has executed
      */
-    List<CommandExecution> inject (CommandExecution commandExec, State state)
+    private List<CommandExecution> inject (CommandExecution commandExec, State state)
     {
         if (!canInject ())
         {
@@ -515,13 +526,24 @@ public class CommandHistory extends EntityBase
      */
     public void accept(UUID commandId)
     {
+        // accepts must arrive in order.
+        int currAcptIdx = getAcceptedIndex();
+        CommandExecution cmdExecution = execLine.get(currAcptIdx + 1);
+        if (cmdExecution.getExecutionState() != CommandExecutionState.AwaitingConfirmation)
+        {
+            String msg = "This commandId cannot be accepted because its current ExecutionState is %s: %s";
+            String formatted = String.format(msg, cmdExecution.getExecutionState(), commandId);
+            throw new IllegalStateException(formatted);
+        }
         
+        cmdExecution.setExecutionState(CommandExecutionState.Accepted);
+        setAcceptedIndex(currAcptIdx + 1);
     }
     
     @Override
     public String toDebugString()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return Debug.getKeyValue("CurrentIndex", currentIdxRef.get()) + 
+               Debug.getKeyValue("AcceptedIdx", acceptedIdxRef.get());
     }
 }

@@ -2,6 +2,7 @@ package gent.timdemey.cards.ui.actions;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
+import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
@@ -26,7 +27,7 @@ public class ActionStartGame extends AAction
 
     public ActionStartGame()
     {
-        super(AAction.ACTION_START, Loc.get("menuitem_newgame"));
+        super(AAction.ACTION_START, Loc.get(LocKey.Menu_newgame));
         Services.get(IContextService.class).getThreadContext().addStateListener(new GameStartListener());
         checkEnabled();
     }

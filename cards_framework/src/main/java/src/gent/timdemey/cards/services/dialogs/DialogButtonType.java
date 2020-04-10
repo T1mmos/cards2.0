@@ -3,10 +3,15 @@ package gent.timdemey.cards.services.dialogs;
 import java.util.EnumSet;
 
 import gent.timdemey.cards.localization.Loc;
+import gent.timdemey.cards.localization.LocKey;
 
 public enum DialogButtonType
 {
-    Ok("button_ok"), Cancel("button_cancel"), Yes("button_yes"), No("button_no"), Forced("button_cancel");
+    Ok(LocKey.Button_ok), 
+    Cancel(LocKey.Button_cancel), 
+    Yes(LocKey.Button_yes), 
+    No(LocKey.Button_no), 
+    Forced(LocKey.Button_cancel);
 
     public static final EnumSet<DialogButtonType> BUTTONS_OK_CANCEL = EnumSet.of(DialogButtonType.Ok,
             DialogButtonType.Cancel);
@@ -15,7 +20,7 @@ public enum DialogButtonType
 
     final String loctext;
 
-    private DialogButtonType(String lockey)
+    private DialogButtonType(LocKey lockey)
     {
         this.loctext = Loc.get(lockey);
     }

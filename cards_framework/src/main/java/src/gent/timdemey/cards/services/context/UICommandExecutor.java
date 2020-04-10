@@ -9,6 +9,7 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.commands.C_Accept;
 import gent.timdemey.cards.model.entities.commands.C_Reject;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.D_ReexecutionFail;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.IContextService;
 
@@ -55,34 +56,31 @@ class UICommandExecutor implements ICommandExecutor
             // delegate command execution to the command history
             if (src_local && hasServer)
             {
-                // multiplayer
-                CommandExecution cmdExecution = new CommandExecution(command, CommandExecutionState.AwaitingConfirmation);
-                state.getCommandHistory().add(cmdExecution, state);
+                // multiplayer, the command is not yet accepted by the server
+                state.getCommandHistory().addAwaiting(command, state);
             }
             else if (src_local && !hasServer)
             {
-                // single player
-                CommandExecution cmdExecution = new CommandExecution(command, CommandExecutionState.Executed);
-                state.getCommandHistory().add(cmdExecution, state);
+                // single player, so the command is immediately in executed state
+                state.getCommandHistory().addExecuted(command, state);
             }
             else
             {
-                // this command comes from the server
-                CommandExecution cmdExecution = new CommandExecution(command, CommandExecutionState.Accepted);
-                List<CommandExecution> fails = state.getCommandHistory().inject(cmdExecution, state);
+                // this command comes from the server so must be accepted
+                List<CommandExecution> fails = state.getCommandHistory().addAccepted(command, state);
                 HandleReexecutionFails(fails);
             }
         }
         else if (command instanceof C_Reject)
         {
-            // this command comes from the server and indicates that another command is rejected
+            // this command comes from the server and references another command that got rejected
             C_Reject rejectCmd = (C_Reject) command;
-            List<CommandExecution> fails = state.getCommandHistory().erase(rejectCmd.rejectedCommandId, state);
+            List<CommandExecution> fails = state.getCommandHistory().reject(rejectCmd.rejectedCommandId, state);
             HandleReexecutionFails(fails);
         }
         else if (command instanceof C_Accept)
         {
-            // this command comes from the server and indicates that another command is rejected
+            // this command comes from the server and references another command that got accepted
             C_Accept acceptCmd = (C_Accept) command;
             state.getCommandHistory().accept(acceptCmd.acceptedCommandId);            
         }
@@ -101,11 +99,9 @@ class UICommandExecutor implements ICommandExecutor
     
     private void HandleReexecutionFails(List<CommandExecution> fails)
     {
-        // TODO show a dialog telling the user some of his command were revoked because
-        // the server inserted a command in the history, that now renders some of his 
-        // commands invalid, given the changed state
-        
-        
+        D_ReexecutionFail cmd = new D_ReexecutionFail(fails);
+        IContextService ctxtServ = Services.get(IContextService.class);
+        ctxtServ.getThreadContext().schedule(cmd);        
     }
 
     @Override

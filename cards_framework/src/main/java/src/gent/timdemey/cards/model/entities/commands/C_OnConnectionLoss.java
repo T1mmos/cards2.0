@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
+import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.multiplayer.io.TCP_Connection;
 import gent.timdemey.cards.services.IDialogService;
@@ -32,8 +33,9 @@ public class C_OnConnectionLoss extends CommandBase
             state.getPlayers().removeAll(state.getRemotePlayers());
             state.setServerId(null);
 
-            Services.get(IDialogService.class).ShowMessage(Loc.get("dialog_title_connectionLost"),
-                    Loc.get("msg_connectionLost"));
+            String title = Loc.get(LocKey.DialogTitle_connectionlost);
+            String msg = Loc.get(LocKey.DialogMessage_connectionlost);
+            Services.get(IDialogService.class).ShowMessage(title, msg);
         }
         else if (contextType == ContextType.Client)
         {
