@@ -12,7 +12,7 @@ Development started somewhere in october 2018 and was initially focused at makin
 
 At april 2020, the game looks like this but is not yet finished:
 
-![Screenshot Solitaire Showdown](screenshots/solshow_2players_792x342.png)
+![Screenshot Solitaire Showdown](screenshots/multiplayer_solitaireshowdown.gif)
 
 In above screenshot you see 2 players each having their own game instance running, being connected to a LAN server that one of the players is currently hosting. 
 
