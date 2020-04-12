@@ -53,7 +53,7 @@ public class C_SolShowUse extends C_Use
                     Card card = initiatorStack.getHighestCard();
                     if(card.visibleRef.get())
                     {
-                        for (CardStack dstCardStack : cardGame.getCardStacks(localId, SolShowCardStackType.LAYDOWN))
+                        for (CardStack dstCardStack : cardGame.getCardStacks(SolShowCardStackType.LAYDOWN))
                         {
                             eligible.add(new C_SolShowMove(initiatorStack.id, dstCardStack.id, card.id));
                         }

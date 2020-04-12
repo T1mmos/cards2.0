@@ -3,6 +3,8 @@ package gent.timdemey.cards.readonlymodel;
 import java.util.HashMap;
 import java.util.Map;
 
+import gent.timdemey.cards.Services;
+import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.state.Property;
 
@@ -84,7 +86,9 @@ public class ReadOnlyProperty<T>
         ReadOnlyProperty<?> roProperty = KNOWN_PROPERTIES.get(property);
         if (roProperty == null)
         {
-            throw new IllegalArgumentException("A ReadOnlyProperty for Property " + property.fullname + " is not registered!");
+            Services.get(ILogManager.class).log("TEMPORARY!!!!!!!!!!");
+            return null;
+            // throw new IllegalArgumentException("A ReadOnlyProperty for Property " + property.fullname + " is not registered!");
         }
         
         return roProperty;

@@ -33,7 +33,9 @@ public class C_Accept extends CommandBase
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
+        CheckNotContext(type, ContextType.UI, ContextType.Server);
         
+        forward(type, state);
     }
 
     @Override

@@ -126,6 +126,22 @@ public class CardGame extends EntityBase
        
         return cardStacks;
     }
+
+    public List<CardStack> getCardStacks(String cardStackType)
+    {
+        List<CardStack> cardStacks = new ArrayList<>();
+        for (PlayerConfiguration pc : playerConfigurations)
+        {
+            for (CardStack cs : pc.cardStacks)
+            {
+                if (cs.cardStackType.equals(cardStackType))
+                {
+                    cardStacks.add(cs);
+                }
+            }
+        }
+        return cardStacks;
+    }
     
     public List<CardStack> getCardStacksForPlayer(UUID playerId)
     {

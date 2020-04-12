@@ -44,7 +44,11 @@ public class C_SolShowMove extends C_Move
         CardGame cardGame = state.getCardGame();
         CardStack srcCardStack = cardGame.getCardStack(srcCardStackId);
         CardStack dstCardStack = cardGame.getCardStack(dstCardStackId);
-        Preconditions.checkArgument(srcCardStack.getCards().contains(cardId));
+        
+        if (!srcCardStack.getCards().contains(cardId))
+        {
+            return false;
+        }
 
         Card card = state.getCardGame().getCard(cardId);
 
@@ -69,11 +73,33 @@ public class C_SolShowMove extends C_Move
             String dstCardStackType = dstCardStack.cardStackType;
             if(srcCardStackType.equals(SolShowCardStackType.DEPOT) && dstCardStackType.equals(SolShowCardStackType.TURNOVER))
             {
-                return !srcCardStack.getCards().isEmpty() && srcCardStack.cards.indexOf(card) >= srcCardStack.cards.size() - 3;
+                if (srcCardStack.getCards().isEmpty())
+                {
+                    return false;
+                }
+                if (srcCardStack.cards.indexOf(card) < srcCardStack.cards.size() - 3)
+                {
+                    return false;
+                }
+                
+                return true;
             }
             else if(srcCardStackType.equals(SolShowCardStackType.TURNOVER) && dstCardStackType.equals(SolShowCardStackType.DEPOT))
             {
-                return !srcCardStack.getCards().isEmpty() && dstCardStack.getCards().isEmpty() && srcCardStack.getLowestCard() == card;
+                if (srcCardStack.getCards().isEmpty())
+                {
+                    return false;
+                }
+                if (!dstCardStack.getCards().isEmpty())
+                {
+                    return false;
+                }
+                if (srcCardStack.getLowestCard() != card)
+                {
+                    return false;
+                }
+                
+                return true;
             }
         }
 

@@ -17,6 +17,7 @@ import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.model.state.StateListRef;
 import gent.timdemey.cards.services.context.Change;
+import gent.timdemey.cards.services.context.CommandExecution;
 import gent.timdemey.cards.services.context.CommandHistory;
 
 public class ReadOnlyEntityFactory
@@ -46,6 +47,7 @@ public class ReadOnlyEntityFactory
         addConverter(CommandHistory.class, ReadOnlyCommandHistory.class, ReadOnlyEntityFactory::getOrCreateCommandHistory);
         addConverter(Player.class, ReadOnlyPlayer.class, ReadOnlyEntityFactory::getOrCreatePlayer);
         addConverter(Server.class, ReadOnlyServer.class, ReadOnlyEntityFactory::getOrCreateServer);
+        addConverter(CommandExecution.class, ReadOnlyCommandExecution.class, ReadOnlyEntityFactory::getOrCreateCommandExecution);
     }
 
     private static final Map<Class<?>, Map<UUID, ? extends ReadOnlyEntityBase<?>>> entities = new HashMap<>();
@@ -112,11 +114,20 @@ public class ReadOnlyEntityFactory
     {
         return GetOrCreateEntity(commandHistory, ch -> new ReadOnlyCommandHistory(ch));
     }
+    
+    public static ReadOnlyCommandExecution getOrCreateCommandExecution(CommandExecution commandExecution)
+    {
+        return GetOrCreateEntity(commandExecution, ce -> new ReadOnlyCommandExecution(ce));
+    }
 
     public static ReadOnlyChange getReadOnlyChange(Change<?> change)
     {
         // find ReadOnlyProperty
         ReadOnlyProperty<?> roProperty = ReadOnlyProperty.getReadOnlyProperty(change.property);
+        if (roProperty == null)
+        {
+            return null;
+        }
 
         Object oldValue = toReadOnly(change.oldValue);
         Object newValue = toReadOnly(change.newValue);

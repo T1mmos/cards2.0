@@ -1,6 +1,6 @@
 package gent.timdemey.cards.services.context;
 
-enum CommandExecutionState
+public enum CommandExecutionState
 {
     /**
      * Command history entry has been created but it's not executed yet.

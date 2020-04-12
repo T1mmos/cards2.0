@@ -100,9 +100,12 @@ class UICommandExecutor implements ICommandExecutor
     
     private void HandleReexecutionFails(List<CommandExecution> fails)
     {
-        D_ReexecutionFail cmd = new D_ReexecutionFail(fails);
-        IContextService ctxtServ = Services.get(IContextService.class);
-        ctxtServ.getThreadContext().schedule(cmd);        
+        if (fails.size() > 0)
+        {
+            D_ReexecutionFail cmd = new D_ReexecutionFail(fails);
+            IContextService ctxtServ = Services.get(IContextService.class);
+            ctxtServ.getThreadContext().schedule(cmd);    
+        }                
     }
 
     @Override

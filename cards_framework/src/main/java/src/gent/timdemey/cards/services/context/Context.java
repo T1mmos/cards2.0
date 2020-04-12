@@ -123,7 +123,10 @@ public final class Context
         for (Change<?> change : changes)
         {
             ReadOnlyChange roChange = ReadOnlyEntityFactory.getReadOnlyChange(change);
-            roChanges.add(roChange);
+            if (roChange != null)
+            {
+                roChanges.add(roChange);
+            }
         }
 
         for (IStateListener sl : stateListeners)

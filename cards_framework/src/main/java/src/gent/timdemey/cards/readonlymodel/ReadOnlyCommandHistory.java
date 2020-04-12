@@ -11,5 +11,4 @@ public class ReadOnlyCommandHistory extends ReadOnlyEntityBase<CommandHistory>
     {
         super(entity);
     } 
-
 }
