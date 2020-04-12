@@ -7,6 +7,7 @@ import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.cards.Value;
 import gent.timdemey.cards.model.entities.commands.C_Push;
+import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.boot.SolShowCardStackType;
 
 public class C_SolShowPush extends C_Push
@@ -17,7 +18,7 @@ public class C_SolShowPush extends C_Push
     }
 
     @Override
-    protected boolean canPush(CardStack dstCardStack, List<Card> srcCards)
+    protected boolean canPush(CardStack dstCardStack, List<Card> srcCards, State state)
     {
         if (dstCardStack.cardStackType.equals(SolShowCardStackType.DEPOT) || 
             dstCardStack.cardStackType.equals(SolShowCardStackType.TURNOVER) || 
@@ -28,6 +29,13 @@ public class C_SolShowPush extends C_Push
         
         if (dstCardStack.cardStackType.equals(SolShowCardStackType.MIDDLE))
         {
+            UUID playerId = getSourceId();
+            if (!playerId.equals(state.getServerId()) && !playerId.equals(state.getCardGame().getPlayerId(dstCardStack)))
+            {
+                return false;
+            }
+            
+            
             // in solitaire showdown you are allowed to put any card on an empty stack,
             // not just a king
             if (dstCardStack.cards.isEmpty())

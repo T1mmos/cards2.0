@@ -28,17 +28,20 @@ public class C_SolShowUse extends C_Use
         CardGame cardGame = state.getCardGame();
         List<CommandBase> eligible = new ArrayList<>();
         UUID localId = context.getReadOnlyState().getLocalId();
+        
 
         if(initiatorStackId != null)
         {
             CardStack initiatorStack = cardGame.getCardStack(initiatorStackId);
-
-            String cardStackType = initiatorStack.cardStackType;
-
-            if(cardStackType.equals(SolShowCardStackType.DEPOT))
+            if (getSourceId().equals(cardGame.getPlayerId(initiatorStack)))
             {
-                addUseCommandDepot(eligible, initiatorStack, cardGame, localId);
-            }
+                String cardStackType = initiatorStack.cardStackType;
+
+                if(cardStackType.equals(SolShowCardStackType.DEPOT))
+                {
+                    addUseCommandDepot(eligible, initiatorStack, cardGame, localId);
+                }
+            }            
         }
         else // initiator is a Card
         {
@@ -46,30 +49,38 @@ public class C_SolShowUse extends C_Use
             CardStack initiatorStack = initiatorCard.cardStack;
             String cardStackType = initiatorStack.cardStackType;
 
-            if(cardStackType.equals(SolShowCardStackType.TURNOVER) || cardStackType.equals(SolShowCardStackType.MIDDLE) || cardStackType.equals(SolShowCardStackType.SPECIAL))
+            if (getSourceId().equals(cardGame.getPlayerId(initiatorStack)))
             {
-                if(!initiatorStack.getCards().isEmpty())
+                if(cardStackType.equals(SolShowCardStackType.TURNOVER) || cardStackType.equals(SolShowCardStackType.MIDDLE) || cardStackType.equals(SolShowCardStackType.SPECIAL))
                 {
-                    Card card = initiatorStack.getHighestCard();
-                    if(card.visibleRef.get())
+                    if(!initiatorStack.getCards().isEmpty())
                     {
-                        for (CardStack dstCardStack : cardGame.getCardStacks(SolShowCardStackType.LAYDOWN))
+                        Card card = initiatorStack.getHighestCard();
+                        if(card.visibleRef.get())
                         {
-                            eligible.add(new C_SolShowMove(initiatorStack.id, dstCardStack.id, card.id));
+                            for (CardStack dstCardStack : cardGame.getCardStacks(SolShowCardStackType.LAYDOWN))
+                            {
+                                C_SolShowMove cmd = new C_SolShowMove(initiatorStack.id, dstCardStack.id, card.id);
+                                cmd.setSourceId(getSourceId());
+                                eligible.add(cmd);
+                            }
+                        }
+                        else
+                        {
+                            List<Card> cards = initiatorStack.getCardsFrom(card);
+                            C_SetVisible cmd = new C_SetVisible(cards, true);
+                            cmd.setSourceId(getSourceId());
+                            eligible.add(cmd);
                         }
                     }
-                    else
-                    {
-                        List<Card> cards = initiatorStack.getCardsFrom(card);
-                        eligible.add(new C_SetVisible(cards, true));
-                    }
+                }
+                else if (cardStackType.contentEquals(SolShowCardStackType.DEPOT))
+                {
+                    addUseCommandDepot(eligible, initiatorStack, cardGame, localId);
                 }
             }
-            else if (cardStackType.contentEquals(SolShowCardStackType.DEPOT))
-            {
-                addUseCommandDepot(eligible, initiatorStack, cardGame, localId);
-            }
         }
+        
         for (CommandBase cmd : eligible)
         {
             if(cmd.canExecute(state))
@@ -89,7 +100,9 @@ public class C_SolShowUse extends C_Use
             CardStack dstCardStack = cardGame.getCardStack(localId, SolShowCardStackType.DEPOT, 0);
             if(!srcCardStack.getCards().isEmpty())
             {
-                eligible.add(new C_SolShowMove(srcCardStack.id, dstCardStack.id, srcCardStack.getLowestCard().id));
+                C_SolShowMove cmd = new C_SolShowMove(srcCardStack.id, dstCardStack.id, srcCardStack.getLowestCard().id);
+                cmd.setSourceId(getSourceId());
+                eligible.add(cmd);
             }
         }
         else // direction depot -> turnover, 3 cards
@@ -102,7 +115,9 @@ public class C_SolShowUse extends C_Use
             int takeCount = Math.min(3, availableCount);
             int idx = availableCount - takeCount;
             UUID highestCardId = availableCards.get(idx).id;
-            eligible.add(new C_SolShowMove(srcCardStack.id, dstCardStack.id, highestCardId));
+            C_SolShowMove cmd = new C_SolShowMove(srcCardStack.id, dstCardStack.id, highestCardId);
+            cmd.setSourceId(getSourceId());
+            eligible.add(cmd);
         }
     }
 

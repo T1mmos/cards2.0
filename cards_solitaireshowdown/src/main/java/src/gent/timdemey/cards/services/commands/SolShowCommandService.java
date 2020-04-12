@@ -16,26 +16,34 @@ import gent.timdemey.cards.services.ICommandService;
 public class SolShowCommandService implements ICommandService
 {
     @Override
-    public C_Move getMoveCommand(UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
+    public C_Move getMoveCommand(UUID playerId, UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
     {
-        return new C_SolShowMove(srcCardStackId, dstCardStackId, cardId);
+        C_SolShowMove cmd = new C_SolShowMove(srcCardStackId, dstCardStackId, cardId);
+        cmd.setSourceId(playerId);
+        return cmd;
     }
 
     @Override
-    public C_Use getUseCommand(UUID srcCardStackId, UUID srcCardId)
+    public C_Use getUseCommand(UUID playerId, UUID srcCardStackId, UUID srcCardId)
     {
-        return new C_SolShowUse(srcCardStackId, srcCardId);
+        C_SolShowUse cmd = new C_SolShowUse(srcCardStackId, srcCardId);
+        cmd.setSourceId(playerId);
+        return cmd;
     }
 
     @Override
-    public C_Pull getPullCommand(UUID srcCardStackId, UUID cardId)
+    public C_Pull getPullCommand(UUID playerId, UUID srcCardStackId, UUID cardId)
     {
-        return new C_SolShowPull(srcCardStackId, cardId);
+        C_SolShowPull cmd = new C_SolShowPull(srcCardStackId, cardId);
+        cmd.setSourceId(playerId);
+        return cmd;
     }
 
     @Override
-    public C_Push getPushCommand(UUID dstCardStackId, List<UUID> srcCardIds)
+    public C_Push getPushCommand(UUID playerId, UUID dstCardStackId, List<UUID> srcCardIds)
     {
-        return new C_SolShowPush(dstCardStackId, srcCardIds);
+        C_SolShowPush cmd = new C_SolShowPush(dstCardStackId, srcCardIds);
+        cmd.setSourceId(playerId);
+        return cmd;
     }
 }

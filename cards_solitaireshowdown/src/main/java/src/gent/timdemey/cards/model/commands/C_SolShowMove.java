@@ -54,8 +54,10 @@ public class C_SolShowMove extends C_Move
 
         List<UUID> toTransferIds = srcCardStack.getCardsFrom(card).getIds();
         C_SolShowPull cmdPull = new C_SolShowPull(srcCardStackId, cardId);
+        cmdPull.setSourceId(getSourceId());
         C_SolShowPush cmdPush = new C_SolShowPush(dstCardStackId, toTransferIds);
-
+        cmdPush.setSourceId(getSourceId());
+        
         if(cmdPull.canExecute(context, type, state) && cmdPush.canExecute(context, type, state)) // user action
         {
             return true;

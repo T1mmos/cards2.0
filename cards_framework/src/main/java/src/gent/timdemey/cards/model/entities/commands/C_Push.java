@@ -36,7 +36,7 @@ public abstract class C_Push extends CommandBase
         CardStack dstCardStack = state.getCardGame().getCardStack(dstCardStackId);
         List<Card> srcCards = state.getCardGame().getCards().getOnly(srcCardIds);
         
-        return canPush(dstCardStack, srcCards);
+        return canPush(dstCardStack, srcCards, state);
     }
     
     /**
@@ -45,7 +45,7 @@ public abstract class C_Push extends CommandBase
      * @param srcCards
      * @return
      */
-    protected boolean canPush(CardStack dstCardStack, List<Card> srcCards)
+    protected boolean canPush(CardStack dstCardStack, List<Card> srcCards, State state)
     {
         return true;
     }

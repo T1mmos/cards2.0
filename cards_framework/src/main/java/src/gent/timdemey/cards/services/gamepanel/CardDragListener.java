@@ -92,18 +92,20 @@ class CardDragListener extends MouseAdapter
         }
 
         JScalableImage jscalable = (JScalableImage) comp;
-        UUID id = Services.get(IScalableImageManager.class).getUUID(jscalable);
+        UUID entityId = Services.get(IScalableImageManager.class).getUUID(jscalable);
         Context context = Services.get(IContextService.class).getThreadContext();
         ICommandService operations = Services.get(ICommandService.class);
         ReadOnlyCardGame cardGame = context.getReadOnlyState().getCardGame();
 
-        if (cardGame.isCard(id))
+        UUID playerId = context.getReadOnlyState().getLocalId();
+        
+        if (cardGame.isCard(entityId))
         {
-            ReadOnlyCard card = cardGame.getCard(id);
+            ReadOnlyCard card = cardGame.getCard(entityId);
             ReadOnlyCardStack stack = card.getCardStack();
 
-            CommandBase cmdPull = operations.getPullCommand(stack.getId(), card.getId());
-            CommandBase cmdUse = operations.getUseCommand(null, id);
+            CommandBase cmdPull = operations.getPullCommand(playerId, stack.getId(), card.getId());
+            CommandBase cmdUse = operations.getUseCommand(playerId, null, entityId);
             boolean pullable = context.canExecute(cmdPull);
             boolean useable = context.canExecute(cmdUse);
 
@@ -141,12 +143,12 @@ class CardDragListener extends MouseAdapter
             mouse_ystart = e.getY();
 
         }
-        else if (cardGame.isCardStack(id))
+        else if (cardGame.isCardStack(entityId))
         {
             ReadOnlyCardStack cardStack = Services.get(IPositionManager.class).getCardStackAt(e.getPoint());
             if (cardStack != null)
             {
-                CommandBase cmdUse = operations.getUseCommand(id, null);
+                CommandBase cmdUse = operations.getUseCommand(playerId, entityId, null);
                 if (context.canExecute(cmdUse))
                 {
                     context.schedule(cmdUse);
@@ -161,6 +163,8 @@ class CardDragListener extends MouseAdapter
         Context context = Services.get(IContextService.class).getThreadContext();
         ReadOnlyCardGame cardGame = context.getReadOnlyState().getCardGame();
 
+        UUID playerId = context.getReadOnlyState().getLocalId();
+        
         if (!draggedImages.isEmpty())
         {
             // check if first card is over another card or an empty card stack
@@ -206,10 +210,10 @@ class CardDragListener extends MouseAdapter
                 ReadOnlyEntityList<ReadOnlyCard> roCards = new ReadOnlyEntityList<>(cards);
 
                 ICommandService operationsServ = Services.get(ICommandService.class);
-                CommandBase cmdPush = operationsServ.getPushCommand(dstCardStack.getId(), roCards.getIds());
+                CommandBase cmdPush = operationsServ.getPushCommand(playerId, dstCardStack.getId(), roCards.getIds());
                 if (context.canExecute(cmdPush))
                 {
-                    CommandBase cmdMove = operationsServ.getMoveCommand(cards.get(0).getCardStack().getId(),
+                    CommandBase cmdMove = operationsServ.getMoveCommand(playerId, cards.get(0).getCardStack().getId(),
                             dstCardStack.getId(), cards.get(0).getId());
                     context.schedule(cmdMove);
                     pushed = true;

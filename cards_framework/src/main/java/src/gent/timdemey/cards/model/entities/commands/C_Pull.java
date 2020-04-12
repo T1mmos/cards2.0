@@ -27,8 +27,8 @@ public abstract class C_Pull extends CommandBase
         
         CardStack srcCardStack = state.getCardGame().getCardStack(srcCardStackId);
         Card srcCard = state.getCardGame().getCards().get(srcCardId);
-        
-        return canPull(srcCardStack, srcCard);
+                
+        return canPull(srcCardStack, srcCard, state);
     }
 
     /**
@@ -37,7 +37,7 @@ public abstract class C_Pull extends CommandBase
      * @param srcCard
      * @return
      */
-    protected boolean canPull(CardStack srcCardStack, Card srcCard)
+    protected boolean canPull(CardStack srcCardStack, Card srcCard, State state)
     {
         return true;
     }

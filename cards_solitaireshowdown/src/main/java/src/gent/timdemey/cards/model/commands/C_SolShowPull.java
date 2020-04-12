@@ -7,6 +7,7 @@ import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.cards.SuitColor;
 import gent.timdemey.cards.model.entities.commands.C_Pull;
+import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.boot.SolShowCardStackType;
 
 public class C_SolShowPull extends C_Pull
@@ -17,10 +18,17 @@ public class C_SolShowPull extends C_Pull
     }
 
     @Override
-    protected boolean canPull(CardStack srcCardStack, Card srcCard)
+    protected boolean canPull(CardStack srcCardStack, Card srcCard, State state)
     {
         if (srcCardStack.cardStackType.equals(SolShowCardStackType.DEPOT) || 
             srcCardStack.cardStackType.equals(SolShowCardStackType.LAYDOWN))
+        {
+            return false;
+        }
+        
+        // can only pull from own stacks
+        UUID srcPlayerId = getSourceId();
+        if (!srcPlayerId.equals(state.getServerId()) && !srcPlayerId.equals(state.getCardGame().getPlayerId(srcCardStack)))
         {
             return false;
         }

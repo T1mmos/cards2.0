@@ -10,11 +10,11 @@ import gent.timdemey.cards.model.entities.commands.C_Use;
 
 public interface ICommandService
 {
-    public C_Move getMoveCommand(UUID srcCardStackId, UUID dstCardStackId, UUID cardId);
+    public C_Move getMoveCommand(UUID playerId, UUID srcCardStackId, UUID dstCardStackId, UUID cardId);
 
-    public C_Use getUseCommand(UUID srcCardStackId, UUID srcCardId);
+    public C_Use getUseCommand(UUID playerId, UUID srcCardStackId, UUID srcCardId);
 
-    public C_Pull getPullCommand(UUID srcCardStackId, UUID cardId);
+    public C_Pull getPullCommand(UUID playerId, UUID srcCardStackId, UUID cardId);
 
-    public C_Push getPushCommand(UUID dstCardStackId, List<UUID> srcCardIds);        
+    public C_Push getPushCommand(UUID playerId, UUID dstCardStackId, List<UUID> srcCardIds);        
 }
