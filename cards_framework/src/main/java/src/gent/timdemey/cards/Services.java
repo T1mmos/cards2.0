@@ -3,8 +3,6 @@ package gent.timdemey.cards;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.SwingUtilities;
-
 import com.google.common.base.Preconditions;
 
 public final class Services
@@ -100,9 +98,23 @@ public final class Services
 
     public static <T> void install(Class<T> iface, Object param, T implementation)
     {
+        if (iface == null)
+        {
+            throw new IllegalArgumentException("iface cannot be null");
+        }
+        if (implementation == null)
+        {
+            throw new IllegalArgumentException("implementation cannot be null");
+        }
+        
         EntryKey entryKey = new EntryKey(iface, param);
-        Preconditions.checkState(!serviceMap.containsKey(entryKey));
-
+        if (serviceMap.containsKey(entryKey))
+        {
+            String msg = "Service for interface %s (param=%s) already installed: %s";
+            String formatted = String.format(msg, iface.getSimpleName(), param, implementation.getClass().getSimpleName());
+            throw new IllegalStateException(formatted);
+        }
+        
         serviceMap.put(entryKey, implementation);
     }
 

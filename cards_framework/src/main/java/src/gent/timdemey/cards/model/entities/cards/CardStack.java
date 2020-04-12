@@ -43,6 +43,12 @@ public class CardStack extends EntityBase
         return card;
     }
 
+    public Card getCardAt(int idx)
+    {
+        Card card = cards.get(idx);
+        return card;
+    }
+    
     public Card getHighestCard()
     {
         Preconditions.checkState(!cards.isEmpty());

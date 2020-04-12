@@ -40,6 +40,7 @@ public class TestUtils
     {
         MockContextService ctxtService = new MockContextService();
         ctxtService.initialize(ContextType.UI);
+        ctxtService.initialize(ContextType.Client);  
         Services.install(IContextService.class, ctxtService);   
     }
     

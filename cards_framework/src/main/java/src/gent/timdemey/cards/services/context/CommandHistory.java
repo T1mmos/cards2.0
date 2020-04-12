@@ -232,10 +232,10 @@ public class CommandHistory extends EntityBase
                 
                 // undo the command and set the execution state
                 command.undo(state);
+                setCurrentIndex(getCurrentIndex() - 1);
             }
             
             cmdExecution.setExecutionState(nextState);
-            setCurrentIndex(getCurrentIndex() - 1);
         }
     }
     
@@ -325,6 +325,7 @@ public class CommandHistory extends EntityBase
         int count = list.size();
         
         List<CommandExecution> fails = new ArrayList<>();
+        List<CommandExecution> quars = new ArrayList<>();
         for (int i = 0; i < count; i++)
         {
             CommandExecution cmdExecution = list.get(i);
@@ -362,6 +363,7 @@ public class CommandHistory extends EntityBase
             else if (execState == CommandExecutionState.Quarantined)
             {
                 nextState = CommandExecutionState.Quarantined;
+                quars.add(cmdExecution);
             }
             else
             {
@@ -374,11 +376,11 @@ public class CommandHistory extends EntityBase
                 command.execute(state);
             }
         }
-       
-       // execLine.removeAll(fails);
-        
-        int execCount = count - fails.size();
-        setCurrentIndex(getCurrentIndex() + execCount);
+               
+        int reexecFails = fails.size();
+        int quarantined = quars.size();
+        int reexecuted = count - reexecFails - quarantined;
+        setCurrentIndex(getCurrentIndex() + reexecuted);
         
         // check that no commands have failed re-execution, because this is a redo operation
         if (noFails && fails.size() > 0)
@@ -442,8 +444,12 @@ public class CommandHistory extends EntityBase
         // now add the command execution
         CommandExecution cmdExecution = new CommandExecution(cmd, execState);
         cmdExecution.getCommand().execute(state);
-        execLine.add(cmdExecution);
-        setCurrentIndex(getLastIndex());
+        
+        // we cannot just add at the end of the execution line, because there can be 
+        // quarantined commands which are beyond the current index pointer.
+        int nextCurrentIndex = getCurrentIndex() + 1;
+        execLine.add(nextCurrentIndex, cmdExecution);
+        setCurrentIndex(nextCurrentIndex);
     }
     
     /**
@@ -508,12 +514,6 @@ public class CommandHistory extends EntityBase
     {
         if (!removable)
         {
-            return false;
-        }
-        if (getCurrentIndex() != getLastIndex())
-        {
-            // currently we do not support insertion if there are unexecuted commands, because we would 
-            // need to check all these commands too after inserting the command.
             return false;
         }
         

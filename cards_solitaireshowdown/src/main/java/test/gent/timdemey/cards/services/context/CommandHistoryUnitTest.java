@@ -2,6 +2,7 @@ package gent.timdemey.cards.services.context;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Before;
@@ -15,13 +16,13 @@ import gent.timdemey.cards.model.commands.C_SolShowMove;
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;
-import gent.timdemey.cards.model.entities.cards.Suit;
-import gent.timdemey.cards.model.entities.cards.Value;
 import gent.timdemey.cards.model.entities.commands.C_Move;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.test.common.SolShowTestUtils;
+import gent.timdemey.cards.test.common.TestUtils;
 import gent.timdemey.cards.test.helpers.PlayerHelper;
 import gent.timdemey.cards.test.helpers.ServerHelper;
 import gent.timdemey.cards.test.helpers.SolShowCardGameHelper;
@@ -31,13 +32,14 @@ public class CommandHistoryUnitTest
 {
     @BeforeClass
     public static void init()
-    {
-        Services.install(ICardPlugin.class, new SolShowPlugin());
+    { 
+        SolShowTestUtils.installSolShowCardPlugin();
+        TestUtils.installMockContextService();     
         
-        MockContextService mockCtxtServ = new MockContextService();                
+    /*    MockContextService mockCtxtServ = new MockContextService();                
         mockCtxtServ.initialize(ContextType.UI);
         mockCtxtServ.initialize(ContextType.Client);        
-        Services.install(IContextService.class, mockCtxtServ);
+        Services.install(IContextService.class, mockCtxtServ);*/
     }
 
     private IContextService ctxtServ;
@@ -51,9 +53,10 @@ public class CommandHistoryUnitTest
     // we'll always one or more of these stacks in the tests
     private CardStack cs_p1depot;
     private CardStack cs_p1turnover;
-    private CardStack cs_p1special;
-    private CardStack cs_p2special;
+    private CardStack cs_p1special; // 8 of spades as highest card
+    private CardStack cs_p2special; // ace of clubs as highest card
     private CardStack cs_p1laydown1;
+    private CardStack cs_p2laydown1;
     
     @Before
     public void resetGame()
@@ -79,6 +82,7 @@ public class CommandHistoryUnitTest
         cs_p1special = cardGame.getCardStack(SolShowTestIds.P1_SPECIAL);
         cs_p2special = cardGame.getCardStack(SolShowTestIds.P2_SPECIAL);
         cs_p1laydown1 = cardGame.getCardStack(SolShowTestIds.P1_LAYDOWN1);
+        cs_p2laydown1 = cardGame.getCardStack(SolShowTestIds.P2_LAYDOWN1);
         
         // reset server
         Server server = ServerHelper.createFixedServer();
@@ -217,41 +221,17 @@ public class CommandHistoryUnitTest
      */
     @Test
     public void awaitInjectQReject()
-    {
-        // in this test, we'll need some C_Move i.o. C_SolShowMove commands 
-        // to step out of the Solitaire Showdown business rules, to trigger
-        // and test a quarantined -> rejected transition. With adherence to
-        // Solitaire Showdown business rules, this transition cannot be
-        // triggered.
-        
-        // the first command needs to be a C_SolShowMove command because the business rules
-        // determine if a command can be (re)executed. A C_Move command doesn't have any 
-        // business rules defined. We'll take the SPECIAL stack of player 2 which has an ace
-        // on top, so we can just create a C_SolShowMove without prior setup.
-        
+    {        
         // add local command, awaiting server confirmation
-        Card c_p2 = cs_p2special.getHighestCard();
-        assertEquals(Suit.CLUBS, c_p2.suit);
-        assertEquals(Value.V_A, c_p2.value);
-        C_SolShowMove cmd1 = new C_SolShowMove(cs_p2special.id, cs_p1laydown1.id, c_p2.id);
-        cmd1.setSourceId(player2.id);
+        C_SolShowMove cmd1 = CreateConflictingCommandClient();
         cmdHistory.addAwaiting(cmd1, state);        
         // test state
         assertEquals(-1, cmdHistory.getAcceptedIndex());
         assertEquals(0, cmdHistory.getCurrentIndex());
         assertEquals(0, cmdHistory.getLastIndex());
         assertEquals(1, cmdHistory.getSize());        
-        
-        // inject another command. this one should be immediately accepted and injected
-        // before the previous local command. Because the previous command will not be able
-        // to execute (because the destination stack is not empty and the card to transfer
-        // is an ace, and ofcourse business rules are in place as it is a C_SolShowMove), 
-        // it must go in quarantine. we use a C_Move command here to neglect business rules.
-        Card c_p1 = cs_p1special.getHighestCard();
-        assertEquals(Suit.SPADES, c_p1.suit);
-        assertEquals(Value.V_8, c_p1.value);
-        C_Move cmd2 = new C_Move(cs_p1special.id, cs_p1laydown1.id, c_p1.id);
-        cmd2.setSourceId(player1.id);
+     
+        C_Move cmd2 = CreateConflictingCommandServer();
         cmdHistory.addAccepted(cmd2, state);        
         // test state
         assertEquals(0, cmdHistory.getAcceptedIndex());
@@ -280,31 +260,225 @@ public class CommandHistoryUnitTest
         assertEquals(0, cmdHistory.getCurrentIndex());
         assertEquals(0, cmdHistory.getLastIndex());
         assertEquals(1, cmdHistory.getSize());
-        
+
+        CommandExecution cmdExec2 = cmdHistory.getCommandExecution(0);
+        assertEquals(CommandExecutionState.Accepted, cmdExec2.cmdExecutionState.get());
+        assertEquals(cmd2, cmdExec2.getCommand());    
     }
     
     /**
      * Tests putting a command in quarantine because of injecting two 
      * server commands. Special thing about this is that quarantined commands
      * are held at the end of the command chain, and thus the second injected
-     * command must gracefully handle the dangling quarantined command. 
+     * command must gracefully handle the dangling quarantined command. Moreover
+     * we also check that the game state is correct (which cards are at which 
+     * stacks), which confirms the correct unexection and reexecution of 
+     * commands within the CommandHistory with respect to Injects and Rejects.
      */
     @Test
     public void awaitInjectQInjectReject()
     {
-        fail("Needs implementation");
+        assertTrue(cs_p1special.getCardAt(12).equalsNotation("8♠")); // coincidence (see below)
+        assertTrue(cs_p1special.getCardAt(11).equalsNotation("2♦"));
+        assertTrue(cs_p2special.getCardAt(12).equalsNotation("A♣")); 
+        assertTrue(cs_p2special.getCardAt(11).equalsNotation("8♠")); // coincidence in the fixed test game, also 8♠
+        assertTrue(cs_p1laydown1.getCards().isEmpty());
+        
+        // add local command, awaiting server confirmation
+        C_SolShowMove cmd1 = CreateConflictingCommandClient();
+        cmdHistory.addAwaiting(cmd1, state);     
+        
+        assertTrue(cs_p1special.getHighestCard().equalsNotation("8♠"));  // not yet modified
+        assertTrue(cs_p2special.getHighestCard().equalsNotation("8♠"));  // A♣ was moved to p1laydown1
+        assertTrue(cs_p1laydown1.getHighestCard().equalsNotation("A♣")); // this confirms it
+     
+        // now a conflicting command from the server comes in. cmd1 will thus
+        // rollback, cmd2 gets executed, then it is detected that cmd1 cannot 
+        // reexecute and the command will thus become quarantined.
+        C_Move cmd2 = CreateConflictingCommandServer();
+        cmdHistory.addAccepted(cmd2, state);        
+
+        assertTrue(cs_p1special.getHighestCard().equalsNotation("2♦"));  // the server command got executed, 8♠ was moved 
+        assertTrue(cs_p2special.getHighestCard().equalsNotation("A♣"));  // A♣ was moved back to original stack, because command rollback
+        assertTrue(cs_p1laydown1.getHighestCard().equalsNotation("8♠")); // this confirms that 8♠ was moved
+        
+        assertEquals(cmdHistory.getCommandExecution(0).getCommand().id, cmd2.id);
+        assertEquals(cmdHistory.getCommandExecution(0).getExecutionState(), CommandExecutionState.Accepted);   
+        assertEquals(cmdHistory.getCommandExecution(1).getCommand().id, cmd1.id);
+        assertEquals(cmdHistory.getCommandExecution(1).getExecutionState(), CommandExecutionState.Quarantined);     
+        
+        // then another command from the server arrives, without conflict.
+        C_Move cmd3 = CreateCommandServer();
+        cmdHistory.addAccepted(cmd3, state);
+        
+        assertTrue(cs_p1special.getHighestCard().equalsNotation("A♣"));  // 2 cards were already taken from this stack (again coincidence with A♣)
+        assertTrue(cs_p2laydown1.getHighestCard().equalsNotation("2♦")); // 2♦ was moved from p1special to p2laydown1
+        assertTrue(cs_p2special.getHighestCard().equalsNotation("A♣"));  // didn't change
+        assertTrue(cs_p1laydown1.getHighestCard().equalsNotation("8♠")); // didn't change
+
+        CommandExecution cmdExec0 = cmdHistory.getCommandExecution(0);
+        CommandExecution cmdExec1 = cmdHistory.getCommandExecution(1);
+        CommandExecution cmdExec2 = cmdHistory.getCommandExecution(2);
+                
+        assertEquals(cmd2.id, cmdExec0.getCommand().id);
+        assertEquals(cmd3.id, cmdExec1.getCommand().id);
+        assertEquals(cmd1.id, cmdExec2.getCommand().id);
+        
+        assertEquals(CommandExecutionState.Accepted, cmdExec0.getExecutionState());
+        assertEquals(CommandExecutionState.Accepted, cmdExec1.getExecutionState());
+        assertEquals(CommandExecutionState.Quarantined, cmdExec2.getExecutionState());
+        
+        assertEquals(1, cmdHistory.getAcceptedIndex());
+        assertEquals(1, cmdHistory.getCurrentIndex());
+        assertEquals(2, cmdHistory.getLastIndex());
+        assertEquals(3, cmdHistory.getSize());    
+        
+        // now a C_Reject command arrives from the server. Our quarantined command will 
+        // thus completely leave the command history, as it is now completely clear that also the
+        // server wasn't able to execute it. A quarantined command is always unexecuted,
+        // thus the game state shouldn't be modified. The quarantined command is just 
+        // completely wiped from the history.
+        cmdHistory.reject(cmd1.id, state);
+        
+        assertTrue(cs_p1special.getHighestCard().equalsNotation("A♣"));  // didn't change
+        assertTrue(cs_p2laydown1.getHighestCard().equalsNotation("2♦")); // didn't change
+        assertTrue(cs_p2special.getHighestCard().equalsNotation("A♣"));  // didn't change
+        assertTrue(cs_p1laydown1.getHighestCard().equalsNotation("8♠")); // didn't change
+                               
+        assertEquals(cmd2.id, cmdExec0.getCommand().id);
+        assertEquals(cmd3.id, cmdExec1.getCommand().id);
+        
+        assertEquals(CommandExecutionState.Accepted, cmdExec0.getExecutionState());
+        assertEquals(CommandExecutionState.Accepted, cmdExec1.getExecutionState());
+        
+        assertEquals(1, cmdHistory.getAcceptedIndex());
+        assertEquals(1, cmdHistory.getCurrentIndex());
+        assertEquals(1, cmdHistory.getLastIndex()); // decremented 1
+        assertEquals(2, cmdHistory.getSize());      // decremented 1
     }
     
+    /**
+     * Almost the same test as awaitInjectQInjectReject, but the second 
+     * inject command will resolve the conflict with the quarantined command. 
+     * The server sends an Accept command which can be handled client-side,
+     * because the quarantined command became executable again.
+     */
     @Test
-    public void awaitInjectInjectAccept()
+    public void awaitInjectQInjectRAccept()
     {        
-        fail("Needs implementation");
+        assertTrue(cs_p1special.getCardAt(12).equalsNotation("8♠")); // coincidence (see below)
+        assertTrue(cs_p1special.getCardAt(11).equalsNotation("2♦"));
+        assertTrue(cs_p2special.getCardAt(12).equalsNotation("A♣")); 
+        assertTrue(cs_p2special.getCardAt(11).equalsNotation("8♠")); // coincidence in the fixed test game, also 8♠
+        assertTrue(cs_p1laydown1.getCards().isEmpty());
+        
+        // add local command, awaiting server confirmation
+        C_SolShowMove cmd1 = CreateConflictingCommandClient();
+        cmdHistory.addAwaiting(cmd1, state);     
+             
+        // now a conflicting command from the server comes in. cmd1 will thus
+        // rollback, cmd2 gets executed, then it is detected that cmd1 cannot 
+        // reexecute and the command will thus become quarantined.
+        C_Move cmd2 = CreateConflictingCommandServer();
+        cmdHistory.addAccepted(cmd2, state);     
+        
+        // then another command from the server arrives. It will resolve the
+        // conflict; the quarantined command will become executable
+        // because the resolve command is the inverse of the conflicting command,
+        // the effect is that the game situation will become the initial situation
+        // (quarantined commands are not retried).
+        C_Move cmd3 = CreateResolvingCommandServer();
+        cmdHistory.addAccepted(cmd3, state);
+        
+        assertTrue(cs_p1special.getHighestCard().equalsNotation("8♠"));  // the card is put back now
+        assertTrue(cs_p2laydown1.cards.isEmpty());                       // 8♠ just got taken
+        assertTrue(cs_p2special.getHighestCard().equalsNotation("A♣"));  // didn't change
+        assertTrue(cs_p1laydown1.cards.isEmpty());                       // didn't change
+
+        // now a C_Accept command arrives from the server. Our quarantined command will 
+        // thus be reexecuted.
+        cmdHistory.accept(cmd1.id, state);
+        
+        assertTrue(cs_p2special.getHighestCard().equalsNotation("8♠"));  // A♣ was taken
+        assertTrue(cs_p1laydown1.getHighestCard().equalsNotation("A♣")); // A♣ was added
+        
+        assertEquals(2, cmdHistory.getAcceptedIndex());
+        assertEquals(2, cmdHistory.getCurrentIndex());
+        assertEquals(2, cmdHistory.getLastIndex());
+        assertEquals(3, cmdHistory.getSize());
+        
+        CommandExecution cmdExec0 = cmdHistory.getCommandExecution(0);
+        CommandExecution cmdExec1 = cmdHistory.getCommandExecution(1);
+        CommandExecution cmdExec2 = cmdHistory.getCommandExecution(2);
+        
+        assertEquals(cmd2.id, cmdExec0.getCommand().id);
+        assertEquals(cmd3.id, cmdExec1.getCommand().id);
+        assertEquals(cmd1.id, cmdExec2.getCommand().id);
+        
+        assertEquals(CommandExecutionState.Accepted, cmdExec0.getExecutionState());
+        assertEquals(CommandExecutionState.Accepted, cmdExec1.getExecutionState());
+        assertEquals(CommandExecutionState.Accepted, cmdExec2.getExecutionState());
     }
-    
+        
     private C_SolShowMove CreateNextMoveCommand()
     {
         Card card = cs_p1depot.getHighestCard();
         C_SolShowMove cmd = new C_SolShowMove(cs_p1depot.id, cs_p1turnover.id, card.id);
+        cmd.setSourceId(player1.id);
+        return cmd;
+    }
+    
+    /**
+     * Creates a client command that will be put into quarantine when a conflicting server 
+     * command is injected.
+     * @return
+     */
+    private C_SolShowMove CreateConflictingCommandClient()
+    { 
+        Card c_p2 = cs_p2special.getHighestCard();
+        C_SolShowMove cmd = new C_SolShowMove(cs_p2special.id, cs_p1laydown1.id, c_p2.id);
+        cmd.setSourceId(player2.id);
+        return cmd;
+    }
+    
+    /**
+     * Create a server command that will be injected. A conflicting client command will 
+     * be put into quarantine.
+     * @return
+     */
+    private C_Move CreateConflictingCommandServer()
+    {
+        Card c_p1 = cs_p1special.getHighestCard();
+        C_Move cmd = new C_Move(cs_p1special.id, cs_p1laydown1.id, c_p1.id);
+        cmd.setSourceId(player1.id);
+        return cmd;
+    }
+    
+    /**
+     * Create a server command that will be injected, and that modifies the state of the card game in
+     * such a manner that a quarantined client command will now become executable. The client 
+     * command should not be executed automatically, but when the Accept from the server arrives.
+     * <p>This command is infact the inverse of CreateConflictingCommandServer, it moves the
+     * card back to its original stack.
+     */
+    private C_Move CreateResolvingCommandServer()
+    {        
+        Card c_p1 = cs_p1laydown1.getHighestCard();
+        C_Move cmd = new C_Move(cs_p1laydown1.id, cs_p1special.id, c_p1.id);
+        
+        cmd.setSourceId(player1.id);
+        return cmd;
+    }
+    
+    /**
+     * Create a server command that will be injected. A conflicting client command will 
+     * be put into quarantine.
+     * @return
+     */
+    private C_Move CreateCommandServer()
+    {
+        Card c_p1 = cs_p1special.getHighestCard();
+        C_Move cmd = new C_Move(cs_p1special.id, cs_p2laydown1.id, c_p1.id);
         cmd.setSourceId(player1.id);
         return cmd;
     }

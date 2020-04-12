@@ -17,7 +17,7 @@ public abstract class EntityBase
     {
         this.id = pl.id;
     }
-
+    
     @Override
     public final boolean equals(Object obj)
     {
