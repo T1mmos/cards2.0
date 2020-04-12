@@ -10,16 +10,16 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import gent.timdemey.cards.model.entities.cards.CardStack;
-import gent.timdemey.cards.test.common.TestUtils;
+import gent.timdemey.cards.test.common.TestBase;
 import gent.timdemey.cards.test.helpers.CardStackHelper;
 
-public class UtilsUnitTest
+public class UtilsUnitTest extends TestBase
 {
     @BeforeClass
     public static void init()
     {
-        TestUtils.installMockCardPlugin();
-        TestUtils.installMockContextService();
+        installMockCardPlugin();
+        installMockContextService();
     }
 
     /**

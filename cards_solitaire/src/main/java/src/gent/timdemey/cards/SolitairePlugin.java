@@ -9,34 +9,39 @@ import gent.timdemey.cards.services.commands.SolitaireCommandService;
 import gent.timdemey.cards.services.gamepanel.SolitaireGamePanelManager;
 import gent.timdemey.cards.services.position.SolitairePositionManager;
 
-public class SolitairePlugin implements ICardPlugin {
+public class SolitairePlugin implements ICardPlugin
+{
 
     @Override
-    public void installServices() {
-        Services.install(ICommandService.class, new SolitaireCommandService());
-        Services.install(IPositionManager.class, new SolitairePositionManager());
-        Services.install(ICardGameCreationService.class, new SolitaireCardGameCreationService());
-        Services.install(IGamePanelManager.class, new SolitaireGamePanelManager());
+    public void installServices()
+    {
+        App.services.install(ICommandService.class, new SolitaireCommandService());
+        App.services.install(IPositionManager.class, new SolitairePositionManager());
+        App.services.install(ICardGameCreationService.class, new SolitaireCardGameCreationService());
+        App.services.install(IGamePanelManager.class, new SolitaireGamePanelManager());
     }
 
     @Override
-    public String getName() {
+    public String getName()
+    {
         return "Solitaire";
     }
 
     @Override
-    public int getMajorVersion() {
+    public int getMajorVersion()
+    {
         return 0;
     }
 
     @Override
-    public int getMinorVersion() {
+    public int getMinorVersion()
+    {
         return 6;
     }
 
     @Override
-    public int getPlayerCount() {
-        // TODO Auto-generated method stub
+    public int getPlayerCount()
+    {
         return 1;
     }
 }

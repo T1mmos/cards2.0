@@ -9,20 +9,19 @@ import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.services.boot.SolShowCardStackType;
-import gent.timdemey.cards.test.common.SolShowTestUtils;
-import gent.timdemey.cards.test.common.TestUtils;
+import gent.timdemey.cards.test.common.SolShowTestBase;
 import gent.timdemey.cards.test.helpers.CardGameHelper;
 import gent.timdemey.cards.test.helpers.PlayerHelper;
 import gent.timdemey.cards.test.helpers.SolShowCardGameHelper;
 import gent.timdemey.cards.test.helpers.SolShowTestIds;
 
-public class SolShowCardGameHelperUnitTest
+public class SolShowCardGameHelperUnitTest extends SolShowTestBase
 {
     @BeforeClass
     public static void init()
     {
-        SolShowTestUtils.installSolShowCardPlugin();
-        TestUtils.installMockContextService();     
+        installSolShowCardPlugin();
+        installMockContextService();     
     }
     
     ///

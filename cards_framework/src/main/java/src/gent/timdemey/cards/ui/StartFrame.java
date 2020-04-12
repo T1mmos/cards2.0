@@ -20,6 +20,7 @@ import javax.swing.WindowConstants;
 import com.alee.laf.WebLookAndFeel;
 import com.google.common.base.Preconditions;
 
+import gent.timdemey.cards.App;
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
@@ -60,12 +61,12 @@ public class StartFrame
         if (!Services.isInstalled(IDialogService.class))
         {
             IDialogService dialogService = new DialogService(frame);
-            Services.install(IDialogService.class, dialogService);
+            App.services.install(IDialogService.class, dialogService);
         }
         if (!Services.isInstalled(IActionService.class))
         {
             IActionService actionService = new ActionService();
-            Services.install(IActionService.class, actionService);
+            App.services.install(IActionService.class, actionService);
         }
     }
 

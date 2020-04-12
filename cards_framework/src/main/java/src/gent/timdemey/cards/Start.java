@@ -70,10 +70,10 @@ public class Start
     private static void installBaseServices()
     {
         ILogManager logMan = new LogManager();
-        Services.install(ILogManager.class, logMan);
+        App.services.install(ILogManager.class, logMan);
 
         IResourceManager resMan = new ResourceManager();
-        Services.install(IResourceManager.class, resMan);
+        App.services.install(IResourceManager.class, resMan);
     }
 
     private static void installServices()
@@ -81,43 +81,44 @@ public class Start
         if (!Services.isInstalled(IConfigManager.class))
         {
             IConfigManager configManager = new ConfigManager();
-            Services.install(IConfigManager.class, configManager);
+            App.services.install(IConfigManager.class, configManager);
         }
         if (!Services.isInstalled(IScalableImageManager.class))
         {
             IScalableImageManager scaleImgMan = new ScalableImageManager();
-            Services.install(IScalableImageManager.class, scaleImgMan);
+            App.services.install(IScalableImageManager.class, scaleImgMan);
         }
         if (!Services.isInstalled(IGamePanelManager.class))
         {
             IGamePanelManager gamePanelMan = new GamePanelManager();
-            Services.install(IGamePanelManager.class, gamePanelMan);
+            App.services.install(IGamePanelManager.class, gamePanelMan);
         }
         if (!Services.isInstalled(IImageService.class))
         {
             IImageService imageService = new ImageService();
-            Services.install(IImageService.class, imageService);
+            App.services.install(IImageService.class, imageService);
         }
         if (!Services.isInstalled(ISoundManager.class))
         {
             ISoundManager sndMan = new SoundManager();
-            Services.install(ISoundManager.class, sndMan);
+            App.services.install(ISoundManager.class, sndMan);
         }
         if (!Services.isInstalled(IContextService.class))
         {
             IContextService ctxtProv = new ContextService();
-            Services.install(IContextService.class, ctxtProv);
+            App.services.install(IContextService.class, ctxtProv);
         } 
         if (!Services.isInstalled(ISerializationService.class))
         {
             ISerializationService serServ = new SerializationService();
-            Services.install(ISerializationService.class, serServ);
+            App.services.install(ISerializationService.class, serServ);
         } 
     }
 
     public static void main(String[] args)
     {
         SwingUtilities.invokeLater(() -> {
+            App.services = new Services();
             Start.installBaseServices();
             Loc.setLocale(Loc.AVAILABLE_LOCALES[0]);
 
@@ -129,7 +130,7 @@ public class Start
                 return;
             }
 
-            Services.install(ICardPlugin.class, plugin);
+            App.services.install(ICardPlugin.class, plugin);
             plugin.installServices();
 
             Start.installServices();

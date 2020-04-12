@@ -74,29 +74,34 @@ public final class Services
         }
 
     }
-
-    private Services()
-    {
-    }
-
+    
     // accessing from multiple threads should be thread safe, as all
     // services are installed from the EDT, and other threads are spawned
     // only after all writes are done. This is the "Thread start rule"
     // in happens-before.
-    private static Map<EntryKey, Object> serviceMap = new HashMap<>();
+    private final Map<EntryKey, Object> serviceMap = new HashMap<>();
 
+    public Services()
+    {
+    }
+
+    private static Services get()
+    {
+        return App.services;
+    }
+    
     public static boolean isInstalled(Class<?> iface)
     {
         EntryKey entryKey = new EntryKey(iface, null);
-        return serviceMap.containsKey(entryKey);
+        return get().serviceMap.containsKey(entryKey);
     }
 
-    public static <T> void install(Class<T> iface, T implementation)
+    public <T> void install(Class<T> iface, T implementation)
     {
         install(iface, null, implementation);
     }
 
-    public static <T> void install(Class<T> iface, Object param, T implementation)
+    public <T> void install(Class<T> iface, Object param, T implementation)
     {
         if (iface == null)
         {
@@ -127,7 +132,7 @@ public final class Services
     {
         EntryKey entryKey = new EntryKey(iface, param);
 
-        T value = (T) serviceMap.get(entryKey);
+        T value = (T) get().serviceMap.get(entryKey);
         if (value == null)
         {
             throw new UnavailableServiceException(iface, param);

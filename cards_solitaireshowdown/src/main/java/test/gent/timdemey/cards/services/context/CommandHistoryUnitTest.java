@@ -3,15 +3,12 @@ package gent.timdemey.cards.services.context;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.SolShowPlugin;
 import gent.timdemey.cards.model.commands.C_SolShowMove;
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardGame;
@@ -21,25 +18,19 @@ import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.test.common.SolShowTestUtils;
-import gent.timdemey.cards.test.common.TestUtils;
+import gent.timdemey.cards.test.common.SolShowTestBase;
 import gent.timdemey.cards.test.helpers.PlayerHelper;
 import gent.timdemey.cards.test.helpers.ServerHelper;
 import gent.timdemey.cards.test.helpers.SolShowCardGameHelper;
 import gent.timdemey.cards.test.helpers.SolShowTestIds;
 
-public class CommandHistoryUnitTest
+public class CommandHistoryUnitTest extends SolShowTestBase
 {
     @BeforeClass
-    public static void init()
+    public static void InitCommandHistoryUnitTest()
     { 
-        SolShowTestUtils.installSolShowCardPlugin();
-        TestUtils.installMockContextService();     
-        
-    /*    MockContextService mockCtxtServ = new MockContextService();                
-        mockCtxtServ.initialize(ContextType.UI);
-        mockCtxtServ.initialize(ContextType.Client);        
-        Services.install(IContextService.class, mockCtxtServ);*/
+        installSolShowCardPlugin();
+        installMockContextService();     
     }
 
     private IContextService ctxtServ;
