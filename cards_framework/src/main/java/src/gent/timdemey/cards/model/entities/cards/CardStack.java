@@ -111,9 +111,10 @@ public class CardStack extends EntityBase
 
     @Override
     public String toDebugString()
-    {
+    {        
         return Debug.getKeyValue("cardStackType", cardStackType) + 
                Debug.getKeyValue("typeNumber", typeNumber) + 
-               Debug.getKeyValue("cardsCount", getCards().size());
+               Debug.getKeyValue("cardsCount", getCards().size()) +
+               Debug.listEntity("cards", getCards());
     }
 }

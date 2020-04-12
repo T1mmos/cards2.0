@@ -15,7 +15,7 @@ public class PlayerConfigurationEquality implements IEquality<PlayerConfiguratio
         new EntityEquality().checkEquality(x1, x2);
         
         assertEquals(x1.playerId, x2.playerId);
-        TestUtils.AssertAreEqual(x1.cardStacks, x2.cardStacks, new CardStackEquality());
+        TestUtils.assertAreEqual(x1.cardStacks, x2.cardStacks, new CardStackEquality());
     }
 
 }

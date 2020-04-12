@@ -41,7 +41,6 @@ public class Card extends EntityBase
     @Override
     public String toDebugString()
     {
-        return Debug.getKeyValue("value", value) + 
-               Debug.getKeyValue("suit", suit);
+        return value.getTextual() + suit.getTextual();
     }
 }

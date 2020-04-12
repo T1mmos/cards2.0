@@ -12,7 +12,7 @@ public class CardGameEquality implements IEquality<CardGame>
     {
         new EntityEquality().checkEquality(x1, x2);
         
-        TestUtils.AssertAreEqual(x1.playerConfigurations, x2.playerConfigurations, new PlayerConfigurationEquality());        
+        TestUtils.assertAreEqual(x1.playerConfigurations, x2.playerConfigurations, new PlayerConfigurationEquality());        
     }
 
 }

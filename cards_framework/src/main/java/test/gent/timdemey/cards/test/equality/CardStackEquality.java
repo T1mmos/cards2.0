@@ -16,7 +16,7 @@ public class CardStackEquality implements IEquality<CardStack>
         
         assertEquals(x1.cardStackType, x2.cardStackType);
         assertEquals(x1.typeNumber, x2.typeNumber);        
-        TestUtils.AssertAreEqual(x1.cards, x2.cards, new CardEquality());
+        TestUtils.assertAreEqual(x1.cards, x2.cards, new CardEquality());
     }
 
 }

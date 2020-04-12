@@ -5,11 +5,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import gent.timdemey.cards.model.entities.cards.CardStack;
+import gent.timdemey.cards.test.common.TestUtils;
+import gent.timdemey.cards.test.helpers.CardStackHelper;
+
 public class UtilsUnitTest
 {
+    @BeforeClass
+    public static void init()
+    {
+        TestUtils.installMockCardPlugin();
+        TestUtils.installMockContextService();
+    }
 
     /**
      * Prints a new int[][]{ ... } array. The output can be used to
@@ -36,4 +47,10 @@ public class UtilsUnitTest
         System.out.println(full);
     }
 
+    @Test
+    public void printCardStack ()
+    {
+        CardStack cs = CardStackHelper.createCardStack();
+        System.out.println(cs.toString());
+    }
 }

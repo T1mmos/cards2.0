@@ -5,16 +5,12 @@ import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import gent.timdemey.cards.ICardPlugin;
-import gent.timdemey.cards.Services;
-import gent.timdemey.cards.SolShowPlugin;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.game.Player;
-import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.boot.SolShowCardStackType;
-import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.context.MockContextService;
+import gent.timdemey.cards.test.common.SolShowTestUtils;
+import gent.timdemey.cards.test.common.TestUtils;
 import gent.timdemey.cards.test.helpers.CardGameHelper;
 import gent.timdemey.cards.test.helpers.PlayerHelper;
 import gent.timdemey.cards.test.helpers.SolShowCardGameHelper;
@@ -25,12 +21,8 @@ public class SolShowCardGameHelperUnitTest
     @BeforeClass
     public static void init()
     {
-        Services.install(ICardPlugin.class, new SolShowPlugin());
-        
-        MockContextService ctxtService = new MockContextService();
-        
-        ctxtService.initialize(ContextType.UI);
-        Services.install(IContextService.class, ctxtService);        
+        SolShowTestUtils.installSolShowCardPlugin();
+        TestUtils.installMockContextService();     
     }
     
     @Test
