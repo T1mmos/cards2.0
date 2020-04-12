@@ -2,9 +2,11 @@ package gent.timdemey.cards.model.state;
 
 import java.util.UUID;
 
+import gent.timdemey.cards.utils.Debug;
+
 public final class StateValueRef<X> extends StateRef<X>
 {
-    private X x;
+    private X value;
 
     public StateValueRef(Property<X> property, UUID entityId)
     {
@@ -14,19 +16,25 @@ public final class StateValueRef<X> extends StateRef<X>
     public StateValueRef(Property<X> property, UUID entityId, X initialValue)
     {
         super(property, entityId);
-        this.x = initialValue;
+        this.value = initialValue;
     }
 
     public void set(X x)
     {
         // update the delta
-        getChangeTracker().recordRefSet(this, this.x, x);
+        getChangeTracker().recordRefSet(this, this.value, x);
 
-        this.x = x;
+        this.value = x;
     }
 
     public X get()
     {
-        return x;
+        return value;
+    }
+    
+    @Override
+    protected String toDebugString()
+    {
+        return Debug.getKeyValue("value", value);
     }
 }

@@ -91,7 +91,7 @@ public class CommandHistory extends EntityBase
     {
         int stopIdx = forwards ? getLastIndex() + 1: -1;
         int incr = forwards ? 1 : -1;
-        for (int i = getCurrentIndex(); i != stopIdx; i += incr)
+        for (int i = getLastIndex(); i != stopIdx; i += incr)
         {
             CommandExecution cmdExecution = execLine.get(i);
             
@@ -175,10 +175,23 @@ public class CommandHistory extends EntityBase
     
     public void undo (UUID chainStart, State state)
     {
-        int chainStartIdx = indexOf(chainStart, false);        
-        List<CommandExecution> list = execLine.subList(chainStartIdx, getCurrentIndex() + 1);
+        int chainStartIdx = indexOf(chainStart, false);
         
-        undo(list, state);
+        // assumumption chainStartIdx <= getCurrentIndex() + 1.
+        // even if there are multiple Quarantined commands, the server should always reject
+        // commands in-order, so only the first quarantined command in the execution line
+        // will be rejected (or in case of redo). Therefore, we allow the case 
+        // chainStartIdx == getCurrentIndex() + 1, which will result in an empty list of
+        // commands to undo.
+        if (chainStartIdx > getCurrentIndex() + 1)
+        {
+            throw new IllegalStateException("Didn't expect to undo commands beyond the current index pointer, as all of these commands "
+                + "are already unexecuted!");
+        }
+        
+        List<CommandExecution> toUndo = execLine.subList(chainStartIdx, getCurrentIndex() + 1);
+        
+        undo(toUndo, state);
     }
     
     private void undo (List<CommandExecution> list, State state)
@@ -199,16 +212,16 @@ public class CommandHistory extends EntityBase
             {
                 nextState = CommandExecutionState.UnexecutedAwaitingConfirmation;
             }
-            else if (execState == CommandExecutionState.Quarantained)
+            else if (execState == CommandExecutionState.Quarantined)
             {
-                nextState = CommandExecutionState.Quarantained;
+                nextState = CommandExecutionState.Quarantined;
             }
             else
             {
                 throw new IllegalStateException("Cannot undo a CommandExecution in state " + execState);
             }
             
-            if (execState != CommandExecutionState.Quarantained)
+            if (execState != CommandExecutionState.Quarantined)
             {
                 if (!command.canUndo(state))
                 {
@@ -224,7 +237,6 @@ public class CommandHistory extends EntityBase
             cmdExecution.setExecutionState(nextState);
             setCurrentIndex(getCurrentIndex() - 1);
         }
-       
     }
     
     /**
@@ -336,20 +348,20 @@ public class CommandHistory extends EntityBase
                 if (!canExecute) 
                 {
                     // UnexecutedAwaitingConfirmation
-                    // in this case the command goes in quarantaine as we cannot exclude the rare case where the command
+                    // in this case the command goes in quarantine as we cannot exclude the rare case where the command
                     // will still be accepted by the server, e.g. this can happen when yet another command needs to be inserted 
-                    // before the quarantained one, which would re-enable the command's execution.
+                    // before the quarantined one, which would re-enable the command's execution.
                     fails.add(cmdExecution);
-                    nextState = CommandExecutionState.Quarantained; 
+                    nextState = CommandExecutionState.Quarantined; 
                 }
                 else
                 {
                     nextState = CommandExecutionState.AwaitingConfirmation;
                 }
             }
-            else if (execState == CommandExecutionState.Quarantained)
+            else if (execState == CommandExecutionState.Quarantined)
             {
-                nextState = CommandExecutionState.Quarantained;
+                nextState = CommandExecutionState.Quarantined;
             }
             else
             {
@@ -357,13 +369,13 @@ public class CommandHistory extends EntityBase
             }
            
             cmdExecution.setExecutionState(nextState);
-            if (execState != CommandExecutionState.Quarantained && canExecute)
+            if (execState != CommandExecutionState.Quarantined && canExecute)
             {
                 command.execute(state);
             }
         }
        
-        execLine.removeAll(fails);
+       // execLine.removeAll(fails);
         
         int execCount = count - fails.size();
         setCurrentIndex(getCurrentIndex() + execCount);
@@ -445,12 +457,6 @@ public class CommandHistory extends EntityBase
     {
         if (!removable)
         {
-            return false;
-        }
-        if (getCurrentIndex() != getLastIndex())
-        {
-            // currently we do not support rejecting if there are unexecuted commands, because we would 
-            // need to check all these commands too after erasing the command.
             return false;
         }
         
@@ -574,19 +580,19 @@ public class CommandHistory extends EntityBase
         CommandExecution cmdExecution = execLine.get(currAcptIdx + 1);
         CommandExecutionState execState = cmdExecution.getExecutionState();
         CommandBase cmd = cmdExecution.getCommand();
-        if (execState != CommandExecutionState.AwaitingConfirmation && execState != CommandExecutionState.Quarantained)
+        if (execState != CommandExecutionState.AwaitingConfirmation && execState != CommandExecutionState.Quarantined)
         {
             String msg = "This commandId cannot be accepted because its current ExecutionState is %s: %s";
             String formatted = String.format(msg, execState, commandId);
             throw new IllegalStateException(formatted);
         }
         
-        if (execState == CommandExecutionState.Quarantained)
+        if (execState == CommandExecutionState.Quarantined)
         {
-            // a quarantained command is unexecuted. as it is accepted, it must be redoable
+            // a quarantined command is unexecuted. as it is accepted, it must be redoable
             if (!cmd.canExecute(state))
             {
-                throw new IllegalStateException("A Quarantained command that gets accepted must be reexecutable, but it isn't: " + cmd.getClass().getSimpleName());
+                throw new IllegalStateException("A Quarantined command that gets accepted must be reexecutable, but it isn't: " + cmd.getClass().getSimpleName());
             }
             
             cmd.execute(state);
@@ -604,5 +610,10 @@ public class CommandHistory extends EntityBase
                Debug.getKeyValue("AcceptedIdx", acceptedIdxRef.get()) + 
                Debug.getKeyValue("LastIndex", getLastIndex()) +
                Debug.getKeyValue("Size", execLine.size());
+    }
+
+    public CommandExecution getCommandExecution(int i)
+    {
+        return execLine.get(i);
     }
 }

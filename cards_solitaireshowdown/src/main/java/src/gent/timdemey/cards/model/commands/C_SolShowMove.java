@@ -19,7 +19,6 @@ import gent.timdemey.cards.services.context.ContextType;
 
 public class C_SolShowMove extends C_Move
 {    
-    private List<Card> transferCards;
     private List<Card> flippedTransferCards;
     private boolean depotInvolved;
     private boolean visible;

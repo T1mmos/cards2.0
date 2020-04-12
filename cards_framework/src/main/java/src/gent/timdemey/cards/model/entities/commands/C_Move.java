@@ -1,20 +1,24 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.cards.Card;
+import gent.timdemey.cards.model.entities.cards.CardGame;
+import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.commands.payload.P_Move;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.utils.Debug;
 
-public abstract class C_Move extends CommandBase
+public class C_Move extends CommandBase
 {
     public final UUID srcCardStackId;
     public final UUID dstCardStackId;
     public final UUID cardId;
+    protected List<Card> transferCards;
     
     public C_Move (UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
     {
@@ -32,16 +36,66 @@ public abstract class C_Move extends CommandBase
         this.cardId = pl.cardId;
     }
 
+    /**
+     * Override this method to implement plugin/game specific business rules.
+     * @param dstCardStack
+     * @param srcCards
+     * @return
+     */
+    @Override
+    protected boolean canExecute(Context context, ContextType type, State state)
+    {
+        return true;
+    }
+    
+    /**
+     * Override this method to implement plugin/game specific business rules.
+     * @param dstCardStack
+     * @param srcCards
+     * @return
+     */
+    @Override
+    protected void execute(Context context, ContextType type, State state)
+    {
+        CardGame cardGame = state.getCardGame();
+        CardStack srcCardStack = cardGame.getCardStack(srcCardStackId);
+        CardStack dstCardStack = cardGame.getCardStack(dstCardStackId);
+        
+        if(transferCards == null)
+        {
+            List<Card> cards = srcCardStack.getCards();
+            Card card = srcCardStack.getCards().get(cardId);
+            transferCards = new ArrayList<>(cards.subList(cards.indexOf(card), cards.size()));
+        }
+       
+        srcCardStack.removeAll(transferCards);
+        dstCardStack.addAll(transferCards);
+        transferCards.forEach(card -> card.cardStack = dstCardStack);
+    
+    }
+    
     public final boolean isSyncable()
     {
         return true;  
     }
     
     @Override
-    protected abstract void undo(Context context, ContextType type, State state);
+    protected void undo(Context context, ContextType type, State state)
+    {
+        CardGame cardGame = state.getCardGame();
+        CardStack srcCardStack = cardGame.getCardStacks().get(srcCardStackId);
+        CardStack dstCardStack = cardGame.getCardStacks().get(dstCardStackId);
+
+        dstCardStack.getCards().removeAll(transferCards);        
+        srcCardStack.addAll(transferCards);
+        transferCards.forEach(card -> card.cardStack = srcCardStack);
+    }
     
     @Override
-    protected abstract boolean canUndo(Context context, ContextType type, State state);
+    protected boolean canUndo(Context context, ContextType type, State state)
+    {
+        return true;
+    }
     
     @Override
     public String toDebugString()
