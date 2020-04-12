@@ -25,6 +25,7 @@ public class SolShowCardGameHelperUnitTest
         TestUtils.installMockContextService();     
     }
     
+    ///
     @Test
     public void checkFixedGame()
     {
@@ -52,6 +53,19 @@ public class SolShowCardGameHelperUnitTest
             assertEquals(SolShowTestIds.P2_LAYDOWN1, cs.id);
             
             cg1.playerConfigurations.get(1).cardStacks.contains(cs);
+        }
+    }
+    
+    @Test
+    public void printFixedGame()
+    {
+        Player player1 = PlayerHelper.getFixedPlayer(0);
+        Player player2 = PlayerHelper.getFixedPlayer(1);
+        CardGame cg = SolShowCardGameHelper.createFixedSolShowCardGame(player1, player2);
+        
+        for (CardStack cs : cg.getCardStacks())
+        {
+            System.out.println(cs);
         }
     }
 }

@@ -15,7 +15,7 @@ public class Debug
     
     public static String listString(String key, List<String> list)
     {
-        String listStr = String.join(",", list);
+        String listStr = "[" + String.join(",", list) + "]";
         return getKeyValue(key, listStr);
     }
     
