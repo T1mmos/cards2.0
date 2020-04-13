@@ -4,6 +4,7 @@ import gent.timdemey.cards.model.entities.cards.payload.P_Card;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.state.Property;
 import gent.timdemey.cards.model.state.StateValueRef;
+import gent.timdemey.cards.utils.Debug;
 
 public class Card extends EntityBase
 {
@@ -68,6 +69,6 @@ public class Card extends EntityBase
     @Override
     public String toDebugString()
     {
-        return value.getTextual() + suit.getTextual();
+        return Debug.getKeyValue("shortNotation", value.getTextual() + suit.getTextual());
     }
 }

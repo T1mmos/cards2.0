@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.commands.C_Pull;
+import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.boot.SolitaireCardStackType;
 
 public class C_SolPull extends C_Pull
@@ -18,7 +19,7 @@ public class C_SolPull extends C_Pull
     }
     
     @Override
-    protected boolean canPull(CardStack srcCardStack, Card srcCard)
+    protected boolean canPull(CardStack srcCardStack, Card srcCard, State state)
     {
         String srcType = srcCardStack.cardStackType;
         List<Card> cards = srcCardStack.getCards();        

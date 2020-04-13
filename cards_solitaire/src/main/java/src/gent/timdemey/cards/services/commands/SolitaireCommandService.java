@@ -16,25 +16,25 @@ import gent.timdemey.cards.services.ICommandService;
 public class SolitaireCommandService implements ICommandService
 {
     @Override
-    public C_Move getMoveCommand(UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
+    public C_Move getMoveCommand(UUID playerId, UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
     {
         return new C_SolMove(srcCardStackId, dstCardStackId, cardId);
     }
     
     @Override
-    public C_Use getUseCommand(UUID srcCardStackId, UUID srcCardId)
+    public C_Use getUseCommand(UUID playerId, UUID srcCardStackId, UUID srcCardId)
     {
         return new C_SolUse(srcCardStackId, srcCardId);
     }
 
     @Override
-    public C_Pull getPullCommand(UUID srcCardStackId, UUID cardId)
+    public C_Pull getPullCommand(UUID playerId, UUID srcCardStackId, UUID cardId)
     {
         return new C_SolPull(srcCardStackId, cardId);
     }
 
     @Override
-    public C_Push getPushCommand(UUID dstCardStackId, List<UUID> srcCardIds)
+    public C_Push getPushCommand(UUID playerId, UUID dstCardStackId, List<UUID> srcCardIds)
     {
         return new C_SolPush(dstCardStackId, srcCardIds);
     }

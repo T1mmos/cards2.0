@@ -7,6 +7,7 @@ import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.cards.Value;
 import gent.timdemey.cards.model.entities.commands.C_Push;
+import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.boot.SolitaireCardStackType;
 
 public class C_SolPush extends C_Push
@@ -17,7 +18,7 @@ public class C_SolPush extends C_Push
     }
 
     @Override
-    protected boolean canPush(CardStack dstCardStack, List<Card> srcCards)
+    protected boolean canPush(CardStack dstCardStack, List<Card> srcCards, State state)
     {
         String dstType = dstCardStack.cardStackType;
 

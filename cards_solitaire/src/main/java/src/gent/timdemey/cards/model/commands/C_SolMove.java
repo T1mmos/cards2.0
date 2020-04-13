@@ -98,12 +98,14 @@ public class C_SolMove extends C_Move
             // cards become visible
             for (Card card : transferCards)
             {
+                card.cardStack = dstCardStack;
                 card.visibleRef.set(visible);
             }
         }
         else
         {
             dstCardStack.addAll(transferCards);
+            transferCards.forEach(card -> card.cardStack = dstCardStack);
         }
     }
 
