@@ -46,23 +46,23 @@ public class ActionService implements IActionService
     {
         switch (id)
         {
-        case AAction.ACTION_UNDO:
+        case Actions.ACTION_UNDO:
             return canExecute(new C_Undo());
-        case AAction.ACTION_REDO:
+        case Actions.ACTION_REDO:
             return canExecute(new C_Redo());
-        case AAction.ACTION_CREATE:
+        case Actions.ACTION_CREATE:
             return canExecute(new D_CreateGame());
-        case AAction.ACTION_START:
+        case Actions.ACTION_START:
             return true;
-        case AAction.ACTION_STOP:
+        case Actions.ACTION_STOP:
             return canExecute(new C_StopGame());
-        case AAction.ACTION_QUIT:
+        case Actions.ACTION_QUIT:
             return true;
-        case AAction.ACTION_DEBUG:
+        case Actions.ACTION_DEBUG:
             return true;
-        case AAction.ACTION_JOIN:
+        case Actions.ACTION_JOIN:
             return canExecute(new D_JoinGame());
-        case AAction.ACTION_LEAVE:
+        case Actions.ACTION_LEAVE:
             return canExecute(new C_LeaveGame());
         default:
             throw new UnsupportedOperationException("No such action id: " + id);
@@ -74,19 +74,19 @@ public class ActionService implements IActionService
     {
         switch (id)
         {
-        case AAction.ACTION_UNDO:
+        case Actions.ACTION_UNDO:
             execute(new C_Undo());
             break;
-        case AAction.ACTION_REDO:
+        case Actions.ACTION_REDO:
             execute(new C_Redo());
             break;
-        case AAction.ACTION_CREATE:
+        case Actions.ACTION_CREATE:
             execute(new D_CreateGame());
             break;
-        case AAction.ACTION_JOIN:
+        case Actions.ACTION_JOIN:
             execute(new D_JoinGame());
             break;
-        case AAction.ACTION_START:
+        case Actions.ACTION_START:
             ICardGameCreationService creator = Services.get(ICardGameCreationService.class);
             List<List<Card>> cards = creator.getCards();
             
@@ -103,13 +103,13 @@ public class ActionService implements IActionService
             C_StartGame command = new C_StartGame(cardGame);            
             contextServ.getContext(ContextType.UI).schedule(command);
             break;
-        case AAction.ACTION_STOP:
+        case Actions.ACTION_STOP:
             execute(new C_StopGame());
             break;
-        case AAction.ACTION_QUIT:
+        case Actions.ACTION_QUIT:
             System.exit(0);
             break;
-        case AAction.ACTION_DEBUG:
+        case Actions.ACTION_DEBUG:
             IGamePanelManager manager = Services.get(IGamePanelManager.class);
             manager.setDrawDebug(!manager.getDrawDebug());
             break;

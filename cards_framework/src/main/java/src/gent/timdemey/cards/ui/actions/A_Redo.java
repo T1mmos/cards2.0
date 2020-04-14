@@ -5,28 +5,31 @@ import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
-import gent.timdemey.cards.readonlymodel.ReadOnlyState;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCommandHistory;
+import gent.timdemey.cards.readonlymodel.ReadOnlyProperty;
 import gent.timdemey.cards.services.IContextService;
 
-public class ActionStopGame extends AAction
+public class A_Redo extends ActionBase
 {
-    private class GameStopListener implements IStateListener
+    private class RedoListener implements IStateListener
     {
 
         @Override
         public void onChange(ReadOnlyChange change)
         {
-            if (change.property == ReadOnlyState.CardGame)
+            ReadOnlyProperty<?> property = change.property;
+
+            if (property == ReadOnlyCommandHistory.CurrentIndex)
             {
                 checkEnabled();
             }
         }
     }
 
-    public ActionStopGame()
+    public A_Redo()
     {
-        super(AAction.ACTION_STOP, Loc.get(LocKey.Menu_stopgame));
-        Services.get(IContextService.class).getThreadContext().addStateListener(new GameStopListener());
+        super(Actions.ACTION_REDO, Loc.get(LocKey.Menu_redo));
+        Services.get(IContextService.class).getThreadContext().addStateListener(new RedoListener());
         checkEnabled();
     }
 }

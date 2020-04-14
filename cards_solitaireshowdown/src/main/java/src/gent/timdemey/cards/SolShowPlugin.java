@@ -10,8 +10,6 @@ import gent.timdemey.cards.services.commands.SolShowCommandService;
 import gent.timdemey.cards.services.gamepanel.SolShowGamePanelManager;
 import gent.timdemey.cards.services.position.SolShowPositionManager;
 import gent.timdemey.cards.services.serialization.SolShowSerializationService;
-import gent.timdemey.cards.ui.actions.IActionService;
-import gent.timdemey.cards.ui.actions.SolShowActionService;
 
 public class SolShowPlugin implements ICardPlugin
 {
@@ -22,7 +20,6 @@ public class SolShowPlugin implements ICardPlugin
         App.services.install(IPositionManager.class, new SolShowPositionManager());
         App.services.install(ICardGameCreationService.class, new SolShowCardGameCreationService());
         App.services.install(IGamePanelManager.class, new SolShowGamePanelManager());
-        App.services.install(IActionService.class, new SolShowActionService());
         App.services.install(ISerializationService.class, new SolShowSerializationService());
     }
 

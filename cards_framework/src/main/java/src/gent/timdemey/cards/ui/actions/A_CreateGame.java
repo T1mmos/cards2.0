@@ -9,11 +9,11 @@ import gent.timdemey.cards.localization.LocKey;
  * @author Timmos
  *
  */
-public class ActionCreateGame extends AAction
+public class A_CreateGame extends ActionBase
 {
 
-    public ActionCreateGame()
+    public A_CreateGame()
     {
-        super(AAction.ACTION_CREATE, Loc.get(LocKey.Menu_creategame));
+        super(Actions.ACTION_CREATE, Loc.get(LocKey.Menu_creategame));
     }
 }

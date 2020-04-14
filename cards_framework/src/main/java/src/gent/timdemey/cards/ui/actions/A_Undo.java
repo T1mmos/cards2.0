@@ -6,30 +6,30 @@ import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCommandHistory;
-import gent.timdemey.cards.readonlymodel.ReadOnlyProperty;
 import gent.timdemey.cards.services.IContextService;
 
-public class ActionRedo extends AAction
+public class A_Undo extends ActionBase
 {
-    private class RedoListener implements IStateListener
+
+    private class UndoListener implements IStateListener
     {
 
         @Override
         public void onChange(ReadOnlyChange change)
         {
-            ReadOnlyProperty<?> property = change.property;
-
-            if (property == ReadOnlyCommandHistory.CurrentIndex)
+            if (change.property == ReadOnlyCommandHistory.CurrentIndex)
             {
                 checkEnabled();
             }
         }
     }
 
-    public ActionRedo()
+    public A_Undo()
     {
-        super(ACTION_REDO, Loc.get(LocKey.Menu_redo));
-        Services.get(IContextService.class).getThreadContext().addStateListener(new RedoListener());
+        super(Actions.ACTION_UNDO, Loc.get(LocKey.Menu_undo));
+        checkEnabled();
+        
+        Services.get(IContextService.class).getThreadContext().addStateListener(new UndoListener());
         checkEnabled();
     }
 }

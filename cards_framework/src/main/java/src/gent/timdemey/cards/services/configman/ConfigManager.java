@@ -11,7 +11,7 @@ public class ConfigManager implements IConfigManager
         // dummy implementation for now
         if (key.getStringKey() == ConfigStringKey.Debug)
         {
-            return (T) Boolean.TRUE;
+            return (T) Boolean.FALSE;
         }
         return key.getDefaultValue();
     }

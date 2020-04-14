@@ -8,10 +8,9 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.IContextService;
 
-public class ActionStartGame extends AAction
+public class A_StopGame extends ActionBase
 {
-
-    private class GameStartListener implements IStateListener
+    private class GameStopListener implements IStateListener
     {
 
         @Override
@@ -22,13 +21,12 @@ public class ActionStartGame extends AAction
                 checkEnabled();
             }
         }
-        
     }
 
-    public ActionStartGame()
+    public A_StopGame()
     {
-        super(AAction.ACTION_START, Loc.get(LocKey.Menu_newgame));
-        Services.get(IContextService.class).getThreadContext().addStateListener(new GameStartListener());
+        super(Actions.ACTION_STOP, Loc.get(LocKey.Menu_stopgame));
+        Services.get(IContextService.class).getThreadContext().addStateListener(new GameStopListener());
         checkEnabled();
     }
 }

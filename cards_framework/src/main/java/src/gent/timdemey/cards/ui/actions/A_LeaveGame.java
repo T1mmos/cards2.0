@@ -3,11 +3,12 @@ package gent.timdemey.cards.ui.actions;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 
-public class ActionQuitGame extends AAction
+public class A_LeaveGame extends ActionBase
 {
 
-    public ActionQuitGame()
+    public A_LeaveGame()
     {
-        super(AAction.ACTION_QUIT, Loc.get(LocKey.Menu_quit));
+        super(Actions.ACTION_LEAVE, Loc.get(LocKey.Menu_leave));
     }
+
 }

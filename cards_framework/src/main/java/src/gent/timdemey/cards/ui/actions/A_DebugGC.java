@@ -7,9 +7,9 @@ import javax.swing.AbstractAction;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 
-public class ActionDebugGC extends AbstractAction
+public class A_DebugGC extends AbstractAction
 {
-    public ActionDebugGC()
+    public A_DebugGC()
     {
         super(Loc.get(LocKey.DebugMenu_gc));
     }
