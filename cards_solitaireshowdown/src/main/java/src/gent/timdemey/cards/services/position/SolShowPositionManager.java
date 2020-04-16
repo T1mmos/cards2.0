@@ -111,17 +111,19 @@ public class SolShowPositionManager implements IPositionManager
 
         boolean local = context.getReadOnlyState().isLocalId(cardGame.getPlayerId(card));
 
-        int xMplier = Math.max(0, 3 - cs.getCardCountFrom(card));
+        int shiftLeft = Math.max(0, 3 - cs.getCards().size());
+        int shiftRight = Math.max(0, 3 - cs.getCardCountFrom(card));
+        int shift = shiftRight - shiftLeft;
         if(local)
         {
-            rect.x += gameLayout.act_scoffsetx + (isOffsetX ? xMplier * gameLayout.act_coffsetvisx : 0);
+            rect.x += gameLayout.act_scoffsetx + (isOffsetX ? shift * gameLayout.act_coffsetvisx : 0);
             rect.y += gameLayout.act_scoffsety + (isOffsetY ? card.getCardIndex() * gameLayout.act_coffsetvisy : 0);
             rect.width = getCardSize().width;
             rect.height = getCardSize().height;
         }
         else
         {
-            rect.x += gameLayout.act_scoffsetx + (isOffsetX ? (2 - xMplier) * gameLayout.act_coffsetvisx : 0);
+            rect.x += gameLayout.act_scoffsetx + (isOffsetX ? (2 - shift) * gameLayout.act_coffsetvisx : 0);
             rect.y = rect.y + rect.height - gameLayout.act_scoffsety - gameLayout.act_cheight - (isOffsetY ? card.getCardIndex() * gameLayout.act_coffsetvisy
                 : 0);
             rect.width = getCardSize().width;
