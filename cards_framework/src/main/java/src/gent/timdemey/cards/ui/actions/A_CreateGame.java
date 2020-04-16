@@ -11,8 +11,7 @@ import gent.timdemey.cards.localization.LocKey;
  */
 public class A_CreateGame extends ActionBase
 {
-
-    public A_CreateGame()
+    protected A_CreateGame()
     {
         super(Actions.ACTION_CREATE, Loc.get(LocKey.Menu_creategame));
     }

@@ -25,7 +25,10 @@ public class SolShowTestActionService extends ActionService
         {
             case SolShowTestActions.ACTION_FAKESOLSHOWGAME:
                 IContextService ctxtServ = Services.get(IContextService.class);
-                ctxtServ.initialize(ContextType.Client); // install a mock executor
+                if (!ctxtServ.isInitialized(ContextType.Client))
+                {
+                    ctxtServ.initialize(ContextType.Client); // install a mock executor    
+                }                
                 ctxtServ.getThreadContext().schedule(new C_NewSolShowGame());
                 break;
             default:

@@ -1,14 +1,11 @@
 package gent.timdemey.cards.services.frame;
 
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Action;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -22,16 +19,9 @@ import gent.timdemey.cards.services.IConfigManager;
 import gent.timdemey.cards.services.IFrameService;
 import gent.timdemey.cards.services.IImageService;
 import gent.timdemey.cards.services.configman.ConfigKey;
-import gent.timdemey.cards.ui.actions.A_CreateGame;
-import gent.timdemey.cards.ui.actions.A_DebugDrawDebugLines;
-import gent.timdemey.cards.ui.actions.A_DebugGC;
-import gent.timdemey.cards.ui.actions.A_JoinGame;
-import gent.timdemey.cards.ui.actions.A_LeaveGame;
-import gent.timdemey.cards.ui.actions.A_QuitGame;
-import gent.timdemey.cards.ui.actions.A_Redo;
-import gent.timdemey.cards.ui.actions.A_StartGame;
-import gent.timdemey.cards.ui.actions.A_StopGame;
-import gent.timdemey.cards.ui.actions.A_Undo;
+import gent.timdemey.cards.ui.actions.ActionDef;
+import gent.timdemey.cards.ui.actions.Actions;
+import gent.timdemey.cards.ui.actions.IActionFactory;
 
 public class FrameService implements IFrameService
 {
@@ -60,6 +50,7 @@ public class FrameService implements IFrameService
 
         return menuBar;
     }
+    
 
     protected void addMenuStart(JMenuBar menuBar, ICardPlugin plugin)
     {
@@ -84,33 +75,40 @@ public class FrameService implements IFrameService
         menuBar.add(menu);
     }
 
+    protected final void addToMenu(JMenu menu, String actionId)
+    {
+        IActionFactory actionFactory = Services.get(IActionFactory.class);
+        ActionDef actionDef = actionFactory.getActionDef(actionId);
+        Action action = actionDef.action;
+        KeyStroke accelerator = actionDef.accelerator;
+        
+        JMenuItem menu_create = new JMenuItem(action);
+        if (accelerator != null)
+        {
+            menu_create.setAccelerator(accelerator);
+        }
+        menu.add(menu_create);
+    }
+
     protected JMenu createMenuStart(ICardPlugin plugin)
     {
         JMenu menu = new JMenu(Loc.get(LocKey.Menu_game));
 
         if (plugin.getPlayerCount() > 1)
         {
-            JMenuItem menu_create = new JMenuItem(new A_CreateGame());
-            menu.add(menu_create);
-
-            JMenuItem menu_join = new JMenuItem(new A_JoinGame());
-            menu.add(menu_join);
-
-            JMenuItem menu_leave = new JMenuItem(new A_LeaveGame());
-            menu.add(menu_leave);
-        } else
+            addToMenu(menu, Actions.ACTION_CREATE);
+            addToMenu(menu, Actions.ACTION_JOIN);
+            addToMenu(menu, Actions.ACTION_LEAVE);
+        }
+        else
         {
-            JMenuItem menu_start = new JMenuItem(new A_StartGame());
-            menu.add(menu_start);
-
-            JMenuItem menu_stop = new JMenuItem(new A_StopGame());
-            menu.add(menu_stop);
+            addToMenu(menu, Actions.ACTION_START);
+            addToMenu(menu, Actions.ACTION_STOP);
         }
 
         menu.addSeparator();
-
-        JMenuItem menu_quit = new JMenuItem(new A_QuitGame());
-        menu.add(menu_quit);
+        addToMenu(menu, Actions.ACTION_QUIT);
+        
         return menu;
     }
 
@@ -118,15 +116,8 @@ public class FrameService implements IFrameService
     {
         JMenu menu = new JMenu(Loc.get(LocKey.Menu_edit));
 
-        Action actionUndo = new A_Undo();
-        JMenuItem menu_undo = new JMenuItem(actionUndo);
-        menu_undo.setAccelerator(KeyStroke.getKeyStroke('Z', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        menu.add(menu_undo);
-
-        Action actionRedo = new A_Redo();
-        JMenuItem menu_redo = new JMenuItem(actionRedo);
-        menu_redo.setAccelerator(KeyStroke.getKeyStroke('Y', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        menu.add(menu_redo);
+        addToMenu(menu, Actions.ACTION_UNDO);
+        addToMenu(menu, Actions.ACTION_REDO);    
 
         return menu;
     }
@@ -135,15 +126,8 @@ public class FrameService implements IFrameService
     {
         JMenu menu = new JMenu(Loc.get(LocKey.DebugMenu_debug));
 
-        JMenuItem menu_drawdebug = new JCheckBoxMenuItem(new A_DebugDrawDebugLines());
-        menu.add(menu_drawdebug);
-
-        JMenuItem menu_gc = new JMenuItem(new A_DebugGC());
-        menu.add(menu_gc);
-
-        // debug start game, for mocking server connection.
-        JMenuItem menu_start = new JMenuItem(new A_StartGame());
-        menu.add(menu_start);
+        addToMenu(menu, Actions.ACTION_DEBUG);
+        addToMenu(menu, Actions.ACTION_GC);
 
         return menu;
     }
@@ -154,4 +138,6 @@ public class FrameService implements IFrameService
         BufferedImage background = Services.get(IImageService.class).read("background_green.png");
         return background;
     }
+
 }
+

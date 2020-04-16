@@ -6,7 +6,14 @@ public class MockCardPlugin implements ICardPlugin
     @Override
     public void installServices()
     {
-        // not necessary, the unit tests must install the required (mock) services
+        // not necessary, the unit tests must install the required (mock)
+        // services
+    }
+
+    @Override
+    public void installUiServices()
+    {
+
     }
 
     @Override

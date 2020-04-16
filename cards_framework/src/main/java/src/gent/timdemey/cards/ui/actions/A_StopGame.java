@@ -23,7 +23,7 @@ public class A_StopGame extends ActionBase
         }
     }
 
-    public A_StopGame()
+    protected A_StopGame()
     {
         super(Actions.ACTION_STOP, Loc.get(LocKey.Menu_stopgame));
         Services.get(IContextService.class).getThreadContext().addStateListener(new GameStopListener());

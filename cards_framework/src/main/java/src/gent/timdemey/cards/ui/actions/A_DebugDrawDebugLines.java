@@ -5,7 +5,7 @@ import gent.timdemey.cards.localization.LocKey;
 
 public class A_DebugDrawDebugLines extends ActionBase
 {
-    public A_DebugDrawDebugLines()
+    protected A_DebugDrawDebugLines()
     {
         super(Actions.ACTION_DEBUG, Loc.get(LocKey.DebugMenu_drawdebuglines));
     }

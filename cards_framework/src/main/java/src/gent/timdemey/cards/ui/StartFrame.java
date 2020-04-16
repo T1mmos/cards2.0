@@ -19,10 +19,14 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.IFrameService;
+import gent.timdemey.cards.services.IGamePanelManager;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.dialogs.DialogService;
 import gent.timdemey.cards.services.frame.FrameService;
+import gent.timdemey.cards.services.gamepanel.GamePanelManager;
+import gent.timdemey.cards.ui.actions.ActionFactory;
 import gent.timdemey.cards.ui.actions.ActionService;
+import gent.timdemey.cards.ui.actions.IActionFactory;
 import gent.timdemey.cards.ui.actions.IActionService;
 
 public class StartFrame
@@ -53,6 +57,16 @@ public class StartFrame
             IFrameService frameServ = new FrameService();
             App.services.install(IFrameService.class, frameServ);
         }
+        if (!Services.isInstalled(IActionFactory.class))
+        {
+            IActionFactory actionFactory = new ActionFactory();
+            App.services.install(IActionFactory.class, actionFactory);
+        }
+        if (!Services.isInstalled(IGamePanelManager.class))
+        {
+            IGamePanelManager gamePanelMan = new GamePanelManager();
+            App.services.install(IGamePanelManager.class, gamePanelMan);
+        }
     }
 
     public static void StartUI(ICardPlugin plugin)
@@ -61,12 +75,14 @@ public class StartFrame
             WebLookAndFeel.install();
 
             Services.get(IContextService.class).initialize(ContextType.UI);
+            plugin.installUiServices();
+            StartFrame.installUiServices();
 
             IFrameService frameServ = Services.get(IFrameService.class);
+            BufferedImage background = frameServ.getBackground();                        
             JMenuBar menuBar = frameServ.getMenuBar(plugin);
             List<Image> images = frameServ.getFrameIcons();
-            BufferedImage background = frameServ.getBackground();
-
+            
             frame.setJMenuBar(menuBar);
             frame.setTitle(String.format("%s v%d.%d", plugin.getName(), plugin.getMajorVersion(), plugin.getMinorVersion()));
             frame.setSize(new Dimension(800, 600));

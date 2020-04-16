@@ -26,7 +26,7 @@ public class A_Redo extends ActionBase
         }
     }
 
-    public A_Redo()
+    protected A_Redo()
     {
         super(Actions.ACTION_REDO, Loc.get(LocKey.Menu_redo));
         Services.get(IContextService.class).getThreadContext().addStateListener(new RedoListener());

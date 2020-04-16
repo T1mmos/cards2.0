@@ -9,7 +9,7 @@ import gent.timdemey.cards.localization.LocKey;
 
 public class A_DebugGC extends AbstractAction
 {
-    public A_DebugGC()
+    protected A_DebugGC()
     {
         super(Loc.get(LocKey.DebugMenu_gc));
     }

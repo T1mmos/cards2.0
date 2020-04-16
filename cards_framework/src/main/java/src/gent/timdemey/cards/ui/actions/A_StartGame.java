@@ -25,7 +25,7 @@ public class A_StartGame extends ActionBase
         
     }
 
-    public A_StartGame()
+    protected A_StartGame()
     {
         super(Actions.ACTION_START, Loc.get(LocKey.Menu_newgame));
         Services.get(IContextService.class).getThreadContext().addStateListener(new GameStartListener());

@@ -6,7 +6,7 @@ import gent.timdemey.cards.localization.LocKey;
 public class A_LeaveGame extends ActionBase
 {
 
-    public A_LeaveGame()
+    protected A_LeaveGame()
     {
         super(Actions.ACTION_LEAVE, Loc.get(LocKey.Menu_leave));
     }

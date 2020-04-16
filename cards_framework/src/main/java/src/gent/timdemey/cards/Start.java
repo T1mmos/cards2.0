@@ -8,7 +8,6 @@ import gent.timdemey.cards.logging.LogManager;
 import gent.timdemey.cards.serialization.SerializationService;
 import gent.timdemey.cards.services.IConfigManager;
 import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.services.IGamePanelManager;
 import gent.timdemey.cards.services.IImageService;
 import gent.timdemey.cards.services.IResourceManager;
 import gent.timdemey.cards.services.IScalableImageManager;
@@ -16,7 +15,6 @@ import gent.timdemey.cards.services.ISerializationService;
 import gent.timdemey.cards.services.ISoundManager;
 import gent.timdemey.cards.services.configman.ConfigManager;
 import gent.timdemey.cards.services.context.ContextService;
-import gent.timdemey.cards.services.gamepanel.GamePanelManager;
 import gent.timdemey.cards.services.images.ImageService;
 import gent.timdemey.cards.services.resman.ResourceManager;
 import gent.timdemey.cards.services.scaleman.ScalableImageManager;
@@ -88,11 +86,6 @@ public class Start
             IScalableImageManager scaleImgMan = new ScalableImageManager();
             App.services.install(IScalableImageManager.class, scaleImgMan);
         }
-        if (!Services.isInstalled(IGamePanelManager.class))
-        {
-            IGamePanelManager gamePanelMan = new GamePanelManager();
-            App.services.install(IGamePanelManager.class, gamePanelMan);
-        }
         if (!Services.isInstalled(IImageService.class))
         {
             IImageService imageService = new ImageService();
@@ -131,10 +124,10 @@ public class Start
             }
 
             App.services.install(ICardPlugin.class, plugin);
-            plugin.installServices();
 
+            
+            plugin.installServices();
             Start.installServices();
-            StartFrame.installUiServices();
 
             StartFrame.StartUI(plugin);
         });

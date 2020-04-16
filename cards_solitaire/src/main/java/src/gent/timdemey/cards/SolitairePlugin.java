@@ -16,8 +16,15 @@ public class SolitairePlugin implements ICardPlugin
     public void installServices()
     {
         App.services.install(ICommandService.class, new SolitaireCommandService());
-        App.services.install(IPositionManager.class, new SolitairePositionManager());
         App.services.install(ICardGameCreationService.class, new SolitaireCardGameCreationService());
+    }
+    
+
+
+    @Override
+    public void installUiServices()
+    {
+        App.services.install(IPositionManager.class, new SolitairePositionManager());
         App.services.install(IGamePanelManager.class, new SolitaireGamePanelManager());
     }
 
@@ -44,4 +51,5 @@ public class SolitairePlugin implements ICardPlugin
     {
         return 1;
     }
+
 }

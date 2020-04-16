@@ -2,10 +2,9 @@ package gent.timdemey.cards.services.frame;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 
 import gent.timdemey.cards.ICardPlugin;
-import gent.timdemey.cards.ui.actions.A_DebugFakeSolShowGame;
+import gent.timdemey.cards.ui.actions.SolShowTestActions;
 
 public class SolShowTestFrameService extends FrameService
 {
@@ -23,9 +22,8 @@ public class SolShowTestFrameService extends FrameService
         JMenu menu = super.createMenuDebug(plugin);
         
         menu.addSeparator();
-        JMenuItem menuItem = new JMenuItem(new A_DebugFakeSolShowGame());
-        menu.add(menuItem);
-        
+        addToMenu(menu, SolShowTestActions.ACTION_FAKESOLSHOWGAME);
+                
         return menu;
     }
 }

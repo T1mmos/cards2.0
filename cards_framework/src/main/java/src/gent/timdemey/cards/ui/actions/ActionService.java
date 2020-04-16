@@ -43,7 +43,7 @@ public class ActionService implements IActionService
 
     @Override
     public boolean canExecuteAction(String id)
-    {
+    {        
         switch (id)
         {
         case Actions.ACTION_UNDO:

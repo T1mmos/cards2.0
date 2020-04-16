@@ -6,8 +6,7 @@ import gent.timdemey.cards.localization.LocKey;
 public class A_JoinGame extends ActionBase
 {
     
-    
-    public A_JoinGame()
+    protected A_JoinGame()
     {
         super(Actions.ACTION_JOIN, Loc.get(LocKey.Menu_join));
     }

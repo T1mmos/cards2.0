@@ -24,7 +24,7 @@ public class A_Undo extends ActionBase
         }
     }
 
-    public A_Undo()
+    protected A_Undo()
     {
         super(Actions.ACTION_UNDO, Loc.get(LocKey.Menu_undo));
         checkEnabled();

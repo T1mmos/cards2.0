@@ -17,10 +17,15 @@ public class SolShowPlugin implements ICardPlugin
     public void installServices()
     {
         App.services.install(ICommandService.class, new SolShowCommandService());
-        App.services.install(IPositionManager.class, new SolShowPositionManager());
         App.services.install(ICardGameCreationService.class, new SolShowCardGameCreationService());
-        App.services.install(IGamePanelManager.class, new SolShowGamePanelManager());
         App.services.install(ISerializationService.class, new SolShowSerializationService());
+    }
+
+    @Override
+    public void installUiServices()
+    {
+        App.services.install(IPositionManager.class, new SolShowPositionManager());
+        App.services.install(IGamePanelManager.class, new SolShowGamePanelManager());
     }
 
     @Override

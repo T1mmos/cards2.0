@@ -28,6 +28,7 @@ public class C_NewSolShowGame extends CommandBase
         state.setLocalId(player0.id);
         state.getPlayers().add(player0);
         state.getPlayers().add(player1);
+        
         state.setCardGame(cardGame);
     }
 
