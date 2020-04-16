@@ -26,7 +26,7 @@ public class JScalableImage extends JPanel
 
     // black-pink checkerboard pattern that can be tiled
     private static BufferedImage ERROR_IMAGE;
-    
+
     private static BufferedImage getErrorImage()
     {
         if (ERROR_IMAGE == null)
@@ -93,7 +93,8 @@ public class JScalableImage extends JPanel
             }
             else
             {
-                // quick rescale until bufferedimage is updated with high quality
+                // quick rescale until bufferedimage is updated with high
+                // quality
 
                 g3.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
                 double sx = 1.0 * compW / imgW;
@@ -121,8 +122,7 @@ public class JScalableImage extends JPanel
 
         if (Services.get(IGamePanelManager.class).getDrawDebug())
         {
-            ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState()
-                    .getCardGame();
+            ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState().getCardGame();
 
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2.setColor(new Color(50, 50, 50, 100));
@@ -133,23 +133,46 @@ public class JScalableImage extends JPanel
             Color debugColor = cardGame.isCard(id) ? Color.cyan : Color.pink;
 
             g2.setColor(debugColor);
-            g2.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 2.0f,
-                    new float[] { 5.0f, 5.0f }, 2.0f));
+            g2.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 2.0f, new float[] { 5.0f, 5.0f }, 2.0f));
             g2.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
-
-            g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-            g2.setColor(Color.white);
-            g2.setFont(Font.decode("Consolas 8"));
 
             int layer = JLayeredPane.getLayer(this);
             int zorder = ((JLayeredPane) getParent()).getComponentZOrder(this);
-            g2.drawString("layer=" + layer, 5, getHeight() - 10);
-            g2.drawString("zorder=" + zorder, 5, getHeight() - 22);
-            g2.drawString("dim=" + getWidth() + "x" + getHeight(), 5, getHeight() - 34);
-            g2.drawString("file=" + file, 5, getHeight() - 46);
+            String[] strings = new String[]{
+                file, 
+                "rect=" + getX() + "," + getY() + ", " + getWidth() + "x" + getHeight(),
+                "layer=" + layer,
+                "zorder=" + zorder
+            };
+                    
+            drawDebugStrings(g2, strings);
         }
 
         g2.dispose();
+    }
+
+    private void drawDebugStrings(Graphics2D g2, String[] strings)
+    {
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2.setColor(Color.white);
+
+        if (strings.length == 0)
+        {
+            return;
+        }
+        
+        g2.setFont(Font.decode("Arial bold 8"));            
+        int hFat = g2.getFontMetrics().getHeight();
+        g2.drawString(strings[0], 5, hFat);
+        
+        g2.setFont(Font.decode("Arial 8"));         
+        int hSmall = g2.getFontMetrics().getHeight();
+        
+        for (int i = 1; i < strings.length; i++)
+        {
+            g2.drawString(strings[i], 5, hFat + i * hSmall);
+        }
+        
     }
 
     public void mirror()
