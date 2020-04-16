@@ -23,8 +23,8 @@ public class SolShowGamePanelManager extends GamePanelManager
         defs.add(new ImageDefinition("stack_short_arrow.png", SolShowCardStackType.DEPOT));
         defs.add(new ImageDefinition("stack_short_green_filled.png", SolShowCardStackType.LAYDOWN));
         defs.add(new ImageDefinition("stack_long_green.png", SolShowCardStackType.MIDDLE));
-        defs.add(new ImageDefinition("stack_short_green.png", SolShowCardStackType.TURNOVER));
-        defs.add(new ImageDefinition("stack_middle_green.png", SolShowCardStackType.SPECIAL));
+        defs.add(new ImageDefinition("stack_middle_green.png", SolShowCardStackType.TURNOVER));
+        defs.add(new ImageDefinition("stack_short_green.png", SolShowCardStackType.SPECIAL));
 
         return defs;
     }
@@ -57,11 +57,11 @@ public class SolShowGamePanelManager extends GamePanelManager
             }
             else if(cardStack.getCardStackType().equals(SolShowCardStackType.TURNOVER))
             {
-                scaleMan.setImage(csId, "stack_short_green.png");
+                scaleMan.setImage(csId, "stack_middle_green.png");
             }
             else if(cardStack.getCardStackType().equals(SolShowCardStackType.SPECIAL))
             {
-                scaleMan.setImage(csId, "stack_middle_green.png");
+                scaleMan.setImage(csId, "stack_short_green.png");
             }
 
             if(!context.getReadOnlyState().isLocalId(cardGame.getPlayerId(cardStack)))

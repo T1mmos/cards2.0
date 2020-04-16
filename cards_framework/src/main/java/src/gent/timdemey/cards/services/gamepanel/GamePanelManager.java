@@ -190,9 +190,7 @@ public class GamePanelManager implements IGamePanelManager
         List<ImageDefinition> imgDefs = new ArrayList<>();
 
         // add card fronts
-
         List<ReadOnlyCard> cards = cardGame.getCards();
-
         for (ReadOnlyCard card : cards)
         {
             String filename = getFilename(card);

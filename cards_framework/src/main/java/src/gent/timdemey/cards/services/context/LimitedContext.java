@@ -2,6 +2,8 @@ package gent.timdemey.cards.services.context;
 
 import com.google.common.base.Preconditions;
 
+import gent.timdemey.cards.ICardPlugin;
+import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
 
@@ -18,7 +20,9 @@ public class LimitedContext
 
         this.contextType = contextType;
         this.cmdExecServ = cmdExecServ;
-        this.state = new State();
+        
+        ICardPlugin plugin = Services.get(ICardPlugin.class);
+        this.state = plugin.createState();
     }
 
     public ContextType getContextType()

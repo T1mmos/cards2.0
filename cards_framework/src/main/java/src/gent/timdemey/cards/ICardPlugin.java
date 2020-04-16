@@ -1,5 +1,7 @@
 package gent.timdemey.cards;
 
+import gent.timdemey.cards.model.state.State;
+
 public interface ICardPlugin
 {
     public void installServices();
@@ -13,4 +15,5 @@ public interface ICardPlugin
 
     public int getMinorVersion();
 
+    public State createState();
 }

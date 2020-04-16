@@ -1,5 +1,7 @@
 package gent.timdemey.cards;
 
+import gent.timdemey.cards.model.state.State;
+
 public class MockCardPlugin implements ICardPlugin
 {
 
@@ -41,4 +43,9 @@ public class MockCardPlugin implements ICardPlugin
         return 66;
     }
 
+    @Override
+    public State createState()
+    {
+        return new State();
+    }
 }

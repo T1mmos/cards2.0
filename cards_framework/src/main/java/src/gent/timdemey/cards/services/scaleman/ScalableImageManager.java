@@ -52,8 +52,8 @@ public class ScalableImageManager implements IScalableImageManager
     private volatile boolean error = false;
 
     /**
-     * Produces threads used by the barrier executor which waits for all tasks to
-     * complete via CompletionFuture.allOf().
+     * Produces threads used by the barrier executor which waits for all tasks
+     * to complete via CompletionFuture.allOf().
      */
     private static class BarrierThreadFactory implements ThreadFactory
     {
@@ -69,8 +69,8 @@ public class ScalableImageManager implements IScalableImageManager
     }
 
     /**
-     * Produces threads used by the task executor which reads and scales buffered
-     * images.
+     * Produces threads used by the task executor which reads and scales
+     * buffered images.
      */
     private static class ScalableImageTaskThreadFactory implements ThreadFactory
     {
@@ -104,8 +104,8 @@ public class ScalableImageManager implements IScalableImageManager
     public ScalableImageManager()
     {
         this.barrierExecutor = Executors.newFixedThreadPool(1, new BarrierThreadFactory());
-        this.taskExecutor = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 5L, TimeUnit.SECONDS,
-                new SynchronousQueue<Runnable>(), new ScalableImageTaskThreadFactory());
+        this.taskExecutor = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 5L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(),
+                new ScalableImageTaskThreadFactory());
         this.groupMap = new HashMap<>();
         this.imageMap = Collections.synchronizedMap(new HashMap<>());
         this.componentMap = HashBiMap.create();
@@ -121,7 +121,7 @@ public class ScalableImageManager implements IScalableImageManager
                 String path = pathMap.get(obj);
                 BufferedImageInfo biInfo = imageMap.get(path);
 
-                jscalable.setImage(biInfo == null ? null : biInfo.currentImg);
+                jscalable.setImage(biInfo == null ? null : biInfo.currentImg, path);
                 jscalable.repaint();
             }
         });
@@ -177,11 +177,14 @@ public class ScalableImageManager implements IScalableImageManager
 
             CreateTaskContext context = new CreateTaskContext(imgDef, null);
             CompletableFuture<Void> cf = CompletableFuture.supplyAsync(() -> context, taskExecutor) // input
-                    .thenApplyAsync(this::readImage, taskExecutor) // to buffered image
+                    .thenApplyAsync(this::readImage, taskExecutor) // to
+                                                                   // buffered
+                                                                   // image
                     .exceptionally(t -> {
                         error = true;
                         return onReadImageException(t, context);
-                    }).thenAccept(this::addBufferedImage); // add buffered image to lists
+                    }).thenAccept(this::addBufferedImage); // add buffered image
+                                                           // to lists
             futures[i] = cf;
         }
 
@@ -223,8 +226,7 @@ public class ScalableImageManager implements IScalableImageManager
 
             BufferedImageScaler scaler = new BufferedImageScaler(biInfo.sourceImg, width, height);
             CompletableFuture<Void> cf = CompletableFuture.supplyAsync(() -> scaler, taskExecutor)
-                    .thenApplyAsync(_scaler -> _scaler.getScaledInstance(), taskExecutor)
-                    .thenAccept(scaledImg -> biInfo.currentImg = scaledImg);
+                    .thenApplyAsync(_scaler -> _scaler.getScaledInstance(), taskExecutor).thenAccept(scaledImg -> biInfo.currentImg = scaledImg);
 
             futures.add(cf);
         }
@@ -253,7 +255,7 @@ public class ScalableImageManager implements IScalableImageManager
         BufferedImageInfo biInfo = imageMap.get(path);
 
         pathMap.put(id, path);
-        jImage.setImage(biInfo.currentImg);
+        jImage.setImage(biInfo.currentImg, path);
         jImage.repaint();
     }
 

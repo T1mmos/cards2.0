@@ -1,5 +1,6 @@
 package gent.timdemey.cards;
 
+import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IFrameService;
 import gent.timdemey.cards.services.context.MockContextService;
@@ -44,5 +45,11 @@ public class SolShowTestPlugin extends SolShowPlugin
     public int getMinorVersion()
     {
         return 66;
+    }
+    
+    @Override
+    public State createState()
+    {
+        return new SolShowTestState();
     }
 }

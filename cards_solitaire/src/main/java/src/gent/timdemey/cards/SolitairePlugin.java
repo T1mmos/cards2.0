@@ -1,5 +1,6 @@
 package gent.timdemey.cards;
 
+import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.ICardGameCreationService;
 import gent.timdemey.cards.services.ICommandService;
 import gent.timdemey.cards.services.IGamePanelManager;
@@ -52,4 +53,9 @@ public class SolitairePlugin implements ICardPlugin
         return 1;
     }
 
+    @Override
+    public State createState()
+    {
+        return new State();
+    }
 }

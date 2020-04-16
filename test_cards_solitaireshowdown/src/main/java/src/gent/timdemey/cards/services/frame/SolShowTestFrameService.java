@@ -23,6 +23,7 @@ public class SolShowTestFrameService extends FrameService
         
         menu.addSeparator();
         addToMenu(menu, SolShowTestActions.ACTION_FAKESOLSHOWGAME);
+        addToMenu(menu, SolShowTestActions.ACTION_SWITCHCARDSVISIBLE);
                 
         return menu;
     }
