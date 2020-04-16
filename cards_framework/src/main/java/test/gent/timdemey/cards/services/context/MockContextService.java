@@ -2,6 +2,9 @@ package gent.timdemey.cards.services.context;
 
 import java.util.ConcurrentModificationException;
 
+import gent.timdemey.cards.model.entities.commands.CommandBase;
+import gent.timdemey.cards.model.state.State;
+
 public class MockContextService extends ContextService
 {
     @Override

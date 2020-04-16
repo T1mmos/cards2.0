@@ -17,8 +17,6 @@ import gent.timdemey.cards.services.context.CommandHistory;
 
 public class State extends EntityBase
 {
-    
-
     public static final Property<CardGame> CardGame = Property.of(State.class, CardGame.class, "CardGame");
     public static final Property<UUID> LocalId = Property.of(State.class, UUID.class, "LocalId");
     public static final Property<String> LocalName = Property.of(State.class, String.class, "LocalName");

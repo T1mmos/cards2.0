@@ -5,6 +5,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import gent.timdemey.cards.ICardPlugin;
+import gent.timdemey.cards.ui.actions.A_DebugFakeSolShowGame;
 
 public class SolShowTestFrameService extends FrameService
 {
@@ -22,7 +23,7 @@ public class SolShowTestFrameService extends FrameService
         JMenu menu = super.createMenuDebug(plugin);
         
         menu.addSeparator();
-        JMenuItem menuItem = new JMenuItem("solshow-test");
+        JMenuItem menuItem = new JMenuItem(new A_DebugFakeSolShowGame());
         menu.add(menuItem);
         
         return menu;
