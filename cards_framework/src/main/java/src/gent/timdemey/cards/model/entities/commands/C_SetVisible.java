@@ -1,5 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
@@ -24,7 +25,7 @@ public class C_SetVisible extends CommandBase
             Preconditions.checkArgument(card.visibleRef.get() != visible);
         }
 
-        this.cards = cards;
+        this.cards = new ArrayList<>(cards);
         this.visible = visible;
     }
 
@@ -58,6 +59,12 @@ public class C_SetVisible extends CommandBase
         }
     }
 
+    @Override
+    public boolean isSyncable()
+    {
+        return true;
+    }
+    
     @Override
     public String toDebugString()
     {
