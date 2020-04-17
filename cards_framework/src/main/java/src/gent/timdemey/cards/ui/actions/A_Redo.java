@@ -7,6 +7,7 @@ import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCommandHistory;
 import gent.timdemey.cards.readonlymodel.ReadOnlyProperty;
+import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.IContextService;
 
 public class A_Redo extends ActionBase
@@ -19,7 +20,7 @@ public class A_Redo extends ActionBase
         {
             ReadOnlyProperty<?> property = change.property;
 
-            if (property == ReadOnlyCommandHistory.CurrentIndex)
+            if (property == ReadOnlyCommandHistory.CurrentIndex || property == ReadOnlyState.CommandHistory)
             {
                 checkEnabled();
             }

@@ -53,6 +53,11 @@ public class LimitedContext
     {
         return state;
     }
+    
+    void shutdownAndWait()
+    {
+        this.cmdExecServ.shutdown();
+    }
 
     public CommandHistory getCommandHistory()
     {

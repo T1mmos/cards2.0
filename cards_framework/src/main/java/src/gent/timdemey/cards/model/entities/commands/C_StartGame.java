@@ -3,9 +3,12 @@ package gent.timdemey.cards.model.entities.commands;
 import java.util.List;
 import java.util.UUID;
 
+import gent.timdemey.cards.ICardPlugin;
+import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.commands.payload.P_StartGame;
 import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.services.context.CommandHistory;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.utils.Debug;
@@ -36,7 +39,13 @@ public class C_StartGame extends CommandBase
     {
         if (type == ContextType.UI)
         {
-            state.setCardGame(cardGame);            
+            state.setCardGame(cardGame);
+
+            ICardPlugin plugin = Services.get(ICardPlugin.class);
+            boolean multiplayer = plugin.getPlayerCount() > 1;
+            
+            CommandHistory commandHistory = new CommandHistory(multiplayer);
+            state.setCommandHistory(commandHistory);
         }
         else if (type == ContextType.Client)
         {

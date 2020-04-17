@@ -18,6 +18,7 @@ import gent.timdemey.cards.services.context.CommandHistory;
 public class State extends EntityBase
 {
     public static final Property<CardGame> CardGame = Property.of(State.class, CardGame.class, "CardGame");
+    public static final Property<CommandHistory> CommandHistory = Property.of(State.class, CommandHistory.class, "CommandHistory");
     public static final Property<UUID> LocalId = Property.of(State.class, UUID.class, "LocalId");
     public static final Property<String> LocalName = Property.of(State.class, String.class, "LocalName");
     public static final Property<Player> Players = Property.of(State.class, Player.class, "Players");
@@ -32,7 +33,7 @@ public class State extends EntityBase
     public static final Property<UDP_ServiceAnnouncer> UdpServiceAnnouncer = Property.of(State.class, UDP_ServiceAnnouncer.class, "UdpServiceAnnouncer");
     public static final Property<UDP_ServiceRequester> UdpServiceRequester = Property.of(State.class, UDP_ServiceRequester.class, "UdpServiceRequester");
 
-    private CommandHistory commandHistory;
+    private StateValueRef<CommandHistory> commandHistoryRef;
     
     // state lists
     private EntityStateListRef<Player> playersRef;
@@ -56,6 +57,7 @@ public class State extends EntityBase
     public State()
     {
         cardGameRef = new StateValueRef<>(CardGame, id);
+        commandHistoryRef = new StateValueRef<>(CommandHistory, id);
         localIdRef = new StateValueRef<>(LocalId, id);
         localNameRef = new StateValueRef<>(LocalName, id);
         playersRef = new EntityStateListRef<>(Players, id, new ArrayList<>());
@@ -193,12 +195,12 @@ public class State extends EntityBase
 
     public void setCommandHistory(CommandHistory commandHistory)
     {
-        this.commandHistory = commandHistory;
+        this.commandHistoryRef.set(commandHistory);
     }
 
     public CommandHistory getCommandHistory()
     {
-        return commandHistory;
+        return this.commandHistoryRef.get();
     }
     
     @Override

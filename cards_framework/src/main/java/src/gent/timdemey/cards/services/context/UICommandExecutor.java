@@ -134,4 +134,10 @@ class UICommandExecutor implements ICommandExecutor
         
         this.executionListeners.remove(executionListener);
     }
+
+    @Override
+    public void shutdown()
+    {
+        // can't shutdown the EDT
+    }
 }

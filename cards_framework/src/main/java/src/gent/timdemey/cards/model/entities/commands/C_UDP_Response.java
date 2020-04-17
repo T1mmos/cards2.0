@@ -74,7 +74,10 @@ public final class C_UDP_Response extends CommandBase
                 pl.serverName = serverName;
             }
             Server server = new Server(pl);
-            state.getServers().add(server);
+            if (!state.getServers().contains(server))
+            {
+                state.getServers().add(server);
+            }
         }
         else
         {

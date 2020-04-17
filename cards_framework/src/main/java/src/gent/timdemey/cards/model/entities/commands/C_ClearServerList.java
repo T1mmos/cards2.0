@@ -6,7 +6,6 @@ import gent.timdemey.cards.services.context.ContextType;
 
 public class C_ClearServerList extends CommandBase
 {
-
     public C_ClearServerList()
     {
     }

@@ -31,14 +31,10 @@ public class CommandHistory extends EntityBase
      * @param removable Indicates whether the history will support the undoing of a command and removing it from the chain, while
      * the command is not necessarily the last command in the chain 
      */
-    public CommandHistory (boolean undoable, boolean removable)
+    public CommandHistory (boolean multiplayer)
     {
-        if (undoable == removable)
-        {
-            throw new UnsupportedOperationException("Currently only undoable or erasable is supported, but not both simultaneously");
-        }
-        this.undoable = undoable;
-        this.removable = removable;
+        this.undoable = !multiplayer;
+        this.removable = multiplayer;
         this.currentIdxRef = new StateValueRef<>(CurrentIndex, id, -1);
         this.acceptedIdxRef = new StateValueRef<>(AcceptedIndex, id, -1);
     }

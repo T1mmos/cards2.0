@@ -55,7 +55,7 @@ public class CommandHistoryUnitTest extends SolShowTestBase
         ctxtServ = Services.get(IContextService.class);
         context = ctxtServ.getThreadContext();
         state = context.limitedContext.getState();
-        cmdHistory = new CommandHistory(false, true);
+        cmdHistory = new CommandHistory(true);
 
         // reset players
         player1 = PlayerHelper.getFixedPlayer(0);

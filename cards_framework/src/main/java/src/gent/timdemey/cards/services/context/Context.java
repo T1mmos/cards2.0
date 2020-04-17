@@ -129,7 +129,10 @@ public final class Context
             }
         }
 
-        for (IStateListener sl : stateListeners)
+        // as some listeners may unregister themselves during updates, guard against
+        // concurrency exceptions
+        List<IStateListener> listeners = new ArrayList<>(stateListeners);
+        for (IStateListener sl : listeners)
         {
             for (ReadOnlyChange roChange : roChanges)
             {

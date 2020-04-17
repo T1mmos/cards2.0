@@ -27,4 +27,11 @@ public class MockCommandExecutor implements ICommandExecutor
         // installed anyway
     }
 
+    @Override
+    public void shutdown()
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

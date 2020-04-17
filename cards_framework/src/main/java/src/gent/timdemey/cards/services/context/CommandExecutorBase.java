@@ -1,7 +1,7 @@
 package gent.timdemey.cards.services.context;
 
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -51,7 +51,7 @@ abstract class CommandExecutorBase implements ICommandExecutor
     }
 
     private final BlockingQueue<Runnable> incomingCommandQueue;
-    private final Executor executor;
+    private final ExecutorService executor;
 
     protected CommandExecutorBase(ContextType contextType)
     {
@@ -63,7 +63,7 @@ abstract class CommandExecutorBase implements ICommandExecutor
             {
                 return new CommandExecutionThread(r, contextType);
             }
-        });
+        });        
     }
 
     @Override
@@ -74,6 +74,21 @@ abstract class CommandExecutorBase implements ICommandExecutor
     }
 
     protected abstract void execute(CommandBase command, State state);
+    
+    @Override
+    public void shutdown()
+    {
+        executor.shutdown();
+        try
+        {
+            executor.awaitTermination(1, TimeUnit.SECONDS);
+        }
+        catch (InterruptedException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public final void addExecutionListener(IExecutionListener executionListener)

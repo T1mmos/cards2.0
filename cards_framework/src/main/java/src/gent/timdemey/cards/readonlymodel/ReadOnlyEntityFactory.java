@@ -204,6 +204,11 @@ public class ReadOnlyEntityFactory
 
     private static <S extends EntityBase, T extends ReadOnlyEntityBase<S>> T GetOrCreateEntity(S entity, IReadOnlyEntityCreator<S, T> creator)
     {
+        if (entity == null)
+        {
+            return null;
+        }
+        
         Map<UUID, ReadOnlyEntityBase<S>> typedEntities = (Map<UUID, ReadOnlyEntityBase<S>>) entities.get(entity.getClass());
 
         if(typedEntities == null)

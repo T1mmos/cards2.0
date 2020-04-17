@@ -84,11 +84,6 @@ public class C_CreateServer extends CommandBase
             return;
         }
 
-        
-        // construct answer envelope
-        int major = Services.get(ICardPlugin.class).getMajorVersion();
-        int minor = Services.get(ICardPlugin.class).getMinorVersion();
-
         InetAddress addr = null;
         try (final DatagramSocket socket = new DatagramSocket())
         {
@@ -105,7 +100,6 @@ public class C_CreateServer extends CommandBase
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
 
         // create the server
         Server server = new Server(srvname, addr, tcpport);

@@ -109,8 +109,6 @@ public class ContextService implements IContextService
             boolean multiplayer = plugin.getPlayerCount() > 1;
             boolean undoable = !multiplayer;
             boolean erasable = multiplayer;
-            CommandHistory commandHistory = new CommandHistory(undoable, erasable);
-            context.limitedContext.getState().setCommandHistory(commandHistory);
         }
 
         Context prev = fullContexts.putIfAbsent(type, context);
@@ -123,6 +121,8 @@ public class ContextService implements IContextService
     @Override
     public void drop(ContextType type)
     {
+        Context ctxt = fullContexts.get(type);
+        ctxt.limitedContext.shutdownAndWait();
         Context curr = fullContexts.remove(type);
         if(curr == null)
         {

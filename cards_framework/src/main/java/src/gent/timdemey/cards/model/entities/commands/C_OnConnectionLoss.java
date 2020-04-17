@@ -7,6 +7,7 @@ import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.multiplayer.io.TCP_Connection;
+import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -27,21 +28,26 @@ public class C_OnConnectionLoss extends CommandBase
     @Override
     public void execute(Context context, ContextType contextType, State state)
     {
-
         if (contextType == ContextType.UI)
         {
+            IContextService ctxtServ = Services.get(IContextService.class);
+            ctxtServ.drop(ContextType.Client);
+            
             state.getPlayers().removeAll(state.getRemotePlayers());
             state.setServerId(null);
+            
 
             String title = Loc.get(LocKey.DialogTitle_connectionlost);
             String msg = Loc.get(LocKey.DialogMessage_connectionlost);
             Services.get(IDialogService.class).ShowMessage(title, msg);
+            
+            state.setCommandHistory(null);
+            state.setCardGame(null);
         }
         else if (contextType == ContextType.Client)
         {
-            state.getPlayers().removeAll(state.getRemotePlayers());
-            state.setServerId(null);
-
+            state.getTcpConnectionPool().closeAllConnections();
+                        
             reschedule(ContextType.UI);
         }
         else

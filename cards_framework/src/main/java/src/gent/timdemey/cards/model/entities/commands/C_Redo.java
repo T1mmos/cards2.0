@@ -19,6 +19,10 @@ public final class C_Redo extends CommandBase
     @Override
     protected boolean canExecute(Context context, ContextType type, State state)
     {
+        if (state.getCommandHistory() == null)
+        {
+            return false;
+        }
         return state.getCommandHistory().canRedo();
     }
 
