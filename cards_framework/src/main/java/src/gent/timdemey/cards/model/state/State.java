@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.common.EntityBase;
+import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.multiplayer.io.ITcpConnectionListener;
@@ -19,6 +20,7 @@ public class State extends EntityBase
 {
     public static final Property<CardGame> CardGame = Property.of(State.class, CardGame.class, "CardGame");
     public static final Property<CommandHistory> CommandHistory = Property.of(State.class, CommandHistory.class, "CommandHistory");
+    public static final Property<GameState> GameState = Property.of(State.class, GameState.class, "GameState"); 
     public static final Property<UUID> LocalId = Property.of(State.class, UUID.class, "LocalId");
     public static final Property<String> LocalName = Property.of(State.class, String.class, "LocalName");
     public static final Property<UUID> LobbyAdminId = Property.of(State.class, UUID.class, "LobbyAdminId");
@@ -42,6 +44,7 @@ public class State extends EntityBase
 
     // state values
     private StateValueRef<CardGame> cardGameRef;
+    private StateValueRef<GameState> gameStateRef;
     private StateValueRef<UUID> localIdRef;
     private StateValueRef<String> localNameRef;
     private StateValueRef<UUID> lobbyAdminId;
@@ -59,6 +62,7 @@ public class State extends EntityBase
     public State()
     {
         cardGameRef = new StateValueRef<>(CardGame, id);
+        gameStateRef = new StateValueRef<>(GameState, id, gent.timdemey.cards.model.entities.game.GameState.None);
         commandHistoryRef = new StateValueRef<>(CommandHistory, id);
         localIdRef = new StateValueRef<>(LocalId, id);
         localNameRef = new StateValueRef<>(LocalName, id);
@@ -86,6 +90,16 @@ public class State extends EntityBase
         cardGameRef.set(cardGame);
     }
 
+    public GameState getGameState()
+    {
+        return gameStateRef.get();
+    }
+
+    public void setGameState(GameState gameState)
+    {
+        gameStateRef.set(gameState);
+    }
+    
     public TCP_ConnectionAccepter getTcpConnectionAccepter()
     {
         return tcpConnectionAccepterRef.get();
