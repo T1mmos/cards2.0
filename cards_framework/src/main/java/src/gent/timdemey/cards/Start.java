@@ -23,9 +23,45 @@ import gent.timdemey.cards.ui.StartFrame;
 
 public class Start
 {
+    private Start()
+    {
+    }
+
+    public static void main(String[] args)
+    {
+        SwingUtilities.invokeLater(() -> boot(args));
+    }
+
+    public static void boot(String[] args)
+    {
+        installAllServices(args);
+        StartFrame.StartUI();
+    }
+
+    private static void installAllServices(String[] args)
+    {
+        Services services = new Services();
+        App.init(services);
+        Start.installBaseServices();
+        Loc.setLocale(Loc.AVAILABLE_LOCALES[0]);
+
+        // determine plugin
+        ICardPlugin plugin = getCardPlugin(args);
+        if(plugin == null)
+        {
+            System.err.println("Cannot load plugin class. Terminating.");
+            return;
+        }
+
+        services.install(ICardPlugin.class, plugin);
+
+        plugin.installServices();
+        Start.installServices();
+    }
+
     private static ICardPlugin getCardPlugin(String[] args)
     {
-        if (args.length != 1)
+        if(args.length != 1)
         {
             System.err.println("A single argument is expected, but " + args.length + " were given.");
             return null;
@@ -43,10 +79,9 @@ public class Start
             return null;
         }
 
-        if (!ICardPlugin.class.isAssignableFrom(clazz))
+        if(!ICardPlugin.class.isAssignableFrom(clazz))
         {
-            System.err.println("Should provide a card plugin. The given class does not derive from "
-                    + ICardPlugin.class.getSimpleName() + ".");
+            System.err.println("Should provide a card plugin. The given class does not derive from " + ICardPlugin.class.getSimpleName() + ".");
             return null;
         }
 
@@ -68,68 +103,44 @@ public class Start
     private static void installBaseServices()
     {
         ILogManager logMan = new LogManager();
-        App.services.install(ILogManager.class, logMan);
+        App.getServices().install(ILogManager.class, logMan);
 
         IResourceManager resMan = new ResourceManager();
-        App.services.install(IResourceManager.class, resMan);
+        App.getServices().install(IResourceManager.class, resMan);
     }
 
     private static void installServices()
     {
-        if (!Services.isInstalled(IConfigManager.class))
+        Services services = App.getServices();
+        if(!Services.isInstalled(IConfigManager.class))
         {
             IConfigManager configManager = new ConfigManager();
-            App.services.install(IConfigManager.class, configManager);
+            App.getServices().install(IConfigManager.class, configManager);
         }
-        if (!Services.isInstalled(IScalableImageManager.class))
+        if(!Services.isInstalled(IScalableImageManager.class))
         {
             IScalableImageManager scaleImgMan = new ScalableImageManager();
-            App.services.install(IScalableImageManager.class, scaleImgMan);
+            services.install(IScalableImageManager.class, scaleImgMan);
         }
-        if (!Services.isInstalled(IImageService.class))
+        if(!Services.isInstalled(IImageService.class))
         {
             IImageService imageService = new ImageService();
-            App.services.install(IImageService.class, imageService);
+            services.install(IImageService.class, imageService);
         }
-        if (!Services.isInstalled(ISoundManager.class))
+        if(!Services.isInstalled(ISoundManager.class))
         {
             ISoundManager sndMan = new SoundManager();
-            App.services.install(ISoundManager.class, sndMan);
+            services.install(ISoundManager.class, sndMan);
         }
-        if (!Services.isInstalled(IContextService.class))
+        if(!Services.isInstalled(IContextService.class))
         {
             IContextService ctxtProv = new ContextService();
-            App.services.install(IContextService.class, ctxtProv);
-        } 
-        if (!Services.isInstalled(ISerializationService.class))
+            services.install(IContextService.class, ctxtProv);
+        }
+        if(!Services.isInstalled(ISerializationService.class))
         {
             ISerializationService serServ = new SerializationService();
-            App.services.install(ISerializationService.class, serServ);
-        } 
-    }
-
-    public static void main(String[] args)
-    {
-        SwingUtilities.invokeLater(() -> {
-            App.services = new Services();
-            Start.installBaseServices();
-            Loc.setLocale(Loc.AVAILABLE_LOCALES[0]);
-
-            // determine plugin
-            ICardPlugin plugin = getCardPlugin(args);
-            if (plugin == null)
-            {
-                System.err.println("Cannot load plugin class. Terminating.");
-                return;
-            }
-
-            App.services.install(ICardPlugin.class, plugin);
-
-            
-            plugin.installServices();
-            Start.installServices();
-
-            StartFrame.StartUI(plugin);
-        });
+            services.install(ISerializationService.class, serServ);
+        }
     }
 }

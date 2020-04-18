@@ -53,7 +53,7 @@ public class ActionService implements IActionService
         case Actions.ACTION_CREATE:
             return canExecute(new D_CreateGame());
         case Actions.ACTION_START:
-            return true;
+            return canExecute(new C_StartGame((CardGame) null));
         case Actions.ACTION_STOP:
             return canExecute(new C_StopGame());
         case Actions.ACTION_QUIT:

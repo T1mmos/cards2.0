@@ -87,7 +87,7 @@ public final class Services
 
     private static Services get()
     {
-        return App.services;
+        return App.getServices();
     }
     
     public static boolean isInstalled(Class<?> iface)

@@ -13,17 +13,16 @@ import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogData;
 import gent.timdemey.cards.ui.dialogs.JoinMultiplayerGameDialogContent;
 
-public class D_JoinGame extends CommandBase
+public class D_JoinGame extends DialogCommandBase
 {
-
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected boolean canShowDialog(Context context, ContextType type, State state)
     {
         return state.getServerId() == null;
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void showDialog(Context context, ContextType type, State state)
     {
         IContextService ctxtServ = Services.get(IContextService.class);
         ctxtServ.initialize(ContextType.Client);
@@ -43,11 +42,4 @@ public class D_JoinGame extends CommandBase
             ctxtServ.drop(ContextType.Client);
         }
     }
-
-    @Override
-    public String toDebugString()
-    {
-        return "";
-    }
-
 }

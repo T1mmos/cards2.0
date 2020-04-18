@@ -17,16 +17,16 @@ public class SolShowTestPlugin extends SolShowPlugin
     {
         super.installServices();
         
-        App.services.install(IContextService.class, new MockContextService());
-        App.services.install(IActionService.class, new SolShowTestActionService());
-        App.services.install(IFrameService.class, new SolShowTestFrameService());
+        App.getServices().install(IContextService.class, new MockContextService());
+        App.getServices().install(IActionService.class, new SolShowTestActionService());
+        App.getServices().install(IFrameService.class, new SolShowTestFrameService());
     }
     
     @Override
     public void installUiServices()
     {
         super.installUiServices();
-        App.services.install(IActionFactory.class, new SolShowTestActionFactory());        
+        App.getServices().install(IActionFactory.class, new SolShowTestActionFactory());        
     }
     
     @Override

@@ -12,17 +12,16 @@ import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogData;
 import gent.timdemey.cards.ui.dialogs.CreateMultiplayerGameDialogContent;
 
-public class D_CreateGame extends CommandBase
+public class D_CreateGame extends DialogCommandBase
 {
-
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected boolean canShowDialog(Context context, ContextType type, State state)
     {
         return !Services.get(IContextService.class).isInitialized(ContextType.Server);
     }
-
+    
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void showDialog(Context context, ContextType type, State state)
     {
         CreateMultiplayerGameDialogContent content = new CreateMultiplayerGameDialogContent();
         IDialogService diagServ = Services.get(IDialogService.class);
@@ -35,11 +34,4 @@ public class D_CreateGame extends CommandBase
             schedule(ContextType.UI, command);
         }
     }
-
-    @Override
-    public String toDebugString()
-    {
-        return "";
-    }
-
 }

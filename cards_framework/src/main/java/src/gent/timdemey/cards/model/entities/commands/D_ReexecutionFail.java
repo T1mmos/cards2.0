@@ -13,7 +13,7 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.utils.Debug;
 
-public class D_ReexecutionFail extends CommandBase
+public class D_ReexecutionFail extends DialogCommandBase
 {
     public final List<CommandExecution> failedReexecutions;
 
@@ -23,15 +23,13 @@ public class D_ReexecutionFail extends CommandBase
     }
 
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected boolean canShowDialog(Context context, ContextType type, State state)
     {
-        CheckNotContext(type, ContextType.Client, ContextType.Server);
-
         return true;
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void showDialog(Context context, ContextType type, State state)
     {
         String title = Loc.get(LocKey.DialogTitle_commandundone);
         String msg = Loc.get(LocKey.DialogMessage_commandundone);
@@ -43,5 +41,4 @@ public class D_ReexecutionFail extends CommandBase
     {
         return Debug.getKeyValue("commandTotal", failedReexecutions.size());
     }
-
 }

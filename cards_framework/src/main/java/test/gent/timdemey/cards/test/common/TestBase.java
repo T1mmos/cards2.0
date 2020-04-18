@@ -16,20 +16,20 @@ public class TestBase
     public static void InitTestBase()
     {
         Services services = new Services();
-        App.services = services;
+        App.init(services);
     }
     
     public static void installMockContextService()
     {
         MockContextService ctxtService = new MockContextService();
         ctxtService.initialize(ContextType.UI);
-        ctxtService.initialize(ContextType.Client);  
-        App.services.install(IContextService.class, ctxtService);   
+        ctxtService.initialize(ContextType.Client);          
+        App.getServices().install(IContextService.class, ctxtService);   
     }
     
     public static void installMockCardPlugin()
     {
         ICardPlugin plugin = new MockCardPlugin();
-        App.services.install(ICardPlugin.class, plugin);
+        App.getServices().install(ICardPlugin.class, plugin);
     }
 }
