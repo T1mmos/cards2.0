@@ -1,6 +1,7 @@
 package gent.timdemey.cards;
 
 import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.serialization.SolShowSerializationService;
 import gent.timdemey.cards.services.ICardGameCreationService;
 import gent.timdemey.cards.services.ICommandService;
 import gent.timdemey.cards.services.IGamePanelManager;
@@ -10,7 +11,6 @@ import gent.timdemey.cards.services.boot.SolShowCardGameCreationService;
 import gent.timdemey.cards.services.commands.SolShowCommandService;
 import gent.timdemey.cards.services.gamepanel.SolShowGamePanelManager;
 import gent.timdemey.cards.services.position.SolShowPositionManager;
-import gent.timdemey.cards.services.serialization.SolShowSerializationService;
 
 public class SolShowPlugin implements ICardPlugin
 {

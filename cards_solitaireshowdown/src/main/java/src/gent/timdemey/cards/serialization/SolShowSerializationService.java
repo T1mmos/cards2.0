@@ -1,8 +1,7 @@
-package gent.timdemey.cards.services.serialization;
+package gent.timdemey.cards.serialization;
 
-import gent.timdemey.cards.serialization.SerializationService;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
-import gent.timdemey.cards.services.serialization.mappers.SolShowCommandDtoMapper;
+import gent.timdemey.cards.serialization.mappers.SolShowCommandDtoMapper;
 
 public class SolShowSerializationService extends SerializationService
 {

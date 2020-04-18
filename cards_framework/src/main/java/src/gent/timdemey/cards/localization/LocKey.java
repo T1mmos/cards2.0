@@ -30,13 +30,17 @@ public final class LocKey
     public static final LocKey DialogMessage_creategame = DialogMessage("creategame");
     public static final LocKey DialogMessage_joingame = DialogMessage("joingame");
     public static final LocKey DialogMessage_lobby = DialogMessage("lobby");
+    public static final LocKey DialogMessage_youlose = DialogMessage("youlose");
+    public static final LocKey DialogMessage_youwin = DialogMessage("youwin");
     
     public static final LocKey DialogTitle_commandundone = DialogTitle("commandundone");
     public static final LocKey DialogTitle_connectionlost = DialogTitle("connectionlost");
     public static final LocKey DialogTitle_generalerror = DialogTitle("generalerror");
     public static final LocKey DialogTitle_creategame = DialogTitle("creategame");
     public static final LocKey DialogTitle_joingame = DialogTitle("joingame");
-    public static final LocKey DialogTitle_lobby = DialogTitle("lobby");    
+    public static final LocKey DialogTitle_lobby = DialogTitle("lobby");
+    public static final LocKey DialogTitle_youlose = DialogTitle("youlose");
+    public static final LocKey DialogTitle_youwin = DialogTitle("youwin");
 
     public static final LocKey Menu_game = Menu("game");
     public static final LocKey Menu_creategame = Menu("creategame");  

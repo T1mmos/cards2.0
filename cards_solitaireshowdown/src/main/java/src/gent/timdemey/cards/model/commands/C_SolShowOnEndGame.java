@@ -2,13 +2,12 @@ package gent.timdemey.cards.model.commands;
 
 import java.util.UUID;
 
-import gent.timdemey.cards.model.commands.payload.P_SolShowEndGame;
+import gent.timdemey.cards.model.commands.payload.P_SolShowOnEndGame;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.ui.dialogs.D_SolShowOnEndGame;
 
 public class C_SolShowOnEndGame extends CommandBase
 {
@@ -19,7 +18,7 @@ public class C_SolShowOnEndGame extends CommandBase
         this.winnerId = winnerId;
     }
     
-    public C_SolShowOnEndGame(P_SolShowEndGame pl)
+    public C_SolShowOnEndGame(P_SolShowOnEndGame pl)
     {
         super(pl);
         this.winnerId = pl.winnerId;
