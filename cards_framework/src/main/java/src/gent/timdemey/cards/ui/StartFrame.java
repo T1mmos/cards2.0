@@ -16,11 +16,12 @@ import com.google.common.base.Preconditions;
 import gent.timdemey.cards.App;
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.model.entities.commands.C_ImportStateUI;
+import gent.timdemey.cards.model.entities.commands.C_ImportExportStateUI;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.IFrameService;
 import gent.timdemey.cards.services.IGamePanelManager;
+import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.dialogs.DialogService;
 import gent.timdemey.cards.services.frame.FrameService;
@@ -76,11 +77,13 @@ public class StartFrame
         WebLookAndFeel.install();
         IContextService ctxtServ = Services.get(IContextService.class);
         ctxtServ.initialize(ContextType.UI);
+        Context ctxt = ctxtServ.getThreadContext();
+        
         plugin.installUiServices();
         StartFrame.installUiServices();
         
-        C_ImportStateUI cmd_readConfig = new C_ImportStateUI();
-        ctxtServ.getThreadContext().schedule(cmd_readConfig);
+        C_ImportExportStateUI cmd_readConfig = new C_ImportExportStateUI(true);
+        ctxt.schedule(cmd_readConfig);
 
         IFrameService frameServ = Services.get(IFrameService.class);
         BufferedImage background = frameServ.getBackground();                        
@@ -98,6 +101,7 @@ public class StartFrame
         frame.setIconImages(images);
         frame.setVisible(true);
 
-        Services.get(IContextService.class).getThreadContext().addStateListener(new GameBootListener(frame));
+        ctxt.addStateListener(new GameBootListener(frame));
+        ctxt.addStateListener(new StateExportListener());
     }
 }

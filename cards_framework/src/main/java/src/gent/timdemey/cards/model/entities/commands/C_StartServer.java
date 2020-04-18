@@ -91,6 +91,8 @@ public class C_StartServer extends CommandBase
             
             ctxtServ.initialize(ContextType.Server);
             
+            state.setLocalName(playerName);
+            
             reschedule(ContextType.Server);
         }
         else

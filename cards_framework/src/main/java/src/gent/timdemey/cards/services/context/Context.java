@@ -129,6 +129,11 @@ public final class Context
             }
         }
 
+        // reset the tracker before updating all listeners,
+        // this way listeners themselves may schedule commands and 
+        // will not cause stackoverflows
+        changeTracker.reset();
+        
         // as some listeners may unregister themselves during updates, guard against
         // concurrency exceptions
         List<IStateListener> listeners = new ArrayList<>(stateListeners);
@@ -140,7 +145,6 @@ public final class Context
             }
         }
 
-        // reset the tracker as we updated all listeners
-        changeTracker.reset();
+
     }
 }
