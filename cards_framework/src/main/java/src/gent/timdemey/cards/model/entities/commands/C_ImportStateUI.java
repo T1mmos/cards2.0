@@ -14,18 +14,20 @@ import gent.timdemey.cards.services.context.ContextType;
  * Reads some initial state from a configuration file.
  * @author Tim
  */
-public class C_ReadState extends CommandBase
+public class C_ImportStateUI extends CommandBase
 {
-
     @Override
     protected boolean canExecute(Context context, ContextType type, State state)
     {
+        CheckContext(type, ContextType.UI);
         return true;
     }
 
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
+        CheckContext(type, ContextType.UI);
+        
         Properties properties = new Properties();
         
         try 
@@ -51,6 +53,4 @@ public class C_ReadState extends CommandBase
         state.setLocalName(name);
         state.setLocalId(UUID.randomUUID());
     }
-    
-    
 }

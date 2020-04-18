@@ -10,10 +10,10 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogData;
-import gent.timdemey.cards.ui.dialogs.CreateMultiplayerGameData;
-import gent.timdemey.cards.ui.dialogs.CreateMultiplayerGameDialogContent;
+import gent.timdemey.cards.ui.dialogs.StartServerDialogData;
+import gent.timdemey.cards.ui.dialogs.StartServerDialogContent;
 
-public class D_CreateMultiplayerGame extends DialogCommandBase
+public class D_StartServer extends DialogCommandBase
 {
     @Override
     protected boolean canShowDialog(Context context, ContextType type, State state)
@@ -24,16 +24,17 @@ public class D_CreateMultiplayerGame extends DialogCommandBase
     @Override
     protected void showDialog(Context context, ContextType type, State state)
     {
-        CreateMultiplayerGameDialogContent content = new CreateMultiplayerGameDialogContent(state.getLocalName());
+        StartServerDialogContent content = new StartServerDialogContent(state.getLocalName());
         IDialogService diagServ = Services.get(IDialogService.class);
         String title = Loc.get(LocKey.DialogTitle_creategame);
-        DialogData<CreateMultiplayerGameData> data = diagServ.ShowAdvanced(title, null, content, DialogButtonType.BUTTONS_OK_CANCEL);
+        DialogData<StartServerDialogData> data = diagServ.ShowAdvanced(title, null, content, DialogButtonType.BUTTONS_OK_CANCEL);
 
         if(data.closeType == DialogButtonType.Ok)
         {
-            C_StartServer command = new C_StartServer(state.getLocalId(), data.payload.playerName, data.payload.srvname, data.payload.srvmsg, data.payload.udpport,
-                data.payload.tcpport, data.payload.minconns, data.payload.maxconns);
-            schedule(ContextType.UI, command);
+            C_StartServer cmd_startServer = new C_StartServer(state.getLocalId(), data.payload.playerName, data.payload.srvname, data.payload.srvmsg, data.payload.udpport,
+                data.payload.tcpport, data.payload.minconns, data.payload.maxconns, data.payload.autoconnect);
+
+            schedule(ContextType.UI, cmd_startServer);
         }
     }
 }

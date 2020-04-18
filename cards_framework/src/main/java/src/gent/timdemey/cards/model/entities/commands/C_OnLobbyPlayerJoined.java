@@ -7,16 +7,21 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.utils.Debug;
 
-public class C_OnPlayerJoined extends CommandBase
+/**
+ * Multicast sent to players in a lobby when a new player joined the lobby.
+ * @author Tim
+ *
+ */
+public class C_OnLobbyPlayerJoined extends CommandBase
 {
     public final Player player;
 
-    public C_OnPlayerJoined(Player player)
+    public C_OnLobbyPlayerJoined(Player player)
     {
         this.player = player;
     }
 
-    public C_OnPlayerJoined(P_OnPlayerJoined pl)
+    public C_OnLobbyPlayerJoined(P_OnPlayerJoined pl)
     {
         super(pl);
         this.player = pl.player;

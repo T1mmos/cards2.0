@@ -45,18 +45,33 @@ public class C_Connect extends CommandBase
     }
 
     @Override
+    protected boolean canExecute(Context context, ContextType type, State state)
+    {
+        return true;
+    }
+    
+    @Override
     public void execute(Context context, ContextType type, State state)
     {
         CheckNotContext(type, ContextType.Server);
         if (type == ContextType.UI)
         {
             updateState(state);
+
+            IContextService ctxtServ = Services.get(IContextService.class);
+            
+            // If we are connecting via a UI, the Client layer could be already installed
+            if (!ctxtServ.isInitialized(ContextType.Client))
+            {
+                ctxtServ.initialize(ContextType.Client);
+            }
             forward(type, state);
         }
         else if (type == ContextType.Client)
         {
             updateState(state);
-            state.setLocalId(playerId);
+            state.setLocalId(playerId); 
+            state.setLocalName(playerName);            
             
             ICardPlugin plugin = Services.get(ICardPlugin.class);
 
@@ -89,18 +104,6 @@ public class C_Connect extends CommandBase
         state.setServerId(serverId);
     }
 
-    @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
-    {
-        return true;
-    }
-
-    @Override
-    protected void undo(Context context, ContextType type, State state)
-    {
-
-    }
-
     private static class ClientCommandSchedulingTcpConnectionListener extends CommandSchedulingTcpConnectionListener
     {
         private final UUID serverId;
@@ -122,7 +125,7 @@ public class C_Connect extends CommandBase
             connectionPool.bindUUID(serverId, connection);
             
             // if the connection is complete then we can join the game
-            CommandBase cmd = new C_JoinGame(clientName, clientId);
+            CommandBase cmd = new C_EnterLobby(clientName, clientId);
             IContextService contextServ = Services.get(IContextService.class);
             LimitedContext context = contextServ.getContext(ContextType.Client);
             context.schedule(cmd);

@@ -13,11 +13,11 @@ import gent.timdemey.cards.utils.Debug;
 
 /**
  * Unicast sent from server to client when the client was accepted, and thus has
- * just joined the server lobby.
+ * just entered the server lobby.
  * 
  * @author Tim
  */
-public class C_WelcomeClient extends CommandBase
+public class C_OnLobbyWelcome extends CommandBase
 {
     public final UUID clientId;
     public final UUID serverId;
@@ -25,7 +25,7 @@ public class C_WelcomeClient extends CommandBase
     public final List<Player> connected;
     public final UUID lobbyAdminId;
 
-    public C_WelcomeClient(UUID clientId, UUID serverId, String serverMessage, List<Player> connected, UUID lobbyAdminId)
+    public C_OnLobbyWelcome(UUID clientId, UUID serverId, String serverMessage, List<Player> connected, UUID lobbyAdminId)
     {
         this.clientId = clientId;
         this.serverId = serverId;
@@ -34,7 +34,7 @@ public class C_WelcomeClient extends CommandBase
         this.lobbyAdminId = lobbyAdminId;
     }
 
-    public C_WelcomeClient(P_WelcomeClient pl)
+    public C_OnLobbyWelcome(P_WelcomeClient pl)
     {
         super(pl);
         this.clientId = pl.clientId;
@@ -74,7 +74,7 @@ public class C_WelcomeClient extends CommandBase
         else if(type == ContextType.UI)
         {
             updateState(state);
-            schedule(ContextType.UI, new D_Lobby());
+            schedule(ContextType.UI, new D_EnterLobby());
         }
     }
 

@@ -14,7 +14,7 @@ import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogData;
 import gent.timdemey.cards.ui.dialogs.LobbyDialogContent;
 
-public class D_Lobby extends DialogCommandBase
+public class D_EnterLobby extends DialogCommandBase
 {
     @Override
     protected boolean canShowDialog(Context context, ContextType type, State state)

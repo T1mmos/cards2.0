@@ -14,7 +14,7 @@ import gent.timdemey.cards.services.dialogs.DialogData;
 import gent.timdemey.cards.ui.dialogs.JoinMultiplayerGameData;
 import gent.timdemey.cards.ui.dialogs.JoinMultiplayerGameDialogContent;
 
-public class D_JoinGame extends DialogCommandBase
+public class D_Connect extends DialogCommandBase
 {
     @Override
     protected boolean canShowDialog(Context context, ContextType type, State state)

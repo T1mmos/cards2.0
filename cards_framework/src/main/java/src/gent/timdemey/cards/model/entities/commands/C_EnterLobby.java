@@ -14,18 +14,23 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.utils.Debug;
 
-public class C_JoinGame extends CommandBase
+/**
+ * Unicast sent to the server upon 
+ * @author Tim
+ *
+ */
+public class C_EnterLobby extends CommandBase
 {
     public final String clientName;
     public final UUID clientId;
 
-    public C_JoinGame(String clientName, UUID clientId)
+    public C_EnterLobby(String clientName, UUID clientId)
     {
         this.clientName = clientName;
         this.clientId = clientId;
     }
 
-    public C_JoinGame(P_JoinGame pl)
+    public C_EnterLobby(P_JoinGame pl)
     {
         this.clientName = pl.clientName;
         this.clientId = pl.clientId;
@@ -76,7 +81,7 @@ public class C_JoinGame extends CommandBase
     
             // send unicast to new client
             {
-                CommandBase cmd_answer = new C_WelcomeClient(clientId, state.getServerId(), state.getServerMessage(), state.getRemotePlayers(), state.getLobbyAdminId());
+                CommandBase cmd_answer = new C_OnLobbyWelcome(clientId, state.getServerId(), state.getServerMessage(), state.getRemotePlayers(), state.getLobbyAdminId());
                 String json_answer = getCommandDtoMapper().toJson(cmd_answer);
                 state.getTcpConnectionPool().getConnection(clientId).send(json_answer);
             }
@@ -85,12 +90,10 @@ public class C_JoinGame extends CommandBase
             List<UUID> updateIds = state.getPlayers().getExceptUUID(clientId);
             if(updateIds.size() > 0)
             {
-                CommandBase cmd_update = new C_OnPlayerJoined(player);
+                CommandBase cmd_update = new C_OnLobbyPlayerJoined(player);
                 String json_update = getCommandDtoMapper().toJson(cmd_update);
                 state.getTcpConnectionPool().broadcast(updateIds, json_update);
-            }
-            
-            
+            }            
         }
         else
         {

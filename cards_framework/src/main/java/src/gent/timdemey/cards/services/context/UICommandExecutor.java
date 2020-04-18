@@ -9,7 +9,7 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.commands.C_Accept;
 import gent.timdemey.cards.model.entities.commands.C_Reject;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
-import gent.timdemey.cards.model.entities.commands.D_ReexecutionFail;
+import gent.timdemey.cards.model.entities.commands.D_OnReexecutionFail;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.IContextService;
 
@@ -102,7 +102,7 @@ class UICommandExecutor implements ICommandExecutor
     {
         if (fails.size() > 0)
         {
-            D_ReexecutionFail cmd = new D_ReexecutionFail(fails);
+            D_OnReexecutionFail cmd = new D_OnReexecutionFail(fails);
             IContextService ctxtServ = Services.get(IContextService.class);
             ctxtServ.getThreadContext().schedule(cmd);    
         }                

@@ -1,6 +1,6 @@
 package gent.timdemey.cards.ui.dialogs;
 
-public class CreateMultiplayerGameData
+public class StartServerDialogData
 {
     public final String playerName; // name of player that started the server, automatically becomes lobby admin id and joins the game
     public final String srvname; // server name to broadcast
@@ -9,8 +9,9 @@ public class CreateMultiplayerGameData
     public final int tcpport; // tcp port to accepts clients on that want to join a game
     public final int minconns; // minimal connections required to start a game
     public final int maxconns; // maximal connections allowed to the server
+    public final boolean autoconnect;
 
-    public CreateMultiplayerGameData(String playerName, String srvname, String srvmsg, int udpport, int tcpport, int minconns, int maxconns)
+    public StartServerDialogData(String playerName, String srvname, String srvmsg, int udpport, int tcpport, int minconns, int maxconns, boolean autoconnect)
     {
         this.playerName = playerName;
         this.srvname = srvname;
@@ -19,5 +20,6 @@ public class CreateMultiplayerGameData
         this.tcpport = tcpport;
         this.minconns = minconns;
         this.maxconns = maxconns;
+        this.autoconnect = autoconnect;
     }
 }

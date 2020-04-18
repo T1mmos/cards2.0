@@ -11,6 +11,8 @@ public final class LocKey
     public static final LocKey Button_refresh = Button("refresh");
     public static final LocKey Button_startMultiplayerGame = Button("startMultiplayerGame");
     
+    public static final LocKey CheckBox_autoconnect = CheckBox("autoconnect");
+    
     public static final LocKey DebugMenu_debug = DebugMenu("debug");
     public static final LocKey DebugMenu_updateimages = DebugMenu("updateimages");
     public static final LocKey DebugMenu_drawdebuglines = DebugMenu("drawdebuglines");
@@ -55,6 +57,7 @@ public final class LocKey
     
     private static final String DELIM = ".";
     private static final String PREFIX_BUTTON = "button";
+    private static final String PREFIX_CHECKBOX = "checkbox";
     private static final String PREFIX_COLUMN = "column";
     private static final String PREFIX_DEBUG = "debug";
     private static final String PREFIX_DIALOG = "dialog";
@@ -75,6 +78,11 @@ public final class LocKey
     private static LocKey Button (String str)
     {
         return from(PREFIX_BUTTON, str);
+    }
+    
+    private static LocKey CheckBox (String str)
+    {
+        return from(PREFIX_CHECKBOX, str);
     }
     
     private static LocKey DialogMessage (String str)

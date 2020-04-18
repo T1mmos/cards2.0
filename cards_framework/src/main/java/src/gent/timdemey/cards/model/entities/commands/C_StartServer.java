@@ -39,8 +39,9 @@ public class C_StartServer extends CommandBase
     public final int tcpport; // tcp port to accepts clients on that want to join a game
     public final int minconns; // minimal connections required to start a game
     public final int maxconns; // maximal connections allowed to the server
+    public final boolean autoconnect; // whether to automatically connect as client to the server about to be created
 
-    public C_StartServer(UUID playerId, String playerName, String srvname, String srvmsg, int udpport, int tcpport, int minconns, int maxconns)
+    public C_StartServer(UUID playerId, String playerName, String srvname, String srvmsg, int udpport, int tcpport, int minconns, int maxconns, boolean autoconnect)
     {
         Preconditions.checkArgument(playerId != null);
         Preconditions.checkArgument(playerName != null);
@@ -60,19 +61,17 @@ public class C_StartServer extends CommandBase
         this.tcpport = tcpport;
         this.minconns = minconns;
         this.maxconns = maxconns;
+        this.autoconnect = autoconnect;
     }
 
     @Override
     protected boolean canExecute(Context context, ContextType type, State state)
     {
+        CheckNotContext(type, ContextType.Client);
         boolean srvCtxtInit = Services.get(IContextService.class).isInitialized(ContextType.Server);
         if (type == ContextType.UI)
         {
             return !srvCtxtInit;
-        }
-        else if (type == ContextType.Client)
-        {
-            return true;
         }
         else if (type == ContextType.Server)
         {
@@ -85,18 +84,12 @@ public class C_StartServer extends CommandBase
     @Override
     protected void execute(Context context, ContextType type, State state)
     {        
+        CheckNotContext(type, ContextType.Client);
         if (type == ContextType.UI)
         {
             IContextService ctxtServ = Services.get(IContextService.class);
-            ctxtServ.initialize(ContextType.Client);
-            ctxtServ.initialize(ContextType.Server);
             
-            reschedule(ContextType.Client);
-        }
-        else if (type == ContextType.Client)
-        {
-            state.setLocalId(playerId);
-            state.setLocalName(playerName);
+            ctxtServ.initialize(ContextType.Server);
             
             reschedule(ContextType.Server);
         }
@@ -141,8 +134,11 @@ public class C_StartServer extends CommandBase
                 udpServAnnouncer.start();
                 tcpConnAccepter.start();
                 
-                C_Connect cmd_connect = new C_Connect(playerId, server.id, addr, tcpport, srvname, playerName);
-                schedule(ContextType.UI, cmd_connect);
+                if (autoconnect)
+                {
+                    C_Connect cmd_connect = new C_Connect(playerId, server.id, addr, tcpport, srvname, playerName);
+                    schedule(ContextType.UI, cmd_connect);
+                }                
             }
             catch (Exception ex)
             {

@@ -1,5 +1,6 @@
 package gent.timdemey.cards.ui.dialogs;
 
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -8,18 +9,18 @@ import javax.swing.event.DocumentListener;
 
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
-import gent.timdemey.cards.model.entities.commands.C_StartServer;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogContent;
 import net.miginfocom.swing.MigLayout;
 
-public class CreateMultiplayerGameDialogContent extends DialogContent<Void, CreateMultiplayerGameData> implements DocumentListener
+public class StartServerDialogContent extends DialogContent<Void, StartServerDialogData> implements DocumentListener
 {
     private final JTextField tf_srvname = new JTextField(30);
     private final JTextField tf_srvmsg = new JTextField(30);
     private final JTextField tf_pname = new JTextField(30);
+    private final JCheckBox cb_autoconnect = new JCheckBox(Loc.get(LocKey.CheckBox_autoconnect));
         
-    public CreateMultiplayerGameDialogContent(String initialPname)
+    public StartServerDialogContent(String initialPname)
     {
         tf_pname.setText(initialPname);
     }
@@ -39,6 +40,7 @@ public class CreateMultiplayerGameDialogContent extends DialogContent<Void, Crea
         panel.add(tf_srvmsg, "wrap");
         panel.add(lb_pname, "");
         panel.add(tf_pname, "wrap");
+        panel.add(cb_autoconnect, "span, pushx, align left");
         
         tf_srvname.getDocument().addDocumentListener(this);
         tf_pname.getDocument().addDocumentListener(this);
@@ -47,14 +49,14 @@ public class CreateMultiplayerGameDialogContent extends DialogContent<Void, Crea
     }
 
     @Override
-    protected CreateMultiplayerGameData onClose(DialogButtonType dbType)
+    protected StartServerDialogData onClose(DialogButtonType dbType)
     {
         tf_srvname.getDocument().removeDocumentListener(this);
         tf_pname.getDocument().removeDocumentListener(this);
         
         if (dbType == DialogButtonType.Ok)
         {
-            return new CreateMultiplayerGameData(tf_pname.getText(), tf_srvname.getText(), tf_srvmsg.getText(), 9000, 9010, 2, 2);
+            return new StartServerDialogData(tf_pname.getText(), tf_srvname.getText(), tf_srvmsg.getText(), 9000, 9010, 2, 2, cb_autoconnect.isSelected());
         }
         else
         {

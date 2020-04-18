@@ -8,8 +8,8 @@ import gent.timdemey.cards.model.entities.commands.C_StartMultiplayerGame;
 import gent.timdemey.cards.model.entities.commands.C_StopGame;
 import gent.timdemey.cards.model.entities.commands.C_Undo;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
-import gent.timdemey.cards.model.entities.commands.D_CreateMultiplayerGame;
-import gent.timdemey.cards.model.entities.commands.D_JoinGame;
+import gent.timdemey.cards.model.entities.commands.D_StartServer;
+import gent.timdemey.cards.model.entities.commands.D_Connect;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IGamePanelManager;
 import gent.timdemey.cards.services.context.ContextType;
@@ -36,7 +36,7 @@ public class ActionService implements IActionService
         case Actions.ACTION_REDO:
             return canExecute(new C_Redo());
         case Actions.ACTION_CREATE:
-            return canExecute(new D_CreateMultiplayerGame());
+            return canExecute(new D_StartServer());
         case Actions.ACTION_START:
             return canExecute(new C_StartLocalGame());
         case Actions.ACTION_STARTMULTIPLAYER:
@@ -48,7 +48,7 @@ public class ActionService implements IActionService
         case Actions.ACTION_DEBUG:
             return true;
         case Actions.ACTION_JOIN:
-            return canExecute(new D_JoinGame());
+            return canExecute(new D_Connect());
         case Actions.ACTION_LEAVE:
             return canExecute(new C_LeaveGame());
         default:
@@ -68,10 +68,10 @@ public class ActionService implements IActionService
             execute(new C_Redo());
             break;
         case Actions.ACTION_CREATE:
-            execute(new D_CreateMultiplayerGame());
+            execute(new D_StartServer());
             break;
         case Actions.ACTION_JOIN:
-            execute(new D_JoinGame());
+            execute(new D_Connect());
             break;
         case Actions.ACTION_START:       
             execute(new C_StartLocalGame());

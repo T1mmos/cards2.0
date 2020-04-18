@@ -13,11 +13,11 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.utils.Debug;
 
-public class D_ReexecutionFail extends DialogCommandBase
+public class D_OnReexecutionFail extends DialogCommandBase
 {
     public final List<CommandExecution> failedReexecutions;
 
-    public D_ReexecutionFail(List<CommandExecution> failedReexecutions)
+    public D_OnReexecutionFail(List<CommandExecution> failedReexecutions)
     {
         this.failedReexecutions = new ArrayList<>(failedReexecutions);
     }
