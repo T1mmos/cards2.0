@@ -20,9 +20,11 @@ public class StateListRef<X> extends StateRef<X> implements List<X>
     @Override
     public boolean add(X e)
     {
+        checkNotContains(e);
+
         boolean added = list.add(e);
 
-        if (added)
+        if(added)
         {
             getChangeTracker().recordListAdd(this, e);
         }
@@ -31,17 +33,20 @@ public class StateListRef<X> extends StateRef<X> implements List<X>
     }
 
     @Override
-    public void add(int index, X element)
+    public void add(int index, X e)
     {
-        list.add(index, element);
-        getChangeTracker().recordListAdd(this, element);
+        checkNotContains(e);
+        list.add(index, e);
+        getChangeTracker().recordListAdd(this, e);
     }
 
     @Override
     public boolean addAll(Collection<? extends X> c)
     {
+        checkNotContains(c);        
+        
         boolean added = list.addAll(c);
-        if (added)
+        if(added)
         {
             for (X x : c)
             {
@@ -54,8 +59,10 @@ public class StateListRef<X> extends StateRef<X> implements List<X>
     @Override
     public boolean addAll(int index, Collection<? extends X> c)
     {
+        checkNotContains(c); 
+        
         boolean added = list.addAll(index, c);
-        if (added)
+        if(added)
         {
             for (X x : c)
             {
@@ -134,7 +141,7 @@ public class StateListRef<X> extends StateRef<X> implements List<X>
     public boolean remove(Object o)
     {
         boolean removed = list.remove(o);
-        if (removed)
+        if(removed)
         {
             X x = (X) o;
             getChangeTracker().recordListRemove(this, x);
@@ -146,7 +153,7 @@ public class StateListRef<X> extends StateRef<X> implements List<X>
     public X remove(int index)
     {
         X x = list.remove(index);
-        if (x != null)
+        if(x != null)
         {
             getChangeTracker().recordListRemove(this, x);
         }
@@ -157,7 +164,7 @@ public class StateListRef<X> extends StateRef<X> implements List<X>
     public boolean removeAll(Collection<?> c)
     {
         boolean removed = list.removeAll(c);
-        if (removed)
+        if(removed)
         {
             for (Object o : c)
             {
@@ -172,7 +179,8 @@ public class StateListRef<X> extends StateRef<X> implements List<X>
     public boolean retainAll(Collection<?> c)
     {
         boolean removed = false;
-        removeIf(x -> {
+        removeIf(x ->
+        {
             boolean remove = !c.contains(x);
             getChangeTracker().recordListRemove(this, x);
             return remove;
@@ -184,8 +192,10 @@ public class StateListRef<X> extends StateRef<X> implements List<X>
     @Override
     public X set(int index, X element)
     {
+        checkNotContains(element);
+        
         X xPrev = list.set(index, element);
-        if (xPrev != null)
+        if(xPrev != null)
         {
             getChangeTracker().recordListRemove(this, xPrev);
         }
@@ -215,5 +225,21 @@ public class StateListRef<X> extends StateRef<X> implements List<X>
     public <T> T[] toArray(T[] a)
     {
         return list.toArray(a);
+    }
+    
+    private void checkNotContains(X e)
+    {
+        if(list.contains(e))
+        {
+            throw new IllegalStateException("A state list cannot contain equal elements: " + e);
+        }
+    }
+    
+    private void checkNotContains(Collection<? extends X> elements)
+    {
+        for (X x : elements)
+        {
+            checkNotContains(x);
+        }
     }
 }

@@ -18,7 +18,6 @@ import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.commands.C_UDP_StartServiceRequester;
 import gent.timdemey.cards.model.entities.commands.C_UDP_StopServiceRequester;
-import gent.timdemey.cards.model.multiplayer.JoinMultiplayerGameData;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyServer;

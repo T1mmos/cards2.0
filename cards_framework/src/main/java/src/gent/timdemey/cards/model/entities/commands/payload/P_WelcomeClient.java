@@ -12,4 +12,5 @@ public class P_WelcomeClient extends PayloadBase
     public UUID serverId;
     public String serverMessage;
     public List<Player> connected;
+    public UUID lobbyAdminId;
 }

@@ -4,5 +4,4 @@ import gent.timdemey.cards.model.entities.common.PayloadBase;
 
 public class P_DenyClient extends PayloadBase
 {
-    public String serverMessage;
 }

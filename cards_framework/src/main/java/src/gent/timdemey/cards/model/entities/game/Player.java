@@ -2,6 +2,7 @@ package gent.timdemey.cards.model.entities.game;
 
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.entities.game.payload.P_Player;
+import gent.timdemey.cards.utils.Debug;
 
 public class Player extends EntityBase
 {
@@ -22,6 +23,6 @@ public class Player extends EntityBase
     @Override
     public String toDebugString()
     {
-        return name;
+        return Debug.getKeyValue("name", name);
     }
 }

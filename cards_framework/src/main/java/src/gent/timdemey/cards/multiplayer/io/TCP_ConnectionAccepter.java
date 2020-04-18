@@ -10,12 +10,12 @@ import java.util.concurrent.ThreadFactory;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
-import gent.timdemey.cards.model.entities.commands.C_CreateServer;
+import gent.timdemey.cards.model.entities.commands.C_StartServer;
 
 public final class TCP_ConnectionAccepter
 {
     private final TCP_ConnectionPool connectionPool;
-    private final C_CreateServer info;
+    private final C_StartServer info;
     private final String messageOnFull;
 
     private final Executor rejectedExecutor;
@@ -30,7 +30,7 @@ public final class TCP_ConnectionAccepter
      * @param connPool
      * @param info
      */
-    public TCP_ConnectionAccepter(TCP_ConnectionPool connPool, C_CreateServer info, String messageOnFull)
+    public TCP_ConnectionAccepter(TCP_ConnectionPool connPool, C_StartServer info, String messageOnFull)
     {
         this.connectionPool = connPool;
         this.info = info;

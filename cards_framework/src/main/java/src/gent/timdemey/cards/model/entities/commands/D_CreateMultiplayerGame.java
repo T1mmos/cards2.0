@@ -10,27 +10,29 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogData;
+import gent.timdemey.cards.ui.dialogs.CreateMultiplayerGameData;
 import gent.timdemey.cards.ui.dialogs.CreateMultiplayerGameDialogContent;
 
-public class D_CreateGame extends DialogCommandBase
+public class D_CreateMultiplayerGame extends DialogCommandBase
 {
     @Override
     protected boolean canShowDialog(Context context, ContextType type, State state)
     {
         return !Services.get(IContextService.class).isInitialized(ContextType.Server);
     }
-    
+
     @Override
     protected void showDialog(Context context, ContextType type, State state)
     {
-        CreateMultiplayerGameDialogContent content = new CreateMultiplayerGameDialogContent();
+        CreateMultiplayerGameDialogContent content = new CreateMultiplayerGameDialogContent(state.getLocalName());
         IDialogService diagServ = Services.get(IDialogService.class);
         String title = Loc.get(LocKey.DialogTitle_creategame);
-        DialogData<C_CreateServer> data = diagServ.ShowAdvanced(title, null, content, DialogButtonType.BUTTONS_OK_CANCEL);
+        DialogData<CreateMultiplayerGameData> data = diagServ.ShowAdvanced(title, null, content, DialogButtonType.BUTTONS_OK_CANCEL);
 
         if(data.closeType == DialogButtonType.Ok)
         {
-            C_CreateServer command = data.payload;
+            C_StartServer command = new C_StartServer(state.getLocalId(), data.payload.playerName, data.payload.srvname, data.payload.srvmsg, data.payload.udpport,
+                data.payload.tcpport, data.payload.minconns, data.payload.maxconns);
             schedule(ContextType.UI, command);
         }
     }

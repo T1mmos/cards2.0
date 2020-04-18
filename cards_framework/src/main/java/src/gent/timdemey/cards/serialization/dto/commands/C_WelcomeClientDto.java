@@ -10,4 +10,5 @@ public class C_WelcomeClientDto extends CommandBaseDto
     public String serverId;
     public String serverMessage;
     public List<PlayerDto> connected;
+    public String lobbyAdminId;
 }

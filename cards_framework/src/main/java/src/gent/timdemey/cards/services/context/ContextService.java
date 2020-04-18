@@ -80,7 +80,7 @@ public class ContextService implements IContextService
     @Override
     public void initialize(ContextType type)
     {
-        Preconditions.checkState(isUiThread());
+        Preconditions.checkState(isUiThread(), "You must initialize from the UI thread!");
 
         ICommandExecutor cmdExecutor = null;
         if(type == ContextType.UI)

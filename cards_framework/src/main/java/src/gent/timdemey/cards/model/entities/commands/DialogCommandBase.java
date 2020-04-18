@@ -1,11 +1,14 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
 public abstract class DialogCommandBase extends CommandBase
 {
+    protected IDialogService dialogServ;
     protected DialogCommandBase()
     {
         super();
@@ -25,7 +28,9 @@ public abstract class DialogCommandBase extends CommandBase
     protected final void execute(Context context, ContextType type, State state)
     {
         CheckNotContext(ContextType.Client, ContextType.Server);
-        showDialog(context, type, state);
+        
+        dialogServ = Services.get(IDialogService.class);
+        showDialog(context, type, state);        
     }
 
     protected abstract void showDialog(Context context, ContextType type, State state);

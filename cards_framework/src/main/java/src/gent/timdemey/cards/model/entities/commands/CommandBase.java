@@ -139,6 +139,15 @@ public abstract class CommandBase extends EntityBase
         }
     }
 
+    protected final void CheckContext(ContextType current, ContextType expected)
+    {
+        if (current != expected)
+        {
+            throw new IllegalStateException(
+                "This command must be executed under the context type " + expected + ", but current context type is: " + current);
+        }
+    }
+    
     private void schedulePriv(ContextType type, CommandBase cmd)
     {
         IContextService contextServ = Services.get(IContextService.class);
@@ -205,5 +214,11 @@ public abstract class CommandBase extends EntityBase
     protected static CommandDtoMapper getCommandDtoMapper()
     {
         return Services.get(ISerializationService.class).getCommandDtoMapper();
+    }
+    
+    @Override
+    public String toDebugString()
+    {
+        return "CommandBase ("+getClass().getSimpleName()+")- override this method to provide more info";
     }
 }

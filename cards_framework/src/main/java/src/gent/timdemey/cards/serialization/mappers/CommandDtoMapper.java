@@ -4,9 +4,10 @@ import gent.timdemey.cards.model.entities.commands.C_Accept;
 import gent.timdemey.cards.model.entities.commands.C_DenyClient;
 import gent.timdemey.cards.model.entities.commands.C_JoinGame;
 import gent.timdemey.cards.model.entities.commands.C_Move;
+import gent.timdemey.cards.model.entities.commands.C_OnMultiplayerGameStarted;
 import gent.timdemey.cards.model.entities.commands.C_OnPlayerJoined;
 import gent.timdemey.cards.model.entities.commands.C_Reject;
-import gent.timdemey.cards.model.entities.commands.C_StartGame;
+import gent.timdemey.cards.model.entities.commands.C_StartMultiplayerGame;
 import gent.timdemey.cards.model.entities.commands.C_UDP_Request;
 import gent.timdemey.cards.model.entities.commands.C_UDP_Response;
 import gent.timdemey.cards.model.entities.commands.C_WelcomeClient;
@@ -15,9 +16,10 @@ import gent.timdemey.cards.model.entities.commands.payload.P_Accept;
 import gent.timdemey.cards.model.entities.commands.payload.P_DenyClient;
 import gent.timdemey.cards.model.entities.commands.payload.P_JoinGame;
 import gent.timdemey.cards.model.entities.commands.payload.P_Move;
+import gent.timdemey.cards.model.entities.commands.payload.P_OnMultiplayerGameStarted;
 import gent.timdemey.cards.model.entities.commands.payload.P_OnPlayerJoined;
 import gent.timdemey.cards.model.entities.commands.payload.P_Reject;
-import gent.timdemey.cards.model.entities.commands.payload.P_StartGame;
+import gent.timdemey.cards.model.entities.commands.payload.P_StartMultiplayerGame;
 import gent.timdemey.cards.model.entities.commands.payload.P_UDP_Request;
 import gent.timdemey.cards.model.entities.commands.payload.P_UDP_Response;
 import gent.timdemey.cards.model.entities.commands.payload.P_WelcomeClient;
@@ -26,9 +28,10 @@ import gent.timdemey.cards.serialization.dto.commands.C_AcceptDto;
 import gent.timdemey.cards.serialization.dto.commands.C_DenyClientDto;
 import gent.timdemey.cards.serialization.dto.commands.C_JoinGameDto;
 import gent.timdemey.cards.serialization.dto.commands.C_MoveDto;
+import gent.timdemey.cards.serialization.dto.commands.C_OnMultiplayerGameStartedDto;
 import gent.timdemey.cards.serialization.dto.commands.C_OnPlayerJoinedDto;
 import gent.timdemey.cards.serialization.dto.commands.C_RejectDto;
-import gent.timdemey.cards.serialization.dto.commands.C_StartGameDto;
+import gent.timdemey.cards.serialization.dto.commands.C_StartMultiplayerGameDto;
 import gent.timdemey.cards.serialization.dto.commands.C_UDP_RequestDto;
 import gent.timdemey.cards.serialization.dto.commands.C_UDP_ResponseDto;
 import gent.timdemey.cards.serialization.dto.commands.C_WelcomeClientDto;
@@ -46,7 +49,8 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         mapperDefs.addMapping(C_JoinGame.class, C_JoinGameDto.class, CommandDtoMapper::toDto);
         mapperDefs.addMapping(C_WelcomeClient.class, C_WelcomeClientDto.class, CommandDtoMapper::toDto);
         mapperDefs.addMapping(C_OnPlayerJoined.class, C_OnPlayerJoinedDto.class, CommandDtoMapper::toDto);
-        mapperDefs.addMapping(C_StartGame.class, C_StartGameDto.class, CommandDtoMapper::toDto);
+        mapperDefs.addMapping(C_StartMultiplayerGame.class, C_StartMultiplayerGameDto.class, CommandDtoMapper::toDto);
+        mapperDefs.addMapping(C_OnMultiplayerGameStarted.class, C_OnMultiplayerGameStartedDto.class, CommandDtoMapper::toDto);
         mapperDefs.addMapping(C_Reject.class, C_RejectDto.class, CommandDtoMapper::toDto);
         mapperDefs.addMapping(C_Accept.class, C_AcceptDto.class, CommandDtoMapper::toDto);
         
@@ -57,7 +61,8 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         mapperDefs.addMapping(C_JoinGameDto.class, C_JoinGame.class, CommandDtoMapper::toCommand);
         mapperDefs.addMapping(C_WelcomeClientDto.class, C_WelcomeClient.class, CommandDtoMapper::toCommand);
         mapperDefs.addMapping(C_OnPlayerJoinedDto.class, C_OnPlayerJoined.class, CommandDtoMapper::toCommand);
-        mapperDefs.addMapping(C_StartGameDto.class, C_StartGame.class, CommandDtoMapper::toCommand);
+        mapperDefs.addMapping(C_StartMultiplayerGameDto.class, C_StartMultiplayerGame.class, CommandDtoMapper::toCommand);
+        mapperDefs.addMapping(C_OnMultiplayerGameStartedDto.class, C_OnMultiplayerGameStarted.class, CommandDtoMapper::toCommand);
         mapperDefs.addMapping(C_RejectDto.class, C_Reject.class, CommandDtoMapper::toCommand);
         mapperDefs.addMapping(C_AcceptDto.class, C_Accept.class, CommandDtoMapper::toCommand);
     }
@@ -132,8 +137,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         {
             mergeEntityBaseToDto(cmd, dto);
             
-            dto.id = CommonMapper.toDto(cmd.id);
-            dto.serverMessage = cmd.serverMessage;            
+            dto.id = CommonMapper.toDto(cmd.id);       
         }
         return dto;
     }
@@ -143,7 +147,6 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         P_DenyClient pl = new P_DenyClient();
         {
             mergeDtoBaseToPayload(dto, pl);
-            pl.serverMessage = dto.serverMessage;
         }
         return new C_DenyClient(pl);        
     }
@@ -180,6 +183,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
             dto.serverId = toDto(cmd.serverId);
             dto.serverMessage = cmd.serverMessage;
             dto.connected = mapList(EntityDtoMapper.mapperDefs, cmd.connected, PlayerDto.class);
+            dto.lobbyAdminId = toDto(cmd.lobbyAdminId);
         }        
         return dto;
     }
@@ -193,6 +197,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
             pl.serverId = toUuid(dto.serverId);
             pl.serverMessage = dto.serverMessage;
             pl.connected = mapList(EntityDtoMapper.mapperDefs, dto.connected, Player.class);
+            pl.lobbyAdminId = toUuid(dto.lobbyAdminId);
         }        
         return new C_WelcomeClient(pl);
     }
@@ -219,9 +224,27 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         return new C_OnPlayerJoined(pl);
     }
     
-    private static C_StartGameDto toDto(C_StartGame cmd)
+    private static C_StartMultiplayerGameDto toDto(C_StartMultiplayerGame cmd)
     {
-        C_StartGameDto dto = new C_StartGameDto();
+        C_StartMultiplayerGameDto dto = new C_StartMultiplayerGameDto();
+        {
+            mergeEntityBaseToDto(cmd, dto);
+        }        
+        return dto;
+    }
+    
+    private static C_StartMultiplayerGame toCommand(C_StartMultiplayerGameDto dto)
+    {
+        P_StartMultiplayerGame pl = new P_StartMultiplayerGame();
+        {
+            mergeDtoBaseToPayload(dto, pl);
+        }        
+        return new C_StartMultiplayerGame(pl);
+    }
+    
+    private static C_OnMultiplayerGameStartedDto toDto(C_OnMultiplayerGameStarted cmd)
+    {
+        C_OnMultiplayerGameStartedDto dto = new C_OnMultiplayerGameStartedDto();
         {
             mergeEntityBaseToDto(cmd, dto);    
             
@@ -230,15 +253,15 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         return dto;
     }
     
-    private static C_StartGame toCommand(C_StartGameDto dto)
+    private static C_OnMultiplayerGameStarted toCommand(C_OnMultiplayerGameStartedDto dto)
     {
-        P_StartGame pl = new P_StartGame();
+        P_OnMultiplayerGameStarted pl = new P_OnMultiplayerGameStarted();
         {
             mergeDtoBaseToPayload(dto, pl);
             
             pl.cardGame = EntityDtoMapper.toDomainObject(dto.cardGame);
         }        
-        return new C_StartGame(pl);
+        return new C_OnMultiplayerGameStarted(pl);
     }
     
     private static C_RejectDto toDto(C_Reject cmd)

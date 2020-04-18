@@ -64,4 +64,9 @@ public class ReadOnlyState extends ReadOnlyEntityBase<State>
     {
         return entity.getServerId();
     }
+
+    public UUID getLobbyAdminId()
+    {
+        return entity.getLobbyAdminId();
+    }
 }

@@ -2,12 +2,13 @@ package gent.timdemey.cards.ui.dialogs;
 
 import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.model.state.Property;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.localization.Loc;
+import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyPlayer;
@@ -15,12 +16,12 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyProperty;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.readonlymodel.TypedChange;
 import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.services.IGamePanelManager;
-import gent.timdemey.cards.services.context.Change;
 import gent.timdemey.cards.services.context.ChangeType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogContent;
+import gent.timdemey.cards.ui.actions.Actions;
+import gent.timdemey.cards.ui.actions.IActionFactory;
 import net.miginfocom.swing.MigLayout;
 
 public class LobbyDialogContent extends DialogContent<Void, Void>
@@ -28,6 +29,9 @@ public class LobbyDialogContent extends DialogContent<Void, Void>
     private final JLabel l_serverMsg;
     private final JLabel l_localPlayer;
     private final JLabel l_remotePlayer;
+    private final JButton b_startGame;
+    
+    private final JLabel l_waitingToStart;
 
     private IStateListener stateListener = null;
 
@@ -36,11 +40,9 @@ public class LobbyDialogContent extends DialogContent<Void, Void>
         @Override
         public void onChange(ReadOnlyChange change)
         {
-            IGamePanelManager gamePanelManager = Services.get(IGamePanelManager.class);
             IContextService contextService = Services.get(IContextService.class);
             Context context = contextService.getThreadContext();
             ReadOnlyState state = context.getReadOnlyState();
-
            
             ReadOnlyProperty<?> property = change.property;
 
@@ -76,15 +78,21 @@ public class LobbyDialogContent extends DialogContent<Void, Void>
             {
                 close();
             }
-            
         }
     }
 
+    
     public LobbyDialogContent()
     {
         ReadOnlyState state = Services.get(IContextService.class).getThreadContext().getReadOnlyState();
+        IActionFactory actFact = Services.get(IActionFactory.class);
+        
         this.l_serverMsg = new JLabel(state.getServerMessage());
         this.l_localPlayer = new JLabel(state.getPlayers().get(state.getLocalId()).getName());
+        this.b_startGame = new JButton(actFact.getActionDef(Actions.ACTION_STARTMULTIPLAYER).action);
+        
+        String lobbyAdminName = state.getPlayers().get(state.getLobbyAdminId()).getName();
+        this.l_waitingToStart = new JLabel(Loc.get(LocKey.Label_waitingToStart, lobbyAdminName));
 
         List<ReadOnlyPlayer> otherPlayers = state.getRemotePlayers();
         if (otherPlayers.size() > 0)
@@ -100,11 +108,23 @@ public class LobbyDialogContent extends DialogContent<Void, Void>
     @Override
     protected JPanel createContent(Void data)
     {
-        JPanel panel = new JPanel(new MigLayout("insets 0, debug"));
+        IContextService contextService = Services.get(IContextService.class);
+        Context context = contextService.getThreadContext();
+        ReadOnlyState state = context.getReadOnlyState();
+        
+        JPanel panel = new JPanel(new MigLayout("insets 0"));
 
         panel.add(l_serverMsg, "span, push, grow, wrap");
         panel.add(l_localPlayer, "align left");
-        panel.add(l_remotePlayer, "align right");
+        panel.add(l_remotePlayer, "align right, wrap");
+        if (state.getLocalId().equals(state.getLobbyAdminId()))
+        {
+            panel.add(b_startGame, "spanx, pushx, align right");
+        }
+        else
+        {
+            panel.add(l_waitingToStart, "spanx, pushx, align right");
+        }
 
         return panel;
     }

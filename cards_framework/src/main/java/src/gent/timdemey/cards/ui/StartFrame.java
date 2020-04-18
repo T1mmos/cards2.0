@@ -16,6 +16,7 @@ import com.google.common.base.Preconditions;
 import gent.timdemey.cards.App;
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.model.entities.commands.C_ReadState;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.IFrameService;
@@ -73,10 +74,13 @@ public class StartFrame
         ICardPlugin plugin = Services.get(ICardPlugin.class);
         
         WebLookAndFeel.install();
-
-        Services.get(IContextService.class).initialize(ContextType.UI);
+        IContextService ctxtServ = Services.get(IContextService.class);
+        ctxtServ.initialize(ContextType.UI);
         plugin.installUiServices();
         StartFrame.installUiServices();
+        
+        C_ReadState cmd_readConfig = new C_ReadState();
+        ctxtServ.getThreadContext().schedule(cmd_readConfig);
 
         IFrameService frameServ = Services.get(IFrameService.class);
         BufferedImage background = frameServ.getBackground();                        

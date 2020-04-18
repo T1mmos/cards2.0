@@ -6,21 +6,16 @@ import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.utils.Debug;
 
 public class C_DenyClient extends CommandBase
 {
-    public final String serverMessage;
-
-    public C_DenyClient(String serverMessage)
+    public C_DenyClient()
     {
-        this.serverMessage = serverMessage;
     }
     
     public C_DenyClient(P_DenyClient pl)
     {
         super(pl);
-        this.serverMessage = pl.serverMessage;
     }
 
     @Override
@@ -32,7 +27,7 @@ public class C_DenyClient extends CommandBase
         }
         else if (type == ContextType.UI)
         {
-            Services.get(IDialogService.class).ShowMessage("test", "not welcome: " + serverMessage);
+            Services.get(IDialogService.class).ShowMessage("test", "TEST: You were denied to join the game. Maybe the server is full.");
         }
         else
         {
@@ -49,6 +44,6 @@ public class C_DenyClient extends CommandBase
     @Override
     public String toDebugString()
     {
-        return Debug.getKeyValue("serverMessage", serverMessage);
+        return "";
     }
 }

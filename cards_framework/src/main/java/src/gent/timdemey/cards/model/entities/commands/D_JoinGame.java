@@ -3,14 +3,15 @@ package gent.timdemey.cards.model.entities.commands;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
-import gent.timdemey.cards.model.multiplayer.JoinMultiplayerGameData;
 import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.readonlymodel.ReadOnlyServer;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogData;
+import gent.timdemey.cards.ui.dialogs.JoinMultiplayerGameData;
 import gent.timdemey.cards.ui.dialogs.JoinMultiplayerGameDialogContent;
 
 public class D_JoinGame extends DialogCommandBase
@@ -34,7 +35,8 @@ public class D_JoinGame extends DialogCommandBase
 
         if(data.closeType == DialogButtonType.Ok)
         {
-            C_Connect cmd = new C_Connect(data.payload.server, data.payload.playerName);
+            ReadOnlyServer server = data.payload.server;
+            C_Connect cmd = new C_Connect(state.getLocalId(), server.getId(), server.getInetAddress(), server.getTcpPort(), data.payload.server.getServerName(), data.payload.playerName);
             schedule(ContextType.UI, cmd);
         }
         else if(data.closeType == DialogButtonType.Cancel)

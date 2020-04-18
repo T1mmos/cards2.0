@@ -1,4 +1,4 @@
-package gent.timdemey.cards.model.multiplayer;
+package gent.timdemey.cards.ui.dialogs;
 
 import gent.timdemey.cards.readonlymodel.ReadOnlyServer;
 

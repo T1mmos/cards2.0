@@ -21,6 +21,7 @@ public class State extends EntityBase
     public static final Property<CommandHistory> CommandHistory = Property.of(State.class, CommandHistory.class, "CommandHistory");
     public static final Property<UUID> LocalId = Property.of(State.class, UUID.class, "LocalId");
     public static final Property<String> LocalName = Property.of(State.class, String.class, "LocalName");
+    public static final Property<UUID> LobbyAdminId = Property.of(State.class, UUID.class, "LobbyAdminId");
     public static final Property<Player> Players = Property.of(State.class, Player.class, "Players");
     public static final Property<UUID> ServerId = Property.of(State.class, UUID.class, "ServerId");
     public static final Property<String> ServerMsg = Property.of(State.class, String.class, "ServerMsg");
@@ -34,7 +35,7 @@ public class State extends EntityBase
     public static final Property<UDP_ServiceRequester> UdpServiceRequester = Property.of(State.class, UDP_ServiceRequester.class, "UdpServiceRequester");
 
     private StateValueRef<CommandHistory> commandHistoryRef;
-    
+
     // state lists
     private EntityStateListRef<Player> playersRef;
     private EntityStateListRef<Server> serversRef;
@@ -43,6 +44,7 @@ public class State extends EntityBase
     private StateValueRef<CardGame> cardGameRef;
     private StateValueRef<UUID> localIdRef;
     private StateValueRef<String> localNameRef;
+    private StateValueRef<UUID> lobbyAdminId;
     private StateValueRef<UUID> serverIdRef;
     private StateValueRef<String> serverMsgRef;
 
@@ -61,6 +63,7 @@ public class State extends EntityBase
         localIdRef = new StateValueRef<>(LocalId, id);
         localNameRef = new StateValueRef<>(LocalName, id);
         playersRef = new EntityStateListRef<>(Players, id, new ArrayList<>());
+        lobbyAdminId = new StateValueRef<>(LobbyAdminId, id);
         serverIdRef = new StateValueRef<>(ServerId, id);
         serverMsgRef = new StateValueRef<>(ServerMsg, id);
         serversRef = new EntityStateListRef<>(Servers, id, new ArrayList<>());
@@ -133,11 +136,21 @@ public class State extends EntityBase
         udpServiceAnnouncerRef.set(udpServiceAnnouncer);
     }
 
+    public UUID getLobbyAdminId()
+    {
+        return lobbyAdminId.get();
+    }
+
+    public void setLobbyAdminId(UUID lobbyAdminId)
+    {
+        this.lobbyAdminId.set(lobbyAdminId);
+    }
+
     public boolean isLocalId(UUID id)
     {
         return getLocalId().equals(id);
     }
-    
+
     public UUID getLocalId()
     {
         return localIdRef.get();
@@ -202,10 +215,10 @@ public class State extends EntityBase
     {
         return this.commandHistoryRef.get();
     }
-    
+
     @Override
     public final String toDebugString()
     {
-        return "State"; 
+        return "State";
     }
 }

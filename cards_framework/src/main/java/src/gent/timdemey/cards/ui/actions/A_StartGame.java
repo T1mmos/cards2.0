@@ -10,10 +10,8 @@ import gent.timdemey.cards.services.IContextService;
 
 public class A_StartGame extends ActionBase
 {
-
     private class GameStartListener implements IStateListener
     {
-
         @Override
         public void onChange(ReadOnlyChange change)
         {
@@ -21,8 +19,7 @@ public class A_StartGame extends ActionBase
             {
                 checkEnabled();
             }
-        }
-        
+        }        
     }
 
     protected A_StartGame()

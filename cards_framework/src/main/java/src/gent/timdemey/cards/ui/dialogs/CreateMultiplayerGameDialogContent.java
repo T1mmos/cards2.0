@@ -8,17 +8,22 @@ import javax.swing.event.DocumentListener;
 
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
-import gent.timdemey.cards.model.entities.commands.C_CreateServer;
+import gent.timdemey.cards.model.entities.commands.C_StartServer;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogContent;
 import net.miginfocom.swing.MigLayout;
 
-public class CreateMultiplayerGameDialogContent extends DialogContent<Void, C_CreateServer> implements DocumentListener
+public class CreateMultiplayerGameDialogContent extends DialogContent<Void, CreateMultiplayerGameData> implements DocumentListener
 {
-
     private final JTextField tf_srvname = new JTextField(30);
     private final JTextField tf_srvmsg = new JTextField(30);
-
+    private final JTextField tf_pname = new JTextField(30);
+        
+    public CreateMultiplayerGameDialogContent(String initialPname)
+    {
+        tf_pname.setText(initialPname);
+    }
+    
     @Override
     protected JPanel createContent(Void parameter)
     {
@@ -26,26 +31,30 @@ public class CreateMultiplayerGameDialogContent extends DialogContent<Void, C_Cr
 
         JLabel lb_srvname = new JLabel(Loc.get(LocKey.Label_servername));
         JLabel lb_srvmsg = new JLabel(Loc.get(LocKey.Label_servermsg));
+        JLabel lb_pname = new JLabel(Loc.get(LocKey.Label_playername));
 
         panel.add(lb_srvname, "");
         panel.add(tf_srvname, "wrap");
         panel.add(lb_srvmsg, "");
         panel.add(tf_srvmsg, "wrap");
-
+        panel.add(lb_pname, "");
+        panel.add(tf_pname, "wrap");
+        
         tf_srvname.getDocument().addDocumentListener(this);
+        tf_pname.getDocument().addDocumentListener(this);
 
         return panel;
     }
 
     @Override
-    protected C_CreateServer onClose(DialogButtonType dbType)
+    protected CreateMultiplayerGameData onClose(DialogButtonType dbType)
     {
+        tf_srvname.getDocument().removeDocumentListener(this);
+        tf_pname.getDocument().removeDocumentListener(this);
+        
         if (dbType == DialogButtonType.Ok)
         {
-            return new C_CreateServer(tf_srvname.getText(), tf_srvmsg.getText(), 9000, 9010, 2, 2); // should override
-                                                                                                    // this class to
-                                                                                                    // specify other
-                                                                                                    // stuff
+            return new CreateMultiplayerGameData(tf_pname.getText(), tf_srvname.getText(), tf_srvmsg.getText(), 9000, 9010, 2, 2);
         }
         else
         {
@@ -56,7 +65,7 @@ public class CreateMultiplayerGameDialogContent extends DialogContent<Void, C_Cr
     @Override
     protected boolean isOk()
     {
-        return !tf_srvname.getText().isEmpty();
+        return !tf_srvname.getText().isBlank() && !tf_pname.getText().isBlank();
     }
 
     @Override
