@@ -67,7 +67,7 @@ public class StartServerDialogContent extends DialogContent<Void, StartServerDia
     @Override
     protected boolean isOk()
     {
-        return !tf_srvname.getText().isBlank() && !tf_pname.getText().isBlank();
+        return !tf_srvname.getText().trim().isEmpty() && !tf_pname.getText().trim().isEmpty();
     }
 
     @Override
