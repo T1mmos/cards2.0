@@ -1,10 +1,24 @@
 package gent.timdemey.cards.services.dialogs;
 
+import java.awt.Container;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.ConvolveOp;
+import java.awt.image.Kernel;
+import java.util.Arrays;
 import java.util.EnumSet;
 
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import com.google.common.base.Preconditions;
 
@@ -13,6 +27,7 @@ import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.services.IDialogService;
+import net.miginfocom.swing.MigLayout;
 
 public final class DialogService implements IDialogService
 {
@@ -59,8 +74,99 @@ public final class DialogService implements IDialogService
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
         Services.get(ILogManager.class).log("Showing dialog with title: " + title);
 
+     /*   JPanel glass = new JPanel(new MigLayout("insets 0"));
+        Container root = frame.getRootPane();
+        
+        int w = root.getWidth();
+        int h = root.getHeight();
+        
+        BufferedImage bi = new BufferedImage(w, h,  BufferedImage.TYPE_INT_ARGB); 
+        Graphics2D g = (Graphics2D) bi.getGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        root.paint(g);
+        
+        frame.setGlassPane(glass);
+        
+        glass.add(new JLabel("TEST"));
+        final Timer t = new Timer(100, null);
+        int max = 7;
+        t.addActionListener(new ActionListener()
+        {
+            int i = 2;
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+               
+                
+                int size = i;
+                float div = size*size;
+                float[] mask = new float[size*size];
+                float value = 1f / div;
+                Arrays.fill(mask, value);
+                Kernel kernel = new Kernel(size, size, mask);
+                BufferedImageOp op = new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null);
+                BufferedImage blurred = op.filter(bi, null);
+                ImageIcon img = new ImageIcon(blurred);
+
+                JLabel label = new JLabel(img);
+
+                glass.removeAll();
+                glass.add(label);
+
+                glass.validate();
+                glass.setVisible(true);
+                
+                if (++i == max)
+                {
+                    t.stop();
+                }
+            }
+        });
+        t.start();*/
+        
+        
         JDialog dialog = new JDialog(frame, title, true);
-        return dialogContent.show(dialog, data, closeTypes);
+        DialogData<OUT> outData = dialogContent.show(dialog, data, closeTypes);
+
+       /* final Timer t2 = new Timer(100, null);
+        t2.addActionListener(new ActionListener()
+        {
+            int i = max - 1;
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                int size = i;
+                float div = size*size;
+                float[] mask = new float[size*size];
+                float value = 1f / div;
+                Arrays.fill(mask, value);
+                Kernel kernel = new Kernel(size, size, mask);
+                BufferedImageOp op = new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null);
+                BufferedImage blurred = op.filter(bi, null);
+                ImageIcon img = new ImageIcon(blurred);
+
+                JLabel label = new JLabel(img);
+
+                glass.removeAll();
+                glass.add(label);
+                glass.add(new JLabel("HEHEH"), "push, grow, wrap");
+
+                glass.validate();
+                
+                if (--i == 2)
+                {
+                    t2.stop();
+                    glass.setVisible(false);
+                }
+            }
+        });
+        t2.start();
+        */
+    //   
+        
+        return outData;
     }
 
+    
 }

@@ -8,6 +8,8 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
+import gent.timdemey.cards.model.entities.game.Player;
+import gent.timdemey.cards.model.entities.game.payload.P_Player;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.ICardGameCreationService;
 import gent.timdemey.cards.services.context.CommandHistory;
@@ -43,6 +45,12 @@ public class C_StartLocalGame extends CommandBase
         ICardGameCreationService ccServ = Services.get(ICardGameCreationService.class);
         List<List<Card>> cards = ccServ.getCards();
         
+        //List<UUID> playerIds = Arrays.asList(UUID.randomUUID());
+        P_Player pl = new P_Player();
+        pl.id = state.getLocalId();
+        pl.name = state.getLocalName();
+        Player player = new Player(pl);
+        state.getPlayers().add(player);
         List<UUID> playerIds = state.getPlayers().getIds();
         List<PlayerConfiguration> playerConfigs = ccServ.createStacks(playerIds, cards);
         CardGame cardGame = new CardGame(playerConfigs);

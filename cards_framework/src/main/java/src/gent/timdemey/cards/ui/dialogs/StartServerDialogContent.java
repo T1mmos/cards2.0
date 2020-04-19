@@ -1,6 +1,5 @@
 package gent.timdemey.cards.ui.dialogs;
 
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -18,7 +17,7 @@ public class StartServerDialogContent extends DialogContent<Void, StartServerDia
     private final JTextField tf_srvname = new JTextField(30);
     private final JTextField tf_srvmsg = new JTextField(30);
     private final JTextField tf_pname = new JTextField(30);
-    private final JCheckBox cb_autoconnect = new JCheckBox(Loc.get(LocKey.CheckBox_autoconnect));
+    // private final JCheckBox cb_autoconnect = new JCheckBox(Loc.get(LocKey.CheckBox_autoconnect));
         
     public StartServerDialogContent(String initialPname)
     {
@@ -40,7 +39,7 @@ public class StartServerDialogContent extends DialogContent<Void, StartServerDia
         panel.add(tf_srvmsg, "wrap");
         panel.add(lb_pname, "");
         panel.add(tf_pname, "wrap");
-        panel.add(cb_autoconnect, "span, pushx, align left");
+        // panel.add(cb_autoconnect, "span, pushx, align left");
         
         tf_srvname.getDocument().addDocumentListener(this);
         tf_pname.getDocument().addDocumentListener(this);
@@ -56,7 +55,8 @@ public class StartServerDialogContent extends DialogContent<Void, StartServerDia
         
         if (dbType == DialogButtonType.Ok)
         {
-            return new StartServerDialogData(tf_pname.getText(), tf_srvname.getText(), tf_srvmsg.getText(), 9000, 9010, 2, 2, cb_autoconnect.isSelected());
+            boolean autoconnect = true; // we currently don't support starting a server without automatically being a player
+            return new StartServerDialogData(tf_pname.getText(), tf_srvname.getText(), tf_srvmsg.getText(), 9000, 9010, 2, 2, autoconnect);
         }
         else
         {

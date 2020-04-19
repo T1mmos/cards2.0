@@ -72,7 +72,9 @@ public class StartFrame
     public static void StartUI()
     {    
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
-        ICardPlugin plugin = Services.get(ICardPlugin.class);
+        ICardPlugin plugin = Services.get(ICardPlugin.class);        
+
+        frame = new JFrame();     
         
         WebLookAndFeel.install();
         IContextService ctxtServ = Services.get(IContextService.class);
@@ -89,8 +91,7 @@ public class StartFrame
         BufferedImage background = frameServ.getBackground();                        
         JMenuBar menuBar = frameServ.getMenuBar(plugin);
         List<Image> images = frameServ.getFrameIcons();
-
-        frame = new JFrame();        
+   
         frame.setJMenuBar(menuBar);
         frame.setTitle(String.format("%s v%d.%d", plugin.getName(), plugin.getMajorVersion(), plugin.getMinorVersion()));
         frame.setSize(new Dimension(800, 600));
