@@ -3,7 +3,7 @@ package gent.timdemey.cards;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IFrameService;
-import gent.timdemey.cards.services.context.MockContextService;
+import gent.timdemey.cards.services.context.ContextService;
 import gent.timdemey.cards.services.frame.SolShowTestFrameService;
 import gent.timdemey.cards.ui.actions.IActionFactory;
 import gent.timdemey.cards.ui.actions.IActionService;
@@ -17,7 +17,7 @@ public class SolShowTestPlugin extends SolShowPlugin
     {
         super.installServices();
         
-        App.getServices().install(IContextService.class, new MockContextService());
+        App.getServices().install(IContextService.class, new ContextService());
         App.getServices().install(IActionService.class, new SolShowTestActionService());
         App.getServices().install(IFrameService.class, new SolShowTestFrameService());
     }

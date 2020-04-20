@@ -11,7 +11,6 @@ import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.netcode.CommandSchedulingTcpConnectionListener;
 import gent.timdemey.cards.netcode.ITcpConnectionListener;
 import gent.timdemey.cards.netcode.TCP_Connection;
-import gent.timdemey.cards.netcode.TCP_ConnectionCreator;
 import gent.timdemey.cards.netcode.TCP_ConnectionPool;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.context.Context;
@@ -56,52 +55,31 @@ public class C_Connect extends CommandBase
         CheckNotContext(type, ContextType.Server);
         if (type == ContextType.UI)
         {
-            updateState(state);
-
-            IContextService ctxtServ = Services.get(IContextService.class);
-            
-            // If we are connecting via a UI, the Client layer could be already installed
-            if (!ctxtServ.isInitialized(ContextType.Client))
-            {
-                ctxtServ.initialize(ContextType.Client);
-            }
-            forward(type, state);
-        }
-        else if (type == ContextType.Client)
-        {
-            updateState(state);
-            state.setLocalId(playerId); 
-            state.setLocalName(playerName);            
-            
             ICardPlugin plugin = Services.get(ICardPlugin.class);
-
             if (plugin.getPlayerCount() == 1)
             {
                 throw new UnsupportedOperationException();
-            }         
-
+            }  
+            
+            if (!state.getServers().contains(serverId))
+            {
+                P_Server pl = new P_Server();
+                pl.id = serverId;
+                pl.inetAddress = serverInetAddress;
+                pl.serverName = serverName;
+                pl.tcpport = serverTcpPort;
+                state.getServers().add(new Server(pl));
+            }
+            state.setServerId(serverId);
+            
             ITcpConnectionListener tcpConnListener = new ClientCommandSchedulingTcpConnectionListener(serverId, playerName, state.getLocalId());
             TCP_ConnectionPool tcpConnPool = new TCP_ConnectionPool(1, tcpConnListener);
 
             state.setTcpConnectionPool(tcpConnPool);
             state.setTcpConnectionListener(tcpConnListener);
 
-            TCP_ConnectionCreator.connect(tcpConnPool, serverInetAddress, serverTcpPort);
+            tcpConnPool.addConnection(serverInetAddress, serverTcpPort);            
         }
-    }
-    
-    private void updateState(State state)
-    {
-        if (!state.getServers().contains(serverId))
-        {
-            P_Server pl = new P_Server();
-            pl.id = serverId;
-            pl.inetAddress = serverInetAddress;
-            pl.serverName = serverName;
-            pl.tcpport = serverTcpPort;
-            state.getServers().add(new Server(pl));
-        }
-        state.setServerId(serverId);
     }
 
     private static class ClientCommandSchedulingTcpConnectionListener extends CommandSchedulingTcpConnectionListener
@@ -112,7 +90,7 @@ public class C_Connect extends CommandBase
         
         private ClientCommandSchedulingTcpConnectionListener(UUID serverId, String clientName, UUID clientId)
         {
-            super(ContextType.Client);
+            super(ContextType.UI);
             this.serverId = serverId;
             this.clientName = clientName;
             this.clientId = clientId;
@@ -127,17 +105,17 @@ public class C_Connect extends CommandBase
             // if the connection is complete then we can join the game
             CommandBase cmd = new C_EnterLobby(clientName, clientId);
             IContextService contextServ = Services.get(IContextService.class);
-            LimitedContext context = contextServ.getContext(ContextType.Client);
+            LimitedContext context = contextServ.getContext(ContextType.UI);
             context.schedule(cmd);
         }
 
         @Override
         public void onTcpConnectionRemotelyClosed(UUID id, TCP_Connection connection)
         {
-            LimitedContext context = Services.get(IContextService.class).getContext(ContextType.Client);
+            LimitedContext context = Services.get(IContextService.class).getContext(ContextType.UI);
             if (id != null)
             {
-                CommandBase cmd = new C_OnConnectionLoss(connection, id);
+                CommandBase cmd = new C_OnConnectionLoss();
                 context.schedule(cmd);
             }
         }

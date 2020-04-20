@@ -9,6 +9,7 @@ import gent.timdemey.cards.services.context.ContextType;
 public abstract class DialogCommandBase extends CommandBase
 {
     protected IDialogService dialogServ;
+
     protected DialogCommandBase()
     {
         super();
@@ -17,8 +18,8 @@ public abstract class DialogCommandBase extends CommandBase
     @Override
     protected final boolean canExecute(Context context, ContextType type, State state)
     {
-        CheckNotContext(ContextType.Client, ContextType.Server);
-        
+        CheckContext(type, ContextType.UI);
+
         return canShowDialog(context, type, state);
     }
 
@@ -27,14 +28,14 @@ public abstract class DialogCommandBase extends CommandBase
     @Override
     protected final void execute(Context context, ContextType type, State state)
     {
-        CheckNotContext(ContextType.Client, ContextType.Server);
-        
+        CheckContext(type, ContextType.UI);
+
         dialogServ = Services.get(IDialogService.class);
-        showDialog(context, type, state);        
+        showDialog(context, type, state);
     }
 
     protected abstract void showDialog(Context context, ContextType type, State state);
-    
+
     @Override
     public String toDebugString()
     {

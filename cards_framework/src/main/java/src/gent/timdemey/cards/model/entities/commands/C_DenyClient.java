@@ -12,33 +12,30 @@ public class C_DenyClient extends CommandBase
     public C_DenyClient()
     {
     }
-    
+
     public C_DenyClient(P_DenyClient pl)
     {
         super(pl);
     }
 
     @Override
+    protected boolean canExecute(Context context, ContextType type, State state)
+    {
+        return type == ContextType.UI;
+    }
+
+    @Override
     public void execute(Context context, ContextType type, State state)
     {
-        if (type == ContextType.Client)
+        if (type == ContextType.UI)
         {
-            reschedule(ContextType.UI);
-        }
-        else if (type == ContextType.UI)
-        {
-            Services.get(IDialogService.class).ShowMessage("test", "TEST: You were denied to join the game. Maybe the server is full.");
+            Services.get(IDialogService.class).ShowMessage("test",
+                    "TEST: You were denied to join the game. Maybe the server is full.");
         }
         else
         {
             throw new IllegalStateException();
         }
-    }
-
-    @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
-    {
-        return type == ContextType.Client || type == ContextType.UI;
     }
 
     @Override

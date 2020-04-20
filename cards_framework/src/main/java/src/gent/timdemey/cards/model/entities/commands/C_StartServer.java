@@ -67,7 +67,6 @@ public class C_StartServer extends CommandBase
     @Override
     protected boolean canExecute(Context context, ContextType type, State state)
     {
-        CheckNotContext(type, ContextType.Client);
         boolean srvCtxtInit = Services.get(IContextService.class).isInitialized(ContextType.Server);
         if (type == ContextType.UI)
         {
@@ -84,7 +83,6 @@ public class C_StartServer extends CommandBase
     @Override
     protected void execute(Context context, ContextType type, State state)
     {        
-        CheckNotContext(type, ContextType.Client);
         if (type == ContextType.UI)
         {
             IContextService ctxtServ = Services.get(IContextService.class);

@@ -22,15 +22,13 @@ public abstract class C_Pull extends CommandBase
     
     @Override
     public final boolean canExecute(Context context, ContextType type, State state)
-    {
-        CheckNotContext(type, ContextType.Client);
-        
+    {        
         CardStack srcCardStack = state.getCardGame().getCardStack(srcCardStackId);
         Card srcCard = state.getCardGame().getCards().get(srcCardId);
                 
         return canPull(srcCardStack, srcCard, state);
     }
-
+    
     /**
      * Override this method to implement plugin/game specific business rules.
      * @param srcCardStack
@@ -41,6 +39,7 @@ public abstract class C_Pull extends CommandBase
     {
         return true;
     }
+
     
     @Override
     public final void execute(Context context, ContextType type, State state)

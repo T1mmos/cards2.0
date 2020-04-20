@@ -34,14 +34,8 @@ public class C_SolShowOnEndGame extends CommandBase
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
-        CheckNotContext(type, ContextType.Server);
-        
-        if (type == ContextType.Client)
-        {
-            forward(type, state);
-            return;
-        }
-        
+        CheckContext(type, ContextType.UI);
+                
         state.setGameState(GameState.Ended);
         D_SolShowOnEndGame d_onendgame = new D_SolShowOnEndGame(winnerId);
         schedule(ContextType.UI, d_onendgame);

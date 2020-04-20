@@ -14,9 +14,11 @@ public abstract class C_Use extends CommandBase
 
     public C_Use(UUID initiatorStackId, UUID initiatorCardId)
     {
-        if((initiatorStackId == null && initiatorCardId == null) || (initiatorStackId != null && initiatorCardId != null))
+        if ((initiatorStackId == null && initiatorCardId == null)
+                || (initiatorStackId != null && initiatorCardId != null))
         {
-            throw new IllegalArgumentException("Choose exactly one initator for a Use command: a card, or a card stack, but not both.");
+            throw new IllegalArgumentException(
+                    "Choose exactly one initator for a Use command: a card, or a card stack, but not both.");
         }
         this.initiatorStackId = initiatorStackId;
         this.initiatorCardId = initiatorCardId;
@@ -25,7 +27,7 @@ public abstract class C_Use extends CommandBase
     @Override
     protected final boolean canExecute(Context context, ContextType type, State state)
     {
-        CheckNotContext(type, ContextType.Client, ContextType.Server);
+        CheckContext(type, ContextType.UI);
 
         CommandBase cmd = resolveCommand(context, type, state);
         return cmd != null;
@@ -33,25 +35,27 @@ public abstract class C_Use extends CommandBase
 
     protected final void execute(Context context, ContextType type, State state)
     {
-        CheckNotContext(type, ContextType.Client, ContextType.Server);
+        CheckContext(type, ContextType.UI);
 
         CommandBase cmd = resolveCommand(context, type, state);
         schedule(ContextType.UI, cmd);
     };
-    
+
     /**
-     * Resolves the actual command to execute whenever a user invokes a 'Use' action.
+     * Resolves the actual command to execute whenever a user invokes a 'Use'
+     * action.
+     * 
      * @param context
      * @param type
      * @param state
      * @return
      */
     protected abstract CommandBase resolveCommand(Context context, ContextType type, State state);
-    
+
     @Override
     public String toDebugString()
     {
-        return Debug.getKeyValue("initiatorStackId", initiatorStackId) + 
-               Debug.getKeyValue("initiatorCardId", initiatorCardId);
+        return Debug.getKeyValue("initiatorStackId", initiatorStackId)
+                + Debug.getKeyValue("initiatorCardId", initiatorCardId);
     }
 }

@@ -24,41 +24,34 @@ public class C_UDP_StartServiceRequester extends CommandBase
     @Override
     protected boolean canExecute(Context context, ContextType type, State state)
     {
+        CheckContext(type, ContextType.UI);
         return true;
     }
 
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
-        CheckNotContext(type, ContextType.Server);
+        CheckContext(type, ContextType.UI);
 
-        if (type == ContextType.UI)
+        if (state.getUdpServiceRequester() != null)
         {
-            reschedule(ContextType.Client);
-            return;
+            throw new IllegalStateException("Already a requesting service running. Stop the current one first.");
         }
 
-        if (type == ContextType.Client)
-        {
-            if (state.getUdpServiceRequester() != null)
-            {
-                throw new IllegalStateException("Already a requesting service running. Stop the current one first.");
-            }
+        // clear the server list shown in the UI
+        CommandBase clrServList = new C_ClearServerList();
+        IContextService contextServ = Services.get(IContextService.class);
+        contextServ.getContext(ContextType.UI).schedule(clrServList);
 
-            // clear the server list shown in the UI
-            CommandBase clrServList = new C_ClearServerList();
-            IContextService contextServ = Services.get(IContextService.class);
-            contextServ.getContext(ContextType.UI).schedule(clrServList);
+        // prepare UDP broadcast
+        C_UDP_Request cmd = new C_UDP_Request();
+        String json = getCommandDtoMapper().toJson(cmd);
 
-            // prepare UDP broadcast
-            C_UDP_Request cmd = new C_UDP_Request();
-            String json = getCommandDtoMapper().toJson(cmd);
+        UDP_ServiceRequester udpServRequester = new UDP_ServiceRequester(json,
+                C_UDP_StartServiceRequester::onUdpReceived);
+        state.setUdpServiceRequester(udpServRequester);
 
-            UDP_ServiceRequester udpServRequester = new UDP_ServiceRequester(json, C_UDP_StartServiceRequester::onUdpReceived);
-            state.setUdpServiceRequester(udpServRequester);
-
-            udpServRequester.start();
-        }
+        udpServRequester.start();
     }
 
     public static void onUdpReceived(String json)
@@ -74,7 +67,7 @@ public class C_UDP_StartServiceRequester extends CommandBase
             }
 
             IContextService contextServ = Services.get(IContextService.class);
-            LimitedContext context = contextServ.getContext(ContextType.Client);
+            LimitedContext context = contextServ.getContext(ContextType.UI);
             context.schedule(command);
         }
         catch (Exception e)

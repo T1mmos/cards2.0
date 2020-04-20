@@ -42,25 +42,14 @@ public class C_StartMultiplayerGame extends CommandBase
             return state.getCardGame() == null &&
                    state.getPlayers().size() == reqPlayerCnt;
         }
-        else if (type == ContextType.Server)
-        {
-            return true; // if the conditions are not met, we need to send an answer to the client
-        }
-        else
-        {
-            return true;
-        }
+
+        return true;
     }
 
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
         if (type == ContextType.UI)
-        {
-            forward(type, state);
-            return;
-        }
-        else if (type == ContextType.Client)
         {
             forward(type, state);
             return;

@@ -54,34 +54,26 @@ public final class C_UDP_Response extends CommandBase
     @Override
     protected boolean canExecute(Context context, ContextType type, State state)
     {
+        CheckContext(type, ContextType.UI);
         return true;
     }
 
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
-        if (type == ContextType.Client)
+        CheckContext(type, ContextType.UI);
+       
+        P_Server pl = new P_Server();
         {
-            reschedule(ContextType.UI);
+            pl.id = serverId;
+            pl.inetAddress = inetAddress;
+            pl.tcpport = tcpport;
+            pl.serverName = serverName;
         }
-        else if (type == ContextType.UI)
+        Server server = new Server(pl);
+        if (!state.getServers().contains(server))
         {
-            P_Server pl = new P_Server();
-            {
-                pl.id = serverId;
-                pl.inetAddress = inetAddress;
-                pl.tcpport = tcpport;
-                pl.serverName = serverName;
-            }
-            Server server = new Server(pl);
-            if (!state.getServers().contains(server))
-            {
-                state.getServers().add(server);
-            }
-        }
-        else
-        {
-            // this command is sent over the wire by UDP_ServiceAnnouncer
+            state.getServers().add(server);
         }
     }
 

@@ -5,7 +5,6 @@ import gent.timdemey.cards.model.commands.C_CardsVisibleSwitch;
 import gent.timdemey.cards.model.commands.C_NewSolShowGame;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.context.Context;
-import gent.timdemey.cards.services.context.ContextType;
 
 public class SolShowTestActionService extends ActionService
 {
@@ -25,11 +24,7 @@ public class SolShowTestActionService extends ActionService
     @Override
     public void executeAction(String id)
     {
-        IContextService ctxtServ = Services.get(IContextService.class);
-        if (!ctxtServ.isInitialized(ContextType.Client))
-        {
-            ctxtServ.initialize(ContextType.Client); // install a mock executor    
-        }    
+        IContextService ctxtServ = Services.get(IContextService.class);       
         Context context = ctxtServ.getThreadContext();
         
         switch (id)

@@ -23,13 +23,14 @@ public class C_UDP_Request extends CommandBase
     @Override
     protected boolean canExecute(Context context, ContextType type, State state)
     {
+        CheckContext(type, ContextType.Server);
         return true;
     }
 
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
-        CheckNotContext(type, ContextType.UI, ContextType.Client);
+        CheckContext(type, ContextType.Server);
         
         Server server = state.getServers().get(state.getServerId());
         C_UDP_Response udpResponseCmd = new C_UDP_Response(server.id, server.serverName, server.inetAddress, server.tcpport, 1, 0);

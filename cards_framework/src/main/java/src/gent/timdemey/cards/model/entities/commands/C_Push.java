@@ -23,16 +23,8 @@ public abstract class C_Push extends CommandBase
     }
     
     @Override
-    public final void execute(Context context, ContextType type, State state)
-    {
-        throw new UnsupportedOperationException("This command should not be executed directly, only the canExecute is important");
-    }
-    
-    @Override
     public final boolean canExecute(Context context, ContextType type, State state)
-    {
-        CheckNotContext(type, ContextType.Client);
-        
+    {        
         CardStack dstCardStack = state.getCardGame().getCardStack(dstCardStackId);
         List<Card> srcCards = state.getCardGame().getCards().getOnly(srcCardIds);
         
@@ -48,6 +40,12 @@ public abstract class C_Push extends CommandBase
     protected boolean canPush(CardStack dstCardStack, List<Card> srcCards, State state)
     {
         return true;
+    }
+    
+    @Override
+    public final void execute(Context context, ContextType type, State state)
+    {
+        throw new UnsupportedOperationException("This command should not be executed directly, only the canExecute is important");
     }
     
     @Override

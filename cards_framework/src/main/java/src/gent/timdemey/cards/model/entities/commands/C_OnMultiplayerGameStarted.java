@@ -30,13 +30,7 @@ public class C_OnMultiplayerGameStarted extends CommandBase
 
     @Override
     protected void execute(Context context, ContextType type, State state)
-    {
-        if (type == ContextType.Client)
-        {
-            forward(type, state);
-            return;
-        }
-        
+    {        
         if (type == ContextType.UI)
         {
             state.setCardGame(cardGame);

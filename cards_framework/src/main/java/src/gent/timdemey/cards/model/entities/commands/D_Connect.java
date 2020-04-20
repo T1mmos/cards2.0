@@ -5,7 +5,6 @@ import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.readonlymodel.ReadOnlyServer;
-import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -25,23 +24,18 @@ public class D_Connect extends DialogCommandBase
     @Override
     protected void showDialog(Context context, ContextType type, State state)
     {
-        IContextService ctxtServ = Services.get(IContextService.class);
-        ctxtServ.initialize(ContextType.Client);
-
         JoinMultiplayerGameDialogContent content = new JoinMultiplayerGameDialogContent();
         IDialogService diagServ = Services.get(IDialogService.class);
         String title = Loc.get(LocKey.DialogTitle_joingame);
-        DialogData<JoinMultiplayerGameData> data = diagServ.ShowAdvanced(title, null, content, DialogButtonType.BUTTONS_OK_CANCEL);
+        DialogData<JoinMultiplayerGameData> data = diagServ.ShowAdvanced(title, null, content,
+                DialogButtonType.BUTTONS_OK_CANCEL);
 
-        if(data.closeType == DialogButtonType.Ok)
+        if (data.closeType == DialogButtonType.Ok)
         {
             ReadOnlyServer server = data.payload.server;
-            C_Connect cmd = new C_Connect(state.getLocalId(), server.getId(), server.getInetAddress(), server.getTcpPort(), data.payload.server.getServerName(), data.payload.playerName);
+            C_Connect cmd = new C_Connect(state.getLocalId(), server.getId(), server.getInetAddress(),
+                    server.getTcpPort(), data.payload.server.getServerName(), data.payload.playerName);
             schedule(ContextType.UI, cmd);
-        }
-        else if(data.closeType == DialogButtonType.Cancel)
-        {
-            ctxtServ.drop(ContextType.Client);
         }
     }
 }

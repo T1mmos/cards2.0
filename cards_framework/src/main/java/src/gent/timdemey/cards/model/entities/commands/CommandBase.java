@@ -31,39 +31,24 @@ public abstract class CommandBase extends EntityBase
     {
         super(pl);
     }
-    
+
     protected final void forward(ContextType type, State state)
     {
         if (type == ContextType.Server)
         {
-            throw new IllegalStateException("To forward, we need to be in the UI or Client layer");
+            throw new IllegalStateException("To forward, we need to be in the UI layer");
         }
         if (getSourceId() == null)
         {
-            throw new IllegalStateException("To forward, we need to know the source ID of this command: " + this.getClass().getCanonicalName());
+            throw new IllegalStateException(
+                    "To forward, we need to know the source ID of this command: " + this.getClass().getCanonicalName());
         }
-        
-        if (type == ContextType.Client)
+
+        if (getSourceId().equals(state.getLocalId()))
         {
-            if (getSourceId().equals(state.getServerId()))
-            {
-                // to UI
-                reschedule(ContextType.UI);
-            }
-            else if (getSourceId().equals(state.getLocalId()))
-            {
-                // to Server
-                String serialized = getCommandDtoMapper().toJson(this);            
-                state.getTcpConnectionPool().getConnection(state.getServerId()).send(serialized);
-            }
-        }
-        else if (type == ContextType.UI)
-        {
-            if (getSourceId().equals(state.getLocalId()))
-            {
-                // to server
-                reschedule(ContextType.Client);
-            }
+            // to Server
+            String serialized = getCommandDtoMapper().toJson(this);
+            state.getTcpConnectionPool().getConnection(state.getServerId()).send(serialized);
         }
     }
 
@@ -143,11 +128,11 @@ public abstract class CommandBase extends EntityBase
     {
         if (current != expected)
         {
-            throw new IllegalStateException(
-                "This command must be executed under the context type " + expected + ", but current context type is: " + current);
+            throw new IllegalStateException("This command must be executed under the context type " + expected
+                    + ", but current context type is: " + current);
         }
     }
-    
+
     private void schedulePriv(ContextType type, CommandBase cmd)
     {
         IContextService contextServ = Services.get(IContextService.class);
@@ -164,13 +149,13 @@ public abstract class CommandBase extends EntityBase
     {
         return sourceTcpConnection;
     }
-    
-    public void setSourceUdp (UDP_Source udpSource)
+
+    public void setSourceUdp(UDP_Source udpSource)
     {
         this.sourceUdp = udpSource;
     }
-    
-    protected final UDP_Source getSourceUdp ()
+
+    protected final UDP_Source getSourceUdp()
     {
         return sourceUdp;
     }
@@ -201,24 +186,25 @@ public abstract class CommandBase extends EntityBase
     }
 
     /**
-     * Indicates if this command should be added to the undo/redo list.
-     * By default, this returns false, so commands will by default not be
-     * undoable/redoable unless you override this method. 
+     * Indicates if this command should be added to the undo/redo list. By default,
+     * this returns false, so commands will by default not be undoable/redoable
+     * unless you override this method.
+     * 
      * @return
      */
     public boolean isSyncable()
     {
         return false;
     }
-    
+
     protected static CommandDtoMapper getCommandDtoMapper()
     {
         return Services.get(ISerializationService.class).getCommandDtoMapper();
     }
-    
+
     @Override
     public String toDebugString()
     {
-        return "CommandBase ("+getClass().getSimpleName()+")- override this method to provide more info";
+        return "CommandBase (" + getClass().getSimpleName() + ")- override this method to provide more info";
     }
 }

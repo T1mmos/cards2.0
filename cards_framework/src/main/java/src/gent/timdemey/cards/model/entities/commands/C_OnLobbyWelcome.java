@@ -24,7 +24,8 @@ public class C_OnLobbyWelcome extends CommandBase
     public final List<Player> connected;
     public final UUID lobbyAdminId;
 
-    public C_OnLobbyWelcome(UUID clientId, UUID serverId, String serverMessage, List<Player> connected, UUID lobbyAdminId)
+    public C_OnLobbyWelcome(UUID clientId, UUID serverId, String serverMessage, List<Player> connected,
+            UUID lobbyAdminId)
     {
         this.clientId = clientId;
         this.serverId = serverId;
@@ -46,42 +47,37 @@ public class C_OnLobbyWelcome extends CommandBase
     @Override
     protected boolean canExecute(Context context, ContextType type, State state)
     {
+        CheckContext(type, ContextType.UI);
+
         return true;
     }
 
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
-        CheckNotContext(type, ContextType.Server);
+        CheckContext(type, ContextType.UI);
 
-        if(type == ContextType.Client)
+        // safety checks: returned clientId == localId
+        if (!state.getLocalId().equals(clientId))
         {
-            // safety checks: returned clientId == localId
-            if(!state.getLocalId().equals(clientId))
-            {
-                throw new IllegalArgumentException("Server returned a WelcomeClient with a clientId not matching the localId");
-            }
-            if(!state.getServerId().equals(serverId))
-            {
-                throw new IllegalArgumentException("Server returned a WelcomeClient with a serverId not matching the serverId");
-            }
-
-            updateState(state);
-
-            reschedule(ContextType.UI);
+            throw new IllegalArgumentException(
+                    "Server returned a WelcomeClient with a clientId not matching the localId");
         }
-        else if(type == ContextType.UI)
+        if (!state.getServerId().equals(serverId))
         {
-            updateState(state);
-            schedule(ContextType.UI, new D_EnterLobby());
+            throw new IllegalArgumentException(
+                    "Server returned a WelcomeClient with a serverId not matching the serverId");
         }
+
+        updateState(state);
+        schedule(ContextType.UI, new D_EnterLobby());
     }
 
     private void updateState(State state)
     {
         state.setServerMessage(serverMessage);
         state.setLobbyAdminId(lobbyAdminId);
-        
+
         // "connected" enlists all players including yourself
         for (Player player : connected)
         {
@@ -92,7 +88,7 @@ public class C_OnLobbyWelcome extends CommandBase
     @Override
     public String toDebugString()
     {
-        return Debug.getKeyValue("clientId", clientId) + Debug.getKeyValue("serverId", serverId) + Debug.getKeyValue("serverMessage", serverMessage) + Debug
-            .listEntity("connected", connected);
+        return Debug.getKeyValue("clientId", clientId) + Debug.getKeyValue("serverId", serverId)
+                + Debug.getKeyValue("serverMessage", serverMessage) + Debug.listEntity("connected", connected);
     }
 }

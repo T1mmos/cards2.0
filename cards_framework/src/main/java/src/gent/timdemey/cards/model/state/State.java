@@ -172,6 +172,11 @@ public class State extends EntityBase
 
     public void setLocalId(UUID id)
     {
+        if (localIdRef.get() != null)
+        {
+            throw new IllegalStateException("LocalId can only be set once");
+        }
+            
         localIdRef.set(id);
     }
 

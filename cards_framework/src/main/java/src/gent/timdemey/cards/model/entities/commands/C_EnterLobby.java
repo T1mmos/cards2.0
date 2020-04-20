@@ -15,7 +15,7 @@ import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.utils.Debug;
 
 /**
- * Unicast sent to the server upon 
+ * Unicast sent to the server upon attempting to join a lobby.
  * @author Tim
  *
  */
@@ -45,7 +45,7 @@ public class C_EnterLobby extends CommandBase
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
-        if(type == ContextType.Client)
+        if(type == ContextType.UI)
         {
             String json = getCommandDtoMapper().toJson(this);
             TCP_Connection tcpConnection = state.getTcpConnectionPool().getConnection(state.getServerId());
@@ -94,10 +94,6 @@ public class C_EnterLobby extends CommandBase
                 String json_update = getCommandDtoMapper().toJson(cmd_update);
                 state.getTcpConnectionPool().broadcast(updateIds, json_update);
             }            
-        }
-        else
-        {
-            throw new IllegalStateException();
         }
     }
 

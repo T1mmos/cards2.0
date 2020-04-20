@@ -27,13 +27,13 @@ public class C_Reject extends CommandBase
     @Override
     protected boolean canExecute(Context context, ContextType type, State state)
     {
-        return type == ContextType.Client;
+        return type == ContextType.UI;
     }
 
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
-        CheckNotContext(type, ContextType.UI, ContextType.Server);
+        CheckContext(type, ContextType.UI);
         
         forward(type, state);
     }

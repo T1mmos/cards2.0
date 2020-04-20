@@ -35,11 +35,7 @@ public class C_DropPlayer extends CommandBase
             }
         }
 
-        if (contextType == ContextType.Client)
-        {
-            reschedule(ContextType.UI);
-        }
-        else if (contextType == ContextType.Server)
+        if (contextType == ContextType.Server)
         {
             String json = getCommandDtoMapper().toJson(this);
             for (Player player : state.getRemotePlayers())

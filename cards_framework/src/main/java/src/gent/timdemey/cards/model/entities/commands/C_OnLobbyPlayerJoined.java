@@ -9,6 +9,7 @@ import gent.timdemey.cards.utils.Debug;
 
 /**
  * Multicast sent to players in a lobby when a new player joined the lobby.
+ * 
  * @author Tim
  *
  */
@@ -26,37 +27,24 @@ public class C_OnLobbyPlayerJoined extends CommandBase
         super(pl);
         this.player = pl.player;
     }
-    
+
     @Override
     protected boolean canExecute(Context context, ContextType type, State state)
     {
+        CheckContext(type, ContextType.UI);
         return true;
     }
 
     @Override
-    public void execute(Context context, ContextType contextType, State state)
+    public void execute(Context context, ContextType type, State state)
     {
-        CheckNotContext(contextType, ContextType.Server);
-        if (contextType == ContextType.UI)
-        {
-            updateState(state);
-        }
-        else if (contextType == ContextType.Client)
-        {
-            updateState(state);
-            reschedule(ContextType.UI);
-        }
-    }
-    
-    private void updateState(State state)
-    {
+        CheckContext(type, ContextType.UI);
         state.getPlayers().add(player);
     }
 
     @Override
     public String toDebugString()
     {
-        return Debug.getKeyValue("playerName", player.name) + 
-               Debug.getKeyValue("playerId", player.id);
+        return Debug.getKeyValue("playerName", player.name) + Debug.getKeyValue("playerId", player.id);
     }
 }

@@ -60,18 +60,6 @@ public final class UDP_ServiceRequester
 
     public void start()
     {
-        try
-        {
-            dsocket = new DatagramSocket();
-            dsocket.setBroadcast(true);
-            dsocket.setSoTimeout(UDP_SERVICE_REQUEST_TIMEOUT);
-        }
-        catch (SocketException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return;
-        }
         thread = new Thread(this::requestLoop, UDP_SERVICE_REQUEST_THREAD_NAME);
         thread.start();
         Services.get(ILogManager.class).log("Thread '" + UDP_SERVICE_REQUEST_THREAD_NAME + "' started.");
@@ -92,6 +80,19 @@ public final class UDP_ServiceRequester
 
     private void requestLoop()
     {
+        try
+        {
+            dsocket = new DatagramSocket();
+            dsocket.setBroadcast(true);
+            dsocket.setSoTimeout(UDP_SERVICE_REQUEST_TIMEOUT);
+        }
+        catch (SocketException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return;
+        }
+        
         Services.get(ILogManager.class).log("This thread has started.");
         try
         {

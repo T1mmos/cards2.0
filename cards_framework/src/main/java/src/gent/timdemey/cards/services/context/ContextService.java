@@ -87,10 +87,6 @@ public class ContextService implements IContextService
         {
             cmdExecutor = new UICommandExecutor();
         }
-        else if(type == ContextType.Client)
-        {
-            cmdExecutor = new ClientCommandExecutor();
-        }
         else if(type == ContextType.Server)
         {
             cmdExecutor = new ServerCommandExecutor();

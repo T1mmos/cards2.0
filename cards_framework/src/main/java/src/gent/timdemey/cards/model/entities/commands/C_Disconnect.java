@@ -18,36 +18,26 @@ public class C_Disconnect extends CommandBase
     }
 
     @Override
-    public void execute(Context context, ContextType type, State state)
+    protected boolean canExecute(Context context, ContextType type, State state)
     {
-        CheckNotContext(type, ContextType.Server);
-
-        if (type == ContextType.Client)
-        {
-            state.getTcpConnectionPool().closeAllConnections();
-
-            for (Player player : state.getRemotePlayers())
-            {
-                state.getPlayers().remove(player);
-            }
-            state.setServerId(null);
-        }
-        else if (type == ContextType.UI)
-        {
-            for (Player player : state.getRemotePlayers())
-            {
-                state.getPlayers().remove(player);
-            }
-            state.setServerId(null);
-
-            reschedule(ContextType.Client);
-        }
+        CheckContext(type, ContextType.UI);
+        return true;
     }
 
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    public void execute(Context context, ContextType type, State state)
     {
-        return type == ContextType.Client || type == ContextType.UI;
+        CheckContext(type, ContextType.UI);
+
+        if (type == ContextType.UI)
+        {
+            state.getTcpConnectionPool().closeAllConnections();
+            for (Player player : state.getRemotePlayers())
+            {
+                state.getPlayers().remove(player);
+            }
+            state.setServerId(null);
+        }
     }
 
     @Override
