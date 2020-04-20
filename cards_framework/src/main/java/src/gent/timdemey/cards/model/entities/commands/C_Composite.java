@@ -7,7 +7,6 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.utils.Debug;

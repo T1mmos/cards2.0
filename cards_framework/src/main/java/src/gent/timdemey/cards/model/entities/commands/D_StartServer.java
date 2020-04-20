@@ -10,8 +10,8 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogData;
-import gent.timdemey.cards.ui.dialogs.StartServerDialogData;
 import gent.timdemey.cards.ui.dialogs.StartServerDialogContent;
+import gent.timdemey.cards.ui.dialogs.StartServerDialogData;
 
 public class D_StartServer extends DialogCommandBase
 {

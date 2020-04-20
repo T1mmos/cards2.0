@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.commands.payload.P_WelcomeClient;
 import gent.timdemey.cards.model.entities.game.Player;
-import gent.timdemey.cards.model.entities.game.payload.P_Server;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
