@@ -27,15 +27,13 @@ public class C_Accept extends CommandBase
     @Override
     protected boolean canExecute(Context context, ContextType type, State state)
     {
-        return true;
+        return false;
     }
 
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
-        CheckNotContext(type, ContextType.UI, ContextType.Server);
-        
-        forward(type, state);
+        throw new IllegalStateException("This command cannot be executed directly.");
     }
 
     @Override

@@ -27,15 +27,13 @@ public class C_Reject extends CommandBase
     @Override
     protected boolean canExecute(Context context, ContextType type, State state)
     {
-        return type == ContextType.UI;
+        return false;
     }
 
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
-        CheckContext(type, ContextType.UI);
-        
-        forward(type, state);
+        throw new IllegalStateException("This command cannot be executed directly.");
     }
 
     @Override
