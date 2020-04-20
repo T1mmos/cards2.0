@@ -12,7 +12,6 @@ import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.commands.C_Move;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.boot.SolShowCardStackType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -174,7 +173,6 @@ public class C_SolShowMove extends C_Move
                 }
             }
         }
-
         else if(type == ContextType.Client)
         {
             forward(type, state);

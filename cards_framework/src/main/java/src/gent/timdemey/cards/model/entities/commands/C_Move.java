@@ -71,7 +71,6 @@ public class C_Move extends CommandBase
         srcCardStack.removeAll(transferCards);
         dstCardStack.addAll(transferCards);
         transferCards.forEach(card -> card.cardStack = dstCardStack);
-    
     }
     
     public final boolean isSyncable()
