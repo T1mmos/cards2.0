@@ -10,9 +10,9 @@ import gent.timdemey.cards.model.entities.commands.C_DropPlayer;
 import gent.timdemey.cards.model.entities.commands.C_Reject;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.multiplayer.io.CommandSchedulingTcpConnectionListener;
-import gent.timdemey.cards.multiplayer.io.TCP_Connection;
-import gent.timdemey.cards.multiplayer.io.TCP_ConnectionPool;
+import gent.timdemey.cards.netcode.CommandSchedulingTcpConnectionListener;
+import gent.timdemey.cards.netcode.TCP_Connection;
+import gent.timdemey.cards.netcode.TCP_ConnectionPool;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.ISerializationService;
 

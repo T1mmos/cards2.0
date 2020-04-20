@@ -1,4 +1,4 @@
-package gent.timdemey.cards.multiplayer.io;
+package gent.timdemey.cards.netcode;
 
 import java.io.IOException;
 import java.net.ServerSocket;

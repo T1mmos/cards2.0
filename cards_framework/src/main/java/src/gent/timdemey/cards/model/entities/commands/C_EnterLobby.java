@@ -9,7 +9,7 @@ import gent.timdemey.cards.model.entities.commands.payload.P_JoinGame;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.payload.P_Player;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.multiplayer.io.TCP_Connection;
+import gent.timdemey.cards.netcode.TCP_Connection;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.utils.Debug;

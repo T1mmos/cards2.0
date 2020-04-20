@@ -1,8 +1,8 @@
 package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.multiplayer.io.TCP_ConnectionAccepter;
-import gent.timdemey.cards.multiplayer.io.UDP_ServiceAnnouncer;
+import gent.timdemey.cards.netcode.TCP_ConnectionAccepter;
+import gent.timdemey.cards.netcode.UDP_ServiceAnnouncer;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 

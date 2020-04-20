@@ -3,8 +3,8 @@ package gent.timdemey.cards.model.entities.commands;
 import gent.timdemey.cards.model.entities.commands.payload.P_UDP_Request;
 import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.multiplayer.io.UDP_Source;
-import gent.timdemey.cards.multiplayer.io.UDP_UnicastMessage;
+import gent.timdemey.cards.netcode.UDP_Source;
+import gent.timdemey.cards.netcode.UDP_UnicastMessage;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 

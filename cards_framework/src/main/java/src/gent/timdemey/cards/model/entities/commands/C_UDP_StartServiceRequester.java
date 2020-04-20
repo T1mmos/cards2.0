@@ -3,7 +3,7 @@ package gent.timdemey.cards.model.entities.commands;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.multiplayer.io.UDP_ServiceRequester;
+import gent.timdemey.cards.netcode.UDP_ServiceRequester;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;

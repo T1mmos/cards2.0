@@ -9,11 +9,11 @@ import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.Server;
-import gent.timdemey.cards.multiplayer.io.ITcpConnectionListener;
-import gent.timdemey.cards.multiplayer.io.TCP_ConnectionAccepter;
-import gent.timdemey.cards.multiplayer.io.TCP_ConnectionPool;
-import gent.timdemey.cards.multiplayer.io.UDP_ServiceAnnouncer;
-import gent.timdemey.cards.multiplayer.io.UDP_ServiceRequester;
+import gent.timdemey.cards.netcode.ITcpConnectionListener;
+import gent.timdemey.cards.netcode.TCP_ConnectionAccepter;
+import gent.timdemey.cards.netcode.TCP_ConnectionPool;
+import gent.timdemey.cards.netcode.UDP_ServiceAnnouncer;
+import gent.timdemey.cards.netcode.UDP_ServiceRequester;
 import gent.timdemey.cards.services.context.CommandHistory;
 
 public class State extends EntityBase
