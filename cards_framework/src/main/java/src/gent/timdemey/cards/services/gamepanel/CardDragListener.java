@@ -1,6 +1,7 @@
 package gent.timdemey.cards.services.gamepanel;
 
 import java.awt.Component;
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -14,9 +15,9 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityList;
+import gent.timdemey.cards.services.ICommandService;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IGamePanelManager;
-import gent.timdemey.cards.services.ICommandService;
 import gent.timdemey.cards.services.IPositionManager;
 import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.context.Context;
@@ -98,7 +99,7 @@ class CardDragListener extends MouseAdapter
         ReadOnlyCardGame cardGame = context.getReadOnlyState().getCardGame();
 
         UUID playerId = context.getReadOnlyState().getLocalId();
-        
+
         if (cardGame.isCard(entityId))
         {
             ReadOnlyCard card = cardGame.getCard(entityId);
@@ -164,14 +165,13 @@ class CardDragListener extends MouseAdapter
         ReadOnlyCardGame cardGame = context.getReadOnlyState().getCardGame();
 
         UUID playerId = context.getReadOnlyState().getLocalId();
-        
+
         if (!draggedImages.isEmpty())
         {
-            // check if first card is over another card or an empty card stack
-            boolean pushed = false;
-
             JScalableImage rootJCard = draggedImages.get(0);
 
+            int intersectAMax = 0;
+            CommandBase cmdMove = null;
             for (Component comp : rootJCard.getParent().getComponents()) // inefficient?
             {
                 if (!(comp instanceof JScalableImage))
@@ -183,7 +183,8 @@ class CardDragListener extends MouseAdapter
                 {
                     continue;
                 }
-                if (!rootJCard.getBounds().intersects(otherScalable.getBounds()))
+                Rectangle intersection = rootJCard.getBounds().intersection(otherScalable.getBounds());
+                if (intersection.isEmpty())
                 {
                     continue;
                 }
@@ -213,26 +214,24 @@ class CardDragListener extends MouseAdapter
                 CommandBase cmdPush = operationsServ.getPushCommand(playerId, dstCardStack.getId(), roCards.getIds());
                 if (context.canExecute(cmdPush))
                 {
-                    CommandBase cmdMove = operationsServ.getMoveCommand(playerId, cards.get(0).getCardStack().getId(),
+                    int intersectA = intersection.width * intersection.height;
+                    if (intersectA < intersectAMax)
+                    {
+                        continue;
+                    }
+
+                    intersectAMax = intersectA;
+                    cmdMove = operationsServ.getMoveCommand(playerId, cards.get(0).getCardStack().getId(),
                             dstCardStack.getId(), cards.get(0).getId());
-                    context.schedule(cmdMove);
-                    pushed = true;
-                    break;
+
                 }
             }
-            /*
-             * if (!pushed) { // try empty card stacks below the dragged card
-             * List<CardStack> cardStacks =
-             * Services.get(IPositionManager.class).getCardStacksIn(rootJCard.getBounds());
-             * List<Card> cards = draggedImages.stream() .map(jcard -> (Card)
-             * Services.get(IScalableImageManager.class).getManagedObject(jcard))
-             * .collect(Collectors.toList()); for (CardStack cardStack : cardStacks) { if
-             * (!cardStack.isEmpty()) { continue; } if
-             * (Services.get(IGameOperations.class).canPush(cardStack, cards)) {
-             * Services.get(IGameOperations.class).move(cards.get(0).getCardStack(),
-             * cardStack, cards.get(0)); pushed = true; break; } } }
-             */
-            if (!pushed)
+
+            if (cmdMove != null)
+            {
+                context.schedule(cmdMove);
+            }
+            else 
             {
                 for (int i = 0; i < draggedImages.size(); i++)
                 {
