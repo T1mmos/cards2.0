@@ -17,11 +17,10 @@ import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
+import gent.timdemey.cards.logging.Logger;
 
 public final class TCP_ConnectionPool
 {
-    private final ILogManager logger = Services.get(ILogManager.class);
-
     /// connections not yet associated to a UUID (should be empty 99% of the time)
     private final List<TCP_Connection> halfConns;
     /// fully established connections that are associated to a UUID.
@@ -146,11 +145,11 @@ public final class TCP_ConnectionPool
             try
             {
                 String hostAddr = address.getHostAddress();
-                logger.log("Connecting to %s:%s", hostAddr, port);
+                Logger.info("Connecting to %s:%s", hostAddr, port);
                 socket = new Socket(address, port);
                 String localAddr = socket.getLocalAddress().getHostAddress();
                 int localPort = socket.getLocalPort();
-                logger.log("Connected to %s:%s, local address is %s:%s", hostAddr, port, localAddr, localPort);
+                Logger.info("Connected to %s:%s, local address is %s:%s", hostAddr, port, localAddr, localPort);
                 addConnectionAndStart(socket);
             }
             catch (IOException e)

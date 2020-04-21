@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.logging.ILogManager;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.C_Accept;
 import gent.timdemey.cards.model.entities.commands.C_DropPlayer;
 import gent.timdemey.cards.model.entities.commands.C_Reject;
@@ -28,15 +28,14 @@ class ServerCommandExecutor extends CommandExecutorBase
     @Override
     protected void execute(CommandBase command, State state)
     {
-        ILogManager logger = Services.get(ILogManager.class);
-        logger.log("Processing command '" + command.getClass().getSimpleName() + "'");
+        Logger.info("Processing command '%s'", command.getName());
 
         CommandHistory cmdHist = state.getCommandHistory();
 
         // a command cannot be executed twice
         if (cmdHist != null && cmdHist.containsAccepted(command))
         {
-            logger.log("This command was already executed: '" + command.getClass().getSimpleName() + "'");
+            Logger.warn("\"This command was already executed: '%s'; ignoring", command.getName());
             return;
         }
 
@@ -71,7 +70,7 @@ class ServerCommandExecutor extends CommandExecutorBase
         {
             if (syncable)
             {
-                logger.log("Can't execute syncable command: '" + command.getName() + "'");
+                Logger.info("\"Can't execute syncable command: '%s'. Responding with a C_Reject.", command.getName());
 
                 C_Reject rejectCmd = new C_Reject(command.id);
                 ISerializationService serServ = Services.get(ISerializationService.class);
@@ -80,7 +79,7 @@ class ServerCommandExecutor extends CommandExecutorBase
             }
             else
             {
-                logger.log("Can't execute non-syncable command: '" + command.getName() + "' - indicates an error");
+                Logger.error("Can't execute non-syncable command: '%s'.", command.getName());
             }
         }
 

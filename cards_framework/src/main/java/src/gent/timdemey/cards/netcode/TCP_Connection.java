@@ -9,8 +9,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingDeque;
 
-import gent.timdemey.cards.Services;
-import gent.timdemey.cards.logging.ILogManager;
+import gent.timdemey.cards.logging.Logger;
 
 public final class TCP_Connection
 {
@@ -98,9 +97,7 @@ public final class TCP_Connection
 
     private void onException(IOException e)
     {
-        Services.get(ILogManager.class).log("Following exception may be expected (connection closing):");
-        Services.get(ILogManager.class).log(e);
-
+        Logger.error("Following exception may be expected (connection closing):", e);
         stop();
     }
 

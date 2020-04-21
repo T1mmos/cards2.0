@@ -4,6 +4,7 @@ import javax.swing.SwingUtilities;
 
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.logging.ILogManager;
+import gent.timdemey.cards.logging.LogLevel;
 import gent.timdemey.cards.logging.LogManager;
 import gent.timdemey.cards.serialization.SerializationService;
 import gent.timdemey.cards.services.IConfigManager;
@@ -105,6 +106,7 @@ public class Start
     private static void installBaseServices()
     {
         ILogManager logMan = new LogManager();
+        logMan.setLogLevel(LogLevel.INFO);
         App.getServices().install(ILogManager.class, logMan);
 
         IResourceManager resMan = new ResourceManager();

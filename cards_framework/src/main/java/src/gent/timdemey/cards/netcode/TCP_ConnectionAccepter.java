@@ -8,8 +8,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
-import gent.timdemey.cards.Services;
-import gent.timdemey.cards.logging.ILogManager;
+import gent.timdemey.cards.logging.Logger;
 
 public final class TCP_ConnectionAccepter
 {
@@ -50,12 +49,11 @@ public final class TCP_ConnectionAccepter
         try
         {
             this.ssocket = new ServerSocket(tcpport);
-            Services.get(ILogManager.class).log("Created TCP server socket on port " + tcpport);
+            Logger.info("Created TCP server socket on port " + tcpport);
         }
         catch (IOException e)
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Logger.error(e);
             return;
         }
         this.thread = new Thread(this::acceptLoop, "TCP ServerSocket Accepter");

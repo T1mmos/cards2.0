@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.ISerializationService;
@@ -22,7 +23,7 @@ public class CommandSchedulingTcpConnectionListener implements ITcpConnectionLis
     @Override
     public void onTcpConnectionAdded(TCP_Connection connection, TCP_ConnectionPool connectionPool)
     {
-        Services.get(ILogManager.class).log("A TCP connection was added to " + connection.getRemote());
+        Logger.info("A TCP connection was added to " + connection.getRemote());
     }
 
     @Override
@@ -38,8 +39,7 @@ public class CommandSchedulingTcpConnectionListener implements ITcpConnectionLis
             command.setSourceId(id);
             command.setSerialized(message);
 
-            Services.get(ILogManager.class).log(
-                    "Received command '" + command.getClass().getSimpleName() + "' from " + tcpConnection.getRemote());
+            Logger.info("Received command '%s' from '%s'", command.getName(), tcpConnection.getRemote());
 
             LimitedContext context = Services.get(IContextService.class).getContext(contextType);
             context.schedule(command);

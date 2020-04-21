@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.logging.ILogManager;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.netcode.TCP_ConnectionPool;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
@@ -44,8 +44,7 @@ public class CommandNetworkService implements INetworkService
         }
         else
         {
-            ILogManager logger = Services.get(ILogManager.class);
-            logger.log("The command %s is not a local command, not so sending it", command.getName());
+            Logger.debug("The command %s is not a local command, not so sending it", command.getName());
         }
     }
 

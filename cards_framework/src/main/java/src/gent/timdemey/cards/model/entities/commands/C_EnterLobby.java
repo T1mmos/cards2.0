@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.logging.ILogManager;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.payload.P_JoinGame;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.payload.P_Player;
@@ -55,7 +55,7 @@ public class C_EnterLobby extends CommandBase
         else if(type == ContextType.Server)
         {
             TCP_Connection tcpConnection = getSourceTcpConnection();
-            Services.get(ILogManager.class).log("Player %s (id %s) joining from %s", clientName, clientId, tcpConnection.getRemote());
+            Logger.info("Player %s (id %s) joining from %s", clientName, clientId, tcpConnection.getRemote());
 
             state.getTcpConnectionPool().bindUUID(clientId, tcpConnection);
 
