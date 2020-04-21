@@ -18,8 +18,9 @@ import gent.timdemey.cards.services.context.CommandHistory;
 public class State extends EntityBase
 {
     public static final Property<CardGame> CardGame = Property.of(State.class, CardGame.class, "CardGame");
-    public static final Property<CommandHistory> CommandHistory = Property.of(State.class, CommandHistory.class, "CommandHistory");
-    public static final Property<GameState> GameState = Property.of(State.class, GameState.class, "GameState"); 
+    public static final Property<CommandHistory> CommandHistory = Property.of(State.class, CommandHistory.class,
+            "CommandHistory");
+    public static final Property<GameState> GameState = Property.of(State.class, GameState.class, "GameState");
     public static final Property<UUID> LocalId = Property.of(State.class, UUID.class, "LocalId");
     public static final Property<String> LocalName = Property.of(State.class, String.class, "LocalName");
     public static final Property<UUID> LobbyAdminId = Property.of(State.class, UUID.class, "LobbyAdminId");
@@ -27,11 +28,6 @@ public class State extends EntityBase
     public static final Property<UUID> ServerId = Property.of(State.class, UUID.class, "ServerId");
     public static final Property<String> ServerMsg = Property.of(State.class, String.class, "ServerMsg");
     public static final Property<Server> Servers = Property.of(State.class, Server.class, "Servers");
-    public static final Property<TCP_ConnectionAccepter> TcpConnectionAccepter = Property.of(State.class, TCP_ConnectionAccepter.class,
-        "TcpConnectionAccepter");
-    public static final Property<TCP_ConnectionPool> TcpConnectionPool = Property.of(State.class, TCP_ConnectionPool.class, "TcpConnectionPool");
-    public static final Property<UDP_ServiceAnnouncer> UdpServiceAnnouncer = Property.of(State.class, UDP_ServiceAnnouncer.class, "UdpServiceAnnouncer");
-    public static final Property<UDP_ServiceRequester> UdpServiceRequester = Property.of(State.class, UDP_ServiceRequester.class, "UdpServiceRequester");
 
     private StateValueRef<CommandHistory> commandHistoryRef;
 
@@ -49,11 +45,10 @@ public class State extends EntityBase
     private StateValueRef<String> serverMsgRef;
 
     // context specific
-    // private StateValueRef<TCP_ConnectionCreator> tcpConnectionCreatorRef;
-    private StateValueRef<TCP_ConnectionAccepter> tcpConnectionAccepterRef;
-    private StateValueRef<TCP_ConnectionPool> tcpConnectionPoolRef;
-    private StateValueRef<UDP_ServiceAnnouncer> udpServiceAnnouncerRef;
-    private StateValueRef<UDP_ServiceRequester> udpServiceRequesterRef;
+    private TCP_ConnectionAccepter tcpConnectionAccepter = null;
+    private TCP_ConnectionPool tcpConnectionPool = null;
+    private UDP_ServiceAnnouncer udpServiceAnnouncer = null;
+    private UDP_ServiceRequester udpServiceRequester = null;
 
     public State()
     {
@@ -67,12 +62,6 @@ public class State extends EntityBase
         serverIdRef = new StateValueRef<>(ServerId, id);
         serverMsgRef = new StateValueRef<>(ServerMsg, id);
         serversRef = new EntityStateListRef<>(Servers, id, new ArrayList<>());
-
-        // state.tcpConnectionCreatorRef = StateValueRef.create(state);
-        tcpConnectionAccepterRef = new StateValueRef<>(TcpConnectionAccepter, id);
-        tcpConnectionPoolRef = new StateValueRef<>(TcpConnectionPool, id);
-        udpServiceAnnouncerRef = new StateValueRef<>(UdpServiceAnnouncer, id);
-        udpServiceRequesterRef = new StateValueRef<>(UdpServiceRequester, id);
     }
 
     public CardGame getCardGame()
@@ -94,45 +83,45 @@ public class State extends EntityBase
     {
         gameStateRef.set(gameState);
     }
-    
+
     public TCP_ConnectionAccepter getTcpConnectionAccepter()
     {
-        return tcpConnectionAccepterRef.get();
+        return tcpConnectionAccepter;
     }
 
     public void setTcpConnectionAccepter(TCP_ConnectionAccepter tcpConnectionAccepter)
     {
-        tcpConnectionAccepterRef.set(tcpConnectionAccepter);
-    }   
+        this.tcpConnectionAccepter = tcpConnectionAccepter;
+    }
 
     public TCP_ConnectionPool getTcpConnectionPool()
     {
-        return tcpConnectionPoolRef.get();
+        return tcpConnectionPool;
     }
 
     public void setTcpConnectionPool(TCP_ConnectionPool tcpConnectionPool)
     {
-        tcpConnectionPoolRef.set(tcpConnectionPool);
+        this.tcpConnectionPool = tcpConnectionPool;
     }
 
     public UDP_ServiceRequester getUdpServiceRequester()
     {
-        return udpServiceRequesterRef.get();
+        return udpServiceRequester;
     }
 
     public void setUdpServiceRequester(UDP_ServiceRequester udpServiceRequester)
     {
-        udpServiceRequesterRef.set(udpServiceRequester);
+        this.udpServiceRequester = udpServiceRequester;
     }
 
     public UDP_ServiceAnnouncer getUdpServiceAnnouncer()
     {
-        return udpServiceAnnouncerRef.get();
+        return udpServiceAnnouncer;
     }
 
     public void setUdpServiceAnnouncer(UDP_ServiceAnnouncer udpServiceAnnouncer)
     {
-        udpServiceAnnouncerRef.set(udpServiceAnnouncer);
+        this.udpServiceAnnouncer = udpServiceAnnouncer;
     }
 
     public UUID getLobbyAdminId()
@@ -156,7 +145,7 @@ public class State extends EntityBase
     }
 
     public void setLocalId(UUID id)
-    {            
+    {
         localIdRef.set(id);
     }
 
@@ -184,7 +173,7 @@ public class State extends EntityBase
     {
         return playersRef.getExceptUUID(serverIdRef.get(), localIdRef.get());
     }
-    
+
     public UUID getServerId()
     {
         return serverIdRef.get();
