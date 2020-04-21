@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.context;
+package gent.timdemey.cards.model.entities.commands;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.common.EntityBase;
+import gent.timdemey.cards.model.state.EntityStateListRef;
 import gent.timdemey.cards.model.state.Property;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.model.state.StateValueRef;
@@ -17,8 +17,9 @@ public class CommandHistory extends EntityBase
 {
     public static final Property<Integer> CurrentIndex = Property.of(CommandHistory.class, Integer.class, "CurrentIndex");
     public static final Property<Integer> AcceptedIndex = Property.of(CommandHistory.class, Integer.class, "AcceptedIndex");
+    public static final Property<CommandExecution> ExecLine = Property.of(CommandHistory.class, CommandExecution.class, "ExecLine");
     
-    private final List<CommandExecution> execLine = new ArrayList<>();
+
     private final Set<UUID> acceptedCommandIds = new HashSet<>();
     private final boolean undoable;
     private final boolean removable;
@@ -27,6 +28,7 @@ public class CommandHistory extends EntityBase
 
     public final StateValueRef<Integer> currentIdxRef;
     public final StateValueRef<Integer> acceptedIdxRef;
+    private final EntityStateListRef<CommandExecution> execLine;
 
     /**
      * Creates a new command history.
@@ -40,6 +42,7 @@ public class CommandHistory extends EntityBase
         this.removable = multiplayer;
         this.currentIdxRef = new StateValueRef<>(CurrentIndex, id, -1);
         this.acceptedIdxRef = new StateValueRef<>(AcceptedIndex, id, -1);
+        this.execLine = new EntityStateListRef<>(ExecLine, id, new ArrayList<>());
     }
     
     /**
@@ -234,7 +237,7 @@ public class CommandHistory extends EntityBase
                 setCurrentIndex(getCurrentIndex() - 1);
             }
             
-            cmdExecution.setExecutionState(nextState);
+            cmdExecution.setExecutionState(nextState); 
         }
     }
     

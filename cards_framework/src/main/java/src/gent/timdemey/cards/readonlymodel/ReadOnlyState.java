@@ -8,13 +8,14 @@ public class ReadOnlyState extends ReadOnlyEntityBase<State>
 {
     public static final ReadOnlyProperty<ReadOnlyCardGame> CardGame = ReadOnlyProperty.of(ReadOnlyCardGame.class, State.CardGame);
     public static final ReadOnlyProperty<ReadOnlyCommandHistory> CommandHistory = ReadOnlyProperty.of(ReadOnlyCommandHistory.class, State.CommandHistory);
+    public static final ReadOnlyProperty<UUID> LobbyAdminId = ReadOnlyProperty.of(State.LobbyAdminId);
     public static final ReadOnlyProperty<UUID> LocalId = ReadOnlyProperty.of(State.LocalId);
     public static final ReadOnlyProperty<String> LocalName = ReadOnlyProperty.of(State.LocalName);
     public static final ReadOnlyProperty<ReadOnlyPlayer> Players = ReadOnlyProperty.of(ReadOnlyPlayer.class, State.Players);
     public static final ReadOnlyProperty<UUID> ServerId = ReadOnlyProperty.of(State.ServerId);
     public static final ReadOnlyProperty<String> ServerMsg = ReadOnlyProperty.of(State.ServerMsg);
     public static final ReadOnlyProperty<ReadOnlyServer> Servers = ReadOnlyProperty.of(ReadOnlyServer.class, State.Servers);
-        
+            
     public ReadOnlyState(State state)
     {
         super(state);

@@ -11,14 +11,14 @@ import java.util.stream.Collectors;
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;
+import gent.timdemey.cards.model.entities.commands.CommandExecution;
+import gent.timdemey.cards.model.entities.commands.CommandHistory;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.model.state.StateListRef;
 import gent.timdemey.cards.services.context.Change;
-import gent.timdemey.cards.services.context.CommandExecution;
-import gent.timdemey.cards.services.context.CommandHistory;
 
 public class ReadOnlyEntityFactory
 {

@@ -12,7 +12,6 @@ import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.payload.P_Player;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.ICardGameCreationService;
-import gent.timdemey.cards.services.context.CommandHistory;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 

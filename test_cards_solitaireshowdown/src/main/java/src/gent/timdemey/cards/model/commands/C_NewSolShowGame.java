@@ -2,9 +2,9 @@ package gent.timdemey.cards.model.commands;
 
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.CommandHistory;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.context.CommandHistory;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.test.helpers.PlayerHelper;

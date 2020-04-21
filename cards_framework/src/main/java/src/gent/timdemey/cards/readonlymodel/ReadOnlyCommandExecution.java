@@ -1,7 +1,7 @@
 package gent.timdemey.cards.readonlymodel;
 
-import gent.timdemey.cards.services.context.CommandExecution;
-import gent.timdemey.cards.services.context.CommandExecutionState;
+import gent.timdemey.cards.model.entities.commands.CommandExecution;
+import gent.timdemey.cards.model.entities.commands.CommandExecutionState;
 
 public class ReadOnlyCommandExecution extends ReadOnlyEntityBase<CommandExecution>
 {

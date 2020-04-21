@@ -1,6 +1,5 @@
-package gent.timdemey.cards.services.context;
+package gent.timdemey.cards.model.entities.commands;
 
-import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.state.Property;
 import gent.timdemey.cards.model.state.StateValueRef;
@@ -11,6 +10,7 @@ public final class CommandExecution extends EntityBase
     public static final Property<CommandExecutionState> CommandExecutionState = Property.of(CommandExecution.class, CommandExecutionState.class, "CommandExecutionState");
 
     public final StateValueRef<CommandExecutionState> cmdExecutionState;
+    
     private final CommandBase command;
     
     public CommandExecution(CommandBase command, CommandExecutionState cmdExecutionState)
@@ -19,7 +19,7 @@ public final class CommandExecution extends EntityBase
         this.cmdExecutionState = new StateValueRef<>(CommandExecutionState, id, cmdExecutionState);
     }
 
-    CommandBase getCommand()
+    public CommandBase getCommand()
     {
         return command;
     }
@@ -29,7 +29,7 @@ public final class CommandExecution extends EntityBase
         return cmdExecutionState.get();
     }
 
-    void setExecutionState(CommandExecutionState state)
+    public void setExecutionState(CommandExecutionState state)
     {
         this.cmdExecutionState.set(state);
     }

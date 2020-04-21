@@ -10,6 +10,7 @@ import gent.timdemey.cards.model.entities.commands.C_DropPlayer;
 import gent.timdemey.cards.model.entities.commands.C_Reject;
 import gent.timdemey.cards.model.entities.commands.C_StartServer;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.CommandHistory;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.netcode.CommandSchedulingTcpConnectionListener;
 import gent.timdemey.cards.netcode.TCP_Connection;

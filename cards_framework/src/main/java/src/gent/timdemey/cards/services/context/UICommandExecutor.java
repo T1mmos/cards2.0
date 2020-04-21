@@ -9,6 +9,7 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.commands.C_Accept;
 import gent.timdemey.cards.model.entities.commands.C_Reject;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.CommandExecution;
 import gent.timdemey.cards.model.entities.commands.D_OnReexecutionFail;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.IContextService;

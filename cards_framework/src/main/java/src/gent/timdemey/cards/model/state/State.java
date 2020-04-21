@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.cards.CardGame;
+import gent.timdemey.cards.model.entities.commands.CommandHistory;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.entities.game.Player;
@@ -13,7 +14,6 @@ import gent.timdemey.cards.netcode.TCP_ConnectionAccepter;
 import gent.timdemey.cards.netcode.TCP_ConnectionPool;
 import gent.timdemey.cards.netcode.UDP_ServiceAnnouncer;
 import gent.timdemey.cards.netcode.UDP_ServiceRequester;
-import gent.timdemey.cards.services.context.CommandHistory;
 
 public class State extends EntityBase
 {
@@ -32,8 +32,8 @@ public class State extends EntityBase
     private StateValueRef<CommandHistory> commandHistoryRef;
 
     // state lists
-    private EntityStateListRef<Player> playersRef;
-    private EntityStateListRef<Server> serversRef;
+    private final EntityStateListRef<Player> playersRef;
+    private final EntityStateListRef<Server> serversRef;
 
     // state values
     private StateValueRef<CardGame> cardGameRef;
