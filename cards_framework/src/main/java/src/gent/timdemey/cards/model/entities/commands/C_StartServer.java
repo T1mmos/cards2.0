@@ -130,7 +130,6 @@ public class C_StartServer extends CommandBase
 
                 state.setUdpServiceAnnouncer(udpServAnnouncer);
                 state.setTcpConnectionAccepter(tcpConnAccepter);
-                state.setTcpConnectionListener(tcpConnListener);
                 state.setTcpConnectionPool(tcpConnPool);
 
                 udpServAnnouncer.start();
@@ -171,17 +170,6 @@ public class C_StartServer extends CommandBase
             if (state.getTcpConnectionAccepter() != null)
             {
                 state.getTcpConnectionAccepter().stop();
-                state.setTcpConnectionAccepter(null);
-            }
-        }
-        catch (Exception ex2)
-        {
-        }
-        
-        try 
-        {
-            if (state.getTcpConnectionListener() != null)
-            {
                 state.setTcpConnectionAccepter(null);
             }
         }

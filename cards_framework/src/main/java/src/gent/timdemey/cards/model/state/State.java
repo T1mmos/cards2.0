@@ -9,7 +9,6 @@ import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.Server;
-import gent.timdemey.cards.netcode.ITcpConnectionListener;
 import gent.timdemey.cards.netcode.TCP_ConnectionAccepter;
 import gent.timdemey.cards.netcode.TCP_ConnectionPool;
 import gent.timdemey.cards.netcode.UDP_ServiceAnnouncer;
@@ -31,8 +30,6 @@ public class State extends EntityBase
     public static final Property<TCP_ConnectionAccepter> TcpConnectionAccepter = Property.of(State.class, TCP_ConnectionAccepter.class,
         "TcpConnectionAccepter");
     public static final Property<TCP_ConnectionPool> TcpConnectionPool = Property.of(State.class, TCP_ConnectionPool.class, "TcpConnectionPool");
-    public static final Property<ITcpConnectionListener> TcpConnectionListener = Property.of(State.class, ITcpConnectionListener.class,
-        "TcpConnectionListener");
     public static final Property<UDP_ServiceAnnouncer> UdpServiceAnnouncer = Property.of(State.class, UDP_ServiceAnnouncer.class, "UdpServiceAnnouncer");
     public static final Property<UDP_ServiceRequester> UdpServiceRequester = Property.of(State.class, UDP_ServiceRequester.class, "UdpServiceRequester");
 
@@ -55,7 +52,6 @@ public class State extends EntityBase
     // private StateValueRef<TCP_ConnectionCreator> tcpConnectionCreatorRef;
     private StateValueRef<TCP_ConnectionAccepter> tcpConnectionAccepterRef;
     private StateValueRef<TCP_ConnectionPool> tcpConnectionPoolRef;
-    private StateValueRef<ITcpConnectionListener> tcpConnectionListenerRef;
     private StateValueRef<UDP_ServiceAnnouncer> udpServiceAnnouncerRef;
     private StateValueRef<UDP_ServiceRequester> udpServiceRequesterRef;
 
@@ -75,7 +71,6 @@ public class State extends EntityBase
         // state.tcpConnectionCreatorRef = StateValueRef.create(state);
         tcpConnectionAccepterRef = new StateValueRef<>(TcpConnectionAccepter, id);
         tcpConnectionPoolRef = new StateValueRef<>(TcpConnectionPool, id);
-        tcpConnectionListenerRef = new StateValueRef<>(TcpConnectionListener, id);
         udpServiceAnnouncerRef = new StateValueRef<>(UdpServiceAnnouncer, id);
         udpServiceRequesterRef = new StateValueRef<>(UdpServiceRequester, id);
     }
@@ -108,17 +103,7 @@ public class State extends EntityBase
     public void setTcpConnectionAccepter(TCP_ConnectionAccepter tcpConnectionAccepter)
     {
         tcpConnectionAccepterRef.set(tcpConnectionAccepter);
-    }
-
-    public ITcpConnectionListener getTcpConnectionListener()
-    {
-        return tcpConnectionListenerRef.get();
-    }
-
-    public void setTcpConnectionListener(ITcpConnectionListener tcpConnectionListener)
-    {
-        tcpConnectionListenerRef.set(tcpConnectionListener);
-    }
+    }   
 
     public TCP_ConnectionPool getTcpConnectionPool()
     {

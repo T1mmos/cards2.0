@@ -35,7 +35,7 @@ class ServerCommandExecutor extends CommandExecutorBase
         // a command cannot be executed twice
         if (cmdHist != null && cmdHist.containsAccepted(command))
         {
-            Logger.warn("\"This command was already executed: '%s'; ignoring", command.getName());
+            Logger.warn("This command was already executed: '%s'; ignoring", command.getName());
             return;
         }
 

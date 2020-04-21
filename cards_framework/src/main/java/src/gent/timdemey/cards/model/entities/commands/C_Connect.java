@@ -76,7 +76,6 @@ public class C_Connect extends CommandBase
             TCP_ConnectionPool tcpConnPool = new TCP_ConnectionPool(type.name(), 1, tcpConnListener);
 
             state.setTcpConnectionPool(tcpConnPool);
-            state.setTcpConnectionListener(tcpConnListener);
 
             tcpConnPool.addConnection(serverInetAddress, serverTcpPort);            
         }
