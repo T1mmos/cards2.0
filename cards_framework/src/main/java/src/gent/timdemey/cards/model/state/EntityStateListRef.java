@@ -65,18 +65,6 @@ public class EntityStateListRef<X extends EntityBase> extends StateListRef<X>
         return xs;
     }
 
-    public List<X> getExcept(StateValueRef<UUID>... excluded)
-    {
-        UUID[] exclIds = new UUID[excluded.length];
-        for (int i = 0; i < excluded.length; i++)
-        {
-            StateValueRef<UUID> ref = excluded[i];
-            UUID id = ref.get();
-            exclIds[i] = id;
-        }
-        return getExcept(exclIds);
-    }
-
     public boolean contains(UUID id)
     {
         return list.stream().anyMatch(x -> x.id.equals(id));

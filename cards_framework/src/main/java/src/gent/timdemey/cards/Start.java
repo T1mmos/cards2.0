@@ -9,11 +9,13 @@ import gent.timdemey.cards.serialization.SerializationService;
 import gent.timdemey.cards.services.IConfigManager;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IImageService;
+import gent.timdemey.cards.services.INetworkService;
 import gent.timdemey.cards.services.IResourceManager;
 import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.ISerializationService;
 import gent.timdemey.cards.services.ISoundManager;
 import gent.timdemey.cards.services.configman.ConfigManager;
+import gent.timdemey.cards.services.context.CommandNetworkService;
 import gent.timdemey.cards.services.context.ContextService;
 import gent.timdemey.cards.services.images.ImageService;
 import gent.timdemey.cards.services.resman.ResourceManager;
@@ -141,6 +143,11 @@ public class Start
         {
             ISerializationService serServ = new SerializationService();
             services.install(ISerializationService.class, serServ);
+        }
+        if (!Services.isInstalled(INetworkService.class))
+        {
+            INetworkService nServ = new CommandNetworkService();
+            services.install(INetworkService.class, nServ);
         }
     }
 }

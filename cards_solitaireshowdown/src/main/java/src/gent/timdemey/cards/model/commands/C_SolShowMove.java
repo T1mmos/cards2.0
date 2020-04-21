@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.commands.payload.P_SolShowMove;
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardGame;
@@ -12,6 +13,7 @@ import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.commands.C_Move;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.services.INetworkService;
 import gent.timdemey.cards.services.boot.SolShowCardStackType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -148,9 +150,10 @@ public class C_SolShowMove extends C_Move
 
         transferCards.forEach(card -> card.cardStack = dstCardStack);
 
+        INetworkService netServ = Services.get(INetworkService.class);
         if (type == ContextType.UI)
         {
-            forward(type, state);
+            netServ.send(state.getLocalId(), state.getServerId(), this, state.getTcpConnectionPool());
         }
         else if (type == ContextType.Server)
         {
@@ -163,9 +166,9 @@ public class C_SolShowMove extends C_Move
                 state.setGameState(GameState.Ended);
                 UUID winnerId = cardGame.getPlayerId(srcCardStack);
                 C_SolShowOnEndGame cmd_endgame = new C_SolShowOnEndGame(winnerId);
-                String ser_endgame = getCommandDtoMapper().toJson(cmd_endgame);
+                
                 List<UUID> ids_endgame = state.getPlayers().getIds();
-                state.getTcpConnectionPool().broadcast(ids_endgame, ser_endgame);
+                netServ.broadcast(state.getLocalId(), ids_endgame, cmd_endgame, state.getTcpConnectionPool());
             }
         }
     }

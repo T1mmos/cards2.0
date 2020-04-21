@@ -16,7 +16,9 @@ import gent.timdemey.cards.netcode.CommandSchedulingTcpConnectionListener;
 import gent.timdemey.cards.netcode.TCP_ConnectionAccepter;
 import gent.timdemey.cards.netcode.TCP_ConnectionPool;
 import gent.timdemey.cards.netcode.UDP_ServiceAnnouncer;
+import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.ISerializationService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.utils.Debug;
@@ -108,6 +110,7 @@ public class C_StartServer extends CommandBase
                 Server server = new Server(srvname, addr, tcpport);
                 state.getServers().add(server);
                 state.setServerId(server.id);
+                state.setLocalId(server.id);
                 state.setLobbyAdminId(playerId);
                 P_Player pl_player = new P_Player();
                 pl_player.id = playerId;
@@ -120,11 +123,13 @@ public class C_StartServer extends CommandBase
                 
                 int playerCount = Services.get(ICardPlugin.class).getPlayerCount();
                 C_DenyClient cmd_reject = new C_DenyClient();
-                String json_reject = getCommandDtoMapper().toJson(cmd_reject);
+                
+                CommandDtoMapper dtoMapper = Services.get(ISerializationService.class).getCommandDtoMapper();
+                String json_reject = dtoMapper.toJson(cmd_reject);
 
                 CommandSchedulingTcpConnectionListener tcpConnListener = new CommandSchedulingTcpConnectionListener(ContextType.Server);
                 TCP_ConnectionPool tcpConnPool = new TCP_ConnectionPool(playerCount, tcpConnListener);
-                TCP_ConnectionAccepter tcpConnAccepter = new TCP_ConnectionAccepter(tcpConnPool, this, json_reject);
+                TCP_ConnectionAccepter tcpConnAccepter = new TCP_ConnectionAccepter(tcpConnPool, tcpport, json_reject);
 
                 state.setUdpServiceAnnouncer(udpServAnnouncer);
                 state.setTcpConnectionAccepter(tcpConnAccepter);

@@ -1,8 +1,10 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.commands.payload.P_OnMultiplayerGameStarted;
 import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.services.INetworkService;
 import gent.timdemey.cards.services.context.CommandHistory;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -39,8 +41,8 @@ public class C_OnMultiplayerGameStarted extends CommandBase
         else
         {
             // broadcast to all players            
-            String json_update = getCommandDtoMapper().toJson(this);
-            state.getTcpConnectionPool().broadcast(state.getPlayers().getIds(), json_update);
+            INetworkService netServ = Services.get(INetworkService.class);
+            netServ.broadcast(state.getLocalId(), state.getPlayers().getIds(), this, state.getTcpConnectionPool());            
         }
     }
 }

@@ -7,8 +7,10 @@ import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.MockCardPlugin;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.INetworkService;
 import gent.timdemey.cards.services.context.ContextService;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.test.mock.MockNetworkService;
 
 public class TestBase
 {
@@ -31,6 +33,7 @@ public class TestBase
         };
         ctxtService.initialize(ContextType.UI);
         App.getServices().install(IContextService.class, ctxtService);
+        App.getServices().install(INetworkService.class, new MockNetworkService());
     }
 
     public static void installMockCardPlugin()

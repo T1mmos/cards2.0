@@ -12,6 +12,7 @@ import gent.timdemey.cards.model.entities.commands.payload.P_StartMultiplayerGam
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.ICardGameCreationService;
+import gent.timdemey.cards.services.INetworkService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
@@ -51,8 +52,8 @@ public class C_StartMultiplayerGame extends CommandBase
     {
         if (type == ContextType.UI)
         {
-            forward(type, state);
-            return;
+            INetworkService netServ = Services.get(INetworkService.class);
+            netServ.send(state.getLocalId(), state.getServerId(), this, state.getTcpConnectionPool());
         }
         else 
         {

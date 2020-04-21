@@ -171,12 +171,7 @@ public class State extends EntityBase
     }
 
     public void setLocalId(UUID id)
-    {
-        if (localIdRef.get() != null)
-        {
-            throw new IllegalStateException("LocalId can only be set once");
-        }
-            
+    {            
         localIdRef.set(id);
     }
 
@@ -197,9 +192,14 @@ public class State extends EntityBase
 
     public List<Player> getRemotePlayers()
     {
-        return playersRef.getExcept(serverIdRef, localIdRef);
+        return playersRef.getExcept(serverIdRef.get(), localIdRef.get());
     }
 
+    public List<UUID> getRemotePlayerIds()
+    {
+        return playersRef.getExceptUUID(serverIdRef.get(), localIdRef.get());
+    }
+    
     public UUID getServerId()
     {
         return serverIdRef.get();

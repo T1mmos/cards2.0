@@ -4,7 +4,9 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.netcode.UDP_ServiceRequester;
+import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.ISerializationService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.context.LimitedContext;
@@ -45,7 +47,9 @@ public class C_UDP_StartServiceRequester extends CommandBase
 
         // prepare UDP broadcast
         C_UDP_Request cmd = new C_UDP_Request();
-        String json = getCommandDtoMapper().toJson(cmd);
+        
+        CommandDtoMapper dtoMapper = Services.get(ISerializationService.class).getCommandDtoMapper();
+        String json = dtoMapper.toJson(cmd);
 
         UDP_ServiceRequester udpServRequester = new UDP_ServiceRequester(json,
                 C_UDP_StartServiceRequester::onUdpReceived);
@@ -58,7 +62,8 @@ public class C_UDP_StartServiceRequester extends CommandBase
     {
         try
         {
-            CommandBase command = getCommandDtoMapper().toCommand(json);
+            CommandDtoMapper dtoMapper = Services.get(ISerializationService.class).getCommandDtoMapper();
+            CommandBase command = dtoMapper.toCommand(json);
             if (!(command instanceof C_UDP_Response))
             {
                 Services.get(ILogManager.class)

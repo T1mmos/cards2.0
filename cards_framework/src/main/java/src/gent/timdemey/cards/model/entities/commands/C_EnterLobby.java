@@ -10,6 +10,7 @@ import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.payload.P_Player;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.netcode.TCP_Connection;
+import gent.timdemey.cards.services.INetworkService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.utils.Debug;
@@ -45,11 +46,11 @@ public class C_EnterLobby extends CommandBase
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
+        INetworkService netServ = Services.get(INetworkService.class);
+        
         if(type == ContextType.UI)
         {
-            String json = getCommandDtoMapper().toJson(this);
-            TCP_Connection tcpConnection = state.getTcpConnectionPool().getConnection(state.getServerId());
-            tcpConnection.send(json);
+            netServ.send(state.getLocalId(), state.getServerId(), this, state.getTcpConnectionPool());
         }
         else if(type == ContextType.Server)
         {
@@ -82,8 +83,7 @@ public class C_EnterLobby extends CommandBase
             // send unicast to new client
             {
                 CommandBase cmd_answer = new C_OnLobbyWelcome(clientId, state.getServerId(), state.getServerMessage(), state.getRemotePlayers(), state.getLobbyAdminId());
-                String json_answer = getCommandDtoMapper().toJson(cmd_answer);
-                state.getTcpConnectionPool().getConnection(clientId).send(json_answer);
+                netServ.send(state.getLocalId(), clientId, cmd_answer, state.getTcpConnectionPool());
             }
 
             // send update to already connected clients
@@ -91,8 +91,7 @@ public class C_EnterLobby extends CommandBase
             if(updateIds.size() > 0)
             {
                 CommandBase cmd_update = new C_OnLobbyPlayerJoined(player);
-                String json_update = getCommandDtoMapper().toJson(cmd_update);
-                state.getTcpConnectionPool().broadcast(updateIds, json_update);
+                netServ.broadcast(state.getLocalId(), updateIds, cmd_update, state.getTcpConnectionPool());
             }            
         }
     }

@@ -32,26 +32,6 @@ public abstract class CommandBase extends EntityBase
         super(pl);
     }
 
-    protected final void forward(ContextType type, State state)
-    {
-        if (type == ContextType.Server)
-        {
-            throw new IllegalStateException("To forward, we need to be in the UI layer");
-        }
-        if (getSourceId() == null)
-        {
-            throw new IllegalStateException(
-                    "To forward, we need to know the source ID of this command: " + this.getClass().getCanonicalName());
-        }
-
-        if (getSourceId().equals(state.getLocalId()))
-        {
-            // to Server
-            String serialized = getCommandDtoMapper().toJson(this);
-            state.getTcpConnectionPool().getConnection(state.getServerId()).send(serialized);
-        }
-    }
-
     private final Context getContext()
     {
         IContextService contextServ = Services.get(IContextService.class);
@@ -197,14 +177,14 @@ public abstract class CommandBase extends EntityBase
         return false;
     }
 
-    protected static CommandDtoMapper getCommandDtoMapper()
-    {
-        return Services.get(ISerializationService.class).getCommandDtoMapper();
-    }
-
     @Override
     public String toDebugString()
     {
-        return "CommandBase (" + getClass().getSimpleName() + ")- override this method to provide more info";
+        return "CommandBase (" + getName() + ")- override this method to provide more info";
+    }
+
+    public String getName()
+    {
+        return this.getClass().getSimpleName();
     }
 }
