@@ -56,7 +56,7 @@ public class LogManager implements ILogManager
     private void append(LogLevel lvl, Object msg)
     {
         String thrname = Thread.currentThread().getName();
-        String formatted = String.format("%-7s %-30s :: %s", lvl.name(), thrname, msg);
+        String formatted = String.format("%-7s %-40s :: %s", lvl.name(), thrname, msg);
         System.out.println(formatted);
     }
 
