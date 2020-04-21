@@ -27,7 +27,7 @@ import gent.timdemey.cards.logging.Logger;
  */
 public final class UDP_ServiceRequester
 {
-    private static String UDP_SERVICE_REQUEST_THREAD_NAME = "UDP Service Requester";
+    private static String UDP_SERVICE_REQUEST_THREAD_NAME = "UI :: UDP Service Requester";
     private static int UDP_SERVICE_REQUEST_TIMEOUT = 10000;
 
     private DatagramSocket dsocket = null;

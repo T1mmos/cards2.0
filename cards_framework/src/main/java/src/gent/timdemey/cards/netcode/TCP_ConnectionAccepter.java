@@ -56,7 +56,7 @@ public final class TCP_ConnectionAccepter
             Logger.error(e);
             return;
         }
-        this.thread = new Thread(this::acceptLoop, "TCP ServerSocket Accepter");
+        this.thread = new Thread(this::acceptLoop, "Server :: TCP ServerSocket Accepter");
         this.thread.start();
     }
 
@@ -94,7 +94,7 @@ public final class TCP_ConnectionAccepter
         @Override
         public void run()
         {
-            TCP_Connection conn = new TCP_Connection(socket, null);
+            TCP_Connection conn = new TCP_Connection("REJECTED", socket, null);
             conn.send(messageOnFull);
 
             try

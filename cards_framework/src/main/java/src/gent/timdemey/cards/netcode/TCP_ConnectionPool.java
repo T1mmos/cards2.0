@@ -21,6 +21,7 @@ import gent.timdemey.cards.logging.Logger;
 
 public final class TCP_ConnectionPool
 {
+    private final String name;
     /// connections not yet associated to a UUID (should be empty 99% of the time)
     private final List<TCP_Connection> halfConns;
     /// fully established connections that are associated to a UUID.
@@ -34,7 +35,8 @@ public final class TCP_ConnectionPool
     {
         Preconditions.checkNotNull(connListener,
                 "You cannot use a TCP_ConnectionPool if you do not specify a callback to be invoked upon new incoming connections");
-
+        
+        this.name = name;
         this.halfConns = Collections.synchronizedList(new ArrayList<>());
         this.uuid2conn = new ConcurrentHashMap<>();
         this.externalConnListener = connListener;
@@ -46,7 +48,7 @@ public final class TCP_ConnectionPool
             @Override
             public Thread newThread(Runnable r)
             {
-                Thread thr = new Thread(r, "TCP_ConnectionPool " + name);
+                Thread thr = new Thread(r, name + " :: TCP_ConnectionPool");
                 thr.setDaemon(true);
                 return thr;
             }
@@ -161,7 +163,7 @@ public final class TCP_ConnectionPool
 
     private void addConnectionAndStart(Socket socket)
     {
-        TCP_Connection connection = new TCP_Connection(socket, this);
+        TCP_Connection connection = new TCP_Connection(name, socket, this);
         halfConns.add(connection);
         connection.start();
     }

@@ -6,7 +6,7 @@ public class CommandExecutionThread extends Thread
 
     CommandExecutionThread(Runnable r, ContextType contextType)
     {
-        super(r, "CommandExecutionThread-" + contextType.toString());
+        super(r, contextType.toString() + " :: CommandExecution");
         this.setDaemon(true);
         this.contextType = contextType;
     }

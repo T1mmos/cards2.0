@@ -21,11 +21,11 @@ public final class TCP_Connection
     private boolean started = false;
     private boolean ended = false;
 
-    TCP_Connection(Socket socket, TCP_ConnectionPool pool)
+    TCP_Connection(String name, Socket socket, TCP_ConnectionPool pool)
     {
         this.socket = socket;
-        this.thread_read = new Thread(() -> read(), "TCP read (" + getRemote() + ")");
-        this.thread_send = new Thread(() -> send(), "TCP send (" + getRemote() + ")");
+        this.thread_read = new Thread(() -> read(), name + " :: TCP read (" + getRemote() + ")");
+        this.thread_send = new Thread(() -> send(), name + " :: TCP send (" + getRemote() + ")");
         this.queue_send = new LinkedBlockingDeque<>();
         this.pool = pool;
     }
