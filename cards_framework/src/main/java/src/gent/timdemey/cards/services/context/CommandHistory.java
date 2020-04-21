@@ -1,7 +1,9 @@
 package gent.timdemey.cards.services.context;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.commands.CommandBase;
@@ -17,6 +19,7 @@ public class CommandHistory extends EntityBase
     public static final Property<Integer> AcceptedIndex = Property.of(CommandHistory.class, Integer.class, "AcceptedIndex");
     
     private final List<CommandExecution> execLine = new ArrayList<>();
+    private final Set<UUID> acceptedCommandIds = new HashSet<>();
     private final boolean undoable;
     private final boolean removable;
     
@@ -399,7 +402,12 @@ public class CommandHistory extends EntityBase
     
     public List<CommandExecution> addAccepted(CommandBase cmd, State state)
     {
+        if (acceptedCommandIds.contains(cmd.id))
+        {
+            throw new IllegalStateException("This command is already accepted: " + cmd.getName());
+        }
         CommandExecution commandExec = new CommandExecution(cmd, CommandExecutionState.Accepted);
+        acceptedCommandIds.add(cmd.id);
         return inject(commandExec, state);
     }
     
@@ -596,7 +604,7 @@ public class CommandHistory extends EntityBase
         }
         
         cmdExecution.setExecutionState(CommandExecutionState.Accepted);
-        setAcceptedIndex(currAcptIdx + 1);
+        setAcceptedIndex(currAcptIdx + 1);        
     }
     
     @Override
@@ -611,5 +619,11 @@ public class CommandHistory extends EntityBase
     public CommandExecution getCommandExecution(int i)
     {
         return execLine.get(i);
+    }
+
+    public boolean containsAccepted(CommandBase command)
+    {
+        boolean found = acceptedCommandIds.contains(command.id);
+        return found;
     }
 }

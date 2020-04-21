@@ -87,11 +87,8 @@ public class C_StartServer extends CommandBase
     {        
         if (type == ContextType.UI)
         {
-            IContextService ctxtServ = Services.get(IContextService.class);
-            
+            IContextService ctxtServ = Services.get(IContextService.class);            
             ctxtServ.initialize(ContextType.Server);
-            
-            state.setLocalName(playerName);
             
             reschedule(ContextType.Server);
         }
@@ -106,7 +103,7 @@ public class C_StartServer extends CommandBase
                     addr = socket.getLocalAddress();
                 }
                 
-                // update the state: set server, lobby admin, add player
+                // update the state: set server, lobby admin, add player, command history
                 Server server = new Server(srvname, addr, tcpport);
                 state.getServers().add(server);
                 state.setServerId(server.id);
@@ -128,7 +125,7 @@ public class C_StartServer extends CommandBase
                 String json_reject = dtoMapper.toJson(cmd_reject);
 
                 CommandSchedulingTcpConnectionListener tcpConnListener = new CommandSchedulingTcpConnectionListener(ContextType.Server);
-                TCP_ConnectionPool tcpConnPool = new TCP_ConnectionPool(playerCount, tcpConnListener);
+                TCP_ConnectionPool tcpConnPool = new TCP_ConnectionPool(type.name(), playerCount, tcpConnListener);
                 TCP_ConnectionAccepter tcpConnAccepter = new TCP_ConnectionAccepter(tcpConnPool, tcpport, json_reject);
 
                 state.setUdpServiceAnnouncer(udpServAnnouncer);

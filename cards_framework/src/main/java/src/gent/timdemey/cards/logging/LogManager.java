@@ -2,7 +2,6 @@ package gent.timdemey.cards.logging;
 
 public class LogManager implements ILogManager
 {
-
     @Override
     public void log(Object msg)
     {
@@ -23,5 +22,4 @@ public class LogManager implements ILogManager
         log("!!! EXCEPTION !!! Caught on thread " + Thread.currentThread().getName());
         ex.printStackTrace(System.out);
     }
-
 }

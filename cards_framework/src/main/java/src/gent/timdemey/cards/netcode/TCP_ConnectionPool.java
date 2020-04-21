@@ -31,7 +31,7 @@ public final class TCP_ConnectionPool
     private final int maxConnections;
     private final ExecutorService execServ;
 
-    public TCP_ConnectionPool(int maxConnections, ITcpConnectionListener connListener)
+    public TCP_ConnectionPool(String name, int maxConnections, ITcpConnectionListener connListener)
     {
         Preconditions.checkNotNull(connListener,
                 "You cannot use a TCP_ConnectionPool if you do not specify a callback to be invoked upon new incoming connections");
@@ -47,7 +47,9 @@ public final class TCP_ConnectionPool
             @Override
             public Thread newThread(Runnable r)
             {
-                return new Thread(r, "TCP_ConnectionPool Delegate");
+                Thread thr = new Thread(r, "TCP_ConnectionPool " + name);
+                thr.setDaemon(true);
+                return thr;
             }
         });
     }
