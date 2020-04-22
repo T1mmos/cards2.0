@@ -3,7 +3,7 @@ package gent.timdemey.cards.model.entities.commands;
 import java.util.List;
 import java.util.UUID;
 
-import gent.timdemey.cards.model.entities.commands.payload.P_WelcomeClient;
+import gent.timdemey.cards.model.entities.commands.payload.P_OnLobbyWelcome;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
@@ -34,7 +34,7 @@ public class C_OnLobbyWelcome extends CommandBase
         this.lobbyAdminId = lobbyAdminId;
     }
 
-    public C_OnLobbyWelcome(P_WelcomeClient pl)
+    public C_OnLobbyWelcome(P_OnLobbyWelcome pl)
     {
         super(pl);
         this.clientId = pl.clientId;

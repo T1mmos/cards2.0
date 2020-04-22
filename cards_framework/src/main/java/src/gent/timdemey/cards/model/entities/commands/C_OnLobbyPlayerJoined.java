@@ -1,6 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
-import gent.timdemey.cards.model.entities.commands.payload.P_OnPlayerJoined;
+import gent.timdemey.cards.model.entities.commands.payload.P_OnLobbyPlayerJoined;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
@@ -22,7 +22,7 @@ public class C_OnLobbyPlayerJoined extends CommandBase
         this.player = player;
     }
 
-    public C_OnLobbyPlayerJoined(P_OnPlayerJoined pl)
+    public C_OnLobbyPlayerJoined(P_OnLobbyPlayerJoined pl)
     {
         super(pl);
         this.player = pl.player;

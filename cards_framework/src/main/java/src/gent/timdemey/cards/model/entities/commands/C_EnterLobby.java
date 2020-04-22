@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.model.entities.commands.payload.P_JoinGame;
+import gent.timdemey.cards.model.entities.commands.payload.P_EnterLobby;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.payload.P_Player;
 import gent.timdemey.cards.model.state.State;
@@ -31,7 +31,7 @@ public class C_EnterLobby extends CommandBase
         this.clientId = clientId;
     }
 
-    public C_EnterLobby(P_JoinGame pl)
+    public C_EnterLobby(P_EnterLobby pl)
     {
         this.clientName = pl.clientName;
         this.clientId = pl.clientId;

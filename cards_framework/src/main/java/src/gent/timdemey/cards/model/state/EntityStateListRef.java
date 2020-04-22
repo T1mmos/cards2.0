@@ -107,6 +107,13 @@ public class EntityStateListRef<X extends EntityBase> extends StateListRef<X>
         }        
     }
 
+    public X remove(UUID id)
+    {
+        X x = get(id);
+        remove(x);
+        return x;
+    }
+    
     public static <X extends EntityBase> EntityStateListRef<X> asReadOnly(List<X> subList)
     {
         return new EntityStateListRef<X>(null, null, Collections.unmodifiableList(subList));

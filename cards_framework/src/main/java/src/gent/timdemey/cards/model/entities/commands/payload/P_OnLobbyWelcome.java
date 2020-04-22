@@ -6,7 +6,7 @@ import java.util.UUID;
 import gent.timdemey.cards.model.entities.common.PayloadBase;
 import gent.timdemey.cards.model.entities.game.Player;
 
-public class P_WelcomeClient extends PayloadBase
+public class P_OnLobbyWelcome extends PayloadBase
 { 
     public UUID clientId;
     public UUID serverId;

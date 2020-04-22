@@ -4,7 +4,7 @@ import java.util.List;
 
 import gent.timdemey.cards.serialization.dto.entities.PlayerDto;
 
-public class C_WelcomeClientDto extends CommandBaseDto
+public class C_OnLobbyWelcomeDto extends CommandBaseDto
 {
     public String clientId;
     public String serverId;
