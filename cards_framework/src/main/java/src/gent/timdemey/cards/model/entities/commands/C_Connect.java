@@ -114,7 +114,7 @@ public class C_Connect extends CommandBase
             LimitedContext context = Services.get(IContextService.class).getContext(ContextType.UI);
             if (id != null)
             {
-                CommandBase cmd = new C_OnConnectionLoss();
+                CommandBase cmd = new C_OnConnectionLost();
                 context.schedule(cmd);
             }
         }

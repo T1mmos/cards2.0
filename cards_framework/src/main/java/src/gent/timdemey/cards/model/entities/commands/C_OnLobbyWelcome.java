@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.commands.payload.P_OnLobbyWelcome;
+import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
@@ -69,20 +70,12 @@ public class C_OnLobbyWelcome extends CommandBase
                     "Server returned a WelcomeClient with a serverId not matching the serverId");
         }
 
-        updateState(state);
-        schedule(ContextType.UI, new D_EnterLobby());
-    }
-
-    private void updateState(State state)
-    {
         state.setServerMessage(serverMessage);
         state.setLobbyAdminId(lobbyAdminId);
-
-        // "connected" enlists all players including yourself
-        for (Player player : connected)
-        {
-            state.getPlayers().add(player);
-        }
+        state.getPlayers().addAll(connected);      
+        state.setGameState(GameState.Lobby);
+        
+        schedule(ContextType.UI, new D_ShowLobby());
     }
 
     @Override

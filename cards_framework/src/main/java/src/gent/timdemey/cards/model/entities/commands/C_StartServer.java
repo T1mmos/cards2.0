@@ -132,6 +132,7 @@ public class C_StartServer extends CommandBase
                 String json_reject = dtoMapper.toJson(cmd_reject);
 
                 CommandSchedulingTcpConnectionListener tcpConnListener = new ServerTcpListener();
+
                 TCP_ConnectionPool tcpConnPool = new TCP_ConnectionPool(type.name(), playerCount, tcpConnListener);
                 TCP_ConnectionAccepter tcpConnAccepter = new TCP_ConnectionAccepter(tcpConnPool, tcpport, json_reject);
 
@@ -195,7 +196,7 @@ public class C_StartServer extends CommandBase
         {
         }
     }
-
+    
     private static class ServerTcpListener extends CommandSchedulingTcpConnectionListener
     {
         private ServerTcpListener()
@@ -210,7 +211,7 @@ public class C_StartServer extends CommandBase
         public void onTcpConnectionRemotelyClosed(UUID id, TCP_Connection connection)
         {
             LimitedContext context = Services.get(IContextService.class).getContext(ContextType.Server);
-            CommandBase cmd = new C_DropPlayer(id);
+            CommandBase cmd = new C_OnPlayerLeft(id);
             context.schedule(cmd);
         };
     }

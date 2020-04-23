@@ -3,6 +3,7 @@ package gent.timdemey.cards.model.entities.commands;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.commands.payload.P_OnMultiplayerGameStarted;
+import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.INetworkService;
 import gent.timdemey.cards.services.context.Context;
@@ -35,6 +36,7 @@ public class C_OnMultiplayerGameStarted extends CommandBase
         if (type == ContextType.UI)
         {
             state.setCardGame(cardGame);
+            state.setGameState(GameState.Started);
             state.setCommandHistory(new CommandHistory(true));
         }
         else

@@ -2,12 +2,13 @@ package gent.timdemey.cards.serialization.mappers;
 
 import gent.timdemey.cards.model.entities.commands.C_Accept;
 import gent.timdemey.cards.model.entities.commands.C_DenyClient;
-import gent.timdemey.cards.model.entities.commands.C_DropPlayer;
 import gent.timdemey.cards.model.entities.commands.C_EnterLobby;
 import gent.timdemey.cards.model.entities.commands.C_Move;
+import gent.timdemey.cards.model.entities.commands.C_OnEndGame;
 import gent.timdemey.cards.model.entities.commands.C_OnLobbyPlayerJoined;
 import gent.timdemey.cards.model.entities.commands.C_OnLobbyWelcome;
 import gent.timdemey.cards.model.entities.commands.C_OnMultiplayerGameStarted;
+import gent.timdemey.cards.model.entities.commands.C_OnPlayerLeft;
 import gent.timdemey.cards.model.entities.commands.C_Reject;
 import gent.timdemey.cards.model.entities.commands.C_StartMultiplayerGame;
 import gent.timdemey.cards.model.entities.commands.C_UDP_Request;
@@ -15,12 +16,13 @@ import gent.timdemey.cards.model.entities.commands.C_UDP_Response;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.payload.P_Accept;
 import gent.timdemey.cards.model.entities.commands.payload.P_DenyClient;
-import gent.timdemey.cards.model.entities.commands.payload.P_DropPlayer;
 import gent.timdemey.cards.model.entities.commands.payload.P_EnterLobby;
 import gent.timdemey.cards.model.entities.commands.payload.P_Move;
+import gent.timdemey.cards.model.entities.commands.payload.P_OnEndGame;
 import gent.timdemey.cards.model.entities.commands.payload.P_OnLobbyPlayerJoined;
 import gent.timdemey.cards.model.entities.commands.payload.P_OnLobbyWelcome;
 import gent.timdemey.cards.model.entities.commands.payload.P_OnMultiplayerGameStarted;
+import gent.timdemey.cards.model.entities.commands.payload.P_OnPlayerLeft;
 import gent.timdemey.cards.model.entities.commands.payload.P_Reject;
 import gent.timdemey.cards.model.entities.commands.payload.P_StartMultiplayerGame;
 import gent.timdemey.cards.model.entities.commands.payload.P_UDP_Request;
@@ -28,12 +30,13 @@ import gent.timdemey.cards.model.entities.commands.payload.P_UDP_Response;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.serialization.dto.commands.C_AcceptDto;
 import gent.timdemey.cards.serialization.dto.commands.C_DenyClientDto;
-import gent.timdemey.cards.serialization.dto.commands.C_DropPlayerDto;
 import gent.timdemey.cards.serialization.dto.commands.C_EnterLobbyDto;
 import gent.timdemey.cards.serialization.dto.commands.C_MoveDto;
+import gent.timdemey.cards.serialization.dto.commands.C_OnEndGameDto;
 import gent.timdemey.cards.serialization.dto.commands.C_OnLobbyPlayerJoinedDto;
 import gent.timdemey.cards.serialization.dto.commands.C_OnLobbyWelcomeDto;
 import gent.timdemey.cards.serialization.dto.commands.C_OnMultiplayerGameStartedDto;
+import gent.timdemey.cards.serialization.dto.commands.C_OnPlayerLeftDto;
 import gent.timdemey.cards.serialization.dto.commands.C_RejectDto;
 import gent.timdemey.cards.serialization.dto.commands.C_StartMultiplayerGameDto;
 import gent.timdemey.cards.serialization.dto.commands.C_UDP_RequestDto;
@@ -48,7 +51,8 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         // domain objects to DTO
         mapperDefs.addMapping(C_Accept.class, C_AcceptDto.class, CommandDtoMapper::toDto);
         mapperDefs.addMapping(C_DenyClient.class, C_DenyClientDto.class, CommandDtoMapper::toDto);
-        mapperDefs.addMapping(C_DropPlayer.class, C_DropPlayerDto.class, CommandDtoMapper::toDto);
+        mapperDefs.addMapping(C_OnEndGame.class, C_OnEndGameDto.class, CommandDtoMapper::toDto);
+        mapperDefs.addMapping(C_OnPlayerLeft.class, C_OnPlayerLeftDto.class, CommandDtoMapper::toDto);
         mapperDefs.addMapping(C_EnterLobby.class, C_EnterLobbyDto.class, CommandDtoMapper::toDto);
         mapperDefs.addMapping(C_OnLobbyPlayerJoined.class, C_OnLobbyPlayerJoinedDto.class, CommandDtoMapper::toDto);
         mapperDefs.addMapping(C_OnLobbyWelcome.class, C_OnLobbyWelcomeDto.class, CommandDtoMapper::toDto);
@@ -61,7 +65,9 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         // DTO to domain object
         mapperDefs.addMapping(C_AcceptDto.class, C_Accept.class, CommandDtoMapper::toCommand);
         mapperDefs.addMapping(C_DenyClientDto.class, C_DenyClient.class, CommandDtoMapper::toCommand);
-        mapperDefs.addMapping(C_DropPlayerDto.class, C_DropPlayer.class, CommandDtoMapper::toCommand);
+        mapperDefs.addMapping(C_OnEndGameDto.class, C_OnEndGame.class, CommandDtoMapper::toCommand);
+        mapperDefs.addMapping(C_OnLobbyWelcomeDto.class, C_OnLobbyWelcome.class, CommandDtoMapper::toCommand);
+        mapperDefs.addMapping(C_OnPlayerLeftDto.class, C_OnPlayerLeft.class, CommandDtoMapper::toCommand);
         mapperDefs.addMapping(C_EnterLobbyDto.class, C_EnterLobby.class, CommandDtoMapper::toCommand);
         mapperDefs.addMapping(C_OnMultiplayerGameStartedDto.class, C_OnMultiplayerGameStarted.class, CommandDtoMapper::toCommand);
         mapperDefs.addMapping(C_OnLobbyPlayerJoinedDto.class, C_OnLobbyPlayerJoined.class, CommandDtoMapper::toCommand);
@@ -69,7 +75,6 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         mapperDefs.addMapping(C_StartMultiplayerGameDto.class, C_StartMultiplayerGame.class, CommandDtoMapper::toCommand);
         mapperDefs.addMapping(C_UDP_RequestDto.class, C_UDP_Request.class, CommandDtoMapper::toCommand);
         mapperDefs.addMapping(C_UDP_ResponseDto.class, C_UDP_Response.class, CommandDtoMapper::toCommand);
-        mapperDefs.addMapping(C_OnLobbyWelcomeDto.class, C_OnLobbyWelcome.class, CommandDtoMapper::toCommand);
     }
 
     public String toJson(CommandBase cmd)
@@ -156,9 +161,9 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         return new C_DenyClient(pl);        
     }
 
-    private static C_DropPlayerDto toDto (C_DropPlayer cmd)
+    private static C_OnPlayerLeftDto toDto (C_OnPlayerLeft cmd)
     {
-        C_DropPlayerDto dto = new C_DropPlayerDto();
+        C_OnPlayerLeftDto dto = new C_OnPlayerLeftDto();
         {
             mergeEntityBaseToDto(cmd, dto);
             
@@ -167,15 +172,15 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         return dto;
     }
     
-    private static C_DropPlayer toCommand(C_DropPlayerDto dto)
+    private static C_OnPlayerLeft toCommand(C_OnPlayerLeftDto dto)
     {
-        P_DropPlayer pl = new P_DropPlayer();
+        P_OnPlayerLeft pl = new P_OnPlayerLeft();
         {
             mergeDtoBaseToPayload(dto, pl);
             
             pl.playerId = toUuid(dto.playerId);
         }
-        return new C_DropPlayer(pl);        
+        return new C_OnPlayerLeft(pl);        
     }
     
     private static C_EnterLobbyDto toDto(C_EnterLobby cmd)
@@ -335,6 +340,26 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         return new C_Accept(pl);
     }
     
+    private static C_OnEndGameDto toDto(C_OnEndGame cmd)
+    {
+        C_OnEndGameDto dto = new C_OnEndGameDto();
+        {
+            mergeEntityBaseToDto(cmd, dto);
+            
+            dto.winnerId = toDto(cmd.winnerId);
+        }
+        return dto;
+    }
+    
+    private static C_OnEndGame toCommand(C_OnEndGameDto dto)
+    {
+        P_OnEndGame pl = new P_OnEndGame();
+        {
+            mergeDtoBaseToPayload(dto, pl);
+            pl.winnerId = toUuid(dto.winnerId);
+        }
+        return new C_OnEndGame(pl);
+    }
     protected static void mergeMoveBaseToDto(C_Move cmd, C_MoveDto dto)
     {
         dto.cardId = toDto(cmd.cardId);

@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.common.PayloadBase;
 
-public class P_DropPlayer extends PayloadBase
+public class P_OnPlayerLeft extends PayloadBase
 {
     public UUID playerId;
 }

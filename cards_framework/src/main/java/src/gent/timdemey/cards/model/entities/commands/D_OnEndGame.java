@@ -1,19 +1,18 @@
-package gent.timdemey.cards.model.commands;
+package gent.timdemey.cards.model.entities.commands;
 
 import java.util.UUID;
 
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
-import gent.timdemey.cards.model.entities.commands.DialogCommandBase;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
-public class D_SolShowOnEndGame extends DialogCommandBase
+public class D_OnEndGame extends DialogCommandBase
 {
     public final UUID winnerId;
     
-    public D_SolShowOnEndGame(UUID winnerId)
+    public D_OnEndGame(UUID winnerId)
     {
         this.winnerId = winnerId;
     }
