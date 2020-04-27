@@ -8,6 +8,7 @@ import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.commands.payload.P_Move;
+import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -43,9 +44,9 @@ public class C_Move extends CommandBase
      * @return
      */
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
-        return true;
+        return state.getGameState() == GameState.Started;
     }
     
     /**

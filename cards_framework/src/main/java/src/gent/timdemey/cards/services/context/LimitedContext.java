@@ -40,6 +40,15 @@ public class LimitedContext
         cmdExecServ.schedule(command, state);
     }
 
+    public void run(CommandBase command)
+    {
+        if (command.getSourceId() == null)
+        {
+            command.setSourceId(state.getLocalId());
+        }
+        cmdExecServ.run(command, state);
+    }
+    
     void addExecutionListener(IExecutionListener executionListener)
     {
         cmdExecServ.addExecutionListener(executionListener);

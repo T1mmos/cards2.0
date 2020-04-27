@@ -2,6 +2,7 @@ package gent.timdemey.cards.model.entities.commands;
 
 import java.util.UUID;
 
+import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -25,10 +26,14 @@ public abstract class C_Use extends CommandBase
     }
 
     @Override
-    protected final boolean canExecute(Context context, ContextType type, State state)
+    protected final CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
         CheckContext(type, ContextType.UI);
-
+        if (state.getGameState() != GameState.Started)
+        {
+            return false;
+        }
+        
         CommandBase cmd = resolveCommand(context, type, state);
         return cmd != null;
     }

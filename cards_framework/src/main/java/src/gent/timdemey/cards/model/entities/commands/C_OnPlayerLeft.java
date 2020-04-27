@@ -30,32 +30,34 @@ public class C_OnPlayerLeft extends CommandBase
     }
     
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
-        return true;
+        return state.getPlayers().contains(playerId);
     }
 
     @Override
     public void execute(Context context, ContextType contextType, State state)
     {
-        Player player = state.getPlayers().remove(playerId);
-        Logger.info("Removed player %s", player.name);
+        Player player_removed = removePlayer(state, playerId);
         
         if (contextType == ContextType.UI)
         {
-            // if the game is ongoing, inform the user
-            // in case of a lobby the UI will be updated without further actions
             if (state.getGameState() == GameState.Started || state.getGameState() == GameState.Paused)
-            {
-                CommandBase cmd_disconnect = new C_Disconnect();
-                schedule(ContextType.UI, cmd_disconnect);
+            {         
+                // inform the user
+                CommandBase cmd_dialog = new D_OnPlayerLeft(player_removed.name);
+                run(cmd_dialog);
                 
-                CommandBase cmd_dialog = new D_OnPlayerLeft(player.name);
-                schedule(ContextType.UI, cmd_dialog);
-            }            
+                // if the game is ongoing then the entire game ends
+                C_OnGameToLobby cmd_ongametolobby = new C_OnGameToLobby();
+                schedule(ContextType.UI, cmd_ongametolobby);     
+            }
         }
         else
         {
+            C_OnGameToLobby cmd_ongametolobby = new C_OnGameToLobby();
+            schedule(ContextType.Server, cmd_ongametolobby);   
+            
             INetworkService ns = Services.get(INetworkService.class);      
             List<UUID> remotes = state.getRemotePlayerIds();
             if (remotes.size() > 0)
@@ -63,6 +65,13 @@ public class C_OnPlayerLeft extends CommandBase
                 ns.broadcast(state.getLocalId(), state.getRemotePlayerIds(), this, state.getTcpConnectionPool());    
             }                        
         }
+    }
+    
+    private Player removePlayer(State state, UUID playerId)
+    {
+        Player player = state.getPlayers().remove(playerId);
+        Logger.info("Removed player %s", player.name);
+        return player;
     }
 
     @Override

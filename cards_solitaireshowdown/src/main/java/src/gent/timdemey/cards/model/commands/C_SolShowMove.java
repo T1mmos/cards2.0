@@ -11,7 +11,7 @@ import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.commands.C_Move;
-import gent.timdemey.cards.model.entities.commands.C_OnEndGame;
+import gent.timdemey.cards.model.entities.commands.C_OnGameEnded;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.INetworkService;
@@ -36,8 +36,13 @@ public class C_SolShowMove extends C_Move
     }
 
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
+        if (!super.canExecute(context, type, state))
+        {
+            return false;
+        }
+        
         CardGame cardGame = state.getCardGame();
         CardStack srcCardStack = cardGame.getCardStack(srcCardStackId);
         CardStack dstCardStack = cardGame.getCardStack(dstCardStackId);
@@ -166,7 +171,7 @@ public class C_SolShowMove extends C_Move
             {
                 state.setGameState(GameState.Ended);
                 UUID winnerId = cardGame.getPlayerId(srcCardStack);
-                C_OnEndGame cmd_endgame = new C_OnEndGame(winnerId);
+                C_OnGameEnded cmd_endgame = new C_OnGameEnded(winnerId);
                 
                 List<UUID> ids_endgame = state.getPlayers().getIds();
                 netServ.broadcast(state.getLocalId(), ids_endgame, cmd_endgame, state.getTcpConnectionPool());

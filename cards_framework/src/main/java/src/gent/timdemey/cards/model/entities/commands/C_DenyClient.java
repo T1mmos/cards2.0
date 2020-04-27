@@ -19,7 +19,7 @@ public class C_DenyClient extends CommandBase
     }
 
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
         return type == ContextType.UI;
     }

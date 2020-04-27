@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardStack;
+import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -21,8 +22,12 @@ public abstract class C_Pull extends CommandBase
     }
     
     @Override
-    public final boolean canExecute(Context context, ContextType type, State state)
+    public final CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {        
+        if (state.getGameState() != GameState.Started)
+        {
+            return false;
+        }
         CardStack srcCardStack = state.getCardGame().getCardStack(srcCardStackId);
         Card srcCard = state.getCardGame().getCards().get(srcCardId);
                 

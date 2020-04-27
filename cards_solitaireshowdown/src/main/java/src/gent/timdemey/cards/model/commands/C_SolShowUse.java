@@ -24,7 +24,7 @@ public class C_SolShowUse extends C_Use
     
     @Override
     protected CommandBase resolveCommand(Context context, ContextType type, State state)
-    {
+    {        
         CardGame cardGame = state.getCardGame();
         List<CommandBase> eligible = new ArrayList<>();
         UUID localId = context.getReadOnlyState().getLocalId();

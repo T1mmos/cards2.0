@@ -47,13 +47,14 @@ public class C_Composite extends CommandBase
     }
 
     @Override
-    public boolean canExecute(Context context, ContextType type, State state)
+    public CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
         boolean canExecute = true;
         int i = 0;
         while (canExecute && i < commands.size())
         {
-            if (commands.get(i).canExecute(context, type, state))
+            CanExecuteResponse respI = commands.get(i).canExecute(context, type, state);
+            if (respI.canExecute)
             {
                 try
                 {
@@ -64,6 +65,7 @@ public class C_Composite extends CommandBase
                     throw new IllegalStateException(
                             "A composite command's commands must never throw! Cannot recover from this.");
                 }
+                i++;
             }
             else
             {

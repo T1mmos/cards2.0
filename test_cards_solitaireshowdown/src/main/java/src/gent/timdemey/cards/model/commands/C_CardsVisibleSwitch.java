@@ -15,7 +15,7 @@ public class C_CardsVisibleSwitch extends CommandBase
 {
 
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
         return true;
     }

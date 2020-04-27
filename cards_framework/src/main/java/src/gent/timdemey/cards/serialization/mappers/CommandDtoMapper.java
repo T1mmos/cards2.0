@@ -4,10 +4,10 @@ import gent.timdemey.cards.model.entities.commands.C_Accept;
 import gent.timdemey.cards.model.entities.commands.C_DenyClient;
 import gent.timdemey.cards.model.entities.commands.C_EnterLobby;
 import gent.timdemey.cards.model.entities.commands.C_Move;
-import gent.timdemey.cards.model.entities.commands.C_OnEndGame;
+import gent.timdemey.cards.model.entities.commands.C_OnGameEnded;
 import gent.timdemey.cards.model.entities.commands.C_OnLobbyPlayerJoined;
 import gent.timdemey.cards.model.entities.commands.C_OnLobbyWelcome;
-import gent.timdemey.cards.model.entities.commands.C_OnMultiplayerGameStarted;
+import gent.timdemey.cards.model.entities.commands.C_OnLobbyToGame;
 import gent.timdemey.cards.model.entities.commands.C_OnPlayerLeft;
 import gent.timdemey.cards.model.entities.commands.C_Reject;
 import gent.timdemey.cards.model.entities.commands.C_StartMultiplayerGame;
@@ -51,12 +51,12 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         // domain objects to DTO
         mapperDefs.addMapping(C_Accept.class, C_AcceptDto.class, CommandDtoMapper::toDto);
         mapperDefs.addMapping(C_DenyClient.class, C_DenyClientDto.class, CommandDtoMapper::toDto);
-        mapperDefs.addMapping(C_OnEndGame.class, C_OnEndGameDto.class, CommandDtoMapper::toDto);
+        mapperDefs.addMapping(C_OnGameEnded.class, C_OnEndGameDto.class, CommandDtoMapper::toDto);
         mapperDefs.addMapping(C_OnPlayerLeft.class, C_OnPlayerLeftDto.class, CommandDtoMapper::toDto);
         mapperDefs.addMapping(C_EnterLobby.class, C_EnterLobbyDto.class, CommandDtoMapper::toDto);
         mapperDefs.addMapping(C_OnLobbyPlayerJoined.class, C_OnLobbyPlayerJoinedDto.class, CommandDtoMapper::toDto);
         mapperDefs.addMapping(C_OnLobbyWelcome.class, C_OnLobbyWelcomeDto.class, CommandDtoMapper::toDto);
-        mapperDefs.addMapping(C_OnMultiplayerGameStarted.class, C_OnMultiplayerGameStartedDto.class, CommandDtoMapper::toDto);
+        mapperDefs.addMapping(C_OnLobbyToGame.class, C_OnMultiplayerGameStartedDto.class, CommandDtoMapper::toDto);
         mapperDefs.addMapping(C_Reject.class, C_RejectDto.class, CommandDtoMapper::toDto);
         mapperDefs.addMapping(C_StartMultiplayerGame.class, C_StartMultiplayerGameDto.class, CommandDtoMapper::toDto);
         mapperDefs.addMapping(C_UDP_Request.class, C_UDP_RequestDto.class, CommandDtoMapper::toDto);
@@ -65,11 +65,11 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         // DTO to domain object
         mapperDefs.addMapping(C_AcceptDto.class, C_Accept.class, CommandDtoMapper::toCommand);
         mapperDefs.addMapping(C_DenyClientDto.class, C_DenyClient.class, CommandDtoMapper::toCommand);
-        mapperDefs.addMapping(C_OnEndGameDto.class, C_OnEndGame.class, CommandDtoMapper::toCommand);
+        mapperDefs.addMapping(C_OnEndGameDto.class, C_OnGameEnded.class, CommandDtoMapper::toCommand);
         mapperDefs.addMapping(C_OnLobbyWelcomeDto.class, C_OnLobbyWelcome.class, CommandDtoMapper::toCommand);
         mapperDefs.addMapping(C_OnPlayerLeftDto.class, C_OnPlayerLeft.class, CommandDtoMapper::toCommand);
         mapperDefs.addMapping(C_EnterLobbyDto.class, C_EnterLobby.class, CommandDtoMapper::toCommand);
-        mapperDefs.addMapping(C_OnMultiplayerGameStartedDto.class, C_OnMultiplayerGameStarted.class, CommandDtoMapper::toCommand);
+        mapperDefs.addMapping(C_OnMultiplayerGameStartedDto.class, C_OnLobbyToGame.class, CommandDtoMapper::toCommand);
         mapperDefs.addMapping(C_OnLobbyPlayerJoinedDto.class, C_OnLobbyPlayerJoined.class, CommandDtoMapper::toCommand);
         mapperDefs.addMapping(C_RejectDto.class, C_Reject.class, CommandDtoMapper::toCommand);
         mapperDefs.addMapping(C_StartMultiplayerGameDto.class, C_StartMultiplayerGame.class, CommandDtoMapper::toCommand);
@@ -274,7 +274,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         return new C_StartMultiplayerGame(pl);
     }
     
-    private static C_OnMultiplayerGameStartedDto toDto(C_OnMultiplayerGameStarted cmd)
+    private static C_OnMultiplayerGameStartedDto toDto(C_OnLobbyToGame cmd)
     {
         C_OnMultiplayerGameStartedDto dto = new C_OnMultiplayerGameStartedDto();
         {
@@ -285,7 +285,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         return dto;
     }
     
-    private static C_OnMultiplayerGameStarted toCommand(C_OnMultiplayerGameStartedDto dto)
+    private static C_OnLobbyToGame toCommand(C_OnMultiplayerGameStartedDto dto)
     {
         P_OnMultiplayerGameStarted pl = new P_OnMultiplayerGameStarted();
         {
@@ -293,7 +293,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
             
             pl.cardGame = EntityDtoMapper.toDomainObject(dto.cardGame);
         }        
-        return new C_OnMultiplayerGameStarted(pl);
+        return new C_OnLobbyToGame(pl);
     }
     
     private static C_RejectDto toDto(C_Reject cmd)
@@ -340,7 +340,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         return new C_Accept(pl);
     }
     
-    private static C_OnEndGameDto toDto(C_OnEndGame cmd)
+    private static C_OnEndGameDto toDto(C_OnGameEnded cmd)
     {
         C_OnEndGameDto dto = new C_OnEndGameDto();
         {
@@ -351,14 +351,14 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         return dto;
     }
     
-    private static C_OnEndGame toCommand(C_OnEndGameDto dto)
+    private static C_OnGameEnded toCommand(C_OnEndGameDto dto)
     {
         P_OnEndGame pl = new P_OnEndGame();
         {
             mergeDtoBaseToPayload(dto, pl);
             pl.winnerId = toUuid(dto.winnerId);
         }
-        return new C_OnEndGame(pl);
+        return new C_OnGameEnded(pl);
     }
     protected static void mergeMoveBaseToDto(C_Move cmd, C_MoveDto dto)
     {

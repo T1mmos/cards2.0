@@ -6,6 +6,7 @@ import java.util.UUID;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.payload.P_EnterLobby;
+import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.payload.P_Player;
 import gent.timdemey.cards.model.state.State;
@@ -38,9 +39,24 @@ public class C_EnterLobby extends CommandBase
     }
 
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
-        return state.getCardGame() == null;
+        if (type == ContextType.UI)
+        {
+            if (state.getGameState() != GameState.NotConnected)
+            {
+                return false;
+            }
+        }
+        else
+        {
+            if (state.getGameState() != GameState.Lobby)
+            {
+                return false;
+            }
+            // handle lobby full, close connection
+            
+        }
     }
 
     @Override

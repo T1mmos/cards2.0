@@ -44,7 +44,7 @@ public class C_Connect extends CommandBase
     }
 
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
         return true;
     }
@@ -114,7 +114,7 @@ public class C_Connect extends CommandBase
             LimitedContext context = Services.get(IContextService.class).getContext(ContextType.UI);
             if (id != null)
             {
-                CommandBase cmd = new C_OnConnectionLost();
+                CommandBase cmd = new C_OnServerConnectionLost();
                 context.schedule(cmd);
             }
         }

@@ -73,7 +73,7 @@ public class C_StartServer extends CommandBase
     }
 
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
         boolean srvCtxtInit = Services.get(IContextService.class).isInitialized(ContextType.Server);
         if(type == ContextType.UI)
@@ -96,7 +96,7 @@ public class C_StartServer extends CommandBase
             IContextService ctxtServ = Services.get(IContextService.class);
             ctxtServ.initialize(ContextType.Server);
 
-            reschedule(ContextType.Server);
+            schedule(ContextType.Server, this);
         }
         else
         {

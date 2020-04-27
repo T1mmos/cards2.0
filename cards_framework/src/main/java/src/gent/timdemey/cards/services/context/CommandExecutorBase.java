@@ -72,6 +72,12 @@ abstract class CommandExecutorBase implements ICommandExecutor
         CommandTask task = new CommandTask(command, state);
         executor.execute(task);
     }
+    
+    @Override
+    public final void run(CommandBase command, State state)
+    {
+        throw new UnsupportedOperationException("Implement this, add support for highly prioritized commands to CommandTask!");
+    }
 
     protected abstract void execute(CommandBase command, State state);
     

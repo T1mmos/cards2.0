@@ -26,42 +26,48 @@ class UICommandExecutor implements ICommandExecutor
     @Override
     public void schedule(CommandBase command, State state)
     {
-        IContextService ctxtServ = Services.get(IContextService.class);
-        if(!ctxtServ.isUiThread())
-        {
-            SwingUtilities.invokeLater(() -> schedule(command, state));
-            return;
-        }
+        SwingUtilities.invokeLater(() -> execute(command, state));
+    }
 
+    @Override
+    public void run(CommandBase command, State state)
+    {
+        IContextService ctxtServ = Services.get(IContextService.class);
+        ContextType type = ctxtServ.getThreadContext().getContextType();
+        if(type != ContextType.UI)
+        {
+            throw new IllegalStateException("Can only run a command from the UI thread. Use schedule instead when posting command from another thread!");
+        }
+        
         execute(command, state);
     }
 
     private void execute(CommandBase command, State state)
-    {        
-        boolean syncable = command.isSyncable();        
+    {
+        boolean syncable = command.isSyncable();
         boolean src_local = command.getSourceId() == state.getLocalId();
         boolean src_server = command.getSourceId() == state.getServerId();
         boolean hasServer = state.getServerId() != null;
-        
-        if (!src_local && !src_server)
+
+        if(!src_local && !src_server)
         {
             throw new IllegalArgumentException("A command's source must either be local or the server");
         }
-        if (src_local && !command.canExecute(state))
+        if(src_local && !command.canExecute(state))
         {
             // if the command is locally created then it is supposed to be able to execute
             throw new IllegalStateException("The command '" + command.getClass().getSimpleName() + " cannot be executed");
         }
-        
-        if (syncable)
+
+        if(syncable)
         {
             // delegate command execution to the command history
-            if (src_local && hasServer)
+            if(src_local && hasServer)
             {
                 // multiplayer, the command is not yet accepted by the server
                 state.getCommandHistory().addAwaiting(command, state);
             }
-            else if (src_local && !hasServer)
+            else if(src_local && !hasServer)
             {
                 // single player, so the command is immediately in executed state
                 state.getCommandHistory().addExecuted(command, state);
@@ -73,40 +79,42 @@ class UICommandExecutor implements ICommandExecutor
                 HandleReexecutionFails(fails);
             }
         }
-        else if (command instanceof C_Reject)
+        else if(command instanceof C_Reject)
         {
-            // this command comes from the server and references another command that got rejected
+            // this command comes from the server and references another command that got
+            // rejected
             C_Reject rejectCmd = (C_Reject) command;
             List<CommandExecution> fails = state.getCommandHistory().reject(rejectCmd.rejectedCommandId, state);
             HandleReexecutionFails(fails);
         }
-        else if (command instanceof C_Accept)
+        else if(command instanceof C_Accept)
         {
-            // this command comes from the server and references another command that got accepted
+            // this command comes from the server and references another command that got
+            // accepted
             C_Accept acceptCmd = (C_Accept) command;
-            state.getCommandHistory().accept(acceptCmd.acceptedCommandId, state);            
+            state.getCommandHistory().accept(acceptCmd.acceptedCommandId, state);
         }
-        else 
+        else
         {
             // execute the command here
             command.execute(state);
         }
-        
+
         // update the listeners
         for (IExecutionListener execListener : executionListeners)
         {
             execListener.onExecuted();
         }
     }
-    
+
     private void HandleReexecutionFails(List<CommandExecution> fails)
     {
-        if (fails.size() > 0)
+        if(fails.size() > 0)
         {
             D_OnReexecutionFail cmd = new D_OnReexecutionFail(fails);
             IContextService ctxtServ = Services.get(IContextService.class);
-            ctxtServ.getThreadContext().schedule(cmd);    
-        }                
+            ctxtServ.getThreadContext().schedule(cmd);
+        }
     }
 
     @Override
@@ -114,7 +122,7 @@ class UICommandExecutor implements ICommandExecutor
     {
         if(executionListeners.contains(executionListener))
         {
-            throw new IllegalStateException("This Execution Listener is already registered"); 
+            throw new IllegalStateException("This Execution Listener is already registered");
         }
 
         this.executionListeners.add(executionListener);
@@ -130,9 +138,9 @@ class UICommandExecutor implements ICommandExecutor
         }
         if(!executionListeners.contains(executionListener))
         {
-            throw new IllegalStateException("This Execution Listener is not registered"); 
+            throw new IllegalStateException("This Execution Listener is not registered");
         }
-        
+
         this.executionListeners.remove(executionListener);
     }
 

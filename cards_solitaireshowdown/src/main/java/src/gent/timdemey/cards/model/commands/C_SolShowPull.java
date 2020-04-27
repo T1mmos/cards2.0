@@ -19,7 +19,7 @@ public class C_SolShowPull extends C_Pull
 
     @Override
     protected boolean canPull(CardStack srcCardStack, Card srcCard, State state)
-    {
+    {        
         if (srcCardStack.cardStackType.equals(SolShowCardStackType.DEPOT) || 
             srcCardStack.cardStackType.equals(SolShowCardStackType.LAYDOWN))
         {

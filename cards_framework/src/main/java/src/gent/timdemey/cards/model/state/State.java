@@ -53,7 +53,7 @@ public class State extends EntityBase
     public State()
     {
         cardGameRef = new StateValueRef<>(CardGame, id);
-        gameStateRef = new StateValueRef<>(GameState, id, gent.timdemey.cards.model.entities.game.GameState.None);
+        gameStateRef = new StateValueRef<>(GameState, id, gent.timdemey.cards.model.entities.game.GameState.NotConnected);
         commandHistoryRef = new StateValueRef<>(CommandHistory, id);
         localIdRef = new StateValueRef<>(LocalId, id);
         localNameRef = new StateValueRef<>(LocalName, id);

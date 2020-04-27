@@ -31,8 +31,7 @@ public class D_ShowLobby extends DialogCommandBase
         DialogData<Void> data = dialogServ.ShowAdvanced(title, null, new LobbyDialogContent(), EnumSet.of(DialogButtonType.Cancel));
         if(data.closeType == DialogButtonType.Cancel)
         {
-            // must drop connections
-            CommandBase cmd = new C_Disconnect();
+            CommandBase cmd = new C_LeaveLobby();
             schedule(ContextType.UI, cmd);
         }
     }

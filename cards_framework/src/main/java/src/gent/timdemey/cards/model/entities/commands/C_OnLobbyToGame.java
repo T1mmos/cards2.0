@@ -9,23 +9,28 @@ import gent.timdemey.cards.services.INetworkService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
-public class C_OnMultiplayerGameStarted extends CommandBase
+/**
+ * Transition from the lobby to the multiplayer game.
+ * @author Tim
+ *
+ */
+public class C_OnLobbyToGame extends CommandBase
 {
     public final CardGame cardGame;
     
-    public C_OnMultiplayerGameStarted(CardGame cardGame)
+    public C_OnLobbyToGame(CardGame cardGame)
     {
         this.cardGame = cardGame;
     }
     
-    public C_OnMultiplayerGameStarted(P_OnMultiplayerGameStarted pl)
+    public C_OnLobbyToGame(P_OnMultiplayerGameStarted pl)
     {
         super(pl);
         this.cardGame = pl.cardGame;
     }
 
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
         return true;        
     }

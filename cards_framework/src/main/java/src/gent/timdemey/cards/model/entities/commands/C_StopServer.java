@@ -9,9 +9,14 @@ import gent.timdemey.cards.services.context.ContextType;
 public class C_StopServer extends CommandBase
 {
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
-        return true;
+        if (state.getServerId() == null)
+        {
+            return CanExecuteResponse.no("There is no ServerId set");
+        }
+        
+        return CanExecuteResponse.yes();
     }
 
     @Override
@@ -19,7 +24,7 @@ public class C_StopServer extends CommandBase
     {
         if (type == ContextType.UI)
         {
-            reschedule(ContextType.Server);
+            schedule(ContextType.Server, this);
             return;
         }
 

@@ -32,7 +32,7 @@ public class C_SolMove extends C_Move
     }
 
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
         CardStack srcCardStack = state.getCardGame().getCardStacks().get(srcCardStackId);
         CardStack dstCardStack = state.getCardGame().getCardStacks().get(dstCardStackId);

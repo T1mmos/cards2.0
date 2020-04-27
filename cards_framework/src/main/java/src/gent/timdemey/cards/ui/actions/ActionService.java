@@ -1,7 +1,7 @@
 package gent.timdemey.cards.ui.actions;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.model.entities.commands.C_LeaveGame;
+import gent.timdemey.cards.model.entities.commands.C_LeaveLobby;
 import gent.timdemey.cards.model.entities.commands.C_Redo;
 import gent.timdemey.cards.model.entities.commands.C_StartLocalGame;
 import gent.timdemey.cards.model.entities.commands.C_StartMultiplayerGame;
@@ -50,7 +50,7 @@ public class ActionService implements IActionService
         case Actions.ACTION_JOIN:
             return canExecute(new D_Connect());
         case Actions.ACTION_LEAVE:
-            return canExecute(new C_LeaveGame());
+            return canExecute(new C_LeaveLobby());
         default:
             throw new UnsupportedOperationException("No such action id: " + id);
         }

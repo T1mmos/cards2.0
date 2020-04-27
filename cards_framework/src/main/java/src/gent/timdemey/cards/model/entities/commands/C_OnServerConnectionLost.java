@@ -8,14 +8,14 @@ import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
-public class C_OnConnectionLost extends CommandBase
+public class C_OnServerConnectionLost extends CommandBase
 {
-    public C_OnConnectionLost()
+    public C_OnServerConnectionLost()
     {
     }
 
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
         CheckContext(type, ContextType.UI);
         return true;
@@ -24,19 +24,14 @@ public class C_OnConnectionLost extends CommandBase
     @Override
     public void execute(Context context, ContextType type, State state)
     {
-        CheckContext(type, ContextType.UI);
-        state.getTcpConnectionPool().closeAllConnections();
-
-        state.getPlayers().removeAll(state.getRemotePlayers());
-        state.setServerId(null);
+        CheckContext(type, ContextType.UI);        
 
         String title = Loc.get(LocKey.DialogTitle_connectionlost);
         String msg = Loc.get(LocKey.DialogMessage_connectionlost);
         Services.get(IDialogService.class).ShowMessage(title, msg);
 
-        state.setCommandHistory(null);
-        state.setCardGame(null);
-
+        C_LeaveLobby cmd_leavelobby = new C_LeaveLobby();
+        schedule(ContextType.UI, cmd_leavelobby);
     }
 
     @Override

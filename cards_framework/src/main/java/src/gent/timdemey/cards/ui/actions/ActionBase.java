@@ -27,4 +27,11 @@ class ActionBase extends AbstractAction
     {
         setEnabled(Services.get(IActionService.class).canExecuteAction(action));
     }
+    
+    @Override
+    public boolean isEnabled()
+    {
+        // TODO Auto-generated method stub
+        return super.isEnabled();
+    }
 }

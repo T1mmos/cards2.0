@@ -34,7 +34,7 @@ public class C_StartMultiplayerGame extends CommandBase
     }
     
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
         if (type == ContextType.UI)
         {
@@ -82,7 +82,7 @@ public class C_StartMultiplayerGame extends CommandBase
             
             state.setCardGame(cardGame);
             
-            C_OnMultiplayerGameStarted cmd = new C_OnMultiplayerGameStarted(cardGame);
+            C_OnLobbyToGame cmd = new C_OnLobbyToGame(cardGame);
             schedule(ContextType.Server, cmd);
         }
     }

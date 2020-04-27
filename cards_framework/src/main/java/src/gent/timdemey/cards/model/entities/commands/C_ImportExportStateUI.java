@@ -27,7 +27,7 @@ public class C_ImportExportStateUI extends CommandBase
     }
     
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
         CheckContext(type, ContextType.UI);
         return true;
