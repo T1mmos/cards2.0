@@ -14,7 +14,11 @@ public class C_StopGame extends CommandBase
     @Override
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
-        return state.getCardGame() != null;
+        if (state.getCardGame() == null)
+        {
+            return CanExecuteResponse.no("State.CardGame is null");
+        }
+        return CanExecuteResponse.yes();
     }
 
     @Override

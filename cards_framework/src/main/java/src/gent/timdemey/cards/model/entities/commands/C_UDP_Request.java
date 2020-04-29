@@ -24,7 +24,7 @@ public class C_UDP_Request extends CommandBase
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
         CheckContext(type, ContextType.Server);
-        return true;
+        return CanExecuteResponse.yes();
     }
 
     @Override

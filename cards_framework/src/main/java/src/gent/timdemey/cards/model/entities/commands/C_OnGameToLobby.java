@@ -24,9 +24,9 @@ public class C_OnGameToLobby extends CommandBase
     {
         if (state.getGameState() != GameState.Started)
         {
-            return false;
+            return CanExecuteResponse.no("GameState should be Started but is: " + state.getGameState());
         }
-        return true;
+        return CanExecuteResponse.yes();
     }
 
     @Override

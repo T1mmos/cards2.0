@@ -50,7 +50,7 @@ public class C_OnLobbyWelcome extends CommandBase
     {
         CheckContext(type, ContextType.UI);
 
-        return true;
+        return CanExecuteResponse.yes();
     }
 
     @Override

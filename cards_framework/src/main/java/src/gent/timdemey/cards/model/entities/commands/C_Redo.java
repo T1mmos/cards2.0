@@ -21,9 +21,13 @@ public final class C_Redo extends CommandBase
     {
         if (state.getCommandHistory() == null)
         {
-            return false;
+            return CanExecuteResponse.no("State.CommandHistory is null");
         }
-        return state.getCommandHistory().canRedo();
+        if (!state.getCommandHistory().canRedo())
+        {
+            return CanExecuteResponse.no("CommandHistory cannot redo");
+        }
+        return CanExecuteResponse.yes();
     }
 
     @Override

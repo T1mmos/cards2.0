@@ -28,8 +28,9 @@ public abstract class C_Push extends CommandBase
     {        
         if (state.getGameState() != GameState.Started)
         {
-            return false;
+            return CanExecuteResponse.no("GameState should be Started but is: " + state.getGameState());
         }
+        
         CardStack dstCardStack = state.getCardGame().getCardStack(dstCardStackId);
         List<Card> srcCards = state.getCardGame().getCards().getOnly(srcCardIds);
         
@@ -42,9 +43,9 @@ public abstract class C_Push extends CommandBase
      * @param srcCards
      * @return
      */
-    protected boolean canPush(CardStack dstCardStack, List<Card> srcCards, State state)
+    protected CanExecuteResponse canPush(CardStack dstCardStack, List<Card> srcCards, State state)
     {
-        return true;
+        return CanExecuteResponse.yes();
     }
     
     @Override

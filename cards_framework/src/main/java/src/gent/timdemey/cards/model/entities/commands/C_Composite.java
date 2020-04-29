@@ -65,20 +65,33 @@ public class C_Composite extends CommandBase
                     throw new IllegalStateException(
                             "A composite command's commands must never throw! Cannot recover from this.");
                 }
-                i++;
             }
             else
             {
                 canExecute = false;
             }
+            i++;
         }
+        
+        int j = i - 1;
 
         // unexecute
         while (i > 0)
         {
-            commands.get(i).undo(context, type, state);
+            commands.get(--i).undo(context, type, state);
         }
-        return canExecute;
+        
+        if (canExecute)
+        {
+            return CanExecuteResponse.yes();
+        }
+        else
+        {
+            String cmdName = commands.get(j).getName();
+            String reason = "Failed to execute command " + cmdName + " at index " + j;
+            return CanExecuteResponse.no(reason);
+        }
+            
     }
 
     @Override

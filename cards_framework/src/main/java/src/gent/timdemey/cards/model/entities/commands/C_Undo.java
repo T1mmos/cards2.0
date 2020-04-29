@@ -21,9 +21,14 @@ public final class C_Undo extends CommandBase
     {
         if (state.getCommandHistory() == null)
         {
-            return false;
+            return CanExecuteResponse.no("State.CommandHistory is null");
         }
-        return state.getCommandHistory().canUndo();
+        if (!state.getCommandHistory().canUndo())
+        {
+            return CanExecuteResponse.no("CommandHistory cannot undo");
+        }
+
+        return CanExecuteResponse.yes();
     }
 
     @Override

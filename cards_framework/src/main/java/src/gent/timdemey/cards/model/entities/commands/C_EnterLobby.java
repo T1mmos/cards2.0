@@ -45,18 +45,20 @@ public class C_EnterLobby extends CommandBase
         {
             if (state.getGameState() != GameState.NotConnected)
             {
-                return false;
+                return CanExecuteResponse.no("GameState should be NotConnected but is: " + state.getGameState());
             }
         }
         else
         {
             if (state.getGameState() != GameState.Lobby)
             {
-                return false;
+                return CanExecuteResponse.no("GameState should be Lobby but is: " + state.getGameState());
             }
             // handle lobby full, close connection
             
         }
+        
+        return CanExecuteResponse.yes();
     }
 
     @Override

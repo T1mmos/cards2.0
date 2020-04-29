@@ -1,4 +1,4 @@
-package gent.timdemey.cards.model.commands;
+package gent.timdemey.cards.model.entities.commands;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,102 +18,95 @@ public class C_SolShowPush extends C_Push
     }
 
     @Override
-    protected boolean canPush(CardStack dstCardStack, List<Card> srcCards, State state)
+    protected CanExecuteResponse canPush(CardStack dstCardStack, List<Card> srcCards, State state)
     {
-        if (dstCardStack.cardStackType.equals(SolShowCardStackType.DEPOT) || 
-            dstCardStack.cardStackType.equals(SolShowCardStackType.TURNOVER) || 
-            dstCardStack.cardStackType.equals(SolShowCardStackType.SPECIAL))
+        if (dstCardStack.cardStackType.equals(SolShowCardStackType.DEPOT)
+                || dstCardStack.cardStackType.equals(SolShowCardStackType.TURNOVER)
+                || dstCardStack.cardStackType.equals(SolShowCardStackType.SPECIAL))
         {
-            return false;
+            return CanExecuteResponse.no("Cannot push onto a " + dstCardStack.cardStackType + "stack");
         }
-        
+
         if (dstCardStack.cardStackType.equals(SolShowCardStackType.MIDDLE))
         {
             UUID playerId = getSourceId();
-            if (!playerId.equals(state.getServerId()) && !playerId.equals(state.getCardGame().getPlayerId(dstCardStack)))
+            if (!playerId.equals(state.getServerId())
+                    && !playerId.equals(state.getCardGame().getPlayerId(dstCardStack)))
             {
-                return false;
+                return CanExecuteResponse.no("Can only push onto your own MIDDLE stacks");
             }
-            
-            
+
             // in solitaire showdown you are allowed to put any card on an empty stack,
             // not just a king
             if (dstCardStack.cards.isEmpty())
             {
-                return true;
+                return CanExecuteResponse.yes();
             }
-            
+
             Card dstCard = dstCardStack.getHighestCard();
             Card srcCard = srcCards.get(0);
-            
-            // suit color must differ
-            if (dstCard.suit.getColor() == srcCard.suit.getColor()) 
+
+            if (dstCard.suit.getColor() == srcCard.suit.getColor())
             {
-                return false;
+                return CanExecuteResponse.no("Suit color must differ");
             }
-            
-            // value of destination card must be 1 more than source card 
+
             int value_src = srcCard.value.getOrderAtoK();
             int value_dst = dstCard.value.getOrderAtoK();
             if (value_dst != value_src + 1)
             {
-                return false;
+                return CanExecuteResponse.no("Value of destination card must be 1 more than source card");
             }
-            
-            return true;
-        }       
+
+            return CanExecuteResponse.yes();
+        }
         else if (dstCardStack.cardStackType.equals(SolShowCardStackType.LAYDOWN))
         {
-            // can only push 1 card at a time
             if (srcCards.size() != 1)
             {
-                return false;
+                return CanExecuteResponse.no("Can only push 1 card at a time");
             }
             Card srcCard = srcCards.get(0);
-            
-            // the card must be visible
+
             if (!srcCard.visibleRef.get())
             {
-                return false;
+                return CanExecuteResponse.no("The card must be visible");
             }
-            
+
             if (srcCard.value == Value.V_A)
             {
-                // an ace requires an empty stack
                 if (!dstCardStack.cards.isEmpty())
                 {
-                    return false;
+                    return CanExecuteResponse.no("An ace requires an empty stack");
                 }
-                
-                return true;
+
+                return CanExecuteResponse.yes();
             }
-            else 
+            else
             {
-                // not an ace -> stack must not be empty
                 if (dstCardStack.cards.isEmpty())
                 {
-                    return false;
+                    return CanExecuteResponse.no("Any card not an ace requires a non-empty destination stack");
                 }
                 Card dstCard = dstCardStack.getHighestCard();
-                
-                // suit must match
+
                 if (dstCard.suit != srcCard.suit)
                 {
-                    return false;
+                    return CanExecuteResponse.no("The suit must match");
                 }
-                
-                // value of source card must be 1 more than destination card
+
                 int value_src = srcCard.value.getOrderAtoK();
                 int value_dst = dstCard.value.getOrderAtoK();
                 if (value_dst + 1 != value_src)
                 {
-                    return false;
+                    return CanExecuteResponse.no("Value of source card must be 1 more than destination card");
                 }
-                
-                return true;
+
+                return CanExecuteResponse.yes();
             }
         }
-        
-        throw new UnsupportedOperationException("No such SolShowCardStackType supported: " + dstCardStack.cardStackType);
+
+        throw new UnsupportedOperationException(
+                "No such SolShowCardStackType supported: " + dstCardStack.cardStackType);
     }
 }

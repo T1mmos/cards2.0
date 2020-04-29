@@ -26,8 +26,9 @@ public abstract class C_Pull extends CommandBase
     {        
         if (state.getGameState() != GameState.Started)
         {
-            return false;
+            return CanExecuteResponse.no("GameState should be Started but is: " + state.getGameState());
         }
+        
         CardStack srcCardStack = state.getCardGame().getCardStack(srcCardStackId);
         Card srcCard = state.getCardGame().getCards().get(srcCardId);
                 
@@ -40,9 +41,9 @@ public abstract class C_Pull extends CommandBase
      * @param srcCard
      * @return
      */
-    protected boolean canPull(CardStack srcCardStack, Card srcCard, State state)
+    protected CanExecuteResponse canPull(CardStack srcCardStack, Card srcCard, State state)
     {
-        return true;
+        return CanExecuteResponse.yes();
     }
 
     

@@ -27,7 +27,7 @@ public class C_OnGameEnded extends CommandBase
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
         CheckNotContext(type, ContextType.Server);
-        return true;
+        return CanExecuteResponse.yes();
     }
 
     @Override

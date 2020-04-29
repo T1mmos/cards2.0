@@ -43,17 +43,22 @@ public class Card extends EntityBase
      */
     public final boolean equalsNotation(String cardNotation)
     {
-        if (cardNotation == null || cardNotation.length() != 2)
+        if (cardNotation == null || (cardNotation.length() != 2 && cardNotation.length() != 3)) // e.g. 10x has length 3
         {
             throw new IllegalArgumentException("Expected a valid short card notation but got: " + cardNotation);
         }
         
-        String valueStr = cardNotation.substring(0, 1);
-        String suitStr = cardNotation.substring(1, 2);
-        Value value = Value.fromCharacter(valueStr);
-        Suit suit = Suit.fromCharacter(suitStr);
-        
-        return this.value == value && this.suit == suit;
+        String valueStr = cardNotation.substring(0, cardNotation.length() - 1);
+        String suitStr = cardNotation.substring(cardNotation.length() - 1, cardNotation.length());
+
+        return getNotation().equals(valueStr + suitStr);
+    }
+    
+    public final String getNotation()
+    {
+        String valueStr = value.getTextual();
+        String suitStr = suit.getTextual();
+        return valueStr + suitStr;
     }
     
     public final boolean equals(String cardNotation)

@@ -31,11 +31,16 @@ public abstract class C_Use extends CommandBase
         CheckContext(type, ContextType.UI);
         if (state.getGameState() != GameState.Started)
         {
-            return false;
+            return CanExecuteResponse.no("GameState should be Started but is: " + state.getGameState());
         }
-        
+
         CommandBase cmd = resolveCommand(context, type, state);
-        return cmd != null;
+        if (cmd == null)
+        {
+            return CanExecuteResponse.no("No command could be resolved");
+        }
+
+        return CanExecuteResponse.yes();
     }
 
     protected final void execute(Context context, ContextType type, State state)

@@ -55,7 +55,7 @@ public final class C_UDP_Response extends CommandBase
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
         CheckContext(type, ContextType.UI);
-        return true;
+        return CanExecuteResponse.yes();
     }
 
     @Override

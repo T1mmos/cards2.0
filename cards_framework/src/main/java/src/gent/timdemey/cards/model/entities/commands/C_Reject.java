@@ -27,7 +27,7 @@ public class C_Reject extends CommandBase
     @Override
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
-        return false;
+        return CanExecuteResponse.no("This command is not intended to be executed");
     }
 
     @Override

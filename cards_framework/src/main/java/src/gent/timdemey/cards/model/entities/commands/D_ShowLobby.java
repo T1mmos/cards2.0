@@ -15,11 +15,20 @@ import gent.timdemey.cards.ui.dialogs.LobbyDialogContent;
 public class D_ShowLobby extends DialogCommandBase
 {
     @Override
-    protected boolean canShowDialog(Context context, ContextType type, State state)
+    protected CanExecuteResponse canShowDialog(Context context, ContextType type, State state)
     {
         CheckContext(type, ContextType.UI);
 
-        return state.getServerId() != null && state.getCardGame() == null;
+        if (state.getServerId() == null)
+        {
+            return CanExecuteResponse.no("State.ServerId is null");
+        }
+        if (state.getCardGame() != null)
+        {
+            return CanExecuteResponse.no("State.CardGame is not null");
+        }
+
+        return CanExecuteResponse.yes();
     }
 
     @Override
@@ -28,8 +37,9 @@ public class D_ShowLobby extends DialogCommandBase
         Server server = state.getServers().get(state.getServerId());
 
         String title = Loc.get(LocKey.DialogTitle_lobby, server.serverName);
-        DialogData<Void> data = dialogServ.ShowAdvanced(title, null, new LobbyDialogContent(), EnumSet.of(DialogButtonType.Cancel));
-        if(data.closeType == DialogButtonType.Cancel)
+        DialogData<Void> data = dialogServ.ShowAdvanced(title, null, new LobbyDialogContent(),
+                EnumSet.of(DialogButtonType.Cancel));
+        if (data.closeType == DialogButtonType.Cancel)
         {
             CommandBase cmd = new C_LeaveLobby();
             schedule(ContextType.UI, cmd);

@@ -28,45 +28,49 @@ public class C_OnPlayerLeft extends CommandBase
         super(pl);
         this.playerId = pl.playerId;
     }
-    
+
     @Override
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
-        return state.getPlayers().contains(playerId);
+        if (!state.getPlayers().contains(playerId))
+        {
+            return CanExecuteResponse.no("PlayerId " + playerId + " was not found in the State.Players");
+        }
+        return CanExecuteResponse.yes();
     }
 
     @Override
     public void execute(Context context, ContextType contextType, State state)
     {
         Player player_removed = removePlayer(state, playerId);
-        
+
         if (contextType == ContextType.UI)
         {
             if (state.getGameState() == GameState.Started || state.getGameState() == GameState.Paused)
-            {         
+            {
                 // inform the user
                 CommandBase cmd_dialog = new D_OnPlayerLeft(player_removed.name);
                 run(cmd_dialog);
-                
+
                 // if the game is ongoing then the entire game ends
                 C_OnGameToLobby cmd_ongametolobby = new C_OnGameToLobby();
-                schedule(ContextType.UI, cmd_ongametolobby);     
+                schedule(ContextType.UI, cmd_ongametolobby);
             }
         }
         else
         {
             C_OnGameToLobby cmd_ongametolobby = new C_OnGameToLobby();
-            schedule(ContextType.Server, cmd_ongametolobby);   
-            
-            INetworkService ns = Services.get(INetworkService.class);      
+            schedule(ContextType.Server, cmd_ongametolobby);
+
+            INetworkService ns = Services.get(INetworkService.class);
             List<UUID> remotes = state.getRemotePlayerIds();
             if (remotes.size() > 0)
             {
-                ns.broadcast(state.getLocalId(), state.getRemotePlayerIds(), this, state.getTcpConnectionPool());    
-            }                        
+                ns.broadcast(state.getLocalId(), state.getRemotePlayerIds(), this, state.getTcpConnectionPool());
+            }
         }
     }
-    
+
     private Player removePlayer(State state, UUID playerId)
     {
         Player player = state.getPlayers().remove(playerId);

@@ -30,10 +30,14 @@ public class C_StartLocalGame extends CommandBase
         boolean multiplayer = plugin.getPlayerCount() > 1;
         if (multiplayer)
         {
-            throw new IllegalStateException("This is a command for single player only!");
+            return CanExecuteResponse.no("This is a command for single player only!");
+        }
+        if (state.getCardGame() != null)
+        {
+            return CanExecuteResponse.no("State.CardGame is not null");
         }
         
-        return state.getCardGame() == null;
+        return CanExecuteResponse.yes();
     }
 
     @Override

@@ -17,22 +17,23 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
 /**
- * A signal sent to the server by the lobby admin to start the game.
- * The server will respond to all players by sending a C_OnMultiplayerGameStarted.
+ * A signal sent to the server by the lobby admin to start the game. The server
+ * will respond to all players by sending a C_OnMultiplayerGameStarted.
+ * 
  * @author Tim
  *
  */
 public class C_StartMultiplayerGame extends CommandBase
-{    
+{
     public C_StartMultiplayerGame()
     {
     }
-    
+
     public C_StartMultiplayerGame(P_StartMultiplayerGame pl)
     {
         super(pl);
     }
-    
+
     @Override
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
@@ -40,11 +41,21 @@ public class C_StartMultiplayerGame extends CommandBase
         {
             ICardPlugin plugin = Services.get(ICardPlugin.class);
             int reqPlayerCnt = plugin.getPlayerCount();
-            return state.getCardGame() == null &&
-                   state.getPlayers().size() == reqPlayerCnt;
+            int curPlayerCnt = state.getPlayers().size();
+
+            if (state.getCardGame() != null)
+            {
+                return CanExecuteResponse.no("State.CardGame is not null");
+            }
+            if (state.getPlayers().size() != reqPlayerCnt)
+            {
+                String msg = "RequiredPlayerCount (%s) != State.Players.Size (%s)";
+                String format = String.format(msg, reqPlayerCnt, curPlayerCnt);
+                return CanExecuteResponse.no(format);
+            }
         }
 
-        return true;
+        return CanExecuteResponse.yes();
     }
 
     @Override
@@ -55,33 +66,33 @@ public class C_StartMultiplayerGame extends CommandBase
             INetworkService netServ = Services.get(INetworkService.class);
             netServ.send(state.getLocalId(), state.getServerId(), this, state.getTcpConnectionPool());
         }
-        else 
+        else
         {
             ICardPlugin plugin = Services.get(ICardPlugin.class);
             int reqPlayerCnt = plugin.getPlayerCount();
-            
+
             List<Player> players = state.getPlayers();
             if (players.size() != reqPlayerCnt)
             {
                 // send an answer
                 return;
             }
-            
+
             if (!getSourceId().equals(state.getLobbyAdminId()))
             {
                 // this command is not authorized: only the lobby admin can start the game
                 return;
             }
-            
+
             // ready to kick off. Generate some cards for the current game type.
             ICardGameCreationService creator = Services.get(ICardGameCreationService.class);
             List<List<Card>> allCards = creator.getCards();
             List<UUID> playerIds = state.getPlayers().getIds();
             List<PlayerConfiguration> playerConfigurations = creator.createStacks(playerIds, allCards);
-            CardGame cardGame = new CardGame(playerConfigurations);       
-            
+            CardGame cardGame = new CardGame(playerConfigurations);
+
             state.setCardGame(cardGame);
-            
+
             C_OnLobbyToGame cmd = new C_OnLobbyToGame(cardGame);
             schedule(ContextType.Server, cmd);
         }

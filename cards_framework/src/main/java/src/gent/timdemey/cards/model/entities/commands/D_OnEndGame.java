@@ -18,9 +18,9 @@ public class D_OnEndGame extends DialogCommandBase
     }
 
     @Override
-    protected boolean canShowDialog(Context context, ContextType type, State state)
+    protected CanExecuteResponse canShowDialog(Context context, ContextType type, State state)
     {
-        return true;
+        return CanExecuteResponse.yes();
     }
 
     @Override

@@ -14,7 +14,7 @@ public class C_UDP_StopServiceRequester extends CommandBase
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
         CheckContext(type, ContextType.UI);
-        return true;
+        return CanExecuteResponse.yes();
     }
 
     @Override

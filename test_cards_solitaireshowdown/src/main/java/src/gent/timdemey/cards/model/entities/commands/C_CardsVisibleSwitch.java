@@ -1,4 +1,4 @@
-package gent.timdemey.cards.model.commands;
+package gent.timdemey.cards.model.entities.commands;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ public class C_CardsVisibleSwitch extends CommandBase
     @Override
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
-        return true;
+        return CanExecuteResponse.yes();
     }
 
     @Override

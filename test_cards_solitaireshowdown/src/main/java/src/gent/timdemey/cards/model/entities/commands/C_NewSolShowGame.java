@@ -1,4 +1,4 @@
-package gent.timdemey.cards.model.commands;
+package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
@@ -16,7 +16,7 @@ public class C_NewSolShowGame extends CommandBase
     @Override
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
-        return true;
+        return CanExecuteResponse.yes();
     }
 
     @Override

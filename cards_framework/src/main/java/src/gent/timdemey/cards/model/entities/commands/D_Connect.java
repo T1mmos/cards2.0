@@ -16,9 +16,14 @@ import gent.timdemey.cards.ui.dialogs.JoinMultiplayerGameDialogContent;
 public class D_Connect extends DialogCommandBase
 {
     @Override
-    protected boolean canShowDialog(Context context, ContextType type, State state)
+    protected CanExecuteResponse canShowDialog(Context context, ContextType type, State state)
     {
-        return state.getServerId() == null;
+        if (state.getServerId() != null)
+        {
+            return CanExecuteResponse.no("State.ServerId is not null: " + state.getServerId());
+        }
+
+        return CanExecuteResponse.yes();
     }
 
     @Override

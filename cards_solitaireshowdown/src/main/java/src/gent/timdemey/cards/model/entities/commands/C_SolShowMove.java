@@ -1,4 +1,4 @@
-package gent.timdemey.cards.model.commands;
+package gent.timdemey.cards.model.entities.commands;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,12 +6,10 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.model.commands.payload.P_SolShowMove;
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;
-import gent.timdemey.cards.model.entities.commands.C_Move;
-import gent.timdemey.cards.model.entities.commands.C_OnGameEnded;
+import gent.timdemey.cards.model.entities.commands.payload.P_SolShowMove;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.INetworkService;
@@ -38,18 +36,19 @@ public class C_SolShowMove extends C_Move
     @Override
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
-        if (!super.canExecute(context, type, state))
+        CanExecuteResponse supResp = super.canExecute(context, type, state);
+        if (!supResp.canExecute)
         {
-            return false;
+            return supResp;
         }
-        
+
         CardGame cardGame = state.getCardGame();
         CardStack srcCardStack = cardGame.getCardStack(srcCardStackId);
         CardStack dstCardStack = cardGame.getCardStack(dstCardStackId);
 
         if (!srcCardStack.getCards().contains(cardId))
         {
-            return false;
+            return CanExecuteResponse.no("Source stack doesn't contain the card with id " + cardId);
         }
 
         Card card = state.getCardGame().getCard(cardId);
@@ -60,9 +59,11 @@ public class C_SolShowMove extends C_Move
         C_SolShowPush cmdPush = new C_SolShowPush(dstCardStackId, toTransferIds);
         cmdPush.setSourceId(getSourceId());
 
-        if (cmdPull.canExecute(context, type, state) && cmdPush.canExecute(context, type, state)) // user action
+        boolean canPull = cmdPull.canExecute(context, type, state).canExecute;
+        boolean canPush = cmdPush.canExecute(context, type, state).canExecute;
+        if (canPull && canPush) // user action
         {
-            return true;
+            return CanExecuteResponse.yes();
         }
         else // game logic action
         {
@@ -70,7 +71,7 @@ public class C_SolShowMove extends C_Move
             UUID dstPlayerId = cardGame.getPlayerId(dstCardStack);
             if (!srcPlayerId.equals(dstPlayerId))
             {
-                return false;
+                return CanExecuteResponse.no("SrcPlayerId != DstPlayerId");
             }
 
             String srcCardStackType = srcCardStack.cardStackType;
@@ -80,36 +81,36 @@ public class C_SolShowMove extends C_Move
             {
                 if (srcCardStack.getCards().isEmpty())
                 {
-                    return false;
+                    return CanExecuteResponse.no("Source stack DEPOT is empty");
                 }
                 if (srcCardStack.cards.indexOf(card) < srcCardStack.cards.size() - 3)
                 {
-                    return false;
+                    return CanExecuteResponse.no("The card to move from DEPOT to TURNOVER must be the third highest card");
                 }
 
-                return true;
+                return CanExecuteResponse.yes();
             }
             else if (srcCardStackType.equals(SolShowCardStackType.TURNOVER)
                     && dstCardStackType.equals(SolShowCardStackType.DEPOT))
             {
                 if (srcCardStack.getCards().isEmpty())
                 {
-                    return false;
+                    return CanExecuteResponse.no("Source stack TURNOVER is empty");
                 }
                 if (!dstCardStack.getCards().isEmpty())
                 {
-                    return false;
+                    return CanExecuteResponse.no("Destination stack DEPOT is not empty");
                 }
                 if (srcCardStack.getLowestCard() != card)
                 {
-                    return false;
+                    return CanExecuteResponse.no("TURNOVER stack's lowest card is not the intended card to move");
                 }
 
-                return true;
+                return CanExecuteResponse.yes();
             }
         }
 
-        return false;
+        return CanExecuteResponse.no("This is not a valid Solitaire Showdown move command");
     }
 
     @Override
@@ -172,7 +173,7 @@ public class C_SolShowMove extends C_Move
                 state.setGameState(GameState.Ended);
                 UUID winnerId = cardGame.getPlayerId(srcCardStack);
                 C_OnGameEnded cmd_endgame = new C_OnGameEnded(winnerId);
-                
+
                 List<UUID> ids_endgame = state.getPlayers().getIds();
                 netServ.broadcast(state.getLocalId(), ids_endgame, cmd_endgame, state.getTcpConnectionPool());
             }

@@ -20,18 +20,18 @@ public class C_Move extends CommandBase
     public final UUID dstCardStackId;
     public final UUID cardId;
     protected List<Card> transferCards;
-    
-    public C_Move (UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
+
+    public C_Move(UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
     {
         this.srcCardStackId = srcCardStackId;
         this.dstCardStackId = dstCardStackId;
         this.cardId = cardId;
     }
-    
-    public C_Move (P_Move pl)
+
+    public C_Move(P_Move pl)
     {
         super(pl);
-        
+
         this.srcCardStackId = pl.srcCardStackId;
         this.dstCardStackId = pl.dstCardStackId;
         this.cardId = pl.cardId;
@@ -39,6 +39,7 @@ public class C_Move extends CommandBase
 
     /**
      * Override this method to implement plugin/game specific business rules.
+     * 
      * @param dstCardStack
      * @param srcCards
      * @return
@@ -46,11 +47,16 @@ public class C_Move extends CommandBase
     @Override
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
-        return state.getGameState() == GameState.Started;
+        if (state.getGameState() != GameState.Started)
+        {
+            return CanExecuteResponse.no("GameState should be Started but is: " + state.getGameState());
+        }
+        return CanExecuteResponse.yes();
     }
-    
+
     /**
      * Override this method to implement plugin/game specific business rules.
+     * 
      * @param dstCardStack
      * @param srcCards
      * @return
@@ -61,24 +67,24 @@ public class C_Move extends CommandBase
         CardGame cardGame = state.getCardGame();
         CardStack srcCardStack = cardGame.getCardStack(srcCardStackId);
         CardStack dstCardStack = cardGame.getCardStack(dstCardStackId);
-        
-        if(transferCards == null)
+
+        if (transferCards == null)
         {
             List<Card> cards = srcCardStack.getCards();
             Card card = srcCardStack.getCards().get(cardId);
             transferCards = new ArrayList<>(cards.subList(cards.indexOf(card), cards.size()));
         }
-       
+
         srcCardStack.removeAll(transferCards);
         dstCardStack.addAll(transferCards);
         transferCards.forEach(card -> card.cardStack = dstCardStack);
     }
-    
+
     public final boolean isSyncable()
     {
-        return true;  
+        return true;
     }
-    
+
     @Override
     protected void undo(Context context, ContextType type, State state)
     {
@@ -86,22 +92,21 @@ public class C_Move extends CommandBase
         CardStack srcCardStack = cardGame.getCardStacks().get(srcCardStackId);
         CardStack dstCardStack = cardGame.getCardStacks().get(dstCardStackId);
 
-        dstCardStack.getCards().removeAll(transferCards);        
+        dstCardStack.getCards().removeAll(transferCards);
         srcCardStack.addAll(transferCards);
         transferCards.forEach(card -> card.cardStack = srcCardStack);
     }
-    
+
     @Override
     protected boolean canUndo(Context context, ContextType type, State state)
     {
         return true;
     }
-    
+
     @Override
     public String toDebugString()
-    {        
-        return Debug.getKeyValue("srcCardStackId", srcCardStackId) +
-               Debug.getKeyValue("dstCardStackId", dstCardStackId) +
-               Debug.getKeyValue("cardId", cardId);
+    {
+        return Debug.getKeyValue("srcCardStackId", srcCardStackId) + Debug.getKeyValue("dstCardStackId", dstCardStackId)
+                + Debug.getKeyValue("cardId", cardId);
     }
 }

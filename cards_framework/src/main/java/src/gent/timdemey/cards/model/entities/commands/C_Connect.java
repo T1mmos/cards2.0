@@ -46,7 +46,7 @@ public class C_Connect extends CommandBase
     @Override
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
-        return true;
+        return CanExecuteResponse.yes();
     }
     
     @Override

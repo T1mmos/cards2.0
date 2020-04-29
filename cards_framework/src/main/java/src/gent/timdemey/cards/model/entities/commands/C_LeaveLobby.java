@@ -22,9 +22,9 @@ public class C_LeaveLobby extends CommandBase
     {
         if (state.getGameState() == GameState.NotConnected)
         {
-            return false;
+            return CanExecuteResponse.no("GameState shouldn't be NotConnected");
         }
-        return true;
+        return CanExecuteResponse.yes();
     }
 
     @Override

@@ -48,8 +48,8 @@ public class C_StartServer extends CommandBase
     public final int maxconns; // maximal connections allowed to the server
     public final boolean autoconnect; // whether to automatically connect as client to the server about to be created
 
-    public C_StartServer(UUID playerId, String playerName, String srvname, String srvmsg, int udpport, int tcpport, int minconns, int maxconns,
-        boolean autoconnect)
+    public C_StartServer(UUID playerId, String playerName, String srvname, String srvmsg, int udpport, int tcpport,
+            int minconns, int maxconns, boolean autoconnect)
     {
         Preconditions.checkArgument(playerId != null);
         Preconditions.checkArgument(playerName != null);
@@ -76,22 +76,28 @@ public class C_StartServer extends CommandBase
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
         boolean srvCtxtInit = Services.get(IContextService.class).isInitialized(ContextType.Server);
-        if(type == ContextType.UI)
+        if (type == ContextType.UI)
         {
-            return !srvCtxtInit;
+            if (srvCtxtInit)
+            {
+                return CanExecuteResponse.no("Server context is already initialized");
+            }
         }
-        else if(type == ContextType.Server)
+        else if (type == ContextType.Server)
         {
-            return srvCtxtInit;
+            if (!srvCtxtInit)
+            {
+                return CanExecuteResponse.no("Server context is not initialized");
+            }
         }
 
-        return false;
+        return CanExecuteResponse.yes();
     }
 
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
-        if(type == ContextType.UI)
+        if (type == ContextType.UI)
         {
             IContextService ctxtServ = Services.get(IContextService.class);
             ctxtServ.initialize(ContextType.Server);
@@ -143,7 +149,7 @@ public class C_StartServer extends CommandBase
                 udpServAnnouncer.start();
                 tcpConnAccepter.start();
 
-                if(autoconnect)
+                if (autoconnect)
                 {
                     C_Connect cmd_connect = new C_Connect(playerId, server.id, addr, tcpport, srvname, playerName);
                     schedule(ContextType.UI, cmd_connect);
@@ -162,7 +168,7 @@ public class C_StartServer extends CommandBase
         // clean up
         try
         {
-            if(state.getUdpServiceAnnouncer() != null)
+            if (state.getUdpServiceAnnouncer() != null)
             {
                 state.getUdpServiceAnnouncer().stop();
                 state.setUdpServiceAnnouncer(null);
@@ -175,7 +181,7 @@ public class C_StartServer extends CommandBase
 
         try
         {
-            if(state.getTcpConnectionAccepter() != null)
+            if (state.getTcpConnectionAccepter() != null)
             {
                 state.getTcpConnectionAccepter().stop();
                 state.setTcpConnectionAccepter(null);
@@ -187,7 +193,7 @@ public class C_StartServer extends CommandBase
 
         try
         {
-            if(state.getTcpConnectionPool() != null)
+            if (state.getTcpConnectionPool() != null)
             {
                 state.setTcpConnectionPool(null);
             }
@@ -196,14 +202,14 @@ public class C_StartServer extends CommandBase
         {
         }
     }
-    
+
     private static class ServerTcpListener extends CommandSchedulingTcpConnectionListener
     {
         private ServerTcpListener()
         {
             super(ContextType.Server);
         }
-        
+
         public void onTcpConnectionLocallyClosed(UUID id, TCP_Connection connection)
         {
         };
@@ -219,7 +225,8 @@ public class C_StartServer extends CommandBase
     @Override
     public String toDebugString()
     {
-        return Debug.getKeyValue("srvname", srvname) + Debug.getKeyValue("srvmsg", srvmsg) + Debug.getKeyValue("udpport", udpport) + Debug.getKeyValue(
-            "tcpport", tcpport) + Debug.getKeyValue("minconns", minconns) + Debug.getKeyValue("maxconns", maxconns);
+        return Debug.getKeyValue("srvname", srvname) + Debug.getKeyValue("srvmsg", srvmsg)
+                + Debug.getKeyValue("udpport", udpport) + Debug.getKeyValue("tcpport", tcpport)
+                + Debug.getKeyValue("minconns", minconns) + Debug.getKeyValue("maxconns", maxconns);
     }
 }

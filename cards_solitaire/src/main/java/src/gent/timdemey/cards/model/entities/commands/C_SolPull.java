@@ -1,4 +1,4 @@
-package gent.timdemey.cards.model.commands;
+package gent.timdemey.cards.model.entities.commands;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,7 +19,7 @@ public class C_SolPull extends C_Pull
     }
     
     @Override
-    protected boolean canPull(CardStack srcCardStack, Card srcCard, State state)
+    protected CanExecuteResponse canPull(CardStack srcCardStack, Card srcCard, State state)
     {
         String srcType = srcCardStack.cardStackType;
         List<Card> cards = srcCardStack.getCards();        
@@ -29,12 +29,16 @@ public class C_SolPull extends C_Pull
         // Can only pull visible cards
         if (!srcCard.visibleRef.get())
         {
-            return false;
+            return CanExecuteResponse.no("The source card isn't visible");
         }
         
         if (srcType.equals(SolitaireCardStackType.TURNOVER) || srcType.equals(SolitaireCardStackType.LAYDOWN))
         {
-            return cards.get(cards.size() - 1) == srcCard; // 1 card
+            if (cards.get(cards.size() - 1) != srcCard)
+            {
+                return CanExecuteResponse.no("Can only move 1 card at a time from TURNOVER to LAYDOWN");
+            }
+            return CanExecuteResponse.yes(); 
         }
         else if (srcType.equals(SolitaireCardStackType.MIDDLE))
         {
@@ -44,28 +48,25 @@ public class C_SolPull extends C_Pull
                 Card lowerCard = cards.get(i);
                 Card higherCard = cards.get(i+1);
                
-                // cannot laydown on invisible cards
                 if (!higherCard.visibleRef.get())
                 {
-                    return false;
+                    return CanExecuteResponse.no("Cannot push onto invisible cards");
                 }
                 
-                // cannot laydown on same color
                 if (lowerCard.suit.getColor() == higherCard.suit.getColor())
                 {
-                    return false;
+                    return CanExecuteResponse.no("Cannot push onto cards of the same color");
                 }
                 
-                // value of destination card must be 1 more
                 if (lowerCard.value.getOrderAtoK() != higherCard.value.getOrderAtoK() + 1)
                 {
-                    return false;
+                    return CanExecuteResponse.no("Value of destination card must be 1 more");
                 }
             }
             
-            return true;            
+            return CanExecuteResponse.yes();        
         }
         
-        return false;
+        return CanExecuteResponse.no("Not a valid pull action");
     }
 }

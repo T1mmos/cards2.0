@@ -9,11 +9,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.model.commands.C_SolShowMove;
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.commands.C_Move;
+import gent.timdemey.cards.model.entities.commands.C_SolShowMove;
 import gent.timdemey.cards.model.entities.commands.CommandExecution;
 import gent.timdemey.cards.model.entities.commands.CommandExecutionState;
 import gent.timdemey.cards.model.entities.commands.CommandHistory;

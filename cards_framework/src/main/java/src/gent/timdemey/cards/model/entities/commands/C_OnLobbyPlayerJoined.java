@@ -32,7 +32,7 @@ public class C_OnLobbyPlayerJoined extends CommandBase
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
         CheckContext(type, ContextType.UI);
-        return true;
+        return CanExecuteResponse.yes();
     }
 
     @Override

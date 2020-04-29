@@ -1,4 +1,4 @@
-package gent.timdemey.cards.model.commands;
+package gent.timdemey.cards.model.entities.commands;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,27 +41,60 @@ public class C_SolMove extends C_Move
         List<UUID> toTransferIds = srcCardStack.getCardsFrom(card).getIds();
         C_SolPull cmdPull = new C_SolPull(srcCardStackId, cardId);
         C_SolPush cmdPush = new C_SolPush(dstCardStackId, toTransferIds);
-        if(cmdPull.canExecute(context, type, state) && cmdPush.canExecute(context, type, state)) // user action
+        boolean canPull = cmdPull.canExecute(context, type, state).canExecute;
+        boolean canPush = cmdPush.canExecute(context, type, state).canExecute;
+        if (canPull && canPush) // user action
         {
-            return true;
+            return CanExecuteResponse.yes();
         }
         else // game logic action
         {
             String srcCardStackType = srcCardStack.cardStackType;
             String dstCardStackType = dstCardStack.cardStackType;
-            if(srcCardStackType.equals(SolitaireCardStackType.DEPOT)
+            if (srcCardStackType.equals(SolitaireCardStackType.DEPOT)
                     && dstCardStackType.equals(SolitaireCardStackType.TURNOVER))
             {
-                return !srcCardStack.getCards().isEmpty() && srcCardStack.getHighestCard() == card;
+                if (srcCardStack.getCards().isEmpty())
+                {
+                    return CanExecuteResponse.no("The DEPOT stack is empty");
+                }
+                if (srcCardStack.getHighestCard() != card)
+                {
+                    String msg = "The DEPOT stack's highest card (%s) is not the intended card to move (%s)";
+                    String highCardNot = srcCardStack.getHighestCard().getNotation();
+                    String intdCardNot = card.getNotation();
+                    String format = String.format(msg, highCardNot, intdCardNot);
+                    return CanExecuteResponse.no(format);
+                }
+                return CanExecuteResponse.yes();
             }
-            else if(srcCardStackType.equals(SolitaireCardStackType.TURNOVER)
+            else if (srcCardStackType.equals(SolitaireCardStackType.TURNOVER)
                     && dstCardStackType.equals(SolitaireCardStackType.DEPOT))
             {
-                return !srcCardStack.getCards().isEmpty() && dstCardStack.getCards().isEmpty()
-                        && srcCardStack.getLowestCard() == card;
+                if (srcCardStack.getCards().isEmpty())
+                {
+                    return CanExecuteResponse.no("The TURNOVER stack is empty");
+                }
+                if (!dstCardStack.getCards().isEmpty())
+                {
+                    return CanExecuteResponse.no("The DEPOT stack isn't empty");
+                }
+                if (srcCardStack.getLowestCard() != card)
+                {
+                    String msg = "The TURNOVER stack's lowest card (%s) is not the intended card to move (%s)";
+                    String highCardNot = srcCardStack.getHighestCard().getNotation();
+                    String intdCardNot = card.getNotation();
+                    String format = String.format(msg, highCardNot, intdCardNot);
+                    return CanExecuteResponse.no(format);
+                }
+                return CanExecuteResponse.yes();
             }
         }
-        return false;
+        
+        String srcCsType = srcCardStack.cardStackType;
+        String dstCsType = dstCardStack.cardStackType;
+        String format = String.format("This move (%s -> %s) is not allowed in Solitaire ", srcCsType, dstCsType);
+        return CanExecuteResponse.no(format);
     }
 
     @Override
@@ -71,7 +104,7 @@ public class C_SolMove extends C_Move
         CardStack srcCardStack = cardGame.getCardStacks().get(srcCardStackId);
         CardStack dstCardStack = cardGame.getCardStacks().get(dstCardStackId);
 
-        if(transferCards == null)
+        if (transferCards == null)
         {
             depotInvolved = (srcCardStack.cardStackType.equals(SolitaireCardStackType.DEPOT)
                     && dstCardStack.cardStackType.equals(SolitaireCardStackType.TURNOVER))
@@ -82,7 +115,7 @@ public class C_SolMove extends C_Move
             Card card = srcCardStack.getCards().get(cardId);
             transferCards = new ArrayList<>(cards.subList(cards.indexOf(card), cards.size()));
 
-            if(depotInvolved)
+            if (depotInvolved)
             {
                 flippedTransferCards = new ArrayList<>(transferCards);
                 Collections.reverse(flippedTransferCards);
@@ -91,7 +124,7 @@ public class C_SolMove extends C_Move
 
         srcCardStack.getCards().removeAll(transferCards);
 
-        if(depotInvolved)
+        if (depotInvolved)
         {
             dstCardStack.addAll(flippedTransferCards);
             // transfering to depot -> cards become invisible, transfering to turnover ->
@@ -125,7 +158,7 @@ public class C_SolMove extends C_Move
         CardStack dstCardStack = cardGame.getCardStacks().get(dstCardStackId);
 
         // for removal, it doesn't really matter which list we take
-        if(depotInvolved)
+        if (depotInvolved)
         {
             dstCardStack.getCards().removeAll(flippedTransferCards);
             for (Card card : flippedTransferCards)
