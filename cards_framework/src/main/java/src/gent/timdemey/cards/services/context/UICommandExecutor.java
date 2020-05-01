@@ -6,8 +6,10 @@ import java.util.List;
 import javax.swing.SwingUtilities;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.C_Accept;
 import gent.timdemey.cards.model.entities.commands.C_Reject;
+import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CommandExecution;
 import gent.timdemey.cards.model.entities.commands.D_OnReexecutionFail;
@@ -44,6 +46,8 @@ class UICommandExecutor implements ICommandExecutor
 
     private void execute(CommandBase command, State state)
     {
+        Logger.info("Executing '%s', id=%s...", command.getName(), command.id);
+        
         boolean syncable = command.isSyncable();
         boolean src_local = command.getSourceId() == state.getLocalId();
         boolean src_server = command.getSourceId() == state.getServerId();
@@ -53,10 +57,12 @@ class UICommandExecutor implements ICommandExecutor
         {
             throw new IllegalArgumentException("A command's source must either be local or the server");
         }
-        if(src_local && !command.canExecute(state))
+        
+        CanExecuteResponse resp = command.canExecute(state);
+        if(src_local && !resp.canExecute)
         {
             // if the command is locally created then it is supposed to be able to execute
-            throw new IllegalStateException("The command '" + command.getClass().getSimpleName() + " cannot be executed");
+            throw new IllegalStateException("The command '" + command.getName() + "' cannot be executed, reason: " + resp.reason);
         }
 
         if(syncable)

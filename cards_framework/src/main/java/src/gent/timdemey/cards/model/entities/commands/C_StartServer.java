@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.model.entities.game.payload.P_Player;
@@ -48,8 +49,8 @@ public class C_StartServer extends CommandBase
     public final int maxconns; // maximal connections allowed to the server
     public final boolean autoconnect; // whether to automatically connect as client to the server about to be created
 
-    public C_StartServer(UUID playerId, String playerName, String srvname, String srvmsg, int udpport, int tcpport,
-            int minconns, int maxconns, boolean autoconnect)
+    public C_StartServer(UUID playerId, String playerName, String srvname, String srvmsg, int udpport, int tcpport, int minconns, int maxconns,
+        boolean autoconnect)
     {
         Preconditions.checkArgument(playerId != null);
         Preconditions.checkArgument(playerName != null);
@@ -76,16 +77,16 @@ public class C_StartServer extends CommandBase
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
         boolean srvCtxtInit = Services.get(IContextService.class).isInitialized(ContextType.Server);
-        if (type == ContextType.UI)
+        if(type == ContextType.UI)
         {
-            if (srvCtxtInit)
+            if(srvCtxtInit)
             {
                 return CanExecuteResponse.no("Server context is already initialized");
             }
         }
-        else if (type == ContextType.Server)
+        else if(type == ContextType.Server)
         {
-            if (!srvCtxtInit)
+            if(!srvCtxtInit)
             {
                 return CanExecuteResponse.no("Server context is not initialized");
             }
@@ -97,7 +98,7 @@ public class C_StartServer extends CommandBase
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
-        if (type == ContextType.UI)
+        if(type == ContextType.UI)
         {
             IContextService ctxtServ = Services.get(IContextService.class);
             ctxtServ.initialize(ContextType.Server);
@@ -121,6 +122,7 @@ public class C_StartServer extends CommandBase
                 state.setServerId(server.id);
                 state.setLocalId(server.id);
                 state.setLobbyAdminId(playerId);
+                state.setGameState(GameState.Lobby);
                 P_Player pl_player = new P_Player();
                 pl_player.id = playerId;
                 pl_player.name = playerName;
@@ -149,7 +151,7 @@ public class C_StartServer extends CommandBase
                 udpServAnnouncer.start();
                 tcpConnAccepter.start();
 
-                if (autoconnect)
+                if(autoconnect)
                 {
                     C_Connect cmd_connect = new C_Connect(playerId, server.id, addr, tcpport, srvname, playerName);
                     schedule(ContextType.UI, cmd_connect);
@@ -168,7 +170,7 @@ public class C_StartServer extends CommandBase
         // clean up
         try
         {
-            if (state.getUdpServiceAnnouncer() != null)
+            if(state.getUdpServiceAnnouncer() != null)
             {
                 state.getUdpServiceAnnouncer().stop();
                 state.setUdpServiceAnnouncer(null);
@@ -181,7 +183,7 @@ public class C_StartServer extends CommandBase
 
         try
         {
-            if (state.getTcpConnectionAccepter() != null)
+            if(state.getTcpConnectionAccepter() != null)
             {
                 state.getTcpConnectionAccepter().stop();
                 state.setTcpConnectionAccepter(null);
@@ -193,7 +195,7 @@ public class C_StartServer extends CommandBase
 
         try
         {
-            if (state.getTcpConnectionPool() != null)
+            if(state.getTcpConnectionPool() != null)
             {
                 state.setTcpConnectionPool(null);
             }
@@ -201,6 +203,8 @@ public class C_StartServer extends CommandBase
         catch (Exception ex2)
         {
         }
+
+        state.setGameState(GameState.NotConnected);
     }
 
     private static class ServerTcpListener extends CommandSchedulingTcpConnectionListener
@@ -225,8 +229,7 @@ public class C_StartServer extends CommandBase
     @Override
     public String toDebugString()
     {
-        return Debug.getKeyValue("srvname", srvname) + Debug.getKeyValue("srvmsg", srvmsg)
-                + Debug.getKeyValue("udpport", udpport) + Debug.getKeyValue("tcpport", tcpport)
-                + Debug.getKeyValue("minconns", minconns) + Debug.getKeyValue("maxconns", maxconns);
+        return Debug.getKeyValue("srvname", srvname) + Debug.getKeyValue("srvmsg", srvmsg) + Debug.getKeyValue("udpport", udpport) + Debug.getKeyValue(
+            "tcpport", tcpport) + Debug.getKeyValue("minconns", minconns) + Debug.getKeyValue("maxconns", maxconns);
     }
 }

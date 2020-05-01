@@ -90,7 +90,7 @@ public class C_SolUse extends C_Use
         }
         for (CommandBase cmd : eligible)
         {
-            if(cmd.canExecute(state))
+            if(cmd.canExecute(state).canExecute)
             {
                 return cmd;
             }

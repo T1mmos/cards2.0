@@ -3,7 +3,6 @@ package gent.timdemey.cards.model.entities.commands;
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.entities.common.PayloadBase;
 import gent.timdemey.cards.model.state.State;
@@ -38,15 +37,11 @@ public abstract class CommandBase extends EntityBase
         return context;
     }
 
-    public final boolean canExecute(State state)
+    public final CanExecuteResponse canExecute(State state)
     {
         Context context = getContext();
         CanExecuteResponse response = canExecute(context, context.getContextType(), state);
-        if (!response.canExecute)
-        {
-            Logger.warn("Cannot execute command %s because: %s", getName(), response.reason);
-        }
-        return response.canExecute;
+        return response;
     }
 
     protected abstract CanExecuteResponse canExecute(Context context, ContextType type, State state);

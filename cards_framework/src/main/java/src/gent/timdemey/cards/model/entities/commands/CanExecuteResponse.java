@@ -1,11 +1,11 @@
 package gent.timdemey.cards.model.entities.commands;
 
-class CanExecuteResponse
+public class CanExecuteResponse
 {
     private static final CanExecuteResponse YES = new CanExecuteResponse(true, null); 
     
-    final boolean canExecute;
-    final String reason;
+    public final boolean canExecute;
+    public final String reason;
     
     private CanExecuteResponse(boolean canExecute, String reason)
     {

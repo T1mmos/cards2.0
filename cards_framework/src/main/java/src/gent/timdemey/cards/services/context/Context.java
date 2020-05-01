@@ -67,7 +67,7 @@ public final class Context
 
     public boolean canExecute(CommandBase command)
     {
-        return command.canExecute(limitedContext.getState());
+        return command.canExecute(limitedContext.getState()).canExecute;
     }
 
     public void schedule(CommandBase command)

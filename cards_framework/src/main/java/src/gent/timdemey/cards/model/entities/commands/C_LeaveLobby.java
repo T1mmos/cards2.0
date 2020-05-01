@@ -35,6 +35,7 @@ public class C_LeaveLobby extends CommandBase
         // clean all state
         state.getTcpConnectionPool().closeAllConnections();
         state.setGameState(GameState.NotConnected);
+        state.setCardGame(null);
         state.getPlayers().clear();
         state.getServers().clear();
         state.setLobbyAdminId(null);

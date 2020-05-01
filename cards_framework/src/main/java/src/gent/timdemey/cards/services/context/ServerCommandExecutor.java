@@ -5,6 +5,7 @@ import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.C_Accept;
 import gent.timdemey.cards.model.entities.commands.C_Reject;
 import gent.timdemey.cards.model.entities.commands.C_StartServer;
+import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CommandHistory;
 import gent.timdemey.cards.model.state.State;
@@ -21,7 +22,7 @@ class ServerCommandExecutor extends CommandExecutorBase
     @Override
     protected void execute(CommandBase command, State state)
     {
-        Logger.info("Processing command '%s'", command.getName());
+        Logger.info("Processing command '%s', id=%s", command.getName(), command.id);
 
         CommandHistory cmdHist = state.getCommandHistory();
 
@@ -32,7 +33,8 @@ class ServerCommandExecutor extends CommandExecutorBase
             return;
         }
 
-        boolean executable = command.canExecute(state);
+        CanExecuteResponse resp = command.canExecute(state);
+        boolean executable = resp.canExecute;
         boolean syncable = command.isSyncable();
 
         // syncable commands are commands that are executed clientside,
@@ -63,7 +65,7 @@ class ServerCommandExecutor extends CommandExecutorBase
         {
             if (syncable)
             {
-                Logger.info("\"Can't execute syncable command: '%s'. Responding with a C_Reject.", command.getName());
+                Logger.info("Can't execute syncable command: '%s'. Responding with a C_Reject. Reason: %s", command.getName(), resp.reason);
 
                 C_Reject rejectCmd = new C_Reject(command.id);
                 ISerializationService serServ = Services.get(ISerializationService.class);
@@ -72,7 +74,7 @@ class ServerCommandExecutor extends CommandExecutorBase
             }
             else
             {
-                Logger.error("Can't execute non-syncable command: '%s'.", command.getName());
+                Logger.error("Can't execute non-syncable command: '%s'. Reason: %s", command.getName(), resp.reason);
             }
         }
     }

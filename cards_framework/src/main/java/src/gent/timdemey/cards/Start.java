@@ -1,11 +1,14 @@
 package gent.timdemey.cards;
 
+import java.lang.reflect.InvocationTargetException;
+
 import javax.swing.SwingUtilities;
 
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.logging.LogLevel;
 import gent.timdemey.cards.logging.LogManager;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.serialization.SerializationService;
 import gent.timdemey.cards.services.IConfigManager;
 import gent.timdemey.cards.services.IContextService;
@@ -78,7 +81,7 @@ public class Start
         }
         catch (ClassNotFoundException e)
         {
-            System.err.println("The given class " + clazzName + " is not found in the classpath.");
+            Logger.error("The given class %s is not found in the classpath.", clazzName);
             return null;
         }
 
@@ -92,11 +95,11 @@ public class Start
         ICardPlugin plugin = null;
         try
         {
-            plugin = pluginClazz.newInstance();
+            plugin = pluginClazz.getDeclaredConstructor().newInstance();
         }
-        catch (InstantiationException | IllegalAccessException e)
+        catch (InstantiationException | IllegalAccessException | InvocationTargetException | SecurityException | NoSuchMethodException e)
         {
-            System.err.println("The given plugin class cannot be instantiated.");
+            Logger.error("The given plugin class cannot be instantiated.", e);
             return null;
         }
 
@@ -106,7 +109,7 @@ public class Start
     private static void installBaseServices()
     {
         ILogManager logMan = new LogManager();
-        logMan.setLogLevel(LogLevel.INFO);
+        logMan.setLogLevel(LogLevel.TRACE);
         App.getServices().install(ILogManager.class, logMan);
 
         IResourceManager resMan = new ResourceManager();

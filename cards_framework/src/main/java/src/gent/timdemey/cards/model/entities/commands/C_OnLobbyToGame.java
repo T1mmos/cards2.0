@@ -46,6 +46,8 @@ public class C_OnLobbyToGame extends CommandBase
         }
         else
         {
+            state.setGameState(GameState.Started);
+            
             // broadcast to all players            
             INetworkService netServ = Services.get(INetworkService.class);
             netServ.broadcast(state.getLocalId(), state.getPlayers().getIds(), this, state.getTcpConnectionPool());            
