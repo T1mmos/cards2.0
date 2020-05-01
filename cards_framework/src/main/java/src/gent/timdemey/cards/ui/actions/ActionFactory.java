@@ -4,7 +4,7 @@ import gent.timdemey.cards.utils.Lazy;
 
 public class ActionFactory implements IActionFactory
 {
-    private Lazy<ActionDef> ad_create = new Lazy<>(() -> new ActionDef(new A_CreateGame(), "C"));
+    private Lazy<ActionDef> ad_create = new Lazy<>(() -> new ActionDef(new A_CreateMultiplayerGame(), "C"));
     private Lazy<ActionDef> ad_debug = new Lazy<>(() -> new ActionDef(new A_DebugDrawDebugLines(), "ctrl D"));
     private Lazy<ActionDef> ad_gc = new Lazy<>(() -> new ActionDef(new A_DebugGC(), null));
     private Lazy<ActionDef> ad_join = new Lazy<>(() -> new ActionDef(new A_JoinGame(), "J"));
@@ -12,7 +12,7 @@ public class ActionFactory implements IActionFactory
     private Lazy<ActionDef> ad_quit = new Lazy<>(() -> new ActionDef(new A_QuitGame(), "alt F4"));
     private Lazy<ActionDef> ad_redo = new Lazy<>(() -> new ActionDef(new A_Redo(), "ctrl Y"));
     private Lazy<ActionDef> ad_start = new Lazy<>(() -> new ActionDef(new A_StartGame(), null));
-    private Lazy<ActionDef> ad_startmultiplayer =new Lazy<>(() ->  new ActionDef(new A_StartMultiplayerGame(), null));
+    private Lazy<ActionDef> ad_startmultiplayer = new Lazy<>(() ->  new ActionDef(new A_StartMultiplayerGame(), null));
     private Lazy<ActionDef> ad_stop = new Lazy<>(() -> new ActionDef(new A_StopGame(), null));
     private Lazy<ActionDef> ad_undo = new Lazy<>(() -> new ActionDef(new A_Undo(), "ctrl Z"));
 
@@ -21,7 +21,7 @@ public class ActionFactory implements IActionFactory
     {        
         switch (action)
         {
-            case Actions.ACTION_CREATE:
+            case Actions.ACTION_CREATE_MULTIPLAYER:
                 return ad_create.get();
             case Actions.ACTION_DEBUG:
                 return ad_debug.get();

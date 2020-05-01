@@ -59,8 +59,12 @@ public class C_OnPlayerLeft extends CommandBase
         }
         else
         {
-            C_OnGameToLobby cmd_ongametolobby = new C_OnGameToLobby();
-            schedule(ContextType.Server, cmd_ongametolobby);
+            // can also leave when in the lobby
+            if (state.getGameState() != GameState.Lobby)
+            {
+                C_OnGameToLobby cmd_ongametolobby = new C_OnGameToLobby();
+                schedule(ContextType.Server, cmd_ongametolobby);
+            }           
 
             INetworkService ns = Services.get(INetworkService.class);
             List<UUID> remotes = state.getRemotePlayerIds();

@@ -3,7 +3,7 @@ package gent.timdemey.cards.ui.actions;
 public class Actions
 {
     public static final String ACTION_DEBUG = "action.debug";
-    public static final String ACTION_CREATE = "action.create";
+    public static final String ACTION_CREATE_MULTIPLAYER = "action.create";
     public static final String ACTION_GC = "action.gc";
     public static final String ACTION_JOIN = "action.join";
     public static final String ACTION_LEAVE = "action.leave";

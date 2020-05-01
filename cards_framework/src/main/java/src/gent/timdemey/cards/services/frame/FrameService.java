@@ -96,7 +96,7 @@ public class FrameService implements IFrameService
 
         if (plugin.getPlayerCount() > 1)
         {
-            addToMenu(menu, Actions.ACTION_CREATE);
+            addToMenu(menu, Actions.ACTION_CREATE_MULTIPLAYER);
             addToMenu(menu, Actions.ACTION_JOIN);
             addToMenu(menu, Actions.ACTION_LEAVE);
         }

@@ -33,7 +33,6 @@ public class C_OnGameToLobby extends CommandBase
     public void execute(Context context, ContextType type, State state)
     {
         state.setCardGame(null);
-        state.setCommandHistory(null);
         state.setGameState(GameState.Lobby);
         
         if (type == ContextType.UI)

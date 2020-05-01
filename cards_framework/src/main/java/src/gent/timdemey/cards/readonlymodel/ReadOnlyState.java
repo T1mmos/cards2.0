@@ -2,12 +2,14 @@ package gent.timdemey.cards.readonlymodel;
 
 import java.util.UUID;
 
+import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
 
 public class ReadOnlyState extends ReadOnlyEntityBase<State>
 {
     public static final ReadOnlyProperty<ReadOnlyCardGame> CardGame = ReadOnlyProperty.of(ReadOnlyCardGame.class, State.CardGame);
     public static final ReadOnlyProperty<ReadOnlyCommandHistory> CommandHistory = ReadOnlyProperty.of(ReadOnlyCommandHistory.class, State.CommandHistory);
+    public static final ReadOnlyProperty<GameState> GameState = ReadOnlyProperty.of(State.GameState);
     public static final ReadOnlyProperty<UUID> LobbyAdminId = ReadOnlyProperty.of(State.LobbyAdminId);
     public static final ReadOnlyProperty<UUID> LocalId = ReadOnlyProperty.of(State.LocalId);
     public static final ReadOnlyProperty<String> LocalName = ReadOnlyProperty.of(State.LocalName);
@@ -29,6 +31,11 @@ public class ReadOnlyState extends ReadOnlyEntityBase<State>
     public ReadOnlyCommandHistory getCommandHistory()
     {
         return ReadOnlyEntityFactory.getOrCreateCommandHistory(entity.getCommandHistory());
+    }
+    
+    public GameState getGameState()
+    {
+        return entity.getGameState();
     }
 
     public ReadOnlyEntityList<ReadOnlyPlayer> getPlayers()

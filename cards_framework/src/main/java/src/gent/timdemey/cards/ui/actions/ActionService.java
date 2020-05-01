@@ -35,7 +35,7 @@ public class ActionService implements IActionService
             return canExecute(new C_Undo());
         case Actions.ACTION_REDO:
             return canExecute(new C_Redo());
-        case Actions.ACTION_CREATE:
+        case Actions.ACTION_CREATE_MULTIPLAYER:
             return canExecute(new D_StartServer());
         case Actions.ACTION_START:
             return canExecute(new C_StartLocalGame());
@@ -67,7 +67,7 @@ public class ActionService implements IActionService
         case Actions.ACTION_REDO:
             execute(new C_Redo());
             break;
-        case Actions.ACTION_CREATE:
+        case Actions.ACTION_CREATE_MULTIPLAYER:
             execute(new D_StartServer());
             break;
         case Actions.ACTION_JOIN:
