@@ -38,17 +38,15 @@ public class C_OnLobbyToGame extends CommandBase
     @Override
     protected void execute(Context context, ContextType type, State state)
     {        
+        state.setCardGame(cardGame);
+        state.setGameState(GameState.Started);
+        
         if (type == ContextType.UI)
         {
-            state.setCardGame(cardGame);
-            state.setGameState(GameState.Started);
             state.setCommandHistory(new CommandHistory(true));
         }
         else
-        {
-            state.setGameState(GameState.Started);
-            
-            // broadcast to all players            
+        {                   
             INetworkService netServ = Services.get(INetworkService.class);
             netServ.broadcast(state.getLocalId(), state.getPlayers().getIds(), this, state.getTcpConnectionPool());            
         }
