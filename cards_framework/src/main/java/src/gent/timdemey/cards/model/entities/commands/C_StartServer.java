@@ -147,6 +147,7 @@ public class C_StartServer extends CommandBase
                 state.setUdpServiceAnnouncer(udpServAnnouncer);
                 state.setTcpConnectionAccepter(tcpConnAccepter);
                 state.setTcpConnectionPool(tcpConnPool);
+                state.setCommandHistory(new CommandHistory(true));
 
                 udpServAnnouncer.start();
                 tcpConnAccepter.start();
@@ -159,54 +160,12 @@ public class C_StartServer extends CommandBase
             }
             catch (Exception ex)
             {
-                cleanResources(state);
+                C_StopServer cmd_stopserver = new C_StopServer();
+                run(cmd_stopserver);
             }
         }
 
     }
-
-    private void cleanResources(State state)
-    {
-        // clean up
-        try
-        {
-            if(state.getUdpServiceAnnouncer() != null)
-            {
-                state.getUdpServiceAnnouncer().stop();
-                state.setUdpServiceAnnouncer(null);
-            }
-
-        }
-        catch (Exception ex2)
-        {
-        }
-
-        try
-        {
-            if(state.getTcpConnectionAccepter() != null)
-            {
-                state.getTcpConnectionAccepter().stop();
-                state.setTcpConnectionAccepter(null);
-            }
-        }
-        catch (Exception ex2)
-        {
-        }
-
-        try
-        {
-            if(state.getTcpConnectionPool() != null)
-            {
-                state.setTcpConnectionPool(null);
-            }
-        }
-        catch (Exception ex2)
-        {
-        }
-
-        state.setGameState(GameState.NotConnected);
-    }
-
     private static class ServerTcpListener extends CommandSchedulingTcpConnectionListener
     {
         private ServerTcpListener()
@@ -221,7 +180,7 @@ public class C_StartServer extends CommandBase
         public void onTcpConnectionRemotelyClosed(UUID id, TCP_Connection connection)
         {
             LimitedContext context = Services.get(IContextService.class).getContext(ContextType.Server);
-            CommandBase cmd = new C_OnPlayerLeft(id);
+            CommandBase cmd = new C_RemovePlayer(id);
             context.schedule(cmd);
         };
     }

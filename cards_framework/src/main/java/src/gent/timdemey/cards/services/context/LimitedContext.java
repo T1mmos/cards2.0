@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CommandHistory;
 import gent.timdemey.cards.model.state.State;
@@ -30,7 +31,17 @@ public class LimitedContext
     {
         return contextType;
     }
-
+    
+    public boolean canExecute (CommandBase command)
+    {
+        if (command.getSourceId() == null)
+        {
+            command.setSourceId(state.getLocalId());
+        }
+        CanExecuteResponse resp = command.canExecute(state);
+        return resp.canExecute;
+    }
+    
     public void schedule(CommandBase command)
     {
         if (command.getSourceId() == null)

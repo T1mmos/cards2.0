@@ -99,14 +99,6 @@ public class ContextService implements IContextService
         boolean allowListeners = type == ContextType.UI;
         Context context = Context.createContext(type, cmdExecutor, allowListeners);
 
-        if(type == ContextType.UI)
-        {
-            ICardPlugin plugin = Services.get(ICardPlugin.class);
-            boolean multiplayer = plugin.getPlayerCount() > 1;
-            boolean undoable = !multiplayer;
-            boolean erasable = multiplayer;
-        }
-
         Context prev = fullContexts.putIfAbsent(type, context);
         if(prev != null)
         {

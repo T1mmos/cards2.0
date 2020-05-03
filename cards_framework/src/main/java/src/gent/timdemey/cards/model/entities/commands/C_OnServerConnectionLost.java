@@ -3,6 +3,7 @@ package gent.timdemey.cards.model.entities.commands;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
+import gent.timdemey.cards.model.entities.commands.C_Disconnect.DisconnectReason;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.context.Context;
@@ -30,7 +31,7 @@ public class C_OnServerConnectionLost extends CommandBase
         String msg = Loc.get(LocKey.DialogMessage_connectionlost);
         Services.get(IDialogService.class).ShowMessage(title, msg);
 
-        C_LeaveLobby cmd_leavelobby = new C_LeaveLobby();
+        C_Disconnect cmd_leavelobby = new C_Disconnect(DisconnectReason.ConnectionLost);
         schedule(ContextType.UI, cmd_leavelobby);
     }
 

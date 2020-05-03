@@ -168,9 +168,9 @@ public abstract class CommandBase extends EntityBase
      * 
      * @return
      */
-    public boolean isSyncable()
+    public CommandType getCommandType()
     {
-        return false;
+        return CommandType.DEFAULT;
     }
 
     @Override

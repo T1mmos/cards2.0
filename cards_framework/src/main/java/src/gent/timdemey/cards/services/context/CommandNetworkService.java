@@ -58,10 +58,6 @@ public class CommandNetworkService implements INetworkService
         {
             throw new NullPointerException("destination");
         }
-        if (dstIds.size() == 0)
-        {
-            throw new IllegalStateException("To send or broadcast, at least one DestinationId is expected");
-        }
         if (command == null)
         {
             throw new NullPointerException("command");

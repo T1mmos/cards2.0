@@ -61,12 +61,6 @@ public abstract class C_Push extends CommandBase
     }
     
     @Override
-    public final boolean isSyncable()
-    {
-        return false;
-    }
-    
-    @Override
     protected final void undo(Context context, ContextType type, State state)
     {
         throw new UnsupportedOperationException("This command should not be executed directly");

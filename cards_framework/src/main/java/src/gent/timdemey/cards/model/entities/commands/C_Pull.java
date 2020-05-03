@@ -60,9 +60,9 @@ public abstract class C_Pull extends CommandBase
     }
     
     @Override
-    public final boolean isSyncable()
+    public final CommandType getCommandType()
     {
-        return false;
+        return CommandType.SYNCED;
     }
     
     @Override

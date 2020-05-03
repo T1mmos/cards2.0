@@ -12,6 +12,7 @@ import gent.timdemey.cards.model.entities.commands.C_Reject;
 import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CommandExecution;
+import gent.timdemey.cards.model.entities.commands.CommandType;
 import gent.timdemey.cards.model.entities.commands.D_OnReexecutionFail;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.IContextService;
@@ -40,15 +41,15 @@ class UICommandExecutor implements ICommandExecutor
         {
             throw new IllegalStateException("Can only run a command from the UI thread. Use schedule instead when posting command from another thread!");
         }
-        
+
         execute(command, state);
     }
 
     private void execute(CommandBase command, State state)
     {
         Logger.info("Executing '%s', id=%s...", command.getName(), command.id);
-        
-        boolean syncable = command.isSyncable();
+
+        CommandType cmdType = command.getCommandType();
         boolean src_local = command.getSourceId() == state.getLocalId();
         boolean src_server = command.getSourceId() == state.getServerId();
         boolean hasServer = state.getServerId() != null;
@@ -57,7 +58,7 @@ class UICommandExecutor implements ICommandExecutor
         {
             throw new IllegalArgumentException("A command's source must either be local or the server");
         }
-        
+
         CanExecuteResponse resp = command.canExecute(state);
         if(src_local && !resp.canExecute)
         {
@@ -65,24 +66,35 @@ class UICommandExecutor implements ICommandExecutor
             throw new IllegalStateException("The command '" + command.getName() + "' cannot be executed, reason: " + resp.reason);
         }
 
-        if(syncable)
+        if(cmdType == CommandType.SYNCED)
         {
+            if(!hasServer)
+            {
+                throw new UnsupportedOperationException("A command of type " + cmdType + " cannot be handled if no server is set");
+            }
             // delegate command execution to the command history
-            if(src_local && hasServer)
+            if(src_local)
             {
                 // multiplayer, the command is not yet accepted by the server
                 state.getCommandHistory().addAwaiting(command, state);
-            }
-            else if(src_local && !hasServer)
-            {
-                // single player, so the command is immediately in executed state
-                state.getCommandHistory().addExecuted(command, state);
             }
             else
             {
                 // this command comes from the server so must be accepted
                 List<CommandExecution> fails = state.getCommandHistory().addAccepted(command, state);
                 HandleReexecutionFails(fails);
+            }
+        }
+        else if(cmdType == CommandType.TRACKED)
+        {
+            if(src_local && !hasServer)
+            {
+                // single player, so the command is immediately in executed state
+                state.getCommandHistory().addExecuted(command, state);
+            }
+            else
+            {
+                throw new UnsupportedOperationException("A command of type " + cmdType + " cannot be handled in this case (or implement)");
             }
         }
         else if(command instanceof C_Reject)

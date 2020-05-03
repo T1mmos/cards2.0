@@ -8,6 +8,7 @@ import gent.timdemey.cards.model.entities.commands.C_StartServer;
 import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CommandHistory;
+import gent.timdemey.cards.model.entities.commands.CommandType;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.INetworkService;
 import gent.timdemey.cards.services.ISerializationService;
@@ -35,35 +36,34 @@ class ServerCommandExecutor extends CommandExecutorBase
 
         CanExecuteResponse resp = command.canExecute(state);
         boolean executable = resp.canExecute;
-        boolean syncable = command.isSyncable();
+        CommandType cmdType = command.getCommandType();
 
         // syncable commands are commands that are executed clientside,
         // but can be rejected serverside e.g. when another player was earlier
         // but due to network delay the client wasn't yet aware.
         if (executable)
         {
-            // server side we add all commands to the history, because this way
-            // we can detect double transmits and correct programming errors.
-            // it isn't strictly necessary because the server state is always
-            // correct and does never need to rollback commands.
-            if (command instanceof C_StartServer)
+            if (cmdType == CommandType.TRACKED || cmdType == CommandType.SYNCED)
             {
-                state.setCommandHistory(new CommandHistory(true));
-            }
-            state.getCommandHistory().addAccepted(command, state);
+                state.getCommandHistory().addAccepted(command, state);
 
-            // in case of syncable commands, we send a response to the source so
-            // the client can mark the command as accepted in its history
-            if (syncable)
+                // in case of syncable commands, we send a response to the source so
+                // the client can mark the command as accepted in its history
+                if (cmdType == CommandType.SYNCED)
+                {
+                    C_Accept acceptCmd = new C_Accept(command.id);
+                    INetworkService ns = Services.get(INetworkService.class);
+                    ns.send(state.getLocalId(), command.getSourceId(), acceptCmd, state.getTcpConnectionPool());
+                }
+            }
+            else if (cmdType == CommandType.DEFAULT)
             {
-                C_Accept acceptCmd = new C_Accept(command.id);
-                INetworkService ns = Services.get(INetworkService.class);
-                ns.send(state.getLocalId(), command.getSourceId(), acceptCmd, state.getTcpConnectionPool());
+                command.execute(state);
             }
         }
         else
         {
-            if (syncable)
+            if (cmdType == CommandType.SYNCED)
             {
                 Logger.info("Can't execute syncable command: '%s'. Responding with a C_Reject. Reason: %s", command.getName(), resp.reason);
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.commands.CommandHistory;
 import gent.timdemey.cards.model.entities.common.EntityBase;
@@ -18,8 +19,7 @@ import gent.timdemey.cards.netcode.UDP_ServiceRequester;
 public class State extends EntityBase
 {
     public static final Property<CardGame> CardGame = Property.of(State.class, CardGame.class, "CardGame");
-    public static final Property<CommandHistory> CommandHistory = Property.of(State.class, CommandHistory.class,
-            "CommandHistory");
+    public static final Property<CommandHistory> CommandHistory = Property.of(State.class, CommandHistory.class, "CommandHistory");
     public static final Property<GameState> GameState = Property.of(State.class, GameState.class, "GameState");
     public static final Property<UUID> LocalId = Property.of(State.class, UUID.class, "LocalId");
     public static final Property<String> LocalName = Property.of(State.class, String.class, "LocalName");
@@ -91,6 +91,17 @@ public class State extends EntityBase
 
     public void setTcpConnectionAccepter(TCP_ConnectionAccepter tcpConnectionAccepter)
     {
+        if(this.tcpConnectionAccepter != null)
+        {
+            try
+            {
+                this.tcpConnectionAccepter.stop();
+            }
+            catch (Exception ex)
+            {
+                Logger.error(ex);
+            }
+        }
         this.tcpConnectionAccepter = tcpConnectionAccepter;
     }
 
@@ -101,6 +112,17 @@ public class State extends EntityBase
 
     public void setTcpConnectionPool(TCP_ConnectionPool tcpConnectionPool)
     {
+        if(this.tcpConnectionPool != null)
+        {
+            try
+            {
+                this.tcpConnectionPool.closeAllConnections();
+            }
+            catch (Exception ex)
+            {
+                Logger.error(ex);
+            }
+        }
         this.tcpConnectionPool = tcpConnectionPool;
     }
 
@@ -111,6 +133,17 @@ public class State extends EntityBase
 
     public void setUdpServiceRequester(UDP_ServiceRequester udpServiceRequester)
     {
+        if(this.udpServiceRequester != null)
+        {
+            try
+            {
+                this.udpServiceRequester.stop();
+            }
+            catch (Exception ex)
+            {
+                Logger.error(ex);
+            }
+        }
         this.udpServiceRequester = udpServiceRequester;
     }
 
@@ -121,6 +154,17 @@ public class State extends EntityBase
 
     public void setUdpServiceAnnouncer(UDP_ServiceAnnouncer udpServiceAnnouncer)
     {
+        if(this.udpServiceAnnouncer != null)
+        {
+            try
+            {
+                this.udpServiceAnnouncer.stop();
+            }
+            catch (Exception ex)
+            {
+                Logger.error(ex);
+            }
+        }
         this.udpServiceAnnouncer = udpServiceAnnouncer;
     }
 

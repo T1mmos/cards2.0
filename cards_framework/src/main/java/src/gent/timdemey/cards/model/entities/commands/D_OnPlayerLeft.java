@@ -10,11 +10,8 @@ import gent.timdemey.cards.services.context.ContextType;
 
 public class D_OnPlayerLeft extends DialogCommandBase
 {
-    public final String playerName;
-
-    public D_OnPlayerLeft(String playerName)
+    public D_OnPlayerLeft()
     {
-        this.playerName = playerName;
     }
 
     @Override
@@ -27,7 +24,7 @@ public class D_OnPlayerLeft extends DialogCommandBase
     protected void showDialog(Context context, ContextType type, State state)
     {
         String title = Loc.get(LocKey.DialogTitle_playerleft);
-        String msg = Loc.get(LocKey.DialogMessage_playerleft, playerName);
+        String msg = Loc.get(LocKey.DialogMessage_playerleft);
         Services.get(IDialogService.class).ShowMessage(title, msg);
     }
 }
