@@ -117,6 +117,7 @@ public class State extends EntityBase
             try
             {
                 this.tcpConnectionPool.closeAllConnections();
+                this.tcpConnectionPool.stop();
             }
             catch (Exception ex)
             {

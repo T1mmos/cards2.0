@@ -147,7 +147,7 @@ public final class TCP_ConnectionPool
             try
             {
                 String hostAddr = address.getHostAddress();
-                Logger.info("Connecting to %s:%s", hostAddr, port);
+                Logger.info("Connecting to %s:%s...", hostAddr, port);
                 socket = new Socket(address, port);
                 String localAddr = socket.getLocalAddress().getHostAddress();
                 int localPort = socket.getLocalPort();
@@ -211,6 +211,11 @@ public final class TCP_ConnectionPool
         {
             closeConnection(id);
         }
+    }
+    
+    public void stop()
+    {
+        execServ.shutdownNow();
     }
 
     public void closeConnection(UUID remote)
