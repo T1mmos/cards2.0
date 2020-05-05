@@ -3,6 +3,7 @@ package gent.timdemey.cards.model.entities.commands;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
+import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IDialogService;
@@ -21,6 +22,10 @@ public class D_StartServer extends DialogCommandBase
         if (Services.get(IContextService.class).isInitialized(ContextType.Server))
         {
             return CanExecuteResponse.no("Server context already initialized");
+        }
+        if (state.getGameState() != GameState.NotConnected)
+        {
+            return CanExecuteResponse.no("Cannot start a server while connected to a server, current GameState=" + state.getGameState());
         }
 
         return CanExecuteResponse.yes();

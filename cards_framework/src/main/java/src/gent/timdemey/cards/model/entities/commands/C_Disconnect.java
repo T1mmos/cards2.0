@@ -67,5 +67,4 @@ public class C_Disconnect extends CommandBase
     {
         return "";
     }
-
 }

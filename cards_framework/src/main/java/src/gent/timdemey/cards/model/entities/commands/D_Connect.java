@@ -3,6 +3,7 @@ package gent.timdemey.cards.model.entities.commands;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
+import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.readonlymodel.ReadOnlyServer;
 import gent.timdemey.cards.services.IDialogService;
@@ -18,6 +19,10 @@ public class D_Connect extends DialogCommandBase
     @Override
     protected CanExecuteResponse canShowDialog(Context context, ContextType type, State state)
     {
+        if (state.getGameState() != GameState.NotConnected)
+        {
+            return CanExecuteResponse.no("GameState should be NotConnected but is: " + state.getGameState());
+        }
         if (state.getServerId() != null)
         {
             return CanExecuteResponse.no("State.ServerId is not null: " + state.getServerId());

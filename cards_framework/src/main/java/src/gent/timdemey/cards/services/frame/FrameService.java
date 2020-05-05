@@ -103,7 +103,6 @@ public class FrameService implements IFrameService
         else
         {
             addToMenu(menu, Actions.ACTION_START);
-            addToMenu(menu, Actions.ACTION_STOP);
         }
 
         menu.addSeparator();
@@ -126,8 +125,8 @@ public class FrameService implements IFrameService
     {
         JMenu menu = new JMenu(Loc.get(LocKey.DebugMenu_debug));
 
-        addToMenu(menu, Actions.ACTION_DEBUG);
-        addToMenu(menu, Actions.ACTION_GC);
+        addToMenu(menu, Actions.ACTION_DEBUG_DRAWOUTLINES);
+        addToMenu(menu, Actions.ACTION_DEBUG_GC);
 
         return menu;
     }

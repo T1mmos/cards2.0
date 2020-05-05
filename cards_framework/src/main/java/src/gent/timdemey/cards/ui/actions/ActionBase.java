@@ -5,8 +5,10 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.readonlymodel.IStateListener;
+import gent.timdemey.cards.services.context.IContextListener;
 
-class ActionBase extends AbstractAction
+abstract class ActionBase extends AbstractAction implements IContextListener, IStateListener
 {
     private final String action;
 
@@ -26,12 +28,5 @@ class ActionBase extends AbstractAction
     protected final void checkEnabled()
     {
         setEnabled(Services.get(IActionService.class).canExecuteAction(action));
-    }
-    
-    @Override
-    public boolean isEnabled()
-    {
-        // TODO Auto-generated method stub
-        return super.isEnabled();
     }
 }

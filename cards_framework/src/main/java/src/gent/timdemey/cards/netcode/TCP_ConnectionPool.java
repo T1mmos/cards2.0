@@ -215,7 +215,7 @@ public final class TCP_ConnectionPool
     
     public void stop()
     {
-        execServ.shutdownNow();
+        execServ.shutdown();
     }
 
     public void closeConnection(UUID remote)
