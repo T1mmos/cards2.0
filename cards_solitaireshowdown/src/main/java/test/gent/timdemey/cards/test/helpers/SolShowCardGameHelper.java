@@ -14,7 +14,7 @@ import gent.timdemey.cards.model.entities.cards.payload.P_CardGame;
 import gent.timdemey.cards.model.entities.cards.payload.P_CardStack;
 import gent.timdemey.cards.model.entities.cards.payload.P_PlayerConfiguration;
 import gent.timdemey.cards.model.entities.game.Player;
-import gent.timdemey.cards.services.boot.SolShowCardGameCreationService;
+import gent.timdemey.cards.services.cardgame.SolShowCardGameCreationService;
 
 public class SolShowCardGameHelper
 {    

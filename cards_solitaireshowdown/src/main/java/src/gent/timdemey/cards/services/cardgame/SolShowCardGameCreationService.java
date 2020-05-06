@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.boot;
+package gent.timdemey.cards.services.cardgame;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,7 +40,7 @@ public class SolShowCardGameCreationService implements ICardGameCreationService
             List<Card> cards = playerCards.get(i);
 
             List<CardStack> cardStacks = new ArrayList<>();
-            addCardStack(cardStacks, SolShowCardStackType.SPECIAL, 0, cards.subList(0, 13), true);
+            addCardStack(cardStacks, SolShowCardStackType.SPECIAL, 0, cards.subList(0, 13), false);
             addCardStack(cardStacks, SolShowCardStackType.MIDDLE, 0, cards.subList(13, 14), true);
             addCardStack(cardStacks, SolShowCardStackType.MIDDLE, 1, cards.subList(14, 15), true);
             addCardStack(cardStacks, SolShowCardStackType.MIDDLE, 2, cards.subList(15, 16), true);
@@ -67,6 +67,13 @@ public class SolShowCardGameCreationService implements ICardGameCreationService
             card.cardStack = cs;
             card.visibleRef.set(visible);            
         }
+        
+        if (cardStackType.equals(SolShowCardStackType.SPECIAL))
+        {
+            // highest card is visible
+            cs.getHighestCard().visibleRef.set(true);
+        }
+        
         listToAdd.add(cs);
     }
 }

@@ -96,7 +96,7 @@ public class C_StartServer extends CommandBase
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void preExecute(Context context, ContextType type, State state)
     {
         if(type == ContextType.UI)
         {

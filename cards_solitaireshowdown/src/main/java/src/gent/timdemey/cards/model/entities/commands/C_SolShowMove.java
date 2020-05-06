@@ -13,7 +13,7 @@ import gent.timdemey.cards.model.entities.commands.payload.P_SolShowMove;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.INetworkService;
-import gent.timdemey.cards.services.boot.SolShowCardStackType;
+import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
@@ -114,7 +114,7 @@ public class C_SolShowMove extends C_Move
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void preExecute(Context context, ContextType type, State state)
     {
         CardGame cardGame = state.getCardGame();
         CardStack srcCardStack = cardGame.getCardStack(srcCardStackId);
@@ -179,6 +179,17 @@ public class C_SolShowMove extends C_Move
             }
         }
     }
+    
+    @Override
+    public void postExecute(Context context, ContextType type, State state)
+    {
+        CardGame cardGame = state.getCardGame();
+        CardStack srcCardStack = cardGame.getCardStack(srcCardStackId);
+        if (srcCardStack.cardStackType.equals(SolShowCardStackType.SPECIAL))
+        {
+            srcCardStack.getHighestCard().visibleRef.set(true);
+        }
+    }
 
     @Override
     protected boolean canUndo(Context context, ContextType type, State state)
@@ -209,5 +220,10 @@ public class C_SolShowMove extends C_Move
 
         srcCardStack.addAll(transferCards);
         transferCards.forEach(card -> card.cardStack = srcCardStack);
+    }
+    
+    public CommandType getCommandType()
+    {
+        return CommandType.SYNCED;
     }
 }

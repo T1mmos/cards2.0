@@ -49,7 +49,7 @@ public abstract class C_Push extends CommandBase
     }
     
     @Override
-    public final void execute(Context context, ContextType type, State state)
+    public final void preExecute(Context context, ContextType type, State state)
     {
         throw new UnsupportedOperationException("This command should not be executed directly, only the canExecute is important");
     }

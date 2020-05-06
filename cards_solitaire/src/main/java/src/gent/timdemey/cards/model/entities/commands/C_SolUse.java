@@ -11,7 +11,7 @@ import gent.timdemey.cards.model.entities.commands.C_SetVisible;
 import gent.timdemey.cards.model.entities.commands.C_Use;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.boot.SolitaireCardStackType;
+import gent.timdemey.cards.services.cardgame.SolitaireCardStackType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 

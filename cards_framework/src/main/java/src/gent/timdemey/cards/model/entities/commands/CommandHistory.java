@@ -99,7 +99,7 @@ public class CommandHistory extends EntityBase
     {
         int stopIdx = forwards ? getLastIndex() + 1 : -1;
         int incr = forwards ? 1 : -1;
-        for (int i = getLastIndex(); i != stopIdx; i += incr)
+        for (int i = getCurrentIndex(); i != stopIdx; i += incr)
         {
             CommandExecution cmdExecution = execLine.get(i);
 
@@ -399,7 +399,7 @@ public class CommandHistory extends EntityBase
             cmdExecution.setExecutionState(nextState);
             if(execState != CommandExecutionState.Quarantined && resp.canExecute)
             {
-                command.execute(state);
+                command.preExecute(state);
             }
         }
 
@@ -485,7 +485,7 @@ public class CommandHistory extends EntityBase
 
         // now add the command execution
         CommandExecution cmdExecution = new CommandExecution(cmd, execState);
-        cmdExecution.getCommand().execute(state);
+        cmdExecution.getCommand().preExecute(state);
 
         // we cannot just add at the end of the execution line, because there can be
         // quarantined commands which are beyond the current index pointer.
@@ -614,7 +614,8 @@ public class CommandHistory extends EntityBase
                 "The CommandExecution is Accepted, yet can't execute it in the current state where all previous commands are Accepted, because: "
                     + resp.reason);
         }
-        command.execute(state);
+        command.preExecute(state);
+        command.postExecute(state); 
         execLine.add(getCurrentIndex() + 1, commandExec);
         setCurrentIndex(getCurrentIndex() + 1);
         setAcceptedIndex(getAcceptedIndex() + 1);
@@ -637,8 +638,16 @@ public class CommandHistory extends EntityBase
         // accepts must arrive in order.
         int currAcptIdx = getAcceptedIndex();
         CommandExecution cmdExecution = execLine.get(currAcptIdx + 1);
+        
         CommandExecutionState execState = cmdExecution.getExecutionState();
-        CommandBase cmd = cmdExecution.getCommand();        
+        CommandBase cmd = cmdExecution.getCommand();
+        // check that the command id matches
+        if (!commandId.equals(cmd.id))
+        {
+            String msg = "This commandId cannot be accepted because it is not the next command to be accepted: %s";
+            String formatted = String.format(msg, commandId);
+            throw new IllegalStateException(formatted);
+        }
         
         if(execState != CommandExecutionState.AwaitingConfirmation && execState != CommandExecutionState.Quarantined)
         {
@@ -657,10 +666,11 @@ public class CommandHistory extends EntityBase
                     + resp.reason);
             }
 
-            cmd.execute(state);
+            cmd.preExecute(state);
             setCurrentIndex(getCurrentIndex() + 1);
         }
 
+        cmd.postExecute(state);
         cmdExecution.setExecutionState(CommandExecutionState.Accepted);
         setAcceptedIndex(currAcptIdx + 1);
     }
@@ -675,6 +685,12 @@ public class CommandHistory extends EntityBase
     public CommandExecution getCommandExecution(int i)
     {
         return execLine.get(i);
+    }    
+
+    public CommandExecution getCommandExecution(UUID acceptedCommandId)
+    {
+        int idx = indexOf(acceptedCommandId, false);
+        return getCommandExecution(idx);
     }
 
     public boolean containsAccepted(CommandBase command)

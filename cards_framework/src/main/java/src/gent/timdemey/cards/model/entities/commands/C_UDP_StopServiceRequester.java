@@ -18,7 +18,7 @@ public class C_UDP_StopServiceRequester extends CommandBase
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void preExecute(Context context, ContextType type, State state)
     {
         CheckContext(type, ContextType.UI);
         

@@ -62,7 +62,7 @@ public class C_Move extends CommandBase
      * @return
      */
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void preExecute(Context context, ContextType type, State state)
     {
         CardGame cardGame = state.getCardGame();
         CardStack srcCardStack = cardGame.getCardStack(srcCardStackId);

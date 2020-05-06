@@ -31,7 +31,7 @@ public final class C_Redo extends CommandBase
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void preExecute(Context context, ContextType type, State state)
     {
         state.getCommandHistory().redo(state);
     }

@@ -9,7 +9,7 @@ import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.commands.C_Pull;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.boot.SolitaireCardStackType;
+import gent.timdemey.cards.services.cardgame.SolitaireCardStackType;
 
 public class C_SolPull extends C_Pull
 {

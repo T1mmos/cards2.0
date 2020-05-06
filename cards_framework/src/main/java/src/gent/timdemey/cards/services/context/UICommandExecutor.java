@@ -115,7 +115,7 @@ class UICommandExecutor implements ICommandExecutor
         else
         {
             // execute the command here
-            command.execute(state);
+            command.preExecute(state);
         }
 
         // update the listeners

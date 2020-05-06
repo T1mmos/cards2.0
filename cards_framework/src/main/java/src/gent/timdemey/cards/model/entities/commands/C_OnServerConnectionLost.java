@@ -23,7 +23,7 @@ public class C_OnServerConnectionLost extends CommandBase
     }
 
     @Override
-    public void execute(Context context, ContextType type, State state)
+    public void preExecute(Context context, ContextType type, State state)
     {
         CheckContext(type, ContextType.UI);        
 

@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.boot;
+package gent.timdemey.cards.services.cardgame;
 
 public final class SolitaireCardStackType {
     public static final String DEPOT = "DEPOT"; 

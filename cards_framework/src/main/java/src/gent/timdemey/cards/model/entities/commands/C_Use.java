@@ -43,7 +43,7 @@ public abstract class C_Use extends CommandBase
         return CanExecuteResponse.yes();
     }
 
-    protected final void execute(Context context, ContextType type, State state)
+    protected final void preExecute(Context context, ContextType type, State state)
     {
         CheckContext(type, ContextType.UI);
 

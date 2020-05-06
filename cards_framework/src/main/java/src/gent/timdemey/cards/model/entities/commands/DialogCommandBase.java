@@ -26,7 +26,7 @@ public abstract class DialogCommandBase extends CommandBase
     protected abstract CanExecuteResponse canShowDialog(Context context, ContextType type, State state);
 
     @Override
-    protected final void execute(Context context, ContextType type, State state)
+    protected final void preExecute(Context context, ContextType type, State state)
     {
         CheckContext(type, ContextType.UI);
 

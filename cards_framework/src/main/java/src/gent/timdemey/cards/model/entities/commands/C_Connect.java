@@ -50,7 +50,7 @@ public class C_Connect extends CommandBase
     }
     
     @Override
-    public void execute(Context context, ContextType type, State state)
+    public void preExecute(Context context, ContextType type, State state)
     {
         CheckNotContext(type, ContextType.Server);
         if (type == ContextType.UI)

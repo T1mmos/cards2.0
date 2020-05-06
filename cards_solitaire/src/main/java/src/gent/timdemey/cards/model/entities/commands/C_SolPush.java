@@ -8,7 +8,7 @@ import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.cards.Value;
 import gent.timdemey.cards.model.entities.commands.C_Push;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.boot.SolitaireCardStackType;
+import gent.timdemey.cards.services.cardgame.SolitaireCardStackType;
 
 public class C_SolPush extends C_Push
 {

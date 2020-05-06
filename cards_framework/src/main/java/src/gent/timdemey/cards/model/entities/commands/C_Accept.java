@@ -31,7 +31,7 @@ public class C_Accept extends CommandBase
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void preExecute(Context context, ContextType type, State state)
     {
         throw new IllegalStateException("This command cannot be executed directly.");
     }

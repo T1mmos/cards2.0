@@ -5,7 +5,7 @@ import gent.timdemey.cards.services.ICardGameCreationService;
 import gent.timdemey.cards.services.ICommandService;
 import gent.timdemey.cards.services.IGamePanelManager;
 import gent.timdemey.cards.services.IPositionManager;
-import gent.timdemey.cards.services.boot.SolitaireCardGameCreationService;
+import gent.timdemey.cards.services.cardgame.SolitaireCardGameCreationService;
 import gent.timdemey.cards.services.commands.SolitaireCommandService;
 import gent.timdemey.cards.services.gamepanel.SolitaireGamePanelManager;
 import gent.timdemey.cards.services.position.SolitairePositionManager;

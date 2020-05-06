@@ -46,13 +46,24 @@ public abstract class CommandBase extends EntityBase
 
     protected abstract CanExecuteResponse canExecute(Context context, ContextType type, State state);
 
-    public final void execute(State state)
+    public final void preExecute(State state)
     {
         Context context = getContext();
-        execute(context, context.getContextType(), state);
+        preExecute(context, context.getContextType(), state);
     }
 
-    protected abstract void execute(Context context, ContextType type, State state);
+    protected abstract void preExecute(Context context, ContextType type, State state);
+
+    public final void postExecute(State state)
+    {
+        Context context = getContext();
+        postExecute(context, context.getContextType(), state);
+    }
+
+    public void postExecute(Context context, ContextType type, State state)
+    {
+        // override when necessary
+    }
 
     public final boolean canUndo(State state)
     {
@@ -75,17 +86,18 @@ public abstract class CommandBase extends EntityBase
     {
         throw new UnsupportedOperationException();
     }
-    
+
     protected final void schedule(ContextType type, CommandBase cmd)
-    {        
+    {
         IContextService contextServ = Services.get(IContextService.class);
         LimitedContext context = contextServ.getContext(type);
         context.schedule(cmd);
     }
-    
+
     /**
-     * Immediately runs the given command on the current context thread. 
-     * If on the UI thread any dialog is shown, this call will block.
+     * Immediately runs the given command on the current context thread. If on the
+     * UI thread any dialog is shown, this call will block.
+     * 
      * @param cmd
      */
     protected final void run(CommandBase cmd)
@@ -116,6 +128,7 @@ public abstract class CommandBase extends EntityBase
                     + ", but current context type is: " + current);
         }
     }
+
     public void setSourceTcpConnection(TCP_Connection tcpConnection)
     {
         this.sourceTcpConnection = tcpConnection;

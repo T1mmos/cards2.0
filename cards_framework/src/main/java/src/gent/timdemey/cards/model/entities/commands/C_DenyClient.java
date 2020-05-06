@@ -26,7 +26,7 @@ public class C_DenyClient extends CommandBase
     }
 
     @Override
-    public void execute(Context context, ContextType type, State state)
+    public void preExecute(Context context, ContextType type, State state)
     {
         if (type == ContextType.UI)
         {

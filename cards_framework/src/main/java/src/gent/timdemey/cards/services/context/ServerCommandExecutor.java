@@ -4,7 +4,6 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.C_Accept;
 import gent.timdemey.cards.model.entities.commands.C_Reject;
-import gent.timdemey.cards.model.entities.commands.C_StartServer;
 import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CommandHistory;
@@ -58,7 +57,7 @@ class ServerCommandExecutor extends CommandExecutorBase
             }
             else if (cmdType == CommandType.DEFAULT)
             {
-                command.execute(state);
+                command.preExecute(state);
             }
         }
         else

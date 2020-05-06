@@ -10,7 +10,7 @@ import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.commands.C_Move;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.boot.SolitaireCardStackType;
+import gent.timdemey.cards.services.cardgame.SolitaireCardStackType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
@@ -98,7 +98,7 @@ public class C_SolMove extends C_Move
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void preExecute(Context context, ContextType type, State state)
     {
         CardGame cardGame = state.getCardGame();
         CardStack srcCardStack = cardGame.getCardStacks().get(srcCardStackId);

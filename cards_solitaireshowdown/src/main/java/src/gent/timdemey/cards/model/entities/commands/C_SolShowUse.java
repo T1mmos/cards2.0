@@ -11,7 +11,7 @@ import gent.timdemey.cards.model.entities.commands.C_SetVisible;
 import gent.timdemey.cards.model.entities.commands.C_Use;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.boot.SolShowCardStackType;
+import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
@@ -65,8 +65,11 @@ public class C_SolShowUse extends C_Use
                                 eligible.add(cmd);
                             }
                         }
-                        else
+                        else if (!cardStackType.equals(SolShowCardStackType.SPECIAL))
                         {
+                            // the SPECIAL stack's highest card can be invisible as long as the server didn't accept
+                            // a previous move that involved the SPECIAL stack, to not reveal any cards until the previously
+                            // highest card has completely moved away from this stack. 
                             List<Card> cards = initiatorStack.getCardsFrom(card);
                             C_SetVisible cmd = new C_SetVisible(cards, true);
                             cmd.setSourceId(getSourceId());
