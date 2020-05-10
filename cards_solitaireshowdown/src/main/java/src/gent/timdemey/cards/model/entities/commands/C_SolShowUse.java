@@ -79,7 +79,7 @@ public class C_SolShowUse extends C_Use
                         eligible.add(cmd);
                     }
                 }
-                else if (!cardStackType.equals(SolShowCardStackType.SPECIAL))
+                else if (!isSpecial)
                 {
                     // the SPECIAL stack's highest card can be invisible as long as the server didn't accept
                     // a previous move that involved the SPECIAL stack, to not reveal any cards until the previously
