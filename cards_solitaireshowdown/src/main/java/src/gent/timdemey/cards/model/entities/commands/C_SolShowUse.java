@@ -27,8 +27,7 @@ public class C_SolShowUse extends C_Use
     {        
         CardGame cardGame = state.getCardGame();
         List<CommandBase> eligible = new ArrayList<>();
-        UUID localId = context.getReadOnlyState().getLocalId();
-        
+        UUID localId = context.getReadOnlyState().getLocalId();        
 
         if(initiatorStackId != null)
         {
@@ -48,40 +47,55 @@ public class C_SolShowUse extends C_Use
             Card initiatorCard = cardGame.getCard(initiatorCardId);
             CardStack initiatorStack = initiatorCard.cardStack;
             String cardStackType = initiatorStack.cardStackType;
-
-            if (getSourceId().equals(cardGame.getPlayerId(initiatorStack)))
+            
+            // can only move from a stack of your own
+            if (!getSourceId().equals(cardGame.getPlayerId(initiatorStack)))
             {
-                if(cardStackType.equals(SolShowCardStackType.TURNOVER) || cardStackType.equals(SolShowCardStackType.MIDDLE) || cardStackType.equals(SolShowCardStackType.SPECIAL))
+                return null;
+            }
+
+            Card card = initiatorStack.getHighestCard();
+            
+            boolean isTurnOver = cardStackType.equals(SolShowCardStackType.TURNOVER);
+            boolean isMiddle = cardStackType.equals(SolShowCardStackType.MIDDLE);
+            boolean isSpecial = cardStackType.equals(SolShowCardStackType.SPECIAL);
+            boolean isDepot = cardStackType.contentEquals(SolShowCardStackType.DEPOT);
+            
+            // certain cardstacks only allow to pick up the highest card
+            // (UI-wise, only the turnover stack shows some lower cards)
+            if ((isTurnOver || isSpecial || isDepot) && card != initiatorCard)
+            {
+                return null;
+            }
+            
+            if(isTurnOver || isMiddle || isSpecial)
+            {
+                if(card.visibleRef.get())
                 {
-                    if(!initiatorStack.getCards().isEmpty())
+                    for (CardStack dstCardStack : cardGame.getCardStacks(SolShowCardStackType.LAYDOWN))
                     {
-                        Card card = initiatorStack.getHighestCard();
-                        if(card.visibleRef.get())
-                        {
-                            for (CardStack dstCardStack : cardGame.getCardStacks(SolShowCardStackType.LAYDOWN))
-                            {
-                                C_SolShowMove cmd = new C_SolShowMove(initiatorStack.id, dstCardStack.id, card.id);
-                                cmd.setSourceId(getSourceId());
-                                eligible.add(cmd);
-                            }
-                        }
-                        else if (!cardStackType.equals(SolShowCardStackType.SPECIAL))
-                        {
-                            // the SPECIAL stack's highest card can be invisible as long as the server didn't accept
-                            // a previous move that involved the SPECIAL stack, to not reveal any cards until the previously
-                            // highest card has completely moved away from this stack. 
-                            List<Card> cards = initiatorStack.getCardsFrom(card);
-                            C_SetVisible cmd = new C_SetVisible(cards, true);
-                            cmd.setSourceId(getSourceId());
-                            eligible.add(cmd);
-                        }
+                        C_SolShowMove cmd = new C_SolShowMove(initiatorStack.id, dstCardStack.id, card.id);
+                        cmd.setSourceId(getSourceId());
+                        eligible.add(cmd);
                     }
                 }
-                else if (cardStackType.contentEquals(SolShowCardStackType.DEPOT))
+                else if (!cardStackType.equals(SolShowCardStackType.SPECIAL))
                 {
-                    addUseCommandDepot(eligible, initiatorStack, cardGame, localId);
+                    // the SPECIAL stack's highest card can be invisible as long as the server didn't accept
+                    // a previous move that involved the SPECIAL stack, to not reveal any cards until the previously
+                    // highest card has completely moved away from this stack. 
+                    List<Card> cards = initiatorStack.getCardsFrom(card);
+                    C_SetVisible cmd = new C_SetVisible(cards, true);
+                    cmd.setSourceId(getSourceId());
+                    eligible.add(cmd);
                 }
+                
             }
+            else if (isDepot)
+            {
+                addUseCommandDepot(eligible, initiatorStack, cardGame, localId);
+            }
+            
         }
         
         for (CommandBase cmd : eligible)
