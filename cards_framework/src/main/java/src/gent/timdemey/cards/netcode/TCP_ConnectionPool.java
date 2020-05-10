@@ -57,7 +57,7 @@ public final class TCP_ConnectionPool
 
     void onTcpConnectionStarted(TCP_Connection connection)
     {
-        externalConnListener.onTcpConnectionAdded(connection, this);
+        externalConnListener.onTcpConnectionAdded(connection);
     }
 
     void onTcpMessageReceived(TCP_Connection connection, String str_in)
@@ -118,15 +118,9 @@ public final class TCP_ConnectionPool
         return maxConnections;
     }
 
-    boolean isFull()
-    {
-        return maxConnections == halfConns.size() + uuid2conn.size();
-    }
-
     void addConnection(Socket socket)
     {
         Preconditions.checkNotNull(socket);
-        Preconditions.checkState(!isFull(), "Connection pool is full with " + maxConnections + " connections");
 
         execServ.submit(() ->
         {
@@ -231,5 +225,10 @@ public final class TCP_ConnectionPool
             locallyClosed.add(remote);
             tcpConnection.stop();
         });
+    }
+
+    public int getHalfConnections()
+    {
+        return halfConns.size();
     }
 }

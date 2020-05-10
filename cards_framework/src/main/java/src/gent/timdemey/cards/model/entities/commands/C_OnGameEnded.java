@@ -2,7 +2,7 @@ package gent.timdemey.cards.model.entities.commands;
 
 import java.util.UUID;
 
-import gent.timdemey.cards.model.entities.commands.payload.P_OnEndGame;
+import gent.timdemey.cards.model.entities.commands.payload.P_OnGameEnded;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
@@ -17,7 +17,7 @@ public class C_OnGameEnded extends CommandBase
         this.winnerId = winnerId;
     }
 
-    public C_OnGameEnded(P_OnEndGame pl)
+    public C_OnGameEnded(P_OnGameEnded pl)
     {
         super(pl);
         this.winnerId = pl.winnerId;

@@ -43,9 +43,9 @@ public class C_EnterLobby extends CommandBase
     {
         if (type == ContextType.UI)
         {
-            if (state.getGameState() != GameState.NotConnected)
+            if (state.getGameState() != GameState.Connected)
             {
-                return CanExecuteResponse.no("GameState should be NotConnected but is: " + state.getGameState());
+                return CanExecuteResponse.no("GameState should be Connected but is: " + state.getGameState());
             }
         }
         else
@@ -54,8 +54,6 @@ public class C_EnterLobby extends CommandBase
             {
                 return CanExecuteResponse.no("GameState should be Lobby but is: " + state.getGameState());
             }
-            // handle lobby full, close connection
-            
         }
         
         return CanExecuteResponse.yes();

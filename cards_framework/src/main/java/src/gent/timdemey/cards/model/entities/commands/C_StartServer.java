@@ -8,12 +8,12 @@ import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.model.entities.game.payload.P_Player;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.netcode.CommandSchedulingTcpConnectionListener;
 import gent.timdemey.cards.netcode.TCP_Connection;
 import gent.timdemey.cards.netcode.TCP_ConnectionAccepter;
 import gent.timdemey.cards.netcode.TCP_ConnectionPool;
@@ -134,15 +134,11 @@ public class C_StartServer extends CommandBase
                 UDP_ServiceAnnouncer udpServAnnouncer = new UDP_ServiceAnnouncer(udpport);
 
                 int playerCount = Services.get(ICardPlugin.class).getPlayerCount();
-                C_DenyClient cmd_reject = new C_DenyClient();
 
-                CommandDtoMapper dtoMapper = Services.get(ISerializationService.class).getCommandDtoMapper();
-                String json_reject = dtoMapper.toJson(cmd_reject);
-
-                CommandSchedulingTcpConnectionListener tcpConnListener = new ServerTcpListener();
+                CommandSchedulingTcpConnectionListener tcpConnListener = new CommandSchedulingTcpConnectionListener(ContextType.Server);
 
                 TCP_ConnectionPool tcpConnPool = new TCP_ConnectionPool(type.name(), playerCount, tcpConnListener);
-                TCP_ConnectionAccepter tcpConnAccepter = new TCP_ConnectionAccepter(tcpConnPool, tcpport, json_reject);
+                TCP_ConnectionAccepter tcpConnAccepter = new TCP_ConnectionAccepter(tcpConnPool, tcpport);
 
                 state.setUdpServiceAnnouncer(udpServAnnouncer);
                 state.setTcpConnectionAccepter(tcpConnAccepter);
@@ -160,31 +156,15 @@ public class C_StartServer extends CommandBase
             }
             catch (Exception ex)
             {
+                Logger.error("An error occured while starting the server", ex);
+
                 C_StopServer cmd_stopserver = new C_StopServer();
                 run(cmd_stopserver);
             }
         }
 
     }
-    private static class ServerTcpListener extends CommandSchedulingTcpConnectionListener
-    {
-        private ServerTcpListener()
-        {
-            super(ContextType.Server);
-        }
-
-        public void onTcpConnectionLocallyClosed(UUID id, TCP_Connection connection)
-        {
-        };
-
-        public void onTcpConnectionRemotelyClosed(UUID id, TCP_Connection connection)
-        {
-            LimitedContext context = Services.get(IContextService.class).getContext(ContextType.Server);
-            CommandBase cmd = new C_RemovePlayer(id);
-            context.schedule(cmd);
-        };
-    }
-
+    
     @Override
     public String toDebugString()
     {

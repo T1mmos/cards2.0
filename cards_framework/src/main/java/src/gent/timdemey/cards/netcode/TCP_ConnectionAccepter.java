@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 import gent.timdemey.cards.logging.Logger;
 
@@ -14,10 +11,6 @@ public final class TCP_ConnectionAccepter
 {
     private final TCP_ConnectionPool connectionPool;
     private final int tcpport;
-    private final String messageOnFull;
-
-    private final Executor rejectedExecutor;
-
     private Thread thread = null;
     private ServerSocket ssocket = null;
 
@@ -28,20 +21,10 @@ public final class TCP_ConnectionAccepter
      * @param connPool
      * @param info
      */
-    public TCP_ConnectionAccepter(TCP_ConnectionPool connPool, int tcpport, String messageOnFull)
+    public TCP_ConnectionAccepter(TCP_ConnectionPool connPool, int tcpport)
     {
         this.connectionPool = connPool;
         this.tcpport = tcpport;
-        this.messageOnFull = messageOnFull;
-        this.rejectedExecutor = Executors.newCachedThreadPool(new ThreadFactory()
-        {
-
-            @Override
-            public Thread newThread(Runnable r)
-            {
-                return new Thread(r, "Rejected Connection Handler");
-            }
-        });
     }
 
     public void start()
@@ -70,8 +53,7 @@ public final class TCP_ConnectionAccepter
             }
             catch (IOException e)
             {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                Logger.error(e);
             }
         }
         if (this.thread != null)
@@ -81,37 +63,6 @@ public final class TCP_ConnectionAccepter
         }
     }
 
-    private class RejectedConnectionTask implements Runnable
-    {
-
-        private final Socket socket;
-
-        private RejectedConnectionTask(Socket socket)
-        {
-            this.socket = socket;
-        }
-
-        @Override
-        public void run()
-        {
-            TCP_Connection conn = new TCP_Connection("REJECTED", socket, null);
-            conn.send(messageOnFull);
-
-            try
-            {
-                Thread.sleep(1000);
-            }
-            catch (InterruptedException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-            conn.stop();
-        }
-
-    }
-
     private void acceptLoop()
     {
         try
@@ -119,24 +70,17 @@ public final class TCP_ConnectionAccepter
             while (true)
             {
                 Socket socket = ssocket.accept();
-                if (connectionPool.isFull())
-                {
-                    rejectedExecutor.execute(new RejectedConnectionTask(socket));
-                }
-                else
-                {
-                    connectionPool.addConnection(socket);
-                }
+                connectionPool.addConnection(socket);                
             }
         }
         catch (SocketException ex)
         {
-            // done listening
+            // done listening, not an error
+            Logger.info("Server socket closed");
         }
         catch (IOException e)
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Logger.error(e);
         }
     }
 }

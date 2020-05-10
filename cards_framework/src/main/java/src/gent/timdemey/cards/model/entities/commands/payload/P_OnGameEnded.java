@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.common.PayloadBase;
 
-public class P_OnEndGame extends PayloadBase
+public class P_OnGameEnded extends PayloadBase
 {
     public UUID winnerId;
 }

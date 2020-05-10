@@ -1,17 +1,18 @@
-package gent.timdemey.cards.netcode;
+package gent.timdemey.cards.model.entities.commands;
 
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.model.entities.commands.CommandBase;
+import gent.timdemey.cards.netcode.ITcpConnectionListener;
+import gent.timdemey.cards.netcode.TCP_Connection;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.ISerializationService;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.context.LimitedContext;
 
-public class CommandSchedulingTcpConnectionListener implements ITcpConnectionListener
+public final class CommandSchedulingTcpConnectionListener implements ITcpConnectionListener
 {
     private final ContextType contextType;
 
@@ -21,9 +22,14 @@ public class CommandSchedulingTcpConnectionListener implements ITcpConnectionLis
     }
 
     @Override
-    public void onTcpConnectionAdded(TCP_Connection connection, TCP_ConnectionPool connectionPool)
+    public void onTcpConnectionAdded(TCP_Connection connection)
     {
         Logger.info("A TCP connection was added to " + connection.getRemote());
+        
+        C_OnTcpConnectionAdded cmd = new C_OnTcpConnectionAdded(connection);
+        
+        LimitedContext context = Services.get(IContextService.class).getContext(contextType);
+        context.schedule(cmd);
     }
 
     @Override
@@ -53,12 +59,18 @@ public class CommandSchedulingTcpConnectionListener implements ITcpConnectionLis
     @Override
     public void onTcpConnectionLocallyClosed(UUID id, TCP_Connection connection)
     {
-
+        C_OnTcpConnectionClosed cmd = new C_OnTcpConnectionClosed(id);
+        LimitedContext context = Services.get(IContextService.class).getContext(contextType);
+        context.schedule(cmd);
     }
 
     @Override
     public void onTcpConnectionRemotelyClosed(UUID id, TCP_Connection connection)
     {
-
+        C_OnTcpConnectionClosed cmd = new C_OnTcpConnectionClosed(id);
+        LimitedContext context = Services.get(IContextService.class).getContext(contextType);
+        context.schedule(cmd);
     }
+    
+    
 }

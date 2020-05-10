@@ -8,14 +8,10 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.model.entities.game.payload.P_Server;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.netcode.CommandSchedulingTcpConnectionListener;
 import gent.timdemey.cards.netcode.ITcpConnectionListener;
-import gent.timdemey.cards.netcode.TCP_Connection;
 import gent.timdemey.cards.netcode.TCP_ConnectionPool;
-import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.context.LimitedContext;
 import gent.timdemey.cards.utils.Debug;
 
 /**
@@ -72,51 +68,12 @@ public class C_Connect extends CommandBase
             }
             state.setServerId(serverId);
             
-            ITcpConnectionListener tcpConnListener = new ClientCommandSchedulingTcpConnectionListener(serverId, playerName, state.getLocalId());
+            ITcpConnectionListener tcpConnListener = new CommandSchedulingTcpConnectionListener(ContextType.UI);
             TCP_ConnectionPool tcpConnPool = new TCP_ConnectionPool(type.name(), 1, tcpConnListener);
 
             state.setTcpConnectionPool(tcpConnPool);
 
             tcpConnPool.addConnection(serverInetAddress, serverTcpPort);            
-        }
-    }
-
-    private static class ClientCommandSchedulingTcpConnectionListener extends CommandSchedulingTcpConnectionListener
-    {
-        private final UUID serverId;
-        private final String clientName;
-        private final UUID clientId;
-        
-        private ClientCommandSchedulingTcpConnectionListener(UUID serverId, String clientName, UUID clientId)
-        {
-            super(ContextType.UI);
-            this.serverId = serverId;
-            this.clientName = clientName;
-            this.clientId = clientId;
-        }
-
-        @Override
-        public void onTcpConnectionAdded(TCP_Connection connection, TCP_ConnectionPool connectionPool)
-        {
-            super.onTcpConnectionAdded(connection, connectionPool);
-            connectionPool.bindUUID(serverId, connection);
-            
-            // if the connection is complete then we can join the game
-            CommandBase cmd = new C_EnterLobby(clientName, clientId);
-            IContextService contextServ = Services.get(IContextService.class);
-            LimitedContext context = contextServ.getContext(ContextType.UI);
-            context.schedule(cmd);
-        }
-
-        @Override
-        public void onTcpConnectionRemotelyClosed(UUID id, TCP_Connection connection)
-        {
-            LimitedContext context = Services.get(IContextService.class).getContext(ContextType.UI);
-            if (id != null)
-            {
-                CommandBase cmd = new C_OnServerConnectionLost();
-                context.schedule(cmd);
-            }
         }
     }
 

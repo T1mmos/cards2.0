@@ -41,6 +41,12 @@ public abstract class CommandBase extends EntityBase
     {
         Context context = getContext();
         CanExecuteResponse response = canExecute(context, context.getContextType(), state);
+        
+        if (response == null)
+        {
+            throw new NullPointerException("canExecute must return a CanExecuteResponse but got null");
+        }
+        
         return response;
     }
 
