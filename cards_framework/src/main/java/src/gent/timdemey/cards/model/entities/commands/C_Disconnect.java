@@ -56,9 +56,9 @@ public class C_Disconnect extends CommandBase
         state.setGameState(GameState.NotConnected);
         state.setCardGame(null);
         state.getPlayers().clear();
-        state.getServers().clear();
+        state.getUDPServers().clear();
         state.setLobbyAdminId(null);
-        state.setServerId(null);
+        state.setServer(null);
         state.setServerMessage(null);
     }
 

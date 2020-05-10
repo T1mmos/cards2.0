@@ -12,37 +12,37 @@ import gent.timdemey.cards.model.entities.cards.payload.P_CardStack;
 import gent.timdemey.cards.model.entities.cards.payload.P_PlayerConfiguration;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.payload.P_Player;
-import gent.timdemey.cards.serialization.dto.entities.CardDto;
-import gent.timdemey.cards.serialization.dto.entities.CardGameDto;
-import gent.timdemey.cards.serialization.dto.entities.CardStackDto;
-import gent.timdemey.cards.serialization.dto.entities.PlayerConfigurationDto;
-import gent.timdemey.cards.serialization.dto.entities.PlayerDto;
+import gent.timdemey.cards.serialization.dto.cards.CardDto;
+import gent.timdemey.cards.serialization.dto.cards.CardGameDto;
+import gent.timdemey.cards.serialization.dto.cards.CardStackDto;
+import gent.timdemey.cards.serialization.dto.cards.PlayerConfigurationDto;
+import gent.timdemey.cards.serialization.dto.cards.PlayerDto;
 
-class EntityDtoMapper extends EntityBaseDtoMapper
+class CardsDtoMapper extends EntityBaseDtoMapper
 {
     static MapperDefs mapperDefs = new MapperDefs();
     static 
     {
         // domain objects to DTO
-        mapperDefs.addMapping(CardGame.class, CardGameDto.class, EntityDtoMapper::toDto);
-        mapperDefs.addMapping(CardStack.class, CardStackDto.class, EntityDtoMapper::toDto);
-        mapperDefs.addMapping(Card.class, CardDto.class, EntityDtoMapper::toDto);
+        mapperDefs.addMapping(CardGame.class, CardGameDto.class, CardsDtoMapper::toDto);
+        mapperDefs.addMapping(CardStack.class, CardStackDto.class, CardsDtoMapper::toDto);
+        mapperDefs.addMapping(Card.class, CardDto.class, CardsDtoMapper::toDto);
         mapperDefs.addMapping(Suit.class, String.class, suit -> suit.getTextual());
         mapperDefs.addMapping(Value.class, String.class, value -> value.getTextual());
-        mapperDefs.addMapping(Player.class, PlayerDto.class, EntityDtoMapper::toDto);
-        mapperDefs.addMapping(PlayerConfiguration.class, PlayerConfigurationDto.class, EntityDtoMapper::toDto);
+        mapperDefs.addMapping(Player.class, PlayerDto.class, CardsDtoMapper::toDto);
+        mapperDefs.addMapping(PlayerConfiguration.class, PlayerConfigurationDto.class, CardsDtoMapper::toDto);
 
         // DTO to domain object
-        mapperDefs.addMapping(CardGameDto.class, CardGame.class, EntityDtoMapper::toDomainObject);
-        mapperDefs.addMapping(CardStackDto.class, CardStack.class, EntityDtoMapper::toDomainObject);
-        mapperDefs.addMapping(CardDto.class, Card.class, EntityDtoMapper::toDomainObject);
+        mapperDefs.addMapping(CardGameDto.class, CardGame.class, CardsDtoMapper::toDomainObject);
+        mapperDefs.addMapping(CardStackDto.class, CardStack.class, CardsDtoMapper::toDomainObject);
+        mapperDefs.addMapping(CardDto.class, Card.class, CardsDtoMapper::toDomainObject);
         mapperDefs.addMapping(String.class, Suit.class, str -> Suit.fromCharacter(str));
         mapperDefs.addMapping(String.class, Value.class, str -> Value.fromCharacter(str));
-        mapperDefs.addMapping(PlayerDto.class, Player.class, EntityDtoMapper::toDomainObject);
-        mapperDefs.addMapping(PlayerConfigurationDto.class, PlayerConfiguration.class, EntityDtoMapper::toDomainObject);
+        mapperDefs.addMapping(PlayerDto.class, Player.class, CardsDtoMapper::toDomainObject);
+        mapperDefs.addMapping(PlayerConfigurationDto.class, PlayerConfiguration.class, CardsDtoMapper::toDomainObject);
     }
 
-    private EntityDtoMapper()
+    private CardsDtoMapper()
     {
     }
 

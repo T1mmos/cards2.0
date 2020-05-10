@@ -38,7 +38,7 @@ public class C_OnTcpConnectionAdded extends CommandBase
             int reserved = state.getTcpConnectionPool().getHalfConnections();
 
             CommandBase cmd_response;
-            if (playerCnt_curr + reserved >= playerCnt_max)
+            if (playerCnt_curr + reserved > playerCnt_max)
             {
                 cmd_response = new C_TCP_NOK(TcpNokReason.LobbyFull);                
             }

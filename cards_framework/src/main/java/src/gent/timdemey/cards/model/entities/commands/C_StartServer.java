@@ -14,16 +14,12 @@ import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.model.entities.game.payload.P_Player;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.netcode.TCP_Connection;
 import gent.timdemey.cards.netcode.TCP_ConnectionAccepter;
 import gent.timdemey.cards.netcode.TCP_ConnectionPool;
 import gent.timdemey.cards.netcode.UDP_ServiceAnnouncer;
-import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.services.ISerializationService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.context.LimitedContext;
 import gent.timdemey.cards.utils.Debug;
 
 /**
@@ -45,12 +41,9 @@ public class C_StartServer extends CommandBase
     // public final InetAddress address;
     public final int udpport; // udp port to listen for clients broadcasting, to discover servers
     public final int tcpport; // tcp port to accepts clients on that want to join a game
-    public final int minconns; // minimal connections required to start a game
-    public final int maxconns; // maximal connections allowed to the server
     public final boolean autoconnect; // whether to automatically connect as client to the server about to be created
 
-    public C_StartServer(UUID playerId, String playerName, String srvname, String srvmsg, int udpport, int tcpport, int minconns, int maxconns,
-        boolean autoconnect)
+    public C_StartServer(UUID playerId, String playerName, String srvname, String srvmsg, int udpport, int tcpport, boolean autoconnect)
     {
         Preconditions.checkArgument(playerId != null);
         Preconditions.checkArgument(playerName != null);
@@ -58,9 +51,6 @@ public class C_StartServer extends CommandBase
         Preconditions.checkArgument(udpport > 1024);
         Preconditions.checkArgument(tcpport > 1024);
         Preconditions.checkArgument(udpport != tcpport);
-        Preconditions.checkArgument(minconns > 1);
-        Preconditions.checkArgument(maxconns <= 4);
-        Preconditions.checkArgument(minconns <= maxconns);
 
         this.playerId = playerId;
         this.playerName = playerName;
@@ -68,8 +58,6 @@ public class C_StartServer extends CommandBase
         this.srvmsg = srvmsg;
         this.udpport = udpport;
         this.tcpport = tcpport;
-        this.minconns = minconns;
-        this.maxconns = maxconns;
         this.autoconnect = autoconnect;
     }
 
@@ -118,8 +106,7 @@ public class C_StartServer extends CommandBase
 
                 // update the state: set server, lobby admin, add player, command history
                 Server server = new Server(srvname, addr, tcpport);
-                state.getServers().add(server);
-                state.setServerId(server.id);
+                state.setServer(server);
                 state.setLocalId(server.id);
                 state.setLobbyAdminId(playerId);
                 state.setGameState(GameState.Lobby);
@@ -169,6 +156,6 @@ public class C_StartServer extends CommandBase
     public String toDebugString()
     {
         return Debug.getKeyValue("srvname", srvname) + Debug.getKeyValue("srvmsg", srvmsg) + Debug.getKeyValue("udpport", udpport) + Debug.getKeyValue(
-            "tcpport", tcpport) + Debug.getKeyValue("minconns", minconns) + Debug.getKeyValue("maxconns", maxconns);
+            "tcpport", tcpport);
     }
 }

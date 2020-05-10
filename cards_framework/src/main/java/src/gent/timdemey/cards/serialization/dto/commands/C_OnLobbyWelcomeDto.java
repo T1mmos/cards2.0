@@ -2,7 +2,7 @@ package gent.timdemey.cards.serialization.dto.commands;
 
 import java.util.List;
 
-import gent.timdemey.cards.serialization.dto.entities.PlayerDto;
+import gent.timdemey.cards.serialization.dto.cards.PlayerDto;
 
 public class C_OnLobbyWelcomeDto extends CommandBaseDto
 {

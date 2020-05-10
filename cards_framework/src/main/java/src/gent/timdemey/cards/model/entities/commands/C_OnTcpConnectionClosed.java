@@ -26,8 +26,11 @@ public class C_OnTcpConnectionClosed extends CommandBase
     {
         if (type == ContextType.UI)
         {
-            CommandBase cmd = new C_OnServerConnectionLost();
-            context.schedule(cmd);
+            if (state.getServerId() != null)
+            {
+                CommandBase cmd = new C_OnServerConnectionLost();
+                context.schedule(cmd);
+            }
         }
         else
         {

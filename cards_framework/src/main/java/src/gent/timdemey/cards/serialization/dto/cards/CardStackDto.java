@@ -1,4 +1,4 @@
-package gent.timdemey.cards.serialization.dto.entities;
+package gent.timdemey.cards.serialization.dto.cards;
 
 import java.util.List;
 

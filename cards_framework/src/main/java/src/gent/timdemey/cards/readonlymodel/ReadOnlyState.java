@@ -14,9 +14,9 @@ public class ReadOnlyState extends ReadOnlyEntityBase<State>
     public static final ReadOnlyProperty<UUID> LocalId = ReadOnlyProperty.of(State.LocalId);
     public static final ReadOnlyProperty<String> LocalName = ReadOnlyProperty.of(State.LocalName);
     public static final ReadOnlyProperty<ReadOnlyPlayer> Players = ReadOnlyProperty.of(ReadOnlyPlayer.class, State.Players);
-    public static final ReadOnlyProperty<UUID> ServerId = ReadOnlyProperty.of(State.ServerId);
+    public static final ReadOnlyProperty<ReadOnlyServer> Server = ReadOnlyProperty.of(ReadOnlyServer.class, State.Server);
     public static final ReadOnlyProperty<String> ServerMsg = ReadOnlyProperty.of(State.ServerMsg);
-    public static final ReadOnlyProperty<ReadOnlyServer> Servers = ReadOnlyProperty.of(ReadOnlyServer.class, State.Servers);
+    public static final ReadOnlyProperty<ReadOnlyUDPServer> Servers = ReadOnlyProperty.of(ReadOnlyUDPServer.class, State.UDPServers);
             
     public ReadOnlyState(State state)
     {
@@ -48,9 +48,9 @@ public class ReadOnlyState extends ReadOnlyEntityBase<State>
         return ReadOnlyEntityFactory.getOrCreatePlayerList(entity.getRemotePlayers());
     }
 
-    public ReadOnlyEntityList<ReadOnlyServer> getServers()
+    public ReadOnlyEntityList<ReadOnlyUDPServer> getServers()
     {
-        return ReadOnlyEntityFactory.getOrCreateServerList(entity.getServers());
+        return ReadOnlyEntityFactory.getOrCreateUDPServerList(entity.getUDPServers());
     }
     
     public boolean isLocalId(UUID id)

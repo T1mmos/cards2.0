@@ -11,6 +11,7 @@ import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.Server;
+import gent.timdemey.cards.model.entities.game.UDPServer;
 import gent.timdemey.cards.netcode.TCP_ConnectionAccepter;
 import gent.timdemey.cards.netcode.TCP_ConnectionPool;
 import gent.timdemey.cards.netcode.UDP_ServiceAnnouncer;
@@ -25,15 +26,15 @@ public class State extends EntityBase
     public static final Property<String> LocalName = Property.of(State.class, String.class, "LocalName");
     public static final Property<UUID> LobbyAdminId = Property.of(State.class, UUID.class, "LobbyAdminId");
     public static final Property<Player> Players = Property.of(State.class, Player.class, "Players");
-    public static final Property<UUID> ServerId = Property.of(State.class, UUID.class, "ServerId");
-    public static final Property<String> ServerMsg = Property.of(State.class, String.class, "ServerMsg");
-    public static final Property<Server> Servers = Property.of(State.class, Server.class, "Servers");
+    public static final Property<Server> Server = Property.of(State.class, Server.class, "Server");
+    public static final Property<String> ServerMsg = Property.of(State.class, String.class, "ServerMsg");    
+    public static final Property<UDPServer> UDPServers = Property.of(State.class, UDPServer.class, "UDPServers");
 
     private StateValueRef<CommandHistory> commandHistoryRef;
 
     // state lists
     private final EntityStateListRef<Player> playersRef;
-    private final EntityStateListRef<Server> serversRef;
+    private final EntityStateListRef<UDPServer> serversRef;
 
     // state values
     private StateValueRef<CardGame> cardGameRef;
@@ -41,7 +42,7 @@ public class State extends EntityBase
     private StateValueRef<UUID> localIdRef;
     private StateValueRef<String> localNameRef;
     private StateValueRef<UUID> lobbyAdminId;
-    private StateValueRef<UUID> serverIdRef;
+    private StateValueRef<Server> serverRef;
     private StateValueRef<String> serverMsgRef;
 
     // context specific
@@ -59,9 +60,9 @@ public class State extends EntityBase
         localNameRef = new StateValueRef<>(LocalName, id);
         playersRef = new EntityStateListRef<>(Players, id, new ArrayList<>());
         lobbyAdminId = new StateValueRef<>(LobbyAdminId, id);
-        serverIdRef = new StateValueRef<>(ServerId, id);
+        serverRef = new StateValueRef<>(Server, id);
         serverMsgRef = new StateValueRef<>(ServerMsg, id);
-        serversRef = new EntityStateListRef<>(Servers, id, new ArrayList<>());
+        serversRef = new EntityStateListRef<>(UDPServers, id, new ArrayList<>());
     }
 
     public CardGame getCardGame()
@@ -211,25 +212,35 @@ public class State extends EntityBase
 
     public List<Player> getRemotePlayers()
     {
-        return playersRef.getExcept(serverIdRef.get(), localIdRef.get());
+        return playersRef.getExcept(serverRef.get().id, localIdRef.get());
     }
 
     public List<UUID> getRemotePlayerIds()
     {
-        return playersRef.getExceptUUID(serverIdRef.get(), localIdRef.get());
+        return playersRef.getExceptUUID(serverRef.get().id, localIdRef.get());
+    }
+
+    public Server getServer()
+    {
+        return serverRef.get();
+    }
+
+    public void setServer(Server server)
+    {
+        serverRef.set(server);
     }
 
     public UUID getServerId()
     {
-        return serverIdRef.get();
+        Server server = getServer();
+        if (server == null)
+        {
+            return null;
+        }
+        return server.id;
     }
 
-    public void setServerId(UUID serverId)
-    {
-        serverIdRef.set(serverId);
-    }
-
-    public EntityStateListRef<Server> getServers()
+    public EntityStateListRef<UDPServer> getUDPServers()
     {
         return serversRef;
     }

@@ -35,7 +35,7 @@ public class D_ShowLobby extends DialogCommandBase
     @Override
     protected void showDialog(Context context, ContextType type, State state)
     {
-        Server server = state.getServers().get(state.getServerId());
+        Server server = state.getServer();
 
         String title = Loc.get(LocKey.DialogTitle_lobby, server.serverName);
         DialogData<Void> data = dialogServ.ShowAdvanced(title, null, new LobbyDialogContent(),

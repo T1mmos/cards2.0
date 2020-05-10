@@ -1,11 +1,7 @@
 package gent.timdemey.cards.model.entities.commands;
 
-import java.net.InetAddress;
-import java.util.UUID;
-
 import gent.timdemey.cards.model.entities.commands.payload.P_UDP_Response;
-import gent.timdemey.cards.model.entities.game.Server;
-import gent.timdemey.cards.model.entities.game.payload.P_Server;
+import gent.timdemey.cards.model.entities.game.UDPServer;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -21,36 +17,20 @@ import gent.timdemey.cards.utils.Debug;
  */
 public final class C_UDP_Response extends CommandBase
 {
-    public final UUID serverId;
-    public final String serverName;
-    public final InetAddress inetAddress;
-    public final int tcpport;
-    public final int majorVersion;
-    public final int minorVersion;
+    public final UDPServer server;
 
-    public C_UDP_Response(UUID serverId, String serverName, InetAddress inetAddress, int tcpport, int majorVersion,
-            int minorVersion)
+    public C_UDP_Response(UDPServer server)
     {
-        this.serverId = serverId;
-        this.serverName = serverName;
-        this.inetAddress = inetAddress;
-        this.tcpport = tcpport;
-        this.majorVersion = majorVersion;
-        this.minorVersion = minorVersion;
+        this.server = server;
     }
 
     public C_UDP_Response(P_UDP_Response pl)
     {
         super(pl);
 
-        this.serverId = pl.serverId;
-        this.serverName = pl.serverName;
-        this.inetAddress = pl.inetAddress;
-        this.tcpport = pl.tcpport;
-        this.majorVersion = pl.majorVersion;
-        this.minorVersion = pl.minorVersion;
+        this.server = pl.server;
     }
-    
+
     @Override
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
@@ -62,29 +42,16 @@ public final class C_UDP_Response extends CommandBase
     protected void preExecute(Context context, ContextType type, State state)
     {
         CheckContext(type, ContextType.UI);
-       
-        P_Server pl = new P_Server();
+
+        if (!state.getUDPServers().contains(server))
         {
-            pl.id = serverId;
-            pl.inetAddress = inetAddress;
-            pl.tcpport = tcpport;
-            pl.serverName = serverName;
-        }
-        Server server = new Server(pl);
-        if (!state.getServers().contains(server))
-        {
-            state.getServers().add(server);
+            state.getUDPServers().add(server);
         }
     }
 
     @Override
     public String toDebugString()
     {
-        return Debug.getKeyValue("serverId", serverId) + 
-               Debug.getKeyValue("serverName", serverName) + 
-               Debug.getKeyValue("inetAddress", inetAddress.getHostAddress()) + 
-               Debug.getKeyValue("tcpport", tcpport) + 
-               Debug.getKeyValue("majorVersion", majorVersion) + 
-               Debug.getKeyValue("minorVersion", minorVersion);
+        return Debug.getKeyValue("server", server);
     }
 }

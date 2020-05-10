@@ -37,14 +37,12 @@ public class D_StartServer extends DialogCommandBase
         StartServerDialogContent content = new StartServerDialogContent(state.getLocalName());
         IDialogService diagServ = Services.get(IDialogService.class);
         String title = Loc.get(LocKey.DialogTitle_creategame);
-        DialogData<StartServerDialogData> data = diagServ.ShowAdvanced(title, null, content,
-                DialogButtonType.BUTTONS_OK_CANCEL);
+        DialogData<StartServerDialogData> data = diagServ.ShowAdvanced(title, null, content, DialogButtonType.BUTTONS_OK_CANCEL);
 
         if (data.closeType == DialogButtonType.Ok)
         {
-            C_StartServer cmd_startServer = new C_StartServer(state.getLocalId(), data.payload.playerName,
-                    data.payload.srvname, data.payload.srvmsg, data.payload.udpport, data.payload.tcpport,
-                    data.payload.minconns, data.payload.maxconns, data.payload.autoconnect);
+            C_StartServer cmd_startServer = new C_StartServer(state.getLocalId(), data.payload.playerName, data.payload.srvname, data.payload.srvmsg,
+                    data.payload.udpport, data.payload.tcpport, data.payload.autoconnect);
 
             schedule(ContextType.UI, cmd_startServer);
         }

@@ -21,7 +21,7 @@ public class C_ClearServerList extends CommandBase
     {
         if (type == ContextType.UI)
         {
-            state.getServers().clear();
+            state.getUDPServers().clear();
         }
     }
 

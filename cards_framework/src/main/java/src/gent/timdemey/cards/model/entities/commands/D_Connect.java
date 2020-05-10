@@ -4,8 +4,9 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.game.GameState;
+import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.readonlymodel.ReadOnlyServer;
+import gent.timdemey.cards.readonlymodel.ReadOnlyUDPServer;
 import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -42,9 +43,10 @@ public class D_Connect extends DialogCommandBase
 
         if (data.closeType == DialogButtonType.Ok)
         {
-            ReadOnlyServer server = data.payload.server;
-            C_Connect cmd = new C_Connect(state.getLocalId(), server.getId(), server.getInetAddress(),
-                    server.getTcpPort(), data.payload.server.getServerName(), data.payload.playerName);
+            ReadOnlyUDPServer udpServer = data.payload.server;
+            Server server = udpServer.getServer();
+            C_Connect cmd = new C_Connect(state.getLocalId(), server.id, server.inetAddress,
+                    server.tcpport, server.serverName, data.payload.playerName);
             schedule(ContextType.UI, cmd);
         }
     }

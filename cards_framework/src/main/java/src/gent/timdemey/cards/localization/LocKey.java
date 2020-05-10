@@ -56,9 +56,9 @@ public final class LocKey
     public static final LocKey Menu_leave = Menu("leave");  
        
     public static final LocKey TableColumnTitle_ipaddress = TableColumnTitle("ipaddress");
+    public static final LocKey TableColumnTitle_lobbyPlayerCounts = TableColumnTitle("lobbyPlayerCounts");
     public static final LocKey TableColumnTitle_servername = TableColumnTitle("servername");
-
-    
+        
     //// PREFIXES
     
     private static final String DELIM = ".";

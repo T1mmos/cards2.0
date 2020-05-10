@@ -57,16 +57,15 @@ public class C_Connect extends CommandBase
                 throw new UnsupportedOperationException();
             }  
             
-            if (!state.getServers().contains(serverId))
+            P_Server pl = new P_Server();
             {
-                P_Server pl = new P_Server();
                 pl.id = serverId;
                 pl.inetAddress = serverInetAddress;
-                pl.serverName = serverName;
                 pl.tcpport = serverTcpPort;
-                state.getServers().add(new Server(pl));
-            }
-            state.setServerId(serverId);
+                pl.serverName = serverName;
+            };
+            Server server = new Server(pl);
+            state.setServer(server);
             
             ITcpConnectionListener tcpConnListener = new CommandSchedulingTcpConnectionListener(ContextType.UI);
             TCP_ConnectionPool tcpConnPool = new TCP_ConnectionPool(type.name(), 1, tcpConnListener);

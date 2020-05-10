@@ -1,7 +1,9 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.commands.payload.P_TCP_NOK;
 import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
@@ -34,6 +36,10 @@ public class C_TCP_NOK extends CommandBase
     @Override
     protected void preExecute(Context context, ContextType type, State state)
     {
-        state.setTcpConnectionPool(null);        
+        state.setServer(null);
+        state.setTcpConnectionPool(null);  
+        
+        IDialogService dialogServ = Services.get(IDialogService.class);
+        dialogServ.ShowMessage("TEMP", reason.name());
     }
 }

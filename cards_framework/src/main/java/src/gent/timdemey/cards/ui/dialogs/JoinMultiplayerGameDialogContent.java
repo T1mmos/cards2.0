@@ -18,10 +18,11 @@ import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.commands.C_UDP_StartServiceRequester;
 import gent.timdemey.cards.model.entities.commands.C_UDP_StopServiceRequester;
+import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
-import gent.timdemey.cards.readonlymodel.ReadOnlyServer;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
+import gent.timdemey.cards.readonlymodel.ReadOnlyUDPServer;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogContent;
@@ -42,6 +43,10 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMu
             {
                 return Loc.get(LocKey.TableColumnTitle_ipaddress);
             }
+            else if (column == 2)
+            {
+                return Loc.get(LocKey.TableColumnTitle_lobbyPlayerCounts);
+            }
             else
             {
                 throw new UnsupportedOperationException("Table only has 2 columns");
@@ -52,18 +57,23 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMu
         public Object getValueAt(int rowIndex, int columnIndex)
         {
             IContextService contextServ = Services.get(IContextService.class);
-            ReadOnlyServer server = contextServ.getThreadContext().getReadOnlyState().getServers().get(rowIndex);
+            ReadOnlyUDPServer udpServer = contextServ.getThreadContext().getReadOnlyState().getServers().get(rowIndex);
+            Server server = udpServer.getServer();
             if (columnIndex == 0)
             {
-                return server.getServerName();
+                return server.serverName;
             }
             else if (columnIndex == 1)
             {
-                return server.getInetAddress().getHostAddress() + ":" + server.getTcpPort();
+                return server.inetAddress.getHostAddress() + ":" + server.tcpport;
+            }
+            else if (columnIndex == 2)
+            {
+                return udpServer.getPlayerCount() + "/" + udpServer.getMaxPlayerCount();  
             }
             else
             {
-                throw new UnsupportedOperationException("Table only has 2 columns");
+                throw new UnsupportedOperationException("Table only has 3 columns");
             }
         }
 
@@ -78,7 +88,7 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMu
         @Override
         public int getColumnCount()
         {
-            return 2;
+            return 3;
         }
     }
 
@@ -186,7 +196,7 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMu
         if (dbType == DialogButtonType.Ok)
         {
             int row = table_servers.getSelectedRow();
-            ReadOnlyServer server = Services.get(IContextService.class).getThreadContext().getReadOnlyState()
+            ReadOnlyUDPServer server = Services.get(IContextService.class).getThreadContext().getReadOnlyState()
                     .getServers().get(row);
             String playerName = tf_name.getText();
             return new JoinMultiplayerGameData(server, playerName);

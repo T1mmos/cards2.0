@@ -95,7 +95,7 @@ public class C_EnterLobby extends CommandBase
             {
                 player = state.getPlayers().get(clientId);
             }
-    
+            
             // send unicast to new client
             {
                 CommandBase cmd_answer = new C_OnLobbyWelcome(clientId, state.getServerId(), state.getServerMessage(), state.getRemotePlayers(), state.getLobbyAdminId());

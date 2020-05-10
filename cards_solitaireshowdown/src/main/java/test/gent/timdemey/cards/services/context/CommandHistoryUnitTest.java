@@ -18,7 +18,7 @@ import gent.timdemey.cards.model.entities.commands.CommandExecution;
 import gent.timdemey.cards.model.entities.commands.CommandExecutionState;
 import gent.timdemey.cards.model.entities.commands.CommandHistory;
 import gent.timdemey.cards.model.entities.game.Player;
-import gent.timdemey.cards.model.entities.game.Server;
+import gent.timdemey.cards.model.entities.game.UDPServer;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.test.common.SolShowTestBase;
@@ -81,10 +81,10 @@ public class CommandHistoryUnitTest extends SolShowTestBase
         cs_p2laydown1 = cardGame.getCardStack(SolShowTestIds.P2_LAYDOWN1);
         
         // reset server
-        Server server = ServerHelper.createFixedServer();
-        state.getServers().clear();
-        state.getServers().add(server);
-        state.setServerId(server.id);
+        UDPServer udpServer = ServerHelper.createFixedUDPServer();
+        state.getUDPServers().clear();
+        state.getUDPServers().add(udpServer);
+        state.setServer(udpServer.server);
         
         // reset command history
         state.setCommandHistory(cmdHistory);        

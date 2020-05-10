@@ -56,7 +56,7 @@ public class StartServerDialogContent extends DialogContent<Void, StartServerDia
         if (dbType == DialogButtonType.Ok)
         {
             boolean autoconnect = true; // we currently don't support starting a server without automatically being a player
-            return new StartServerDialogData(tf_pname.getText(), tf_srvname.getText(), tf_srvmsg.getText(), 9000, 9010, 2, 2, autoconnect);
+            return new StartServerDialogData(tf_pname.getText(), tf_srvname.getText(), tf_srvmsg.getText(), 9000, 9010, autoconnect);
         }
         else
         {
