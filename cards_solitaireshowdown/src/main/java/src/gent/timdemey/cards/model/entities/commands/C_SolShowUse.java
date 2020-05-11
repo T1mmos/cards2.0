@@ -7,9 +7,6 @@ import java.util.UUID;
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;
-import gent.timdemey.cards.model.entities.commands.C_SetVisible;
-import gent.timdemey.cards.model.entities.commands.C_Use;
-import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.Context;
@@ -48,54 +45,46 @@ public class C_SolShowUse extends C_Use
             CardStack initiatorStack = initiatorCard.cardStack;
             String cardStackType = initiatorStack.cardStackType;
             
-            // can only move from a stack of your own
-            if (!getSourceId().equals(cardGame.getPlayerId(initiatorStack)))
-            {
-                return null;
-            }
-
-            Card card = initiatorStack.getHighestCard();
-            
             boolean isTurnOver = cardStackType.equals(SolShowCardStackType.TURNOVER);
             boolean isMiddle = cardStackType.equals(SolShowCardStackType.MIDDLE);
             boolean isSpecial = cardStackType.equals(SolShowCardStackType.SPECIAL);
             boolean isDepot = cardStackType.contentEquals(SolShowCardStackType.DEPOT);
             
-            // certain cardstacks only allow to pick up the highest card
-            // (UI-wise, only the turnover stack shows some lower cards)
-            if ((isTurnOver || isSpecial || isDepot) && card != initiatorCard)
+            // can only move from a stack of your own
+            if (!getSourceId().equals(cardGame.getPlayerId(initiatorStack)))
+            {
+                return null;
+            }
+            
+            // the SPECIAL stack's highest card can be invisible as long as the server didn't accept
+            // a previous move that involved the SPECIAL stack, to not reveal any cards until the previously
+            // highest card has completely moved away from this stack. 
+            if(isSpecial && !initiatorCard.visibleRef.get())
+            {
+                return null;
+            }
+            
+            // a player cannot "use" a card that is not the highest of the stack
+            // (of these cardstacks, only the turnover stack shows some lower cards in the UI)
+            Card highestCard = initiatorStack.getHighestCard();
+            if (highestCard != initiatorCard)
             {
                 return null;
             }
             
             if(isTurnOver || isMiddle || isSpecial)
             {
-                if(card.visibleRef.get())
+                for (CardStack dstCardStack : cardGame.getCardStacks(SolShowCardStackType.LAYDOWN))
                 {
-                    for (CardStack dstCardStack : cardGame.getCardStacks(SolShowCardStackType.LAYDOWN))
-                    {
-                        C_SolShowMove cmd = new C_SolShowMove(initiatorStack.id, dstCardStack.id, card.id);
-                        cmd.setSourceId(getSourceId());
-                        eligible.add(cmd);
-                    }
-                }
-                else if (!isSpecial)
-                {
-                    // the SPECIAL stack's highest card can be invisible as long as the server didn't accept
-                    // a previous move that involved the SPECIAL stack, to not reveal any cards until the previously
-                    // highest card has completely moved away from this stack. 
-                    List<Card> cards = initiatorStack.getCardsFrom(card);
-                    C_SetVisible cmd = new C_SetVisible(cards, true);
+                    C_SolShowMove cmd = new C_SolShowMove(initiatorStack.id, dstCardStack.id, initiatorCardId);
                     cmd.setSourceId(getSourceId());
                     eligible.add(cmd);
                 }
-                
             }
             else if (isDepot)
             {
                 addUseCommandDepot(eligible, initiatorStack, cardGame, localId);
             }
-            
         }
         
         for (CommandBase cmd : eligible)

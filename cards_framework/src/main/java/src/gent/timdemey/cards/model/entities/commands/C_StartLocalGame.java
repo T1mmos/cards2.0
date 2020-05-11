@@ -8,6 +8,7 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
+import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.payload.P_Player;
 import gent.timdemey.cards.model.state.State;
@@ -58,6 +59,7 @@ public class C_StartLocalGame extends CommandBase
         List<PlayerConfiguration> playerConfigs = ccServ.createStacks(playerIds, cards);
         CardGame cardGame = new CardGame(playerConfigs);
         state.setCardGame(cardGame);
+        state.setGameState(GameState.Started);
         
         CommandHistory commandHistory = new CommandHistory(false);
         state.setCommandHistory(commandHistory);

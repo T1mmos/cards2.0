@@ -70,7 +70,7 @@ class UICommandExecutor implements ICommandExecutor
         {
             if(!hasServer)
             {
-                throw new UnsupportedOperationException("A command of type " + cmdType + " cannot be handled if no server is set");
+                throw new UnsupportedOperationException("The command "+command.getName()+" of type " + cmdType + " cannot be handled if no server is set");
             }
             // delegate command execution to the command history
             if(src_local)

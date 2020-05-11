@@ -60,9 +60,9 @@ public class C_SetVisible extends CommandBase
     }
 
     @Override
-    public final CommandType getCommandType()
+    public CommandType getCommandType()
     {
-        return CommandType.SYNCED;
+        return CommandType.DEFAULT;
     }
     
     @Override
