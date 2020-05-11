@@ -185,7 +185,7 @@ public class C_SolShowMove extends C_Move
     {
         CardGame cardGame = state.getCardGame();
         CardStack srcCardStack = cardGame.getCardStack(srcCardStackId);
-        if (srcCardStack.cardStackType.equals(SolShowCardStackType.SPECIAL))
+        if (srcCardStack.cardStackType.equals(SolShowCardStackType.SPECIAL) && srcCardStack.cards.size() > 0)
         {
             srcCardStack.getHighestCard().visibleRef.set(true);
         }
