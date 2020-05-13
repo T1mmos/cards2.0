@@ -134,7 +134,7 @@ public class FrameService implements IFrameService
     @Override
     public BufferedImage getBackground()
     {
-        BufferedImage background = Services.get(IImageService.class).read("background_gray.png");
+        BufferedImage background = Services.get(IImageService.class).read("background_green.png");
         return background;
     }
 
