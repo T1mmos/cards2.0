@@ -8,6 +8,11 @@ Back in the early nillies people could play Solitaire Showdown, a game included 
 
 This project's goal is to replicate the original as close as possible. [This](screenshots/solshow_orig_game.jpg) is a screenshot of the original game.
 
+The game is still unfinished as specific parts require are not yet developed. Some examples:
+* Score system
+* Sounds
+* UI must be reworked to resemble the original game
+
 ## A pluggable card game engine
 
 The main engine found in cards_framework must be started with a plugin in order to run a game. Currently, two plugins are supported: 
