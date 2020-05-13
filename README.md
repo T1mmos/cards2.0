@@ -11,8 +11,8 @@ This project's goal is to replicate the original as close as possible.
 ## A pluggable card game engine
 
 The main engine found in cards_framework must be started with a plugin in order to run a game. Currently, two plugins are supported: 
-* Solitaire (single player - [screenshot](screenshots/solitaire_590x445.png))
-* Solitaire Showdown (1vs1 multiplayer - [animated GIF](screenshots/solitaireshowdown_04162020.gif))
+* Solitaire (single player - [screenshot](screenshots/solitaire_590x445.png?raw=true))
+* Solitaire Showdown (1vs1 multiplayer - [animated GIF](screenshots/solitaireshowdown_04162020.gif?raw=true))
 
 ## Project History
 
@@ -20,7 +20,7 @@ The main engine found in cards_framework must be started with a plugin in order 
 * Development on cards2.0 started somewhere in october 2018 and was initially focused at making a standard, single player Solitaire game in order to have most of the UI stuff working, but already with Solitaire Showdown in mind.
 * Starting late 2018, netcode was added, after which the work on the primary goal, Solitaire Showdown, was started. 
 * After a long period of doing nothing, I continued somewhere around January 2020, refactoring the complete codebase and throwing away unnecessary garbage. When that was done, support for undoing command chains was added. (In multiplayer the server may not accept commands that are already executed client-side. They are executed client-side and corrected afterwards if necessary, to ensure a smooth gameplay that never blocks).
-* The hardest part was then done. Support for lobbies was added, I completed the game logic, it all started coming together around April 2020. (see [animated GIF](screenshots/solitaireshowdown_04162020.gif)). 
+* The hardest part was then done. Support for lobbies was added, I completed the game logic, it all started coming together around April 2020. (see [animated GIF](screenshots/solitaireshowdown_04162020.gif?raw=true)). 
 
 ## Sprites
 
