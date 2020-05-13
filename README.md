@@ -1,5 +1,5 @@
 # cards2.0
-A pluggable card game engine by Tim De Mey with support for a remake of MSN Messenger's Solitaire Showdown
+A pluggable card game engine by Tim De Mey with a plugin supporting a remake of MSN Messenger's Solitaire Showdown
 
 ![Screenshot Solitaire Showdown](screenshots/solshow_3d.png)
 
@@ -8,7 +8,7 @@ Back in the early nillies people could play Solitaire Showdown, a game included 
 
 This project's goal is to replicate the original as close as possible. [This](screenshots/solshow_orig_game.jpg) is a screenshot of the original game.
 
-The game is still unfinished as specific parts require are not yet developed. Some examples:
+The game is still unfinished as specific parts require are not yet (fully) developed. Some examples:
 * Score system
 * Sounds
 * UI must be reworked to resemble the original game
