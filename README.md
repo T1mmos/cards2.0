@@ -6,7 +6,7 @@ A pluggable card game engine by Tim De Mey with a plugin supporting a remake of 
 ## Project Goal
 Back in the early nillies people could play Solitaire Showdown, a game included in the chat application MSN Messenger - later renamed to Windows Live Messenger. As Microsoft pulled the plug, this game is no longer available to the public, or at least not in its original form. 
 
-This project's goal is to replicate the original as close as possible. [This](screenshots/solshow_orig_game.jpg) is a screenshot of the original game.
+This project's goal is to replicate the original as close as possible. [This](screenshots/solshow_orig_game.jpg?raw=true) is a screenshot of the original game.
 
 The game is still unfinished as specific parts require are not yet (fully) developed. Some examples:
 * Score system
