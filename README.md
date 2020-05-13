@@ -15,9 +15,9 @@ The game is still unfinished as specific parts require are not yet (fully) devel
 
 ## A pluggable card game engine
 
-The main engine found in cards_framework must be started with a plugin in order to run a game. Currently, two plugins are supported: 
-* Solitaire (single player - [screenshot](screenshots/solitaire_590x445.png?raw=true))
-* Solitaire Showdown (1vs1 multiplayer - [animated GIF](screenshots/solitaireshowdown_04162020.gif?raw=true))
+The main engine found in [cards_framework](../master/cards_framework) must be started with a [plugin](../master/cards_framework/src/main/java/src/gent/timdemey/cards/ICardPlugin.java) in order to run a game. Currently, two plugins are supported: 
+* Solitaire (single player - [screenshot](screenshots/solitaire_590x445.png?raw=true) - [plugin](../master/cards_solitaire/src/main/java/src/gent/timdemey/cards/SolitairePlugin.java))
+* Solitaire Showdown (1vs1 multiplayer - [animated GIF](screenshots/solitaireshowdown_04162020.gif?raw=true) - [plugin](../master/cards_solitaireshowdown/src/main/java/src/gent/timdemey/cards/SolShowPlugin.java))
 
 ## Sprites
 
