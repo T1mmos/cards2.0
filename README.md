@@ -1,7 +1,7 @@
 # cards2.0
 A pluggable card game engine with support for a remake of MSN Messenger's Solitaire Showdown
 
-![Screenshot Solitaire Showdown](screenshots/solitaireshowdown_3d.png)
+![Screenshot Solitaire Showdown](screenshots/solshow_3d.png)
 
 ## Project Goal
 Back in the early nillies people could play Solitaire Showdown, a game included in the chat application MSN Messenger - later renamed to Windows Live Messenger. As Microsoft pulled the plug, this game is no longer available to the public, or at least not in its original form. 
