@@ -25,13 +25,13 @@ public class C_Reject extends CommandBase
     }
     
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
-        return false;
+        return CanExecuteResponse.no("This command is not intended to be executed");
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void preExecute(Context context, ContextType type, State state)
     {
         throw new IllegalStateException("This command cannot be executed directly.");
     }

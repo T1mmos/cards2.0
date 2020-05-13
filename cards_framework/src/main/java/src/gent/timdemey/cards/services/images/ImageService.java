@@ -10,7 +10,7 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.logging.ILogManager;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.services.IImageService;
 import gent.timdemey.cards.services.IResourceManager;
 
@@ -20,7 +20,7 @@ public class ImageService implements IImageService
     @Override
     public BufferedImage read(String filename)
     {
-        Services.get(ILogManager.class).log("Read image: " + filename);
+        Logger.trace("Read image: %s", filename);
         IResourceManager resMan = Services.get(IResourceManager.class);
         InputStream is = resMan.getResourceAsStream(filename);
         try

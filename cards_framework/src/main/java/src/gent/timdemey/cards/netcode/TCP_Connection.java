@@ -9,8 +9,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingDeque;
 
-import gent.timdemey.cards.Services;
-import gent.timdemey.cards.logging.ILogManager;
+import gent.timdemey.cards.logging.Logger;
 
 public final class TCP_Connection
 {
@@ -22,11 +21,11 @@ public final class TCP_Connection
     private boolean started = false;
     private boolean ended = false;
 
-    TCP_Connection(Socket socket, TCP_ConnectionPool pool)
+    TCP_Connection(String name, Socket socket, TCP_ConnectionPool pool)
     {
         this.socket = socket;
-        this.thread_read = new Thread(() -> read(), "TCP read (" + getRemote() + ")");
-        this.thread_send = new Thread(() -> send(), "TCP send (" + getRemote() + ")");
+        this.thread_read = new Thread(() -> read(), name + " :: TCP read (" + getRemote() + ")");
+        this.thread_send = new Thread(() -> send(), name + " :: TCP send (" + getRemote() + ")");
         this.queue_send = new LinkedBlockingDeque<>();
         this.pool = pool;
     }
@@ -98,9 +97,7 @@ public final class TCP_Connection
 
     private void onException(IOException e)
     {
-        Services.get(ILogManager.class).log("Following exception may be expected (connection closing):");
-        Services.get(ILogManager.class).log(e);
-
+        Logger.error("Following exception may be expected (connection closing):", e);
         stop();
     }
 

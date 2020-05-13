@@ -18,7 +18,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyPlayer;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IPositionManager;
-import gent.timdemey.cards.services.boot.SolShowCardStackType;
+import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.Context;
 
 public class SolShowPositionManager implements IPositionManager

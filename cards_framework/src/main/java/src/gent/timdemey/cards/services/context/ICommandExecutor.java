@@ -21,6 +21,13 @@ interface ICommandExecutor
      */
     void schedule(CommandBase command, State state);
     
+    /**
+     * Immediately executes a command. 
+     * @param command
+     * @param state
+     */
+    void run(CommandBase command, State state);
+    
     void shutdown();
 
     void addExecutionListener(IExecutionListener executionListener);

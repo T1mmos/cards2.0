@@ -30,13 +30,13 @@ public class C_SetVisible extends CommandBase
     }
 
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
-        return true;
+        return CanExecuteResponse.yes();
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void preExecute(Context context, ContextType type, State state)
     {
         for (Card card : cards)
         {
@@ -60,9 +60,9 @@ public class C_SetVisible extends CommandBase
     }
 
     @Override
-    public boolean isSyncable()
+    public CommandType getCommandType()
     {
-        return true;
+        return CommandType.DEFAULT;
     }
     
     @Override

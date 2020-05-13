@@ -7,7 +7,6 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.model.entities.commands.C_StopGame;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
@@ -35,7 +34,6 @@ public class GameBootListener implements IStateListener
         if (success == null || !success)
         {
             Services.get(IDialogService.class).ShowInternalError();
-            Services.get(IContextService.class).getThreadContext().schedule(new C_StopGame());
         }
         else
         {

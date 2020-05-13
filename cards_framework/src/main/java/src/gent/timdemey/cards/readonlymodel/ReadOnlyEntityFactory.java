@@ -11,14 +11,15 @@ import java.util.stream.Collectors;
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;
+import gent.timdemey.cards.model.entities.commands.CommandExecution;
+import gent.timdemey.cards.model.entities.commands.CommandHistory;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.Server;
+import gent.timdemey.cards.model.entities.game.UDPServer;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.model.state.StateListRef;
 import gent.timdemey.cards.services.context.Change;
-import gent.timdemey.cards.services.context.CommandExecution;
-import gent.timdemey.cards.services.context.CommandHistory;
 
 public class ReadOnlyEntityFactory
 {
@@ -47,13 +48,14 @@ public class ReadOnlyEntityFactory
         addConverter(CommandHistory.class, ReadOnlyCommandHistory.class, ReadOnlyEntityFactory::getOrCreateCommandHistory);
         addConverter(Player.class, ReadOnlyPlayer.class, ReadOnlyEntityFactory::getOrCreatePlayer);
         addConverter(Server.class, ReadOnlyServer.class, ReadOnlyEntityFactory::getOrCreateServer);
+        addConverter(UDPServer.class, ReadOnlyUDPServer.class, ReadOnlyEntityFactory::getOrCreateUDPServer);
         addConverter(CommandExecution.class, ReadOnlyCommandExecution.class, ReadOnlyEntityFactory::getOrCreateCommandExecution);
     }
 
     private static final Map<Class<?>, Map<UUID, ? extends ReadOnlyEntityBase<?>>> entities = new HashMap<>();
 
     private static <S extends EntityBase, T extends ReadOnlyEntityBase<S>> void addConverter(Class<S> entityClazz, Class<T> roEntityClazz,
-        Function<? super S, ? extends T> mapperFunc)
+            Function<? super S, ? extends T> mapperFunc)
     {
         Function<? super EntityBase, Object> rawMapperFunc = (Function<? super EntityBase, Object>) mapperFunc;
         EntityConverter converter = new EntityConverter((Class<?>) entityClazz, (Class<?>) roEntityClazz, rawMapperFunc);
@@ -109,12 +111,22 @@ public class ReadOnlyEntityFactory
     {
         return getOrCreateList(servers, ReadOnlyEntityFactory::getOrCreateServer);
     }
+    
+    public static ReadOnlyUDPServer getOrCreateUDPServer(UDPServer server)
+    {
+        return GetOrCreateEntity(server, s -> new ReadOnlyUDPServer(s));
+    }
+
+    public static ReadOnlyEntityList<ReadOnlyUDPServer> getOrCreateUDPServerList(StateListRef<UDPServer> servers)
+    {
+        return getOrCreateList(servers, ReadOnlyEntityFactory::getOrCreateUDPServer);
+    }
 
     public static ReadOnlyCommandHistory getOrCreateCommandHistory(CommandHistory commandHistory)
     {
         return GetOrCreateEntity(commandHistory, ch -> new ReadOnlyCommandHistory(ch));
     }
-    
+
     public static ReadOnlyCommandExecution getOrCreateCommandExecution(CommandExecution commandExecution)
     {
         return GetOrCreateEntity(commandExecution, ce -> new ReadOnlyCommandExecution(ce));
@@ -133,7 +145,7 @@ public class ReadOnlyEntityFactory
         Object newValue = toReadOnly(change.newValue);
         Object addedValue = toReadOnly(change.addedValue);
         Object removedValue = toReadOnly(change.removedValue);
-        
+
         ReadOnlyChange roChange = new ReadOnlyChange(change.changeType, roProperty, change.entityId, oldValue, newValue, addedValue, removedValue);
         return roChange;
     }
@@ -144,26 +156,26 @@ public class ReadOnlyEntityFactory
         {
             return null;
         }
-        
+
         Class<?> srcClazz = wrappee.getClass();
 
-        if(wrappee instanceof EntityBase)
+        if (wrappee instanceof EntityBase)
         {
             EntityBase entity = (EntityBase) wrappee;
             EntityConverter convertor = null;
             for (int i = 0; i < CONVERTORS.size(); i++)
             {
-                if(CONVERTORS.get(i).srcClazz == srcClazz)
+                if (CONVERTORS.get(i).srcClazz == srcClazz)
                 {
                     convertor = CONVERTORS.get(i);
                     break;
                 }
             }
 
-            if(convertor == null)
+            if (convertor == null)
             {
-                throw new IllegalStateException(
-                    "The given object is an instance of EntityBase, but no mapper is found to wrap it in a ReadOnlyEntityBase object");
+                throw new IllegalStateException("The given object of type " + wrappee.getClass().getSimpleName()
+                        + " is an instance of EntityBase, but no mapper is found to wrap it in a ReadOnlyEntityBase object");
             }
 
             ReadOnlyEntityBase<?> roEntity = (ReadOnlyEntityBase<?>) convertor.mapperFunc.apply(entity);
@@ -176,7 +188,7 @@ public class ReadOnlyEntityFactory
     }
 
     private static <SRC extends EntityBase, DST extends ReadOnlyEntityBase<SRC>> ReadOnlyEntityList<DST> getOrCreateList(List<SRC> srcList,
-        Function<? super SRC, ? extends DST> mapperFunc)
+            Function<? super SRC, ? extends DST> mapperFunc)
     {
         List<DST> wrappee = srcList.stream().map(mapperFunc).collect(Collectors.toList());
         ReadOnlyEntityList<DST> roList = new ReadOnlyEntityList<DST>(wrappee);
@@ -187,14 +199,14 @@ public class ReadOnlyEntityFactory
     {
         Map<UUID, ReadOnlyEntityBase<?>> typedEntities = (Map<UUID, ReadOnlyEntityBase<?>>) entities.get(clazz);
 
-        if(typedEntities == null)
+        if (typedEntities == null)
         {
             throw new IllegalArgumentException("No registered instances of class " + clazz);
         }
 
         T roEntity = (T) typedEntities.get(id);
 
-        if(roEntity == null)
+        if (roEntity == null)
         {
             throw new IllegalArgumentException("No entity registered of " + clazz + " with id=" + id);
         }
@@ -208,10 +220,10 @@ public class ReadOnlyEntityFactory
         {
             return null;
         }
-        
+
         Map<UUID, ReadOnlyEntityBase<S>> typedEntities = (Map<UUID, ReadOnlyEntityBase<S>>) entities.get(entity.getClass());
 
-        if(typedEntities == null)
+        if (typedEntities == null)
         {
             typedEntities = new HashMap<UUID, ReadOnlyEntityBase<S>>();
             entities.put(entity.getClass(), typedEntities);
@@ -219,7 +231,7 @@ public class ReadOnlyEntityFactory
 
         T roEntity = (T) typedEntities.get(entity.id);
 
-        if(roEntity == null)
+        if (roEntity == null)
         {
             roEntity = creator.CreateReadOnlyEntity(entity);
             typedEntities.put(entity.id, roEntity);

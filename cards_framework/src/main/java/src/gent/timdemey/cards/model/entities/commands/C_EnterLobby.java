@@ -4,8 +4,9 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.logging.ILogManager;
-import gent.timdemey.cards.model.entities.commands.payload.P_JoinGame;
+import gent.timdemey.cards.logging.Logger;
+import gent.timdemey.cards.model.entities.commands.payload.P_EnterLobby;
+import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.payload.P_Player;
 import gent.timdemey.cards.model.state.State;
@@ -31,20 +32,35 @@ public class C_EnterLobby extends CommandBase
         this.clientId = clientId;
     }
 
-    public C_EnterLobby(P_JoinGame pl)
+    public C_EnterLobby(P_EnterLobby pl)
     {
         this.clientName = pl.clientName;
         this.clientId = pl.clientId;
     }
 
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
-        return state.getCardGame() == null;
+        if (type == ContextType.UI)
+        {
+            if (state.getGameState() != GameState.Connected)
+            {
+                return CanExecuteResponse.no("GameState should be Connected but is: " + state.getGameState());
+            }
+        }
+        else
+        {
+            if (state.getGameState() != GameState.Lobby)
+            {
+                return CanExecuteResponse.no("GameState should be Lobby but is: " + state.getGameState());
+            }
+        }
+        
+        return CanExecuteResponse.yes();
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void preExecute(Context context, ContextType type, State state)
     {
         INetworkService netServ = Services.get(INetworkService.class);
         
@@ -55,7 +71,7 @@ public class C_EnterLobby extends CommandBase
         else if(type == ContextType.Server)
         {
             TCP_Connection tcpConnection = getSourceTcpConnection();
-            Services.get(ILogManager.class).log("Player %s (id %s) joining from %s", clientName, clientId, tcpConnection.getRemote());
+            Logger.info("Player %s (id %s) joining from %s", clientName, clientId, tcpConnection.getRemote());
 
             state.getTcpConnectionPool().bindUUID(clientId, tcpConnection);
 
@@ -79,7 +95,7 @@ public class C_EnterLobby extends CommandBase
             {
                 player = state.getPlayers().get(clientId);
             }
-    
+            
             // send unicast to new client
             {
                 CommandBase cmd_answer = new C_OnLobbyWelcome(clientId, state.getServerId(), state.getServerMessage(), state.getRemotePlayers(), state.getLobbyAdminId());

@@ -1,43 +1,55 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.netcode.TCP_ConnectionAccepter;
-import gent.timdemey.cards.netcode.UDP_ServiceAnnouncer;
+import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
 public class C_StopServer extends CommandBase
 {
-    @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    public C_StopServer()
     {
-        return true;
+        
+    }
+    
+    @Override
+    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    {
+        if (state.getServerId() == null)
+        {
+            return CanExecuteResponse.no("There is no ServerId set");
+        }
+        
+        return CanExecuteResponse.yes();
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void preExecute(Context context, ContextType type, State state)
     {
         if (type == ContextType.UI)
         {
-            reschedule(ContextType.Server);
+            schedule(ContextType.Server, this);
             return;
         }
-
-        UDP_ServiceAnnouncer udpServAnnouncer = state.getUdpServiceAnnouncer();
-        if (udpServAnnouncer != null)
-        {
-            udpServAnnouncer.stop();
-            state.setUdpServiceAnnouncer(null);
-        }
-
-        TCP_ConnectionAccepter tcpConnAccepter = state.getTcpConnectionAccepter();
-        if (tcpConnAccepter != null)
-        {
-            tcpConnAccepter.stop();
-            state.setTcpConnectionAccepter(null);
-        }
+        
+        // clean up
+        state.setUdpServiceAnnouncer(null);       
+        state.setTcpConnectionAccepter(null);     
+        state.setTcpConnectionPool(null);
+       
+        // Drop the server context entirely
+        IContextService ctxtServ = Services.get(IContextService.class);
+        ctxtServ.drop(ContextType.Server);
     }
 
+    @Override
+    protected void undo(Context context, ContextType type, State state)
+    {
+        // TODO Auto-generated method stub
+        super.undo(context, type, state);
+    }
+    
     @Override
     public String toDebugString()
     {

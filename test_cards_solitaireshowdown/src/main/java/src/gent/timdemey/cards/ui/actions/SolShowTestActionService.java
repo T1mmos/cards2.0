@@ -1,8 +1,8 @@
 package gent.timdemey.cards.ui.actions;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.model.commands.C_CardsVisibleSwitch;
-import gent.timdemey.cards.model.commands.C_NewSolShowGame;
+import gent.timdemey.cards.model.entities.commands.C_CardsVisibleSwitch;
+import gent.timdemey.cards.model.entities.commands.C_NewSolShowGame;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.context.Context;
 

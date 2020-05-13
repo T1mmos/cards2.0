@@ -19,14 +19,16 @@ abstract class CommandExecutorBase implements ICommandExecutor
         private final CommandBase command;
         private final State state;
         private final long time_issued;
+        private final boolean highprio;
 
-        private CommandTask(CommandBase command, State state)
+        private CommandTask(CommandBase command, State state, boolean highprio)
         {
             Preconditions.checkNotNull(command);
 
             this.command = command;
             this.state = state;
             this.time_issued = System.currentTimeMillis();
+            this.highprio = highprio;
         }
 
         @Override
@@ -46,7 +48,18 @@ abstract class CommandExecutorBase implements ICommandExecutor
         @Override
         public int compareTo(CommandTask o)
         {
-            return (int) (time_issued - o.time_issued);
+            if (highprio == o.highprio)
+            {
+                return (int) (time_issued - o.time_issued);
+            }
+            else if (highprio)
+            {
+                return -1;
+            }
+            else 
+            {
+                return +1;
+            }
         }
     }
 
@@ -69,7 +82,14 @@ abstract class CommandExecutorBase implements ICommandExecutor
     @Override
     public void schedule(CommandBase command, State state)
     {
-        CommandTask task = new CommandTask(command, state);
+        CommandTask task = new CommandTask(command, state, false);
+        executor.execute(task);
+    }
+    
+    @Override
+    public final void run(CommandBase command, State state)
+    {
+        CommandTask task = new CommandTask(command, state, true);
         executor.execute(task);
     }
 

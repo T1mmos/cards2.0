@@ -47,17 +47,18 @@ public class C_Composite extends CommandBase
     }
 
     @Override
-    public boolean canExecute(Context context, ContextType type, State state)
+    public CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
         boolean canExecute = true;
         int i = 0;
         while (canExecute && i < commands.size())
         {
-            if (commands.get(i).canExecute(context, type, state))
+            CanExecuteResponse respI = commands.get(i).canExecute(context, type, state);
+            if (respI.canExecute)
             {
                 try
                 {
-                    commands.get(i).execute(context, type, state);
+                    commands.get(i).preExecute(context, type, state);
                 }
                 catch (Exception e)
                 {
@@ -69,22 +70,36 @@ public class C_Composite extends CommandBase
             {
                 canExecute = false;
             }
+            i++;
         }
+        
+        int j = i - 1;
 
         // unexecute
         while (i > 0)
         {
-            commands.get(i).undo(context, type, state);
+            commands.get(--i).undo(context, type, state);
         }
-        return canExecute;
+        
+        if (canExecute)
+        {
+            return CanExecuteResponse.yes();
+        }
+        else
+        {
+            String cmdName = commands.get(j).getName();
+            String reason = "Failed to execute command " + cmdName + " at index " + j;
+            return CanExecuteResponse.no(reason);
+        }
+            
     }
 
     @Override
-    public void execute(Context context, ContextType type, State state)
+    public void preExecute(Context context, ContextType type, State state)
     {
         for (int i = 0; i < commands.size(); i++)
         {
-            commands.get(i).execute(context, type, state);
+            commands.get(i).preExecute(context, type, state);
         }
     }
 

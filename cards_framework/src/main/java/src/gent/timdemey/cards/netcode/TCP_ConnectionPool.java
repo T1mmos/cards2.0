@@ -17,11 +17,11 @@ import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
+import gent.timdemey.cards.logging.Logger;
 
 public final class TCP_ConnectionPool
 {
-    private final ILogManager logger = Services.get(ILogManager.class);
-
+    private final String name;
     /// connections not yet associated to a UUID (should be empty 99% of the time)
     private final List<TCP_Connection> halfConns;
     /// fully established connections that are associated to a UUID.
@@ -31,11 +31,12 @@ public final class TCP_ConnectionPool
     private final int maxConnections;
     private final ExecutorService execServ;
 
-    public TCP_ConnectionPool(int maxConnections, ITcpConnectionListener connListener)
+    public TCP_ConnectionPool(String name, int maxConnections, ITcpConnectionListener connListener)
     {
         Preconditions.checkNotNull(connListener,
                 "You cannot use a TCP_ConnectionPool if you do not specify a callback to be invoked upon new incoming connections");
-
+        
+        this.name = name;
         this.halfConns = Collections.synchronizedList(new ArrayList<>());
         this.uuid2conn = new ConcurrentHashMap<>();
         this.externalConnListener = connListener;
@@ -47,14 +48,16 @@ public final class TCP_ConnectionPool
             @Override
             public Thread newThread(Runnable r)
             {
-                return new Thread(r, "TCP_ConnectionPool Delegate");
+                Thread thr = new Thread(r, name + " :: TCP_ConnectionPool");
+                thr.setDaemon(true);
+                return thr;
             }
         });
     }
 
     void onTcpConnectionStarted(TCP_Connection connection)
     {
-        externalConnListener.onTcpConnectionAdded(connection, this);
+        externalConnListener.onTcpConnectionAdded(connection);
     }
 
     void onTcpMessageReceived(TCP_Connection connection, String str_in)
@@ -115,15 +118,9 @@ public final class TCP_ConnectionPool
         return maxConnections;
     }
 
-    boolean isFull()
-    {
-        return maxConnections == halfConns.size() + uuid2conn.size();
-    }
-
     void addConnection(Socket socket)
     {
         Preconditions.checkNotNull(socket);
-        Preconditions.checkState(!isFull(), "Connection pool is full with " + maxConnections + " connections");
 
         execServ.submit(() ->
         {
@@ -144,11 +141,11 @@ public final class TCP_ConnectionPool
             try
             {
                 String hostAddr = address.getHostAddress();
-                logger.log("Connecting to %s:%s", hostAddr, port);
+                Logger.info("Connecting to %s:%s...", hostAddr, port);
                 socket = new Socket(address, port);
                 String localAddr = socket.getLocalAddress().getHostAddress();
                 int localPort = socket.getLocalPort();
-                logger.log("Connected to %s:%s, local address is %s:%s", hostAddr, port, localAddr, localPort);
+                Logger.info("Connected to %s:%s, local address is %s:%s", hostAddr, port, localAddr, localPort);
                 addConnectionAndStart(socket);
             }
             catch (IOException e)
@@ -160,7 +157,7 @@ public final class TCP_ConnectionPool
 
     private void addConnectionAndStart(Socket socket)
     {
-        TCP_Connection connection = new TCP_Connection(socket, this);
+        TCP_Connection connection = new TCP_Connection(name, socket, this);
         halfConns.add(connection);
         connection.start();
     }
@@ -209,6 +206,11 @@ public final class TCP_ConnectionPool
             closeConnection(id);
         }
     }
+    
+    public void stop()
+    {
+        execServ.shutdown();
+    }
 
     public void closeConnection(UUID remote)
     {
@@ -223,5 +225,10 @@ public final class TCP_ConnectionPool
             locallyClosed.add(remote);
             tcpConnection.stop();
         });
+    }
+
+    public int getHalfConnections()
+    {
+        return halfConns.size();
     }
 }

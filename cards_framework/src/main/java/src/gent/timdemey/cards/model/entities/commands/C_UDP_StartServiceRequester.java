@@ -1,7 +1,7 @@
 package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.logging.ILogManager;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.netcode.UDP_ServiceRequester;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
@@ -24,14 +24,14 @@ public class C_UDP_StartServiceRequester extends CommandBase
     }
 
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
         CheckContext(type, ContextType.UI);
-        return true;
+        return CanExecuteResponse.yes();
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void preExecute(Context context, ContextType type, State state)
     {
         CheckContext(type, ContextType.UI);
 
@@ -66,8 +66,7 @@ public class C_UDP_StartServiceRequester extends CommandBase
             CommandBase command = dtoMapper.toCommand(json);
             if (!(command instanceof C_UDP_Response))
             {
-                Services.get(ILogManager.class)
-                        .log("Unexpected command on UDP datagram, class: " + command.getClass().getSimpleName());
+                Logger.warn("Unexpected command on UDP datagram, class: " + command.getClass().getSimpleName());
                 return;
             }
 
@@ -75,9 +74,9 @@ public class C_UDP_StartServiceRequester extends CommandBase
             LimitedContext context = contextServ.getContext(ContextType.UI);
             context.schedule(command);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Services.get(ILogManager.class).log("Failed to deserialize UDP datagram, ignoring");
+            Logger.error("Failed to deserialize UDP datagram, ignoring", ex);
             return;
         }
     }

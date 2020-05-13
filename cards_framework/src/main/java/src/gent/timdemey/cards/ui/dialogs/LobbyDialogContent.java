@@ -56,9 +56,7 @@ public class LobbyDialogContent extends DialogContent<Void, Void>
                     jlabel.setText(addedPlayer.getName());
                 }
                 else if (typed.changeType == ChangeType.Remove)
-                {
-                    ReadOnlyPlayer removedPlayer = typed.removedValue;
-                    
+                {                    
                     l_remotePlayer.setText(null);
                 }
             }
@@ -67,7 +65,7 @@ public class LobbyDialogContent extends DialogContent<Void, Void>
                 TypedChange<String> typed = ReadOnlyState.ServerMsg.cast(change);
                 l_serverMsg.setText(typed.newValue);
             }
-            else if (property == ReadOnlyState.ServerId)
+            else if (property == ReadOnlyState.Server)
             {
                 if (change.newValue == null)
                 {

@@ -3,8 +3,10 @@ package gent.timdemey.cards.model.entities.commands;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
+import gent.timdemey.cards.model.entities.game.GameState;
+import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.readonlymodel.ReadOnlyServer;
+import gent.timdemey.cards.readonlymodel.ReadOnlyUDPServer;
 import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -16,9 +18,18 @@ import gent.timdemey.cards.ui.dialogs.JoinMultiplayerGameDialogContent;
 public class D_Connect extends DialogCommandBase
 {
     @Override
-    protected boolean canShowDialog(Context context, ContextType type, State state)
+    protected CanExecuteResponse canShowDialog(Context context, ContextType type, State state)
     {
-        return state.getServerId() == null;
+        if (state.getGameState() != GameState.NotConnected)
+        {
+            return CanExecuteResponse.no("GameState should be NotConnected but is: " + state.getGameState());
+        }
+        if (state.getServerId() != null)
+        {
+            return CanExecuteResponse.no("State.ServerId is not null: " + state.getServerId());
+        }
+
+        return CanExecuteResponse.yes();
     }
 
     @Override
@@ -32,9 +43,10 @@ public class D_Connect extends DialogCommandBase
 
         if (data.closeType == DialogButtonType.Ok)
         {
-            ReadOnlyServer server = data.payload.server;
-            C_Connect cmd = new C_Connect(state.getLocalId(), server.getId(), server.getInetAddress(),
-                    server.getTcpPort(), data.payload.server.getServerName(), data.payload.playerName);
+            ReadOnlyUDPServer udpServer = data.payload.server;
+            Server server = udpServer.getServer();
+            C_Connect cmd = new C_Connect(state.getLocalId(), server.id, server.inetAddress,
+                    server.tcpport, server.serverName, data.payload.playerName);
             schedule(ContextType.UI, cmd);
         }
     }

@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardStack;
+import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -21,8 +22,13 @@ public abstract class C_Pull extends CommandBase
     }
     
     @Override
-    public final boolean canExecute(Context context, ContextType type, State state)
+    public final CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {        
+        if (state.getGameState() != GameState.Started)
+        {
+            return CanExecuteResponse.no("GameState should be Started but is: " + state.getGameState());
+        }
+        
         CardStack srcCardStack = state.getCardGame().getCardStack(srcCardStackId);
         Card srcCard = state.getCardGame().getCards().get(srcCardId);
                 
@@ -35,14 +41,14 @@ public abstract class C_Pull extends CommandBase
      * @param srcCard
      * @return
      */
-    protected boolean canPull(CardStack srcCardStack, Card srcCard, State state)
+    protected CanExecuteResponse canPull(CardStack srcCardStack, Card srcCard, State state)
     {
-        return true;
+        return CanExecuteResponse.yes();
     }
 
     
     @Override
-    public final void execute(Context context, ContextType type, State state)
+    public final void preExecute(Context context, ContextType type, State state)
     {
         throw new UnsupportedOperationException("This command should not be executed directly, only the canExecute is important");
     }
@@ -54,9 +60,9 @@ public abstract class C_Pull extends CommandBase
     }
     
     @Override
-    public final boolean isSyncable()
+    public final CommandType getCommandType()
     {
-        return false;
+        return CommandType.SYNCED;
     }
     
     @Override

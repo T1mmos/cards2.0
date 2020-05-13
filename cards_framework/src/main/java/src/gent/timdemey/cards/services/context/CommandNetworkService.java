@@ -5,8 +5,9 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.logging.ILogManager;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
+import gent.timdemey.cards.netcode.TCP_Connection;
 import gent.timdemey.cards.netcode.TCP_ConnectionPool;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.INetworkService;
@@ -21,6 +22,13 @@ public class CommandNetworkService implements INetworkService
         List<UUID> dstIds = Arrays.asList(dstId);
         CheckArgs(localId, dstIds, command, tcpConnPool);
         sendPriv(localId, dstIds, command, tcpConnPool);
+    }
+    
+    @Override 
+    public void send(TCP_Connection conn, CommandBase command)
+    {
+        String serialized = serialize(command);
+        conn.send(serialized);
     }
 
     @Override
@@ -38,15 +46,20 @@ public class CommandNetworkService implements INetworkService
         // didn't originate from somewhere else.
         if (srcId.equals(localId))
         {
-            CommandDtoMapper dtoMapper = Services.get(ISerializationService.class).getCommandDtoMapper();
-            String serialized = dtoMapper.toJson(command);
+            String serialized = serialize(command);
             tcpConnPool.broadcast(dstIds, serialized);
         }
         else
         {
-            ILogManager logger = Services.get(ILogManager.class);
-            logger.log("The command %s is not a local command, not so sending it", command.getName());
+            Logger.debug("The command %s is not a local command, not so sending it", command.getName());
         }
+    }
+    
+    private String serialize(CommandBase command)
+    {
+        CommandDtoMapper dtoMapper = Services.get(ISerializationService.class).getCommandDtoMapper();
+        String serialized = dtoMapper.toJson(command);
+        return serialized;
     }
 
     private void CheckArgs(UUID localId, List<UUID> dstIds, CommandBase command, TCP_ConnectionPool tcpConnPool)
@@ -58,10 +71,6 @@ public class CommandNetworkService implements INetworkService
         if (dstIds == null)
         {
             throw new NullPointerException("destination");
-        }
-        if (dstIds.size() == 0)
-        {
-            throw new IllegalStateException("To send or broadcast, at least one DestinationId is expected");
         }
         if (command == null)
         {

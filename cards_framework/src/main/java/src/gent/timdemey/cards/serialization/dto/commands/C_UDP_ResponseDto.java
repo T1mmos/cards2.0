@@ -1,11 +1,8 @@
 package gent.timdemey.cards.serialization.dto.commands;
 
+import gent.timdemey.cards.serialization.dto.game.UDPServerDto;
+
 public class C_UDP_ResponseDto extends CommandBaseDto
 {
-    public String serverId;
-    public String serverName;
-    public String inetAddress;
-    public int tcpport;
-    public int majorVersion;
-    public int minorVersion;
+    public UDPServerDto server;
 }

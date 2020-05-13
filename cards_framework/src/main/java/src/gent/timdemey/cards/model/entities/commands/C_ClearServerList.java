@@ -11,17 +11,17 @@ public class C_ClearServerList extends CommandBase
     }
 
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
-        return true;
+        return CanExecuteResponse.yes();
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void preExecute(Context context, ContextType type, State state)
     {
         if (type == ContextType.UI)
         {
-            state.getServers().clear();
+            state.getUDPServers().clear();
         }
     }
 

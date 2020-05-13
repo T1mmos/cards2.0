@@ -5,8 +5,10 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.readonlymodel.IStateListener;
+import gent.timdemey.cards.services.context.IContextListener;
 
-class ActionBase extends AbstractAction
+abstract class ActionBase extends AbstractAction implements IContextListener, IStateListener
 {
     private final String action;
 

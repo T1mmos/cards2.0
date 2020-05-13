@@ -67,7 +67,7 @@ public final class Context
 
     public boolean canExecute(CommandBase command)
     {
-        return command.canExecute(limitedContext.getState());
+        return limitedContext.canExecute(command);
     }
 
     public void schedule(CommandBase command)
@@ -144,7 +144,5 @@ public final class Context
                 sl.onChange(roChange);
             }
         }
-
-
     }
 }

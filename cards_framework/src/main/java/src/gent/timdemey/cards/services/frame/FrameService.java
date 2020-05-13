@@ -96,14 +96,13 @@ public class FrameService implements IFrameService
 
         if (plugin.getPlayerCount() > 1)
         {
-            addToMenu(menu, Actions.ACTION_CREATE);
+            addToMenu(menu, Actions.ACTION_CREATE_MULTIPLAYER);
             addToMenu(menu, Actions.ACTION_JOIN);
             addToMenu(menu, Actions.ACTION_LEAVE);
         }
         else
         {
             addToMenu(menu, Actions.ACTION_START);
-            addToMenu(menu, Actions.ACTION_STOP);
         }
 
         menu.addSeparator();
@@ -126,8 +125,8 @@ public class FrameService implements IFrameService
     {
         JMenu menu = new JMenu(Loc.get(LocKey.DebugMenu_debug));
 
-        addToMenu(menu, Actions.ACTION_DEBUG);
-        addToMenu(menu, Actions.ACTION_GC);
+        addToMenu(menu, Actions.ACTION_DEBUG_DRAWOUTLINES);
+        addToMenu(menu, Actions.ACTION_DEBUG_GC);
 
         return menu;
     }
@@ -135,7 +134,7 @@ public class FrameService implements IFrameService
     @Override
     public BufferedImage getBackground()
     {
-        BufferedImage background = Services.get(IImageService.class).read("background_green.png");
+        BufferedImage background = Services.get(IImageService.class).read("background_gray.png");
         return background;
     }
 

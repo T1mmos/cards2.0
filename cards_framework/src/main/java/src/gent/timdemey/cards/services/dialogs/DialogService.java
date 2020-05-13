@@ -1,33 +1,17 @@
 package gent.timdemey.cards.services.dialogs;
 
-import java.awt.Container;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
-import java.awt.image.ConvolveOp;
-import java.awt.image.Kernel;
-import java.util.Arrays;
 import java.util.EnumSet;
 
-import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 
 import com.google.common.base.Preconditions;
 
-import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
-import gent.timdemey.cards.logging.ILogManager;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.services.IDialogService;
-import net.miginfocom.swing.MigLayout;
 
 public final class DialogService implements IDialogService
 {
@@ -72,7 +56,7 @@ public final class DialogService implements IDialogService
             EnumSet<DialogButtonType> closeTypes)
     {
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
-        Services.get(ILogManager.class).log("Showing dialog with title: " + title);
+        Logger.info("Showing dialog with title: " + title);
 
      /*   JPanel glass = new JPanel(new MigLayout("insets 0"));
         Container root = frame.getRootPane();

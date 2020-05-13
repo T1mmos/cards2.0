@@ -2,6 +2,7 @@ package gent.timdemey.cards.services;
 
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.context.IContextListener;
 import gent.timdemey.cards.services.context.LimitedContext;
 
 /**
@@ -65,5 +66,8 @@ public interface IContextService
      * Checks if there is a context installed for the given context type.
      */
     public boolean isInitialized(ContextType type);
-
+    
+    public void addContextListener(IContextListener listener);
+    
+    public void removeContextListener(IContextListener listener);
 }

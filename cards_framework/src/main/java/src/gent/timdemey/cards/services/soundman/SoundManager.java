@@ -15,7 +15,6 @@ import gent.timdemey.cards.services.ISoundManager;
 
 public class SoundManager implements ISoundManager
 {
-
     private static int SNDTHREAD_COUNT = 0;
     private final Executor soundExecutor;
 
@@ -23,7 +22,6 @@ public class SoundManager implements ISoundManager
     {
         this.soundExecutor = Executors.newCachedThreadPool(new ThreadFactory()
         {
-
             @Override
             public Thread newThread(Runnable r)
             {

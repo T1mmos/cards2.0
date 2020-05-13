@@ -3,6 +3,7 @@ package gent.timdemey.cards.model.entities.commands;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
+import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IDialogService;
@@ -16,9 +17,18 @@ import gent.timdemey.cards.ui.dialogs.StartServerDialogData;
 public class D_StartServer extends DialogCommandBase
 {
     @Override
-    protected boolean canShowDialog(Context context, ContextType type, State state)
+    protected CanExecuteResponse canShowDialog(Context context, ContextType type, State state)
     {
-        return !Services.get(IContextService.class).isInitialized(ContextType.Server);
+        if (Services.get(IContextService.class).isInitialized(ContextType.Server))
+        {
+            return CanExecuteResponse.no("Server context already initialized");
+        }
+        if (state.getGameState() != GameState.NotConnected)
+        {
+            return CanExecuteResponse.no("Cannot start a server while connected to a server, current GameState=" + state.getGameState());
+        }
+
+        return CanExecuteResponse.yes();
     }
 
     @Override
@@ -29,10 +39,10 @@ public class D_StartServer extends DialogCommandBase
         String title = Loc.get(LocKey.DialogTitle_creategame);
         DialogData<StartServerDialogData> data = diagServ.ShowAdvanced(title, null, content, DialogButtonType.BUTTONS_OK_CANCEL);
 
-        if(data.closeType == DialogButtonType.Ok)
+        if (data.closeType == DialogButtonType.Ok)
         {
-            C_StartServer cmd_startServer = new C_StartServer(state.getLocalId(), data.payload.playerName, data.payload.srvname, data.payload.srvmsg, data.payload.udpport,
-                data.payload.tcpport, data.payload.minconns, data.payload.maxconns, data.payload.autoconnect);
+            C_StartServer cmd_startServer = new C_StartServer(state.getLocalId(), data.payload.playerName, data.payload.srvname, data.payload.srvmsg,
+                    data.payload.udpport, data.payload.tcpport, data.payload.autoconnect);
 
             schedule(ContextType.UI, cmd_startServer);
         }

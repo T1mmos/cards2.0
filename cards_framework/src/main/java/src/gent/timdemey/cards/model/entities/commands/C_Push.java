@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardStack;
+import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -23,8 +24,13 @@ public abstract class C_Push extends CommandBase
     }
     
     @Override
-    public final boolean canExecute(Context context, ContextType type, State state)
+    public final CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {        
+        if (state.getGameState() != GameState.Started)
+        {
+            return CanExecuteResponse.no("GameState should be Started but is: " + state.getGameState());
+        }
+        
         CardStack dstCardStack = state.getCardGame().getCardStack(dstCardStackId);
         List<Card> srcCards = state.getCardGame().getCards().getOnly(srcCardIds);
         
@@ -37,25 +43,19 @@ public abstract class C_Push extends CommandBase
      * @param srcCards
      * @return
      */
-    protected boolean canPush(CardStack dstCardStack, List<Card> srcCards, State state)
+    protected CanExecuteResponse canPush(CardStack dstCardStack, List<Card> srcCards, State state)
     {
-        return true;
+        return CanExecuteResponse.yes();
     }
     
     @Override
-    public final void execute(Context context, ContextType type, State state)
+    public final void preExecute(Context context, ContextType type, State state)
     {
         throw new UnsupportedOperationException("This command should not be executed directly, only the canExecute is important");
     }
     
     @Override
     protected final boolean canUndo(Context context, ContextType type, State state)
-    {
-        return false;
-    }
-    
-    @Override
-    public final boolean isSyncable()
     {
         return false;
     }

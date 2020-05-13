@@ -8,7 +8,7 @@ import org.junit.Test;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.game.Player;
-import gent.timdemey.cards.services.boot.SolShowCardStackType;
+import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.test.common.SolShowTestBase;
 import gent.timdemey.cards.test.helpers.CardGameHelper;
 import gent.timdemey.cards.test.helpers.PlayerHelper;

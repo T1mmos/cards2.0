@@ -4,43 +4,37 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.cards.CardGame;
+import gent.timdemey.cards.model.entities.commands.CommandHistory;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.Server;
-import gent.timdemey.cards.netcode.ITcpConnectionListener;
+import gent.timdemey.cards.model.entities.game.UDPServer;
 import gent.timdemey.cards.netcode.TCP_ConnectionAccepter;
 import gent.timdemey.cards.netcode.TCP_ConnectionPool;
 import gent.timdemey.cards.netcode.UDP_ServiceAnnouncer;
 import gent.timdemey.cards.netcode.UDP_ServiceRequester;
-import gent.timdemey.cards.services.context.CommandHistory;
 
 public class State extends EntityBase
 {
     public static final Property<CardGame> CardGame = Property.of(State.class, CardGame.class, "CardGame");
     public static final Property<CommandHistory> CommandHistory = Property.of(State.class, CommandHistory.class, "CommandHistory");
-    public static final Property<GameState> GameState = Property.of(State.class, GameState.class, "GameState"); 
+    public static final Property<GameState> GameState = Property.of(State.class, GameState.class, "GameState");
     public static final Property<UUID> LocalId = Property.of(State.class, UUID.class, "LocalId");
     public static final Property<String> LocalName = Property.of(State.class, String.class, "LocalName");
     public static final Property<UUID> LobbyAdminId = Property.of(State.class, UUID.class, "LobbyAdminId");
     public static final Property<Player> Players = Property.of(State.class, Player.class, "Players");
-    public static final Property<UUID> ServerId = Property.of(State.class, UUID.class, "ServerId");
-    public static final Property<String> ServerMsg = Property.of(State.class, String.class, "ServerMsg");
-    public static final Property<Server> Servers = Property.of(State.class, Server.class, "Servers");
-    public static final Property<TCP_ConnectionAccepter> TcpConnectionAccepter = Property.of(State.class, TCP_ConnectionAccepter.class,
-        "TcpConnectionAccepter");
-    public static final Property<TCP_ConnectionPool> TcpConnectionPool = Property.of(State.class, TCP_ConnectionPool.class, "TcpConnectionPool");
-    public static final Property<ITcpConnectionListener> TcpConnectionListener = Property.of(State.class, ITcpConnectionListener.class,
-        "TcpConnectionListener");
-    public static final Property<UDP_ServiceAnnouncer> UdpServiceAnnouncer = Property.of(State.class, UDP_ServiceAnnouncer.class, "UdpServiceAnnouncer");
-    public static final Property<UDP_ServiceRequester> UdpServiceRequester = Property.of(State.class, UDP_ServiceRequester.class, "UdpServiceRequester");
+    public static final Property<Server> Server = Property.of(State.class, Server.class, "Server");
+    public static final Property<String> ServerMsg = Property.of(State.class, String.class, "ServerMsg");    
+    public static final Property<UDPServer> UDPServers = Property.of(State.class, UDPServer.class, "UDPServers");
 
     private StateValueRef<CommandHistory> commandHistoryRef;
 
     // state lists
-    private EntityStateListRef<Player> playersRef;
-    private EntityStateListRef<Server> serversRef;
+    private final EntityStateListRef<Player> playersRef;
+    private final EntityStateListRef<UDPServer> serversRef;
 
     // state values
     private StateValueRef<CardGame> cardGameRef;
@@ -48,36 +42,27 @@ public class State extends EntityBase
     private StateValueRef<UUID> localIdRef;
     private StateValueRef<String> localNameRef;
     private StateValueRef<UUID> lobbyAdminId;
-    private StateValueRef<UUID> serverIdRef;
+    private StateValueRef<Server> serverRef;
     private StateValueRef<String> serverMsgRef;
 
     // context specific
-    // private StateValueRef<TCP_ConnectionCreator> tcpConnectionCreatorRef;
-    private StateValueRef<TCP_ConnectionAccepter> tcpConnectionAccepterRef;
-    private StateValueRef<TCP_ConnectionPool> tcpConnectionPoolRef;
-    private StateValueRef<ITcpConnectionListener> tcpConnectionListenerRef;
-    private StateValueRef<UDP_ServiceAnnouncer> udpServiceAnnouncerRef;
-    private StateValueRef<UDP_ServiceRequester> udpServiceRequesterRef;
+    private TCP_ConnectionAccepter tcpConnectionAccepter = null;
+    private TCP_ConnectionPool tcpConnectionPool = null;
+    private UDP_ServiceAnnouncer udpServiceAnnouncer = null;
+    private UDP_ServiceRequester udpServiceRequester = null;
 
     public State()
     {
         cardGameRef = new StateValueRef<>(CardGame, id);
-        gameStateRef = new StateValueRef<>(GameState, id, gent.timdemey.cards.model.entities.game.GameState.None);
+        gameStateRef = new StateValueRef<>(GameState, id, gent.timdemey.cards.model.entities.game.GameState.NotConnected);
         commandHistoryRef = new StateValueRef<>(CommandHistory, id);
         localIdRef = new StateValueRef<>(LocalId, id);
         localNameRef = new StateValueRef<>(LocalName, id);
         playersRef = new EntityStateListRef<>(Players, id, new ArrayList<>());
         lobbyAdminId = new StateValueRef<>(LobbyAdminId, id);
-        serverIdRef = new StateValueRef<>(ServerId, id);
+        serverRef = new StateValueRef<>(Server, id);
         serverMsgRef = new StateValueRef<>(ServerMsg, id);
-        serversRef = new EntityStateListRef<>(Servers, id, new ArrayList<>());
-
-        // state.tcpConnectionCreatorRef = StateValueRef.create(state);
-        tcpConnectionAccepterRef = new StateValueRef<>(TcpConnectionAccepter, id);
-        tcpConnectionPoolRef = new StateValueRef<>(TcpConnectionPool, id);
-        tcpConnectionListenerRef = new StateValueRef<>(TcpConnectionListener, id);
-        udpServiceAnnouncerRef = new StateValueRef<>(UdpServiceAnnouncer, id);
-        udpServiceRequesterRef = new StateValueRef<>(UdpServiceRequester, id);
+        serversRef = new EntityStateListRef<>(UDPServers, id, new ArrayList<>());
     }
 
     public CardGame getCardGame()
@@ -99,55 +84,90 @@ public class State extends EntityBase
     {
         gameStateRef.set(gameState);
     }
-    
+
     public TCP_ConnectionAccepter getTcpConnectionAccepter()
     {
-        return tcpConnectionAccepterRef.get();
+        return tcpConnectionAccepter;
     }
 
     public void setTcpConnectionAccepter(TCP_ConnectionAccepter tcpConnectionAccepter)
     {
-        tcpConnectionAccepterRef.set(tcpConnectionAccepter);
-    }
-
-    public ITcpConnectionListener getTcpConnectionListener()
-    {
-        return tcpConnectionListenerRef.get();
-    }
-
-    public void setTcpConnectionListener(ITcpConnectionListener tcpConnectionListener)
-    {
-        tcpConnectionListenerRef.set(tcpConnectionListener);
+        if(this.tcpConnectionAccepter != null)
+        {
+            try
+            {
+                this.tcpConnectionAccepter.stop();
+            }
+            catch (Exception ex)
+            {
+                Logger.error(ex);
+            }
+        }
+        this.tcpConnectionAccepter = tcpConnectionAccepter;
     }
 
     public TCP_ConnectionPool getTcpConnectionPool()
     {
-        return tcpConnectionPoolRef.get();
+        return tcpConnectionPool;
     }
 
     public void setTcpConnectionPool(TCP_ConnectionPool tcpConnectionPool)
     {
-        tcpConnectionPoolRef.set(tcpConnectionPool);
+        if(this.tcpConnectionPool != null)
+        {
+            try
+            {
+                this.tcpConnectionPool.closeAllConnections();
+                this.tcpConnectionPool.stop();
+            }
+            catch (Exception ex)
+            {
+                Logger.error(ex);
+            }
+        }
+        this.tcpConnectionPool = tcpConnectionPool;
     }
 
     public UDP_ServiceRequester getUdpServiceRequester()
     {
-        return udpServiceRequesterRef.get();
+        return udpServiceRequester;
     }
 
     public void setUdpServiceRequester(UDP_ServiceRequester udpServiceRequester)
     {
-        udpServiceRequesterRef.set(udpServiceRequester);
+        if(this.udpServiceRequester != null)
+        {
+            try
+            {
+                this.udpServiceRequester.stop();
+            }
+            catch (Exception ex)
+            {
+                Logger.error(ex);
+            }
+        }
+        this.udpServiceRequester = udpServiceRequester;
     }
 
     public UDP_ServiceAnnouncer getUdpServiceAnnouncer()
     {
-        return udpServiceAnnouncerRef.get();
+        return udpServiceAnnouncer;
     }
 
     public void setUdpServiceAnnouncer(UDP_ServiceAnnouncer udpServiceAnnouncer)
     {
-        udpServiceAnnouncerRef.set(udpServiceAnnouncer);
+        if(this.udpServiceAnnouncer != null)
+        {
+            try
+            {
+                this.udpServiceAnnouncer.stop();
+            }
+            catch (Exception ex)
+            {
+                Logger.error(ex);
+            }
+        }
+        this.udpServiceAnnouncer = udpServiceAnnouncer;
     }
 
     public UUID getLobbyAdminId()
@@ -171,7 +191,7 @@ public class State extends EntityBase
     }
 
     public void setLocalId(UUID id)
-    {            
+    {
         localIdRef.set(id);
     }
 
@@ -192,25 +212,35 @@ public class State extends EntityBase
 
     public List<Player> getRemotePlayers()
     {
-        return playersRef.getExcept(serverIdRef.get(), localIdRef.get());
+        return playersRef.getExcept(serverRef.get().id, localIdRef.get());
     }
 
     public List<UUID> getRemotePlayerIds()
     {
-        return playersRef.getExceptUUID(serverIdRef.get(), localIdRef.get());
+        return playersRef.getExceptUUID(serverRef.get().id, localIdRef.get());
     }
-    
+
+    public Server getServer()
+    {
+        return serverRef.get();
+    }
+
+    public void setServer(Server server)
+    {
+        serverRef.set(server);
+    }
+
     public UUID getServerId()
     {
-        return serverIdRef.get();
+        Server server = getServer();
+        if (server == null)
+        {
+            return null;
+        }
+        return server.id;
     }
 
-    public void setServerId(UUID serverId)
-    {
-        serverIdRef.set(serverId);
-    }
-
-    public EntityStateListRef<Server> getServers()
+    public EntityStateListRef<UDPServer> getUDPServers()
     {
         return serversRef;
     }

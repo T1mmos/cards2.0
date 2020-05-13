@@ -3,13 +3,13 @@ package gent.timdemey.cards.services.commands;
 import java.util.List;
 import java.util.UUID;
 
-import gent.timdemey.cards.model.commands.C_SolShowMove;
-import gent.timdemey.cards.model.commands.C_SolShowPull;
-import gent.timdemey.cards.model.commands.C_SolShowPush;
-import gent.timdemey.cards.model.commands.C_SolShowUse;
 import gent.timdemey.cards.model.entities.commands.C_Move;
 import gent.timdemey.cards.model.entities.commands.C_Pull;
 import gent.timdemey.cards.model.entities.commands.C_Push;
+import gent.timdemey.cards.model.entities.commands.C_SolShowMove;
+import gent.timdemey.cards.model.entities.commands.C_SolShowPull;
+import gent.timdemey.cards.model.entities.commands.C_SolShowPush;
+import gent.timdemey.cards.model.entities.commands.C_SolShowUse;
 import gent.timdemey.cards.model.entities.commands.C_Use;
 import gent.timdemey.cards.services.ICommandService;
 

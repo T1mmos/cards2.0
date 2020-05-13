@@ -1,6 +1,9 @@
 package gent.timdemey.cards.services.context;
 
+import java.util.Collections;
 import java.util.ConcurrentModificationException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -8,8 +11,6 @@ import javax.swing.SwingUtilities;
 
 import com.google.common.base.Preconditions;
 
-import gent.timdemey.cards.ICardPlugin;
-import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.IContextService;
 
 /**
@@ -21,10 +22,12 @@ import gent.timdemey.cards.services.IContextService;
 public class ContextService implements IContextService
 {
     protected final ConcurrentMap<ContextType, Context> fullContexts;
+    private final Set<IContextListener> contextListeners;
 
     public ContextService()
     {
         fullContexts = new ConcurrentHashMap<>();
+        contextListeners = Collections.synchronizedSet(new HashSet<>());
     }
 
     @Override
@@ -32,28 +35,29 @@ public class ContextService implements IContextService
     {
         return SwingUtilities.isEventDispatchThread();
     }
-    
+
     @Override
     public Context getThreadContext()
     {
         ContextType type;
 
-        if(isUiThread())
+        if (isUiThread())
         {
             type = ContextType.UI;
         }
-        else if(Thread.currentThread() instanceof CommandExecutionThread)
+        else if (Thread.currentThread() instanceof CommandExecutionThread)
         {
             CommandExecutionThread cmdExecThread = (CommandExecutionThread) Thread.currentThread();
             type = cmdExecThread.contextType;
         }
         else
         {
-            throw new IllegalThreadStateException("This thread has no access to context: " + Thread.currentThread().getName());
+            throw new IllegalThreadStateException(
+                    "This thread has no access to context: " + Thread.currentThread().getName());
         }
 
         Context context = fullContexts.get(type);
-        if(context == null)
+        if (context == null)
         {
             throw new IllegalStateException("No context installed for context type: " + type);
         }
@@ -70,7 +74,7 @@ public class ContextService implements IContextService
     public LimitedContext getContext(ContextType ctxtType)
     {
         Context context = fullContexts.get(ctxtType);
-        if(context == null)
+        if (context == null)
         {
             throw new IllegalStateException("No context installed for context type: " + ctxtType);
         }
@@ -83,11 +87,11 @@ public class ContextService implements IContextService
         Preconditions.checkState(isUiThread(), "You must initialize from the UI thread!");
 
         ICommandExecutor cmdExecutor = null;
-        if(type == ContextType.UI)
+        if (type == ContextType.UI)
         {
             cmdExecutor = new UICommandExecutor();
         }
-        else if(type == ContextType.Server)
+        else if (type == ContextType.Server)
         {
             cmdExecutor = new ServerCommandExecutor();
         }
@@ -99,18 +103,19 @@ public class ContextService implements IContextService
         boolean allowListeners = type == ContextType.UI;
         Context context = Context.createContext(type, cmdExecutor, allowListeners);
 
-        if(type == ContextType.UI)
-        {
-            ICardPlugin plugin = Services.get(ICardPlugin.class);
-            boolean multiplayer = plugin.getPlayerCount() > 1;
-            boolean undoable = !multiplayer;
-            boolean erasable = multiplayer;
-        }
-
         Context prev = fullContexts.putIfAbsent(type, context);
-        if(prev != null)
+        if (prev != null)
         {
-            throw new ConcurrentModificationException("Context concurrently installed by different thread for type " + type);
+            throw new ConcurrentModificationException(
+                    "Context concurrently installed by different thread for type " + type);
+        }
+        
+        synchronized (contextListeners)
+        {
+            for (IContextListener ctxtListener : contextListeners)
+            {
+                ctxtListener.onContextInitialized(type);
+            }
         }
     }
 
@@ -120,9 +125,18 @@ public class ContextService implements IContextService
         Context ctxt = fullContexts.get(type);
         ctxt.limitedContext.shutdownAndWait();
         Context curr = fullContexts.remove(type);
-        if(curr == null)
+        if (curr == null)
         {
-            throw new IllegalStateException("Async processor currently unavailable, so cannot drop processor for type " + type);
+            throw new IllegalStateException(
+                    "Async processor currently unavailable, so cannot drop processor for type " + type);
+        }
+
+        synchronized (contextListeners)
+        {
+            for (IContextListener ctxtListener : contextListeners)
+            {
+                ctxtListener.onContextDropped(type);
+            }
         }
     }
 
@@ -130,5 +144,17 @@ public class ContextService implements IContextService
     public boolean isInitialized(ContextType type)
     {
         return fullContexts.containsKey(type);
+    }
+
+    @Override
+    public void addContextListener(IContextListener listener)
+    {
+        contextListeners.add(listener);
+    }
+
+    @Override
+    public void removeContextListener(IContextListener listener)
+    {
+        contextListeners.remove(listener);
     }
 }

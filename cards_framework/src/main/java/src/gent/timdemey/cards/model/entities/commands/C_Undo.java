@@ -17,17 +17,22 @@ public final class C_Undo extends CommandBase
     }
 
     @Override
-    protected boolean canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
         if (state.getCommandHistory() == null)
         {
-            return false;
+            return CanExecuteResponse.no("State.CommandHistory is null");
         }
-        return state.getCommandHistory().canUndo();
+        if (!state.getCommandHistory().canUndo())
+        {
+            return CanExecuteResponse.no("CommandHistory cannot undo");
+        }
+
+        return CanExecuteResponse.yes();
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void preExecute(Context context, ContextType type, State state)
     {
         state.getCommandHistory().undo(state);
     }

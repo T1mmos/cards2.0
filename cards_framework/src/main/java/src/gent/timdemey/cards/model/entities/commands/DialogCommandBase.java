@@ -16,17 +16,17 @@ public abstract class DialogCommandBase extends CommandBase
     }
 
     @Override
-    protected final boolean canExecute(Context context, ContextType type, State state)
+    protected final CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
         CheckContext(type, ContextType.UI);
 
         return canShowDialog(context, type, state);
     }
 
-    protected abstract boolean canShowDialog(Context context, ContextType type, State state);
+    protected abstract CanExecuteResponse canShowDialog(Context context, ContextType type, State state);
 
     @Override
-    protected final void execute(Context context, ContextType type, State state)
+    protected final void preExecute(Context context, ContextType type, State state)
     {
         CheckContext(type, ContextType.UI);
 

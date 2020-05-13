@@ -1,19 +1,15 @@
 package gent.timdemey.cards.services.context;
 
-import java.util.UUID;
-
-import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.logging.ILogManager;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.C_Accept;
-import gent.timdemey.cards.model.entities.commands.C_DropPlayer;
 import gent.timdemey.cards.model.entities.commands.C_Reject;
+import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.CommandHistory;
+import gent.timdemey.cards.model.entities.commands.CommandType;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.netcode.CommandSchedulingTcpConnectionListener;
-import gent.timdemey.cards.netcode.TCP_Connection;
-import gent.timdemey.cards.netcode.TCP_ConnectionPool;
-import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.INetworkService;
 import gent.timdemey.cards.services.ISerializationService;
 
 class ServerCommandExecutor extends CommandExecutorBase
@@ -26,64 +22,58 @@ class ServerCommandExecutor extends CommandExecutorBase
     @Override
     protected void execute(CommandBase command, State state)
     {
-        Services.get(ILogManager.class).log("Processing command '" + command.getClass().getSimpleName() + "'");
-        if (command.canExecute(state))
+        Logger.info("Processing command '%s', id=%s", command.getName(), command.id);
+
+        CommandHistory cmdHist = state.getCommandHistory();
+
+        // a command cannot be executed twice
+        if (cmdHist != null && cmdHist.containsAccepted(command))
         {
-            command.execute(state);
-            
-            if (command.isSyncable())
+            Logger.warn("This command was already executed: '%s'; ignoring", command.getName());
+            return;
+        }
+
+        CanExecuteResponse resp = command.canExecute(state);
+        boolean executable = resp.canExecute;
+        CommandType cmdType = command.getCommandType();
+
+        // syncable commands are commands that are executed clientside,
+        // but can be rejected serverside e.g. when another player was earlier
+        // but due to network delay the client wasn't yet aware.
+        if (executable)
+        {
+            if (cmdType == CommandType.TRACKED || cmdType == CommandType.SYNCED)
             {
-                C_Accept acceptCmd = new C_Accept(command.id);                
-                ISerializationService serServ = Services.get(ISerializationService.class);
-                String answer = serServ.getCommandDtoMapper().toJson(acceptCmd);
-                state.getTcpConnectionPool().getConnection(command.getSourceId()).send(answer);
+                state.getCommandHistory().addAccepted(command, state);
+
+                // in case of syncable commands, we send a response to the source so
+                // the client can mark the command as accepted in its history
+                if (cmdType == CommandType.SYNCED)
+                {
+                    C_Accept acceptCmd = new C_Accept(command.id);
+                    INetworkService ns = Services.get(INetworkService.class);
+                    ns.send(state.getLocalId(), command.getSourceId(), acceptCmd, state.getTcpConnectionPool());
+                }
             }
-            
+            else if (cmdType == CommandType.DEFAULT)
+            {
+                command.preExecute(state);
+            }
         }
         else
         {
-            Services.get(ILogManager.class).log("Can't execute this command: '" + command.getClass().getSimpleName() + "'");
-            if (command.isSyncable())
+            if (cmdType == CommandType.SYNCED)
             {
-                C_Reject rejectCmd = new C_Reject(command.id);                
+                Logger.info("Can't execute syncable command: '%s'. Responding with a C_Reject. Reason: %s", command.getName(), resp.reason);
+
+                C_Reject rejectCmd = new C_Reject(command.id);
                 ISerializationService serServ = Services.get(ISerializationService.class);
                 String answer = serServ.getCommandDtoMapper().toJson(rejectCmd);
                 state.getTcpConnectionPool().getConnection(command.getSourceId()).send(answer);
             }
-        }
-
-    }
-
-    private class ConnListener extends CommandSchedulingTcpConnectionListener
-    {
-        public ConnListener()
-        {
-            super(ContextType.Server);
-        }
-
-        @Override
-        public void onTcpConnectionAdded(TCP_Connection connection, TCP_ConnectionPool connectionPool)
-        {
-            super.onTcpConnectionAdded(connection, connectionPool);
-
-            int requiredPlayerCount = Services.get(ICardPlugin.class).getPlayerCount();
-
-        }
-
-        @Override
-        public void onTcpConnectionLocallyClosed(UUID id, TCP_Connection connection)
-        {
-
-        }
-
-        @Override
-        public void onTcpConnectionRemotelyClosed(UUID id, TCP_Connection connection)
-        {
-            if (id != null)
+            else
             {
-                LimitedContext context = Services.get(IContextService.class).getContext(ContextType.Server);
-                CommandBase cmd = new C_DropPlayer(id);
-                context.schedule(cmd);
+                Logger.error("Can't execute non-syncable command: '%s'. Reason: %s", command.getName(), resp.reason);
             }
         }
     }

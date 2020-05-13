@@ -7,7 +7,7 @@ import gent.timdemey.cards.services.ICommandService;
 import gent.timdemey.cards.services.IGamePanelManager;
 import gent.timdemey.cards.services.IPositionManager;
 import gent.timdemey.cards.services.ISerializationService;
-import gent.timdemey.cards.services.boot.SolShowCardGameCreationService;
+import gent.timdemey.cards.services.cardgame.SolShowCardGameCreationService;
 import gent.timdemey.cards.services.commands.SolShowCommandService;
 import gent.timdemey.cards.services.gamepanel.SolShowGamePanelManager;
 import gent.timdemey.cards.services.position.SolShowPositionManager;
