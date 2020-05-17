@@ -1,16 +1,16 @@
 package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.model.entities.cards.CardGame;
-import gent.timdemey.cards.model.entities.commands.CommandBase;
-import gent.timdemey.cards.model.entities.commands.CommandHistory;
+import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.entities.game.Player;
+import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.test.helpers.PlayerHelper;
 import gent.timdemey.cards.test.helpers.SolShowCardGameHelper;
 
-public class C_NewSolShowGame extends CommandBase
+public class C_FakeSolShowGame extends CommandBase
 {
 
     @Override
@@ -29,6 +29,8 @@ public class C_NewSolShowGame extends CommandBase
         state.setLocalId(player0.id);
         state.getPlayers().add(player0);
         state.getPlayers().add(player1);
+        state.setGameState(GameState.Started);
+        state.setServer(new Server("FakeServer", null, 1024));
         
         state.setCardGame(cardGame);
         state.setCommandHistory(new CommandHistory(true));

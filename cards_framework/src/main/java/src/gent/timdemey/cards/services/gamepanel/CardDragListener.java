@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
@@ -112,7 +113,7 @@ class CardDragListener extends MouseAdapter
 
             boolean pull = pullable && (!useable || useable && e.getClickCount() % 2 == 1);
             boolean use = useable && (!pullable || pullable && e.getClickCount() % 2 == 0);
-
+            
             if (pull)
             {
                 List<ReadOnlyCard> cards = stack.getCardsFrom(card);
@@ -172,6 +173,7 @@ class CardDragListener extends MouseAdapter
 
             int intersectAMax = 0;
             CommandBase cmdMove = null;
+            List<UUID> visitedStackIds = new ArrayList<>();
             for (Component comp : rootJCard.getParent().getComponents()) // inefficient?
             {
                 if (!(comp instanceof JScalableImage))
@@ -204,6 +206,13 @@ class CardDragListener extends MouseAdapter
                 {
                     continue;
                 }
+                
+                UUID dstCardStackId = dstCardStack.getId();
+                if (visitedStackIds.contains(dstCardStackId))
+                {
+                    continue;
+                }                
+                visitedStackIds.add(dstCardStackId);
 
                 List<ReadOnlyCard> cards = draggedImages.stream()
                         .map(jcard -> Services.get(IScalableImageManager.class).getUUID(jcard))

@@ -10,7 +10,7 @@ public class Debug
 {
     public static String getKeyValue(String key, Object value)
     {
-        return "\n    " + key + "=" + value.toString();
+        return "\n    " + key + "=" + (value == null ? null : value.toString());
     }
     
     public static String listString(String key, List<String> list)

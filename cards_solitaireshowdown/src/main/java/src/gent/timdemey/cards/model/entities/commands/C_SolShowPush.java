@@ -24,7 +24,7 @@ public class C_SolShowPush extends C_Push
                 || dstCardStack.cardStackType.equals(SolShowCardStackType.TURNOVER)
                 || dstCardStack.cardStackType.equals(SolShowCardStackType.SPECIAL))
         {
-            return CanExecuteResponse.no("Cannot push onto a " + dstCardStack.cardStackType + "stack");
+            return CanExecuteResponse.no("Cannot push onto a " + dstCardStack.cardStackType + " stack");
         }
 
         if (dstCardStack.cardStackType.equals(SolShowCardStackType.MIDDLE))

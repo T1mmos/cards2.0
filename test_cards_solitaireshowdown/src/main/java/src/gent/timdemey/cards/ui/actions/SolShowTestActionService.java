@@ -2,7 +2,7 @@ package gent.timdemey.cards.ui.actions;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.commands.C_CardsVisibleSwitch;
-import gent.timdemey.cards.model.entities.commands.C_NewSolShowGame;
+import gent.timdemey.cards.model.entities.commands.C_FakeSolShowGame;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.context.Context;
 
@@ -30,7 +30,7 @@ public class SolShowTestActionService extends ActionService
         switch (id)
         {
             case SolShowTestActions.ACTION_FAKESOLSHOWGAME:                            
-                context.schedule(new C_NewSolShowGame());
+                context.schedule(new C_FakeSolShowGame());
                 break;
             case SolShowTestActions.ACTION_SWITCHCARDSVISIBLE:     
                 context.schedule(new C_CardsVisibleSwitch());
