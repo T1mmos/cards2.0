@@ -4,10 +4,11 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.C_Accept;
 import gent.timdemey.cards.model.entities.commands.C_Reject;
-import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CommandHistory;
 import gent.timdemey.cards.model.entities.commands.CommandType;
+import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.INetworkService;
 import gent.timdemey.cards.services.ISerializationService;
@@ -34,13 +35,12 @@ class ServerCommandExecutor extends CommandExecutorBase
         }
 
         CanExecuteResponse resp = command.canExecute(state);
-        boolean executable = resp.canExecute;
         CommandType cmdType = command.getCommandType();
 
         // syncable commands are commands that are executed clientside,
         // but can be rejected serverside e.g. when another player was earlier
         // but due to network delay the client wasn't yet aware.
-        if (executable)
+        if (resp.execState == ExecutionState.Yes)
         {
             if (cmdType == CommandType.TRACKED || cmdType == CommandType.SYNCED)
             {
@@ -60,7 +60,7 @@ class ServerCommandExecutor extends CommandExecutorBase
                 command.preExecute(state);
             }
         }
-        else
+        else if (resp.execState == ExecutionState.No)
         {
             if (cmdType == CommandType.SYNCED)
             {
@@ -75,6 +75,10 @@ class ServerCommandExecutor extends CommandExecutorBase
             {
                 Logger.error("Can't execute non-syncable command: '%s'. Reason: %s", command.getName(), resp.reason);
             }
+        }
+        else
+        {
+            Logger.error("Can't execute command '%s' because of state error. Reason: %s", command.getName(), resp.reason);
         }
     }
 }

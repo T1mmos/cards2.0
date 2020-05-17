@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import gent.timdemey.cards.logging.Logger;
@@ -54,6 +55,19 @@ public final class TCP_Connection
         thread_read.start();
         thread_send.start();
     }
+    
+    private void stop (Socket s, IOException ex)
+    {
+        if (ex instanceof SocketException && s.isClosed())
+        {
+            Logger.info("Closing socket...");
+        }
+        else
+        {
+            Logger.error("Unexpected exception on socket", ex);
+        }
+        stop();
+    }
 
     void stop()
     {
@@ -72,10 +86,9 @@ public final class TCP_Connection
             {
                 socket.close();
             }
-            catch (IOException e)
+            catch (IOException ex)
             {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                Logger.error(ex);
             }
         }
 
@@ -95,12 +108,6 @@ public final class TCP_Connection
         pool.onTcpConnectionEnded(this);
     }
 
-    private void onException(IOException e)
-    {
-        Logger.error("Following exception may be expected (connection closing):", e);
-        stop();
-    }
-
     private void read()
     {
         try
@@ -112,16 +119,23 @@ public final class TCP_Connection
                 String str_in = reader.readLine();
                 if (str_in == null)
                 {
-                    Logger.info("Read a poison pill value (null). All threads linked to this TCP socket will shut down.");
+                    Logger.info("Read a poison pill value (null)");
                     stop();
                     break;
                 }
                 pool.onTcpMessageReceived(this, str_in);
             }
         }
+        catch (SocketException se)
+        {
+            if (!socket.isClosed())
+            {
+                stop(socket, se);
+            }
+        }
         catch (IOException e)
         {
-            onException(e);
+            stop(socket, e);
         }
     }
 
@@ -136,9 +150,7 @@ public final class TCP_Connection
                 String str_out = queue_send.take();
                 if (str_out == null)
                 {
-                    Logger.info("Send thread received a poison pill value (null). All threads linked to this TCP socket will shut down.");
-                    stop();
-                    break;
+                    throw new IOException("Send thread received a poison pill value (null)");
                 }
 
                 writer.write(str_out);
@@ -148,7 +160,7 @@ public final class TCP_Connection
         }
         catch (IOException e)
         {
-            onException(e);
+            stop(socket, e);
         }
         catch (InterruptedException e2)
         {
@@ -158,6 +170,14 @@ public final class TCP_Connection
 
     public void send(String str)
     {
+        if (!started)
+        {
+            throw new IllegalStateException("This connection has not started yet");
+        }
+        if (ended)
+        {
+            throw new IllegalStateException("This connection has ended");
+        }
         queue_send.add(str);
     }
 }

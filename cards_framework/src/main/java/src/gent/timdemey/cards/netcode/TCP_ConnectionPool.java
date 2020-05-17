@@ -26,7 +26,7 @@ public final class TCP_ConnectionPool
     private final List<TCP_Connection> halfConns;
     /// fully established connections that are associated to a UUID.
     private final ConcurrentMap<UUID, TCP_Connection> uuid2conn;
-    private final List<UUID> locallyClosed;
+    private final List<UUID> locallyClosing;
     private final ITcpConnectionListener externalConnListener;
     private final int maxConnections;
     private final ExecutorService execServ;
@@ -41,7 +41,7 @@ public final class TCP_ConnectionPool
         this.uuid2conn = new ConcurrentHashMap<>();
         this.externalConnListener = connListener;
         this.maxConnections = maxConnections;
-        this.locallyClosed = new ArrayList<>();
+        this.locallyClosing = Collections.synchronizedList(new ArrayList<>());
         this.execServ = Executors.newSingleThreadExecutor(new ThreadFactory()
         {
 
@@ -79,20 +79,12 @@ public final class TCP_ConnectionPool
 
             if (id != null)
             {
-                local = locallyClosed.contains(id);
+                local = locallyClosing.remove(id);
                 uuid2conn.remove(id);
                 halfConns.remove(connection);
             }
 
-            if (local)
-            {
-                externalConnListener.onTcpConnectionLocallyClosed(id, connection);
-                locallyClosed.remove(id);
-            }
-            else
-            {
-                externalConnListener.onTcpConnectionRemotelyClosed(id, connection);
-            }
+            externalConnListener.onTcpConnectionClosed(id, connection, local);
         }
     }
 
@@ -222,7 +214,7 @@ public final class TCP_ConnectionPool
             Preconditions.checkNotNull(conn, "No connection in the pool for UUID: " + remote);
 
             TCP_Connection tcpConnection = uuid2conn.get(remote);
-            locallyClosed.add(remote);
+            locallyClosing.add(remote);
             tcpConnection.stop();
         });
     }

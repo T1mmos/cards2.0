@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
+import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -54,7 +55,7 @@ public class C_Composite extends CommandBase
         while (canExecute && i < commands.size())
         {
             CanExecuteResponse respI = commands.get(i).canExecute(context, type, state);
-            if (respI.canExecute)
+            if (respI.canExecute())
             {
                 try
                 {

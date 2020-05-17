@@ -9,11 +9,12 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.C_Accept;
 import gent.timdemey.cards.model.entities.commands.C_Reject;
-import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CommandExecution;
 import gent.timdemey.cards.model.entities.commands.CommandType;
 import gent.timdemey.cards.model.entities.commands.D_OnReexecutionFail;
+import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.IContextService;
 
@@ -60,7 +61,12 @@ class UICommandExecutor implements ICommandExecutor
         }
 
         CanExecuteResponse resp = command.canExecute(state);
-        if(src_local && !resp.canExecute)
+        if (resp.execState == ExecutionState.Error)
+        {
+            throw new IllegalStateException("The command '" + command.getName() + "' cannot be executed because of a state error, reason: " + resp.reason);
+        }
+        
+        if(src_local && !resp.canExecute())
         {
             // if the command is locally created then it is supposed to be able to execute
             throw new IllegalStateException("The command '" + command.getName() + "' cannot be executed, reason: " + resp.reason);

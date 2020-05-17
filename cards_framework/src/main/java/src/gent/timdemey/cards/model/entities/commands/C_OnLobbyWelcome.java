@@ -3,6 +3,7 @@ package gent.timdemey.cards.model.entities.commands;
 import java.util.List;
 import java.util.UUID;
 
+import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_OnLobbyWelcome;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.entities.game.Player;

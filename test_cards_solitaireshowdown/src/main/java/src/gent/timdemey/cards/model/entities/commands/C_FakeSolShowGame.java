@@ -1,6 +1,7 @@
 package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.model.entities.cards.CardGame;
+import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.Server;

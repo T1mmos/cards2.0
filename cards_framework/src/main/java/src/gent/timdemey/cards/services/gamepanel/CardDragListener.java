@@ -11,8 +11,9 @@ import java.util.stream.Collectors;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
@@ -261,15 +262,20 @@ class CardDragListener extends MouseAdapter
     private boolean canExecute(Context context, CommandBase command, String dragContext)
     {
         CanExecuteResponse response = context.canExecute(command);
-        if (!response.canExecute)
+        if (response.execState == ExecutionState.Yes)
         {
-            Logger.trace("Cannot execute command %s (%s) because: %s", command.getName(), dragContext, response.reason);
+            return true;
             
+        }
+        else if (response.execState == ExecutionState.No)
+        {
+            Logger.trace("Cannot execute command %s (%s) because: %s", command.getName(), dragContext, response.reason);            
             return false;
         }
         else
         {
-            return true;
+            Logger.error("Cannot execute command %s (%s) because of a state error: %s", command.getName(), dragContext, response.reason);
+            return false;
         }
     }
 }

@@ -1,6 +1,7 @@
 package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.context.Context;

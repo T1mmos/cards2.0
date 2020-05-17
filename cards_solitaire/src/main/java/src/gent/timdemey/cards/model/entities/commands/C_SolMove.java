@@ -9,6 +9,7 @@ import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.commands.C_Move;
+import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.cardgame.SolitaireCardStackType;
 import gent.timdemey.cards.services.context.Context;
@@ -41,8 +42,8 @@ public class C_SolMove extends C_Move
         List<UUID> toTransferIds = srcCardStack.getCardsFrom(card).getIds();
         C_SolPull cmdPull = new C_SolPull(srcCardStackId, cardId);
         C_SolPush cmdPush = new C_SolPush(dstCardStackId, toTransferIds);
-        boolean canPull = cmdPull.canExecute(context, type, state).canExecute;
-        boolean canPush = cmdPush.canExecute(context, type, state).canExecute;
+        boolean canPull = cmdPull.canExecute(context, type, state).canExecute();
+        boolean canPush = cmdPush.canExecute(context, type, state).canExecute();
         if (canPull && canPush) // user action
         {
             return CanExecuteResponse.yes();

@@ -137,6 +137,5 @@ public class FrameService implements IFrameService
         BufferedImage background = Services.get(IImageService.class).read("background_green.png");
         return background;
     }
-
 }
 

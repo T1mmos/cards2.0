@@ -9,6 +9,7 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;
+import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_SolShowMove;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
@@ -37,7 +38,7 @@ public class C_SolShowMove extends C_Move
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
         CanExecuteResponse supResp = super.canExecute(context, type, state);
-        if (!supResp.canExecute)
+        if (!supResp.canExecute())
         {
             return supResp;
         }
@@ -59,8 +60,8 @@ public class C_SolShowMove extends C_Move
         C_SolShowPush cmdPush = new C_SolShowPush(dstCardStackId, toTransferIds);
         cmdPush.setSourceId(getSourceId());
 
-        boolean canPull = cmdPull.canExecute(context, type, state).canExecute;
-        boolean canPush = cmdPush.canExecute(context, type, state).canExecute;
+        boolean canPull = cmdPull.canExecute(context, type, state).canExecute();
+        boolean canPush = cmdPush.canExecute(context, type, state).canExecute();
         if (canPull && canPush) // user action
         {
             return CanExecuteResponse.yes();
