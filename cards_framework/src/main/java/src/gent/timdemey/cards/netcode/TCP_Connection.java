@@ -112,7 +112,9 @@ public final class TCP_Connection
                 String str_in = reader.readLine();
                 if (str_in == null)
                 {
-                    throw new IOException("Read a poison pill value (null). All threads linked to this TCP socket will shut down.");
+                    Logger.info("Read a poison pill value (null). All threads linked to this TCP socket will shut down.");
+                    stop();
+                    break;
                 }
                 pool.onTcpMessageReceived(this, str_in);
             }
@@ -134,7 +136,9 @@ public final class TCP_Connection
                 String str_out = queue_send.take();
                 if (str_out == null)
                 {
-                    throw new IOException("Send thread received a poison pill value (null). All threads linked to this TCP socket will shut down.");
+                    Logger.info("Send thread received a poison pill value (null). All threads linked to this TCP socket will shut down.");
+                    stop();
+                    break;
                 }
 
                 writer.write(str_out);

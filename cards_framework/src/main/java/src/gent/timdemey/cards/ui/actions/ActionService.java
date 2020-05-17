@@ -5,12 +5,14 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.C_Disconnect;
 import gent.timdemey.cards.model.entities.commands.C_Disconnect.DisconnectReason;
 import gent.timdemey.cards.model.entities.commands.C_Redo;
 import gent.timdemey.cards.model.entities.commands.C_StartLocalGame;
 import gent.timdemey.cards.model.entities.commands.C_StartMultiplayerGame;
 import gent.timdemey.cards.model.entities.commands.C_Undo;
+import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.D_Connect;
 import gent.timdemey.cards.model.entities.commands.D_StartServer;
@@ -49,7 +51,17 @@ public class ActionService implements IActionService
 
     private boolean canExecute(CommandBase command)
     {
-        return Services.get(IContextService.class).getThreadContext().canExecute(command);
+        CanExecuteResponse response = Services.get(IContextService.class).getThreadContext().canExecute(command);
+        if (!response.canExecute)
+        {
+            Logger.trace("Cannot execute command %s (%s) because: %s", command.getName(), "ActionService", response.reason);
+            
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
     private void execute(CommandBase command)

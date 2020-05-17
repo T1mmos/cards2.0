@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
@@ -65,7 +66,7 @@ public final class Context
         return changeTracker;
     }
 
-    public boolean canExecute(CommandBase command)
+    public CanExecuteResponse canExecute(CommandBase command)
     {
         return limitedContext.canExecute(command);
     }

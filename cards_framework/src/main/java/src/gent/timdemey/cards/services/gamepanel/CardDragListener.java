@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
+import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
@@ -108,8 +109,8 @@ class CardDragListener extends MouseAdapter
 
             CommandBase cmdPull = operations.getPullCommand(playerId, stack.getId(), card.getId());
             CommandBase cmdUse = operations.getUseCommand(playerId, null, entityId);
-            boolean pullable = context.canExecute(cmdPull);
-            boolean useable = context.canExecute(cmdUse);
+            boolean pullable = canExecute(context, cmdPull, "mousePressed/card");
+            boolean useable = canExecute(context, cmdUse, "mousePressed/card");
 
             boolean pull = pullable && (!useable || useable && e.getClickCount() % 2 == 1);
             boolean use = useable && (!pullable || pullable && e.getClickCount() % 2 == 0);
@@ -151,7 +152,7 @@ class CardDragListener extends MouseAdapter
             if (cardStack != null)
             {
                 CommandBase cmdUse = operations.getUseCommand(playerId, entityId, null);
-                if (context.canExecute(cmdUse))
+                if (canExecute(context, cmdUse, "mousePressed/cardstack"))
                 {
                     context.schedule(cmdUse);
                 }
@@ -221,7 +222,7 @@ class CardDragListener extends MouseAdapter
 
                 ICommandService operationsServ = Services.get(ICommandService.class);
                 CommandBase cmdPush = operationsServ.getPushCommand(playerId, dstCardStack.getId(), roCards.getIds());
-                if (context.canExecute(cmdPush))
+                if (canExecute(context, cmdPush, "mouseReleased"))
                 {
                     int intersectA = intersection.width * intersection.height;
                     if (intersectA < intersectAMax)
@@ -254,6 +255,21 @@ class CardDragListener extends MouseAdapter
 
             draggedImages.clear();
             dragStates.clear();
+        }
+    }
+    
+    private boolean canExecute(Context context, CommandBase command, String dragContext)
+    {
+        CanExecuteResponse response = context.canExecute(command);
+        if (!response.canExecute)
+        {
+            Logger.trace("Cannot execute command %s (%s) because: %s", command.getName(), dragContext, response.reason);
+            
+            return false;
+        }
+        else
+        {
+            return true;
         }
     }
 }

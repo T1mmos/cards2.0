@@ -33,7 +33,7 @@ public class LimitedContext
         return contextType;
     }
     
-    public boolean canExecute (CommandBase command)
+    public CanExecuteResponse canExecute (CommandBase command)
     {
         if (command.getSourceId() == null)
         {
@@ -41,11 +41,7 @@ public class LimitedContext
         }
         CanExecuteResponse resp = command.canExecute(state);
         
-        if (!resp.canExecute)
-        {
-            Logger.trace("Cannot execute command %s because: %s", command.getName(), resp.reason);
-        }
-        return resp.canExecute;
+        return resp;
     }
     
     public void schedule(CommandBase command)
