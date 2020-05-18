@@ -133,7 +133,7 @@ class CardsDtoMapper extends EntityBaseDtoMapper
         {
             mergeEntityBaseToDto(player, dto);
             
-            dto.name = player.name;
+            dto.name = player.getName();
         }
         return dto;
     }

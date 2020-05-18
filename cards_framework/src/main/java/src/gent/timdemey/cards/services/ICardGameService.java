@@ -5,12 +5,15 @@ import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
+import gent.timdemey.cards.readonlymodel.ReadOnlyList;
 
-public interface ICardGameCreationService
+public interface ICardGameService
 {
     /**
      * Returns a random deck that includes all cards per player necessary to play a
-     * game. A deck is not limited to 52 cards, it is up to the game type to decide
+     * game. A deck is not limited or bound to 52 cards, it is up to the game type to decide
      * on this.
      * <p>
      * Equal decks should result in initially equal stack configurations as created
@@ -33,4 +36,13 @@ public interface ICardGameCreationService
      * @return
      */
     public List<PlayerConfiguration> createStacks(List<UUID> playerIds, List<List<Card>> playerCards);
+    
+    /**
+     * Calculates the score for moving the given cards from cardstack A to cardstack B.
+     * @param srcCardStack
+     * @param dstCardStack
+     * @param transferedCards
+     * @return
+     */
+    public int getScore(ReadOnlyCardStack srcCardStack, ReadOnlyCardStack dstCardStack, ReadOnlyList<ReadOnlyCard> transferedCards);
 }

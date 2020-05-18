@@ -14,7 +14,7 @@ public class PlayerConfiguration extends EntityBase
     public final UUID playerId;
     public final List<CardStack> cardStacks;
     
-    public PlayerConfiguration (UUID playerId,  List<CardStack> cardStacks)
+    public PlayerConfiguration (UUID playerId, List<CardStack> cardStacks)
     {
         this.playerId = playerId;
         this.cardStacks = Collections.unmodifiableList(new ArrayList<>(cardStacks));

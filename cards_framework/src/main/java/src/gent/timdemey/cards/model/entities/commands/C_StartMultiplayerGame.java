@@ -11,7 +11,7 @@ import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_StartMultiplayerGame;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.ICardGameCreationService;
+import gent.timdemey.cards.services.ICardGameService;
 import gent.timdemey.cards.services.INetworkService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -72,7 +72,7 @@ public class C_StartMultiplayerGame extends CommandBase
         else
         {
             // ready to kick off. Generate some cards for the current game type.
-            ICardGameCreationService creator = Services.get(ICardGameCreationService.class);
+            ICardGameService creator = Services.get(ICardGameService.class);
             List<List<Card>> allCards = creator.getCards();
             List<UUID> playerIds = state.getPlayers().getIds();
             List<PlayerConfiguration> playerConfigurations = creator.createStacks(playerIds, allCards);

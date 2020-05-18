@@ -46,6 +46,6 @@ public class C_OnLobbyPlayerJoined extends CommandBase
     @Override
     public String toDebugString()
     {
-        return Debug.getKeyValue("playerName", player.name) + Debug.getKeyValue("playerId", player.id);
+        return Debug.getKeyValue("playerName", player.getName()) + Debug.getKeyValue("playerId", player.id);
     }
 }

@@ -10,10 +10,13 @@ import com.google.common.base.Preconditions;
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
-import gent.timdemey.cards.services.ICardGameCreationService;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
+import gent.timdemey.cards.readonlymodel.ReadOnlyList;
+import gent.timdemey.cards.services.ICardGameService;
 import gent.timdemey.cards.utils.CardDeckUtils;
 
-public class SolitaireCardGameCreationService implements ICardGameCreationService
+public class SolitaireCardGameCreationService implements ICardGameService
 {
     @Override
     public List<PlayerConfiguration> createStacks(List<UUID> playerIds, List<List<Card>> playerCards)
@@ -82,5 +85,11 @@ public class SolitaireCardGameCreationService implements ICardGameCreationServic
         List<List<Card>> playerCards = new ArrayList<>();
         playerCards.add(Arrays.asList(cards));
         return playerCards;
+    }
+
+    @Override
+    public int getScore(ReadOnlyCardStack srcCardStack, ReadOnlyCardStack dstCardStack, ReadOnlyList<ReadOnlyCard> transferedCards)
+    {
+        return 0; // currently no score in Solitaire
     }
 }

@@ -11,8 +11,11 @@ public class ReadOnlyPlayer extends ReadOnlyEntityBase<Player>
 
     public String getName()
     {
-        return entity.name;
+        return entity.getName();
     }
     
-    
+    public int getScore()
+    {
+        return entity.getScore();
+    }
 }

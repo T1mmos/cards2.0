@@ -13,13 +13,18 @@ import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_SolShowMove;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
+import gent.timdemey.cards.readonlymodel.ReadOnlyEntityFactory;
+import gent.timdemey.cards.readonlymodel.ReadOnlyEntityList;
+import gent.timdemey.cards.services.ICardGameService;
 import gent.timdemey.cards.services.INetworkService;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
 public class C_SolShowMove extends C_Move
-{
+{    
     private List<Card> flippedTransferCards;
     private boolean depotInvolved;
     private boolean visible;
@@ -158,6 +163,9 @@ public class C_SolShowMove extends C_Move
 
         transferCards.forEach(card -> card.cardStack = dstCardStack);
 
+        // calculate score
+        addScore(state, cardGame, srcCardStack, dstCardStack, false);
+        
         INetworkService netServ = Services.get(INetworkService.class);
         if (type == ContextType.UI)
         {
@@ -198,13 +206,32 @@ public class C_SolShowMove extends C_Move
         return true;
     }
 
+    private void addScore(State state, CardGame cardGame, CardStack srcCardStack, CardStack dstCardStack, boolean undo)
+    {
+        ReadOnlyEntityList<ReadOnlyCard> roTransferCards = ReadOnlyEntityFactory.getOrCreateCardList(transferCards);
+        ReadOnlyCardStack roSrcCardStack = ReadOnlyEntityFactory.getOrCreateCardStack(srcCardStack);
+        ReadOnlyCardStack roDstCardStack = ReadOnlyEntityFactory.getOrCreateCardStack(dstCardStack);
+        ICardGameService cgServ = Services.get(ICardGameService.class);
+        int score = cgServ.getScore(roSrcCardStack, roDstCardStack, roTransferCards);
+        
+        if (undo)
+        {
+            score *= -1;
+        }
+        
+        UUID playerId = cardGame.getPlayerId(srcCardStack);
+        state.getPlayers().get(playerId).addScore(score);
+    }
+    
     @Override
     protected void undo(Context context, ContextType type, State state)
     {
         CardGame cardGame = state.getCardGame();
         CardStack srcCardStack = cardGame.getCardStacks().get(srcCardStackId);
-        CardStack dstCardStack = cardGame.getCardStacks().get(dstCardStackId);
+        CardStack dstCardStack = cardGame.getCardStacks().get(dstCardStackId);      
 
+        addScore(state, cardGame, srcCardStack, dstCardStack, true);
+        
         // for removal, it doesn't really matter which list we take
         if (depotInvolved)
         {

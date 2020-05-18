@@ -82,7 +82,7 @@ public class C_RemovePlayer extends CommandBase
     private Player removePlayer(State state, UUID playerId)
     {
         Player player = state.getPlayers().remove(playerId);
-        Logger.info("Removed player %s, id=%s", player.name, player.id);
+        Logger.info("Removed player %s, id=%s", player.getName(), player.id);
         return player;
     }
 

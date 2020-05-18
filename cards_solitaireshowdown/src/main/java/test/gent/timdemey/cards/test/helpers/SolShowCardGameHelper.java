@@ -14,7 +14,7 @@ import gent.timdemey.cards.model.entities.cards.payload.P_CardGame;
 import gent.timdemey.cards.model.entities.cards.payload.P_CardStack;
 import gent.timdemey.cards.model.entities.cards.payload.P_PlayerConfiguration;
 import gent.timdemey.cards.model.entities.game.Player;
-import gent.timdemey.cards.services.cardgame.SolShowCardGameCreationService;
+import gent.timdemey.cards.services.cardgame.SolShowCardGameService;
 
 public class SolShowCardGameHelper
 {    
@@ -28,7 +28,7 @@ public class SolShowCardGameHelper
         List<Card> cards2 = Arrays.asList(fixedShuffledDeck2);
         List<List<Card>> allCards = Arrays.asList(cards1, cards2);
         
-        SolShowCardGameCreationService serv = new SolShowCardGameCreationService();
+        SolShowCardGameService serv = new SolShowCardGameService();
         List<PlayerConfiguration> playerConfigs = serv.createStacks(playerIds, allCards);
         
         // because the id's of the entities are randomly chosen, we will deep-copy all

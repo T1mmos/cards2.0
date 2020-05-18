@@ -13,7 +13,7 @@ import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.payload.P_Player;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.ICardGameCreationService;
+import gent.timdemey.cards.services.ICardGameService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 
@@ -47,7 +47,7 @@ public class C_StartLocalGame extends CommandBase
     {
         CheckContext(type, ContextType.UI);
        
-        ICardGameCreationService ccServ = Services.get(ICardGameCreationService.class);
+        ICardGameService ccServ = Services.get(ICardGameService.class);
         List<List<Card>> cards = ccServ.getCards();
         
         //List<UUID> playerIds = Arrays.asList(UUID.randomUUID());

@@ -8,10 +8,13 @@ import java.util.UUID;
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
-import gent.timdemey.cards.services.ICardGameCreationService;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
+import gent.timdemey.cards.readonlymodel.ReadOnlyList;
+import gent.timdemey.cards.services.ICardGameService;
 import gent.timdemey.cards.utils.CardDeckUtils;
 
-public class SolShowCardGameCreationService implements ICardGameCreationService
+public class SolShowCardGameService implements ICardGameService
 {
     @Override
     public List<List<Card>> getCards()
@@ -75,5 +78,34 @@ public class SolShowCardGameCreationService implements ICardGameCreationService
         }
         
         listToAdd.add(cs);
+    }
+    
+    @Override
+    public int getScore(ReadOnlyCardStack srcCardStack, ReadOnlyCardStack dstCardStack, ReadOnlyList<ReadOnlyCard> transferedCards)
+    {
+        String srcCardStackType = srcCardStack.getCardStackType();
+        String dstCardStackType = dstCardStack.getCardStackType();
+        
+        int score = 0;        
+        
+        // source == TURNOVER, but it shouldn't return to the depot of course
+        if (srcCardStackType.equals(SolShowCardStackType.TURNOVER) && !dstCardStackType.equals(SolShowCardStackType.DEPOT))
+        {
+            score += 5;
+        }
+        
+        // source == SPECIAL 
+        if (srcCardStackType.equals(SolShowCardStackType.SPECIAL))
+        {
+            score += 20;
+        }
+        
+        // destination == LAYDOWN
+        if (dstCardStackType.equals(SolShowCardStackType.LAYDOWN))
+        {
+            score += 10;
+        }
+        
+        return score;
     }
 }
