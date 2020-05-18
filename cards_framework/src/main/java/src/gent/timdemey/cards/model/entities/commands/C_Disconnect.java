@@ -76,8 +76,7 @@ public class C_Disconnect extends CommandBase
         state.setServerMessage(null);
 
         String title = null;
-        String msg = null;
-        
+        String msg = null;        
         switch(reason)
         {
         case ConnectionLost:

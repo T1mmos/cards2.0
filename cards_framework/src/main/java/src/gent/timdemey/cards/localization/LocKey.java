@@ -32,6 +32,7 @@ public final class LocKey
     public static final LocKey DialogMessage_kicked = DialogMessage("kicked");
     public static final LocKey DialogMessage_lobby = DialogMessage("lobby");
     public static final LocKey DialogMessage_lobbyAdminLeft = DialogMessage("lobbyAdminLeft");    
+    public static final LocKey DialogMessage_lobbyFull = DialogMessage("lobbyFull");    
     public static final LocKey DialogMessage_playerleft = DialogMessage("playerleft");
     public static final LocKey DialogMessage_youlose = DialogMessage("youlose");
     public static final LocKey DialogMessage_youwin = DialogMessage("youwin");
@@ -44,6 +45,7 @@ public final class LocKey
     public static final LocKey DialogTitle_kicked = DialogTitle("kicked");
     public static final LocKey DialogTitle_lobby = DialogTitle("lobby");
     public static final LocKey DialogTitle_lobbyAdminLeft = DialogTitle("lobbyAdminLeft");    
+    public static final LocKey DialogTitle_lobbyFull = DialogTitle("lobbyFull");
     public static final LocKey DialogTitle_playerleft = DialogTitle("playerleft");
     public static final LocKey DialogTitle_youlose = DialogTitle("youlose");
     public static final LocKey DialogTitle_youwin = DialogTitle("youwin");

@@ -1,6 +1,8 @@
 package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.localization.Loc;
+import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_TCP_NOK;
 import gent.timdemey.cards.model.state.State;
@@ -40,7 +42,24 @@ public class C_TCP_NOK extends CommandBase
         state.setServer(null);
         state.setTcpConnectionPool(null);  
         
-        IDialogService dialogServ = Services.get(IDialogService.class);
-        dialogServ.ShowMessage("TEMP", reason.name());
+        String title = null;
+        String msg = null;      
+        switch(reason)
+        {
+        case LobbyFull:
+            title = Loc.get(LocKey.DialogTitle_lobbyFull);
+            msg = Loc.get(LocKey.DialogMessage_lobbyFull);
+            break;        
+        default:
+            break;
+        }
+        
+        if (title != null && msg != null)
+        {
+            Services.get(IDialogService.class).ShowMessage(title, msg);
+        }
+        
+        D_Connect cmd_connect = new D_Connect();
+        schedule(ContextType.UI, cmd_connect);
     }
 }
