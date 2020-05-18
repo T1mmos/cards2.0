@@ -58,9 +58,9 @@ public final class TCP_Connection
     
     private void stop (Socket s, IOException ex)
     {
-        if (ex instanceof SocketException && s.isClosed())
+        if (ex instanceof SocketException)
         {
-            Logger.info("Closing socket...");
+            Logger.info("SocketException occured. Closing socket...");
         }
         else
         {

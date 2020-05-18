@@ -5,10 +5,10 @@ public enum GameState
     /**
      * The client is not connected to any server. This state is invalid server-side.
      */
-    NotConnected,
+    Disconnected,
     
     /**
-     * TCP connection is set up but additional handshaking needs to complete. The TCP 
+     * TCP connection is set up but additional handshaking (application level) needs to complete. The TCP 
      * connection may be closed server side because e.g. the lobby is full. The server
      * will first send a command in all cases so the client can be notified, and in the
      * case of rejecting the connection, the client can expect the TCP connection to be

@@ -34,9 +34,9 @@ public class C_RemovePlayer extends CommandBase
     @Override
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
-        if(state.getGameState() == GameState.NotConnected)
+        if(state.getGameState() == GameState.Disconnected)
         {
-            return CanExecuteResponse.no("A player cannot leave if the NotConnected state");
+            return CanExecuteResponse.no("A player cannot leave if the Disconnected state");
         }
         if(!state.getPlayers().contains(playerId))
         {

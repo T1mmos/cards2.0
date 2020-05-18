@@ -21,9 +21,9 @@ public class D_Connect extends DialogCommandBase
     @Override
     protected CanExecuteResponse canShowDialog(Context context, ContextType type, State state)
     {
-        if (state.getGameState() != GameState.NotConnected)
+        if (state.getGameState() != GameState.Disconnected)
         {
-            return CanExecuteResponse.no("GameState should be NotConnected but is: " + state.getGameState());
+            return CanExecuteResponse.no("GameState should be Disconnected but is: " + state.getGameState());
         }
         if (state.getServerId() != null)
         {

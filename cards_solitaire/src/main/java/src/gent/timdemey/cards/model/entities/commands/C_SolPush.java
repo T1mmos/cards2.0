@@ -49,7 +49,7 @@ public class C_SolPush extends C_Push
             }
 
         }
-        
+
         return CanExecuteResponse.no("Not a valid push action");
     }
 

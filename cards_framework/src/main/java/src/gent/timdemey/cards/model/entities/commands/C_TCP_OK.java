@@ -21,9 +21,9 @@ public class C_TCP_OK extends CommandBase
     @Override
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
-        if (state.getGameState() != GameState.NotConnected)
+        if (state.getGameState() != GameState.Disconnected)
         {
-            return CanExecuteResponse.no("Expected the current GameState to be NotConnected but it is: " + state.getGameState());
+            return CanExecuteResponse.no("Expected the current GameState to be Disconnected but it is: " + state.getGameState());
         }
         
         return CanExecuteResponse.yes();
@@ -34,7 +34,7 @@ public class C_TCP_OK extends CommandBase
     {
         if (type == ContextType.UI)
         {
-            // state goes from NotConnected -> Connected
+            // state goes from Disconnected -> Connected
             state.setGameState(GameState.Connected);
             
             // enter the lobby to go from Connected -> Lobby

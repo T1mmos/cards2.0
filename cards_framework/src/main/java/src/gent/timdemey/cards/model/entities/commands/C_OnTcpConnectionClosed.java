@@ -2,7 +2,9 @@ package gent.timdemey.cards.model.entities.commands;
 
 import java.util.UUID;
 
+import gent.timdemey.cards.model.entities.commands.C_Disconnect.DisconnectReason;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -21,13 +23,11 @@ public class C_OnTcpConnectionClosed extends CommandBase
     @Override
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
-        if (local && state.getServerId() != null)
+        GameState gameState = state.getGameState();
+        boolean expected = gameState == GameState.Disconnected;
+        if (local && !expected)
         {
-            return CanExecuteResponse.error("When the connection is closed by the local party, State.ServerId must be null");
-        }
-        if (!local && state.getServerId() == null)
-        {
-            return CanExecuteResponse.error("When the connection is closed by the remote party, State.ServerId must not be null");
+            return CanExecuteResponse.error("When the connection is closed by the local party, TcpOnConnectionClosed must be expected");
         }
         return CanExecuteResponse.yes();
     }
@@ -37,11 +37,15 @@ public class C_OnTcpConnectionClosed extends CommandBase
     {
         if (type == ContextType.UI)
         {
-            if (!local)
+            GameState gameState = state.getGameState();
+            boolean expected = gameState == GameState.Disconnected;
+            
+            if (!expected)
             {
-                CommandBase cmd = new C_OnServerConnectionLost();
-                context.schedule(cmd);
+                C_Disconnect cmd_disconnect = new C_Disconnect(DisconnectReason.ConnectionLost);
+                run(cmd_disconnect);
             }
+            // else: expected because C_Disconnect has already run.
         }
         else
         {

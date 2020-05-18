@@ -24,7 +24,7 @@ public class D_StartServer extends DialogCommandBase
         {
             return CanExecuteResponse.no("Server context already initialized");
         }
-        if (state.getGameState() != GameState.NotConnected)
+        if (state.getGameState() != GameState.Disconnected)
         {
             return CanExecuteResponse.no("Cannot start a server while connected to a server, current GameState=" + state.getGameState());
         }

@@ -21,7 +21,14 @@ public class C_OnGameToLobby extends CommandBase
 {
     public enum GameToLobbyReason
     {
-        PlayerLeft, GameEnded,
+        /** A player (not the lobby admin) has left the game. */
+        PlayerLeft, 
+        
+        /** The game has ended. */
+        GameEnded,
+        
+        /** The lobby admin chose to go back to the lobby. */
+        LobbyAdmin
     }
     
     public final GameToLobbyReason reason;

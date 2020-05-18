@@ -61,7 +61,6 @@ public final class CommandSchedulingTcpConnectionListener implements ITcpConnect
     {
         Logger.info("TCP connection closed by the %s party (id=%s)", local ? "local" : "remote", id);
      
-        // if the remote party closed the connection then we have to react
         C_OnTcpConnectionClosed cmd = new C_OnTcpConnectionClosed(id, local);
         LimitedContext context = Services.get(IContextService.class).getContext(contextType);
         context.schedule(cmd);        
