@@ -30,7 +30,7 @@ import gent.timdemey.cards.services.scaleman.JScalableImage;
 
 public class GamePanelManager implements IGamePanelManager
 {
-    private static final int ANIMATION_TIME_CARD = 150;
+    private static final int ANIMATION_TIME_CARD = 80;
     private static final int ANIMATION_TIME_SCORE = 500;
 
     private static final String SCALEGROUP_CARDS = "SCALEGROUP_CARDS";
