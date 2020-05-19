@@ -141,6 +141,7 @@ class CardDragListener extends MouseAdapter
             else if (use)
             {
                 context.schedule(cmdUse);
+                draggedImages.clear();
             }
 
             mouse_xstart = e.getX();
@@ -156,6 +157,7 @@ class CardDragListener extends MouseAdapter
                 if (canExecute(context, cmdUse, "mousePressed/cardstack"))
                 {
                     context.schedule(cmdUse);
+                    draggedImages.clear();
                 }
             }
         }

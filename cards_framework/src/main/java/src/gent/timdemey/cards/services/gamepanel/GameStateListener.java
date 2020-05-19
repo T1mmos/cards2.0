@@ -39,7 +39,7 @@ class GameStateListener implements IStateListener
 
             for (ReadOnlyCard card : cardStack.getCards())
             {
-                gamePanelManager.updatePosition(card);
+                gamePanelManager.animatePosition(card);
             }
         }
         else if (property == ReadOnlyPlayer.Score)

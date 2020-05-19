@@ -11,7 +11,6 @@ import java.util.UUID;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 
 import com.google.common.base.Preconditions;
 
@@ -32,7 +31,7 @@ import gent.timdemey.cards.services.scaleman.JScalableImage;
 public class GamePanelManager implements IGamePanelManager
 {
     private static final int ANIMATION_TIME_CARD = 150;
-    private static final int ANIMATION_TIME_SCORE = 2000;
+    private static final int ANIMATION_TIME_SCORE = 500;
 
     private static final String SCALEGROUP_CARDS = "SCALEGROUP_CARDS";
     private static final String FILENAME_BACKSIDE = "backside_bluegrad.png";
@@ -44,8 +43,7 @@ public class GamePanelManager implements IGamePanelManager
     private boolean drawDebug = false;
     protected GamePanel gamePanel;
 
-    private Timer timer;
-    private AnimationTick animationTick;
+    private Animator animationTick;
 
     public GamePanelManager()
     {
@@ -74,7 +72,8 @@ public class GamePanelManager implements IGamePanelManager
             Services.get(IPositionManager.class).calculate(gamePanel.getWidth(), gamePanel.getHeight());
             relayout();
 
-            updateScalableImages(() -> {
+            updateScalableImages(() ->
+            {
                 SwingUtilities.invokeLater(() -> callback.onPanelCreated(gamePanel));
             });
         }
@@ -232,15 +231,31 @@ public class GamePanelManager implements IGamePanelManager
     @Override
     public void updatePosition(ReadOnlyCard card)
     {
+        updateOrAnimatePosition(card, true);
+    }
+
+    @Override
+    public void animatePosition(ReadOnlyCard card)
+    {
+        updateOrAnimatePosition(card, false);
+    }
+
+    private void updateOrAnimatePosition(ReadOnlyCard card, boolean update)
+    {
         JScalableImage jcard = Services.get(IScalableImageManager.class).getJScalableImage(card.getId());
-        Rectangle rect_dst = Services.get(IPositionManager.class).getBounds(card);
-
         ReadOnlyCardStack cardStack = card.getCardStack();
-
         int layerIndex = 200 + 20 * cardStack.getCardTypeNumber() + card.getCardIndex();
         gamePanel.setLayer(jcard, layerIndex);
-
-        jcard.setBounds(rect_dst.x, rect_dst.y, rect_dst.width, rect_dst.height);
+        Rectangle rect_dst = Services.get(IPositionManager.class).getBounds(card);
+        
+        if (update)
+        {
+            jcard.setBounds(rect_dst.x, rect_dst.y, rect_dst.width, rect_dst.height);
+        }
+        else
+        {
+            animate(jcard, rect_dst.getLocation(), ANIMATION_TIME_CARD, false);
+        }
     }
 
     @Override
@@ -257,15 +272,6 @@ public class GamePanelManager implements IGamePanelManager
         jcardstack.setBounds(rect_dst.x, rect_dst.y, rect_dst.width, rect_dst.height);
     }
 
-    @Override
-    public void animatePosition(ReadOnlyCard card)
-    {
-        JScalableImage jcard = Services.get(IScalableImageManager.class).getJScalableImage(card.getId());
-        Rectangle rect_dst = Services.get(IPositionManager.class).getBounds(card);
-
-        animate(jcard, rect_dst.getLocation(), ANIMATION_TIME_CARD);
-    }
-    
     public void animateScore(UUID playerId, int oldScore, int newScore)
     {
         int incr = newScore - oldScore;
@@ -274,28 +280,21 @@ public class GamePanelManager implements IGamePanelManager
         Font f = fontServ.getFont("SMB2.ttf");
         Font derived = f.deriveFont(20f);
         label.setFont(derived);
-        label.setForeground(Color.orange);        
-      
-        label.setBounds(50,200,300,200);
+        label.setForeground(Color.orange);
+
+        label.setBounds(50, 200, 300, 200);
         gamePanel.add(label);
-        
-        animate(label, new Point(50,0), ANIMATION_TIME_SCORE);
+
+        animate(label, new Point(50, 0), ANIMATION_TIME_SCORE, true);
     }
-    
-    private void animate(JComponent comp, Point dst, int animationTime)
+
+    private void animate(JComponent comp, Point dst, int animationTime, boolean dissolve)
     {
-        if (timer == null)
+        if (animationTick == null)
         {
-            animationTick = new AnimationTick();
-            timer = new Timer(15, animationTick);
-            animationTick.setTimer(timer);
+            animationTick = new Animator();
         }
 
-        animationTick.addComponent(comp, dst, animationTime);
-
-        if (!timer.isRunning())
-        {
-            timer.start();
-        }
+        animationTick.animate(comp, dst, animationTime, dissolve);
     }
 }

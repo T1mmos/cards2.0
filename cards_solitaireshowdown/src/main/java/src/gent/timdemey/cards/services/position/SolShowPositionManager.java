@@ -106,7 +106,7 @@ public class SolShowPositionManager implements IPositionManager
         ReadOnlyCardStack cs = card.getCardStack();
         Rectangle rect = getBounds(cs);
 
-        boolean isOffsetX = cs.getCardStackType().contentEquals(SolShowCardStackType.TURNOVER);
+        boolean isOffsetX = cs.getCardStackType().equals(SolShowCardStackType.TURNOVER);
         boolean isOffsetY = cs.getCardStackType().equals(SolShowCardStackType.MIDDLE);
 
         boolean local = context.getReadOnlyState().isLocalId(cardGame.getPlayerId(card));
