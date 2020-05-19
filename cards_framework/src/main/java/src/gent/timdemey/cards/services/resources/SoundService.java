@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.soundman;
+package gent.timdemey.cards.services.resources;
 
 import java.io.InputStream;
 import java.util.concurrent.Executor;
@@ -10,15 +10,16 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.services.IResourceManager;
-import gent.timdemey.cards.services.ISoundManager;
+import gent.timdemey.cards.services.IResourceRepository;
+import gent.timdemey.cards.services.ISoundService;
+import gent.timdemey.cards.services.IResourceRepository.ResourceType;
 
-public class SoundManager implements ISoundManager
+public class SoundService implements ISoundService
 {
     private static int SNDTHREAD_COUNT = 0;
     private final Executor soundExecutor;
 
-    public SoundManager()
+    public SoundService()
     {
         this.soundExecutor = Executors.newCachedThreadPool(new ThreadFactory()
         {
@@ -38,7 +39,7 @@ public class SoundManager implements ISoundManager
         soundExecutor.execute(() -> {
             try
             {
-                InputStream is = Services.get(IResourceManager.class).getResourceAsStream("snd/" + id + ".wav");
+                InputStream is = Services.get(IResourceRepository.class).getResourceAsStream(ResourceType.SOUND, id + ".wav");
                 AudioInputStream ais = AudioSystem.getAudioInputStream(is);
                 Clip test = AudioSystem.getClip();
 

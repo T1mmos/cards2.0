@@ -1,6 +1,7 @@
 package gent.timdemey.cards.services;
 
 import java.util.List;
+import java.util.UUID;
 
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
@@ -31,4 +32,5 @@ public interface IGamePanelManager
 
     public void animatePosition(ReadOnlyCard card);
 
+    public void animateScore(UUID playerId, int oldScore, int newScore);
 }

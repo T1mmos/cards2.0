@@ -1,9 +1,15 @@
 package gent.timdemey.cards.services.gamepanel;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
@@ -15,6 +21,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.IFontService;
 import gent.timdemey.cards.services.IGamePanelManager;
 import gent.timdemey.cards.services.IPositionManager;
 import gent.timdemey.cards.services.IScalableImageManager;
@@ -24,6 +31,8 @@ import gent.timdemey.cards.services.scaleman.JScalableImage;
 
 public class GamePanelManager implements IGamePanelManager
 {
+    private static final int ANIMATION_TIME_CARD = 150;
+    private static final int ANIMATION_TIME_SCORE = 2000;
 
     private static final String SCALEGROUP_CARDS = "SCALEGROUP_CARDS";
     private static final String FILENAME_BACKSIDE = "backside_bluegrad.png";
@@ -254,6 +263,27 @@ public class GamePanelManager implements IGamePanelManager
         JScalableImage jcard = Services.get(IScalableImageManager.class).getJScalableImage(card.getId());
         Rectangle rect_dst = Services.get(IPositionManager.class).getBounds(card);
 
+        animate(jcard, rect_dst.getLocation(), ANIMATION_TIME_CARD);
+    }
+    
+    public void animateScore(UUID playerId, int oldScore, int newScore)
+    {
+        int incr = newScore - oldScore;
+        JLabel label = new JLabel("+" + incr);
+        IFontService fontServ = Services.get(IFontService.class);
+        Font f = fontServ.getFont("SMB2.ttf");
+        Font derived = f.deriveFont(20f);
+        label.setFont(derived);
+        label.setForeground(Color.orange);        
+      
+        label.setBounds(50,200,300,200);
+        gamePanel.add(label);
+        
+        animate(label, new Point(50,0), ANIMATION_TIME_SCORE);
+    }
+    
+    private void animate(JComponent comp, Point dst, int animationTime)
+    {
         if (timer == null)
         {
             animationTick = new AnimationTick();
@@ -261,7 +291,7 @@ public class GamePanelManager implements IGamePanelManager
             animationTick.setTimer(timer);
         }
 
-        animationTick.addCard(jcard, rect_dst);
+        animationTick.addComponent(comp, dst, animationTime);
 
         if (!timer.isRunning())
         {

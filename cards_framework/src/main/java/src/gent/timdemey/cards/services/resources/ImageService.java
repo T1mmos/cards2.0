@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.images;
+package gent.timdemey.cards.services.resources;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -12,7 +12,8 @@ import javax.imageio.ImageIO;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.services.IImageService;
-import gent.timdemey.cards.services.IResourceManager;
+import gent.timdemey.cards.services.IResourceRepository;
+import gent.timdemey.cards.services.IResourceRepository.ResourceType;
 
 public class ImageService implements IImageService
 {
@@ -21,8 +22,8 @@ public class ImageService implements IImageService
     public BufferedImage read(String filename)
     {
         Logger.trace("Read image: %s", filename);
-        IResourceManager resMan = Services.get(IResourceManager.class);
-        InputStream is = resMan.getResourceAsStream(filename);
+        IResourceRepository resMan = Services.get(IResourceRepository.class);
+        InputStream is = resMan.getResourceAsStream(ResourceType.IMAGE, filename);
         try
         {
             BufferedImage image = ImageIO.read(is);

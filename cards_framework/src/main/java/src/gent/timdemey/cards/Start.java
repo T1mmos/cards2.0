@@ -12,19 +12,21 @@ import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.serialization.SerializationService;
 import gent.timdemey.cards.services.IConfigManager;
 import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.IFontService;
 import gent.timdemey.cards.services.IImageService;
 import gent.timdemey.cards.services.INetworkService;
-import gent.timdemey.cards.services.IResourceManager;
+import gent.timdemey.cards.services.IResourceRepository;
 import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.ISerializationService;
-import gent.timdemey.cards.services.ISoundManager;
+import gent.timdemey.cards.services.ISoundService;
 import gent.timdemey.cards.services.configman.ConfigManager;
 import gent.timdemey.cards.services.context.CommandNetworkService;
 import gent.timdemey.cards.services.context.ContextService;
-import gent.timdemey.cards.services.images.ImageService;
-import gent.timdemey.cards.services.resman.ResourceManager;
+import gent.timdemey.cards.services.resources.FontService;
+import gent.timdemey.cards.services.resources.ImageService;
+import gent.timdemey.cards.services.resources.ResourceRepository;
+import gent.timdemey.cards.services.resources.SoundService;
 import gent.timdemey.cards.services.scaleman.ScalableImageManager;
-import gent.timdemey.cards.services.soundman.SoundManager;
 import gent.timdemey.cards.ui.StartFrame;
 
 public class Start
@@ -112,8 +114,8 @@ public class Start
         logMan.setLogLevel(LogLevel.TRACE);
         App.getServices().install(ILogManager.class, logMan);
 
-        IResourceManager resMan = new ResourceManager();
-        App.getServices().install(IResourceManager.class, resMan);
+        IResourceRepository resRepo = new ResourceRepository();
+        App.getServices().install(IResourceRepository.class, resRepo);
     }
 
     private static void installServices()
@@ -129,21 +131,30 @@ public class Start
             IScalableImageManager scaleImgMan = new ScalableImageManager();
             services.install(IScalableImageManager.class, scaleImgMan);
         }
-        if(!Services.isInstalled(IImageService.class))
-        {
-            IImageService imageService = new ImageService();
-            services.install(IImageService.class, imageService);
-        }
-        if(!Services.isInstalled(ISoundManager.class))
-        {
-            ISoundManager sndMan = new SoundManager();
-            services.install(ISoundManager.class, sndMan);
-        }
         if(!Services.isInstalled(IContextService.class))
         {
             IContextService ctxtProv = new ContextService();
             services.install(IContextService.class, ctxtProv);
         }
+        
+        // resource services
+        if(!Services.isInstalled(IImageService.class))
+        {
+            IImageService imgServ = new ImageService();
+            services.install(IImageService.class, imgServ);
+        }
+        if(!Services.isInstalled(ISoundService.class))
+        {
+            ISoundService sndServ = new SoundService();
+            services.install(ISoundService.class, sndServ);
+        }
+        if (!Services.isInstalled(IFontService.class))
+        {
+            IFontService fontServ = new FontService();
+            services.install(IFontService.class, fontServ);
+        }
+        
+        // network related
         if(!Services.isInstalled(ISerializationService.class))
         {
             ISerializationService serServ = new SerializationService();
@@ -154,5 +165,6 @@ public class Start
             INetworkService nServ = new CommandNetworkService();
             services.install(INetworkService.class, nServ);
         }
+        
     }
 }

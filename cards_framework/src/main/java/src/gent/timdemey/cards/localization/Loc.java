@@ -8,7 +8,8 @@ import java.util.ResourceBundle;
 import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.services.IResourceManager;
+import gent.timdemey.cards.services.IResourceRepository;
+import gent.timdemey.cards.services.IResourceRepository.ResourceType;
 
 public class Loc
 {
@@ -27,8 +28,8 @@ public class Loc
 
         LOCALE = locale;
 
-        IResourceManager resourceManager = Services.get(IResourceManager.class);
-        ClassLoader resClassLoader = resourceManager.getResourceClassLoader();
+        IResourceRepository resourceManager = Services.get(IResourceRepository.class);
+        ClassLoader resClassLoader = resourceManager.getResourceClassLoader(ResourceType.LOCALIZATION);
         ResourceBundle rb = ResourceBundle.getBundle(FILENAME_BASE, LOCALE, resClassLoader);
 
         BUNDLE = rb;

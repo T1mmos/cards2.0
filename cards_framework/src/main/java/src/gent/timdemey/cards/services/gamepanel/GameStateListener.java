@@ -1,10 +1,13 @@
 package gent.timdemey.cards.services.gamepanel;
 
+import java.util.UUID;
+
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
+import gent.timdemey.cards.readonlymodel.ReadOnlyPlayer;
 import gent.timdemey.cards.readonlymodel.ReadOnlyProperty;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.readonlymodel.TypedChange;
@@ -22,14 +25,11 @@ class GameStateListener implements IStateListener
         IContextService contextService = Services.get(IContextService.class);
         Context context = contextService.getThreadContext();
         ReadOnlyState state = context.getReadOnlyState();
-
         
         ReadOnlyProperty<?> property = change.property;
 
         if (property == ReadOnlyCard.Visible)
-        {
-            TypedChange<Boolean> typed = ReadOnlyCard.Visible.cast(change);
-            
+        {            
             ReadOnlyCard card = state.getCardGame().getCard(change.entityId);
             gamePanelManager.setVisible(card, card.isVisible());
         }
@@ -37,12 +37,17 @@ class GameStateListener implements IStateListener
         {
             ReadOnlyCardStack cardStack = state.getCardGame().getCardStack(change.entityId);
 
-            IGamePanelManager gamePanelMan = Services.get(IGamePanelManager.class);
-
             for (ReadOnlyCard card : cardStack.getCards())
             {
-                gamePanelMan.updatePosition(card);
+                gamePanelManager.updatePosition(card);
             }
-        }        
+        }
+        else if (property == ReadOnlyPlayer.Score)
+        {            
+            TypedChange<Integer> typed = ReadOnlyPlayer.Score.cast(change);
+            UUID playerId = typed.entityId;
+            
+            gamePanelManager.animateScore(playerId, typed.oldValue, typed.newValue);
+        }
     }
 }
