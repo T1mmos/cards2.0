@@ -56,7 +56,6 @@ class CardDragListener extends MouseAdapter
     @Override
     public void mouseDragged(MouseEvent e)
     {
-
         if (!dragStates.isEmpty())
         {
             int mouse_x = e.getX();
@@ -81,12 +80,16 @@ class CardDragListener extends MouseAdapter
     @Override
     public void mouseMoved(MouseEvent e)
     {
-
     }
 
     @Override
     public void mousePressed(MouseEvent e)
     {
+        if (!isLeftMouseButton(e))
+        {
+            return;
+        }
+        
         GamePanel gpMan = (GamePanel) e.getComponent();
 
         Component comp = gpMan.getComponentAt(e.getPoint());
@@ -166,6 +169,11 @@ class CardDragListener extends MouseAdapter
     @Override
     public void mouseReleased(MouseEvent e)
     {
+        if (!isLeftMouseButton(e))
+        {
+            return;
+        }
+        
         Context context = Services.get(IContextService.class).getThreadContext();
         ReadOnlyCardGame cardGame = context.getReadOnlyState().getCardGame();
 
@@ -259,6 +267,15 @@ class CardDragListener extends MouseAdapter
             draggedImages.clear();
             dragStates.clear();
         }
+    }
+    
+    private boolean isLeftMouseButton(MouseEvent e)
+    {
+        if (e.getButton() == MouseEvent.BUTTON1)
+        {
+            return true;
+        }
+        return false;
     }
     
     private boolean canExecute(Context context, CommandBase command, String dragContext)
