@@ -51,7 +51,7 @@ public class C_SolShowUse extends C_Use
             boolean isDepot = cardStackType.contentEquals(SolShowCardStackType.DEPOT);
             
             // can only move from a stack of your own
-            if (!getSourceId().equals(cardGame.getPlayerId(initiatorStack)))
+            if (!localId.equals(cardGame.getPlayerId(initiatorStack)))
             {
                 return null;
             }
@@ -74,7 +74,12 @@ public class C_SolShowUse extends C_Use
             
             if(isTurnOver || isMiddle || isSpecial)
             {
-                for (CardStack dstCardStack : cardGame.getCardStacks(SolShowCardStackType.LAYDOWN))
+                List<UUID> otherPlayerIds = state.getPlayers().getExceptUUID(localId);
+                UUID otherPlayerId = otherPlayerIds.get(0);
+                List<CardStack> allLaydownStacks = cardGame.getCardStacks(localId, SolShowCardStackType.LAYDOWN);
+                List<CardStack> otherLaydownStacks = cardGame.getCardStacks(otherPlayerId, SolShowCardStackType.LAYDOWN);
+                allLaydownStacks.addAll(otherLaydownStacks);
+                for (CardStack dstCardStack : allLaydownStacks)
                 {
                     C_SolShowMove cmd = new C_SolShowMove(initiatorStack.id, dstCardStack.id, initiatorCardId);
                     cmd.setSourceId(getSourceId());

@@ -9,7 +9,7 @@ import java.util.Map;
 import javax.swing.JComponent;
 import javax.swing.Timer;
 
-class Animator
+class GamePanelAnimator
 {
     private static final class AnimInfo
     {
@@ -23,7 +23,7 @@ class Animator
     private final Map<JComponent, AnimInfo> animations;
     private final Timer timer;
 
-    Animator()
+    GamePanelAnimator()
     {
         animations = new HashMap<>();     
         timer = new Timer(15, e -> tick());

@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.position;
+package gent.timdemey.cards.services.gamepanel;
 
 final class SolShowGameLayout {
 

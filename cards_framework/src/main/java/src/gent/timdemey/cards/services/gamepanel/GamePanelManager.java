@@ -37,13 +37,13 @@ public class GamePanelManager implements IGamePanelManager
     private static final String FILENAME_BACKSIDE = "backside_bluegrad.png";
 
     private GamePanelResizeListener resizeListener;
-    private CardDragListener dragListener;
+    private GamePanelMouseListener dragListener;
     private IStateListener gameEventListener;
 
     private boolean drawDebug = false;
     protected GamePanel gamePanel;
 
-    private Animator animationTick;
+    private GamePanelAnimator animationTick;
 
     public GamePanelManager()
     {
@@ -62,7 +62,7 @@ public class GamePanelManager implements IGamePanelManager
             addScalableImages();
 
             resizeListener = new GamePanelResizeListener();
-            dragListener = new CardDragListener();
+            dragListener = new GamePanelMouseListener();
             gameEventListener = new GameStateListener();
 
             gamePanel.addComponentListener(resizeListener);
@@ -264,8 +264,6 @@ public class GamePanelManager implements IGamePanelManager
         JScalableImage jcardstack = Services.get(IScalableImageManager.class).getJScalableImage(cardStack.getId());
         Rectangle rect_dst = Services.get(IPositionManager.class).getBounds(cardStack);
 
-        // int layerIndex = cardStack.getCardStackType().getOrder() +
-        // 20*cardStack.getCardStackIndex();
         int layerIndex = 0;
         gamePanel.setLayer(jcardstack, layerIndex);
 
@@ -292,7 +290,7 @@ public class GamePanelManager implements IGamePanelManager
     {
         if (animationTick == null)
         {
-            animationTick = new Animator();
+            animationTick = new GamePanelAnimator();
         }
 
         animationTick.animate(comp, dst, animationTime, dissolve);

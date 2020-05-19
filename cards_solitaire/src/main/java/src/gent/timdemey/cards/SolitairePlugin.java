@@ -8,7 +8,7 @@ import gent.timdemey.cards.services.IPositionManager;
 import gent.timdemey.cards.services.cardgame.SolitaireCardGameCreationService;
 import gent.timdemey.cards.services.commands.SolitaireCommandService;
 import gent.timdemey.cards.services.gamepanel.SolitaireGamePanelManager;
-import gent.timdemey.cards.services.position.SolitairePositionManager;
+import gent.timdemey.cards.services.gamepanel.SolitairePositionManager;
 
 public class SolitairePlugin implements ICardPlugin
 {

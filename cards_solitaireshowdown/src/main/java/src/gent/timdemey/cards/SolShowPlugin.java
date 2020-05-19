@@ -10,7 +10,7 @@ import gent.timdemey.cards.services.ISerializationService;
 import gent.timdemey.cards.services.cardgame.SolShowCardGameService;
 import gent.timdemey.cards.services.commands.SolShowCommandService;
 import gent.timdemey.cards.services.gamepanel.SolShowGamePanelManager;
-import gent.timdemey.cards.services.position.SolShowPositionManager;
+import gent.timdemey.cards.services.gamepanel.SolShowPositionManager;
 
 public class SolShowPlugin implements ICardPlugin
 {

@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.position;
+package gent.timdemey.cards.services.gamepanel;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -159,7 +159,7 @@ public class SolShowPositionManager implements IPositionManager
         }
         else if(cardStack.getCardStackType().equals(SolShowCardStackType.LAYDOWN))
         {
-            rect.x += (4 + stackNr) * (gameLayout.act_swidth + gameLayout.act_soffsetx);
+            rect.x += (0 + stackNr) * (gameLayout.act_swidth + gameLayout.act_soffsetx);
             rect.y += 2 * (gameLayout.act_sheight + gameLayout.act_soffsety); // always in the middle of the field
         }
         else if(cardStack.getCardStackType().equals(SolShowCardStackType.MIDDLE))

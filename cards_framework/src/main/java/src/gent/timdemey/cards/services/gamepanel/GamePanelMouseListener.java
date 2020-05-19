@@ -26,7 +26,7 @@ import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.scaleman.JScalableImage;
 
-class CardDragListener extends MouseAdapter
+class GamePanelMouseListener extends MouseAdapter
 {
 
     private static class CardDragState
@@ -47,7 +47,7 @@ class CardDragListener extends MouseAdapter
     private final List<CardDragState> dragStates;
     private final List<JScalableImage> draggedImages;
 
-    CardDragListener()
+    GamePanelMouseListener()
     {
         dragStates = new ArrayList<>();
         draggedImages = new ArrayList<>();

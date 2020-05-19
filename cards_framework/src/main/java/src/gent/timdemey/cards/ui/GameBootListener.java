@@ -55,7 +55,6 @@ public class GameBootListener implements IStateListener
     @Override
     public void onChange(ReadOnlyChange change)
     {
-        IGamePanelManager gamePanelManager = Services.get(IGamePanelManager.class);
         IContextService contextService = Services.get(IContextService.class);
         Context context = contextService.getThreadContext();
         ReadOnlyState state = context.getReadOnlyState();

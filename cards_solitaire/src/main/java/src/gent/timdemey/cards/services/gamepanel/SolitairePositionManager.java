@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.position;
+package gent.timdemey.cards.services.gamepanel;
 
 import java.awt.Point;
 import java.awt.Rectangle;
