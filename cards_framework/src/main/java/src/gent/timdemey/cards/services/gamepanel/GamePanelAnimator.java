@@ -22,10 +22,10 @@ class GamePanelAnimator
 
     private final Map<JComponent, AnimInfo> animations;
     private final Timer timer;
-
+    
     GamePanelAnimator()
     {
-        animations = new HashMap<>();     
+        animations = new HashMap<>();
         timer = new Timer(15, e -> tick());
     }
 
@@ -37,12 +37,17 @@ class GamePanelAnimator
         animInfo.tickStart = System.currentTimeMillis();
         animInfo.animationTime = animationTime;
         animInfo.dissolve = dissolve;
-        animations.put(comp, animInfo);
-        
-        if (!timer.isRunning())
-        {
-            timer.start();
-        }
+        animations.put(comp, animInfo);        
+    }
+    
+    void start()
+    {
+        timer.start();        
+    }
+    
+    void stop ()
+    {
+        timer.stop();
     }
 
     private void tick()
@@ -75,11 +80,6 @@ class GamePanelAnimator
                     comp.getParent().remove(comp);
                 }
             }
-        }
-
-        if (animations.isEmpty())
-        {
-            timer.stop();
         }
     }
 

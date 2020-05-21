@@ -15,7 +15,6 @@ import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.IGamePanelManager;
 import gent.timdemey.cards.services.IScalableImageManager;
-import gent.timdemey.cards.services.ISoundService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.scaleman.ImageDefinition;
 
@@ -72,9 +71,6 @@ public class GameBootListener implements IStateListener
             {
                 List<ImageDefinition> imgDefs = Services.get(IGamePanelManager.class).getScalableImageDefinitions();
                 Services.get(IScalableImageManager.class).loadImages(imgDefs, this::onScalableImagesLoaded);
-
-                ISoundService sndman = Services.get(ISoundService.class);
-                sndman.playSound("shuffle");
             }
         }        
     }

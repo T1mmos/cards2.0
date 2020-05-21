@@ -36,17 +36,18 @@ public class GamePanelManager implements IGamePanelManager
     private static final String SCALEGROUP_CARDS = "SCALEGROUP_CARDS";
     private static final String FILENAME_BACKSIDE = "backside_bluegrad.png";
 
+
+    private final GamePanelAnimator animator;
+    
     private GamePanelResizeListener resizeListener;
     private GamePanelMouseListener dragListener;
     private IStateListener gameEventListener;
-
     private boolean drawDebug = false;
     protected GamePanel gamePanel;
 
-    private GamePanelAnimator animationTick;
-
     public GamePanelManager()
     {
+        this.animator = new GamePanelAnimator();
     }
 
     @Override
@@ -71,7 +72,8 @@ public class GamePanelManager implements IGamePanelManager
             Services.get(IContextService.class).getThreadContext().addStateListener(gameEventListener);
             Services.get(IPositionManager.class).calculate(gamePanel.getWidth(), gamePanel.getHeight());
             relayout();
-
+            animator.start();
+            
             updateScalableImages(() ->
             {
                 SwingUtilities.invokeLater(() -> callback.onPanelCreated(gamePanel));
@@ -103,6 +105,8 @@ public class GamePanelManager implements IGamePanelManager
     {
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
 
+        animator.stop();
+        
         if (gamePanel != null)
         {
             gamePanel.removeComponentListener(resizeListener);
@@ -275,8 +279,9 @@ public class GamePanelManager implements IGamePanelManager
         int incr = newScore - oldScore;
         JLabel label = new JLabel("+" + incr);
         IFontService fontServ = Services.get(IFontService.class);
-        Font f = fontServ.getFont("SMB2.ttf");
-        Font derived = f.deriveFont(20f);
+      //  Font f = fontServ.getFont("SMB2.ttf");
+      //  Font derived = f.deriveFont(20f);
+        Font derived = Font.decode("Arial 20 bold");
         label.setFont(derived);
         label.setForeground(Color.orange);
 
@@ -288,11 +293,7 @@ public class GamePanelManager implements IGamePanelManager
 
     private void animate(JComponent comp, Point dst, int animationTime, boolean dissolve)
     {
-        if (animationTick == null)
-        {
-            animationTick = new GamePanelAnimator();
-        }
 
-        animationTick.animate(comp, dst, animationTime, dissolve);
+        animator.animate(comp, dst, animationTime, dissolve);
     }
 }
