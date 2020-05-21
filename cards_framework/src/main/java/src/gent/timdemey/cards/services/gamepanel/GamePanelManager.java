@@ -283,7 +283,13 @@ public class GamePanelManager implements IGamePanelManager
         jcardstack.setBounds(rect_dst.x, rect_dst.y, rect_dst.width, rect_dst.height);
     }
 
-    public void animateScore(UUID playerId, int oldScore, int newScore)
+    public void animatePlayerScore(UUID playerId, int oldScore, int newScore)
+    {
+        /* animate the player score when it is implemented */
+    }
+
+    @Override
+    public void animateCardScore(UUID cardId, int oldScore, int newScore)
     {
         int incr = newScore - oldScore;
         JLabel label = new JLabel("+" + incr);
@@ -292,12 +298,19 @@ public class GamePanelManager implements IGamePanelManager
         Font derived = f.deriveFont(52f);
         label.setFont(derived);
 
-        label.setBounds(1, 1, 400, 400);
+        label.setSize(label.getPreferredSize());
         gamePanel.add(label);
-        gamePanel.setLayer(label, 30000);
+        gamePanel.setLayer(label, LAYER_ANIMATIONS);
+        
+        IContextService contextService = Services.get(IContextService.class);
+        Context context = contextService.getThreadContext();
+        ReadOnlyCard card = context.getReadOnlyState().getCardGame().getCard(cardId);
+        Rectangle rect_dst = Services.get(IPositionManager.class).getBounds(card);
+        int posx = rect_dst.x + (rect_dst.width - label.getWidth()) / 2;
+        int posy = rect_dst.y;        
         
         IAnimation anim_color = new ColorAnimation(new Color(100, 200, 100, 255), new Color(255, 165, 0, 0));
-        IAnimation anim_pos = new MovingAnimation(new Point(50, 200), new Point(50, 0));
+        IAnimation anim_pos = new MovingAnimation(new Point(posx, posy), new Point(posx, posy - 100));
 
         animator.animate(label, new AnimationEnd(true, -1), ANIMATION_TIME_SCORE, anim_color, anim_pos);
     }

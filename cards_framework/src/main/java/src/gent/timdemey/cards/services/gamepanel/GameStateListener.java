@@ -43,11 +43,16 @@ class GameStateListener implements IStateListener
             }
         }
         else if (property == ReadOnlyPlayer.Score)
-        {            
-            TypedChange<Integer> typed = ReadOnlyPlayer.Score.cast(change);
-            UUID playerId = typed.entityId;
+        {   
+            // update the player score
+        }
+        else if (property == ReadOnlyCard.Score)
+        {
+            // animate a score popping up from the card involved
+            TypedChange<Integer> typed = ReadOnlyCard.Score.cast(change);
+            UUID cardId = typed.entityId;
             
-            gamePanelManager.animateScore(playerId, typed.oldValue, typed.newValue);
+            gamePanelManager.animateCardScore(cardId, typed.oldValue, typed.newValue);
         }
     }
 }

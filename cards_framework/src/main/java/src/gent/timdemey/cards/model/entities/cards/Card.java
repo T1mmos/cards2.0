@@ -9,18 +9,22 @@ import gent.timdemey.cards.utils.Debug;
 public class Card extends EntityBase
 {
     public static final Property<Boolean> Visible = Property.of(Card.class, Boolean.class, "Visible");
+    public static final Property<Integer> Score = Property.of(Card.class, Integer.class, "Score");
 
     public final Suit suit;
     public final Value value;
 
     public final StateValueRef<Boolean> visibleRef;
-    public CardStack cardStack;
-
+    public final StateValueRef<Integer> scoreRef;
+    public CardStack cardStack;    
+    
+    
     public Card(Suit suit, Value value, boolean visible)
     {
         this.suit = suit;
         this.value = value;
         this.visibleRef = new StateValueRef<>(Visible, id, visible);
+        this.scoreRef = new StateValueRef<>(Score, id, 0);
         this.cardStack = null;
     }
 
@@ -30,6 +34,7 @@ public class Card extends EntityBase
         this.suit = pl.suit;
         this.value = pl.value;
         this.visibleRef = new StateValueRef<>(Visible, id, pl.visible);
+        this.scoreRef = new StateValueRef<>(Score, id, 0);
         this.cardStack = null;
     }
     

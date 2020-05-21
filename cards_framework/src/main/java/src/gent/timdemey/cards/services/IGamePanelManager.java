@@ -32,5 +32,7 @@ public interface IGamePanelManager
 
     public void animatePosition(ReadOnlyCard card);
 
-    public void animateScore(UUID playerId, int oldScore, int newScore);
+    public void animatePlayerScore(UUID playerId, int oldScore, int newScore);
+
+    public void animateCardScore(UUID cardId, int oldValue, int newValue);
 }

@@ -221,6 +221,9 @@ public class C_SolShowMove extends C_Move
         
         UUID playerId = cardGame.getPlayerId(srcCardStack);
         state.getPlayers().get(playerId).addScore(score);
+        
+        Card highestTransferCard = transferCards.get(0);
+        highestTransferCard.scoreRef.set(highestTransferCard.scoreRef.get() + score);
     }
     
     @Override

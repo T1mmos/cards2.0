@@ -7,6 +7,7 @@ import gent.timdemey.cards.model.entities.cards.Value;
 public final class ReadOnlyCard extends ReadOnlyEntityBase<Card>
 {
     public static final ReadOnlyProperty<Boolean> Visible = ReadOnlyProperty.of(Card.Visible);
+    public static ReadOnlyProperty<Integer> Score = ReadOnlyProperty.of(Card.Score);
     
     ReadOnlyCard(Card card)
     {
