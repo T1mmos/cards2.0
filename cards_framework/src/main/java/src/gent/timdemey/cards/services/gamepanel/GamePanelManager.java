@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
@@ -25,13 +24,17 @@ import gent.timdemey.cards.services.IGamePanelManager;
 import gent.timdemey.cards.services.IPositionManager;
 import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.context.Context;
+import gent.timdemey.cards.services.gamepanel.animations.ColorAnimation;
+import gent.timdemey.cards.services.gamepanel.animations.GamePanelAnimator;
+import gent.timdemey.cards.services.gamepanel.animations.IAnimation;
+import gent.timdemey.cards.services.gamepanel.animations.MovingAnimation;
 import gent.timdemey.cards.services.scaleman.ImageDefinition;
 import gent.timdemey.cards.services.scaleman.JScalableImage;
 
 public class GamePanelManager implements IGamePanelManager
 {
     private static final int ANIMATION_TIME_CARD = 80;
-    private static final int ANIMATION_TIME_SCORE = 500;
+    private static final int ANIMATION_TIME_SCORE = 800;
 
     private static final String SCALEGROUP_CARDS = "SCALEGROUP_CARDS";
     private static final String FILENAME_BACKSIDE = "backside_bluegrad.png";
@@ -258,7 +261,8 @@ public class GamePanelManager implements IGamePanelManager
         }
         else
         {
-            animate(jcard, rect_dst.getLocation(), ANIMATION_TIME_CARD, false);
+            MovingAnimation anim_pos = new MovingAnimation(jcard.getLocation(), rect_dst.getLocation());
+            animator.animate(jcard, false, ANIMATION_TIME_CARD , anim_pos);
         }
     }
 
@@ -279,21 +283,16 @@ public class GamePanelManager implements IGamePanelManager
         int incr = newScore - oldScore;
         JLabel label = new JLabel("+" + incr);
         IFontService fontServ = Services.get(IFontService.class);
-      //  Font f = fontServ.getFont("SMB2.ttf");
-      //  Font derived = f.deriveFont(20f);
-        Font derived = Font.decode("Arial 20 bold");
+        Font f = fontServ.getFont("SMB2.ttf");
+        Font derived = f.deriveFont(52f);
         label.setFont(derived);
-        label.setForeground(Color.orange);
 
-        label.setBounds(50, 200, 300, 200);
+        label.setBounds(1, 1, 400, 400);
         gamePanel.add(label);
+        
+        IAnimation anim_color = new ColorAnimation(new Color(100, 200, 100, 255), new Color(255, 165, 0, 0));
+        IAnimation anim_pos = new MovingAnimation(new Point(50, 200), new Point(50, 0));
 
-        animate(label, new Point(50, 0), ANIMATION_TIME_SCORE, true);
-    }
-
-    private void animate(JComponent comp, Point dst, int animationTime, boolean dissolve)
-    {
-
-        animator.animate(comp, dst, animationTime, dissolve);
+        animator.animate(label, true, ANIMATION_TIME_SCORE, anim_color, anim_pos);
     }
 }
