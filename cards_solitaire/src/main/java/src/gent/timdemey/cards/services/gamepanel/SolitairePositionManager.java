@@ -108,7 +108,7 @@ public class SolitairePositionManager implements IPositionManager
     @Override
     public Rectangle getBounds(ReadOnlyCardStack cardStack)
     {
-        int stackNr = cardStack.getCardTypeNumber();
+        int stackNr = cardStack.getTypeNumber();
 
         Rectangle size = getCardStackSize(cardStack.getCardStackType());
         Rectangle rect = new Rectangle(gameLayout.act_tpadx, gameLayout.act_tpady, size.width, size.height);

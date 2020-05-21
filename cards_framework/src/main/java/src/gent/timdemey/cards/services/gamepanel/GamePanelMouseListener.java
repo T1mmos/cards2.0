@@ -134,7 +134,7 @@ class GamePanelMouseListener extends MouseAdapter
                     int card_xstart = currentJcard.getLocation().x;
                     int card_ystart = currentJcard.getLocation().y;
 
-                    ((GamePanel) currentJcard.getParent()).setLayer(currentJcard, 10000 + i);
+                    ((GamePanel) currentJcard.getParent()).setLayer(currentJcard, GamePanelManager.LAYER_DRAG + i);
 
                     CardDragState dragState = new CardDragState(card_xstart, card_ystart);
                     dragStates.add(dragState);

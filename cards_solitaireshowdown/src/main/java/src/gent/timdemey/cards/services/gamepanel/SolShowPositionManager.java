@@ -142,7 +142,7 @@ public class SolShowPositionManager implements IPositionManager
         UUID playerId = context.getReadOnlyState().getCardGame().getPlayerId(cardStack);
         boolean isLocal = localId.equals(playerId);
 
-        int stackNr = cardStack.getCardTypeNumber();
+        int stackNr = cardStack.getTypeNumber();
 
         Rectangle size = getCardStackSize(cardStack.getCardStackType());
         Rectangle rect = new Rectangle(gameLayout.act_tpadx, gameLayout.act_tpady, size.width, size.height);

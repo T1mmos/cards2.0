@@ -18,7 +18,7 @@ public final class ReadOnlyCardStack extends ReadOnlyEntityBase<CardStack>
         return entity.cardStackType;
     }
 
-    public int getCardTypeNumber()
+    public int getTypeNumber()
     {
         return entity.typeNumber;
     }

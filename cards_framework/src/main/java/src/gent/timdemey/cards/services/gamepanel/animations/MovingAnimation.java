@@ -14,7 +14,7 @@ public class MovingAnimation implements IAnimation
         this.pos_start = start;
         this.pos_end = end;
     }
-
+    
     @Override
     public void tick(double frac, JComponent comp)
     {

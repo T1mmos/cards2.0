@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JComponent;
+import javax.swing.JLayeredPane;
 import javax.swing.Timer;
 
 public class GamePanelAnimator
@@ -18,12 +19,12 @@ public class GamePanelAnimator
         timer = new Timer(15, e -> tick());
     }
 
-    public void animate(JComponent comp, boolean dispose, int animationTime, IAnimation ...  animations)
+    public void animate(JComponent comp, AnimationEnd end, int animationTime, IAnimation ...  animations)
     {
-        AnimationInfo animationInfo = new AnimationInfo(comp, dispose, animationTime, System.currentTimeMillis(), animations);
+        AnimationInfo animationInfo = new AnimationInfo(comp, end, animationTime, System.currentTimeMillis(), animations);
         animationInfos.add(animationInfo);        
     }
-    
+        
     public void start()
     {
         timer.start();        
@@ -53,9 +54,13 @@ public class GamePanelAnimator
             if (frac == 1.0)
             {
                 i.remove();
-                if (animInfo.dispose)
+                if (animInfo.end.dispose)
                 {
                     animInfo.component.getParent().remove(animInfo.component);
+                }
+                else
+                {
+                    ((JLayeredPane) animInfo.component.getParent()).setLayer(animInfo.component, animInfo.end.layer);
                 }
             }
         }

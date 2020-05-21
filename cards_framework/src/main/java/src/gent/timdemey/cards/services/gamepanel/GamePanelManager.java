@@ -24,6 +24,7 @@ import gent.timdemey.cards.services.IGamePanelManager;
 import gent.timdemey.cards.services.IPositionManager;
 import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.context.Context;
+import gent.timdemey.cards.services.gamepanel.animations.AnimationEnd;
 import gent.timdemey.cards.services.gamepanel.animations.ColorAnimation;
 import gent.timdemey.cards.services.gamepanel.animations.GamePanelAnimator;
 import gent.timdemey.cards.services.gamepanel.animations.IAnimation;
@@ -39,6 +40,10 @@ public class GamePanelManager implements IGamePanelManager
     private static final String SCALEGROUP_CARDS = "SCALEGROUP_CARDS";
     private static final String FILENAME_BACKSIDE = "backside_bluegrad.png";
 
+    static final int LAYER_CARDSTACKS = 0;
+    static final int LAYER_CARDS = 200;
+    static final int LAYER_DRAG = 10000;
+    static final int LAYER_ANIMATIONS = 20000;
 
     private final GamePanelAnimator animator;
     
@@ -251,18 +256,18 @@ public class GamePanelManager implements IGamePanelManager
     {
         JScalableImage jcard = Services.get(IScalableImageManager.class).getJScalableImage(card.getId());
         ReadOnlyCardStack cardStack = card.getCardStack();
-        int layerIndex = 200 + 20 * cardStack.getCardTypeNumber() + card.getCardIndex();
-        gamePanel.setLayer(jcard, layerIndex);
+        int layerIndex = LAYER_CARDS + 20 * cardStack.getTypeNumber() + card.getCardIndex();        
         Rectangle rect_dst = Services.get(IPositionManager.class).getBounds(card);
         
         if (update)
         {
+            gamePanel.setLayer(jcard, layerIndex);
             jcard.setBounds(rect_dst.x, rect_dst.y, rect_dst.width, rect_dst.height);
         }
         else
         {
             MovingAnimation anim_pos = new MovingAnimation(jcard.getLocation(), rect_dst.getLocation());
-            animator.animate(jcard, false, ANIMATION_TIME_CARD , anim_pos);
+            animator.animate(jcard, new AnimationEnd(false, layerIndex), ANIMATION_TIME_CARD , anim_pos);
         }
     }
 
@@ -272,7 +277,7 @@ public class GamePanelManager implements IGamePanelManager
         JScalableImage jcardstack = Services.get(IScalableImageManager.class).getJScalableImage(cardStack.getId());
         Rectangle rect_dst = Services.get(IPositionManager.class).getBounds(cardStack);
 
-        int layerIndex = 0;
+        int layerIndex = LAYER_CARDSTACKS;
         gamePanel.setLayer(jcardstack, layerIndex);
 
         jcardstack.setBounds(rect_dst.x, rect_dst.y, rect_dst.width, rect_dst.height);
@@ -289,10 +294,11 @@ public class GamePanelManager implements IGamePanelManager
 
         label.setBounds(1, 1, 400, 400);
         gamePanel.add(label);
+        gamePanel.setLayer(label, 30000);
         
         IAnimation anim_color = new ColorAnimation(new Color(100, 200, 100, 255), new Color(255, 165, 0, 0));
         IAnimation anim_pos = new MovingAnimation(new Point(50, 200), new Point(50, 0));
 
-        animator.animate(label, true, ANIMATION_TIME_SCORE, anim_color, anim_pos);
+        animator.animate(label, new AnimationEnd(true, -1), ANIMATION_TIME_SCORE, anim_color, anim_pos);
     }
 }
