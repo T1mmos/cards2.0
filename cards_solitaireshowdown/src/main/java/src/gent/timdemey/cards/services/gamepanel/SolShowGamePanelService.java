@@ -22,7 +22,7 @@ public class SolShowGamePanelService extends GamePanelService
 
         defs.add(new ImageDefinition("stack_short_arrow.png", SolShowCardStackType.DEPOT));
         defs.add(new ImageDefinition("stack_short_green_filled.png", SolShowCardStackType.LAYDOWN));
-        defs.add(new ImageDefinition("stack_long_green.png", SolShowCardStackType.MIDDLE));
+        defs.add(new ImageDefinition("stack_long_yellow.png", SolShowCardStackType.MIDDLE));
         defs.add(new ImageDefinition("stack_middle_green.png", SolShowCardStackType.TURNOVER));
         defs.add(new ImageDefinition("stack_short_green.png", SolShowCardStackType.SPECIAL));
 
@@ -45,7 +45,7 @@ public class SolShowGamePanelService extends GamePanelService
 
             if(cardStack.getCardStackType().equals(SolShowCardStackType.MIDDLE))
             {
-                scaleMan.setImage(csId, "stack_long_green.png");
+                scaleMan.setImage(csId, "stack_long_yellow.png");
             }
             else if(cardStack.getCardStackType().equals(SolShowCardStackType.LAYDOWN))
             {

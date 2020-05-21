@@ -37,7 +37,7 @@ public class GamePanelService implements IGamePanelService
     private static final int ANIMATION_TIME_SCORE = 1200;
 
     private static final String SCALEGROUP_CARDS = "SCALEGROUP_CARDS";
-    private static final String FILENAME_BACKSIDE = "backside_bluegrad.png";
+    private static final String FILENAME_BACKSIDE = "backside_yellow.png";
 
     static final int LAYER_CARDSTACKS = 0;
     static final int LAYER_CARDS = 200;
@@ -231,7 +231,7 @@ public class GamePanelService implements IGamePanelService
     {
         String suit = card.getSuit().name().substring(0, 1);
         String value = card.getValue().getTextual();
-        String full = suit + "_" + value + ".png";
+        String full = String.format("cards/edge_thick/%s_%s.png", suit, value);
 
         return full;
     }
