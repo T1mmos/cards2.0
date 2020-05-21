@@ -32,6 +32,6 @@ The cards are designed to replicate the cards as seen in the [original Solitaire
 * Starting late 2018, netcode was added, after which the work on the primary goal, Solitaire Showdown, was started. 
 * After a long period of doing nothing, I continued somewhere around January 2020, refactoring the complete codebase and throwing away unnecessary garbage. When that was done, support for undoing command chains was added. (In multiplayer the server may not accept commands that are already executed client-side. They are executed client-side and corrected afterwards if necessary, to ensure a smooth gameplay that never blocks).
 * The hardest part was then done. Support for lobbies was added, I completed the game logic, it all started coming together around April 2020. (see [animated GIF 04/16/2020](screenshots/solitaireshowdown_04162020.gif?raw=true)). 
-* May 2020: Better handling of leaving players, lost connections, full lobbies, general cleanup of TCP connections in all these cases. Added score system. Support for animations other than cards. Added more card sprites for both front and back, and card stacks. (see [animated GIF 05/21/2020](screenshots/solitaireshowdown_04162020.gif?raw=true))
+* May 2020: Better handling of leaving players, lost connections, full lobbies, general cleanup of TCP connections in all these cases. Added score system. Support for animations other than cards. Added more card sprites for both front and back, and card stacks. (see [animated GIF 05/21/2020](screenshots/solitaireshowdown_05212020.gif?raw=true))
 
 
