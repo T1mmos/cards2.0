@@ -9,7 +9,7 @@ import java.awt.Rectangle;
 import javax.swing.JLayeredPane;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.services.IGamePanelManager;
+import gent.timdemey.cards.services.IGamePanelService;
 import gent.timdemey.cards.services.IPositionManager;
 
 public class GamePanel extends JLayeredPane
@@ -30,7 +30,7 @@ public class GamePanel extends JLayeredPane
         IPositionManager posMan = Services.get(IPositionManager.class);
         Rectangle rect = posMan.getBounds();
 
-        if (Services.get(IGamePanelManager.class).getDrawDebug())
+        if (Services.get(IGamePanelService.class).getDrawDebug())
         {
             g2.setStroke(new BasicStroke(2.0f));
             g2.setColor(Color.ORANGE);

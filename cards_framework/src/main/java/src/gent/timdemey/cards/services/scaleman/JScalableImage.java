@@ -18,7 +18,7 @@ import com.google.common.base.Preconditions;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.services.IGamePanelManager;
+import gent.timdemey.cards.services.IGamePanelService;
 import gent.timdemey.cards.services.IScalableImageManager;
 
 public class JScalableImage extends JPanel
@@ -120,7 +120,7 @@ public class JScalableImage extends JPanel
             }
         }
 
-        if (Services.get(IGamePanelManager.class).getDrawDebug())
+        if (Services.get(IGamePanelService.class).getDrawDebug())
         {
             ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState().getCardGame();
 

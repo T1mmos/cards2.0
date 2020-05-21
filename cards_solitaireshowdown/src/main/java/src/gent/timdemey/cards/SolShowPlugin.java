@@ -4,12 +4,12 @@ import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.serialization.SolShowSerializationService;
 import gent.timdemey.cards.services.ICardGameService;
 import gent.timdemey.cards.services.ICommandService;
-import gent.timdemey.cards.services.IGamePanelManager;
+import gent.timdemey.cards.services.IGamePanelService;
 import gent.timdemey.cards.services.IPositionManager;
 import gent.timdemey.cards.services.ISerializationService;
 import gent.timdemey.cards.services.cardgame.SolShowCardGameService;
 import gent.timdemey.cards.services.commands.SolShowCommandService;
-import gent.timdemey.cards.services.gamepanel.SolShowGamePanelManager;
+import gent.timdemey.cards.services.gamepanel.SolShowGamePanelService;
 import gent.timdemey.cards.services.gamepanel.SolShowPositionManager;
 
 public class SolShowPlugin implements ICardPlugin
@@ -26,7 +26,7 @@ public class SolShowPlugin implements ICardPlugin
     public void installUiServices()
     {
         App.getServices().install(IPositionManager.class, new SolShowPositionManager());
-        App.getServices().install(IGamePanelManager.class, new SolShowGamePanelManager());
+        App.getServices().install(IGamePanelService.class, new SolShowGamePanelService());
     }
 
     @Override

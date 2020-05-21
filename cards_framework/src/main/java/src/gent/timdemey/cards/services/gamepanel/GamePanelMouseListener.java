@@ -20,7 +20,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityList;
 import gent.timdemey.cards.services.ICommandService;
 import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.services.IGamePanelManager;
+import gent.timdemey.cards.services.IGamePanelService;
 import gent.timdemey.cards.services.IPositionManager;
 import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.context.Context;
@@ -134,7 +134,7 @@ class GamePanelMouseListener extends MouseAdapter
                     int card_xstart = currentJcard.getLocation().x;
                     int card_ystart = currentJcard.getLocation().y;
 
-                    ((GamePanel) currentJcard.getParent()).setLayer(currentJcard, GamePanelManager.LAYER_DRAG + i);
+                    ((GamePanel) currentJcard.getParent()).setLayer(currentJcard, GamePanelService.LAYER_DRAG + i);
 
                     CardDragState dragState = new CardDragState(card_xstart, card_ystart);
                     dragStates.add(dragState);
@@ -260,7 +260,7 @@ class GamePanelMouseListener extends MouseAdapter
 
                     UUID id = Services.get(IScalableImageManager.class).getUUID(scaledImg);
                     ReadOnlyCard card = cardGame.getCard(id);
-                    Services.get(IGamePanelManager.class).animatePosition(card);
+                    Services.get(IGamePanelService.class).animatePosition(card);
                 }
             }
 

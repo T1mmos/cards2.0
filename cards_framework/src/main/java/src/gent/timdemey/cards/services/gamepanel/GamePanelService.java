@@ -2,7 +2,6 @@ package gent.timdemey.cards.services.gamepanel;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IFontService;
-import gent.timdemey.cards.services.IGamePanelManager;
+import gent.timdemey.cards.services.IGamePanelService;
 import gent.timdemey.cards.services.IPositionManager;
 import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.context.Context;
@@ -32,10 +31,10 @@ import gent.timdemey.cards.services.gamepanel.animations.MovingAnimation;
 import gent.timdemey.cards.services.scaleman.ImageDefinition;
 import gent.timdemey.cards.services.scaleman.JScalableImage;
 
-public class GamePanelManager implements IGamePanelManager
+public class GamePanelService implements IGamePanelService
 {
     private static final int ANIMATION_TIME_CARD = 80;
-    private static final int ANIMATION_TIME_SCORE = 800;
+    private static final int ANIMATION_TIME_SCORE = 1200;
 
     private static final String SCALEGROUP_CARDS = "SCALEGROUP_CARDS";
     private static final String FILENAME_BACKSIDE = "backside_bluegrad.png";
@@ -52,8 +51,9 @@ public class GamePanelManager implements IGamePanelManager
     private IStateListener gameEventListener;
     private boolean drawDebug = false;
     protected GamePanel gamePanel;
+    private Font scoreFont;
 
-    public GamePanelManager()
+    public GamePanelService()
     {
         this.animator = new GamePanelAnimator();
     }
@@ -81,6 +81,10 @@ public class GamePanelManager implements IGamePanelManager
             Services.get(IPositionManager.class).calculate(gamePanel.getWidth(), gamePanel.getHeight());
             relayout();
             animator.start();
+            
+            IFontService fontServ = Services.get(IFontService.class);
+            Font f = fontServ.getFont("SMB2.ttf");
+            scoreFont = f.deriveFont(52f);
             
             updateScalableImages(() ->
             {
@@ -171,7 +175,6 @@ public class GamePanelManager implements IGamePanelManager
     @Override
     public final void updateScalableImages(Runnable callback)
     {
-
         updateScalableImages();
 
         Services.get(IScalableImageManager.class).apply(callback);
@@ -293,15 +296,16 @@ public class GamePanelManager implements IGamePanelManager
     {
         int incr = newScore - oldScore;
         JLabel label = new JLabel("+" + incr);
-        IFontService fontServ = Services.get(IFontService.class);
-        Font f = fontServ.getFont("SMB2.ttf");
-        Font derived = f.deriveFont(52f);
-        label.setFont(derived);
+        
+        
+        label.setFont(scoreFont);
 
         label.setSize(label.getPreferredSize());
         gamePanel.add(label);
         gamePanel.setLayer(label, LAYER_ANIMATIONS);
         
+        // determine final card position (the card itself may still be animated into its final position)
+        // to calculate the animation's start position
         IContextService contextService = Services.get(IContextService.class);
         Context context = contextService.getThreadContext();
         ReadOnlyCard card = context.getReadOnlyState().getCardGame().getCard(cardId);
@@ -309,8 +313,8 @@ public class GamePanelManager implements IGamePanelManager
         int posx = rect_dst.x + (rect_dst.width - label.getWidth()) / 2;
         int posy = rect_dst.y;        
         
-        IAnimation anim_color = new ColorAnimation(new Color(100, 200, 100, 255), new Color(255, 165, 0, 0));
-        IAnimation anim_pos = new MovingAnimation(new Point(posx, posy), new Point(posx, posy - 100));
+        IAnimation anim_color = new ColorAnimation(new Color(50, 100, 50, 255), new Color(255, 165, 0, 0));
+        IAnimation anim_pos = new MovingAnimation(posx, posy, posx, posy - 100);
 
         animator.animate(label, new AnimationEnd(true, -1), ANIMATION_TIME_SCORE, anim_color, anim_pos);
     }

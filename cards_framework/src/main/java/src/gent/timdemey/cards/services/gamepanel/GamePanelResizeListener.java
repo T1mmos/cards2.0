@@ -8,7 +8,7 @@ import java.util.TimerTask;
 import javax.swing.SwingUtilities;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.services.IGamePanelManager;
+import gent.timdemey.cards.services.IGamePanelService;
 
 class GamePanelResizeListener implements ComponentListener
 {
@@ -60,7 +60,7 @@ class GamePanelResizeListener implements ComponentListener
         if (diff > MS_WAIT_RELAYOUT)
         {
             msLastRelayout = System.currentTimeMillis();
-            SwingUtilities.invokeLater(() -> Services.get(IGamePanelManager.class).relayout());
+            SwingUtilities.invokeLater(() -> Services.get(IGamePanelService.class).relayout());
         }
         else
         {
@@ -70,7 +70,7 @@ class GamePanelResizeListener implements ComponentListener
                 @Override
                 public void run()
                 {
-                    SwingUtilities.invokeLater(() -> Services.get(IGamePanelManager.class).relayout());
+                    SwingUtilities.invokeLater(() -> Services.get(IGamePanelService.class).relayout());
                 }
             };
             timer.schedule(relayoutTask, MS_WAIT_RELAYOUT);
@@ -87,7 +87,7 @@ class GamePanelResizeListener implements ComponentListener
             @Override
             public void run()
             {
-                SwingUtilities.invokeLater(() -> Services.get(IGamePanelManager.class).updateScalableImages(null));
+                SwingUtilities.invokeLater(() -> Services.get(IGamePanelService.class).updateScalableImages(null));
             }
         };
 

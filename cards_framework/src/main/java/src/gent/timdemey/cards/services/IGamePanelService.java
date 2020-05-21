@@ -8,7 +8,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.gamepanel.IGamePanelReceiver;
 import gent.timdemey.cards.services.scaleman.ImageDefinition;
 
-public interface IGamePanelManager
+public interface IGamePanelService
 {
     public List<ImageDefinition> getScalableImageDefinitions();
 

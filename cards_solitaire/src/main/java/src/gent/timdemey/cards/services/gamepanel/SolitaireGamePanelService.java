@@ -11,7 +11,7 @@ import gent.timdemey.cards.services.cardgame.SolitaireCardStackType;
 import gent.timdemey.cards.services.scaleman.ImageDefinition;
 import gent.timdemey.cards.services.scaleman.JScalableImage;
 
-public class SolitaireGamePanelManager extends GamePanelManager {
+public class SolitaireGamePanelService extends GamePanelService {
     
     @Override
     public List<ImageDefinition> getScalableImageDefinitions() {        

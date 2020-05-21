@@ -13,7 +13,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IDialogService;
-import gent.timdemey.cards.services.IGamePanelManager;
+import gent.timdemey.cards.services.IGamePanelService;
 import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.scaleman.ImageDefinition;
@@ -39,7 +39,7 @@ public class GameBootListener implements IStateListener
             SwingUtilities.invokeLater(() -> {
                 int w = frame.getContentPane().getWidth();
                 int h = frame.getContentPane().getHeight();
-                Services.get(IGamePanelManager.class).createGamePanel(w, h, this::onGamePanelCreated);
+                Services.get(IGamePanelService.class).createGamePanel(w, h, this::onGamePanelCreated);
             });
         }
     }
@@ -63,13 +63,13 @@ public class GameBootListener implements IStateListener
             ReadOnlyCardGame cardGame = state.getCardGame();
             if (cardGame == null)
             {
-                Services.get(IGamePanelManager.class).destroyGamePanel();
+                Services.get(IGamePanelService.class).destroyGamePanel();
                 frame.getContentPane().removeAll();
                 frame.repaint();
             }
             else
             {
-                List<ImageDefinition> imgDefs = Services.get(IGamePanelManager.class).getScalableImageDefinitions();
+                List<ImageDefinition> imgDefs = Services.get(IGamePanelService.class).getScalableImageDefinitions();
                 Services.get(IScalableImageManager.class).loadImages(imgDefs, this::onScalableImagesLoaded);
             }
         }        

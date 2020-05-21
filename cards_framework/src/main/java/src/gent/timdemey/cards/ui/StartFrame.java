@@ -20,12 +20,12 @@ import gent.timdemey.cards.model.entities.commands.C_ImportExportStateUI;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.IFrameService;
-import gent.timdemey.cards.services.IGamePanelManager;
+import gent.timdemey.cards.services.IGamePanelService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.dialogs.DialogService;
 import gent.timdemey.cards.services.frame.FrameService;
-import gent.timdemey.cards.services.gamepanel.GamePanelManager;
+import gent.timdemey.cards.services.gamepanel.GamePanelService;
 import gent.timdemey.cards.ui.actions.ActionFactory;
 import gent.timdemey.cards.ui.actions.ActionService;
 import gent.timdemey.cards.ui.actions.IActionFactory;
@@ -62,10 +62,10 @@ public class StartFrame
             IActionFactory actionFactory = new ActionFactory();
             services.install(IActionFactory.class, actionFactory);
         }
-        if (!Services.isInstalled(IGamePanelManager.class))
+        if (!Services.isInstalled(IGamePanelService.class))
         {
-            IGamePanelManager gamePanelMan = new GamePanelManager();
-            services.install(IGamePanelManager.class, gamePanelMan);
+            IGamePanelService gamePanelMan = new GamePanelService();
+            services.install(IGamePanelService.class, gamePanelMan);
         }
     }
 

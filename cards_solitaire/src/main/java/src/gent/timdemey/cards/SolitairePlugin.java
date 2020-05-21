@@ -3,11 +3,11 @@ package gent.timdemey.cards;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.ICardGameService;
 import gent.timdemey.cards.services.ICommandService;
-import gent.timdemey.cards.services.IGamePanelManager;
+import gent.timdemey.cards.services.IGamePanelService;
 import gent.timdemey.cards.services.IPositionManager;
 import gent.timdemey.cards.services.cardgame.SolitaireCardGameCreationService;
 import gent.timdemey.cards.services.commands.SolitaireCommandService;
-import gent.timdemey.cards.services.gamepanel.SolitaireGamePanelManager;
+import gent.timdemey.cards.services.gamepanel.SolitaireGamePanelService;
 import gent.timdemey.cards.services.gamepanel.SolitairePositionManager;
 
 public class SolitairePlugin implements ICardPlugin
@@ -26,7 +26,7 @@ public class SolitairePlugin implements ICardPlugin
     public void installUiServices()
     {
         App.getServices().install(IPositionManager.class, new SolitairePositionManager());
-        App.getServices().install(IGamePanelManager.class, new SolitaireGamePanelManager());
+        App.getServices().install(IGamePanelService.class, new SolitaireGamePanelService());
     }
 
     @Override

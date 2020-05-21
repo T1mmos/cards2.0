@@ -13,7 +13,7 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.scaleman.ImageDefinition;
 import gent.timdemey.cards.services.scaleman.JScalableImage;
 
-public class SolShowGamePanelManager extends GamePanelManager
+public class SolShowGamePanelService extends GamePanelService
 {
     @Override
     public List<ImageDefinition> getScalableImageDefinitions()

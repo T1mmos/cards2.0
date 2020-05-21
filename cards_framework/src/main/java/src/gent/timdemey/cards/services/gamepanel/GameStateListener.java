@@ -12,7 +12,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyProperty;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.readonlymodel.TypedChange;
 import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.services.IGamePanelManager;
+import gent.timdemey.cards.services.IGamePanelService;
 import gent.timdemey.cards.services.context.Context;
 
 class GameStateListener implements IStateListener
@@ -21,7 +21,7 @@ class GameStateListener implements IStateListener
     @Override
     public void onChange(ReadOnlyChange change)
     {
-        IGamePanelManager gamePanelManager = Services.get(IGamePanelManager.class);
+        IGamePanelService gamePanelManager = Services.get(IGamePanelService.class);
         IContextService contextService = Services.get(IContextService.class);
         Context context = contextService.getThreadContext();
         ReadOnlyState state = context.getReadOnlyState();

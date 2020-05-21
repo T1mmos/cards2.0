@@ -9,6 +9,11 @@ public class MovingAnimation implements IAnimation
     final Point pos_start;
     final Point pos_end;
     
+    public MovingAnimation (int startx, int starty, int endx, int endy)
+    {
+        this (new Point(startx, starty), new Point(endx, endy));
+    }
+    
     public MovingAnimation (Point start, Point end)
     {
         this.pos_start = start;
