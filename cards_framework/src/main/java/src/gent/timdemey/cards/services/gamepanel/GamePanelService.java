@@ -72,7 +72,7 @@ public class GamePanelService implements IGamePanelService
 
             resizeListener = new GamePanelResizeListener();
             dragListener = new GamePanelMouseListener();
-            gameEventListener = new GameStateListener();
+            gameEventListener = new GamePanelStateListener();
 
             gamePanel.addComponentListener(resizeListener);
             gamePanel.addMouseMotionListener(dragListener);

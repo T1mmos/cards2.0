@@ -15,7 +15,7 @@ import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IGamePanelService;
 import gent.timdemey.cards.services.context.Context;
 
-class GameStateListener implements IStateListener
+class GamePanelStateListener implements IStateListener
 {
 
     @Override
