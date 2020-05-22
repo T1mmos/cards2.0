@@ -29,7 +29,7 @@ public interface IScalableImageManager
      * @param paths
      * @param callback
      */
-    public void loadImages(List<ImageDefinition> imgDefs, Consumer<Boolean> onResult);
+    public void loadImagesAsync(List<ImageDefinition> imgDefs, Consumer<Boolean> onResult);
 
     /**
      * Sets the size of all image mapped from object of the given type the given
@@ -47,7 +47,7 @@ public interface IScalableImageManager
      * waits for all rescale operations to finish before updating all
      * JScalableImages at the same time on the UI thread.
      */
-    public void apply(Runnable callback);
+    public void rescaleAsync(Runnable callback);
 
     /**
      * Sets the image in the JScalable mapped from the given object to the image

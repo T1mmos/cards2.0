@@ -9,7 +9,6 @@ import com.google.common.base.Preconditions;
 
 class BufferedImageScaler
 {
-
     private final BufferedImage srcImage;
     private final int targetWidth;
     private final int targetHeight;

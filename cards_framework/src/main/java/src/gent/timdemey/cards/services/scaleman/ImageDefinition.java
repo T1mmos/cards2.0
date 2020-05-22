@@ -10,14 +10,4 @@ public final class ImageDefinition
         this.path = path;
         this.group = group;
     }
-
-    /*
-     * @Override public boolean equals(Object obj) { if (obj == null) { return
-     * false; } if (!(obj instanceof ImageDefinition)) { return false; }
-     * ImageDefinition other = ((ImageDefinition) obj);
-     * 
-     * return path.equals(other.path) && group.equals(other.group); }
-     * 
-     * @Override public int hashCode() { return Objects.hash(path, group); }
-     */
 }

@@ -25,7 +25,7 @@ public class SolitairePositionManager implements IPositionManager
     private SolitaireGameLayout gameLayout;
 
     @Override
-    public void calculate(int maxWidth, int maxHeight)
+    public void setMaxSize(int maxWidth, int maxHeight)
     {
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
 
