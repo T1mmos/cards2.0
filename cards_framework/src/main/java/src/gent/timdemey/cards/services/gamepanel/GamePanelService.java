@@ -78,7 +78,7 @@ public class GamePanelService implements IGamePanelService
             gamePanel.addMouseMotionListener(dragListener);
             gamePanel.addMouseListener(dragListener);
             Services.get(IContextService.class).getThreadContext().addStateListener(gameEventListener);
-            
+            Services.get(IPositionManager.class).calculate(gamePanel.getWidth(), gamePanel.getHeight());
             relayout();
             animator.start();
             
@@ -86,19 +86,11 @@ public class GamePanelService implements IGamePanelService
             Font f = fontServ.getFont("SMB2.ttf");
             scoreFont = f.deriveFont(52f);
             
-            rescaleAsync(() ->
+            updateScalableImages(() ->
             {
                 SwingUtilities.invokeLater(() -> callback.onPanelCreated(gamePanel));
             });
         }
-    }
-    
-    private void updatePositionManager()
-    {
-        IPositionManager posMan = Services.get(IPositionManager.class);
-        int maxWidth = gamePanel.getWidth();
-        int maxHeight = gamePanel.getHeight();
-        posMan.setMaxSize(maxWidth, maxHeight);
     }
 
     protected void addScalableImages()
@@ -147,16 +139,16 @@ public class GamePanelService implements IGamePanelService
     {
         Context context = Services.get(IContextService.class).getThreadContext();
         ReadOnlyCardGame cardGame = context.getReadOnlyState().getCardGame();
-        
-        updatePositionManager();
+        IPositionManager posMan = Services.get(IPositionManager.class);
+        posMan.calculate(gamePanel.getWidth(), gamePanel.getHeight());
 
         for (ReadOnlyCardStack cardStack : cardGame.getCardStacks())
         {
-            updateOrAnimatePosition(cardStack, true);
+            updatePosition(cardStack);
         }
         for (ReadOnlyCard card : cardGame.getCards())
         {
-            updateOrAnimatePosition(card, true);
+            updatePosition(card);
         }
 
         gamePanel.repaint();
@@ -181,14 +173,14 @@ public class GamePanelService implements IGamePanelService
     }
 
     @Override
-    public final void rescaleAsync(Runnable callback)
+    public final void updateScalableImages(Runnable callback)
     {
-        rescaleAsync();
+        updateScalableImages();
 
-        Services.get(IScalableImageManager.class).rescaleAsync(callback);
+        Services.get(IScalableImageManager.class).apply(callback);
     }
 
-    protected void rescaleAsync()
+    protected void updateScalableImages()
     {
         IPositionManager posMan = Services.get(IPositionManager.class);
         {
@@ -251,6 +243,11 @@ public class GamePanelService implements IGamePanelService
         Services.get(IScalableImageManager.class).setImage(card.getId(), whatToShow);
     }
 
+    @Override
+    public void updatePosition(ReadOnlyCard card)
+    {
+        updateOrAnimatePosition(card, true);
+    }
 
     @Override
     public void animatePosition(ReadOnlyCard card)

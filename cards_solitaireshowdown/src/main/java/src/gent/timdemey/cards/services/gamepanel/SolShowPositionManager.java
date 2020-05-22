@@ -17,16 +17,17 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyPlayer;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.IPositionManager;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.Context;
 
-public class SolShowPositionManager extends PositionManager
+public class SolShowPositionManager implements IPositionManager
 {
 
     private SolShowGameLayout gameLayout;
 
     @Override
-    public void setMaxSize(int maxWidth, int maxHeight)
+    public void calculate(int maxWidth, int maxHeight)
     {
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
 

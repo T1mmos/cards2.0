@@ -35,6 +35,15 @@ public class ScalableImageManager implements IScalableImageManager
     private final Executor barrierExecutor;
     private final Executor taskExecutor;
 
+    private static class BufferedImageInfo
+    {
+        private BufferedImage sourceImg;
+        private BufferedImage currentImg;
+
+        private int requested_x;
+        private int requested_y;
+    }
+
     private final Map<String, Set<String>> groupMap;
     private final Map<String, BufferedImageInfo> imageMap;
     private final BiMap<UUID, JScalableImage> componentMap;
@@ -43,8 +52,8 @@ public class ScalableImageManager implements IScalableImageManager
     private volatile boolean error = false;
 
     /**
-     * Produces threads used by the barrier executor which waits for all tasks to
-     * complete via CompletionFuture.allOf().
+     * Produces threads used by the barrier executor which waits for all tasks
+     * to complete via CompletionFuture.allOf().
      */
     private static class BarrierThreadFactory implements ThreadFactory
     {
@@ -60,8 +69,8 @@ public class ScalableImageManager implements IScalableImageManager
     }
 
     /**
-     * Produces threads used by the task executor which reads and scales buffered
-     * images.
+     * Produces threads used by the task executor which reads and scales
+     * buffered images.
      */
     private static class ScalableImageTaskThreadFactory implements ThreadFactory
     {
@@ -96,7 +105,7 @@ public class ScalableImageManager implements IScalableImageManager
     {
         this.barrierExecutor = Executors.newFixedThreadPool(1, new BarrierThreadFactory());
         this.taskExecutor = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 5L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(),
-            new ScalableImageTaskThreadFactory());
+                new ScalableImageTaskThreadFactory());
         this.groupMap = new HashMap<>();
         this.imageMap = Collections.synchronizedMap(new HashMap<>());
         this.componentMap = HashBiMap.create();
@@ -105,8 +114,7 @@ public class ScalableImageManager implements IScalableImageManager
 
     private void updateUI()
     {
-        SwingUtilities.invokeLater(() ->
-        {
+        SwingUtilities.invokeLater(() -> {
             for (Object obj : componentMap.keySet())
             {
                 JScalableImage jscalable = componentMap.get(obj);
@@ -125,7 +133,7 @@ public class ScalableImageManager implements IScalableImageManager
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
         Preconditions.checkNotNull(id);
 
-        if(!componentMap.containsKey(id))
+        if (!componentMap.containsKey(id))
         {
             componentMap.put(id, new JScalableImage());
         }
@@ -153,7 +161,7 @@ public class ScalableImageManager implements IScalableImageManager
         for (int i = 0; i < imgDefs.size(); i++)
         {
             ImageDefinition def = imgDefs.get(i);
-            if(def == null)
+            if (def == null)
             {
                 throw new IllegalArgumentException("null object at index " + i);
             }
@@ -169,16 +177,18 @@ public class ScalableImageManager implements IScalableImageManager
 
             CreateTaskContext context = new CreateTaskContext(imgDef, null);
             CompletableFuture<Void> cf = CompletableFuture.supplyAsync(() -> context, taskExecutor) // input
-                .thenApplyAsync(this::readImage, taskExecutor) // to buffered image
-                .exceptionally(t ->
-                {
-                    error = true;
-                    return onReadImageException(t, context);
-                }).thenAccept(this::addBufferedImage); // add buffered image to lists
+                    .thenApplyAsync(this::readImage, taskExecutor) // to
+                                                                   // buffered
+                                                                   // image
+                    .exceptionally(t -> {
+                        error = true;
+                        return onReadImageException(t, context);
+                    }).thenAccept(this::addBufferedImage); // add buffered image
+                                                           // to lists
             futures[i] = cf;
         }
 
-        if(onResult != null)
+        if (onResult != null)
         {
             CompletableFuture.allOf(futures).thenRunAsync(() -> onResult.accept(!error), barrierExecutor);
         }
@@ -215,18 +225,17 @@ public class ScalableImageManager implements IScalableImageManager
             int height = biInfo.requested_y;
 
             BufferedImageScaler scaler = new BufferedImageScaler(biInfo.sourceImg, width, height);
-            CompletableFuture<Void> cf = CompletableFuture.supplyAsync(() -> scaler, taskExecutor).thenApplyAsync(_scaler -> _scaler.getScaledInstance(),
-                taskExecutor).thenAccept(scaledImg -> biInfo.currentImg = scaledImg);
+            CompletableFuture<Void> cf = CompletableFuture.supplyAsync(() -> scaler, taskExecutor)
+                    .thenApplyAsync(_scaler -> _scaler.getScaledInstance(), taskExecutor).thenAccept(scaledImg -> biInfo.currentImg = scaledImg);
 
             futures.add(cf);
         }
 
         CompletableFuture<?>[] arr_futures = new CompletableFuture<?>[futures.size()];
         futures.toArray(arr_futures);
-        CompletableFuture.allOf(arr_futures).thenAcceptAsync((nil) ->
-        {
-            // updateUI();
-            if(callback != null)
+        CompletableFuture.allOf(arr_futures).thenAcceptAsync((nil) -> {
+            updateUI();
+            if (callback != null)
             {
                 callback.run();
             }
@@ -272,12 +281,11 @@ public class ScalableImageManager implements IScalableImageManager
     {
         Preconditions.checkState(!SwingUtilities.isEventDispatchThread());
 
-        if(context.image != null && context.imgDef != null)
+        if (context.image != null && context.imgDef != null)
         {
-            SwingUtilities.invokeLater(() ->
-            {
+            SwingUtilities.invokeLater(() -> {
                 // add path to group
-                if(!groupMap.containsKey(context.imgDef.group))
+                if (!groupMap.containsKey(context.imgDef.group))
                 {
                     groupMap.put(context.imgDef.group, new HashSet<>());
                 }

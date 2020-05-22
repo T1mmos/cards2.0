@@ -21,15 +21,15 @@ import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IGamePanelService;
 import gent.timdemey.cards.services.IScalableImageManager;
 
-@SuppressWarnings("serial")
 public class JScalableImage extends JPanel
 {
+
     // black-pink checkerboard pattern that can be tiled
     private static BufferedImage ERROR_IMAGE;
 
     private static BufferedImage getErrorImage()
     {
-        if(ERROR_IMAGE == null)
+        if (ERROR_IMAGE == null)
         {
             BufferedImage img = new BufferedImage(80, 80, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = (Graphics2D) img.getGraphics();
@@ -74,10 +74,10 @@ public class JScalableImage extends JPanel
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g.create();
 
-        if(image != null)
+        if (image != null)
         {
             Graphics2D g3 = (Graphics2D) g.create();
-            if(pointMirror)
+            if (pointMirror)
             {
                 g3.scale(-1.0, -1.0);
                 g3.translate(-getWidth(), -getHeight());
@@ -86,14 +86,16 @@ public class JScalableImage extends JPanel
             int imgW = image.getWidth();
             int compW = getWidth();
 
-            if(imgW == compW)
+            if (imgW == compW)
             {
                 // best image quality
                 g3.drawImage(image, 0, 0, null);
             }
             else
             {
-                // quick rescale until bufferedimage is updated with high quality
+                // quick rescale until bufferedimage is updated with high
+                // quality
+
                 g3.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
                 double sx = 1.0 * compW / imgW;
                 g3.scale(sx, sx);
@@ -104,7 +106,7 @@ public class JScalableImage extends JPanel
         else
         {
             BufferedImage errorImg = getErrorImage();
-            if(errorImg != null)
+            if (errorImg != null)
             {
                 int tileWidth = errorImg.getWidth();
                 int tileHeight = errorImg.getHeight();
@@ -118,7 +120,7 @@ public class JScalableImage extends JPanel
             }
         }
 
-        if(Services.get(IGamePanelService.class).getDrawDebug())
+        if (Services.get(IGamePanelService.class).getDrawDebug())
         {
             ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState().getCardGame();
 
@@ -131,15 +133,18 @@ public class JScalableImage extends JPanel
             Color debugColor = cardGame.isCard(id) ? Color.cyan : Color.pink;
 
             g2.setColor(debugColor);
-            g2.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 2.0f, new float[]
-            { 5.0f, 5.0f }, 2.0f));
+            g2.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 2.0f, new float[] { 5.0f, 5.0f }, 2.0f));
             g2.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
 
             int layer = JLayeredPane.getLayer(this);
             int zorder = ((JLayeredPane) getParent()).getComponentZOrder(this);
-            String[] strings = new String[]
-            { file, "rect=" + getX() + "," + getY() + ", " + getWidth() + "x" + getHeight(), "layer=" + layer, "zorder=" + zorder };
-
+            String[] strings = new String[]{
+                file, 
+                "rect=" + getX() + "," + getY() + ", " + getWidth() + "x" + getHeight(),
+                "layer=" + layer,
+                "zorder=" + zorder
+            };
+                    
             drawDebugStrings(g2, strings);
         }
 
@@ -151,23 +156,23 @@ public class JScalableImage extends JPanel
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setColor(Color.white);
 
-        if(strings.length == 0)
+        if (strings.length == 0)
         {
             return;
         }
-
-        g2.setFont(Font.decode("Arial bold 8"));
+        
+        g2.setFont(Font.decode("Arial bold 8"));            
         int hFat = g2.getFontMetrics().getHeight();
         g2.drawString(strings[0], 5, hFat);
-
-        g2.setFont(Font.decode("Arial 8"));
+        
+        g2.setFont(Font.decode("Arial 8"));         
         int hSmall = g2.getFontMetrics().getHeight();
-
+        
         for (int i = 1; i < strings.length; i++)
         {
             g2.drawString(strings[i], 5, hFat + i * hSmall);
         }
-
+        
     }
 
     public void mirror()
