@@ -21,7 +21,6 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyEntityList;
 import gent.timdemey.cards.services.ICommandService;
 import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IGamePanelService;
-import gent.timdemey.cards.services.IPositionManager;
 import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.scaleman.JScalableImage;
@@ -153,15 +152,11 @@ class GamePanelMouseListener extends MouseAdapter
         }
         else if (cardGame.isCardStack(entityId))
         {
-            ReadOnlyCardStack cardStack = Services.get(IPositionManager.class).getCardStackAt(e.getPoint());
-            if (cardStack != null)
+            CommandBase cmdUse = operations.getUseCommand(playerId, entityId, null);
+            if (canExecute(context, cmdUse, "mousePressed/cardstack"))
             {
-                CommandBase cmdUse = operations.getUseCommand(playerId, entityId, null);
-                if (canExecute(context, cmdUse, "mousePressed/cardstack"))
-                {
-                    context.schedule(cmdUse);
-                    draggedImages.clear();
-                }
+                context.schedule(cmdUse);
+                draggedImages.clear();
             }
         }
     }

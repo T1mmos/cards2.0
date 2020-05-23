@@ -152,7 +152,7 @@ public class GamePanelService implements IGamePanelService
 
         for (ReadOnlyCardStack cardStack : cardGame.getCardStacks())
         {
-            updateOrAnimatePosition(cardStack, true);
+            updateOrAnimatePosition(cardStack);
         }
         for (ReadOnlyCard card : cardGame.getCards())
         {
@@ -263,7 +263,7 @@ public class GamePanelService implements IGamePanelService
         JScalableImage jcard = Services.get(IScalableImageManager.class).getJScalableImage(card.getId());
         ReadOnlyCardStack cardStack = card.getCardStack();
         int layerIndex = LAYER_CARDS + 20 * cardStack.getTypeNumber() + card.getCardIndex();        
-        Rectangle rect_dst = Services.get(IPositionManager.class).getBounds(card);
+        Rectangle rect_dst = Services.get(IPositionManager.class).getBounds(card.getId());
         
         if (update)
         {
@@ -281,7 +281,7 @@ public class GamePanelService implements IGamePanelService
     public void updatePosition(ReadOnlyCardStack cardStack)
     {
         JScalableImage jcardstack = Services.get(IScalableImageManager.class).getJScalableImage(cardStack.getId());
-        Rectangle rect_dst = Services.get(IPositionManager.class).getBounds(cardStack);
+        Rectangle rect_dst = Services.get(IPositionManager.class).getBounds(cardStack.getId());
 
         int layerIndex = LAYER_CARDSTACKS;
         gamePanel.setLayer(jcardstack, layerIndex);
@@ -311,8 +311,7 @@ public class GamePanelService implements IGamePanelService
         // to calculate the animation's start position
         IContextService contextService = Services.get(IContextService.class);
         Context context = contextService.getThreadContext();
-        ReadOnlyCard card = context.getReadOnlyState().getCardGame().getCard(cardId);
-        Rectangle rect_dst = Services.get(IPositionManager.class).getBounds(card);
+        Rectangle rect_dst = Services.get(IPositionManager.class).getBounds(cardId);
         int posx = rect_dst.x + (rect_dst.width - label.getWidth()) / 2;
         int posy = rect_dst.y;        
         
