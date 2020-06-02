@@ -26,7 +26,7 @@ import gent.timdemey.cards.services.resources.FontService;
 import gent.timdemey.cards.services.resources.ImageService;
 import gent.timdemey.cards.services.resources.ResourceRepository;
 import gent.timdemey.cards.services.resources.SoundService;
-import gent.timdemey.cards.services.scaleman.ScalableImageManager;
+import gent.timdemey.cards.services.scaleman.img.ScalableImageManager;
 import gent.timdemey.cards.ui.StartFrame;
 
 public class Start

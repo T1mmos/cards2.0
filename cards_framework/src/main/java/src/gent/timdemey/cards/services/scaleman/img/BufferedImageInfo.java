@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.scaleman;
+package gent.timdemey.cards.services.scaleman.img;
 
 import java.awt.image.BufferedImage;
 

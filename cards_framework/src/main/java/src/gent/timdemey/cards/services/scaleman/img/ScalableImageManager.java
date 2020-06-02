@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.scaleman;
+package gent.timdemey.cards.services.scaleman.img;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -31,13 +31,12 @@ import gent.timdemey.cards.services.IScalableImageManager;
 
 public class ScalableImageManager implements IScalableImageManager
 {
-
     private final Executor barrierExecutor;
     private final Executor taskExecutor;
 
     private final Map<String, Set<String>> groupMap;
     private final Map<String, BufferedImageInfo> imageMap;
-    private final BiMap<UUID, JScalableImage> componentMap;
+    private final BiMap<UUID, ScalableImage> componentMap;
     private final Map<UUID, String> pathMap;
 
     private volatile boolean error = false;
@@ -109,42 +108,42 @@ public class ScalableImageManager implements IScalableImageManager
         {
             for (Object obj : componentMap.keySet())
             {
-                JScalableImage jscalable = componentMap.get(obj);
+                ScalableImage scalable = componentMap.get(obj);
                 String path = pathMap.get(obj);
                 BufferedImageInfo biInfo = imageMap.get(path);
 
-                jscalable.setImage(biInfo == null ? null : biInfo.currentImg, path);
-                jscalable.repaint();
+                scalable.setImage(biInfo == null ? null : biInfo.currentImg, path);
+                scalable.repaint();
             }
         });
     }
 
     @Override
-    public JScalableImage getJScalableImage(UUID id)
+    public ScalableImage getScalableImage(UUID id)
     {
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
         Preconditions.checkNotNull(id);
 
         if(!componentMap.containsKey(id))
         {
-            componentMap.put(id, new JScalableImage());
+            componentMap.put(id, new ScalableImage(id));
         }
 
         return componentMap.get(id);
     }
 
     @Override
-    public UUID getUUID(JScalableImage jscalable)
+    public UUID getUUID(ScalableImage scaleImg)
     {
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
-        Preconditions.checkState(componentMap.containsValue(jscalable));
+        Preconditions.checkState(componentMap.containsValue(scaleImg));
 
-        UUID id = componentMap.inverse().get(jscalable);
+        UUID id = componentMap.inverse().get(scaleImg);
         return id;
     }
 
     @Override
-    public void loadImages(List<ImageDefinition> imgDefs, Consumer<Boolean> onResult)
+    public void loadImagesAsync(List<ImageDefinition> imgDefs, Consumer<Boolean> onResult)
     {
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
         Preconditions.checkArgument(imgDefs != null);
@@ -201,7 +200,7 @@ public class ScalableImageManager implements IScalableImageManager
     }
 
     @Override
-    public void apply(Runnable callback)
+    public void rescaleAsync(Runnable callback)
     {
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
 
@@ -242,12 +241,12 @@ public class ScalableImageManager implements IScalableImageManager
         Preconditions.checkArgument(componentMap.containsKey(id));
         Preconditions.checkArgument(imageMap.containsKey(path));
 
-        JScalableImage jImage = componentMap.get(id);
+        ScalableImage scaleImg = componentMap.get(id);
         BufferedImageInfo biInfo = imageMap.get(path);
 
         pathMap.put(id, path);
-        jImage.setImage(biInfo.currentImg, path);
-        jImage.repaint();
+        scaleImg.setImage(biInfo.currentImg, path);
+        scaleImg.repaint();
     }
 
     private CreateTaskContext readImage(CreateTaskContext context)

@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import gent.timdemey.cards.services.scaleman.ImageDefinition;
-import gent.timdemey.cards.services.scaleman.JScalableImage;
+import gent.timdemey.cards.services.scaleman.img.ImageDefinition;
+import gent.timdemey.cards.services.scaleman.img.ScalableImage;
 
 /**
  * Creates and manages JScalableImages. You create them by supplying any object
@@ -50,7 +50,7 @@ public interface IScalableImageManager
     public void rescaleAsync(Runnable callback);
 
     /**
-     * Sets the image in the JScalable mapped from the given object to the image
+     * Sets the image in the ScalableImage mapped from the given object to the image
      * identified by the given path. The group of the path must equal the group of
      * the current path of the object.
      * 
@@ -59,24 +59,24 @@ public interface IScalableImageManager
     public void setImage(UUID id, String path);
 
     /**
-     * Get a JScalableImage mapped to the given managed object.
+     * Get a ScalableImage mapped to the given managed object.
      * 
      * @param card
      * @return
      */
-    public JScalableImage getJScalableImage(UUID id);
+    public ScalableImage getScalableImage(UUID id);
 
     /**
-     * Clears all links between JScalableImages and their managed objects. All
+     * Clears all links between ScalableImages and their managed objects. All
      * references to managed objects are cleared.
      */
     public void clearManagedObjects();
 
     /**
-     * Get the object associated to the JScalableImage.
+     * Get the object associated to the ScalableImage.
      * 
      * @param card
      * @return
      */
-    public UUID getUUID(JScalableImage jcard);
+    public UUID getUUID(ScalableImage scaleImg);
 }

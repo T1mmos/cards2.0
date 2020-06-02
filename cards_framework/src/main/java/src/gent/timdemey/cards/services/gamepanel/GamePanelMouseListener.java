@@ -23,7 +23,8 @@ import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IGamePanelService;
 import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.context.Context;
-import gent.timdemey.cards.services.scaleman.JScalableImage;
+import gent.timdemey.cards.services.scaleman.IScalableComponent;
+import gent.timdemey.cards.services.scaleman.ScalableComponent;
 
 class GamePanelMouseListener extends MouseAdapter
 {
@@ -44,12 +45,12 @@ class GamePanelMouseListener extends MouseAdapter
     private int mouse_ystart;
 
     private final List<CardDragState> dragStates;
-    private final List<JScalableImage> draggedImages;
+    private final List<IScalableComponent> draggedComps;
 
     GamePanelMouseListener()
     {
         dragStates = new ArrayList<>();
-        draggedImages = new ArrayList<>();
+        draggedComps = new ArrayList<>();
     }
 
     @Override
@@ -66,7 +67,7 @@ class GamePanelMouseListener extends MouseAdapter
             for (int i = 0; i < dragStates.size(); i++)
             {
                 CardDragState state = dragStates.get(i);
-                JScalableImage scaleImg = draggedImages.get(i);
+                IScalableComponent scaleImg = draggedComps.get(i);
                 int card_x = state.xstart + dx;
                 int card_y = state.ystart + dy;
 
