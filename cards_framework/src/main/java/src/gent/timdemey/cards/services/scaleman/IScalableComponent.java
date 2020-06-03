@@ -1,6 +1,7 @@
 package gent.timdemey.cards.services.scaleman;
 
 import java.awt.Rectangle;
+import java.util.UUID;
 
 import javax.swing.JComponent;
 
@@ -15,4 +16,5 @@ public interface IScalableComponent
     
     public JComponent getComponent();
     public Rectangle getBounds();
+    public UUID getModelId();
 }

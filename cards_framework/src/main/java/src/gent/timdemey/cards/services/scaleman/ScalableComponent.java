@@ -145,5 +145,9 @@ public abstract class ScalableComponent implements IScalableComponent
         getComponent().repaint();
     }
 
-    
+    @Override
+    public UUID getModelId()
+    {
+        return modelId;
+    }
 }

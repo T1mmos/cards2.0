@@ -5,6 +5,8 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,8 +68,6 @@ public class GamePanelService implements IGamePanelService
     @Override 
     public void load()
     {
-
-        
         IFontService fontServ = Services.get(IFontService.class);
         Font f = fontServ.getFont("SMB2.ttf");
         scoreFont = f.deriveFont(52f);
@@ -356,5 +356,18 @@ public class GamePanelService implements IGamePanelService
         JComponent jcomp = comp.getComponent();
         gamePanel.remove(jcomp);
         reverseCompMap.remove(jcomp);
+    }
+
+    @Override
+    public IScalableComponent get(Object uiComp)
+    {
+        IScalableComponent scaleComp = reverseCompMap.get(uiComp);
+        return scaleComp;
+    }
+
+    @Override
+    public Collection<IScalableComponent> getScalableComponents()
+    {
+        return Collections.unmodifiableCollection(reverseCompMap.values());
     }
 }
