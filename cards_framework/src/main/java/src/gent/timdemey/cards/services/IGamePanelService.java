@@ -8,7 +8,6 @@ import gent.timdemey.cards.IPreload;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.scaleman.IScalableComponent;
-import gent.timdemey.cards.services.scaleman.img.ImageDefinition;
 
 public interface IGamePanelService extends IPreload
 {

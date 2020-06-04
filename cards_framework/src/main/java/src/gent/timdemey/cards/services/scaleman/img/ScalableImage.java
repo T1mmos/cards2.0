@@ -15,33 +15,7 @@ public class ScalableImage extends ScalableComponent
     private String file = null;
     private BufferedImage image = null;
     
- // black-pink checkerboard pattern that can be tiled
-    private static BufferedImage ERROR_IMAGE;
-
-    private static BufferedImage getErrorImage()
-    {
-        if(ERROR_IMAGE == null)
-        {
-            BufferedImage img = new BufferedImage(80, 80, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g = (Graphics2D) img.getGraphics();
-
-            g.setColor(Color.black);
-            g.fillRect(0, 0, 80, 80);
-            g.setColor(new Color(249, 14, 245));
-            g.fillRect(40, 0, 40, 40);
-            g.fillRect(0, 40, 40, 40);
-            g.drawRect(0, 0, 40, 40);
-            g.drawRect(40, 40, 40, 40);
-            g.setColor(Color.black);
-            g.drawRect(40, 0, 40, 40);
-            g.drawRect(0, 40, 40, 40);
-
-            g.dispose();
-
-            ERROR_IMAGE = img;
-        }
-        return ERROR_IMAGE;
-    }
+    
 
     
     public ScalableImage(UUID modelId)

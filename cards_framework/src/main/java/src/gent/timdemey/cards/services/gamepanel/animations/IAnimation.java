@@ -1,6 +1,6 @@
 package gent.timdemey.cards.services.gamepanel.animations;
 
-import javax.swing.JComponent;
+import gent.timdemey.cards.services.scaleman.IScalableComponent;
 
 public interface IAnimation
 {
@@ -11,5 +11,5 @@ public interface IAnimation
      * @param frac
      * @param comp
      */
-    public void tick (double frac, JComponent comp);
+    public void tick (double frac, IScalableComponent comp);
 }

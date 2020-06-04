@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.scaleman.img;
+package gent.timdemey.cards.services.scaleman;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -27,9 +27,10 @@ import com.google.common.collect.HashBiMap;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.services.IImageService;
-import gent.timdemey.cards.services.IScalableImageManager;
+import gent.timdemey.cards.services.IScalableComponentManager;
+import gent.timdemey.cards.services.scaleman.img.ScalableImage;
 
-public class ScalableImageManager implements IScalableImageManager
+public class ScalableComponentManager implements IScalableComponentManager
 {
     private final Executor barrierExecutor;
     private final Executor taskExecutor;
@@ -91,7 +92,7 @@ public class ScalableImageManager implements IScalableImageManager
         }
     }
 
-    public ScalableImageManager()
+    public ScalableComponentManager()
     {
         this.barrierExecutor = Executors.newFixedThreadPool(1, new BarrierThreadFactory());
         this.taskExecutor = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 5L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(),

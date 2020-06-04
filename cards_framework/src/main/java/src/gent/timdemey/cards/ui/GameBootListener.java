@@ -16,7 +16,7 @@ import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.IGamePanelService;
 import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.context.Context;
-import gent.timdemey.cards.services.scaleman.img.ImageDefinition;
+import gent.timdemey.cards.services.scaleman.ImageDefinition;
 
 public class GameBootListener implements IStateListener
 {

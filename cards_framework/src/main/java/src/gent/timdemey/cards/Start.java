@@ -26,7 +26,7 @@ import gent.timdemey.cards.services.resources.FontService;
 import gent.timdemey.cards.services.resources.ImageService;
 import gent.timdemey.cards.services.resources.ResourceRepository;
 import gent.timdemey.cards.services.resources.SoundService;
-import gent.timdemey.cards.services.scaleman.img.ScalableImageManager;
+import gent.timdemey.cards.services.scaleman.ScalableComponentManager;
 import gent.timdemey.cards.ui.StartFrame;
 
 public class Start
@@ -128,7 +128,7 @@ public class Start
         }
         if(!Services.isInstalled(IScalableImageManager.class))
         {
-            IScalableImageManager scaleImgMan = new ScalableImageManager();
+            IScalableImageManager scaleImgMan = new ScalableComponentManager();
             services.install(IScalableImageManager.class, scaleImgMan);
         }
         if(!Services.isInstalled(IContextService.class))

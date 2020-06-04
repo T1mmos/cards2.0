@@ -15,15 +15,16 @@ import java.util.UUID;
 import javax.swing.JComponent;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.model.entities.cards.Suit;
+import gent.timdemey.cards.model.entities.cards.Value;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.services.IFontService;
 import gent.timdemey.cards.services.IGamePanelService;
 import gent.timdemey.cards.services.IPositionManager;
-import gent.timdemey.cards.services.IScalableImageManager;
+import gent.timdemey.cards.services.IResourceService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.gamepanel.animations.AnimationEnd;
 import gent.timdemey.cards.services.gamepanel.animations.ColorAnimation;
@@ -31,7 +32,6 @@ import gent.timdemey.cards.services.gamepanel.animations.GamePanelAnimator;
 import gent.timdemey.cards.services.gamepanel.animations.IAnimation;
 import gent.timdemey.cards.services.gamepanel.animations.MovingAnimation;
 import gent.timdemey.cards.services.scaleman.IScalableComponent;
-import gent.timdemey.cards.services.scaleman.img.ImageDefinition;
 import gent.timdemey.cards.services.scaleman.img.ScalableImage;
 import gent.timdemey.cards.services.scaleman.text.ScalableText;
 
@@ -40,8 +40,9 @@ public class GamePanelService implements IGamePanelService
     private static final int ANIMATION_TIME_CARD = 80;
     private static final int ANIMATION_TIME_SCORE = 1200;
 
+    private static final String FILEPATH_FRONTSIDE = "cards/edge_thick/%s_%s.png";
+    private static final String FILEPATH_BACKSIDE = "backside_yellow.png";
     private static final String SCALEGROUP_CARDS = "SCALEGROUP_CARDS";
-    private static final String FILENAME_BACKSIDE = "backside_yellow.png";
 
     static final int LAYER_CARDSTACKS = 0;
     static final int LAYER_CARDS = 200;
@@ -68,9 +69,25 @@ public class GamePanelService implements IGamePanelService
     @Override 
     public void load()
     {
-        IFontService fontServ = Services.get(IFontService.class);
-        Font f = fontServ.getFont("SMB2.ttf");
-        scoreFont = f.deriveFont(52f);
+        // score font
+        IResourceService resServ = Services.get(IResourceService.class);
+        scoreFont = resServ.getFont("SMB2.ttf").deriveFont(52f);
+        
+        // card fronts
+        for (Suit suit : Suit.values())
+        {
+            String suit_str = suit.name().substring(0, 1);
+            for (Value value : Value.values()) // have fun reading the code lol
+            {
+                String value_str = value.getTextual();
+                String filename_card = String.format(FILEPATH_FRONTSIDE, suit_str, value_str);
+                
+                resServ.getImage(filename_card);
+            }
+        }
+        
+        // card back
+        resServ.getImage(FILEPATH_BACKSIDE);
     }
 
     @Override
@@ -152,14 +169,10 @@ public class GamePanelService implements IGamePanelService
         ReadOnlyCardGame cardGame = context.getReadOnlyState().getCardGame();
         
         updatePositionManager();
-
-        for (ReadOnlyCardStack cardStack : cardGame.getCardStacks())
+        
+        for (IScalableComponent comp : getScalableComponents())
         {
-            updateOrAnimatePosition(cardStack);
-        }
-        for (ReadOnlyCard card : cardGame.getCards())
-        {
-            updateOrAnimatePosition(card, true);
+            updateOrAnimatePosition(comp, true);
         }
 
         gamePanel.repaint();
@@ -229,15 +242,6 @@ public class GamePanelService implements IGamePanelService
         return imgDefs;
     }
 
-    private String getFilename(ReadOnlyCard card)
-    {
-        String suit = card.getSuit().name().substring(0, 1);
-        String value = card.getValue().getTextual();
-        String full = String.format("cards/edge_thick/%s_%s.png", suit, value);
-
-        return full;
-    }
-
     @Override
     public void setVisible(ReadOnlyCard card, boolean visible)
     {
@@ -252,23 +256,29 @@ public class GamePanelService implements IGamePanelService
         updateOrAnimatePosition(card, false);
     }
 
-    private void updateOrAnimatePosition(ReadOnlyCard card, boolean update)
+    private void updateOrAnimatePosition(IScalableComponent scaleComp, boolean update)
     {
-        IScalableComponent scaleComp = Services.get(IScalableImageManager.class).getScalableImage(card.getId());
-        ReadOnlyCardStack cardStack = card.getCardStack();
-        int layerIndex = LAYER_CARDS + 20 * cardStack.getTypeNumber() + card.getCardIndex();        
-        Rectangle rect_dst = Services.get(IPositionManager.class).getBounds(card.getId());
-        
-        if (update)
+        UUID modelId = scaleComp.getModelId();
+        if (modelId != null)
         {
-            setLayer(scaleComp, layerIndex);
-            scaleComp.setBounds(rect_dst.x, rect_dst.y, rect_dst.width, rect_dst.height);
+            IScalableImageManager
+            IScalableComponent scaleComp = .getScalableImage(modelId);
+            ReadOnlyCardStack cardStack = card.getCardStack();
+            int layerIndex = LAYER_CARDS + 20 * cardStack.getTypeNumber() + card.getCardIndex();        
+            Rectangle rect_dst = Services.get(IPositionManager.class).getBounds(modelId);
+            
+            if (update)
+            {
+                setLayer(scaleComp, layerIndex);
+                scaleComp.setBounds(rect_dst.x, rect_dst.y, rect_dst.width, rect_dst.height);
+            }
+            else
+            {
+                MovingAnimation anim_pos = new MovingAnimation(scaleComp.getBounds().getLocation(), rect_dst.getLocation());
+                animator.animate(scaleComp, new AnimationEnd(false, layerIndex), ANIMATION_TIME_CARD, anim_pos);
+            }
         }
-        else
-        {
-            MovingAnimation anim_pos = new MovingAnimation(scaleComp.getBounds().getLocation(), rect_dst.getLocation());
-            animator.animate(jcard, new AnimationEnd(false, layerIndex), ANIMATION_TIME_CARD, anim_pos);
-        }
+       
     }
 
     @Override

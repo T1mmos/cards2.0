@@ -10,7 +10,7 @@ import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.Context;
-import gent.timdemey.cards.services.scaleman.img.ImageDefinition;
+import gent.timdemey.cards.services.scaleman.ImageDefinition;
 import gent.timdemey.cards.services.scaleman.img.JScalableImage;
 
 public class SolShowGamePanelService extends GamePanelService

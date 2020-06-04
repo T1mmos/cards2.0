@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import gent.timdemey.cards.services.scaleman.img.ImageDefinition;
-import gent.timdemey.cards.services.scaleman.img.ScalableImage;
+import gent.timdemey.cards.services.scaleman.IScalableComponent;
+import gent.timdemey.cards.services.scaleman.ImageDefinition;
 
 /**
  * Creates and manages JScalableImages. You create them by supplying any object
@@ -19,17 +19,17 @@ import gent.timdemey.cards.services.scaleman.img.ScalableImage;
  * 
  * @author Timmos
  */
-public interface IScalableImageManager
+public interface IScalableComponentManager
 {
 
     /**
-     * Loads all images mapped from the given objects in a background thread and
+     * Loads all resources in a background thread and
      * runs the given Runnable on the UI thread when all images are loaded.
      * 
      * @param paths
      * @param callback
      */
-    public void loadImagesAsync(List<ImageDefinition> imgDefs, Consumer<Boolean> onResult);
+    public void loadResourcesAsync(List<ImageDefinition> imgDefs, Consumer<Boolean> onResult);
 
     /**
      * Sets the size of all image mapped from object of the given type the given
@@ -42,10 +42,10 @@ public interface IScalableImageManager
     public void setSize(String group, int x, int y);
 
     /**
-     * Rescales all images and updates the JScalableImages. This schedules a high
-     * quality rescale of the original buffered images in background threads, and
+     * Rescales all images and updates the scalable components. This schedules a high
+     * quality rescale of the components in background threads, and
      * waits for all rescale operations to finish before updating all
-     * JScalableImages at the same time on the UI thread.
+     * components at the same time on the UI thread.
      */
     public void rescaleAsync(Runnable callback);
 
@@ -64,7 +64,7 @@ public interface IScalableImageManager
      * @param card
      * @return
      */
-    public ScalableImage getScalableImage(UUID id);
+    public IScalableComponent getScalableComponent(UUID id);
 
     /**
      * Clears all links between ScalableImages and their managed objects. All
@@ -73,10 +73,10 @@ public interface IScalableImageManager
     public void clearManagedObjects();
 
     /**
-     * Get the object associated to the ScalableImage.
+     * Get the object associated to the scalable component.
      * 
      * @param card
      * @return
      */
-    public UUID getUUID(ScalableImage scaleImg);
+    public UUID getUUID(IScalableComponent scaleComp);
 }

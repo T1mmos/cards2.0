@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.JComponent;
-import javax.swing.JLayeredPane;
 import javax.swing.Timer;
+
+import gent.timdemey.cards.Services;
+import gent.timdemey.cards.services.IGamePanelService;
+import gent.timdemey.cards.services.scaleman.IScalableComponent;
 
 public class GamePanelAnimator
 {
@@ -19,9 +21,9 @@ public class GamePanelAnimator
         timer = new Timer(15, e -> tick());
     }
 
-    public void animate(JComponent comp, AnimationEnd end, int animationTime, IAnimation ...  animations)
+    public void animate(IScalableComponent component, AnimationEnd end, int animationTime, IAnimation ...  animations)
     {
-        AnimationInfo animationInfo = new AnimationInfo(comp, end, animationTime, System.currentTimeMillis(), animations);
+        AnimationInfo animationInfo = new AnimationInfo(component, end, animationTime, System.currentTimeMillis(), animations);
         animationInfos.add(animationInfo);        
     }
         
@@ -54,13 +56,15 @@ public class GamePanelAnimator
             if (frac == 1.0)
             {
                 i.remove();
+
+                IGamePanelService gpServ = Services.get(IGamePanelService.class);
                 if (animInfo.end.dispose)
                 {
-                    animInfo.component.getParent().remove(animInfo.component);
+                    gpServ.remove(animInfo.component);
                 }
                 else
                 {
-                    ((JLayeredPane) animInfo.component.getParent()).setLayer(animInfo.component, animInfo.end.layer);
+                    gpServ.setLayer(animInfo.component, animInfo.end.layer);
                 }
             }
         }

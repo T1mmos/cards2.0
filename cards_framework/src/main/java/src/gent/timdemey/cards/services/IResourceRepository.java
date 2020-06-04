@@ -9,7 +9,7 @@ public interface IResourceRepository
         IMAGE,
         SOUND,
         LOCALIZATION,
-        FONTS
+        FONT
     }
     
     public InputStream getResourceAsStream(ResourceType type, String name);
