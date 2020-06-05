@@ -12,21 +12,17 @@ import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.serialization.SerializationService;
 import gent.timdemey.cards.services.IConfigManager;
 import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.services.IFontService;
-import gent.timdemey.cards.services.IImageService;
 import gent.timdemey.cards.services.INetworkService;
 import gent.timdemey.cards.services.IResourceRepository;
-import gent.timdemey.cards.services.IScalableImageManager;
+import gent.timdemey.cards.services.IResourceService;
+import gent.timdemey.cards.services.IScalableComponentService;
 import gent.timdemey.cards.services.ISerializationService;
-import gent.timdemey.cards.services.ISoundService;
 import gent.timdemey.cards.services.configman.ConfigManager;
 import gent.timdemey.cards.services.context.CommandNetworkService;
 import gent.timdemey.cards.services.context.ContextService;
-import gent.timdemey.cards.services.resources.FontService;
-import gent.timdemey.cards.services.resources.ImageService;
 import gent.timdemey.cards.services.resources.ResourceRepository;
-import gent.timdemey.cards.services.resources.SoundService;
-import gent.timdemey.cards.services.scaleman.ScalableComponentManager;
+import gent.timdemey.cards.services.resources.ResourceService;
+import gent.timdemey.cards.services.scaleman.ScalableComponentService;
 import gent.timdemey.cards.ui.StartFrame;
 
 public class Start
@@ -126,10 +122,10 @@ public class Start
             IConfigManager configManager = new ConfigManager();
             App.getServices().install(IConfigManager.class, configManager);
         }
-        if(!Services.isInstalled(IScalableImageManager.class))
+        if(!Services.isInstalled(IScalableComponentService.class))
         {
-            IScalableImageManager scaleImgMan = new ScalableComponentManager();
-            services.install(IScalableImageManager.class, scaleImgMan);
+            IScalableComponentService scaleServ = new ScalableComponentService();
+            services.install(IScalableComponentService.class, scaleServ);
         }
         if(!Services.isInstalled(IContextService.class))
         {
@@ -137,21 +133,16 @@ public class Start
             services.install(IContextService.class, ctxtProv);
         }
         
-        // resource services
-        if(!Services.isInstalled(IImageService.class))
+        // resources
+        if(!Services.isInstalled(IResourceService.class))
         {
-            IImageService imgServ = new ImageService();
-            services.install(IImageService.class, imgServ);
+            IResourceService resServ = new ResourceService();
+            services.install(IResourceService.class, resServ);
         }
-        if(!Services.isInstalled(ISoundService.class))
+        if(!Services.isInstalled(IResourceRepository.class))
         {
-            ISoundService sndServ = new SoundService();
-            services.install(ISoundService.class, sndServ);
-        }
-        if (!Services.isInstalled(IFontService.class))
-        {
-            IFontService fontServ = new FontService();
-            services.install(IFontService.class, fontServ);
+            IResourceRepository resRepo = new ResourceRepository();
+            services.install(IResourceRepository.class, resRepo);
         }
         
         // network related

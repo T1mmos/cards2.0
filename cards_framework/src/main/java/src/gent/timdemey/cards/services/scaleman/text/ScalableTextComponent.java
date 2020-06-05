@@ -7,12 +7,12 @@ import javax.swing.JLabel;
 
 import gent.timdemey.cards.services.scaleman.ScalableComponent;
 
-public class ScalableText extends ScalableComponent
+public class ScalableTextComponent extends ScalableComponent
 {
     private final String text;
     private final Font font;
 
-    public ScalableText(String text, Font font)
+    public ScalableTextComponent(String text, Font font)
     {
         super(null);
         this.text = text;

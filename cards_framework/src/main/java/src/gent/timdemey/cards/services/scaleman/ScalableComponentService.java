@@ -27,17 +27,17 @@ import com.google.common.collect.HashBiMap;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.services.IImageService;
-import gent.timdemey.cards.services.IScalableComponentManager;
-import gent.timdemey.cards.services.scaleman.img.ScalableImage;
+import gent.timdemey.cards.services.IScalableComponentService;
+import gent.timdemey.cards.services.scaleman.img.ScalableImageComponent;
 
-public class ScalableComponentManager implements IScalableComponentManager
+public class ScalableComponentService implements IScalableComponentService
 {
     private final Executor barrierExecutor;
     private final Executor taskExecutor;
 
     private final Map<String, Set<String>> groupMap;
     private final Map<String, BufferedImageInfo> imageMap;
-    private final BiMap<UUID, ScalableImage> componentMap;
+    private final BiMap<UUID, ScalableImageComponent> componentMap;
     private final Map<UUID, String> pathMap;
 
     private volatile boolean error = false;
@@ -92,7 +92,7 @@ public class ScalableComponentManager implements IScalableComponentManager
         }
     }
 
-    public ScalableComponentManager()
+    public ScalableComponentService()
     {
         this.barrierExecutor = Executors.newFixedThreadPool(1, new BarrierThreadFactory());
         this.taskExecutor = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 5L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(),
@@ -109,7 +109,7 @@ public class ScalableComponentManager implements IScalableComponentManager
         {
             for (Object obj : componentMap.keySet())
             {
-                ScalableImage scalable = componentMap.get(obj);
+                ScalableImageComponent scalable = componentMap.get(obj);
                 String path = pathMap.get(obj);
                 BufferedImageInfo biInfo = imageMap.get(path);
 
@@ -120,21 +120,21 @@ public class ScalableComponentManager implements IScalableComponentManager
     }
 
     @Override
-    public ScalableImage getScalableImage(UUID id)
+    public ScalableImageComponent getScalableImage(UUID id)
     {
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
         Preconditions.checkNotNull(id);
 
         if(!componentMap.containsKey(id))
         {
-            componentMap.put(id, new ScalableImage(id));
+            componentMap.put(id, new ScalableImageComponent(id));
         }
 
         return componentMap.get(id);
     }
 
     @Override
-    public UUID getUUID(ScalableImage scaleImg)
+    public UUID getUUID(ScalableImageComponent scaleImg)
     {
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
         Preconditions.checkState(componentMap.containsValue(scaleImg));
@@ -242,7 +242,7 @@ public class ScalableComponentManager implements IScalableComponentManager
         Preconditions.checkArgument(componentMap.containsKey(id));
         Preconditions.checkArgument(imageMap.containsKey(path));
 
-        ScalableImage scaleImg = componentMap.get(id);
+        ScalableImageComponent scaleImg = componentMap.get(id);
         BufferedImageInfo biInfo = imageMap.get(path);
 
         pathMap.put(id, path);

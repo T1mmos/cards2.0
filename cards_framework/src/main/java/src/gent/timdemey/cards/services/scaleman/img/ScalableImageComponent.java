@@ -1,26 +1,29 @@
 package gent.timdemey.cards.services.scaleman.img;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.util.List;
 import java.util.UUID;
 
 import javax.swing.JComponent;
 
+import gent.timdemey.cards.logging.Logger;
+import gent.timdemey.cards.services.scaleman.IScalableResource;
 import gent.timdemey.cards.services.scaleman.ScalableComponent;
+import gent.timdemey.cards.services.scaleman.resources.ScalableImageResource;
 
-public class ScalableImage extends ScalableComponent
+public class ScalableImageComponent extends ScalableComponent
 {
     private String file = null;
-    private BufferedImage image = null;
+    private final List<ScalableImageResource> imageResources;
+    private ScalableImageResource currentImageResource;
     
-    
-
-    
-    public ScalableImage(UUID modelId)
+    public ScalableImageComponent(UUID modelId, List<ScalableImageResource> imageResources)
     {
-        super(modelId);        
+        super(modelId);  
+        this.imageResources = imageResources;
+        this.currentImageResource = null;
     }
 
     @Override
@@ -34,22 +37,37 @@ public class ScalableImage extends ScalableComponent
     {
         return new String[] { String.format("file=%s", file) };
     }
-
-    public void setImage(BufferedImage image, String file)
+    
+    /**
+     * Swap the image shown.
+     * @param resourceId
+     */
+    public void setScalableImageResource(UUID resourceId)
     {
-        this.file = file;
-        this.image = image;
+        ScalableImageResource found = null;
+        for (ScalableImageResource resource : imageResources)
+        {
+            if (resource.id.equals(resourceId))
+            {
+                found = resource;
+                break;
+            }
+        }
+        if (found == null)
+        {
+            Logger.error("Resource with id=%s not found", resourceId);
+        }
+        
+        repaint();
     }
 
     public void draw(Graphics2D g2)
     {
-        JComponent comp = getComponent();
-        int width = comp.getWidth();
-        int height = getComponent().getWidth();
+        int width = getBounds().width;
+        int height = getBounds().height;
         
-        if(image != null)
+        if(currentImageResource != null)
         {
-            
             Graphics2D g3 = (Graphics2D) g2.create();
             if(getMirror())
             {
@@ -57,6 +75,7 @@ public class ScalableImage extends ScalableComponent
                 g3.translate(-width, -height);
             }
 
+            BufferedImage image = currentImageResource.get();
             int imgW = image.getWidth();
             int imgH = image.getHeight();
 
@@ -92,5 +111,18 @@ public class ScalableImage extends ScalableComponent
                 }
             }
         }
+    }
+
+    @Override
+    public List<ScalableImageResource> getResources()
+    {
+        return images;
+    }
+
+    @Override
+    public void update()
+    {
+        // TODO Auto-generated method stub
+        
     }
 }

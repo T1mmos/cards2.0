@@ -8,9 +8,9 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 class JScalableImage extends JPanel
 {
-    private final ScalableImage abstractor;
+    private final ScalableImageComponent abstractor;
 
-    JScalableImage(ScalableImage abstractor)
+    JScalableImage(ScalableImageComponent abstractor)
     {
         this.abstractor = abstractor;
         setOpaque(false);

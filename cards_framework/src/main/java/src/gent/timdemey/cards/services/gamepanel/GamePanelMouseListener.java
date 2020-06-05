@@ -27,7 +27,7 @@ import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.scaleman.IScalableComponent;
 import gent.timdemey.cards.services.scaleman.ScalableComponent;
-import gent.timdemey.cards.services.scaleman.img.ScalableImage;
+import gent.timdemey.cards.services.scaleman.img.ScalableImageComponent;
 
 class GamePanelMouseListener extends MouseAdapter
 {
@@ -103,12 +103,12 @@ class GamePanelMouseListener extends MouseAdapter
             return;
         }
 
-        if (!(scaleComp instanceof ScalableImage))
+        if (!(scaleComp instanceof ScalableImageComponent))
         {
             return;
         }
 
-        ScalableImage scaleImg = (ScalableImage) scaleComp;
+        ScalableImageComponent scaleImg = (ScalableImageComponent) scaleComp;
         UUID entityId = Services.get(IScalableImageManager.class).getUUID(scaleImg);
         Context context = Services.get(IContextService.class).getThreadContext();
         ICommandService operations = Services.get(ICommandService.class);
@@ -139,7 +139,7 @@ class GamePanelMouseListener extends MouseAdapter
                 for (int i = 0; i < cards.size(); i++)
                 {
                     ReadOnlyCard currentCard = cards.get(i);
-                    ScalableImage currScaleImg = Services.get(IScalableImageManager.class)
+                    ScalableImageComponent currScaleImg = Services.get(IScalableImageManager.class)
                             .getScalableImage(currentCard.getId());
                     int card_xstart = currScaleImg.getBounds().x;
                     int card_ystart = currScaleImg.getBounds().y;
@@ -195,11 +195,11 @@ class GamePanelMouseListener extends MouseAdapter
             IGamePanelService gpServ = Services.get(IGamePanelService.class);;
             for (IScalableComponent comp : gpServ.getScalableComponents()) // inefficient?
             {
-                if (!(comp instanceof ScalableImage))
+                if (!(comp instanceof ScalableImageComponent))
                 {
                     continue;
                 }
-                ScalableImage scaleMan = (ScalableImage) comp;
+                ScalableImageComponent scaleMan = (ScalableImageComponent) comp;
                 if (draggedComps.contains(scaleMan))
                 {
                     continue;
@@ -262,7 +262,7 @@ class GamePanelMouseListener extends MouseAdapter
             {
                 for (int i = 0; i < draggedComps.size(); i++)
                 {
-                    ScalableImage scaleImg = (ScalableImage) draggedComps.get(i);
+                    ScalableImageComponent scaleImg = (ScalableImageComponent) draggedComps.get(i);
                     UUID id = scaleImg.getModelId();
                     ReadOnlyCard card = cardGame.getCard(id);
                     Services.get(IGamePanelService.class).animatePosition(card);

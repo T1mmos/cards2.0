@@ -1,11 +1,9 @@
 package gent.timdemey.cards.services;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 import gent.timdemey.cards.services.scaleman.IScalableComponent;
-import gent.timdemey.cards.services.scaleman.ImageDefinition;
+import gent.timdemey.cards.services.scaleman.IScalableResource;
 
 /**
  * Creates and manages JScalableImages. You create them by supplying any object
@@ -19,18 +17,8 @@ import gent.timdemey.cards.services.scaleman.ImageDefinition;
  * 
  * @author Timmos
  */
-public interface IScalableComponentManager
+public interface IScalableComponentService
 {
-
-    /**
-     * Loads all resources in a background thread and
-     * runs the given Runnable on the UI thread when all images are loaded.
-     * 
-     * @param paths
-     * @param callback
-     */
-    public void loadResourcesAsync(List<ImageDefinition> imgDefs, Consumer<Boolean> onResult);
-
     /**
      * Sets the size of all image mapped from object of the given type the given
      * dimensions. This has no effect until calling an update() method.
@@ -50,21 +38,19 @@ public interface IScalableComponentManager
     public void rescaleAsync(Runnable callback);
 
     /**
-     * Sets the image in the ScalableImage mapped from the given object to the image
-     * identified by the given path. The group of the path must equal the group of
-     * the current path of the object.
-     * 
-     * @param objects
-     */
-    public void setImage(UUID id, String path);
-
-    /**
      * Get a ScalableImage mapped to the given managed object.
      * 
      * @param card
      * @return
      */
     public IScalableComponent getScalableComponent(UUID id);
+    
+    /**
+     * Get a ScalableResource mapped to the given id.
+     * @param id
+     * @return
+     */
+    public IScalableResource getScalableResource(UUID id);
 
     /**
      * Clears all links between ScalableImages and their managed objects. All

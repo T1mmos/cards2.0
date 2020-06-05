@@ -17,7 +17,7 @@ import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.services.IConfigManager;
 import gent.timdemey.cards.services.IFrameService;
-import gent.timdemey.cards.services.IImageService;
+import gent.timdemey.cards.services.IResourceService;
 import gent.timdemey.cards.services.configman.ConfigKey;
 import gent.timdemey.cards.ui.actions.ActionDef;
 import gent.timdemey.cards.ui.actions.Actions;
@@ -30,11 +30,11 @@ public class FrameService implements IFrameService
     {
         List<Image> images = new ArrayList<>();
 
-        IImageService imageService = Services.get(IImageService.class);
-        images.add(imageService.read("icon_spade_16x16.png"));
-        images.add(imageService.read("icon_spade_24x24.png"));
-        images.add(imageService.read("icon_spade_48x48.png"));
-        images.add(imageService.read("icon_spade_140x140.png"));
+        IResourceService resServ = Services.get(IResourceService.class);
+        images.add(resServ.getImage("icon_spade_16x16.png"));
+        images.add(resServ.getImage("icon_spade_24x24.png"));
+        images.add(resServ.getImage("icon_spade_48x48.png"));
+        images.add(resServ.getImage("icon_spade_140x140.png"));
 
         return images;
     }
@@ -134,7 +134,8 @@ public class FrameService implements IFrameService
     @Override
     public BufferedImage getBackground()
     {
-        BufferedImage background = Services.get(IImageService.class).read("background_green.png");
+        IResourceService resServ = Services.get(IResourceService.class);
+        BufferedImage background = resServ.getImage("background_green.png");
         return background;
     }
 }
