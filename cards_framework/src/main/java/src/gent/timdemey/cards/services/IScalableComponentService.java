@@ -34,6 +34,18 @@ public interface IScalableComponentService
     public void updateComponents();
 
     /**
+     * Adds a scalable resource.
+     * @param scaleRes
+     */
+    public void addScalableResource(IScalableResource scaleRes);
+    
+    /**
+     * Adds a scalable component.
+     * @param scaleComp
+     */
+    public void addScalableComponent(IScalableComponent scaleComp);
+    
+    /**
      * Get a ScalableImage mapped to the given managed object.
      * 
      * @param card

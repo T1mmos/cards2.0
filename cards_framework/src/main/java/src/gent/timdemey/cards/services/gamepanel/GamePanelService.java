@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,7 +34,9 @@ import gent.timdemey.cards.services.gamepanel.animations.GamePanelAnimator;
 import gent.timdemey.cards.services.gamepanel.animations.IAnimation;
 import gent.timdemey.cards.services.gamepanel.animations.MovingAnimation;
 import gent.timdemey.cards.services.scaleman.IScalableComponent;
-import gent.timdemey.cards.services.scaleman.img.ScalableImage;
+import gent.timdemey.cards.services.scaleman.IScalableResource;
+import gent.timdemey.cards.services.scaleman.img.ScalableImageComponent;
+import gent.timdemey.cards.services.scaleman.resources.ScalableImageResource;
 import gent.timdemey.cards.services.scaleman.text.ScalableText;
 
 public class GamePanelService implements IGamePanelService
@@ -70,27 +73,50 @@ public class GamePanelService implements IGamePanelService
     @Override 
     public void load()
     {
+        IScalableComponentService scaleCompServ = Services.get(IScalableComponentService.class);
+        
         // score font
         IResourceService resServ = Services.get(IResourceService.class);
         scoreFont = resServ.getFont("SMB2.ttf").deriveFont(52f);
+                
+        // card back
+        String 
+        BufferedImage bi_back = resServ.getImage(FILEPATH_BACKSIDE);
+        IScalableResource scaleRes_back = new ScalableImageResource(bi_back);
+        scaleCompServ.addScalableResource(scaleRes_back);
         
         // card fronts
         for (Suit suit : Suit.values())
         {
-            String suit_str = suit.name().substring(0, 1);
             for (Value value : Value.values()) // have fun reading the code lol
             {
-                String value_str = value.getTextual();
-                String filename_card = String.format(FILEPATH_FRONTSIDE, suit_str, value_str);
+                String filename_card = getCardFrontResourceId(suit, value);
                 
-                resServ.getImage(filename_card);
+                BufferedImage bi_front = resServ.getImage(filename_card);                
+                IScalableResource scaleRes_front = new ScalableImageResource(bi_front);
+                scaleCompServ.addScalableResource(scaleRes_front);
+                
+                // card component using front and back resource
+                IScalableComponent scaleComp = new ScalableImageComponent(card.)
             }
         }
-        
-        // card back
-        resServ.getImage(FILEPATH_BACKSIDE);
     }
 
+    private String getCardFrontResourceId (Suit suit, Value value)
+    {
+        String suit_str = suit.name().substring(0, 1);
+        String value_str = value.getTextual();
+        
+        return String.format(FILEPATH_FRONTSIDE, suit_str, value_str);
+    }
+    
+    private String getCardBackResourceId ()
+    {
+        return FILEPATH_BACKSIDE;
+    }
+    
+    
+    
     @Override
     public void createGamePanel(int w, int h)
     {
@@ -99,7 +125,7 @@ public class GamePanelService implements IGamePanelService
             gamePanel = new GamePanel();
             gamePanel.setBounds(0, 0, w, h);
 
-            addScalableComponents();
+            createScalableComponents();
 
             resizeListener = new GamePanelResizeListener();
             dragListener = new GamePanelMouseListener();
@@ -117,16 +143,20 @@ public class GamePanelService implements IGamePanelService
         }
     }
     
-    protected void addScalableComponents()
+    protected void createScalableComponents()
     {
+        IScalableComponentService scaleCompServ = Services.get(IScalableComponentService.class);
+        
         ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState()
                 .getCardGame();
 
         List<ReadOnlyCard> cards = cardGame.getCards();
         for (int i = 0; i < cards.size(); i++)
         {
+            scaleCompServ.getScalableComponent()
             ReadOnlyCard card = cards.get(i);
-            ScalableImage scaleImg = Services.get(IScalableComponentService.class).getScalableImage(card.getId());
+            IScalableComponent scaleComp = new ScalableImageComponent(card.getId(), )
+            ScalableImage scaleImg = .getScalableImage(card.getId());
 
             String filename = card.isVisible() ? getFilename(card) : FILENAME_BACKSIDE;
             Services.get(IScalableImageManager.class).setImage(card.getId(), filename);

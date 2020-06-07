@@ -23,6 +23,11 @@ public class ScalableImageResource extends ScalableResource
         this.imageCache = Collections.synchronizedMap(new HashMap<>());        
     }
     
+    public ScalableImageResource (BufferedImage image)
+    {
+        this(UUID.randomUUID(), image);        
+    }
+    
     @Override
     public void rescale(int width, int height)
     {

@@ -2,7 +2,6 @@ package gent.timdemey.cards.services.scaleman;
 
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.UUID;
 
 import javax.swing.JComponent;
 
@@ -17,7 +16,13 @@ public interface IScalableComponent
     
     public JComponent getComponent();
     public Rectangle getBounds();
-    public UUID getId();
+    
+    /**
+     * The unique id of this component. 
+     * UUID id, 
+     * @return
+     */
+    public String getId();
     
     /**
      * Get a list of scalable resources needed by this IScalableComponent.

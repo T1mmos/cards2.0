@@ -1,18 +1,16 @@
 package gent.timdemey.cards.services.scaleman;
 
-import java.util.UUID;
-
 public abstract class ScalableResource implements IScalableResource
 {
-    public final UUID id;
+    public final String id;
     
-    public ScalableResource (UUID id)
+    public ScalableResource (String id)
     {
         this.id = id;
     }
     
     @Override
-    public UUID getId()
+    public String getId()
     {
         return id;
     }
