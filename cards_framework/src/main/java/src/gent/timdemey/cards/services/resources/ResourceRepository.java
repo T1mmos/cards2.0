@@ -29,7 +29,7 @@ public class ResourceRepository implements IResourceRepository
         resourceLoaders.put(ResourceType.IMAGE, createResourceLoader("/img/"));
         resourceLoaders.put(ResourceType.SOUND, createResourceLoader("/snd/"));
         resourceLoaders.put(ResourceType.LOCALIZATION, createResourceLoader("/loc/"));
-        resourceLoaders.put(ResourceType.FONTS, createResourceLoader("/fonts/"));
+        resourceLoaders.put(ResourceType.FONT, createResourceLoader("/fonts/"));
     }
 
     @Override

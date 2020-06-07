@@ -25,6 +25,7 @@ import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IGamePanelService;
 import gent.timdemey.cards.services.IPositionManager;
 import gent.timdemey.cards.services.IResourceService;
+import gent.timdemey.cards.services.IScalableComponentService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.gamepanel.animations.AnimationEnd;
 import gent.timdemey.cards.services.gamepanel.animations.ColorAnimation;
@@ -98,7 +99,7 @@ public class GamePanelService implements IGamePanelService
             gamePanel = new GamePanel();
             gamePanel.setBounds(0, 0, w, h);
 
-            addScalableImages();
+            addScalableComponents();
 
             resizeListener = new GamePanelResizeListener();
             dragListener = new GamePanelMouseListener();
@@ -116,15 +117,7 @@ public class GamePanelService implements IGamePanelService
         }
     }
     
-    private void updatePositionManager()
-    {
-        IPositionManager posMan = Services.get(IPositionManager.class);
-        int maxWidth = gamePanel.getWidth();
-        int maxHeight = gamePanel.getHeight();
-        posMan.setMaxSize(maxWidth, maxHeight);
-    }
-
-    protected void addScalableImages()
+    protected void addScalableComponents()
     {
         ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState()
                 .getCardGame();
@@ -133,7 +126,7 @@ public class GamePanelService implements IGamePanelService
         for (int i = 0; i < cards.size(); i++)
         {
             ReadOnlyCard card = cards.get(i);
-            ScalableImage scaleImg = Services.get(IScalableImageManager.class).getScalableImage(card.getId());
+            ScalableImage scaleImg = Services.get(IScalableComponentService.class).getScalableImage(card.getId());
 
             String filename = card.isVisible() ? getFilename(card) : FILENAME_BACKSIDE;
             Services.get(IScalableImageManager.class).setImage(card.getId(), filename);
@@ -141,6 +134,16 @@ public class GamePanelService implements IGamePanelService
             add(scaleImg);
         }
     }
+    
+    private void updatePositionManager()
+    {
+        IPositionManager posMan = Services.get(IPositionManager.class);
+        int maxWidth = gamePanel.getWidth();
+        int maxHeight = gamePanel.getHeight();
+        posMan.setMaxSize(maxWidth, maxHeight);
+    }
+
+    
 
     @Override
     public void destroyGamePanel()

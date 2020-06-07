@@ -20,22 +20,18 @@ import gent.timdemey.cards.services.scaleman.IScalableResource;
 public interface IScalableComponentService
 {
     /**
-     * Sets the size of all image mapped from object of the given type the given
-     * dimensions. This has no effect until calling an update() method.
-     * 
-     * @param clazzs
-     * @param x
-     * @param y
-     */
-    public void setSize(String group, int x, int y);
-
-    /**
-     * Rescales all images and updates the scalable components. This schedules a high
+     * Rescales all resources in a background thread. This schedules a high
      * quality rescale of the components in background threads, and
      * waits for all rescale operations to finish before updating all
      * components at the same time on the UI thread.
      */
-    public void rescaleAsync(Runnable callback);
+    public void updateResources(Runnable callback);
+    
+    /**
+     * Inserts into the managed scalable components, their required resources in the
+     * current scale. 
+     */
+    public void updateComponents();
 
     /**
      * Get a ScalableImage mapped to the given managed object.
@@ -50,19 +46,11 @@ public interface IScalableComponentService
      * @param id
      * @return
      */
-    public IScalableResource getScalableResource(UUID id);
+ //   public IScalableResource getScalableResource(UUID id);
 
     /**
      * Clears all links between ScalableImages and their managed objects. All
      * references to managed objects are cleared.
      */
     public void clearManagedObjects();
-
-    /**
-     * Get the object associated to the scalable component.
-     * 
-     * @param card
-     * @return
-     */
-    public UUID getUUID(IScalableComponent scaleComp);
 }

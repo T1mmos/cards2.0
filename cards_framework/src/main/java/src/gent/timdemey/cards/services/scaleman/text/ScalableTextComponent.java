@@ -1,10 +1,12 @@
 package gent.timdemey.cards.services.scaleman.text;
 
 import java.awt.Font;
+import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
+import gent.timdemey.cards.services.scaleman.IScalableResource;
 import gent.timdemey.cards.services.scaleman.ScalableComponent;
 
 public class ScalableTextComponent extends ScalableComponent
@@ -32,5 +34,19 @@ public class ScalableTextComponent extends ScalableComponent
     protected String[] addDebugStrings()
     {
         return null;
+    }
+
+    @Override
+    public List<? extends IScalableResource> getResources()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void update()
+    {
+        // TODO Auto-generated method stub
+        
     }
 }

@@ -1,6 +1,10 @@
 package gent.timdemey.cards.services.scaleman.resources;
 
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import gent.timdemey.cards.services.scaleman.ScalableResource;
@@ -9,34 +13,44 @@ public class ScalableImageResource extends ScalableResource
 {
     private final BufferedImage image_src;
     
-    private BufferedImage image_scaled_current;
-    private BufferedImage image_scaled_working;
+    private Map<Dimension, BufferedImage> imageCache;
     
     public ScalableImageResource (UUID id, BufferedImage image)
     {
         super(id);
+        
         this.image_src = image;
-        this.image_scaled_current = null;
-        this.image_scaled_working = null;
+        this.imageCache = Collections.synchronizedMap(new HashMap<>());        
     }
     
     @Override
     public void rescale(int width, int height)
     {
-        // call the rescaler...
-        // this.image_scaled = ...
+        Dimension dim = new Dimension(width, height);
+        
+        BufferedImage biScaled = imageCache.get(dim);
+        if (biScaled == null)
+        {
+            BufferedImageScaler scaler = new BufferedImageScaler(image_src, width, height);
+            biScaled = scaler.getScaledInstance();
+            
+            imageCache.put(dim, biScaled);
+        }
     }
 
     @Override
-    public void publish()
+    public BufferedImage get(int width, int height)
     {
-        image_scaled_current = this.image_scaled_working;
-        image_scaled_working = null;
-    }
+        Dimension dim = new Dimension(width, height);
 
-    @Override
-    public BufferedImage get()
-    {
-        return image_scaled_current;
+        BufferedImage biScaled = imageCache.get(dim);
+        if (biScaled != null)
+        {
+            return biScaled;
+        }
+        else
+        {
+            return image_src;   
+        }
     }
 }

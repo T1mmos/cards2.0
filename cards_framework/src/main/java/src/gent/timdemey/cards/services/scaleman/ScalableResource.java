@@ -10,4 +10,10 @@ public abstract class ScalableResource implements IScalableResource
     {
         this.id = id;
     }
+    
+    @Override
+    public UUID getId()
+    {
+        return id;
+    }
 }

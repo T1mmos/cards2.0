@@ -146,7 +146,7 @@ public abstract class ScalableComponent implements IScalableComponent
     }
 
     @Override
-    public UUID getModelId()
+    public UUID getId()
     {
         return modelId;
     }

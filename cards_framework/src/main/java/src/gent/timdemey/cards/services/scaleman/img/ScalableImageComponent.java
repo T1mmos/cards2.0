@@ -75,7 +75,7 @@ public class ScalableImageComponent extends ScalableComponent
                 g3.translate(-width, -height);
             }
 
-            BufferedImage image = currentImageResource.get();
+            BufferedImage image = currentImageResource.get(width, height);
             int imgW = image.getWidth();
             int imgH = image.getHeight();
 
@@ -116,7 +116,7 @@ public class ScalableImageComponent extends ScalableComponent
     @Override
     public List<ScalableImageResource> getResources()
     {
-        return images;
+        return imageResources;
     }
 
     @Override

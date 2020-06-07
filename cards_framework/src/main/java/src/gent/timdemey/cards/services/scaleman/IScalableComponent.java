@@ -17,7 +17,7 @@ public interface IScalableComponent
     
     public JComponent getComponent();
     public Rectangle getBounds();
-    public UUID getModelId();
+    public UUID getId();
     
     /**
      * Get a list of scalable resources needed by this IScalableComponent.
