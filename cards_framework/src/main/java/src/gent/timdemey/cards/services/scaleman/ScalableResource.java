@@ -1,8 +1,10 @@
 package gent.timdemey.cards.services.scaleman;
 
+import java.util.UUID;
+
 public abstract class ScalableResource implements IScalableResource
 {
-    public final String id;
+    public final UUID id;
     
     /**
      * If true, it indicates that the resource is not the intended resource because
@@ -12,14 +14,14 @@ public abstract class ScalableResource implements IScalableResource
      */
     public final boolean fallback;
     
-    public ScalableResource (String id, boolean fallback)
+    public ScalableResource (UUID id, boolean fallback)
     {
         this.id = id;
         this.fallback = fallback;
     }
     
     @Override
-    public String getId()
+    public UUID getId()
     {
         return id;
     }

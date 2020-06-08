@@ -10,7 +10,7 @@ import java.util.UUID;
  * @author Tim
  *
  */
-public interface IPositionManager
+public interface IPositionService
 {
     /**
      * Sets the container maximum bounds and calculates the new current bounds of the
@@ -28,11 +28,11 @@ public interface IPositionManager
     public Rectangle getBounds();
 
     /**
-     * Returns the bounds of a child element identified by the given id.
-     * @param childId
+     * Returns the bounds of a element identified by the given id.
+     * @param id
      * @return
      */
-    public Rectangle getBounds(UUID childId);   
+    public Rectangle getBounds(UUID id);   
     
     /**
      * Returns all components of type T found at the given point in the container.

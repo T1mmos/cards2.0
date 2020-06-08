@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -26,8 +27,8 @@ public class ScalableComponentService implements IScalableComponentService
     private final Executor barrierExecutor;
     private final Executor taskExecutor;
 
-    private final Map<String, IScalableResource> resources;
-    private final Map<String, IScalableComponent> components;
+    private final Map<UUID, IScalableResource> resources;
+    private final Map<UUID, IScalableComponent> components;
 
     /**
      * Produces threads used by the barrier executor which waits for all tasks to
@@ -140,7 +141,7 @@ public class ScalableComponentService implements IScalableComponentService
     }
 
     @Override
-    public IScalableComponent getScalableComponent(String id)
+    public IScalableComponent getScalableComponent(UUID id)
     {
         return components.get(id);        
     }
@@ -158,7 +159,7 @@ public class ScalableComponentService implements IScalableComponentService
     }
 
     @Override
-    public IScalableResource getScalableResource(String id)
+    public IScalableResource getScalableResource(UUID id)
     {
         return resources.get(id);
     }

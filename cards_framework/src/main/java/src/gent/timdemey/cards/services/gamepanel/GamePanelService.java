@@ -30,9 +30,10 @@ import gent.timdemey.cards.services.gamepanel.animations.IAnimation;
 import gent.timdemey.cards.services.gamepanel.animations.MovingAnimation;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
-import gent.timdemey.cards.services.interfaces.IPositionManager;
+import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceService;
 import gent.timdemey.cards.services.interfaces.IScalableComponentService;
+import gent.timdemey.cards.services.interfaces.IUUIDService;
 import gent.timdemey.cards.services.scaleman.IScalableComponent;
 import gent.timdemey.cards.services.scaleman.IScalableResource;
 import gent.timdemey.cards.services.scaleman.img.ScalableImageComponent;
@@ -42,11 +43,6 @@ public class GamePanelService implements IGamePanelService
 {
     private static final int ANIMATION_TIME_CARD = 80;
     private static final int ANIMATION_TIME_SCORE = 1200;
-
-    private static final String RESID_CARD_BACKSIDE = "card.backside";
-    private static final String RESID_CARD_FRONTSIDE = "card.frontside.%s%s";
-
-    private static final String COMPID_CARD = "card.%s%s";
 
     private static final String FILEPATH_FRONTSIDE = "cards/edge_thick/%s_%s.png";
     private static final String FILEPATH_BACKSIDE = "backside_yellow.png";
@@ -77,6 +73,7 @@ public class GamePanelService implements IGamePanelService
     public void preload()
     {
         IScalableComponentService scaleCompServ = Services.get(IScalableComponentService.class);
+        IUUIDService uuidServ = Services.get(IUUIDService.class);
 
         // score font
         IResourceService resServ = Services.get(IResourceService.class);
@@ -85,7 +82,9 @@ public class GamePanelService implements IGamePanelService
 
         // card back
         GetImageResourceResponse resp_back = resServ.getImage(getCardBackFilePath());
-        IScalableResource scaleRes_back = new ScalableImageResource(getCardBackResourceId(), resp_back.bufferedImage, resp_back.fallback);
+        UUID resBackId = uuidServ.getCardBackResourceId();
+        IScalableResource scaleRes_back = new ScalableImageResource(resBackId, resp_back.bufferedImage,
+                resp_back.fallback);
         scaleCompServ.addScalableResource(scaleRes_back);
 
         // card fronts
@@ -93,11 +92,12 @@ public class GamePanelService implements IGamePanelService
         {
             for (Value value : Value.values()) // have fun reading the code lol
             {
-                String resId = getCardFrontResourceId(suit, value);
+                UUID resId = uuidServ.getCardFrontResourceId(suit, value);
                 String filepath = getCardFrontFilePath(suit, value);
 
                 GetImageResourceResponse resp_front = resServ.getImage(filepath);
-                IScalableResource scaleRes_front = new ScalableImageResource(resId, resp_front.bufferedImage, resp_front.fallback);
+                IScalableResource scaleRes_front = new ScalableImageResource(resId, resp_front.bufferedImage,
+                        resp_front.fallback);
                 scaleCompServ.addScalableResource(scaleRes_front);
             }
         }
@@ -114,28 +114,6 @@ public class GamePanelService implements IGamePanelService
     private String getCardBackFilePath()
     {
         return FILEPATH_BACKSIDE;
-    }
-
-    private String getCardFrontResourceId(Suit suit, Value value)
-    {
-        String suit_str = suit.getTextual();
-        String value_str = value.getTextual();
-        return String.format(RESID_CARD_FRONTSIDE, value_str, suit_str);
-    }
-
-    private String getCardFrontResourceId(ReadOnlyCard card)
-    {
-        return getCardFrontResourceId(card.getSuit(), card.getValue());
-    }
-
-    private String getCardBackResourceId()
-    {
-        return RESID_CARD_BACKSIDE;
-    }
-
-    private String getCardComponentId(ReadOnlyCard card)
-    {
-        return String.format(COMPID_CARD, card.getValue().getTextual(), card.getSuit().getTextual());
     }
 
     @Override
@@ -167,27 +145,28 @@ public class GamePanelService implements IGamePanelService
     protected void createScalableComponents()
     {
         IScalableComponentService scaleCompServ = Services.get(IScalableComponentService.class);
-        
+        IUUIDService uuidServ = Services.get(IUUIDService.class);
+
         ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState()
                 .getCardGame();
 
         List<ReadOnlyCard> cards = cardGame.getCards();
         for (int i = 0; i < cards.size(); i++)
-        { 
+        {
             // get the ids
             ReadOnlyCard card = cards.get(i);
-            String compId = getCardComponentId(card);
-            String res_front_id = getCardFrontResourceId(card);
-            String res_back_id = getCardBackResourceId();
-            
+            UUID compId = uuidServ.getCardComponentId(card);
+            UUID resFrontId = uuidServ.getCardFrontResourceId(card);
+            UUID resBackId = uuidServ.getCardBackResourceId();
+
             // create the component using its necessary image resources
-            ScalableImageResource res_front = (ScalableImageResource) scaleCompServ.getScalableResource(res_front_id);
-            ScalableImageResource res_back = (ScalableImageResource) scaleCompServ.getScalableResource(res_back_id);
+            ScalableImageResource res_front = (ScalableImageResource) scaleCompServ.getScalableResource(resFrontId);
+            ScalableImageResource res_back = (ScalableImageResource) scaleCompServ.getScalableResource(resBackId);
             ScalableImageComponent scaleComp = new ScalableImageComponent(compId, res_front, res_back);
-           
+
             // initialize the card to show its front or back
-            scaleComp.setScalableImageResource(card.isVisible() ? res_front_id : res_back_id);
-           
+            scaleComp.setScalableImageResource(card.isVisible() ? resFrontId : resBackId);
+
             // add to the game panel
             add(scaleComp);
         }
@@ -195,7 +174,7 @@ public class GamePanelService implements IGamePanelService
 
     private void updatePositionManager()
     {
-        IPositionManager posMan = Services.get(IPositionManager.class);
+        IPositionService posMan = Services.get(IPositionService.class);
         int maxWidth = gamePanel.getWidth();
         int maxHeight = gamePanel.getHeight();
         posMan.setMaxSize(maxWidth, maxHeight);
@@ -256,17 +235,30 @@ public class GamePanelService implements IGamePanelService
 
     public void rescaleAsync()
     {
-        IPositionManager posMan = Services.get(IPositionManager.class);
+        IScalableComponentService scaleCompServ = Services.get(IScalableComponentService.class);
+        IPositionService posServ = Services.get(IPositionService.class);
+        IUUIDService uuidServ = Services.get(IUUIDService.class);
+        
+        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState()
+                .getCardGame();
+        
+        for (ReadOnlyCard card : cardGame.getCards())
         {
+            // get the scalable component for this card
+            UUID cardCompId = uuidServ.getCardComponentId(card);
+            IScalableComponent scaleComp = scaleCompServ.getScalableComponent(cardCompId);
+            
+            // get the bounds for this component
+            posServ.getBounds()
+            scaleComp.
+        }
             Rectangle rect = posMan.getCardSize();
             if (rect.width > 0 && rect.height > 0)
             {
-                Services.get(IScalableComponentService.class).setSize(SCALEGROUP_CARDS, rect.width, rect.height);
+                .setSize(SCALEGROUP_CARDS, rect.width, rect.height);
             }
-        }
+        
 
-        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState()
-                .getCardGame();
 
         for (String cardStackType : cardGame.getCardStackTypes())
         {
@@ -295,12 +287,12 @@ public class GamePanelService implements IGamePanelService
     private void updateOrAnimatePosition(IScalableComponent scaleComp, boolean update)
     {
         String id = scaleComp.getId();
-    
+
         IScalableComponentService scaleCompServ = Services.get(IScalableComponentService.class);
         ReadOnlyCardStack cardStack = card.getCardStack();
-        int layerIndex = LAYER_CARDS + 20 * cardStack.getTypeNumber() + card.getCardIndex();        
+        int layerIndex = LAYER_CARDS + 20 * cardStack.getTypeNumber() + card.getCardIndex();
         Rectangle rect_dst = Services.get(IPositionManager.class).getBounds(modelId);
-        
+
         if (update)
         {
             setLayer(scaleComp, layerIndex);
@@ -310,7 +302,7 @@ public class GamePanelService implements IGamePanelService
         {
             MovingAnimation anim_pos = new MovingAnimation(scaleComp.getBounds().getLocation(), rect_dst.getLocation());
             animator.animate(scaleComp, new AnimationEnd(false, layerIndex), ANIMATION_TIME_CARD, anim_pos);
-        }       
+        }
     }
 
     @Override

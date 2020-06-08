@@ -17,9 +17,9 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.cardgame.SolitaireCardStackType;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.services.interfaces.IPositionManager;
+import gent.timdemey.cards.services.interfaces.IPositionService;
 
-public class SolitairePositionManager implements IPositionManager
+public class SolitairePositionManager implements IPositionService
 {
 
     private SolitaireGameLayout gameLayout;

@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import gent.timdemey.cards.services.scaleman.ScalableResource;
 
@@ -14,7 +15,7 @@ public class ScalableImageResource extends ScalableResource
     
     private Map<Dimension, BufferedImage> imageCache;
     
-    public ScalableImageResource (String id, BufferedImage image, boolean fallback)
+    public ScalableImageResource (UUID id, BufferedImage image, boolean fallback)
     {
         super(id, fallback);
         

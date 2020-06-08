@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.util.Arrays;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import javax.swing.JComponent;
@@ -16,12 +17,12 @@ import gent.timdemey.cards.services.interfaces.IGamePanelService;
 
 public abstract class ScalableComponent implements IScalableComponent
 {
-    protected final String id;
+    protected final UUID id;
     
     private JComponent component = null;
     private boolean mirror = false;    
     
-    protected ScalableComponent(String id)
+    protected ScalableComponent(UUID id)
     {
         this.id = id;
     }
@@ -145,7 +146,7 @@ public abstract class ScalableComponent implements IScalableComponent
     }
 
     @Override
-    public String getId()
+    public UUID getId()
     {
         return id;
     }

@@ -10,7 +10,7 @@ import javax.swing.JLayeredPane;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
-import gent.timdemey.cards.services.interfaces.IPositionManager;
+import gent.timdemey.cards.services.interfaces.IPositionService;
 
 public class GamePanel extends JLayeredPane
 {
@@ -27,7 +27,7 @@ public class GamePanel extends JLayeredPane
         super.paintComponent(g);
 
         Graphics2D g2 = (Graphics2D) g;
-        IPositionManager posMan = Services.get(IPositionManager.class);
+        IPositionService posMan = Services.get(IPositionService.class);
         Rectangle rect = posMan.getBounds();
 
         if (Services.get(IGamePanelService.class).getDrawDebug())

@@ -9,7 +9,7 @@ import gent.timdemey.cards.services.gamepanel.SolShowPositionManager;
 import gent.timdemey.cards.services.interfaces.ICardGameService;
 import gent.timdemey.cards.services.interfaces.ICommandService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
-import gent.timdemey.cards.services.interfaces.IPositionManager;
+import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.ISerializationService;
 
 public class SolShowPlugin implements ICardPlugin
@@ -25,7 +25,7 @@ public class SolShowPlugin implements ICardPlugin
     @Override
     public void installUiServices()
     {
-        App.getServices().install(IPositionManager.class, new SolShowPositionManager());
+        App.getServices().install(IPositionService.class, new SolShowPositionManager());
         App.getServices().install(IGamePanelService.class, new SolShowGamePanelService());
     }
 

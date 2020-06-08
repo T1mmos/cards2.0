@@ -13,14 +13,14 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.services.interfaces.IPositionManager;
+import gent.timdemey.cards.services.interfaces.IPositionService;
 
 /**
  * Card game specific position manager. 
  * @author Tim
  *
  */
-public abstract class PositionManager implements IPositionManager
+public abstract class PositionManager implements IPositionService
 {
     public Rectangle getBounds(UUID childId)
     {

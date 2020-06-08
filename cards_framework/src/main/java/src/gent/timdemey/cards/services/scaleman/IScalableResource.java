@@ -1,12 +1,14 @@
 package gent.timdemey.cards.services.scaleman;
 
+import java.util.UUID;
+
 public interface IScalableResource
 {
     /**
      * The unique id of this resource. Most of the time, this is a file path.
      * @return
      */
-    String getId();    
+    UUID getId();
     
     /**
      * Rescales the original raw resource in the requested

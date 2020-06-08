@@ -5,6 +5,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import javax.swing.JComponent;
 
@@ -17,7 +18,7 @@ public class ScalableImageComponent extends ScalableComponent
     private final List<ScalableImageResource> imageResources;
     private ScalableImageResource currentImageResource;
     
-    public ScalableImageComponent(String id, ScalableImageResource ... imageResources)
+    public ScalableImageComponent(UUID id, ScalableImageResource ... imageResources)
     {
         super(id);  
         this.imageResources = Arrays.asList(imageResources);
@@ -40,7 +41,7 @@ public class ScalableImageComponent extends ScalableComponent
      * Swap the image shown.
      * @param resourceId
      */
-    public void setScalableImageResource(String resourceId)
+    public void setScalableImageResource(UUID resourceId)
     {
         ScalableImageResource found = null;
         for (ScalableImageResource resource : imageResources)
