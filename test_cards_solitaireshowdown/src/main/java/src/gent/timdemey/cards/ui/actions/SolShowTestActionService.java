@@ -3,8 +3,8 @@ package gent.timdemey.cards.ui.actions;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.commands.C_CardsVisibleSwitch;
 import gent.timdemey.cards.model.entities.commands.C_FakeSolShowGame;
-import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.context.Context;
+import gent.timdemey.cards.services.interfaces.IContextService;
 
 public class SolShowTestActionService extends ActionService
 {

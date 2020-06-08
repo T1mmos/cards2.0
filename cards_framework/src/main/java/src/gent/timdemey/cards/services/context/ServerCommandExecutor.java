@@ -10,8 +10,8 @@ import gent.timdemey.cards.model.entities.commands.CommandType;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.INetworkService;
-import gent.timdemey.cards.services.ISerializationService;
+import gent.timdemey.cards.services.interfaces.INetworkService;
+import gent.timdemey.cards.services.interfaces.ISerializationService;
 
 class ServerCommandExecutor extends CommandExecutorBase
 {

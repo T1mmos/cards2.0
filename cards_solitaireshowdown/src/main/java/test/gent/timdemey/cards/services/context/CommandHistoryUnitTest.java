@@ -20,7 +20,7 @@ import gent.timdemey.cards.model.entities.commands.CommandHistory;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.UDPServer;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.test.common.SolShowTestBase;
 import gent.timdemey.cards.test.helpers.PlayerHelper;
 import gent.timdemey.cards.test.helpers.ServerHelper;

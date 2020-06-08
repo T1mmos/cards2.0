@@ -5,9 +5,9 @@ import java.util.List;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
-import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.cardgame.SolitaireCardStackType;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.scaleman.ImageDefinition;
 import gent.timdemey.cards.services.scaleman.img.JScalableImage;
 

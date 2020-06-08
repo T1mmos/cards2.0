@@ -23,9 +23,9 @@ import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.readonlymodel.ReadOnlyUDPServer;
-import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogContent;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import net.miginfocom.swing.MigLayout;
 
 public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMultiplayerGameData>

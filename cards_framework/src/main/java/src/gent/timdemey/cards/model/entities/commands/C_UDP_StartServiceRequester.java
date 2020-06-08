@@ -6,11 +6,11 @@ import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.netcode.UDP_ServiceRequester;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
-import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.services.ISerializationService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.context.LimitedContext;
+import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.services.interfaces.ISerializationService;
 
 /**
  * Command sent over UDP broadcast to the network in order to detect servers.

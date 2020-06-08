@@ -8,8 +8,8 @@ import java.util.ResourceBundle;
 import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.services.IResourceRepository;
-import gent.timdemey.cards.services.IResourceRepository.ResourceType;
+import gent.timdemey.cards.services.interfaces.IResourceRepository;
+import gent.timdemey.cards.services.interfaces.IResourceRepository.ResourceType;
 
 public class Loc
 {

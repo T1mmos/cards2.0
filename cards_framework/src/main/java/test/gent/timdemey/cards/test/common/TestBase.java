@@ -6,10 +6,10 @@ import gent.timdemey.cards.App;
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.MockCardPlugin;
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.services.INetworkService;
 import gent.timdemey.cards.services.context.ContextService;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.services.interfaces.INetworkService;
 import gent.timdemey.cards.test.mock.MockNetworkService;
 
 public class TestBase

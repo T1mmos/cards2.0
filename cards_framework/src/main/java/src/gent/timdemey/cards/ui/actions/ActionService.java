@@ -17,9 +17,9 @@ import gent.timdemey.cards.model.entities.commands.C_Undo;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.D_Connect;
 import gent.timdemey.cards.model.entities.commands.D_StartServer;
-import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.services.IGamePanelService;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.services.interfaces.IGamePanelService;
 
 public class ActionService implements IActionService
 {

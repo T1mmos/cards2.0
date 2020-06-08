@@ -9,8 +9,8 @@ import java.awt.Rectangle;
 import javax.swing.JLayeredPane;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.services.IGamePanelService;
-import gent.timdemey.cards.services.IPositionManager;
+import gent.timdemey.cards.services.interfaces.IGamePanelService;
+import gent.timdemey.cards.services.interfaces.IPositionManager;
 
 public class GamePanel extends JLayeredPane
 {

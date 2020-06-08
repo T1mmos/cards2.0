@@ -7,10 +7,10 @@ import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.netcode.ITcpConnectionListener;
 import gent.timdemey.cards.netcode.TCP_Connection;
-import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.services.ISerializationService;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.context.LimitedContext;
+import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.services.interfaces.ISerializationService;
 
 public final class CommandSchedulingTcpConnectionListener implements ITcpConnectionListener
 {

@@ -2,15 +2,15 @@ package gent.timdemey.cards;
 
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.serialization.SolShowSerializationService;
-import gent.timdemey.cards.services.ICardGameService;
-import gent.timdemey.cards.services.ICommandService;
-import gent.timdemey.cards.services.IGamePanelService;
-import gent.timdemey.cards.services.IPositionManager;
-import gent.timdemey.cards.services.ISerializationService;
 import gent.timdemey.cards.services.cardgame.SolShowCardGameService;
 import gent.timdemey.cards.services.commands.SolShowCommandService;
 import gent.timdemey.cards.services.gamepanel.SolShowGamePanelService;
 import gent.timdemey.cards.services.gamepanel.SolShowPositionManager;
+import gent.timdemey.cards.services.interfaces.ICardGameService;
+import gent.timdemey.cards.services.interfaces.ICommandService;
+import gent.timdemey.cards.services.interfaces.IGamePanelService;
+import gent.timdemey.cards.services.interfaces.IPositionManager;
+import gent.timdemey.cards.services.interfaces.ISerializationService;
 
 public class SolShowPlugin implements ICardPlugin
 {

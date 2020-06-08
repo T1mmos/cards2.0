@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 import javax.swing.JComponent;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.services.IGamePanelService;
+import gent.timdemey.cards.services.interfaces.IGamePanelService;
 
 public abstract class ScalableComponent implements IScalableComponent
 {

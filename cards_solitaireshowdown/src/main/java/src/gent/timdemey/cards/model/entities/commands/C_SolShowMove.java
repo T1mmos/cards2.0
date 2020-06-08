@@ -17,11 +17,11 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityFactory;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityList;
-import gent.timdemey.cards.services.ICardGameService;
-import gent.timdemey.cards.services.INetworkService;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.ICardGameService;
+import gent.timdemey.cards.services.interfaces.INetworkService;
 
 public class C_SolShowMove extends C_Move
 {    

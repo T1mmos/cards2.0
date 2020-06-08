@@ -8,11 +8,11 @@ import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.readonlymodel.ReadOnlyUDPServer;
-import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogData;
+import gent.timdemey.cards.services.interfaces.IDialogService;
 import gent.timdemey.cards.ui.dialogs.JoinMultiplayerGameData;
 import gent.timdemey.cards.ui.dialogs.JoinMultiplayerGameDialogContent;
 

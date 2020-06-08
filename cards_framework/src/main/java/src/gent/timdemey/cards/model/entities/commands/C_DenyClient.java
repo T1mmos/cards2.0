@@ -4,9 +4,9 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_DenyClient;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IDialogService;
 
 public class C_DenyClient extends CommandBase
 {

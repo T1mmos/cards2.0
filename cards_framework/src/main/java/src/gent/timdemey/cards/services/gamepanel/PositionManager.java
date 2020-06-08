@@ -6,13 +6,14 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
-import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.services.IPositionManager;
 import gent.timdemey.cards.services.context.Context;
+import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.services.interfaces.IPositionManager;
 
 /**
  * Card game specific position manager. 
@@ -36,7 +37,8 @@ public abstract class PositionManager implements IPositionManager
             return getBounds(cardGame.getCardStack(childId));
         }
         
-        throw new UnsupportedOperationException("");
+        Logger.warn("No bounds defined for id=%s", childId);        
+        return new Rectangle(0, 0, 100, 100);
     }
     
     @Override

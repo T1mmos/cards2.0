@@ -16,7 +16,7 @@ import gent.timdemey.cards.model.entities.commands.D_OnReexecutionFail;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.interfaces.IContextService;
 
 class UICommandExecutor implements ICommandExecutor
 {

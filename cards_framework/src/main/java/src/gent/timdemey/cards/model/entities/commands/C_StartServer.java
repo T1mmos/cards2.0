@@ -18,9 +18,9 @@ import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.netcode.TCP_ConnectionAccepter;
 import gent.timdemey.cards.netcode.TCP_ConnectionPool;
 import gent.timdemey.cards.netcode.UDP_ServiceAnnouncer;
-import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.utils.Debug;
 
 /**

@@ -11,9 +11,9 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyPlayer;
 import gent.timdemey.cards.readonlymodel.ReadOnlyProperty;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.readonlymodel.TypedChange;
-import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.services.IGamePanelService;
 import gent.timdemey.cards.services.context.Context;
+import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.services.interfaces.IGamePanelService;
 
 class GamePanelStateListener implements IStateListener
 {

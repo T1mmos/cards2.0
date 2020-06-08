@@ -7,7 +7,7 @@ import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.netcode.TCP_Connection;
 import gent.timdemey.cards.netcode.TCP_ConnectionPool;
-import gent.timdemey.cards.services.INetworkService;
+import gent.timdemey.cards.services.interfaces.INetworkService;
 
 public class MockNetworkService implements INetworkService
 {

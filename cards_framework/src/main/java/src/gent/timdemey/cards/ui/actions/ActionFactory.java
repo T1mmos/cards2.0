@@ -1,7 +1,7 @@
 package gent.timdemey.cards.ui.actions;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.utils.Lazy;
 
 public class ActionFactory implements IActionFactory

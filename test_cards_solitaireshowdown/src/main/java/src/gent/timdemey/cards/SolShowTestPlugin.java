@@ -1,11 +1,11 @@
 package gent.timdemey.cards;
 
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.services.IFrameService;
-import gent.timdemey.cards.services.INetworkService;
 import gent.timdemey.cards.services.context.ContextService;
 import gent.timdemey.cards.services.frame.SolShowTestFrameService;
+import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.services.interfaces.IFrameService;
+import gent.timdemey.cards.services.interfaces.INetworkService;
 import gent.timdemey.cards.test.mock.MockNetworkService;
 import gent.timdemey.cards.ui.actions.IActionFactory;
 import gent.timdemey.cards.ui.actions.IActionService;

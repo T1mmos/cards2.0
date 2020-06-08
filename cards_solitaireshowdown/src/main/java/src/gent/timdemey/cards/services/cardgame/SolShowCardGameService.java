@@ -11,7 +11,7 @@ import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyList;
-import gent.timdemey.cards.services.ICardGameService;
+import gent.timdemey.cards.services.interfaces.ICardGameService;
 import gent.timdemey.cards.utils.CardDeckUtils;
 
 public class SolShowCardGameService implements ICardGameService

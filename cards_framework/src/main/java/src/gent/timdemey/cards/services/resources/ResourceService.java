@@ -15,15 +15,17 @@ import javax.imageio.ImageIO;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.services.IResourceRepository;
-import gent.timdemey.cards.services.IResourceRepository.ResourceType;
-import gent.timdemey.cards.services.IResourceService;
+import gent.timdemey.cards.services.contract.GetFontResourceResponse;
+import gent.timdemey.cards.services.contract.GetImageResourceResponse;
+import gent.timdemey.cards.services.interfaces.IResourceRepository;
+import gent.timdemey.cards.services.interfaces.IResourceRepository.ResourceType;
+import gent.timdemey.cards.services.interfaces.IResourceService;
 
 public class ResourceService implements IResourceService
 {
     // caches
-    private final Map<String, BufferedImage> cache_images = new HashMap<>();
-    private final Map<String, Font> cache_fonts = new HashMap<>();
+    private final Map<String, GetImageResourceResponse> cache_images = new HashMap<>();
+    private final Map<String, GetFontResourceResponse> cache_fonts = new HashMap<>();
     
     // black-pink checkerboard pattern that can be tiled
     private BufferedImage ERROR_IMAGE;
@@ -58,17 +60,17 @@ public class ResourceService implements IResourceService
     }
     
     @Override
-    public BufferedImage getImage(String filename)
+    public GetImageResourceResponse getImage(String filename)
     {
-        BufferedImage bi = get(cache_images, filename, ResourceType.IMAGE, this::loadImage);
-        return bi;
+        GetImageResourceResponse resp_cached = get(cache_images, filename, ResourceType.IMAGE, this::loadImage);
+        return resp_cached;
     }
 
     @Override
-    public Font getFont(String filename)
+    public GetFontResourceResponse getFont(String filename)
     {
-        Font font = get(cache_fonts, filename, ResourceType.FONT, this::loadFont);
-        return font;
+        GetFontResourceResponse resp_cached = get(cache_fonts, filename, ResourceType.FONT, this::loadFont);
+        return resp_cached;
     }
 
     @Override
@@ -78,20 +80,22 @@ public class ResourceService implements IResourceService
         cache_fonts.clear();
     }
 
-    private BufferedImage loadImage(InputStream is, String filename)
+    private GetImageResourceResponse loadImage(InputStream is, String filename)
     {
         try
         {
-            return ImageIO.read(is);
+            BufferedImage bi = ImageIO.read(is);
+            return new GetImageResourceResponse(bi, false);
         }
         catch (IOException e)
         {
             Logger.error("Failed to load image %s", filename);
-            return getErrorImage();
+            BufferedImage bi = getErrorImage();
+            return new GetImageResourceResponse(bi, true);
         }
     }
     
-    private Font loadFont(InputStream is, String filename)
+    private GetFontResourceResponse loadFont(InputStream is, String filename)
     {              
         Font font = null;
         try
@@ -107,12 +111,14 @@ public class ResourceService implements IResourceService
             Logger.error("Failed to load font %s (IOException)", filename);
         } 
         
+        boolean fallback = false;
         if (font == null)
         {
             font = Font.decode("Consolas-12");
+            fallback = true;
         }
    
-        return font;
+        return new GetFontResourceResponse(font, fallback);
     }
     
     private <T> T get(Map<String, T> cache, String filename, ResourceType resourceType, BiFunction<InputStream, String, T> loadFunc)

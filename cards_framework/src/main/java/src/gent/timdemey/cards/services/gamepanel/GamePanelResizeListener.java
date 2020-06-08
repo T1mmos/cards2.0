@@ -8,7 +8,7 @@ import java.util.TimerTask;
 import javax.swing.SwingUtilities;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.services.IGamePanelService;
+import gent.timdemey.cards.services.interfaces.IGamePanelService;
 
 class GamePanelResizeListener implements ComponentListener
 {

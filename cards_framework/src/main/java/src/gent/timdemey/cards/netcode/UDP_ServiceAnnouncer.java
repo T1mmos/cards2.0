@@ -15,9 +15,9 @@ import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.C_UDP_Request;
 import gent.timdemey.cards.model.entities.commands.C_UDP_Response;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
-import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.services.ISerializationService;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.services.interfaces.ISerializationService;
 
 public final class UDP_ServiceAnnouncer
 {

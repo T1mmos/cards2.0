@@ -12,9 +12,9 @@ import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.payload.P_Player;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.netcode.TCP_Connection;
-import gent.timdemey.cards.services.INetworkService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.INetworkService;
 import gent.timdemey.cards.utils.Debug;
 
 /**

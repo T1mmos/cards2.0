@@ -1,6 +1,4 @@
-package gent.timdemey.cards.services;
-
-import java.util.UUID;
+package gent.timdemey.cards.services.interfaces;
 
 import gent.timdemey.cards.services.scaleman.IScalableComponent;
 import gent.timdemey.cards.services.scaleman.IScalableResource;
@@ -46,12 +44,19 @@ public interface IScalableComponentService
     public void addScalableComponent(IScalableComponent scaleComp);
     
     /**
-     * Get a ScalableImage mapped to the given managed object.
+     * Get a scalable resource mapped to the given id.
+     * @param id
+     * @return
+     */
+    public IScalableResource getScalableResource(String id);
+    
+    /**
+     * Get a ScalableImage mapped to the given id.
      * 
      * @param card
      * @return
      */
-    public IScalableComponent getScalableComponent(UUID id);
+    public IScalableComponent getScalableComponent(String id);
     
     /**
      * Get a ScalableResource mapped to the given id.

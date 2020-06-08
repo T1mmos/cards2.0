@@ -11,7 +11,7 @@ import com.google.common.base.Preconditions;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.services.IDialogService;
+import gent.timdemey.cards.services.interfaces.IDialogService;
 
 public final class DialogService implements IDialogService
 {

@@ -1,7 +1,7 @@
 package gent.timdemey.cards.serialization;
 
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
-import gent.timdemey.cards.services.ISerializationService;
+import gent.timdemey.cards.services.interfaces.ISerializationService;
 
 public class SerializationService implements ISerializationService
 {

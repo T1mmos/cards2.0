@@ -11,7 +11,7 @@ import gent.timdemey.cards.model.entities.commands.C_SolShowPull;
 import gent.timdemey.cards.model.entities.commands.C_SolShowPush;
 import gent.timdemey.cards.model.entities.commands.C_SolShowUse;
 import gent.timdemey.cards.model.entities.commands.C_Use;
-import gent.timdemey.cards.services.ICommandService;
+import gent.timdemey.cards.services.interfaces.ICommandService;
 
 public class SolShowCommandService implements ICommandService
 {

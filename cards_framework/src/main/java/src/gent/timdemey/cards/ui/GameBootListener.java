@@ -11,11 +11,11 @@ import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
-import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.services.IDialogService;
-import gent.timdemey.cards.services.IGamePanelService;
 import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.context.Context;
+import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.services.interfaces.IDialogService;
+import gent.timdemey.cards.services.interfaces.IGamePanelService;
 import gent.timdemey.cards.services.scaleman.ImageDefinition;
 
 public class GameBootListener implements IStateListener

@@ -6,27 +6,27 @@ import java.util.UUID;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
-import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.Context;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.scaleman.ImageDefinition;
 import gent.timdemey.cards.services.scaleman.img.JScalableImage;
 
 public class SolShowGamePanelService extends GamePanelService
-{
+{    
     @Override
-    public List<ImageDefinition> getScalableImageDefinitions()
+    public void load()
     {
-        List<ImageDefinition> defs = super.getScalableImageDefinitions();
-
+        // load card fronts, card back etc
+        super.load();
+        
+        // additionally load the card stack sprites into scalable resources
         defs.add(new ImageDefinition("stack_short_arrow.png", SolShowCardStackType.DEPOT));
         defs.add(new ImageDefinition("stack_short_green_filled.png", SolShowCardStackType.LAYDOWN));
         defs.add(new ImageDefinition("stack_long_yellow.png", SolShowCardStackType.MIDDLE));
         defs.add(new ImageDefinition("stack_middle_green.png", SolShowCardStackType.TURNOVER));
         defs.add(new ImageDefinition("stack_short_green.png", SolShowCardStackType.SPECIAL));
-
-        return defs;
     }
 
     @Override

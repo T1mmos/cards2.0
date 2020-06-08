@@ -10,8 +10,8 @@ import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.netcode.TCP_Connection;
 import gent.timdemey.cards.netcode.TCP_ConnectionPool;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
-import gent.timdemey.cards.services.INetworkService;
-import gent.timdemey.cards.services.ISerializationService;
+import gent.timdemey.cards.services.interfaces.INetworkService;
+import gent.timdemey.cards.services.interfaces.ISerializationService;
 
 public class CommandNetworkService implements INetworkService
 {

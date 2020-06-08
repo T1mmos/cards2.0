@@ -11,10 +11,10 @@ import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_StartMultiplayerGame;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.ICardGameService;
-import gent.timdemey.cards.services.INetworkService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.ICardGameService;
+import gent.timdemey.cards.services.interfaces.INetworkService;
 
 /**
  * A signal sent to the server by the lobby admin to start the game. The server

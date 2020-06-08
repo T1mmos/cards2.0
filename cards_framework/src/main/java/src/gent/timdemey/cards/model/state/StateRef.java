@@ -3,8 +3,8 @@ package gent.timdemey.cards.model.state;
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.context.IChangeTracker;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.utils.Debug;
 
 public abstract class StateRef<X>

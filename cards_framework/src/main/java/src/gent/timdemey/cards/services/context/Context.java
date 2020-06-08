@@ -10,7 +10,7 @@ import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityFactory;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
-import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.interfaces.IContextService;
 
 public final class Context
 {

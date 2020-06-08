@@ -9,10 +9,10 @@ import gent.timdemey.cards.model.entities.common.PayloadBase;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.netcode.TCP_Connection;
 import gent.timdemey.cards.netcode.UDP_Source;
-import gent.timdemey.cards.services.IContextService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.context.LimitedContext;
+import gent.timdemey.cards.services.interfaces.IContextService;
 
 public abstract class CommandBase extends EntityBase
 {

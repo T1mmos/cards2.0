@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -20,15 +19,15 @@ import javax.swing.SwingUtilities;
 
 import com.google.common.base.Preconditions;
 
-import gent.timdemey.cards.services.IScalableComponentService;
+import gent.timdemey.cards.services.interfaces.IScalableComponentService;
 
 public class ScalableComponentService implements IScalableComponentService
 {
     private final Executor barrierExecutor;
     private final Executor taskExecutor;
 
-    private final Set<IScalableResource> resources;
-    private final Map<UUID, IScalableComponent> components;
+    private final Map<String, IScalableResource> resources;
+    private final Map<String, IScalableComponent> components;
 
     /**
      * Produces threads used by the barrier executor which waits for all tasks to
@@ -67,7 +66,7 @@ public class ScalableComponentService implements IScalableComponentService
         this.barrierExecutor = Executors.newFixedThreadPool(1, new BarrierThreadFactory());
         this.taskExecutor = new ThreadPoolExecutor(1, 5, 5L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(),
             new ScalableImageTaskThreadFactory());
-        this.resources = new HashSet<>();
+        this.resources = new HashMap<>();
         this.components = new HashMap<>();
         
     }
@@ -141,15 +140,26 @@ public class ScalableComponentService implements IScalableComponentService
     }
 
     @Override
-    public IScalableComponent getScalableComponent(UUID id)
+    public IScalableComponent getScalableComponent(String id)
     {
         return components.get(id);        
     }
 
- /*   @Override
-    public IScalableResource getScalableResource(UUID id)
+    @Override
+    public void addScalableResource(IScalableResource scaleRes)
     {
-        // TODO Auto-generated method stub
-        return null;
-    }*/
+        resources.put(scaleRes.getId(), scaleRes);
+    }
+
+    @Override
+    public void addScalableComponent(IScalableComponent scaleComp)
+    {
+        components.put(scaleComp.getId(), scaleComp);
+    }
+
+    @Override
+    public IScalableResource getScalableResource(String id)
+    {
+        return resources.get(id);
+    }
 }

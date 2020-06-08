@@ -6,12 +6,12 @@ import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.IContextService;
-import gent.timdemey.cards.services.IDialogService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogData;
+import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.services.interfaces.IDialogService;
 import gent.timdemey.cards.ui.dialogs.StartServerDialogContent;
 import gent.timdemey.cards.ui.dialogs.StartServerDialogData;
 

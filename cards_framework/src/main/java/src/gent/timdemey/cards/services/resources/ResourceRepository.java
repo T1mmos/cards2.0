@@ -6,7 +6,7 @@ import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
 
-import gent.timdemey.cards.services.IResourceRepository;
+import gent.timdemey.cards.services.interfaces.IResourceRepository;
 
 public class ResourceRepository implements IResourceRepository
 {

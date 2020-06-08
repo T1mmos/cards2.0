@@ -11,7 +11,7 @@ import javax.swing.SwingUtilities;
 
 import com.google.common.base.Preconditions;
 
-import gent.timdemey.cards.services.IContextService;
+import gent.timdemey.cards.services.interfaces.IContextService;
 
 /**
  * The thread-local context provider.

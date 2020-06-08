@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services;
+package gent.timdemey.cards.services.interfaces;
 
 import java.io.InputStream;
 

@@ -3,15 +3,13 @@ package gent.timdemey.cards.services.scaleman.img;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 import javax.swing.JComponent;
 
 import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.services.scaleman.IScalableResource;
 import gent.timdemey.cards.services.scaleman.ScalableComponent;
-import gent.timdemey.cards.services.scaleman.resources.ScalableImageResource;
 
 public class ScalableImageComponent extends ScalableComponent
 {
@@ -19,10 +17,10 @@ public class ScalableImageComponent extends ScalableComponent
     private final List<ScalableImageResource> imageResources;
     private ScalableImageResource currentImageResource;
     
-    public ScalableImageComponent(UUID modelId, List<ScalableImageResource> imageResources)
+    public ScalableImageComponent(String id, ScalableImageResource ... imageResources)
     {
-        super(modelId);  
-        this.imageResources = imageResources;
+        super(id);  
+        this.imageResources = Arrays.asList(imageResources);
         this.currentImageResource = null;
     }
 
@@ -42,7 +40,7 @@ public class ScalableImageComponent extends ScalableComponent
      * Swap the image shown.
      * @param resourceId
      */
-    public void setScalableImageResource(UUID resourceId)
+    public void setScalableImageResource(String resourceId)
     {
         ScalableImageResource found = null;
         for (ScalableImageResource resource : imageResources)
@@ -53,11 +51,14 @@ public class ScalableImageComponent extends ScalableComponent
                 break;
             }
         }
+        
         if (found == null)
         {
             Logger.error("Resource with id=%s not found", resourceId);
+            return;            
         }
         
+        currentImageResource = found;
         repaint();
     }
 
@@ -66,53 +67,72 @@ public class ScalableImageComponent extends ScalableComponent
         int width = getBounds().width;
         int height = getBounds().height;
         
-        if(currentImageResource != null)
+        BufferedImage bi = currentImageResource.get(width, height);
+        
+        if (!currentImageResource.fallback)
         {
-            Graphics2D g3 = (Graphics2D) g2.create();
-            if(getMirror())
-            {
-                g3.scale(-1.0, -1.0);
-                g3.translate(-width, -height);
-            }
-
-            BufferedImage image = currentImageResource.get(width, height);
-            int imgW = image.getWidth();
-            int imgH = image.getHeight();
-
-            if(imgW == width && imgH == height)
-            {
-                // best image quality
-                g3.drawImage(image, 0, 0, null);
-            }
-            else
-            {
-                // quick rescale until bufferedimage is updated with high quality
-                g3.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-                double sx = 1.0 * width / imgW;
-                double sy = 1.0 * height / imgH;
-                g3.scale(sx, sy);
-                g3.drawImage(image, 0, 0, null);
-            }
-            g3.dispose();
+            drawScaled(g2, bi, width, height);
         }
         else
         {
-            BufferedImage errorImg = getErrorImage();
-            if(errorImg != null)
-            {
-                int tileWidth = errorImg.getWidth();
-                int tileHeight = errorImg.getHeight();
-                for (int y = 0; y < height; y += tileHeight)
-                {
-                    for (int x = 0; x < width; x += tileWidth)
-                    {
-                        g2.drawImage(errorImg, x, y, comp);
-                    }
-                }
-            }
+            drawTiled(g2, bi, width, height);
         }
     }
+    
+    /**
+     * Draw the image rescaled.
+     * @param g2
+     * @param image
+     * @param width
+     * @param height
+     */
+    private void drawScaled(Graphics2D g2, BufferedImage image, int width, int height)
+    {
+        Graphics2D g3 = (Graphics2D) g2.create();
+        if(getMirror())
+        {
+            g3.scale(-1.0, -1.0);
+            g3.translate(-width, -height);
+        }
 
+        int imgW = image.getWidth();
+        int imgH = image.getHeight();
+
+        if(imgW == width && imgH == height)
+        {
+            // best image quality
+            g3.drawImage(image, 0, 0, null);
+        }
+        else
+        {
+            // quick rescale until bufferedimage is updated with high quality
+            g3.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+            double sx = 1.0 * width / imgW;
+            double sy = 1.0 * height / imgH;
+            g3.scale(sx, sy);
+            g3.drawImage(image, 0, 0, null);
+        }
+        
+        g3.dispose();
+    }
+
+    private void drawTiled(Graphics2D g2, BufferedImage image, int width, int height)
+    {
+        Graphics2D g3 = (Graphics2D) g2.create();
+        
+        int tileWidth = image.getWidth();
+        int tileHeight = image.getHeight();
+        for (int y = 0; y < height; y += tileHeight)
+        {
+            for (int x = 0; x < width; x += tileWidth)
+            {
+                g3.drawImage(image, x, y, null);
+            }
+        }
+        
+        g3.dispose();
+    }
+   
     @Override
     public List<ScalableImageResource> getResources()
     {

@@ -1,11 +1,10 @@
-package gent.timdemey.cards.services.scaleman.resources;
+package gent.timdemey.cards.services.scaleman.img;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import gent.timdemey.cards.services.scaleman.ScalableResource;
 
@@ -15,22 +14,23 @@ public class ScalableImageResource extends ScalableResource
     
     private Map<Dimension, BufferedImage> imageCache;
     
-    public ScalableImageResource (UUID id, BufferedImage image)
+    public ScalableImageResource (String id, BufferedImage image, boolean fallback)
     {
-        super(id);
+        super(id, fallback);
         
         this.image_src = image;
         this.imageCache = Collections.synchronizedMap(new HashMap<>());        
     }
     
-    public ScalableImageResource (BufferedImage image)
-    {
-        this(UUID.randomUUID(), image);        
-    }
-    
     @Override
     public void rescale(int width, int height)
     {
+        // we do not scaled fallback images
+        if (fallback)
+        {
+            return;
+        }
+        
         Dimension dim = new Dimension(width, height);
         
         BufferedImage biScaled = imageCache.get(dim);
@@ -46,6 +46,14 @@ public class ScalableImageResource extends ScalableResource
     @Override
     public BufferedImage get(int width, int height)
     {
+        // if this is a fallback image, we don't scale so the 
+        // cache will also not be filled with tiled versions.
+        // the component using this resource may choose to tile it.
+        if (fallback)
+        {
+            return image_src;
+        }
+        
         Dimension dim = new Dimension(width, height);
 
         BufferedImage biScaled = imageCache.get(dim);

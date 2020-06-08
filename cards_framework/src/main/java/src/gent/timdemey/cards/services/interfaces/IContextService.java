@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services;
+package gent.timdemey.cards.services.interfaces;
 
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
