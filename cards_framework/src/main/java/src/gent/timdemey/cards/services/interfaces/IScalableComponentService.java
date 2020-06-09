@@ -50,15 +50,15 @@ public interface IScalableComponentService
      * @param id
      * @return
      */
-    public IScalableResource getScalableResource(UUID id);
+    public IScalableResource getScalableResource(UUID resId);
     
     /**
-     * Get a ScalableImage mapped to the given id.
+     * Get a scalable component mapped to the given id.
      * 
      * @param card
      * @return
      */
-    public IScalableComponent getScalableComponent(UUID id);
+    public IScalableComponent getScalableComponent(UUID compId);
     
     /**
      * Get a ScalableResource mapped to the given id.

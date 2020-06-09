@@ -1,5 +1,7 @@
 package gent.timdemey.cards.services.uuid;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.cards.Suit;
@@ -14,6 +16,8 @@ public class UUIDService implements IUUIDService
     private static final String RESID_CARD_BACKSIDE = "card.backside";
     private static final String RESID_CARD_FRONTSIDE = "card.frontside.%s%s";
     private static final String COMPID_CARD = "card.%s%s";
+    
+    private final Map<UUID, UUID> modelToCompMap = new HashMap<>();
 
     @Override
     public UUID getCardFrontResourceId(Suit suit, Value value)
@@ -34,15 +38,27 @@ public class UUIDService implements IUUIDService
     }
 
     @Override
-    public UUID getCardComponentId(ReadOnlyCard card)
+    public UUID createCardComponentId(ReadOnlyCard card)
     {
-        return card.getId();
+        UUID compId = modelToCompMap.get(card.getId());
+        if (compId == null)
+        {
+            compId = card.getId();
+            modelToCompMap.put(card.getId(), compId);
+        }
+        return compId;
     }
 
     @Override
-    public UUID getCardStackComponentId(ReadOnlyCardStack cardStack)
+    public UUID createCardStackComponentId(ReadOnlyCardStack cardStack)
     {
-        return cardStack.getId();
+        UUID compId = modelToCompMap.get(cardStack.getId());
+        if (compId == null)
+        {
+            compId = cardStack.getId();
+            modelToCompMap.put(cardStack.getId(), compId);
+        }
+        return compId;
     }
     
     private UUID getUUID(String id_str)
@@ -55,5 +71,23 @@ public class UUIDService implements IUUIDService
     {
         String id_str = String.format(id_template, args);
         return getUUID(id_str);
+    }
+
+    @Override
+    public UUID createCardFrontResourceId(ReadOnlyCard card)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    @Override
+    public UUID getComponentId(UUID modelId)
+    {
+        UUID compId = modelToCompMap.get(modelId);
+        if (compId == null)
+        {
+            throw new NullPointerException();
+        }
+        return compId;
     }
 }

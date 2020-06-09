@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -150,13 +151,14 @@ public class GamePanelService implements IGamePanelService
         ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState()
                 .getCardGame();
 
+        // card components
         List<ReadOnlyCard> cards = cardGame.getCards();
         for (int i = 0; i < cards.size(); i++)
         {
             // get the ids
             ReadOnlyCard card = cards.get(i);
-            UUID compId = uuidServ.getCardComponentId(card);
-            UUID resFrontId = uuidServ.getCardFrontResourceId(card);
+            UUID compId = uuidServ.createCardComponentId(card);
+            UUID resFrontId = uuidServ.createCardFrontResourceId(card);
             UUID resBackId = uuidServ.getCardBackResourceId();
 
             // create the component using its necessary image resources
@@ -242,40 +244,47 @@ public class GamePanelService implements IGamePanelService
         ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState()
                 .getCardGame();
         
+        // find all model ids to update
+        List<UUID> modelIds = new ArrayList<>();
         for (ReadOnlyCard card : cardGame.getCards())
         {
             // get the scalable component for this card
-            UUID cardCompId = uuidServ.getCardComponentId(card);
-            IScalableComponent scaleComp = scaleCompServ.getScalableComponent(cardCompId);
-            
-            // get the bounds for this component
-            posServ.getBounds()
-            scaleComp.
+            modelIds.add(card.getId());
         }
-            Rectangle rect = posMan.getCardSize();
-            if (rect.width > 0 && rect.height > 0)
-            {
-                .setSize(SCALEGROUP_CARDS, rect.width, rect.height);
-            }
-        
-
-
-        for (String cardStackType : cardGame.getCardStackTypes())
+                
+        // apply all bounds on scalable components linked to model entities
+        for (UUID modelId : modelIds)
         {
-            String scalegroup_id = cardStackType;
-            Rectangle rect = posMan.getCardStackSize(cardStackType);
-            if (rect.width > 0 && rect.height > 0)
-            {
-                Services.get(IScalableComponentService.class).setSize(scalegroup_id, rect.width, rect.height);
-            }
+            // get the component and the bounds for the model id and apply
+            UUID compId = uuidServ.getComponentId(modelId);
+            IScalableComponent scaleComp = scaleCompServ.getScalableComponent(compId);                   
+            Rectangle bounds = posServ.getBounds(modelId);
+            scaleComp.setBounds(bounds);
         }
+        
+        scaleCompServ.updateResources(() -> scaleCompServ.updateComponents());
     }
 
     @Override
     public void setVisible(ReadOnlyCard card, boolean visible)
     {
-        String whatToShow = visible ? getFilename(card) : FILENAME_BACKSIDE;
-        Services.get(IScalableComponentService.class).setImage(card.getId(), whatToShow);
+        IUUIDService uuidServ = Services.get(IUUIDService.class);
+        UUID compId = uuidServ.getComponentId(card.getId());
+        
+        IScalableComponentService scaleCompServ = Services.get(IScalableComponentService.class);
+        ScalableImageComponent imgComp = (ScalableImageComponent) scaleCompServ.getScalableComponent(compId);
+        
+        UUID resId;
+        if (visible)
+        {
+            resId = uuidServ.getCardFrontResourceId(card.getSuit(), card.getValue());
+        }
+        else
+        {
+            resId = uuidServ.getCardBackResourceId();
+        }
+        
+        imgComp.setScalableImageResource(resId);
     }
 
     @Override

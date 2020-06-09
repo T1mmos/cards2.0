@@ -28,7 +28,7 @@ public interface IPositionService
     public Rectangle getBounds();
 
     /**
-     * Returns the bounds of a element identified by the given id.
+     * Returns the bounds of an element identified by the given id.
      * @param id
      * @return
      */

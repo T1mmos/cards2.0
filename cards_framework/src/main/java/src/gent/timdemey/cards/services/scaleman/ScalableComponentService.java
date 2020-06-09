@@ -141,9 +141,9 @@ public class ScalableComponentService implements IScalableComponentService
     }
 
     @Override
-    public IScalableComponent getScalableComponent(UUID id)
+    public IScalableComponent getScalableComponent(UUID compId)
     {
-        return components.get(id);        
+        return components.get(compId);        
     }
 
     @Override
@@ -159,8 +159,8 @@ public class ScalableComponentService implements IScalableComponentService
     }
 
     @Override
-    public IScalableResource getScalableResource(UUID id)
+    public IScalableResource getScalableResource(UUID resId)
     {
-        return resources.get(id);
+        return resources.get(resId);
     }
 }
