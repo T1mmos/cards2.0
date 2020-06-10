@@ -1,12 +1,12 @@
 package gent.timdemey.cards.services.interfaces;
 
-import gent.timdemey.cards.services.contract.GetFontResourceResponse;
-import gent.timdemey.cards.services.contract.GetImageResourceResponse;
+import gent.timdemey.cards.services.contract.FontResource;
+import gent.timdemey.cards.services.contract.ImageResource;
 
 public interface IResourceService
 {
-    GetImageResourceResponse getImage(String filename);
-    GetFontResourceResponse getFont(String filename);
+    ImageResource getImage(String filename);
+    FontResource getFont(String filename);
     
     void clear();
 }

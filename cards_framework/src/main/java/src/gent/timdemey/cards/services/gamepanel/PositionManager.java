@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
@@ -40,20 +39,6 @@ public abstract class PositionManager implements IPositionService
         Logger.warn("No bounds defined for id=%s", childId);        
         return new Rectangle(0, 0, 100, 100);
     }
-    
-    @Override
-    public <T> List<T> getComponentsOfTypeAt(Class<T> clazz, Point p)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public <T> List<T> getComponentsOfTypeIn(Class<T> clazz, Rectangle rect)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
     protected abstract Rectangle getCardSize();
 
@@ -66,6 +51,4 @@ public abstract class PositionManager implements IPositionService
     protected abstract ReadOnlyCardStack getCardStackAt(Point p);
 
     protected abstract List<ReadOnlyCardStack> getCardStacksIn(Rectangle rect);
-
-
 }

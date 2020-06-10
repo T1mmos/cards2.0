@@ -16,10 +16,10 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.services.configman.ConfigKey;
-import gent.timdemey.cards.services.contract.GetImageResourceResponse;
 import gent.timdemey.cards.services.interfaces.IConfigManager;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IResourceService;
+import gent.timdemey.cards.services.resources.ImageResource;
 import gent.timdemey.cards.ui.actions.ActionDef;
 import gent.timdemey.cards.ui.actions.Actions;
 import gent.timdemey.cards.ui.actions.IActionFactory;
@@ -36,7 +36,7 @@ public class FrameService implements IFrameService
         IResourceService resServ = Services.get(IResourceService.class);
         for (int dim : new int []{16,24,48,140})
         {
-            GetImageResourceResponse resp = resServ.getImage(String.format(APP_ICON, dim, dim));
+            ImageResource resp = resServ.getImage(String.format(APP_ICON, dim, dim));
             images.add(resp.bufferedImage);
         }
 

@@ -23,7 +23,7 @@ public interface IScalableComponent
      * @return
      */
     public UUID getId();
-    
+        
     /**
      * Get a list of scalable resources needed by this IScalableComponent.
      * @return

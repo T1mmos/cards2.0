@@ -22,7 +22,6 @@ public interface IGamePanelService extends IPreload
     public void rescaleAsync();
     public void setDrawDebug(boolean on);
     public boolean getDrawDebug();
-    public void setVisible(ReadOnlyCard card, boolean visible);
 
     public void animatePosition(ReadOnlyCard card);    
     public void animatePosition(ReadOnlyCardStack cardStack);

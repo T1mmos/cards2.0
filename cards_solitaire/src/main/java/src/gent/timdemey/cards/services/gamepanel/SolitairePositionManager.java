@@ -18,6 +18,8 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.cardgame.SolitaireCardStackType;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
+import gent.timdemey.cards.services.scaleman.IScalableComponent;
+import gent.timdemey.cards.services.scaleman.comps.CardScalableImageComponent;
 
 public class SolitairePositionManager implements IPositionService
 {
@@ -83,6 +85,17 @@ public class SolitairePositionManager implements IPositionService
     {
         return new Rectangle(gameLayout.act_tpadx, gameLayout.act_tpady,
                 gameLayout.act_twidth - 2 * gameLayout.act_tpadx, gameLayout.act_theight - 2 * gameLayout.act_tpady);
+    }
+    
+    @Override
+    public Rectangle getBounds(IScalableComponent scaleComp)
+    {
+        if (scaleComp instanceof CardScalableImageComponent)
+        {
+            ReadOnlyCard card = ((CardScalableImageComponent) scaleComp).getCard();
+            
+            // ...
+        }
     }
 
     @Override

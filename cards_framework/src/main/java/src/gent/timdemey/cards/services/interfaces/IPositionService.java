@@ -1,9 +1,8 @@
 package gent.timdemey.cards.services.interfaces;
 
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.util.List;
-import java.util.UUID;
+
+import gent.timdemey.cards.services.scaleman.IScalableComponent;
 
 /**
  * Calculates the entire game panel layout given a maximum width and height.
@@ -32,23 +31,5 @@ public interface IPositionService
      * @param id
      * @return
      */
-    public Rectangle getBounds(UUID id);   
-    
-    /**
-     * Returns all components of type T found at the given point in the container.
-     * @param <T>
-     * @param clazz
-     * @param p
-     * @return
-     */
-    public <T> List<T> getComponentsOfTypeAt(Class<T> clazz, Point p); 
-    
-    /**
-     * Returns all components of type T found overlapping with the given rectangle in the container.
-     * @param <T>
-     * @param clazz
-     * @param rect
-     * @return
-     */
-    public <T> List<T> getComponentsOfTypeIn(Class<T> clazz, Rectangle rect);
+    public Rectangle getBounds(IScalableComponent scaleComp);   
 }

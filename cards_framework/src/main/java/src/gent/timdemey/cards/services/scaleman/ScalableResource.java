@@ -2,22 +2,18 @@ package gent.timdemey.cards.services.scaleman;
 
 import java.util.UUID;
 
-public abstract class ScalableResource implements IScalableResource
+import gent.timdemey.cards.services.contract.Resource;
+
+public abstract class ScalableResource<T extends Resource> implements IScalableResource
 {
     public final UUID id;
     
-    /**
-     * If true, it indicates that the resource is not the intended resource because
-     * it couldn't be loaded (e.g. because of I/O error). This resource object
-     * is using a fallback resource. For example, in case of image resources,
-     * a programmatically generated image could be used.
-     */
-    public final boolean fallback;
+    public final T resource;
     
-    public ScalableResource (UUID id, boolean fallback)
+    public ScalableResource (UUID id, T resource)
     {
         this.id = id;
-        this.fallback = fallback;
+        this.resource = resource;
     }
     
     @Override

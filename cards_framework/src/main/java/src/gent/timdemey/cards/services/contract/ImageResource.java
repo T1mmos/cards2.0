@@ -2,13 +2,13 @@ package gent.timdemey.cards.services.contract;
 
 import java.awt.image.BufferedImage;
 
-public class GetImageResourceResponse extends GetResourceResponse
+public class ImageResource extends Resource
 {
     public final BufferedImage bufferedImage;
     
-    public GetImageResourceResponse(BufferedImage bufferedImage, boolean fallback)
+    public ImageResource(BufferedImage bufferedImage, String filename, boolean fallback)
     {
-        super(fallback);
+        super(filename, fallback);
         this.bufferedImage = bufferedImage;
     }
 }

@@ -9,16 +9,19 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 
 /**
  * Allows to find UUID identifiers given other primary keys identifying objects.
+ * 
  * @author timdm
  *
  */
 public interface IUUIDService
 {
-    UUID getCardFrontResourceId(Suit suit, Value value);
+    UUID createCardFrontResourceId(Suit suit, Value value);
+
     UUID createCardFrontResourceId(ReadOnlyCard card);
-    UUID getCardBackResourceId();
+
+    UUID createCardBackResourceId();
 
     UUID createCardComponentId(ReadOnlyCard card);
-    UUID createCardStackComponentId(ReadOnlyCardStack cardStack);    
-    UUID getComponentId(UUID modelId);
+
+    UUID createCardStackComponentId(ReadOnlyCardStack cardStack);
 }

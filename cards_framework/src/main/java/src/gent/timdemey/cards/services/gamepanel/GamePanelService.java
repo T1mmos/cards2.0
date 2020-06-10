@@ -22,21 +22,22 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.context.Context;
-import gent.timdemey.cards.services.contract.GetFontResourceResponse;
-import gent.timdemey.cards.services.contract.GetImageResourceResponse;
+import gent.timdemey.cards.services.contract.FontResource;
+import gent.timdemey.cards.services.contract.ImageResource;
 import gent.timdemey.cards.services.gamepanel.animations.AnimationEnd;
 import gent.timdemey.cards.services.gamepanel.animations.ColorAnimation;
 import gent.timdemey.cards.services.gamepanel.animations.GamePanelAnimator;
 import gent.timdemey.cards.services.gamepanel.animations.IAnimation;
 import gent.timdemey.cards.services.gamepanel.animations.MovingAnimation;
+import gent.timdemey.cards.services.interfaces.IScalableComponentService;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceService;
-import gent.timdemey.cards.services.interfaces.IScalableComponentService;
 import gent.timdemey.cards.services.interfaces.IUUIDService;
 import gent.timdemey.cards.services.scaleman.IScalableComponent;
 import gent.timdemey.cards.services.scaleman.IScalableResource;
+import gent.timdemey.cards.services.scaleman.comps.CardScalableImageComponent;
 import gent.timdemey.cards.services.scaleman.img.ScalableImageComponent;
 import gent.timdemey.cards.services.scaleman.img.ScalableImageResource;
 
@@ -78,14 +79,13 @@ public class GamePanelService implements IGamePanelService
 
         // score font
         IResourceService resServ = Services.get(IResourceService.class);
-        GetFontResourceResponse resp_font = resServ.getFont("SMB2.ttf");
+        FontResource resp_font = resServ.getFont("SMB2.ttf");
         scoreFont = resp_font.font.deriveFont(52f);
 
         // card back
-        GetImageResourceResponse resp_back = resServ.getImage(getCardBackFilePath());
+        ImageResource imgRes_back = resServ.getImage(getCardBackFilePath());
         UUID resBackId = uuidServ.getCardBackResourceId();
-        IScalableResource scaleRes_back = new ScalableImageResource(resBackId, resp_back.bufferedImage,
-                resp_back.fallback);
+        IScalableResource scaleRes_back = new ScalableImageResource(resBackId, imgRes_back);
         scaleCompServ.addScalableResource(scaleRes_back);
 
         // card fronts
@@ -96,9 +96,8 @@ public class GamePanelService implements IGamePanelService
                 UUID resId = uuidServ.getCardFrontResourceId(suit, value);
                 String filepath = getCardFrontFilePath(suit, value);
 
-                GetImageResourceResponse resp_front = resServ.getImage(filepath);
-                IScalableResource scaleRes_front = new ScalableImageResource(resId, resp_front.bufferedImage,
-                        resp_front.fallback);
+                ImageResource imgRes_front = resServ.getImage(filepath);
+                IScalableResource scaleRes_front = new ScalableImageResource(resId, imgRes_front);
                 scaleCompServ.addScalableResource(scaleRes_front);
             }
         }
@@ -146,30 +145,16 @@ public class GamePanelService implements IGamePanelService
     protected void createScalableComponents()
     {
         IScalableComponentService scaleCompServ = Services.get(IScalableComponentService.class);
-        IUUIDService uuidServ = Services.get(IUUIDService.class);
 
         ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState()
                 .getCardGame();
-
+        
         // card components
         List<ReadOnlyCard> cards = cardGame.getCards();
         for (int i = 0; i < cards.size(); i++)
         {
-            // get the ids
             ReadOnlyCard card = cards.get(i);
-            UUID compId = uuidServ.createCardComponentId(card);
-            UUID resFrontId = uuidServ.createCardFrontResourceId(card);
-            UUID resBackId = uuidServ.getCardBackResourceId();
-
-            // create the component using its necessary image resources
-            ScalableImageResource res_front = (ScalableImageResource) scaleCompServ.getScalableResource(resFrontId);
-            ScalableImageResource res_back = (ScalableImageResource) scaleCompServ.getScalableResource(resBackId);
-            ScalableImageComponent scaleComp = new ScalableImageComponent(compId, res_front, res_back);
-
-            // initialize the card to show its front or back
-            scaleComp.setScalableImageResource(card.isVisible() ? resFrontId : resBackId);
-
-            // add to the game panel
+            IScalableComponent scaleComp = scaleCompServ.getOrCreate(card);
             add(scaleComp);
         }
     }
@@ -205,9 +190,6 @@ public class GamePanelService implements IGamePanelService
     @Override
     public void relayout()
     {
-        Context context = Services.get(IContextService.class).getThreadContext();
-        ReadOnlyCardGame cardGame = context.getReadOnlyState().getCardGame();
-
         updatePositionManager();
 
         for (IScalableComponent comp : getScalableComponents())
@@ -238,53 +220,9 @@ public class GamePanelService implements IGamePanelService
     public void rescaleAsync()
     {
         IScalableComponentService scaleCompServ = Services.get(IScalableComponentService.class);
-        IPositionService posServ = Services.get(IPositionService.class);
-        IUUIDService uuidServ = Services.get(IUUIDService.class);
         
-        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState()
-                .getCardGame();
-        
-        // find all model ids to update
-        List<UUID> modelIds = new ArrayList<>();
-        for (ReadOnlyCard card : cardGame.getCards())
-        {
-            // get the scalable component for this card
-            modelIds.add(card.getId());
-        }
-                
-        // apply all bounds on scalable components linked to model entities
-        for (UUID modelId : modelIds)
-        {
-            // get the component and the bounds for the model id and apply
-            UUID compId = uuidServ.getComponentId(modelId);
-            IScalableComponent scaleComp = scaleCompServ.getScalableComponent(compId);                   
-            Rectangle bounds = posServ.getBounds(modelId);
-            scaleComp.setBounds(bounds);
-        }
-        
-        scaleCompServ.updateResources(() -> scaleCompServ.updateComponents());
-    }
-
-    @Override
-    public void setVisible(ReadOnlyCard card, boolean visible)
-    {
-        IUUIDService uuidServ = Services.get(IUUIDService.class);
-        UUID compId = uuidServ.getComponentId(card.getId());
-        
-        IScalableComponentService scaleCompServ = Services.get(IScalableComponentService.class);
-        ScalableImageComponent imgComp = (ScalableImageComponent) scaleCompServ.getScalableComponent(compId);
-        
-        UUID resId;
-        if (visible)
-        {
-            resId = uuidServ.getCardFrontResourceId(card.getSuit(), card.getValue());
-        }
-        else
-        {
-            resId = uuidServ.getCardBackResourceId();
-        }
-        
-        imgComp.setScalableImageResource(resId);
+        scaleCompServ.setAllBounds();        
+        scaleCompServ.rescaleResources(() -> scaleCompServ.updateComponents());
     }
 
     @Override

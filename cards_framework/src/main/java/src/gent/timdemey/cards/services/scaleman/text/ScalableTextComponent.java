@@ -2,6 +2,7 @@ package gent.timdemey.cards.services.scaleman.text;
 
 import java.awt.Font;
 import java.util.List;
+import java.util.UUID;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -14,9 +15,9 @@ public class ScalableTextComponent extends ScalableComponent
     private final String text;
     private final Font font;
 
-    public ScalableTextComponent(String text, Font font)
+    public ScalableTextComponent(UUID id, String text, Font font)
     {
-        super(null);
+        super(id);
         this.text = text;
         this.font = font;
     }

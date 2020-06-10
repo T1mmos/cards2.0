@@ -17,8 +17,7 @@ import gent.timdemey.cards.services.interfaces.IGamePanelService;
 
 public abstract class ScalableComponent implements IScalableComponent
 {
-    protected final UUID id;
-    
+    private final UUID id;
     private JComponent component = null;
     private boolean mirror = false;    
     

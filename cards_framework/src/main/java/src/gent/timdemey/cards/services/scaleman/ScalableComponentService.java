@@ -20,7 +20,13 @@ import javax.swing.SwingUtilities;
 
 import com.google.common.base.Preconditions;
 
+import gent.timdemey.cards.Services;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
+import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IScalableComponentService;
+import gent.timdemey.cards.services.interfaces.IUUIDService;
+import gent.timdemey.cards.services.scaleman.comps.CardScalableImageComponent;
+import gent.timdemey.cards.services.scaleman.img.ScalableImageResource;
 
 public class ScalableComponentService implements IScalableComponentService
 {
@@ -30,6 +36,8 @@ public class ScalableComponentService implements IScalableComponentService
     private final Map<UUID, IScalableResource> resources;
     private final Map<UUID, IScalableComponent> components;
 
+    private final Map<UUID, UUID> model2comp;
+    
     /**
      * Produces threads used by the barrier executor which waits for all tasks to
      * complete via CompletionFuture.allOf().
@@ -69,11 +77,11 @@ public class ScalableComponentService implements IScalableComponentService
             new ScalableImageTaskThreadFactory());
         this.resources = new HashMap<>();
         this.components = new HashMap<>();
-        
+        this.model2comp = new HashMap<>();
     }
     
     @Override
-    public void updateResources(Runnable callback)
+    public void rescaleResources(Runnable callback)
     {
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
 
@@ -153,14 +161,47 @@ public class ScalableComponentService implements IScalableComponentService
     }
 
     @Override
-    public void addScalableComponent(IScalableComponent scaleComp)
+    public IScalableComponent getOrCreate(ReadOnlyCard card)
     {
-        components.put(scaleComp.getId(), scaleComp);
+        IUUIDService uuidServ = Services.get(IUUIDService.class);
+                
+        UUID compId = model2comp.get(card.getId());        
+        if (compId == null)
+        {
+            // get the ids
+            compId = uuidServ.createCardComponentId(card);
+        }
+        
+        CardScalableImageComponent comp = (CardScalableImageComponent) components.get(compId);
+        if (comp == null)
+        {
+            UUID resFrontId = uuidServ.createCardFrontResourceId(card);
+            UUID resBackId = uuidServ.createCardBackResourceId();
+
+            // create the component using its necessary image resources
+            ScalableImageResource res_front = (ScalableImageResource) resources.get(resFrontId);
+            ScalableImageResource res_back = (ScalableImageResource) resources.get(resBackId);
+            comp = new CardScalableImageComponent(compId, card, res_front, res_back);
+
+            // initialize the card to show its front or back
+            comp.updateVisible();
+            
+            components.put(compId, comp);
+        }
+        
+        return comp;
     }
 
     @Override
-    public IScalableResource getScalableResource(UUID resId)
+    public void setAllBounds()
     {
-        return resources.get(resId);
+        IPositionService posServ = Services.get(IPositionService.class);
+        
+        // apply all bounds on scalable components
+        for (IScalableComponent scaleComp : components.values())
+        {            
+            Rectangle bounds = posServ.getBounds(scaleComp);
+            scaleComp.setBounds(bounds);
+        }
     }
 }

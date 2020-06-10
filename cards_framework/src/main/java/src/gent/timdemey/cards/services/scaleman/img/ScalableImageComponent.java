@@ -16,13 +16,13 @@ public class ScalableImageComponent extends ScalableComponent
 {
     private String file = null;
     private final List<ScalableImageResource> imageResources;
-    private ScalableImageResource currentImageResource;
+    private ScalableImageResource currentScaledResource;
     
     public ScalableImageComponent(UUID id, ScalableImageResource ... imageResources)
     {
         super(id);  
         this.imageResources = Arrays.asList(imageResources);
-        this.currentImageResource = null;
+        this.currentScaledResource = null;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class ScalableImageComponent extends ScalableComponent
      * Swap the image shown.
      * @param resourceId
      */
-    public void setScalableImageResource(UUID resourceId)
+    public final void setScalableImageResource(UUID resourceId)
     {
         ScalableImageResource found = null;
         for (ScalableImageResource resource : imageResources)
@@ -59,7 +59,7 @@ public class ScalableImageComponent extends ScalableComponent
             return;            
         }
         
-        currentImageResource = found;
+        currentScaledResource = found;
         repaint();
     }
 
@@ -68,9 +68,9 @@ public class ScalableImageComponent extends ScalableComponent
         int width = getBounds().width;
         int height = getBounds().height;
         
-        BufferedImage bi = currentImageResource.get(width, height);
+        BufferedImage bi = currentScaledResource.get(width, height);
         
-        if (!currentImageResource.fallback)
+        if (!currentScaledResource.resource.fallback)
         {
             drawScaled(g2, bi, width, height);
         }

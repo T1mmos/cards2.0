@@ -1,7 +1,5 @@
 package gent.timdemey.cards.services.uuid;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.cards.Suit;
@@ -12,27 +10,25 @@ import gent.timdemey.cards.services.interfaces.IUUIDService;
 
 public class UUIDService implements IUUIDService
 {
-
     private static final String RESID_CARD_BACKSIDE = "card.backside";
     private static final String RESID_CARD_FRONTSIDE = "card.frontside.%s%s";
-    private static final String COMPID_CARD = "card.%s%s";
+    private static final String COMPID_CARD = "card.%s";
+    private static final String COMPID_CARDSTACK = "card.%s";
     
-    private final Map<UUID, UUID> modelToCompMap = new HashMap<>();
-
     @Override
-    public UUID getCardFrontResourceId(Suit suit, Value value)
+    public UUID createCardFrontResourceId(Suit suit, Value value)
     {
         String suit_str = suit.getTextual();
         String value_str = value.getTextual();
         return getUUID(RESID_CARD_FRONTSIDE, value_str, suit_str);
     }
     
-    public UUID getCardFrontResourceId(ReadOnlyCard card)
+    public UUID createCardFrontResourceId(ReadOnlyCard card)
     {
-        return getCardFrontResourceId(card.getSuit(), card.getValue());
+        return createCardFrontResourceId(card.getSuit(), card.getValue());
     }
 
-    public UUID getCardBackResourceId()
+    public UUID createCardBackResourceId()
     {
         return getUUID(RESID_CARD_BACKSIDE);
     }
@@ -40,15 +36,15 @@ public class UUIDService implements IUUIDService
     @Override
     public UUID createCardComponentId(ReadOnlyCard card)
     {
-        UUID compId = modelToCompMap.get(card.getId());
-        if (compId == null)
-        {
-            compId = card.getId();
-            modelToCompMap.put(card.getId(), compId);
-        }
-        return compId;
+        return getUUID(COMPID_CARD, card.getId().toString());
     }
 
+    @Override
+    public UUID createCardStackComponentId(ReadOnlyCardStack cardStack)
+    {
+        return getUUID(COMPID_CARDSTACK, cardStack.getId().toString());
+    }
+/*
     @Override
     public UUID createCardStackComponentId(ReadOnlyCardStack cardStack)
     {
@@ -59,7 +55,7 @@ public class UUIDService implements IUUIDService
             modelToCompMap.put(cardStack.getId(), compId);
         }
         return compId;
-    }
+    }*/
     
     private UUID getUUID(String id_str)
     {
@@ -73,21 +69,4 @@ public class UUIDService implements IUUIDService
         return getUUID(id_str);
     }
 
-    @Override
-    public UUID createCardFrontResourceId(ReadOnlyCard card)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
-    @Override
-    public UUID getComponentId(UUID modelId)
-    {
-        UUID compId = modelToCompMap.get(modelId);
-        if (compId == null)
-        {
-            throw new NullPointerException();
-        }
-        return compId;
-    }
 }
