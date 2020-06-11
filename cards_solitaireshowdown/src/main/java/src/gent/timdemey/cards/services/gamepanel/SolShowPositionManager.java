@@ -20,7 +20,7 @@ import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.interfaces.IContextService;
 
-public class SolShowPositionManager extends PositionManager
+public class SolShowPositionManager extends PositionService
 {
 
     private SolShowGameLayout gameLayout;

@@ -22,6 +22,7 @@ import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
+import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IScalableComponentService;
 import gent.timdemey.cards.services.interfaces.IUUIDService;
@@ -81,7 +82,7 @@ public class ScalableComponentService implements IScalableComponentService
     }
     
     @Override
-    public void rescaleResources(Runnable callback)
+    public void rescaleAllResources(Runnable callback)
     {
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
 
@@ -127,21 +128,6 @@ public class ScalableComponentService implements IScalableComponentService
     }
 
     @Override
-    public void updateComponents()
-    {
-        // it may be more efficient to call an update on the game panel itself i.o. 
-        // updating all components individually -> todo
-        SwingUtilities.invokeLater(() ->
-        {
-            for (IScalableComponent scaleComp : components.values())
-            {
-                scaleComp.update();
-            }
-        });
-    }
-
-
-    @Override
     public void clearManagedObjects()
     {
         resources.clear();
@@ -175,7 +161,7 @@ public class ScalableComponentService implements IScalableComponentService
         CardScalableImageComponent comp = (CardScalableImageComponent) components.get(compId);
         if (comp == null)
         {
-            UUID resFrontId = uuidServ.createCardFrontResourceId(card);
+            UUID resFrontId = uuidServ.createCardFrontResourceId(card.getSuit(), card.getValue());
             UUID resBackId = uuidServ.createCardBackResourceId();
 
             // create the component using its necessary image resources
@@ -200,8 +186,8 @@ public class ScalableComponentService implements IScalableComponentService
         // apply all bounds on scalable components
         for (IScalableComponent scaleComp : components.values())
         {            
-            Rectangle bounds = posServ.getBounds(scaleComp);
-            scaleComp.setBounds(bounds);
+            LayeredArea layRect = posServ.getLayeredArea(scaleComp, false);
+            scaleComp.setBounds(layRect.getBounds2D());
         }
     }
 }

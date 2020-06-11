@@ -16,12 +16,8 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 public interface IUUIDService
 {
     UUID createCardFrontResourceId(Suit suit, Value value);
-
-    UUID createCardFrontResourceId(ReadOnlyCard card);
-
     UUID createCardBackResourceId();
 
     UUID createCardComponentId(ReadOnlyCard card);
-
     UUID createCardStackComponentId(ReadOnlyCardStack cardStack);
 }

@@ -2,6 +2,7 @@ package gent.timdemey.cards.services.interfaces;
 
 import java.awt.Rectangle;
 
+import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.scaleman.IScalableComponent;
 
 /**
@@ -31,5 +32,5 @@ public interface IPositionService
      * @param id
      * @return
      */
-    public Rectangle getBounds(IScalableComponent scaleComp);   
+    public LayeredArea getLayeredArea(IScalableComponent scaleComp, boolean animating);   
 }

@@ -1,8 +1,9 @@
 package gent.timdemey.cards.services.gamepanel.animations;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 
-import javax.swing.JComponent;
+import gent.timdemey.cards.services.scaleman.IScalableComponent;
 
 public class MovingAnimation implements IAnimation
 {
@@ -21,11 +22,11 @@ public class MovingAnimation implements IAnimation
     }
     
     @Override
-    public void tick(double frac, JComponent comp)
+    public void tick(double frac, IScalableComponent comp)
     {
         int posx = (int) ( (1.0 - frac) * pos_start.getX() + frac * pos_end.getX() );
         int posy = (int) ( (1.0 - frac) * pos_start.getY() + frac * pos_end.getY() );
-        
-        comp.setBounds(posx, posy, comp.getWidth(), comp.getHeight());
+        Rectangle bounds = comp.getBounds();
+        comp.setBounds(posx, posy, bounds.width,  bounds.height);
     }
 }

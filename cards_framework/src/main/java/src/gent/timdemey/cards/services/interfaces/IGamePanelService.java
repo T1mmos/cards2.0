@@ -1,6 +1,5 @@
 package gent.timdemey.cards.services.interfaces;
 
-import java.util.Collection;
 import java.util.UUID;
 
 import gent.timdemey.cards.IPreload;
@@ -10,11 +9,6 @@ import gent.timdemey.cards.services.scaleman.IScalableComponent;
 
 public interface IGamePanelService extends IPreload
 {
-    public void add(IScalableComponent comp);
-    public void remove(IScalableComponent comp);
-    public IScalableComponent get(Object uiComp);
-    public Collection<IScalableComponent> getScalableComponents();    
-
     public void createGamePanel(int w, int h);
     public void destroyGamePanel();
 

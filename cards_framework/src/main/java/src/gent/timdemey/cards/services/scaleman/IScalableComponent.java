@@ -1,5 +1,6 @@
 package gent.timdemey.cards.services.scaleman;
 
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.util.List;
 import java.util.UUID;
@@ -9,7 +10,7 @@ import javax.swing.JComponent;
 public interface IScalableComponent
 {
     public void setMirror(boolean mirror);
-    public boolean getMirror();
+    public boolean isMirror();
         
     public void setBounds(Rectangle rect);
     public void setBounds(int x, int y, int w, int h);
@@ -31,8 +32,14 @@ public interface IScalableComponent
     public List<? extends IScalableResource> getResources();
     
     /**
-     * Update the rendered component. (e.g. when the resources have been rescaled)
+     * Repaints the rendered component after some resources have changed behind its back. (e.g. when the resources have been rescaled)
+     * This method should not be called after calling e.g. setForeground.
      */
-    public void update();
+    public void repaint();
     
+    /**
+     * Changes the foreground color of this component.
+     * @param color
+     */
+    public void setForeground(Color color);    
 }

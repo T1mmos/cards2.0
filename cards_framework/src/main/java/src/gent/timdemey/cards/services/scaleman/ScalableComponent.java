@@ -134,7 +134,7 @@ public abstract class ScalableComponent implements IScalableComponent
         this.mirror = mirror;
     }
     
-    public final boolean getMirror ()
+    public final boolean isMirror ()
     {
         return this.mirror;
     }
@@ -144,6 +144,13 @@ public abstract class ScalableComponent implements IScalableComponent
         getComponent().repaint();
     }
 
+
+    @Override
+    public final void setForeground(Color color)
+    {
+        getComponent().setForeground(color);
+    }
+    
     @Override
     public UUID getId()
     {

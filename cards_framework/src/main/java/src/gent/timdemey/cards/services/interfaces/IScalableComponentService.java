@@ -26,13 +26,7 @@ public interface IScalableComponentService
      * waits for all rescale operations to finish before updating all
      * components at the same time on the UI thread.
      */
-    public void rescaleResources(Runnable callback);
-    
-    /**
-     * Inserts into the managed scalable components, their required resources in the
-     * current scale. 
-     */
-    public void updateComponents();
+    public void rescaleAllResources(Runnable callback);    
 
     /**
      * Get or creates once a scalable component for the given model object.
@@ -54,8 +48,6 @@ public interface IScalableComponentService
      * @return
      */
     public IScalableComponent getScalableComponent(UUID compId);
-    
-    
 
     /**
      * Clears all links between ScalableImages and their managed objects. All

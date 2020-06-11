@@ -28,7 +28,7 @@ public class ScalableImageComponent extends ScalableComponent
     @Override
     protected JComponent createComponent()
     {
-        return new JScalableImage(this);
+        return new JScalableImage(this);        
     }
 
     @Override
@@ -90,7 +90,7 @@ public class ScalableImageComponent extends ScalableComponent
     private void drawScaled(Graphics2D g2, BufferedImage image, int width, int height)
     {
         Graphics2D g3 = (Graphics2D) g2.create();
-        if(getMirror())
+        if(isMirror())
         {
             g3.scale(-1.0, -1.0);
             g3.translate(-width, -height);
@@ -138,12 +138,5 @@ public class ScalableImageComponent extends ScalableComponent
     public List<ScalableImageResource> getResources()
     {
         return imageResources;
-    }
-
-    @Override
-    public void update()
-    {
-        // TODO Auto-generated method stub
-        
     }
 }

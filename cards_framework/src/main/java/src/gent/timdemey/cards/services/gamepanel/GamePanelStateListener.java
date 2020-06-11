@@ -33,7 +33,7 @@ class GamePanelStateListener implements IStateListener
         {            
             ReadOnlyCard card = state.getCardGame().getCard(change.entityId);
             IScalableComponentService scaleCompServ = Services.get(IScalableComponentService.class);
-            scaleCompServ.getOrCreate(card).update();
+            scaleCompServ.getOrCreate(card).repaint();
         }
         else if (property == ReadOnlyCardStack.Cards)
         {

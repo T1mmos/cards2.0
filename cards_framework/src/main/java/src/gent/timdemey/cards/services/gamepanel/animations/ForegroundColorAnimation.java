@@ -2,21 +2,21 @@ package gent.timdemey.cards.services.gamepanel.animations;
 
 import java.awt.Color;
 
-import javax.swing.JComponent;
+import gent.timdemey.cards.services.scaleman.IScalableComponent;
 
-public class ColorAnimation implements IAnimation 
+public class ForegroundColorAnimation implements IAnimation 
 {
     final Color color_start;
     final Color color_end;
     
-    public ColorAnimation (Color start, Color end)
+    public ForegroundColorAnimation (Color start, Color end)
     {
         this.color_start = start;
         this.color_end = end;
     }
 
     @Override
-    public void tick(double frac, JComponent comp)
+    public void tick(double frac, IScalableComponent comp)
     {
         int r = (int) ( (1.0 - frac) * color_start.getRed() + frac * color_end.getRed() );
         int g = (int) ( (1.0 - frac) * color_start.getGreen() + frac * color_end.getGreen() );

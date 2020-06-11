@@ -25,6 +25,7 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.interfaces.ICommandService;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
+import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaleman.IScalableComponent;
 import gent.timdemey.cards.services.scaleman.ScalableComponent;
 import gent.timdemey.cards.services.scaleman.img.ScalableImageComponent;
@@ -94,9 +95,9 @@ class GamePanelMouseListener extends MouseAdapter
         }
 
         GamePanel gamePanel = (GamePanel) e.getComponent();
-        JComponent uiComp = (JComponent) gamePanel.getComponentAt(e.getPoint());
+        IPositionService posServ = Services.get(IPositionService.class);
+        IScalableComponent scaleComp = posServ.getComponentAt(e.getPoint());
         IGamePanelService gpServ = Services.get(IGamePanelService.class);
-        Object scaleComp = gpServ.get(uiComp);
 
         if (!(scaleComp instanceof ScalableComponent))
         {

@@ -16,6 +16,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.cardgame.SolitaireCardStackType;
+import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaleman.IScalableComponent;
@@ -23,7 +24,11 @@ import gent.timdemey.cards.services.scaleman.comps.CardScalableImageComponent;
 
 public class SolitairePositionManager implements IPositionService
 {
-
+    private static final int LAYER_CARDSTACKS = 0;
+    private static final int LAYER_CARDS = 200;
+    private static final int LAYER_DRAG = 10000;
+    private static final int LAYER_ANIMATIONS = 20000;
+    
     private SolitaireGameLayout gameLayout;
 
     @Override
@@ -88,24 +93,41 @@ public class SolitairePositionManager implements IPositionService
     }
     
     @Override
-    public Rectangle getBounds(IScalableComponent scaleComp)
+    public LayeredArea getLayeredArea(IScalableComponent scaleComp, boolean animating)
     {
         if (scaleComp instanceof CardScalableImageComponent)
         {
             ReadOnlyCard card = ((CardScalableImageComponent) scaleComp).getCard();
             
-            // ...
+            Rectangle bounds = getBounds(card);
+            
+            int layer;
+            if (animating)
+            {
+                layer = LAYER_ANIMATIONS;
+            }
+            else
+            {
+                ReadOnlyCardStack cardStack = card.getCardStack();
+                layer = LAYER_CARDS + 20 * cardStack.getTypeNumber() + card.getCardIndex();
+            }
+            
+            return new LayeredArea(bounds, layer);
         }
+        else if (scaleComp instanceof CardStackScalableImageComponent)
+        {
+
+            
+        }
+        throw new UnsupportedOperationException();
     }
 
-    @Override
-    public Rectangle getCardSize()
+    private Rectangle getCardSize()
     {
         return new Rectangle(0, 0, gameLayout.act_cwidth, gameLayout.act_cheight);
     }
 
-    @Override
-    public Rectangle getCardStackSize(String cardStackType)
+    private Rectangle getCardStackSize(String cardStackType)
     {
         if (cardStackType.equals(SolitaireCardStackType.MIDDLE))
         {
@@ -118,8 +140,7 @@ public class SolitairePositionManager implements IPositionService
 
     }
 
-    @Override
-    public Rectangle getBounds(ReadOnlyCardStack cardStack)
+    private Rectangle getBounds(ReadOnlyCardStack cardStack)
     {
         int stackNr = cardStack.getTypeNumber();
 
@@ -148,9 +169,8 @@ public class SolitairePositionManager implements IPositionService
         }
         return rect;
     }
-
-    @Override
-    public Rectangle getBounds(ReadOnlyCard card)
+    
+    private Rectangle getBounds(ReadOnlyCard card)
     {
         ReadOnlyCardStack cardStack = card.getCardStack();
 
@@ -187,8 +207,7 @@ public class SolitairePositionManager implements IPositionService
         return rect;
     }
 
-    @Override
-    public ReadOnlyCardStack getCardStackAt(Point p)
+    private ReadOnlyCardStack getCardStackAt(Point p)
     {
         IContextService contextServ = Services.get(IContextService.class);
         ReadOnlyState state = contextServ.getThreadContext().getReadOnlyState();
@@ -261,8 +280,7 @@ public class SolitairePositionManager implements IPositionService
         return null;
     }
 
-    @Override
-    public List<ReadOnlyCardStack> getCardStacksIn(Rectangle rect)
+    private List<ReadOnlyCardStack> getCardStacksIn(Rectangle rect)
     {
         List<ReadOnlyCardStack> cardStacks = new ArrayList<>();
         Point[] points = new Point[] { new Point(rect.x, rect.y), new Point(rect.x, rect.y + rect.height - 1),
@@ -280,5 +298,4 @@ public class SolitairePositionManager implements IPositionService
 
         return cardStacks;
     }
-
 }
