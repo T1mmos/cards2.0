@@ -41,7 +41,7 @@ class GamePanelStateListener implements IStateListener
 
             for (ReadOnlyCard card : cardStack.getCards())
             {
-                gamePanelManager.animatePosition(card);
+                gamePanelManager.animateCard(card);
             }
         }
         else if (property == ReadOnlyPlayer.Score)
@@ -50,11 +50,11 @@ class GamePanelStateListener implements IStateListener
         }
         else if (property == ReadOnlyCard.Score)
         {
-            // animate a score popping up from the card involved
             TypedChange<Integer> typed = ReadOnlyCard.Score.cast(change);
             UUID cardId = typed.entityId;
             
-            gamePanelManager.animateCardScore(cardId, typed.oldValue, typed.newValue);
+            ReadOnlyCard card = state.getCardGame().getCard(cardId);
+            gamePanelManager.animateCardScore(card, typed.oldValue, typed.newValue);
         }
     }
 }

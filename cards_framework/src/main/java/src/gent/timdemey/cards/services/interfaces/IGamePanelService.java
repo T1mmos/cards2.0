@@ -1,15 +1,14 @@
 package gent.timdemey.cards.services.interfaces;
 
-import java.util.UUID;
-
 import gent.timdemey.cards.IPreload;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
-import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
+import gent.timdemey.cards.services.gamepanel.GamePanel;
 import gent.timdemey.cards.services.scaleman.IScalableComponent;
 
 public interface IGamePanelService extends IPreload
 {
-    public void createGamePanel(int w, int h);
+    public GamePanel createGamePanel();
+    public void fillGamePanel();
     public void destroyGamePanel();
 
     public void relayout();
@@ -17,13 +16,14 @@ public interface IGamePanelService extends IPreload
     public void setDrawDebug(boolean on);
     public boolean getDrawDebug();
 
-    public void animatePosition(ReadOnlyCard card);    
-    public void animatePosition(ReadOnlyCardStack cardStack);
-    public void animatePlayerScore(UUID playerId, int oldScore, int newScore);
-    public void animateCardScore(UUID cardId, int oldValue, int newValue);
+    public void animateCard(ReadOnlyCard card);    
+    public void animateCardScore(ReadOnlyCard card, int oldValue, int newValue);
 
     public int getLayer(IScalableComponent scalableComponent);
     public void setLayer(IScalableComponent component, int layerIndex);    
     public int getZOrder(IScalableComponent scalableComponent);
     public void setZOrder(IScalableComponent component, int zorder);
+    
+    public void add(IScalableComponent comp);
+    public void remove(IScalableComponent comp);
 }

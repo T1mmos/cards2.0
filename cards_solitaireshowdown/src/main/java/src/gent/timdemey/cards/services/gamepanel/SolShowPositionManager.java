@@ -18,10 +18,19 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyPlayer;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.Context;
+import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.services.interfaces.IPositionService;
+import gent.timdemey.cards.services.scaleman.IScalableComponent;
+import gent.timdemey.cards.services.scaleman.comps.CardScalableImageComponent;
+import gent.timdemey.cards.services.scaleman.comps.CardScoreScalableTextComponent;
 
-public class SolShowPositionManager extends PositionService
+public class SolShowPositionManager implements IPositionService
 {
+    private static final int LAYER_CARDSTACKS = 0;
+    private static final int LAYER_CARDS = 200;
+    private static final int LAYER_DRAG = 10000;
+    private static final int LAYER_ANIMATIONS = 20000;
 
     private SolShowGameLayout gameLayout;
 
@@ -297,5 +306,28 @@ public class SolShowPositionManager extends PositionService
     {
         return new Rectangle(gameLayout.act_tpadx, gameLayout.act_tpady, gameLayout.act_twidth - 2 * gameLayout.act_tpadx, gameLayout.act_theight - 2
             * gameLayout.act_tpady);
+    }
+
+    @Override
+    public LayeredArea getLayeredArea(IScalableComponent scaleComp, boolean animating)
+    {
+        IContextService contextService = Services.get(IContextService.class);
+        Context context = contextService.getThreadContext();
+        
+        if (scaleComp instanceof CardScoreScalableTextComponent)
+        {
+            CardScoreScalableTextComponent comp = (CardScoreScalableTextComponent) scaleComp;
+            LayeredArea cardLayArea = getLayeredArea(comp, false);
+            
+            int x = cardLayArea.x + gameLayout.act_cwidth / 4;
+            int y = cardLayArea.y - gameLayout.act_cheight / 8;
+            int width = gameLayout.act_cwidth / 4;
+            int height = gameLayout.act_cheight / 4;
+            return new LayeredArea(x, y, width, height, 0, LAYER_ANIMATIONS, 0);
+        }
+        else if (scaleComp instanceof CardScalableImageComponent)
+        {
+            
+        }
     }
 }

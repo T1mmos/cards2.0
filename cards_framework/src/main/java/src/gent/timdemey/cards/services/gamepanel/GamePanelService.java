@@ -3,13 +3,8 @@ package gent.timdemey.cards.services.gamepanel;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.Rectangle;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-
-import javax.swing.JComponent;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.cards.Suit;
@@ -17,8 +12,6 @@ import gent.timdemey.cards.model.entities.cards.Value;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
-import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
-import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.FontResource;
 import gent.timdemey.cards.services.contract.ImageResource;
 import gent.timdemey.cards.services.contract.LayeredArea;
@@ -35,6 +28,7 @@ import gent.timdemey.cards.services.interfaces.IScalableComponentService;
 import gent.timdemey.cards.services.interfaces.IUUIDService;
 import gent.timdemey.cards.services.scaleman.IScalableComponent;
 import gent.timdemey.cards.services.scaleman.IScalableResource;
+import gent.timdemey.cards.services.scaleman.comps.CardScoreScalableTextComponent;
 import gent.timdemey.cards.services.scaleman.img.ScalableImageResource;
 import gent.timdemey.cards.services.scaleman.text.ScalableTextComponent;
 
@@ -106,29 +100,33 @@ public class GamePanelService implements IGamePanelService
     }
 
     @Override
-    public void createGamePanel(int w, int h)
+    public GamePanel createGamePanel()
     {
         if (gamePanel == null)
         {
             gamePanel = new GamePanel();
-            gamePanel.setBounds(0, 0, w, h);
-
-            createScalableComponents();
-
-            resizeListener = new GamePanelResizeListener();
-            dragListener = new GamePanelMouseListener();
-            gameEventListener = new GamePanelStateListener();
-
-            gamePanel.addComponentListener(resizeListener);
-            gamePanel.addMouseMotionListener(dragListener);
-            gamePanel.addMouseListener(dragListener);
-            Services.get(IContextService.class).getThreadContext().addStateListener(gameEventListener);
-
-            relayout();
-            animator.start();
-
-            rescaleAsync();
         }
+        return gamePanel;
+    }
+    
+    @Override
+    public void fillGamePanel()
+    {
+        createScalableComponents();
+
+        resizeListener = new GamePanelResizeListener();
+        dragListener = new GamePanelMouseListener();
+        gameEventListener = new GamePanelStateListener();
+
+        gamePanel.addComponentListener(resizeListener);
+        gamePanel.addMouseMotionListener(dragListener);
+        gamePanel.addMouseListener(dragListener);
+        Services.get(IContextService.class).getThreadContext().addStateListener(gameEventListener);
+
+        relayout();
+        animator.start();
+
+        rescaleAsync();
     }
 
     protected void createScalableComponents()
@@ -209,7 +207,7 @@ public class GamePanelService implements IGamePanelService
     }
 
     @Override
-    public void animatePosition(ReadOnlyCard card)
+    public void animateCard(ReadOnlyCard card)
     {
         IUUIDService uuidServ = Services.get(IUUIDService.class);
         IScalableComponentService scaleCompServ = Services.get(IScalableComponentService.class);
@@ -218,7 +216,7 @@ public class GamePanelService implements IGamePanelService
         IScalableComponent scaleComp = scaleCompServ.getScalableComponent(compId);
         updateOrAnimatePosition(scaleComp, true);
     }
-
+    
     private void updateOrAnimatePosition(IScalableComponent scaleComp, boolean animate)
     {
         LayeredArea layArea = Services.get(IPositionService.class).getLayeredArea(scaleComp, animate);
@@ -240,40 +238,27 @@ public class GamePanelService implements IGamePanelService
         }
     }
 
-    public void animatePlayerScore(UUID playerId, int oldScore, int newScore)
-    {
-        /* animate the player score when it is implemented */
-    }
-
     @Override
-    public void animateCardScore(UUID cardId, int oldScore, int newScore)
+    public void animateCardScore(ReadOnlyCard card, int oldScore, int newScore)
     {
         int incr = newScore - oldScore;
-        ScalableTextComponent scaleTextComp = new ScalableTextComponent(id, "+" + incr, font);
+        ScalableTextComponent scaleTextComp = new CardScoreScalableTextComponent(UUID.randomUUID(), "+" + incr, scoreFont, card);
 
-        add(scaleText);
-        setLayer(scaleText, LAYER_ANIMATIONS);
+        add(scaleTextComp);
+        IPositionService posServ = Services.get(IPositionService.class);
+        LayeredArea layArea = posServ.getLayeredArea(scaleTextComp, true);
+        setLayer(scaleTextComp, layArea.getLayer(true));
+        setZOrder(scaleTextComp, layArea.getZOrder());
 
         // determine final card position (the card itself may still be animated into its
         // final position)
         // to calculate the animation's start position
-        IContextService contextService = Services.get(IContextService.class);
-        Context context = contextService.getThreadContext();
-        Rectangle rect_dst = Services.get(IPositionService.class).getBounds(cardId);
-        int posx = rect_dst.x + (rect_dst.width - scaleText.getWidth()) / 2;
-        int posy = rect_dst.y;
+      
 
         IAnimation anim_color = new ForegroundColorAnimation(new Color(50, 100, 50, 255), new Color(255, 165, 0, 0));
-        IAnimation anim_pos = new MovingAnimation(posx, posy, posx, posy - 100);
+        IAnimation anim_pos = new MovingAnimation(layArea.x, layArea.y, layArea.x, layArea.y - layArea.height);
 
-        animator.animate(scaleText, new AnimationEnd(true, -1), ANIMATION_TIME_SCORE, anim_color, anim_pos);
-    }
-
-    @Override
-    public void animatePosition(ReadOnlyCardStack cardStack)
-    {
-        // TODO Auto-generated method stub
-
+        animator.animate(scaleTextComp, new AnimationEnd(true, -1), ANIMATION_TIME_SCORE, anim_color, anim_pos);
     }
 
     @Override
@@ -299,12 +284,14 @@ public class GamePanelService implements IGamePanelService
         gamePanel.setComponentZOrder(component.getComponent(), zorder);
     }
     
-    void add(IScalableComponent comp)
+    @Override
+    public void add(IScalableComponent comp)
     {
         gamePanel.add(comp.getComponent());
     }
-
-    void remove(IScalableComponent comp)
+    
+    @Override
+    public void remove(IScalableComponent comp)
     {
         gamePanel.remove(comp.getComponent());
     }

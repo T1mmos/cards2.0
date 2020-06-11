@@ -7,31 +7,33 @@ public class LayeredArea
 {
     public final int x;
     public final int y;    
-    public final int w;
-    public final int h;
+    public final int width;
+    public final int height;
     
 
-    private final int z_norm;
-    private final int z_anim;
+    private final int layer_norm;
+    private final int layer_anim;
+    private final int zorder;
     
-    public LayeredArea(int x, int y, int w, int h, int z_norm, int z_anim)
+    public LayeredArea(int x, int y, int w, int h, int layer_norm, int layer_anim, int zorder)
     {
         this.x = x;
         this.y = y;
-        this.w = w;
-        this.h = h;
-        this.z_norm = z_norm;
-        this.z_anim = z_anim;
+        this.width = w;
+        this.height = h;
+        this.layer_norm = layer_norm;
+        this.layer_anim = layer_anim;
+        this.zorder = zorder;
     }
     
-    public LayeredArea(Rectangle bounds, int z_norm, int z_anim)
+    public LayeredArea(Rectangle bounds, int layer_norm, int layer_anim, int zorder)
     {
-        this(bounds.x, bounds.y, bounds.width, bounds.height, z_norm, z_anim);
+        this(bounds.x, bounds.y, bounds.width, bounds.height, layer_norm, layer_anim, zorder);
     }
     
     public Rectangle getBounds2D ()
     {
-        return new Rectangle(x, y, w, h);
+        return new Rectangle(x, y, width, height);
     }
 
     public Point getLocation2D()
@@ -43,11 +45,16 @@ public class LayeredArea
     {
         if (animating)
         {
-            return z_anim;
+            return layer_anim;
         }
         else
         {
-            return z_norm;
+            return layer_norm;
         }
+    }
+    
+    public int getZOrder()
+    {
+        return zorder;
     }
 }

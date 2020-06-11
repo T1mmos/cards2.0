@@ -1,6 +1,5 @@
 package gent.timdemey.cards.services.gamepanel;
 
-import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -8,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import javax.swing.JComponent;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
@@ -20,7 +17,6 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityList;
-import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.interfaces.ICommandService;
 import gent.timdemey.cards.services.interfaces.IContextService;

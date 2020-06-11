@@ -61,10 +61,10 @@ public final class DialogService implements IDialogService
      /*   JPanel glass = new JPanel(new MigLayout("insets 0"));
         Container root = frame.getRootPane();
         
-        int w = root.getWidth();
-        int h = root.getHeight();
+        int width = root.getWidth();
+        int height = root.getHeight();
         
-        BufferedImage bi = new BufferedImage(w, h,  BufferedImage.TYPE_INT_ARGB); 
+        BufferedImage bi = new BufferedImage(width, height,  BufferedImage.TYPE_INT_ARGB); 
         Graphics2D g = (Graphics2D) bi.getGraphics();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);

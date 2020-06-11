@@ -1,22 +1,17 @@
 package gent.timdemey.cards.ui;
 
-import java.util.List;
-
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
-import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.context.Context;
+import gent.timdemey.cards.services.gamepanel.GamePanel;
+import gent.timdemey.cards.services.gamepanel.GamePanelService;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.services.interfaces.IDialogService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
-import gent.timdemey.cards.services.scaleman.ImageDefinition;
 
 public class GameBootListener implements IStateListener
 {
@@ -26,29 +21,6 @@ public class GameBootListener implements IStateListener
     GameBootListener(JFrame frame)
     {
         this.frame = frame;
-    }
-
-    private void onScalableImagesLoaded(Boolean success)
-    {
-        if (success == null || !success)
-        {
-            Services.get(IDialogService.class).ShowInternalError();
-        }
-        else
-        {
-            SwingUtilities.invokeLater(() -> {
-                int w = frame.getContentPane().getWidth();
-                int h = frame.getContentPane().getHeight();
-                Services.get(IGamePanelService.class).createGamePanel(w, h, this::onGamePanelCreated);
-            });
-        }
-    }
-
-    private void onGamePanelCreated(JComponent component)
-    {
-        frame.getContentPane().add(component, "push, grow");
-        component.repaint();
-        frame.validate();
     }
 
     @Override
@@ -69,8 +41,13 @@ public class GameBootListener implements IStateListener
             }
             else
             {
-                List<ImageDefinition> imgDefs = Services.get(IGamePanelService.class).getScalableImageDefinitions();
-                Services.get(IScalableImageManager.class).loadImages(imgDefs, this::onScalableImagesLoaded);
+                GamePanelService gamePanelServ = Services.get(GamePanelService.class);
+                
+                GamePanel gamePanel = gamePanelServ.createGamePanel();
+                frame.getContentPane().add(gamePanel, "push, grow");
+                
+                gamePanelServ.fillGamePanel();
+                frame.validate();
             }
         }        
     }
