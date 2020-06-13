@@ -1,5 +1,7 @@
 package gent.timdemey.cards.services.interfaces;
 
+import java.awt.Point;
+import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
@@ -56,4 +58,28 @@ public interface IScalableComponentService
     public void clearManagedObjects();
 
     public void setAllBounds();
+    
+
+    /**
+     * Gets the component at the given position with the highest Z-order.
+     * @param p
+     * @return
+     */
+    public IScalableComponent getComponentAt(Point p);
+        
+    /**
+     * Get all components found at the given position, disregarding their Z-order.
+     * @param p
+     * @return
+     */
+    public List<IScalableComponent> getComponentsAt(Point p);
+    
+    /**
+     * Get the components found at the given position that are of the given type.
+     * @param p
+     * @param clazz
+     * @return
+     */
+    public <T extends IScalableComponent> List<T> getComponentsAt(Point p, Class<T> clazz);  
+   
 }

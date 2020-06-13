@@ -271,6 +271,8 @@ public class GamePanelService implements IGamePanelService
     {
         gamePanel.setLayer(component.getComponent(), layerIndex);
     }
+    
+    
 
     @Override
     public int getZOrder(IScalableComponent scalableComponent)
@@ -295,4 +297,5 @@ public class GamePanelService implements IGamePanelService
     {
         gamePanel.remove(comp.getComponent());
     }
+
 }

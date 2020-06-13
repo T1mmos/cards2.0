@@ -1,6 +1,8 @@
 package gent.timdemey.cards.services.interfaces;
 
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.List;
 
 import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.scaleman.IScalableComponent;
@@ -28,9 +30,16 @@ public interface IPositionService
     public Rectangle getBounds();
 
     /**
-     * Returns the bounds of an element identified by the given id.
+     * Returns the bounds where an element identified by the given id should be positioned at.
      * @param id
      * @return
      */
     public LayeredArea getLayeredArea(IScalableComponent scaleComp, boolean animating);   
+
+    /**
+     * Gets the drag layer, the layer in which components should be positioned when 
+     * a component is manually dragged.
+     * @return
+     */
+    public int getDragLayer();
 }
