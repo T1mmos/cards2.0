@@ -21,6 +21,19 @@ public class ScalableImageComponent extends ScalableComponent
     public ScalableImageComponent(UUID id, ScalableImageResource ... imageResources)
     {
         super(id);  
+        
+        if (imageResources == null || imageResources.length == 0)
+        {
+            throw new NullPointerException("imageResources must contain at least 1 image resource");
+        }
+        for (ScalableImageResource res : imageResources)
+        {
+            if (res == null)
+            {
+                throw new NullPointerException("imageResources must not contain null entries");
+            }
+        }
+        
         this.imageResources = Arrays.asList(imageResources);
         this.currentScaledResource = null;
     }

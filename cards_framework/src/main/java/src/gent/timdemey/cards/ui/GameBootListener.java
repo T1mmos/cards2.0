@@ -41,7 +41,7 @@ public class GameBootListener implements IStateListener
             }
             else
             {
-                GamePanelService gamePanelServ = Services.get(GamePanelService.class);
+                IGamePanelService gamePanelServ = Services.get(IGamePanelService.class);
                 
                 GamePanel gamePanel = gamePanelServ.createGamePanel();
                 frame.getContentPane().add(gamePanel, "push, grow");

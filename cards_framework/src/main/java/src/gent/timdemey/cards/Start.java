@@ -33,10 +33,10 @@ public class Start
 
     public static void main(String[] args)
     {
-        SwingUtilities.invokeLater(() -> boot(args));
+        SwingUtilities.invokeLater(() -> bootUI(args));
     }
 
-    public static void boot(String[] args)
+    public static void bootUI(String[] args)
     {
         installAllServices(args);
         StartFrame.StartUI();

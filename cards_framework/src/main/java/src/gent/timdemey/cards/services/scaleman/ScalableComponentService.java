@@ -167,8 +167,8 @@ public class ScalableComponentService implements IScalableComponentService
             UUID resBackId = uuidServ.createCardBackResourceId();
 
             // create the component using its necessary image resources
-            ScalableImageResource res_front = (ScalableImageResource) resources.get(resFrontId);
-            ScalableImageResource res_back = (ScalableImageResource) resources.get(resBackId);
+            ScalableImageResource res_front = (ScalableImageResource) getResourceOrThrow(resFrontId);
+            ScalableImageResource res_back = (ScalableImageResource) getResourceOrThrow(resBackId);
             comp = new CardScalableImageComponent(compId, card, res_front, res_back);
 
             // initialize the card to show its front or back
@@ -180,6 +180,18 @@ public class ScalableComponentService implements IScalableComponentService
         return comp;
     }
 
+    private IScalableResource getResourceOrThrow(UUID resId)
+    {
+        IScalableResource res = resources.get(resId);
+        if (res == null)
+        {
+            String msg = "No resource with id=%s was found, ensure all resources are preloaded before creating components that use them";
+            String format = String.format(msg, resId);
+            throw new NullPointerException(format);
+        }
+        return res;
+    }
+    
     @Override
     public void setAllBounds()
     {

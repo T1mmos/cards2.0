@@ -139,6 +139,16 @@ public final class Services
         }
 
         return value;
-
+    }
+    
+    public static void preload()
+    {
+        for (Object obj : get().serviceMap.values())
+        {
+            if (obj instanceof IPreload)
+            {
+                ((IPreload) obj).preload();
+            }
+        }
     }
 }

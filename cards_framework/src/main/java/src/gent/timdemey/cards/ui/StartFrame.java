@@ -84,9 +84,13 @@ public class StartFrame
         plugin.installUiServices();
         StartFrame.installUiServices();
         
+        Services.preload();
+        
         C_ImportExportStateUI cmd_readConfig = new C_ImportExportStateUI(true);
         ctxt.schedule(cmd_readConfig);
 
+        
+        
         IFrameService frameServ = Services.get(IFrameService.class);
         BufferedImage background = frameServ.getBackground();                        
         JMenuBar menuBar = frameServ.getMenuBar(plugin);

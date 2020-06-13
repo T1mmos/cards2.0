@@ -23,6 +23,11 @@ public abstract class ScalableComponent implements IScalableComponent
     
     protected ScalableComponent(UUID id)
     {
+        if (id == null)
+        {
+            throw new NullPointerException("id cannot be null");
+        }
+        
         this.id = id;
     }
     
