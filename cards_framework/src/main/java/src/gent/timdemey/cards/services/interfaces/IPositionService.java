@@ -1,8 +1,6 @@
 package gent.timdemey.cards.services.interfaces;
 
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.util.List;
 
 import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.scaleman.IScalableComponent;
@@ -34,7 +32,7 @@ public interface IPositionService
      * @param id
      * @return
      */
-    public LayeredArea getLayeredArea(IScalableComponent scaleComp, boolean animating);   
+    public LayeredArea getLayeredArea(IScalableComponent scaleComp);   
 
     /**
      * Gets the drag layer, the layer in which components should be positioned when 
@@ -42,4 +40,6 @@ public interface IPositionService
      * @return
      */
     public int getDragLayer();
+    
+    public int getAnimationLayer();
 }

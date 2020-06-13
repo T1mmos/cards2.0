@@ -21,6 +21,7 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaleman.IScalableComponent;
 import gent.timdemey.cards.services.scaleman.comps.CardScalableImageComponent;
+import gent.timdemey.cards.services.scaleman.comps.CardStackScalableImageComponent;
 
 public class SolitairePositionManager implements IPositionService
 {
@@ -93,7 +94,7 @@ public class SolitairePositionManager implements IPositionService
     }
     
     @Override
-    public LayeredArea getLayeredArea(IScalableComponent scaleComp, boolean animating)
+    public LayeredArea getLayeredArea(IScalableComponent scaleComp)
     {
         if (scaleComp instanceof CardScalableImageComponent)
         {
@@ -101,18 +102,7 @@ public class SolitairePositionManager implements IPositionService
             
             Rectangle bounds = getBounds(card);
             
-            int layer;
-            if (animating)
-            {
-                layer = LAYER_ANIMATIONS;
-            }
-            else
-            {
-                ReadOnlyCardStack cardStack = card.getCardStack();
-                layer = LAYER_CARDS + 20 * cardStack.getTypeNumber() + card.getCardIndex();
-            }
-            
-            return new LayeredArea(bounds, layer);
+            return new LayeredArea(bounds, LAYER_CARDS, card.getCardIndex());
         }
         else if (scaleComp instanceof CardStackScalableImageComponent)
         {
@@ -297,5 +287,17 @@ public class SolitairePositionManager implements IPositionService
         }
 
         return cardStacks;
+    }
+
+    @Override
+    public int getDragLayer()
+    {
+        return LAYER_DRAG;
+    }
+
+    @Override
+    public int getAnimationLayer()
+    {
+        return LAYER_ANIMATIONS;
     }
 }

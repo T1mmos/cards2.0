@@ -13,11 +13,12 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
  * @author timdm
  *
  */
-public interface IUUIDService
+public interface IIdService
 {
     UUID createCardFrontResourceId(Suit suit, Value value);
     UUID createCardBackResourceId();
-
+    UUID createCardStackResourceId(String cardStackType);
+    
     UUID createCardComponentId(ReadOnlyCard card);
     UUID createCardStackComponentId(ReadOnlyCardStack cardStack);
 }

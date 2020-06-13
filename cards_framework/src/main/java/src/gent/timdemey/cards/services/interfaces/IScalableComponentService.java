@@ -1,6 +1,7 @@
 package gent.timdemey.cards.services.interfaces;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.List;
 import java.util.UUID;
 
@@ -73,6 +74,13 @@ public interface IScalableComponentService
      * @return
      */
     public List<IScalableComponent> getComponentsAt(Point p);
+    
+    /**
+     * Get all components overlapping with the given rectangle, disregarding their Z-order.
+     * @param p
+     * @return
+     */
+    public List<IScalableComponent> getComponentsIn(Rectangle rect);
     
     /**
      * Get the components found at the given position that are of the given type.

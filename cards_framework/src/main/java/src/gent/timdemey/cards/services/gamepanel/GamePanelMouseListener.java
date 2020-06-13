@@ -14,7 +14,6 @@ import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
-import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityList;
 import gent.timdemey.cards.services.context.Context;
@@ -24,7 +23,6 @@ import gent.timdemey.cards.services.interfaces.IGamePanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IScalableComponentService;
 import gent.timdemey.cards.services.scaleman.IScalableComponent;
-import gent.timdemey.cards.services.scaleman.ScalableComponent;
 import gent.timdemey.cards.services.scaleman.comps.CardScalableImageComponent;
 import gent.timdemey.cards.services.scaleman.comps.CardStackScalableImageComponent;
 import gent.timdemey.cards.services.scaleman.img.ScalableImageComponent;
@@ -93,15 +91,10 @@ class GamePanelMouseListener extends MouseAdapter
             return;
         }
 
-        GamePanel gamePanel = (GamePanel) e.getComponent();
         IPositionService posServ = Services.get(IPositionService.class);
-        IScalableComponent scaleComp = posServ.getComponentAt(e.getPoint());
+        IScalableComponentService scaleServ = Services.get(IScalableComponentService.class);
+        IScalableComponent scaleComp = scaleServ.getComponentAt(e.getPoint());
         IGamePanelService gpServ = Services.get(IGamePanelService.class);
-
-        if (!(scaleComp instanceof ScalableComponent))
-        {
-            return;
-        }
 
         if (!(scaleComp instanceof ScalableImageComponent))
         {
@@ -110,14 +103,13 @@ class GamePanelMouseListener extends MouseAdapter
 
         Context context = Services.get(IContextService.class).getThreadContext();
         ICommandService operations = Services.get(ICommandService.class);
-        ReadOnlyCardGame cardGame = context.getReadOnlyState().getCardGame();
 
         UUID playerId = context.getReadOnlyState().getLocalId();
 
         if (scaleComp instanceof CardScalableImageComponent)
         {
             CardScalableImageComponent cardImgComp = (CardScalableImageComponent) scaleComp;
-            
+
             ReadOnlyCard card = cardImgComp.getCard();
             ReadOnlyCardStack stack = card.getCardStack();
 
@@ -133,13 +125,14 @@ class GamePanelMouseListener extends MouseAdapter
             {
                 List<ReadOnlyCard> cards = stack.getCardsFrom(card);
 
-                dragStates.clear(); // ensure list is empty (might miss mouseReleased event)
+                dragStates.clear(); // ensure list is empty (might miss
+                                    // mouseReleased event)
                 draggedComps.clear();
 
                 for (int i = 0; i < cards.size(); i++)
-                {                    
+                {
                     ReadOnlyCard currentCard = cards.get(i);
-                    
+
                     IScalableComponent currScaleImg = Services.get(IScalableComponentService.class).getOrCreate(currentCard);
                     int card_xstart = currScaleImg.getBounds().x;
                     int card_ystart = currScaleImg.getBounds().y;
@@ -184,7 +177,6 @@ class GamePanelMouseListener extends MouseAdapter
         }
 
         Context context = Services.get(IContextService.class).getThreadContext();
-        ReadOnlyCardGame cardGame = context.getReadOnlyState().getCardGame();
 
         UUID playerId = context.getReadOnlyState().getLocalId();
 
@@ -197,41 +189,38 @@ class GamePanelMouseListener extends MouseAdapter
             List<UUID> visitedStackIds = new ArrayList<>();
             IGamePanelService gpServ = Services.get(IGamePanelService.class);
             IScalableComponentService scaleServ = Services.get(IScalableComponentService.class);
-            
-            scaleServ.get
-            for (IScalableComponent comp : gpServ.getScalableComponents()) // inefficient?
+
+            List<IScalableComponent> overlapComps = scaleServ.getComponentsIn(scaleComp.getBounds());
+            for (IScalableComponent comp : overlapComps)
             {
                 if (!(comp instanceof ScalableImageComponent))
                 {
                     continue;
                 }
-                ScalableImageComponent scaleMan = (ScalableImageComponent) comp;
-                if (draggedComps.contains(scaleMan))
-                {
-                    continue;
-                }
-                Rectangle intersection = scaleComp.getBounds().intersection(scaleMan.getBounds());
-                if (intersection.isEmpty())
+
+                // exclude overlaps with components being dragged
+                ScalableImageComponent scaleImgComp = (ScalableImageComponent) comp;
+                if (draggedComps.contains(scaleImgComp))
                 {
                     continue;
                 }
 
-                // intersection with a JScalableImage
-                UUID id = Services.get(IScalableImageManager.class).getUUID(scaleMan);
+                // exclude overlaps that are not cards or cardstacks
                 ReadOnlyCardStack dstCardStack;
-                if (cardGame.isCard(id))
+                if (comp instanceof CardScalableImageComponent)
                 {
-                    dstCardStack = cardGame.getCard(id).getCardStack();
+                    dstCardStack = ((CardScalableImageComponent) comp).getCard().getCardStack();
                 }
-                else if (cardGame.isCardStack(id))
+                else if (comp instanceof CardStackScalableImageComponent)
                 {
-                    dstCardStack = cardGame.getCardStack(id);
+                    dstCardStack = ((CardStackScalableImageComponent) comp).getCardStack();
                 }
                 else
                 {
                     continue;
                 }
 
+                // don't visit the same cardstacks again
                 UUID dstCardStackId = dstCardStack.getId();
                 if (visitedStackIds.contains(dstCardStackId))
                 {
@@ -239,14 +228,14 @@ class GamePanelMouseListener extends MouseAdapter
                 }
                 visitedStackIds.add(dstCardStackId);
 
-                List<ReadOnlyCard> cards = draggedComps.stream().map(sc -> sc.getModelId())
-                        .map(modelId -> cardGame.getCard(modelId)).collect(Collectors.toList());
+                List<ReadOnlyCard> cards = draggedComps.stream().map(sc -> ((CardScalableImageComponent) sc).getCard()).collect(Collectors.toList());
                 ReadOnlyEntityList<ReadOnlyCard> roCards = new ReadOnlyEntityList<>(cards);
 
                 ICommandService operationsServ = Services.get(ICommandService.class);
                 CommandBase cmdPush = operationsServ.getPushCommand(playerId, dstCardStack.getId(), roCards.getIds());
                 if (canExecute(context, cmdPush, "mouseReleased"))
                 {
+                    Rectangle intersection = scaleComp.getBounds().intersection(scaleImgComp.getBounds());
                     int intersectA = intersection.width * intersection.height;
                     if (intersectA < intersectAMax)
                     {
@@ -254,8 +243,7 @@ class GamePanelMouseListener extends MouseAdapter
                     }
 
                     intersectAMax = intersectA;
-                    cmdMove = operationsServ.getMoveCommand(playerId, cards.get(0).getCardStack().getId(),
-                            dstCardStack.getId(), cards.get(0).getId());
+                    cmdMove = operationsServ.getMoveCommand(playerId, cards.get(0).getCardStack().getId(), dstCardStack.getId(), cards.get(0).getId());
 
                 }
             }
@@ -268,10 +256,8 @@ class GamePanelMouseListener extends MouseAdapter
             {
                 for (int i = 0; i < draggedComps.size(); i++)
                 {
-                    ScalableImageComponent scaleImg = (ScalableImageComponent) draggedComps.get(i);
-                    UUID id = scaleImg.getModelId();
-                    ReadOnlyCard card = cardGame.getCard(id);
-                    Services.get(IGamePanelService.class).animatePosition(card);
+                    CardScalableImageComponent scaleImg = (CardScalableImageComponent) draggedComps.get(i);
+                    gpServ.animateCard(scaleImg.getCard());
                 }
             }
 
@@ -304,8 +290,7 @@ class GamePanelMouseListener extends MouseAdapter
         }
         else
         {
-            Logger.error("Cannot execute command %s (%s) because of a state error: %s", command.getName(), dragContext,
-                    response.reason);
+            Logger.error("Cannot execute command %s (%s) because of a state error: %s", command.getName(), dragContext, response.reason);
             return false;
         }
     }

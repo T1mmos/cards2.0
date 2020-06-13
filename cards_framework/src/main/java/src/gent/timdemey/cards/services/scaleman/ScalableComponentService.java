@@ -3,7 +3,6 @@ package gent.timdemey.cards.services.scaleman;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,6 +17,7 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.swing.SwingUtilities;
 
@@ -27,9 +27,9 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
+import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IScalableComponentService;
-import gent.timdemey.cards.services.interfaces.IUUIDService;
 import gent.timdemey.cards.services.scaleman.comps.CardScalableImageComponent;
 import gent.timdemey.cards.services.scaleman.img.ScalableImageResource;
 
@@ -44,8 +44,8 @@ public class ScalableComponentService implements IScalableComponentService
     private final Map<UUID, UUID> model2comp;
 
     /**
-     * Produces threads used by the barrier executor which waits for all tasks to
-     * complete via CompletionFuture.allOf().
+     * Produces threads used by the barrier executor which waits for all tasks
+     * to complete via CompletionFuture.allOf().
      */
     private static class BarrierThreadFactory implements ThreadFactory
     {
@@ -61,8 +61,8 @@ public class ScalableComponentService implements IScalableComponentService
     }
 
     /**
-     * Produces threads used by the task executor which reads and scales buffered
-     * images.
+     * Produces threads used by the task executor which reads and scales
+     * buffered images.
      */
     private static class ScalableImageTaskThreadFactory implements ThreadFactory
     {
@@ -112,17 +112,16 @@ public class ScalableComponentService implements IScalableComponentService
         // put the tasks into futures to execute
         for (ScalableResourceRescaleTask task : rescaleTasks)
         {
-            CompletableFuture<Void> cf = CompletableFuture.supplyAsync(() -> task, taskExecutor).thenAcceptAsync(t -> t.scaleResource.rescale(task.width,
-                task.height), taskExecutor);
+            CompletableFuture<Void> cf = CompletableFuture.supplyAsync(() -> task, taskExecutor)
+                    .thenAcceptAsync(t -> t.scaleResource.rescale(task.width, task.height), taskExecutor);
             futures.add(cf);
         }
 
         // execute all futures and invoke callback when all is complete
         CompletableFuture<?>[] arr_futures = new CompletableFuture<?>[futures.size()];
         futures.toArray(arr_futures);
-        CompletableFuture.allOf(arr_futures).thenAcceptAsync((nil) ->
-        {
-            if(callback != null)
+        CompletableFuture.allOf(arr_futures).thenAcceptAsync((nil) -> {
+            if (callback != null)
             {
                 callback.run();
             }
@@ -152,17 +151,17 @@ public class ScalableComponentService implements IScalableComponentService
     @Override
     public IScalableComponent getOrCreate(ReadOnlyCard card)
     {
-        IUUIDService uuidServ = Services.get(IUUIDService.class);
+        IIdService uuidServ = Services.get(IIdService.class);
 
         UUID compId = model2comp.get(card.getId());
-        if(compId == null)
+        if (compId == null)
         {
             // get the ids
             compId = uuidServ.createCardComponentId(card);
         }
 
         CardScalableImageComponent comp = (CardScalableImageComponent) components.get(compId);
-        if(comp == null)
+        if (comp == null)
         {
             UUID resFrontId = uuidServ.createCardFrontResourceId(card.getSuit(), card.getValue());
             UUID resBackId = uuidServ.createCardBackResourceId();
@@ -189,7 +188,7 @@ public class ScalableComponentService implements IScalableComponentService
         // apply all bounds on scalable components
         for (IScalableComponent scaleComp : components.values())
         {
-            LayeredArea layRect = posServ.getLayeredArea(scaleComp, false);
+            LayeredArea layRect = posServ.getLayeredArea(scaleComp);
             scaleComp.setBounds(layRect.getBounds2D());
         }
     }
@@ -198,29 +197,36 @@ public class ScalableComponentService implements IScalableComponentService
     public IScalableComponent getComponentAt(Point p)
     {
         IGamePanelService gpServ = Services.get(IGamePanelService.class);
-        Iterator<IScalableComponent> it = components.values().stream().sorted((x,y) -> 
-        { 
+        Iterator<IScalableComponent> it = components.values().stream().sorted((x, y) -> {
             return gpServ.getLayer(y) - gpServ.getLayer(x);
         }).iterator();
-        while(it.hasNext())
+        while (it.hasNext())
         {
             IScalableComponent scaleComp = it.next();
-            scaleComp.
+            if (scaleComp.getBounds().contains(p))
+            {
+                return scaleComp;
+            }
         }
-        
+        return null;
     }
 
     @Override
     public List<IScalableComponent> getComponentsAt(Point p)
     {
-        // TODO Auto-generated method stub
-        return null;
+        return components.values().stream().filter(s -> s.getBounds().contains(p)).collect(Collectors.toList());
     }
 
     @Override
     public <T extends IScalableComponent> List<T> getComponentsAt(Point p, Class<T> clazz)
     {
-        // TODO Auto-generated method stub
-        return null;
+        return components.values().stream().filter(s -> s.getBounds().contains(p) && clazz.isAssignableFrom(s.getClass())).map(s -> (T) s)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<IScalableComponent> getComponentsIn(Rectangle rect)
+    {
+        return components.values().stream().filter(s -> s.getBounds().intersects(rect)).collect(Collectors.toList());
     }
 }

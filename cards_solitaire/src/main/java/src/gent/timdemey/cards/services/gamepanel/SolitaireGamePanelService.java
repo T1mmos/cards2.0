@@ -1,61 +1,35 @@
 package gent.timdemey.cards.services.gamepanel;
 
-import java.util.List;
+import java.util.UUID;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
-import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
-import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.cardgame.SolitaireCardStackType;
-import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.services.scaleman.ImageDefinition;
-import gent.timdemey.cards.services.scaleman.img.JScalableImage;
+import gent.timdemey.cards.services.interfaces.IIdService;
 
-public class SolitaireGamePanelService extends GamePanelService {
-    
+public class SolitaireGamePanelService extends GamePanelService
+{
+    private static final String FILEPATH_CARDSTACK = "stack_%s.png";
+
     @Override
-    public List<ImageDefinition> getScalableImageDefinitions() {        
-        List<ImageDefinition> defs = super.getScalableImageDefinitions();
-        
-        defs.add(new ImageDefinition("stack_short_arrow.png", SolitaireCardStackType.DEPOT));
-        defs.add(new ImageDefinition("stack_short_green_filled.png", SolitaireCardStackType.LAYDOWN));
-        defs.add(new ImageDefinition("stack_long_green.png", SolitaireCardStackType.MIDDLE));
-        defs.add(new ImageDefinition("stack_short_green.png", SolitaireCardStackType.TURNOVER));
-        
-        return defs;
+    public void preload()
+    {
+        super.preload();
+
+        preloadCardStacks();
     }
-    
-    @Override
-    protected void addScalableImages() {
-        super.addScalableImages();
-        
-        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState().getCardGame();
-        
-        IScalableImageManager scaleMan = Services.get(IScalableImageManager.class);
-        for (ReadOnlyCardStack cardStack : cardGame.getCardStacks()) {
-            
-            JScalableImage jscalable = scaleMan.getJScalableImage(cardStack.getId());
-            
-            if (cardStack.getCardStackType().equals( SolitaireCardStackType.MIDDLE))
-            {
-                scaleMan.setImage(cardStack.getId(), "stack_long_green.png");
-            }
-            else if (cardStack.getCardStackType().equals(SolitaireCardStackType.LAYDOWN))
-            {
-                scaleMan.setImage(cardStack.getId(), "stack_short_green_filled.png");
-            } 
-            else if (cardStack.getCardStackType().equals(SolitaireCardStackType.DEPOT))
-            {
-                scaleMan.setImage(cardStack.getId(), "stack_short_arrow.png");
-            }  
-            else
-            {
-                scaleMan.setImage(cardStack.getId(), "stack_short_green.png");
-            }
-            
-            jscalable.setSize(100,100);
-            
-            gamePanel.add(jscalable);            
+
+    protected void preloadCardStacks()
+    {
+        IIdService idServ = Services.get(IIdService.class);
+
+        String[] stacks = new String[] { SolitaireCardStackType.DEPOT, SolitaireCardStackType.LAYDOWN, SolitaireCardStackType.MIDDLE,
+                SolitaireCardStackType.TURNOVER };
+
+        for (String stack : stacks)
+        {
+            UUID id = idServ.createCardStackResourceId(stack);
+            String filename = String.format(FILEPATH_CARDSTACK, stack.toLowerCase());
+            preloadImage(id, filename);
         }
     }
 }

@@ -26,7 +26,7 @@ import gent.timdemey.cards.ui.actions.IActionFactory;
 
 public class FrameService implements IFrameService
 {
-    private static final String APP_ICON = "icon_spade_%s_%s.png";
+    private static final String APP_ICON = "icon_spade_%sx%s.png";
     
     @Override
     public List<Image> getFrameIcons()

@@ -18,7 +18,6 @@ import gent.timdemey.cards.services.interfaces.IScalableComponentService;
 
 class GamePanelStateListener implements IStateListener
 {
-
     @Override
     public void onChange(ReadOnlyChange change)
     {
