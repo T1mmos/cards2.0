@@ -192,6 +192,15 @@ public class GamePanelService implements IGamePanelService
         // now update the position of all components
         IScalableComponentService scaleCompService = Services.get(IScalableComponentService.class);
         scaleCompService.setAllBounds();
+        
+        for (IScalableComponent scaleComp : scaleCompService.getComponents())
+        {
+            LayeredArea layArea = posMan.getLayeredArea(scaleComp);
+            
+            setLayer(scaleComp, layArea.layer);
+         //   setZOrder(scaleComp, layArea.zorder);
+        }
+        
 
         gamePanel.repaint();
     }
@@ -240,7 +249,7 @@ public class GamePanelService implements IGamePanelService
 
         if (animate)
         {
-            int layerEnd = layArea.getLayer();
+            int layerEnd = layArea.layer;
             MovingAnimation anim_pos = new MovingAnimation(scaleComp.getBounds().getLocation(), layArea.getLocation2D());
             AnimationEnd animEnd = new AnimationEnd(false, layerEnd);
             animator.animate(scaleComp, animEnd, ANIMATION_TIME_CARD, anim_pos);
@@ -260,7 +269,7 @@ public class GamePanelService implements IGamePanelService
         }
         else
         {
-            return layArea.getLayer();
+            return layArea.layer;
         }
     }
 
@@ -274,7 +283,7 @@ public class GamePanelService implements IGamePanelService
         IPositionService posServ = Services.get(IPositionService.class);
         LayeredArea layArea = posServ.getLayeredArea(scaleTextComp);
         setLayer(scaleTextComp, posServ.getAnimationLayer());
-        setZOrder(scaleTextComp, layArea.getZOrder());
+        setZOrder(scaleTextComp, layArea.zorder);
 
         // determine final card position (the card itself may still be animated
         // into its

@@ -102,7 +102,7 @@ public class SolitairePositionManager implements IPositionService
             
             Rectangle bounds = getBounds(card);
             
-            return new LayeredArea(bounds, LAYER_CARDS, card.getCardIndex());
+            return new LayeredArea(bounds, LAYER_CARDS + card.getCardIndex(), 0);
         }
         else if (scaleComp instanceof CardStackScalableImageComponent)
         {

@@ -14,7 +14,7 @@ public interface IScalableComponent
         
     public void setBounds(Rectangle rect);
     public void setBounds(int x, int y, int w, int h);
-    public void setLocation(int x, int y);
+    public void setLocation(int x, int y);    
     
     public JComponent getComponent();
     public Rectangle getBounds();
@@ -41,5 +41,5 @@ public interface IScalableComponent
      * Changes the foreground color of this component.
      * @param color
      */
-    public void setForeground(Color color);    
+    public void setForeground(Color color);
 }

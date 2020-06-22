@@ -89,5 +89,7 @@ public interface IScalableComponentService
      * @return
      */
     public <T extends IScalableComponent> List<T> getComponentsAt(Point p, Class<T> clazz);  
+    
+    public List<IScalableComponent> getComponents();
    
 }

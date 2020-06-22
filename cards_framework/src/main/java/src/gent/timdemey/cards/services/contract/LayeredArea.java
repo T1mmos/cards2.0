@@ -10,16 +10,16 @@ public class LayeredArea
     public final int width;
     public final int height;
 
-    private final int layer_norm;
-    private final int zorder;
+    public final int layer;
+    public final int zorder;
 
-    public LayeredArea(int x, int y, int w, int h, int layer_norm, int zorder)
+    public LayeredArea(int x, int y, int w, int h, int layer, int zorder)
     {
         this.x = x;
         this.y = y;
         this.width = w;
         this.height = h;
-        this.layer_norm = layer_norm;
+        this.layer = layer;
         this.zorder = zorder;
     }
 
@@ -36,15 +36,5 @@ public class LayeredArea
     public Point getLocation2D()
     {
         return new Point(x, y);
-    }
-
-    public int getLayer()
-    {
-        return layer_norm;
-    }
-
-    public int getZOrder()
-    {
-        return zorder;
     }
 }

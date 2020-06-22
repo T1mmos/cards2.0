@@ -13,7 +13,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -78,7 +78,7 @@ public class ScalableComponentService implements IScalableComponentService
     public ScalableComponentService()
     {
         this.barrierExecutor = Executors.newFixedThreadPool(1, new BarrierThreadFactory());
-        this.taskExecutor = new ThreadPoolExecutor(1, 5, 5L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ScalableImageTaskThreadFactory());
+        this.taskExecutor = new ThreadPoolExecutor(1, 52, 5L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ScalableImageTaskThreadFactory());
         this.resources = new HashMap<>();
         this.components = new HashMap<>();
         this.model2comp = new HashMap<>();
@@ -240,5 +240,11 @@ public class ScalableComponentService implements IScalableComponentService
     public List<IScalableComponent> getComponentsIn(Rectangle rect)
     {
         return components.values().stream().filter(s -> s.getBounds().intersects(rect)).collect(Collectors.toList());
+    }
+    
+    @Override
+    public List<IScalableComponent> getComponents()
+    {
+        return new ArrayList<>(components.values());
     }
 }
