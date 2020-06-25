@@ -106,7 +106,9 @@ public class SolitairePositionManager implements IPositionService
         }
         else if (scaleComp instanceof CardStackScalableImageComponent)
         {
-
+            ReadOnlyCardStack cardstack = ((CardStackScalableImageComponent) scaleComp).getCardStack();
+            Rectangle bounds = getBounds(cardstack);
+            return new LayeredArea(bounds, LAYER_CARDSTACKS, 0);
             
         }
         throw new UnsupportedOperationException();

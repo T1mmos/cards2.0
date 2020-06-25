@@ -138,8 +138,8 @@ class GamePanelMouseListener extends MouseAdapter
                     int card_ystart = currScaleImg.getBounds().y;
 
                     int layer = posServ.getDragLayer();
-                    gpServ.setLayer(currScaleImg, layer);
-                    gpServ.setZOrder(currScaleImg, i);
+                    gpServ.setLayer(currScaleImg, layer + i);
+                //    gpServ.setZOrder(currScaleImg, i);
 
                     CardDragState dragState = new CardDragState(card_xstart, card_ystart);
                     dragStates.add(dragState);

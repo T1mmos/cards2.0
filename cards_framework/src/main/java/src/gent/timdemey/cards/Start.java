@@ -18,11 +18,9 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.INetworkService;
 import gent.timdemey.cards.services.interfaces.IResourceRepository;
 import gent.timdemey.cards.services.interfaces.IResourceService;
-import gent.timdemey.cards.services.interfaces.IScalableComponentService;
 import gent.timdemey.cards.services.interfaces.ISerializationService;
 import gent.timdemey.cards.services.resources.ResourceRepository;
 import gent.timdemey.cards.services.resources.ResourceService;
-import gent.timdemey.cards.services.scaleman.ScalableComponentService;
 import gent.timdemey.cards.ui.StartFrame;
 
 public class Start
@@ -121,11 +119,6 @@ public class Start
         {
             IConfigManager configManager = new ConfigManager();
             App.getServices().install(IConfigManager.class, configManager);
-        }
-        if(!Services.isInstalled(IScalableComponentService.class))
-        {
-            IScalableComponentService scaleServ = new ScalableComponentService();
-            services.install(IScalableComponentService.class, scaleServ);
         }
         if(!Services.isInstalled(IContextService.class))
         {

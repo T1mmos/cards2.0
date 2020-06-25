@@ -38,10 +38,10 @@ public abstract class ScalableComponentService implements IScalableComponentServ
     private final Executor barrierExecutor;
     private final Executor taskExecutor;
 
-    private final Map<UUID, IScalableResource> resources;
-    private final Map<UUID, IScalableComponent> components;
+    protected final Map<UUID, IScalableResource> resources;
+    protected final Map<UUID, IScalableComponent> components;
 
-    private final Map<UUID, UUID> model2comp;
+    protected final Map<UUID, UUID> model2comp;
 
     /**
      * Produces threads used by the barrier executor which waits for all tasks
@@ -171,16 +171,13 @@ public abstract class ScalableComponentService implements IScalableComponentServ
             ScalableImageResource res_back = (ScalableImageResource) getResourceOrThrow(resBackId);
             comp = new CardScalableImageComponent(compId, card, res_front, res_back);
 
-            // initialize the card to show its front or back
-            comp.updateVisible();
-
             components.put(compId, comp);
         }
 
         return comp;
     }
 
-    private IScalableResource getResourceOrThrow(UUID resId)
+    protected IScalableResource getResourceOrThrow(UUID resId)
     {
         IScalableResource res = resources.get(resId);
         if (res == null)

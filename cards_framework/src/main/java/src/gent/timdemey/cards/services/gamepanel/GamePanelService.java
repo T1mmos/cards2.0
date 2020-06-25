@@ -243,8 +243,14 @@ public class GamePanelService implements IGamePanelService
     {
         LayeredArea layArea = Services.get(IPositionService.class).getLayeredArea(scaleComp);
 
-        // set current layer
-        int layer = getLayer(layArea, animate);
+        IPositionService posServ = Services.get(IPositionService.class);
+       
+        int layer = layArea.layer;
+        if (animate)
+        {
+            layer += posServ.getDragLayer();
+        }
+        
         setLayer(scaleComp, layer);
 
         if (animate)
@@ -257,19 +263,6 @@ public class GamePanelService implements IGamePanelService
         else
         {
             scaleComp.setBounds(layArea.getBounds2D());
-        }
-    }
-    
-    private int getLayer(LayeredArea layArea, boolean animate)
-    {
-        IPositionService posServ = Services.get(IPositionService.class);
-        if (animate)
-        {
-            return posServ.getAnimationLayer();
-        }
-        else
-        {
-            return layArea.layer;
         }
     }
 

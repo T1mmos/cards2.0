@@ -32,6 +32,11 @@ public interface IScalableComponent
     public List<? extends IScalableResource> getResources();
     
     /**
+     * Updates the component to match the model state.
+     */
+    public void update();
+    
+    /**
      * Repaints the rendered component after some resources have changed behind its back. (e.g. when the resources have been rescaled)
      * This method should not be called after calling e.g. setForeground.
      */

@@ -6,6 +6,7 @@ import java.util.UUID;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.cardgame.SolitaireCardStackType;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IIdService;
@@ -52,6 +53,15 @@ public class SolitaireGamePanelService extends GamePanelService
         {
             ReadOnlyCard card = cards.get(i);
             IScalableComponent scaleComp = scaleCompServ.getOrCreateScalableComponent(card);
+            add(scaleComp);
+        }
+        
+        // cardstack components
+        List<ReadOnlyCardStack> cardstacks = cardGame.getCardStacks();
+        for (int i = 0; i < cardstacks.size(); i++)
+        {
+            ReadOnlyCardStack cardstack = cardstacks.get(i);
+            IScalableComponent scaleComp = scaleCompServ.getOrCreateScalableComponent(cardstack);
             add(scaleComp);
         }
     }

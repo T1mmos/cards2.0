@@ -35,7 +35,8 @@ class GamePanelStateListener implements IStateListener
             IScalableComponentService scaleCompServ = Services.get(IScalableComponentService.class);
             
             CardScalableImageComponent cardComp = (CardScalableImageComponent) scaleCompServ.getOrCreateScalableComponent(card);
-            cardComp.updateVisible();
+            cardComp.update();
+            cardComp.repaint();
         }
         else if (property == ReadOnlyCardStack.Cards)
         {

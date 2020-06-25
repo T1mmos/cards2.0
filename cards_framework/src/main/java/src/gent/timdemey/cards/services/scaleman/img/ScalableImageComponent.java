@@ -12,7 +12,7 @@ import javax.swing.JComponent;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.services.scaleman.ScalableComponent;
 
-public class ScalableImageComponent extends ScalableComponent
+public abstract class ScalableImageComponent extends ScalableComponent
 {
     private String file = null;
     private final List<ScalableImageResource> imageResources;
@@ -54,7 +54,7 @@ public class ScalableImageComponent extends ScalableComponent
      * Swap the image shown.
      * @param resourceId
      */
-    public final void setScalableImageResource(UUID resourceId)
+    protected final void setScalableImageResource(UUID resourceId)
     {
         ScalableImageResource found = null;
         for (ScalableImageResource resource : imageResources)
@@ -73,10 +73,9 @@ public class ScalableImageComponent extends ScalableComponent
         }
         
         currentScaledResource = found;
-        repaint();
     }
 
-    public void draw(Graphics2D g2)
+    public final void draw(Graphics2D g2)
     {
         int width = getBounds().width;
         int height = getBounds().height;
