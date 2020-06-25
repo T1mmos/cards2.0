@@ -3,23 +3,21 @@ package gent.timdemey.cards.services.scaleman.img;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 import javax.swing.JComponent;
 
 import gent.timdemey.cards.logging.Logger;
+import gent.timdemey.cards.services.contract.Resource;
 import gent.timdemey.cards.services.scaleman.ScalableComponent;
 import gent.timdemey.cards.services.scaleman.ScalableResource;
 
-public abstract class ScalableImageComponent extends ScalableComponent
+public abstract class ScalableImageComponent extends ScalableComponent<BufferedImage>
 {
     private String file = null;
-    private final List<ScalableImageResource> imageResources;
     private ScalableImageResource currentScaledResource;
     
-    public ScalableImageComponent(UUID id, ScalableResource<ScalableResource<BufferedImage>> ... imageResources)
+    public ScalableImageComponent(UUID id, ScalableResource<BufferedImage, Resource<BufferedImage>> ... imageResources)
     {
         super(id);  
         
@@ -27,15 +25,7 @@ public abstract class ScalableImageComponent extends ScalableComponent
         {
             throw new NullPointerException("imageResources must contain at least 1 image resource");
         }
-        for (ScalableImageResource res : imageResources)
-        {
-            if (res == null)
-            {
-                throw new NullPointerException("imageResources must not contain null entries");
-            }
-        }
-        
-        this.imageResources = Arrays.asList(imageResources);
+
         this.currentScaledResource = null;
     }
 
@@ -58,7 +48,7 @@ public abstract class ScalableImageComponent extends ScalableComponent
     protected final void setScalableImageResource(UUID resourceId)
     {
         ScalableImageResource found = null;
-        for (ScalableImageResource resource : imageResources)
+        for (ScalableResource<BufferedImage> resource : resources)
         {
             if (resource.id.equals(resourceId))
             {
@@ -145,11 +135,5 @@ public abstract class ScalableImageComponent extends ScalableComponent
         }
         
         g3.dispose();
-    }
-   
-    @Override
-    public List<ScalableImageResource> getResources()
-    {
-        return imageResources;
     }
 }

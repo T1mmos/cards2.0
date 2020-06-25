@@ -2,7 +2,7 @@ package gent.timdemey.cards.services.contract;
 
 import java.awt.Font;
 
-public class FontResource extends Resource
+public class FontResource extends Resource<Font>
 {
     public final Font font;
     

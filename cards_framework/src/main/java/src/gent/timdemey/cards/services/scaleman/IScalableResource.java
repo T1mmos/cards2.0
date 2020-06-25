@@ -2,7 +2,9 @@ package gent.timdemey.cards.services.scaleman;
 
 import java.util.UUID;
 
-public interface IScalableResource
+import gent.timdemey.cards.services.contract.Resource;
+
+public interface IScalableResource<R>
 {
     /**
      * The unique id of this resource. Most of the time, this is a file path.
@@ -26,5 +28,5 @@ public interface IScalableResource
      * rescale operation on the UI thread optimized for speed.
      * @return
      */
-    Object get(int width, int height);
+    R get(int width, int height);
 }

@@ -8,17 +8,15 @@ import java.util.Map;
 import java.util.UUID;
 
 import gent.timdemey.cards.services.contract.ImageResource;
+import gent.timdemey.cards.services.contract.Resource;
 import gent.timdemey.cards.services.scaleman.ScalableResource;
 
-public class ScalableImageResource extends ScalableResource<ImageResource>
+public class ScalableImageResource extends ScalableResource<BufferedImage>
 {    
-    private Map<Dimension, BufferedImage> imageCache;
     
-    public ScalableImageResource (UUID id, ImageResource resource)
+    public ScalableImageResource (UUID id, Resource<BufferedImage> resource)
     {
-        super(id, resource);
-        
-        this.imageCache = Collections.synchronizedMap(new HashMap<>());        
+        super(id, resource);   
     }
     
     @Override

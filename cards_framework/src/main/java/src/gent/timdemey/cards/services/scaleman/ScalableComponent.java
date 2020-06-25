@@ -7,21 +7,25 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
 import javax.swing.JComponent;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.services.contract.Resource;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 
-public abstract class ScalableComponent implements IScalableComponent
+public abstract class ScalableComponent<R> implements IScalableComponent<R>
 {
     private final UUID id;
     private JComponent component = null;
     private boolean mirror = false;
+    
+    protected final List<IScalableResource<R, Resource<R>>> resources;
 
-    protected ScalableComponent(UUID id)
+    protected ScalableComponent(UUID id, IScalableResource<R, Resource<R>> ... scaledResources)
     {
         if(id == null)
         {
@@ -29,6 +33,7 @@ public abstract class ScalableComponent implements IScalableComponent
         }
 
         this.id = id;
+        this.resources = Arrays.asList(scaledResources);
     }
 
     @Override
@@ -158,5 +163,11 @@ public abstract class ScalableComponent implements IScalableComponent
     public UUID getId()
     {
         return id;
+    }
+   
+    @Override
+    public List<IScalableResource<R, Resource<R>>> getResources()
+    {
+        return resources;
     }
 }
