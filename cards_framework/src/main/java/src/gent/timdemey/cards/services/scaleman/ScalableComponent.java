@@ -19,37 +19,37 @@ public abstract class ScalableComponent implements IScalableComponent
 {
     private final UUID id;
     private JComponent component = null;
-    private boolean mirror = false;    
-    
+    private boolean mirror = false;
+
     protected ScalableComponent(UUID id)
     {
-        if (id == null)
+        if(id == null)
         {
             throw new NullPointerException("id cannot be null");
         }
-        
+
         this.id = id;
     }
-    
+
     @Override
     public final JComponent getComponent()
     {
-        if (component == null)
+        if(component == null)
         {
             component = createComponent();
         }
         return component;
     }
-    
+
     protected abstract JComponent createComponent();
-    
+
     public void drawDebug(Graphics2D g2)
     {
         if(!Services.get(IGamePanelService.class).getDrawDebug())
         {
             return;
         }
-        
+
         int width = getComponent().getWidth();
         int height = getComponent().getHeight();
         int x = getComponent().getX();
@@ -59,19 +59,18 @@ public abstract class ScalableComponent implements IScalableComponent
         g2.setColor(new Color(50, 50, 50, 100));
         g2.fillRect(0, 0, width, height);
 
-        g2.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 2.0f,
-                new float[] { 5.0f, 5.0f }, 2.0f));
+        g2.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 2.0f, new float[]
+        { 5.0f, 5.0f }, 2.0f));
         g2.drawRect(0, 0, width - 1, height - 1);
 
         IGamePanelService gpServ = Services.get(IGamePanelService.class);
         int layer = gpServ.getLayer(this);
-        int zorder = gpServ.getZOrder(this);
 
-        String[] strings = new String[] { "rect=" + x + "," + y + ", " + width + "x" + height, "layer=" + layer,
-                "zorder=" + zorder };
+        String[] strings = new String[] { "rect=" + x + "," + y + ", " + width + "x" + height, "layer=" + layer };
         String[] extraStrings = addDebugStrings();
+
         String[] allStrings;
-        if (extraStrings != null && extraStrings.length > 0)
+        if(extraStrings != null && extraStrings.length > 0)
         {
             allStrings = Stream.concat(Arrays.stream(strings), Arrays.stream(extraStrings)).toArray(String[]::new);
         }
@@ -90,7 +89,7 @@ public abstract class ScalableComponent implements IScalableComponent
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setColor(Color.white);
 
-        if (strings.length == 0)
+        if(strings.length == 0)
         {
             return;
         }
@@ -113,33 +112,32 @@ public abstract class ScalableComponent implements IScalableComponent
     {
         getComponent().setBounds(rect);
     }
-    
+
     @Override
     public final void setBounds(int x, int y, int w, int h)
     {
-        getComponent().setBounds(x,y,w,h);
+        getComponent().setBounds(x, y, w, h);
     }
-    
+
     @Override
     public Rectangle getBounds()
     {
         return getComponent().getBounds();
     }
-    
 
     @Override
     public void setLocation(int x, int y)
     {
         getComponent().setLocation(x, y);
     }
-    
+
     @Override
     public final void setMirror(boolean mirror)
     {
         this.mirror = mirror;
     }
-    
-    public final boolean isMirror ()
+
+    public final boolean isMirror()
     {
         return this.mirror;
     }
@@ -150,13 +148,12 @@ public abstract class ScalableComponent implements IScalableComponent
         getComponent().repaint();
     }
 
-
     @Override
     public final void setForeground(Color color)
     {
         getComponent().setForeground(color);
     }
-    
+
     @Override
     public UUID getId()
     {

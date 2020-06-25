@@ -21,8 +21,6 @@ public interface IGamePanelService extends IPreload
 
     public int getLayer(IScalableComponent scalableComponent);
     public void setLayer(IScalableComponent component, int layerIndex);    
-    public int getZOrder(IScalableComponent scalableComponent);
-    public void setZOrder(IScalableComponent component, int zorder);
     
     public void add(IScalableComponent comp);
     public void remove(IScalableComponent comp);

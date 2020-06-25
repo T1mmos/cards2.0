@@ -11,6 +11,7 @@ import javax.swing.JComponent;
 
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.services.scaleman.ScalableComponent;
+import gent.timdemey.cards.services.scaleman.ScalableResource;
 
 public abstract class ScalableImageComponent extends ScalableComponent
 {
@@ -18,7 +19,7 @@ public abstract class ScalableImageComponent extends ScalableComponent
     private final List<ScalableImageResource> imageResources;
     private ScalableImageResource currentScaledResource;
     
-    public ScalableImageComponent(UUID id, ScalableImageResource ... imageResources)
+    public ScalableImageComponent(UUID id, ScalableResource<ScalableResource<BufferedImage>> ... imageResources)
     {
         super(id);  
         

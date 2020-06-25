@@ -1,6 +1,6 @@
 package gent.timdemey.cards.services.contract;
 
-public abstract class Resource
+public abstract class Resource<T>
 {
     /**
      * Indicates that this resource is infact a fallback because the intended

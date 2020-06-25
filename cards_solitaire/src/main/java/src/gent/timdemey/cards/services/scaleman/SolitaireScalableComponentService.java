@@ -14,19 +14,19 @@ public class SolitaireScalableComponentService extends ScalableComponentService
     @Override
     public IScalableComponent getOrCreateScalableComponent(ReadOnlyCardStack cardstack)
     {
-        IIdService uuidServ = Services.get(IIdService.class);
+        IIdService idServ = Services.get(IIdService.class);
 
         UUID compId = model2comp.get(cardstack.getId());
         if (compId == null)
         {
             // get the ids
-            compId = uuidServ.createCardStackComponentId(cardstack);
+            compId = idServ.createCardStackComponentId(cardstack);
         }
 
         CardStackScalableImageComponent comp = (CardStackScalableImageComponent) components.get(compId);
         if (comp == null)
         {
-            UUID csResId = uuidServ.createCardStackResourceId(cardstack.getCardStackType());
+            UUID csResId = idServ.createCardStackResourceId(cardstack.getCardStackType());
 
             // create the component using its necessary image resources
             ScalableImageResource res = (ScalableImageResource) getResourceOrThrow(csResId);

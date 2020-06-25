@@ -11,21 +11,19 @@ public class LayeredArea
     public final int height;
 
     public final int layer;
-    public final int zorder;
 
-    public LayeredArea(int x, int y, int w, int h, int layer, int zorder)
+    public LayeredArea(int x, int y, int w, int h, int layer)
     {
         this.x = x;
         this.y = y;
         this.width = w;
         this.height = h;
         this.layer = layer;
-        this.zorder = zorder;
     }
 
-    public LayeredArea(Rectangle bounds, int layer_norm, int zorder)
+    public LayeredArea(Rectangle bounds, int layer)
     {
-        this(bounds.x, bounds.y, bounds.width, bounds.height, layer_norm, zorder);
+        this(bounds.x, bounds.y, bounds.width, bounds.height, layer);
     }
 
     public Rectangle getBounds2D()

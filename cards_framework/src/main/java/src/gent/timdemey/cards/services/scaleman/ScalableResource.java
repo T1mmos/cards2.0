@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.services.contract.Resource;
 
-public abstract class ScalableResource<T extends Resource> implements IScalableResource
+public abstract class ScalableResource<T extends Resource<?>> implements IScalableResource
 {
     public final UUID id;
     

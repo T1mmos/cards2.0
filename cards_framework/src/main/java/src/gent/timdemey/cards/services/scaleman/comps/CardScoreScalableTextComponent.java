@@ -21,4 +21,9 @@ public class CardScoreScalableTextComponent extends ScalableTextComponent
     {
         return card;
     }
+
+    public Font getFont()
+    {
+         
+    }
 }

@@ -3,69 +3,43 @@ package gent.timdemey.cards.services.gamepanel;
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
-import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
-import gent.timdemey.cards.services.context.Context;
-import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.services.interfaces.IIdService;
 
 public class SolShowGamePanelService extends GamePanelService
-{    
+{
+    // reuse some of the Solitaire sprites for the time being
+    private static final String FILEPATH_CARDSTACK = "stack_solitaire_%s.png";
+
     @Override
-    public void load()
+    public void preload()
     {
-        // load card fronts, card back etc
-        super.load();
+        super.preload();
+
+        preloadCardStacks();
+    }
+
+    private void preloadCardStacks()
+    {
+        IIdService idServ = Services.get(IIdService.class);
+
+        String[] solstacks = new String[]
+        { SolShowCardStackType.DEPOT, SolShowCardStackType.LAYDOWN, SolShowCardStackType.MIDDLE };
         
-        // additionally load the card stack sprites into scalable resources
-        defs.add(new ImageDefinition("stack_short_arrow.png", SolShowCardStackType.DEPOT));
-        defs.add(new ImageDefinition("stack_short_green_filled.png", SolShowCardStackType.LAYDOWN));
-        defs.add(new ImageDefinition("stack_long_yellow.png", SolShowCardStackType.MIDDLE));
-        defs.add(new ImageDefinition("stack_middle_green.png", SolShowCardStackType.TURNOVER));
-        defs.add(new ImageDefinition("stack_short_green.png", SolShowCardStackType.SPECIAL));
-    }
-
-    @Override
-    protected void addScalableImages()
-    {
-        super.addScalableImages();
-
-        Context context = Services.get(IContextService.class).getThreadContext();
-        ReadOnlyCardGame cardGame = context.getReadOnlyState().getCardGame();
-
-        IScalableImageManager scaleMan = Services.get(IScalableImageManager.class);
-        for (ReadOnlyCardStack cardStack : cardGame.getCardStacks())
+        for (String stack : solstacks)
         {
-            UUID csId = cardStack.getId();
-            JScalableImage jscalable = scaleMan.getJScalableImage(csId);
-
-            if(cardStack.getCardStackType().equals(SolShowCardStackType.MIDDLE))
-            {
-                scaleMan.setImage(csId, "stack_long_yellow.png");
-            }
-            else if(cardStack.getCardStackType().equals(SolShowCardStackType.LAYDOWN))
-            {
-                scaleMan.setImage(csId, "stack_short_green_filled.png");
-            }
-            else if(cardStack.getCardStackType().equals(SolShowCardStackType.DEPOT))
-            {
-                scaleMan.setImage(csId, "stack_short_arrow.png");
-            }
-            else if(cardStack.getCardStackType().equals(SolShowCardStackType.TURNOVER))
-            {
-                scaleMan.setImage(csId, "stack_middle_green.png");
-            }
-            else if(cardStack.getCardStackType().equals(SolShowCardStackType.SPECIAL))
-            {
-                scaleMan.setImage(csId, "stack_short_green.png");
-            }
-
-            if(!context.getReadOnlyState().isLocalId(cardGame.getPlayerId(cardStack)))
-            {
-                jscalable.mirror();
-            }
-
-            gamePanel.add(jscalable);
+            UUID id = idServ.createCardStackResourceId(stack);
+            String filename = String.format(FILEPATH_CARDSTACK, stack.toLowerCase());
+            preloadImage(id, filename);
         }
+        
+        UUID resId_turnover = idServ.createCardStackResourceId(SolShowCardStackType.TURNOVER);
+        String filename_turnover = "stack_solshow_turnover.png";
+        preloadImage(resId_turnover, filename_turnover);
+        
+        UUID resId_special = idServ.createCardStackResourceId(SolShowCardStackType.SPECIAL);
+        String filename_special = "stack_solshow_special.png";
+        preloadImage(resId_special, filename_special);
     }
+
 }

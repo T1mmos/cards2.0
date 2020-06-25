@@ -1,9 +1,6 @@
 package gent.timdemey.cards.services.gamepanel;
 
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import javax.swing.SwingUtilities;
@@ -14,8 +11,6 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
-import gent.timdemey.cards.readonlymodel.ReadOnlyPlayer;
-import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.LayeredArea;
@@ -24,6 +19,7 @@ import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaleman.IScalableComponent;
 import gent.timdemey.cards.services.scaleman.comps.CardScalableImageComponent;
 import gent.timdemey.cards.services.scaleman.comps.CardScoreScalableTextComponent;
+import gent.timdemey.cards.services.scaleman.comps.CardStackScalableImageComponent;
 
 public class SolShowPositionManager implements IPositionService
 {
@@ -83,36 +79,50 @@ public class SolShowPositionManager implements IPositionService
     }
 
     @Override
-    public Rectangle getCardSize()
+    public Rectangle getBounds()
     {
-        return new Rectangle(0, 0, gameLayout.act_cwidth, gameLayout.act_cheight);
+        return new Rectangle(gameLayout.act_tpadx, gameLayout.act_tpady, gameLayout.act_twidth - 2 * gameLayout.act_tpadx, gameLayout.act_theight - 2
+            * gameLayout.act_tpady);
     }
 
     @Override
-    public Rectangle getCardStackSize(String cardStackType)
+    public LayeredArea getLayeredArea(IScalableComponent scaleComp)
     {
-        if(cardStackType.equals(SolShowCardStackType.MIDDLE))
+        if(scaleComp instanceof CardScalableImageComponent)
         {
-            return new Rectangle(0, 0, gameLayout.act_swidth, 2 * gameLayout.act_sheight);
+            ReadOnlyCard card = ((CardScalableImageComponent) scaleComp).getCard();
+            return getLayeredArea(card);
         }
-        else if(cardStackType.equals(SolShowCardStackType.TURNOVER))
+        else if(scaleComp instanceof CardStackScalableImageComponent)
         {
-            return new Rectangle(0, 0, (gameLayout.act_swidth + (int) (0.5 * gameLayout.act_cwidth)), gameLayout.act_sheight);
+            ReadOnlyCardStack cardStack = ((CardStackScalableImageComponent) scaleComp).getCardStack();
+            return getLayeredArea(cardStack);
         }
-        else
+        else if (scaleComp instanceof CardScoreScalableTextComponent)
         {
-            return new Rectangle(0, 0, gameLayout.act_swidth, gameLayout.act_sheight);
+            CardScoreScalableTextComponent cardScoreComp = ((CardScoreScalableTextComponent) scaleComp);
+            ReadOnlyCard card = cardScoreComp.getCard();
+            LayeredArea la_card = getLayeredArea(card);
+            
+            Font font = cardScoreComp.getFont();
+            
+            int width = la_card.width;
+            // int height = la_card. 
+                
+            cardScoreComp.packToWidth();
         }
+
+        throw new UnsupportedOperationException();
     }
 
-    @Override
-    public Rectangle getBounds(ReadOnlyCard card)
+    private LayeredArea getLayeredArea(ReadOnlyCard card)
     {
-        Context context = Services.get(IContextService.class).getThreadContext();
+        IContextService contextService = Services.get(IContextService.class);
+        Context context = contextService.getThreadContext();
         ReadOnlyCardGame cardGame = context.getReadOnlyState().getCardGame();
 
         ReadOnlyCardStack cs = card.getCardStack();
-        Rectangle rect = getBounds(cs);
+        Rectangle rect = getLayeredArea(cs).getBounds2D();
 
         boolean isOffsetX = cs.getCardStackType().equals(SolShowCardStackType.TURNOVER);
         boolean isOffsetY = cs.getCardStackType().equals(SolShowCardStackType.MIDDLE);
@@ -126,208 +136,89 @@ public class SolShowPositionManager implements IPositionService
         {
             rect.x += gameLayout.act_scoffsetx + (isOffsetX ? shift * gameLayout.act_coffsetvisx : 0);
             rect.y += gameLayout.act_scoffsety + (isOffsetY ? card.getCardIndex() * gameLayout.act_coffsetvisy : 0);
-            rect.width = getCardSize().width;
-            rect.height = getCardSize().height;
+            rect.width = gameLayout.act_cwidth;
+            rect.height = gameLayout.act_cheight;
         }
         else
         {
             rect.x += gameLayout.act_scoffsetx + (isOffsetX ? (2 - shift) * gameLayout.act_coffsetvisx : 0);
             rect.y = rect.y + rect.height - gameLayout.act_scoffsety - gameLayout.act_cheight - (isOffsetY ? card.getCardIndex() * gameLayout.act_coffsetvisy
                 : 0);
-            rect.width = getCardSize().width;
-            rect.height = getCardSize().height;
+            rect.width = gameLayout.act_cwidth;
+            rect.height = gameLayout.act_cheight;
         }
 
-        return rect;
+        return new LayeredArea(rect, LAYER_CARDS + card.getCardIndex());
     }
 
-    @Override
-    public Rectangle getBounds(ReadOnlyCardStack cardStack)
+    private LayeredArea getLayeredArea(ReadOnlyCardStack cardStack)
     {
-        Context context = Services.get(IContextService.class).getThreadContext();
+        IContextService contextService = Services.get(IContextService.class);
+        Context context = contextService.getThreadContext();        
 
         UUID localId = context.getReadOnlyState().getLocalId();
         UUID playerId = context.getReadOnlyState().getCardGame().getPlayerId(cardStack);
         boolean isLocal = localId.equals(playerId);
 
         int stackNr = cardStack.getTypeNumber();
-
-        Rectangle size = getCardStackSize(cardStack.getCardStackType());
-        Rectangle rect = new Rectangle(gameLayout.act_tpadx, gameLayout.act_tpady, size.width, size.height);
-
+        
+        int x = 0, y = 0, w = 0, h = 0;
         if(cardStack.getCardStackType().equals(SolShowCardStackType.DEPOT))
         {
-            rect.x += 0;
-            rect.y += 4 * (gameLayout.act_sheight + gameLayout.act_soffsety);
+            x = gameLayout.act_tpadx;
+            y = gameLayout.act_tpady + 4 * (gameLayout.act_sheight + gameLayout.act_soffsety);
+            w = gameLayout.act_swidth;
+            h = gameLayout.act_sheight;
         }
         else if(cardStack.getCardStackType().equals(SolShowCardStackType.TURNOVER))
         {
-            rect.x += gameLayout.act_swidth + gameLayout.act_soffsetx;
-            rect.y += 4 * (gameLayout.act_sheight + gameLayout.act_soffsety);
+            x = gameLayout.act_tpadx + (int) (0.5 * gameLayout.act_cwidth) + gameLayout.act_swidth + gameLayout.act_soffsetx;
+            y = gameLayout.act_tpady + 4 * (gameLayout.act_sheight + gameLayout.act_soffsety);
+            w = gameLayout.act_swidth;
+            h = gameLayout.act_sheight ;
         }
         else if(cardStack.getCardStackType().equals(SolShowCardStackType.LAYDOWN))
         {
-            rect.x += (0 + stackNr) * (gameLayout.act_swidth + gameLayout.act_soffsetx);
-            rect.y += 2 * (gameLayout.act_sheight + gameLayout.act_soffsety); // always in the middle of the field
+            x = gameLayout.act_tpadx + (0 + stackNr) * (gameLayout.act_swidth + gameLayout.act_soffsetx);
+            y = gameLayout.act_tpady + 2 * (gameLayout.act_sheight + gameLayout.act_soffsety);
+            w = gameLayout.act_swidth;
+            h = gameLayout.act_sheight;
         }
         else if(cardStack.getCardStackType().equals(SolShowCardStackType.MIDDLE))
         {
-            rect.x += (4 + stackNr) * (gameLayout.act_swidth + gameLayout.act_soffsetx);
-            rect.y += 3 * (gameLayout.act_sheight + gameLayout.act_soffsety);
+            x = gameLayout.act_tpadx + (4 + stackNr) * (gameLayout.act_swidth + gameLayout.act_soffsetx);
+            y = gameLayout.act_tpady+ 3 * (gameLayout.act_sheight + gameLayout.act_soffsety);
+            w = gameLayout.act_swidth;
+            h = 2 * gameLayout.act_sheight;
         }
         else if(cardStack.getCardStackType().equals(SolShowCardStackType.SPECIAL))
         {
-            rect.x += gameLayout.act_swidth + gameLayout.act_soffsetx;
-            rect.y += 3 * (gameLayout.act_sheight + gameLayout.act_soffsety);
+            x = gameLayout.act_tpadx + gameLayout.act_swidth + gameLayout.act_soffsetx;
+            y = gameLayout.act_tpady + 3 * (gameLayout.act_sheight + gameLayout.act_soffsety);
+            w = gameLayout.act_swidth;
+            h = gameLayout.act_sheight;            
         }
+        
+        Rectangle rect = new Rectangle(x, y, w, h);
 
         if(!isLocal) // point-mirror
         {
-            rect.x = gameLayout.act_twidth - rect.x - size.width;
-            rect.y = gameLayout.act_theight - rect.y - size.height;
-        }
-        return rect;
+            rect.x = gameLayout.act_twidth - rect.x - rect.width;
+            rect.y = gameLayout.act_theight - rect.y - rect.height;
+        }            
+
+        return new LayeredArea(rect, LAYER_CARDSTACKS);
     }
 
     @Override
-    public ReadOnlyCardStack getCardStackAt(Point p)
+    public int getDragLayer()
     {
-        Context context = Services.get(IContextService.class).getThreadContext();
-        ReadOnlyState state = context.getReadOnlyState();
-
-        ReadOnlyCardGame cardGame = state.getCardGame();
-        UUID localId = state.getLocalId();
-        List<ReadOnlyPlayer> otherPlayers = state.getPlayers().getExcept(state.getLocalId());
-        Preconditions.checkState(otherPlayers != null && otherPlayers.size() == 1);
-        UUID remoteId = otherPlayers.get(0).getId();
-
-        int x = p.x;
-        int y = p.y;
-        UUID id;
-        if(y < gameLayout.act_theight / 2)
-        {
-            id = remoteId;
-            x = gameLayout.act_twidth - x;
-            y = gameLayout.act_theight - y;
-        }
-        else
-        {
-            id = localId;
-        }
-
-        x = x - gameLayout.act_tpadx;
-        y = y - gameLayout.act_tpady;
-
-        // depot
-        {
-            int x1_depot = 0;
-            int x2_depot = gameLayout.act_swidth;
-            int y1_depot = 4 * (gameLayout.act_sheight + gameLayout.act_soffsety);
-            int y2_depot = y1_depot + gameLayout.act_sheight;
-
-            if(x1_depot <= x && x < x2_depot && y1_depot <= y && y < y2_depot)
-            {
-                return cardGame.getCardStack(id, SolShowCardStackType.DEPOT, 0);
-            }
-        }
-
-        // turnover
-        {
-            int x1_turn = gameLayout.act_swidth + gameLayout.act_soffsetx;
-            int x2_turn = x1_turn + gameLayout.act_swidth;
-            int y1_turn = 4 * (gameLayout.act_sheight + gameLayout.act_soffsety);
-            int y2_turn = y1_turn + gameLayout.act_sheight;
-
-            if(x1_turn <= x && x <= x2_turn && y1_turn <= y && y < y2_turn)
-            {
-                return cardGame.getCardStack(id, SolShowCardStackType.TURNOVER, 0);
-            }
-        }
-
-        // middles
-        {
-            List<ReadOnlyCardStack> middleStacks = cardGame.getCardStacks(id, SolShowCardStackType.MIDDLE);
-            for (int i = 0; i < middleStacks.size(); i++)
-            {
-                int x1_mid = (4 + i) * (gameLayout.act_swidth + gameLayout.act_soffsetx);
-                int x2_mid = x1_mid + gameLayout.act_swidth;
-                int y1_mid = 3 * (gameLayout.act_sheight + gameLayout.act_soffsety);
-                int y2_mid = y1_mid + 2 * gameLayout.act_sheight;
-
-                if(x1_mid <= x && x <= x2_mid && y1_mid <= y && y < y2_mid)
-                {
-                    return middleStacks.get(i);
-                }
-            }
-        }
-
-        // laydown
-        {
-            List<ReadOnlyCardStack> laydownStacks = cardGame.getCardStacks(id, SolShowCardStackType.LAYDOWN);
-            for (int i = 0; i < laydownStacks.size(); i++)
-            {
-                int x1_lay = (4 + i) * (gameLayout.act_swidth + gameLayout.act_soffsetx);
-                int x2_lay = x1_lay + gameLayout.act_swidth;
-                int y1_lay = 2 * (gameLayout.act_sheight + gameLayout.act_soffsety);
-                int y2_lay = y1_lay + gameLayout.act_sheight;
-
-                if(x1_lay <= x && x <= x2_lay && y1_lay <= y && y < y2_lay)
-                {
-                    return laydownStacks.get(i);
-                }
-            }
-        }
-
-        return null;
+        return LAYER_DRAG;
     }
 
     @Override
-    public List<ReadOnlyCardStack> getCardStacksIn(Rectangle rect)
+    public int getAnimationLayer()
     {
-        List<ReadOnlyCardStack> cardStacks = new ArrayList<>();
-        Point[] points = new Point[]
-        { new Point(rect.x, rect.y), new Point(rect.x, rect.y + rect.height - 1), new Point(rect.x + rect.width - 1, rect.y), new Point(rect.x + rect.width - 1,
-            rect.y + rect.height - 1), };
-
-        for (Point point : points)
-        {
-            ReadOnlyCardStack cardStack = getCardStackAt(point);
-            if(cardStack != null)
-            {
-                cardStacks.add(cardStack);
-            }
-        }
-
-        return cardStacks;
-    }
-
-    @Override
-    public Rectangle getBounds()
-    {
-        return new Rectangle(gameLayout.act_tpadx, gameLayout.act_tpady, gameLayout.act_twidth - 2 * gameLayout.act_tpadx, gameLayout.act_theight - 2
-            * gameLayout.act_tpady);
-    }
-
-    @Override
-    public LayeredArea getLayeredArea(IScalableComponent scaleComp, boolean animating)
-    {
-        IContextService contextService = Services.get(IContextService.class);
-        Context context = contextService.getThreadContext();
-        
-        if (scaleComp instanceof CardScoreScalableTextComponent)
-        {
-            CardScoreScalableTextComponent comp = (CardScoreScalableTextComponent) scaleComp;
-            LayeredArea cardLayArea = getLayeredArea(comp, false);
-            
-            int x = cardLayArea.x + gameLayout.act_cwidth / 4;
-            int y = cardLayArea.y - gameLayout.act_cheight / 8;
-            int width = gameLayout.act_cwidth / 4;
-            int height = gameLayout.act_cheight / 4;
-            return new LayeredArea(x, y, width, height, 0, LAYER_ANIMATIONS, 0);
-        }
-        else if (scaleComp instanceof CardScalableImageComponent)
-        {
-            
-        }
+        return LAYER_ANIMATIONS;
     }
 }

@@ -15,7 +15,7 @@ import gent.timdemey.cards.services.scaleman.IScalableComponent;
 
 public class SolitaireGamePanelService extends GamePanelService
 {
-    private static final String FILEPATH_CARDSTACK = "stack_%s.png";
+    private static final String FILEPATH_CARDSTACK = "stack_solitaire_%s.png";
 
     @Override
     public void preload()

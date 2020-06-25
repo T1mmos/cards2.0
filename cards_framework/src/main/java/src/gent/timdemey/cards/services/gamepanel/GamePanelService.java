@@ -59,7 +59,6 @@ public class GamePanelService implements IGamePanelService
     {
         preloadFonts();
         preloadCards();
-
     }
 
     protected void preloadImage(UUID resId, String path)
@@ -276,12 +275,6 @@ public class GamePanelService implements IGamePanelService
         IPositionService posServ = Services.get(IPositionService.class);
         LayeredArea layArea = posServ.getLayeredArea(scaleTextComp);
         setLayer(scaleTextComp, posServ.getAnimationLayer());
-        setZOrder(scaleTextComp, layArea.zorder);
-
-        // determine final card position (the card itself may still be animated
-        // into its
-        // final position)
-        // to calculate the animation's start position
 
         IAnimation anim_color = new ForegroundColorAnimation(new Color(50, 100, 50, 255), new Color(255, 165, 0, 0));
         IAnimation anim_pos = new MovingAnimation(layArea.x, layArea.y, layArea.x, layArea.y - layArea.height);
@@ -298,18 +291,6 @@ public class GamePanelService implements IGamePanelService
     public void setLayer(IScalableComponent component, int layerIndex)
     {
         gamePanel.setLayer(component.getComponent(), layerIndex);
-    }
-
-    @Override
-    public int getZOrder(IScalableComponent scalableComponent)
-    {
-        return gamePanel.getComponentZOrder(scalableComponent.getComponent());
-    }
-
-    @Override
-    public void setZOrder(IScalableComponent component, int zorder)
-    {
-        gamePanel.setComponentZOrder(component.getComponent(), zorder);
     }
 
     @Override
