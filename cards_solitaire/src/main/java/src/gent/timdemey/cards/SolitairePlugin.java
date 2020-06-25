@@ -11,8 +11,6 @@ import gent.timdemey.cards.services.interfaces.ICommandService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
-import gent.timdemey.cards.services.interfaces.IScalingService;
-import gent.timdemey.cards.services.scaleman.SolitaireScalingService;
 
 public class SolitairePlugin implements ICardPlugin
 {
@@ -22,8 +20,7 @@ public class SolitairePlugin implements ICardPlugin
     {
         App.getServices().install(ICommandService.class, new SolitaireCommandService());
         App.getServices().install(ICardGameService.class, new SolitaireCardGameCreationService());
-        App.getServices().install(IIdService.class, new SolitaireIdService());        
-        App.getServices().install(IScalingService.class, new SolitaireScalingService());
+        App.getServices().install(IIdService.class, new SolitaireIdService());
     }
 
     @Override

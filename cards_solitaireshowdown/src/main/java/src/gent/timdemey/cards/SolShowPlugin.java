@@ -12,9 +12,7 @@ import gent.timdemey.cards.services.interfaces.ICommandService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
-import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.interfaces.ISerializationService;
-import gent.timdemey.cards.services.scaleman.SolShowScalingService;
 
 public class SolShowPlugin implements ICardPlugin
 {
@@ -25,7 +23,6 @@ public class SolShowPlugin implements ICardPlugin
         App.getServices().install(ICardGameService.class, new SolShowCardGameService());
         App.getServices().install(ISerializationService.class, new SolShowSerializationService());
         App.getServices().install(IIdService.class, new SolShowIdService());
-        App.getServices().install(IScalingService.class, new SolShowScalingService());
     }
 
     @Override

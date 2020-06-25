@@ -88,9 +88,7 @@ public class GamePanelService implements IGamePanelService
         
         // score font        
         preloadFont(idServ.createFontResourceId(FILEPATH_FONT_SCORE), FILEPATH_FONT_SCORE);
-    }
-
-    
+    }    
     
     protected void preloadCards()
     {
@@ -215,9 +213,7 @@ public class GamePanelService implements IGamePanelService
             LayeredArea layArea = posMan.getLayeredArea(scaleComp);
             
             setLayer(scaleComp, layArea.layer);
-         //   setZOrder(scaleComp, layArea.zorder);
         }
-        
 
         gamePanel.repaint();
     }
@@ -253,34 +249,20 @@ public class GamePanelService implements IGamePanelService
 
         UUID compId = uuidServ.createCardComponentId(card);
         IScalableComponent<?> scaleComp = scaleCompServ.getScalableComponent(compId);
-        updateOrAnimatePosition(scaleComp, true);
-    }
 
-    private void updateOrAnimatePosition(IScalableComponent<?> scaleComp, boolean animate)
-    {
         LayeredArea layArea = Services.get(IPositionService.class).getLayeredArea(scaleComp);
 
         IPositionService posServ = Services.get(IPositionService.class);
        
         int layer = layArea.layer;
-        if (animate)
-        {
-            layer += posServ.getDragLayer();
-        }
+        layer += posServ.getDragLayer();
         
         setLayer(scaleComp, layer);
 
-        if (animate)
-        {
-            int layerEnd = layArea.layer;
-            MovingAnimation anim_pos = new MovingAnimation(scaleComp.getBounds().getLocation(), layArea.getLocation2D());
-            AnimationEnd animEnd = new AnimationEnd(false, layerEnd);
-            animator.animate(scaleComp, animEnd, ANIMATION_TIME_CARD, anim_pos);
-        }
-        else
-        {
-            scaleComp.setBounds(layArea.getBounds2D());
-        }
+        int layerEnd = layArea.layer;
+        MovingAnimation anim_pos = new MovingAnimation(scaleComp.getBounds().getLocation(), layArea.getLocation2D());
+        AnimationEnd animEnd = new AnimationEnd(false, layerEnd);
+        animator.animate(scaleComp, animEnd, ANIMATION_TIME_CARD, anim_pos);
     }
 
     @Override
@@ -299,8 +281,10 @@ public class GamePanelService implements IGamePanelService
         IPositionService posServ = Services.get(IPositionService.class);
        
         LayeredArea layArea = posServ.getLayeredArea(scaleTextComp);
+        scaleTextComp.setBounds(layArea.getBounds2D());
         setLayer(scaleTextComp, posServ.getAnimationLayer());
-
+        scaleTextComp.update();
+        
         IAnimation anim_color = new ForegroundColorAnimation(new Color(50, 100, 50, 255), new Color(255, 165, 0, 0));
         IAnimation anim_pos = new MovingAnimation(layArea.x, layArea.y, layArea.x, layArea.y - layArea.height);
 

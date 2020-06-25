@@ -41,6 +41,6 @@ public class ScalableTextComponent extends ScalableComponent<Font>
     @Override
     public void update()
     {
-        // no model to update from
+      
     }
 }

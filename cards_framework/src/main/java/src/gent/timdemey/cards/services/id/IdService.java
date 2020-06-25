@@ -1,6 +1,5 @@
 package gent.timdemey.cards.services.id;
 
-import java.awt.Font;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.cards.Suit;

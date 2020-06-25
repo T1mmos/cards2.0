@@ -1,23 +1,15 @@
 package gent.timdemey.cards.services.gamepanel;
 
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 import javax.swing.SwingUtilities;
 
 import com.google.common.base.Preconditions;
 
-import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
-import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
-import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.cardgame.SolitaireCardStackType;
 import gent.timdemey.cards.services.contract.LayeredArea;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaleman.IScalableComponent;
 import gent.timdemey.cards.services.scaleman.comps.CardScalableImageComponent;
@@ -94,7 +86,7 @@ public class SolitairePositionManager implements IPositionService
     }
     
     @Override
-    public LayeredArea getLayeredArea(IScalableComponent scaleComp)
+    public LayeredArea getLayeredArea(IScalableComponent<?> scaleComp)
     {
         if (scaleComp instanceof CardScalableImageComponent)
         {
@@ -197,98 +189,6 @@ public class SolitairePositionManager implements IPositionService
         }
 
         return rect;
-    }
-
-    private ReadOnlyCardStack getCardStackAt(Point p)
-    {
-        IContextService contextServ = Services.get(IContextService.class);
-        ReadOnlyState state = contextServ.getThreadContext().getReadOnlyState();
-        ReadOnlyCardGame cardGame = state.getCardGame();
-        UUID localId = state.getLocalId();
-
-        int x = p.x - gameLayout.act_tpadx;
-        int y = p.y - gameLayout.act_tpady;
-
-        // depot
-        {
-            int x1_depot = 0;
-            int x2_depot = gameLayout.act_swidth;
-            int y1_depot = 0;
-            int y2_depot = gameLayout.act_sheight;
-
-            if (x1_depot <= x && x < x2_depot && y1_depot <= y && y < y2_depot)
-            {
-                return cardGame.getCardStack(localId, SolitaireCardStackType.DEPOT, 0);
-            }
-        }
-
-        // turnover
-        {
-            int x1_turn = gameLayout.act_swidth + gameLayout.act_spadx;
-            int x2_turn = x1_turn + gameLayout.act_swidth;
-            int y1_turn = 0;
-            int y2_turn = gameLayout.act_sheight;
-
-            if (x1_turn <= x && x <= x2_turn && y1_turn <= y && y < y2_turn)
-            {
-                return cardGame.getCardStack(localId, SolitaireCardStackType.TURNOVER, 0);
-            }
-        }
-
-        // middles
-        {
-            List<ReadOnlyCardStack> middleStacks = cardGame.getCardStacks(localId, SolitaireCardStackType.MIDDLE);
-            for (int i = 0; i < middleStacks.size(); i++)
-            {
-                int x1_mid = i * (gameLayout.act_swidth + gameLayout.act_spadx);
-                int x2_mid = x1_mid + gameLayout.act_swidth;
-                int y1_mid = gameLayout.act_sheight + gameLayout.act_spady;
-                int y2_mid = y1_mid + gameLayout.act_sheight;
-
-                if (x1_mid <= x && x <= x2_mid && y1_mid <= y && y < y2_mid)
-                {
-                    return middleStacks.get(i);
-                }
-            }
-        }
-
-        // laydown
-        {
-            List<ReadOnlyCardStack> laydownStacks = cardGame.getCardStacks(localId, SolitaireCardStackType.LAYDOWN);
-            for (int i = 0; i < laydownStacks.size(); i++)
-            {
-                int x1_lay = (i + 3) * (gameLayout.act_swidth + gameLayout.act_spadx);
-                int x2_lay = x1_lay + gameLayout.act_swidth;
-                int y1_lay = 0;
-                int y2_lay = gameLayout.act_sheight;
-
-                if (x1_lay <= x && x <= x2_lay && y1_lay <= y && y < y2_lay)
-                {
-                    return laydownStacks.get(i);
-                }
-            }
-        }
-
-        return null;
-    }
-
-    private List<ReadOnlyCardStack> getCardStacksIn(Rectangle rect)
-    {
-        List<ReadOnlyCardStack> cardStacks = new ArrayList<>();
-        Point[] points = new Point[] { new Point(rect.x, rect.y), new Point(rect.x, rect.y + rect.height - 1),
-                new Point(rect.x + rect.width - 1, rect.y),
-                new Point(rect.x + rect.width - 1, rect.y + rect.height - 1), };
-
-        for (Point point : points)
-        {
-            ReadOnlyCardStack cardStack = getCardStackAt(point);
-            if (cardStack != null)
-            {
-                cardStacks.add(cardStack);
-            }
-        }
-
-        return cardStacks;
     }
 
     @Override
