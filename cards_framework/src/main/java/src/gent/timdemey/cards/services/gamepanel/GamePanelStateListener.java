@@ -14,7 +14,7 @@ import gent.timdemey.cards.readonlymodel.TypedChange;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
-import gent.timdemey.cards.services.interfaces.IScalableComponentService;
+import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.scaleman.comps.CardScalableImageComponent;
 
 class GamePanelStateListener implements IStateListener
@@ -32,7 +32,7 @@ class GamePanelStateListener implements IStateListener
         if (property == ReadOnlyCard.Visible)
         {            
             ReadOnlyCard card = state.getCardGame().getCard(change.entityId);
-            IScalableComponentService scaleCompServ = Services.get(IScalableComponentService.class);
+            IScalingService scaleCompServ = Services.get(IScalingService.class);
             
             CardScalableImageComponent cardComp = (CardScalableImageComponent) scaleCompServ.getOrCreateScalableComponent(card);
             cardComp.update();

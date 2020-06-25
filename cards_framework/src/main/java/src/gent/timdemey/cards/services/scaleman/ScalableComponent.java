@@ -14,7 +14,6 @@ import java.util.stream.Stream;
 import javax.swing.JComponent;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.services.contract.Resource;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 
 public abstract class ScalableComponent<R> implements IScalableComponent<R>
@@ -23,17 +22,22 @@ public abstract class ScalableComponent<R> implements IScalableComponent<R>
     private JComponent component = null;
     private boolean mirror = false;
     
-    protected final List<IScalableResource<R, Resource<R>>> resources;
+    protected final List<IScalableResource<R>> resources;
 
-    protected ScalableComponent(UUID id, IScalableResource<R, Resource<R>> ... scaledResources)
+    protected ScalableComponent(UUID id, IScalableResource<R> ... resources)
     {
         if(id == null)
         {
             throw new NullPointerException("id cannot be null");
         }
 
+        if (resources == null || resources.length == 0)
+        {
+            throw new NullPointerException("resources must contain at least 1 resource");
+        }
+
         this.id = id;
-        this.resources = Arrays.asList(scaledResources);
+        this.resources = Arrays.asList(resources);
     }
 
     @Override
@@ -166,7 +170,7 @@ public abstract class ScalableComponent<R> implements IScalableComponent<R>
     }
    
     @Override
-    public List<IScalableResource<R, Resource<R>>> getResources()
+    public List<IScalableResource<R>> getScalableResources()
     {
         return resources;
     }

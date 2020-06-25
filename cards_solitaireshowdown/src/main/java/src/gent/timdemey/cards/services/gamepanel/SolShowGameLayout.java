@@ -17,6 +17,8 @@ final class SolShowGameLayout {
     public int act_coffsetvisy;
     public int act_soffsetx; 
     public int act_soffsety;
+    
+    public int act_scoretext_height;
         
     SolShowGameLayout (){}
 }

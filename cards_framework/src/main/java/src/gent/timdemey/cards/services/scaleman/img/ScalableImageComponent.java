@@ -8,23 +8,17 @@ import java.util.UUID;
 import javax.swing.JComponent;
 
 import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.services.contract.Resource;
+import gent.timdemey.cards.services.scaleman.IScalableResource;
 import gent.timdemey.cards.services.scaleman.ScalableComponent;
-import gent.timdemey.cards.services.scaleman.ScalableResource;
 
 public abstract class ScalableImageComponent extends ScalableComponent<BufferedImage>
 {
     private String file = null;
-    private ScalableImageResource currentScaledResource;
+    private IScalableResource<BufferedImage> currentScaledResource;
     
-    public ScalableImageComponent(UUID id, ScalableResource<BufferedImage, Resource<BufferedImage>> ... imageResources)
+    public ScalableImageComponent(UUID id, ScalableImageResource ... resources)
     {
-        super(id);  
-        
-        if (imageResources == null || imageResources.length == 0)
-        {
-            throw new NullPointerException("imageResources must contain at least 1 image resource");
-        }
+        super(id, resources);  
 
         this.currentScaledResource = null;
     }
@@ -47,10 +41,10 @@ public abstract class ScalableImageComponent extends ScalableComponent<BufferedI
      */
     protected final void setScalableImageResource(UUID resourceId)
     {
-        ScalableImageResource found = null;
-        for (ScalableResource<BufferedImage> resource : resources)
+        IScalableResource<BufferedImage> found = null;
+        for (IScalableResource<BufferedImage> resource : resources)
         {
-            if (resource.id.equals(resourceId))
+            if (resource.getId().equals(resourceId))
             {
                 found = resource;
                 break;
@@ -73,7 +67,7 @@ public abstract class ScalableImageComponent extends ScalableComponent<BufferedI
         
         BufferedImage bi = currentScaledResource.get(width, height);
         
-        if (!currentScaledResource.resource.fallback)
+        if (!currentScaledResource.getResource().fallback)
         {
             drawScaled(g2, bi, width, height);
         }

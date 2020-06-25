@@ -8,11 +8,11 @@ import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.scaleman.comps.CardStackScalableImageComponent;
 import gent.timdemey.cards.services.scaleman.img.ScalableImageResource;
 
-public class SolitaireScalableComponentService extends ScalableComponentService
+public class SolitaireScalingService extends ScalingService
 {
 
     @Override
-    public IScalableComponent getOrCreateScalableComponent(ReadOnlyCardStack cardstack)
+    public IScalableComponent<?> getOrCreateScalableComponent(ReadOnlyCardStack cardstack)
     {
         IIdService idServ = Services.get(IIdService.class);
 
@@ -29,7 +29,7 @@ public class SolitaireScalableComponentService extends ScalableComponentService
             UUID csResId = idServ.createCardStackResourceId(cardstack.getCardStackType());
 
             // create the component using its necessary image resources
-            ScalableImageResource res = (ScalableImageResource) getResourceOrThrow(csResId);
+            ScalableImageResource res = (ScalableImageResource) getScalableResource(csResId);
             comp = new CardStackScalableImageComponent(compId, cardstack, res);
 
             components.put(compId, comp);

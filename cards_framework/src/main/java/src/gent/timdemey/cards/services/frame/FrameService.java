@@ -37,7 +37,7 @@ public class FrameService implements IFrameService
         for (int dim : new int []{16,24,48,140})
         {
             ImageResource resp = resServ.getImage(String.format(APP_ICON, dim, dim));
-            images.add(resp.bufferedImage);
+            images.add(resp.raw);
         }
 
         return images;
@@ -139,7 +139,7 @@ public class FrameService implements IFrameService
     public BufferedImage getBackground()
     {
         IResourceService resServ = Services.get(IResourceService.class);
-        BufferedImage background = resServ.getImage("background_green.png").bufferedImage;
+        BufferedImage background = resServ.getImage("background_green.png").raw;
         return background;
     }
 }

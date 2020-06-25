@@ -29,4 +29,10 @@ public interface IScalableResource<R>
      * @return
      */
     R get(int width, int height);
+    
+    /**
+     * Get the actual resource in its original dimensions.
+     * @return
+     */
+    Resource<R> getResource();
 }

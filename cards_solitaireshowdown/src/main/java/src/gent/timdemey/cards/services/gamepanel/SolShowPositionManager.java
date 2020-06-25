@@ -1,5 +1,6 @@
 package gent.timdemey.cards.services.gamepanel;
 
+import java.awt.Font;
 import java.awt.Rectangle;
 import java.util.UUID;
 
@@ -47,7 +48,8 @@ public class SolShowPositionManager implements IPositionService
         int base_soffsety = 2;
         int base_tpadx = 2; // (minimal) space edge playfield
         int base_tpady = 2;
-
+        int base_scoretext_height = 4;
+        
         int base_twidth = 8 * base_swidth + 7 * base_soffsetx + 2 * base_tpadx;
         int base_theight = 5 * base_sheight + 4 * base_soffsety + 2 * base_tpady;
 
@@ -72,6 +74,8 @@ public class SolShowPositionManager implements IPositionService
         gameLayout.act_coffsetvisy = ratio * base_coffsetvisy;
         gameLayout.act_soffsetx = ratio * base_soffsetx;
         gameLayout.act_soffsety = ratio * base_soffsety;
+        gameLayout.act_scoretext_height = ratio * base_scoretext_height;
+        
         // remaining space is distributed to the paddings, keeps everything
         // centered
         gameLayout.act_tpadx = (gameLayout.act_twidth - 8 * gameLayout.act_swidth - 7 * gameLayout.act_soffsetx) / 2;
@@ -86,7 +90,7 @@ public class SolShowPositionManager implements IPositionService
     }
 
     @Override
-    public LayeredArea getLayeredArea(IScalableComponent scaleComp)
+    public LayeredArea getLayeredArea(IScalableComponent<?> scaleComp)
     {
         if(scaleComp instanceof CardScalableImageComponent)
         {
@@ -104,12 +108,17 @@ public class SolShowPositionManager implements IPositionService
             ReadOnlyCard card = cardScoreComp.getCard();
             LayeredArea la_card = getLayeredArea(card);
             
-            Font font = cardScoreComp.getFont();
+            // for determine the width of the text, we should know the Graphics context, and of course the text
+            // for the time being just use the width of a card
+            String text = cardScoreComp.getText();
+            Font font = cardScoreComp.getScalableResources().get(0).getResource().raw;
             
-            int width = la_card.width;
-            // int height = la_card. 
-                
-            cardScoreComp.packToWidth();
+            int x = la_card.x;
+            int y = la_card.layer - gameLayout.act_scoretext_height / 2;
+            int width = la_card.width; 
+            int height = gameLayout.act_scoretext_height;
+            
+            return new LayeredArea(x, y, width, height, LAYER_ANIMATIONS);
         }
 
         throw new UnsupportedOperationException();

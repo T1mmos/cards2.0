@@ -6,19 +6,25 @@ import java.util.UUID;
 import gent.timdemey.cards.services.contract.Resource;
 import gent.timdemey.cards.services.scaleman.ScalableResource;
 
-public class ScalableFontResource extends ScalableResource<Font, Resource<Font>>
+public class ScalableFontResource extends ScalableResource<Font>
 {
-
     public ScalableFontResource(UUID id, Resource<Font> resource)
     {
         super(id, resource);
     }
 
     @Override
-    public void rescale(int width, int height)
+    protected boolean canRescale()
     {
-        
-        // TODO Auto-generated method stub
-        
+        // we always rescale fonts
+        return true;
+    }
+
+    @Override
+    protected Font rescaleImpl(int width, int height)
+    {
+        float size = (float) height;
+        Font rescaled = getResource().raw.deriveFont(size);
+        return rescaled;
     }
 }

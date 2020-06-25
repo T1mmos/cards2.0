@@ -1,34 +1,28 @@
 package gent.timdemey.cards.services.scaleman.text;
 
 import java.awt.Font;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import gent.timdemey.cards.services.contract.FontResource;
-import gent.timdemey.cards.services.scaleman.IScalableResource;
 import gent.timdemey.cards.services.scaleman.ScalableComponent;
 
-public class ScalableTextComponent extends ScalableComponent
+public class ScalableTextComponent extends ScalableComponent<Font>
 {
     private final String text;
-    private final FontResource fontRes;
 
-    public ScalableTextComponent(UUID id, String text, FontResource fontRes)
+    public ScalableTextComponent(UUID id, String text, ScalableFontResource fontRes)
     {
-        super(id);
+        super(id, fontRes);
         this.text = text;
-        this.fontRes = fontRes;
     }
 
     @Override
     protected final JComponent createComponent()
     {
         JLabel label = new JLabel(text);
-        label.setFont(fontRes.font);
+        label.setFont(getScalableResources().get(0).getResource().raw);
         label.setSize(label.getPreferredSize());
         return label;
     }
@@ -38,11 +32,10 @@ public class ScalableTextComponent extends ScalableComponent
     {
         return null;
     }
-
-    @Override
-    public List<? extends IScalableResource> getResources()
+    
+    public final String getText()
     {
-        return Arrays.asList(fontRes);
+        return text;
     }
 
     @Override

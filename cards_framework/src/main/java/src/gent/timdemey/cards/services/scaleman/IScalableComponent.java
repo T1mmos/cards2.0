@@ -7,8 +7,6 @@ import java.util.UUID;
 
 import javax.swing.JComponent;
 
-import gent.timdemey.cards.services.contract.Resource;
-
 public interface IScalableComponent<R>
 {
     public void setMirror(boolean mirror);
@@ -31,7 +29,7 @@ public interface IScalableComponent<R>
      * Get a list of scalable resources needed by this IScalableComponent.
      * @return
      */
-    public List<IScalableResource<R, Resource<R>>> getResources();
+    public List<IScalableResource<R>> getScalableResources();
     
     /**
      * Updates the component to match the model state.

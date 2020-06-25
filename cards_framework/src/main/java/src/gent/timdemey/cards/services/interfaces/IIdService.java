@@ -18,7 +18,10 @@ public interface IIdService
     UUID createCardFrontResourceId(Suit suit, Value value);
     UUID createCardBackResourceId();
     UUID createCardStackResourceId(String cardStackType);
+    UUID createFontResourceId(String fontname);
     
     UUID createCardComponentId(ReadOnlyCard card);
     UUID createCardStackComponentId(ReadOnlyCardStack cardStack);
+    
+    
 }

@@ -32,7 +32,7 @@ public interface IPositionService
      * @param id
      * @return
      */
-    public LayeredArea getLayeredArea(IScalableComponent scaleComp);   
+    public LayeredArea getLayeredArea(IScalableComponent<?> scaleComp);   
 
     /**
      * Gets the drag layer, the layer in which components should be positioned when 

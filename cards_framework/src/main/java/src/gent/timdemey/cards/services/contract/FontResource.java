@@ -3,12 +3,9 @@ package gent.timdemey.cards.services.contract;
 import java.awt.Font;
 
 public class FontResource extends Resource<Font>
-{
-    public final Font font;
-    
-    public FontResource(Font font, String filename, boolean fallback)
+{    
+    public FontResource(String filename, boolean fallback, Font font)
     {
-        super(filename, fallback);
-        this.font = font;
+        super(filename, fallback, font);
     }
 }

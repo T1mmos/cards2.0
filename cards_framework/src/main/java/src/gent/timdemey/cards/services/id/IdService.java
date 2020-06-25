@@ -1,5 +1,6 @@
 package gent.timdemey.cards.services.id;
 
+import java.awt.Font;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.cards.Suit;
@@ -13,8 +14,11 @@ public abstract class IdService implements IIdService
     private static final String RESID_CARD_BACKSIDE = "resid.card.backside";
     private static final String RESID_CARD_FRONTSIDE = "resid.card.frontside.%s%s";
     protected static final String RESID_CARDSTACK = "resid.cardstack.%s";
+    private static final String RESID_FONT = "resid.font.%s";
+    
     private static final String COMPID_CARD = "compid.card.%s";
     private static final String COMPID_CARDSTACK = "compid.cardstack.%s";
+    
     
     @Override
     public UUID createCardFrontResourceId(Suit suit, Value value)
@@ -72,4 +76,9 @@ public abstract class IdService implements IIdService
         return getUUID(id_str);
     }
 
+    @Override
+    public UUID createFontResourceId(String fontname)
+    {
+        return getUUID(RESID_FONT, fontname);
+    }
 }

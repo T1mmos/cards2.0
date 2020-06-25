@@ -85,13 +85,13 @@ public class ResourceService implements IResourceService
         try
         {
             BufferedImage bi = ImageIO.read(is);
-            return new ImageResource(bi, filename, false);
+            return new ImageResource(filename, false, bi);
         }
         catch (IOException e)
         {
             Logger.error("Failed to load image %s", filename);
             BufferedImage bi = getErrorImage();
-            return new ImageResource(bi, filename, true);
+            return new ImageResource(filename, true, bi);
         }
     }
     
@@ -118,7 +118,7 @@ public class ResourceService implements IResourceService
             fallback = true;
         }
    
-        return new FontResource(font, filename, fallback);
+        return new FontResource(filename, fallback, font);
     }
     
     private <T> T get(Map<String, T> cache, String filename, ResourceType resourceType, BiFunction<InputStream, String, T> loadFunc)

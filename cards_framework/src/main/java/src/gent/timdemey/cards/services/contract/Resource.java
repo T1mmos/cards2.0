@@ -15,9 +15,15 @@ public abstract class Resource<T>
      */
     public final String filename;
     
-    public Resource(String filename, boolean fallback)
+    /**
+     * The raw, original resource.
+     */
+    public final T raw;
+    
+    public Resource(String filename, boolean fallback, T raw)
     {
         this.filename = filename;
         this.fallback = fallback;
+        this.raw = raw;
     }
 }

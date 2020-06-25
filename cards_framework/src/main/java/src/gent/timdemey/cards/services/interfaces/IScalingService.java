@@ -22,7 +22,7 @@ import gent.timdemey.cards.services.scaleman.IScalableResource;
  * 
  * @author Timmos
  */
-public interface IScalableComponentService
+public interface IScalingService
 {
     /**
      * Rescales all resources in a background thread. This schedules a high
@@ -37,20 +37,20 @@ public interface IScalableComponentService
      * @param card
      * @return
      */
-    public IScalableComponent getOrCreateScalableComponent(ReadOnlyCard card);
+    public IScalableComponent<?> getOrCreateScalableComponent(ReadOnlyCard card);
     
     /**
      * Get or creates once a scalable component for the given model object.
      * @param card
      * @return
      */
-    public IScalableComponent getOrCreateScalableComponent(ReadOnlyCardStack card);
+    public IScalableComponent<?> getOrCreateScalableComponent(ReadOnlyCardStack card);
     
     /**
      * Adds a scalable resource.
      * @param scaleRes
      */
-    public void addScalableResource(IScalableResource scaleRes);
+    public void addScalableResource(IScalableResource<?> scaleRes);
             
     /**
      * Get a scalable component mapped to the given id.
@@ -58,7 +58,7 @@ public interface IScalableComponentService
      * @param card
      * @return
      */
-    public IScalableComponent getScalableComponent(UUID compId);
+    public IScalableComponent<?> getScalableComponent(UUID compId);
 
     /**
      * Clears all links between ScalableImages and their managed objects. All
@@ -74,21 +74,21 @@ public interface IScalableComponentService
      * @param p
      * @return
      */
-    public IScalableComponent getComponentAt(Point p);
+    public IScalableComponent<?> getComponentAt(Point p);
         
     /**
      * Get all components found at the given position, disregarding their Z-order.
      * @param p
      * @return
      */
-    public List<IScalableComponent> getComponentsAt(Point p);
+    public List<IScalableComponent<?>> getComponentsAt(Point p);
     
     /**
      * Get all components overlapping with the given rectangle, disregarding their Z-order.
      * @param p
      * @return
      */
-    public List<IScalableComponent> getComponentsIn(Rectangle rect);
+    public List<IScalableComponent<?>> getComponentsIn(Rectangle rect);
     
     /**
      * Get the components found at the given position that are of the given type.
@@ -96,8 +96,15 @@ public interface IScalableComponentService
      * @param clazz
      * @return
      */
-    public <T extends IScalableComponent> List<T> getComponentsAt(Point p, Class<T> clazz);  
+    public <T extends IScalableComponent<?>> List<T> getComponentsAt(Point p, Class<T> clazz);  
     
-    public List<IScalableComponent> getComponents();
+    public List<IScalableComponent<?>> getComponents();
+
+    /**
+     * Gets the scalable resource with the given id.
+     * @param resId
+     * @return
+     */
+    public IScalableResource<?> getScalableResource(UUID resId);
    
 }

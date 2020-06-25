@@ -2,7 +2,7 @@ package gent.timdemey.cards.services.scaleman;
 
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 
-public class SolShowScalableComponentService extends ScalableComponentService
+public class SolShowScalingService extends ScalingService
 {
 
     @Override
