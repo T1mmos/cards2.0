@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.scaleman.IScalableComponent;
 import gent.timdemey.cards.services.scaleman.IScalableResource;
 
@@ -36,7 +37,14 @@ public interface IScalableComponentService
      * @param card
      * @return
      */
-    public IScalableComponent getOrCreate(ReadOnlyCard card);
+    public IScalableComponent getOrCreateScalableComponent(ReadOnlyCard card);
+    
+    /**
+     * Get or creates once a scalable component for the given model object.
+     * @param card
+     * @return
+     */
+    public IScalableComponent getOrCreateScalableComponent(ReadOnlyCardStack card);
     
     /**
      * Adds a scalable resource.

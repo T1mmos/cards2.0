@@ -125,7 +125,7 @@ public class GamePanelService implements IGamePanelService
     @Override
     public void fillGamePanel()
     {
-        createScalableComponents();
+        addScalableComponents();
 
         resizeListener = new GamePanelResizeListener();
         dragListener = new GamePanelMouseListener();
@@ -142,7 +142,7 @@ public class GamePanelService implements IGamePanelService
         rescaleAsync();
     }
 
-    protected void createScalableComponents()
+    protected void addScalableComponents()
     {
         IScalableComponentService scaleCompServ = Services.get(IScalableComponentService.class);
 
@@ -153,7 +153,7 @@ public class GamePanelService implements IGamePanelService
         for (int i = 0; i < cards.size(); i++)
         {
             ReadOnlyCard card = cards.get(i);
-            IScalableComponent scaleComp = scaleCompServ.getOrCreate(card);
+            IScalableComponent scaleComp = scaleCompServ.getOrCreateScalableComponent(card);
             add(scaleComp);
         }
     }

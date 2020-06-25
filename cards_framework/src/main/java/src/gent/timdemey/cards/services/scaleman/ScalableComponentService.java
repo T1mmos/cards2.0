@@ -33,7 +33,7 @@ import gent.timdemey.cards.services.interfaces.IScalableComponentService;
 import gent.timdemey.cards.services.scaleman.comps.CardScalableImageComponent;
 import gent.timdemey.cards.services.scaleman.img.ScalableImageResource;
 
-public class ScalableComponentService implements IScalableComponentService
+public abstract class ScalableComponentService implements IScalableComponentService
 {
     private final Executor barrierExecutor;
     private final Executor taskExecutor;
@@ -149,7 +149,7 @@ public class ScalableComponentService implements IScalableComponentService
     }
 
     @Override
-    public IScalableComponent getOrCreate(ReadOnlyCard card)
+    public IScalableComponent getOrCreateScalableComponent(ReadOnlyCard card)
     {
         IIdService uuidServ = Services.get(IIdService.class);
 

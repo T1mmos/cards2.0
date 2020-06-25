@@ -1,10 +1,16 @@
 package gent.timdemey.cards.services.gamepanel;
 
+import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.services.cardgame.SolitaireCardStackType;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IIdService;
+import gent.timdemey.cards.services.interfaces.IScalableComponentService;
+import gent.timdemey.cards.services.scaleman.IScalableComponent;
 
 public class SolitaireGamePanelService extends GamePanelService
 {
@@ -18,7 +24,7 @@ public class SolitaireGamePanelService extends GamePanelService
         preloadCardStacks();
     }
 
-    protected void preloadCardStacks()
+    private void preloadCardStacks()
     {
         IIdService idServ = Services.get(IIdService.class);
 
@@ -32,4 +38,22 @@ public class SolitaireGamePanelService extends GamePanelService
             preloadImage(id, filename);
         }
     }
+    
+    @Override
+    protected void addScalableComponents()
+    {
+        IScalableComponentService scaleCompServ = Services.get(IScalableComponentService.class);
+
+        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState().getCardGame();
+
+        // card components
+        List<ReadOnlyCard> cards = cardGame.getCards();
+        for (int i = 0; i < cards.size(); i++)
+        {
+            ReadOnlyCard card = cards.get(i);
+            IScalableComponent scaleComp = scaleCompServ.getOrCreateScalableComponent(card);
+            add(scaleComp);
+        }
+    }
+
 }

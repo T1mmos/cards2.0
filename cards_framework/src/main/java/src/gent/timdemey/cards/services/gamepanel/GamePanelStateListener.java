@@ -15,6 +15,7 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 import gent.timdemey.cards.services.interfaces.IScalableComponentService;
+import gent.timdemey.cards.services.scaleman.comps.CardScalableImageComponent;
 
 class GamePanelStateListener implements IStateListener
 {
@@ -32,16 +33,25 @@ class GamePanelStateListener implements IStateListener
         {            
             ReadOnlyCard card = state.getCardGame().getCard(change.entityId);
             IScalableComponentService scaleCompServ = Services.get(IScalableComponentService.class);
-            scaleCompServ.getOrCreate(card).repaint();
+            
+            CardScalableImageComponent cardComp = (CardScalableImageComponent) scaleCompServ.getOrCreateScalableComponent(card);
+            cardComp.updateVisible();
         }
         else if (property == ReadOnlyCardStack.Cards)
         {
-            ReadOnlyCardStack cardStack = state.getCardGame().getCardStack(change.entityId);
-
-            for (ReadOnlyCard card : cardStack.getCards())
+            if (change.addedValue != null)
             {
+                ReadOnlyCard card = (ReadOnlyCard) change.addedValue;
                 gamePanelManager.animateCard(card);
+             //   ReadOnlyCard card = state.getCardGame().getCard(change.entityId);
+             //   gamePanelManager.animateCard(card);
+                /*ReadOnlyCardStack cardStack = state.getCardGame().getCardStack(change.entityId);
+
+                for (ReadOnlyCard card : cardStack.getCards())
+                {
+                }*/
             }
+            
         }
         else if (property == ReadOnlyPlayer.Score)
         {   
