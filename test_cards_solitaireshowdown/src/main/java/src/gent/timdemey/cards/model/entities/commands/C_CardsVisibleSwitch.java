@@ -5,12 +5,12 @@ import java.util.List;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.SolShowTestState;
 import gent.timdemey.cards.model.entities.cards.Card;
-import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.IScalableImageManager;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IScalingService;
+import gent.timdemey.cards.services.scaleman.IScalableComponent;
 
 public class C_CardsVisibleSwitch extends CommandBase
 {
@@ -30,7 +30,14 @@ public class C_CardsVisibleSwitch extends CommandBase
         
         for(Card card : cards)
         {
-            Services.get(IScalableImageManager.class).getJScalableImage(card.id).setVisible(testState.cardsVisible); 
+            card.visibleRef.set(testState.cardsVisible);
+        } 
+        
+        IScalingService scaleServ = Services.get(IScalingService.class);
+        List<IScalableComponent<?>> comps = scaleServ.getComponents();
+        for(IScalableComponent<?> comp : comps)
+        {
+            comp.update();
         }        
     }
 
