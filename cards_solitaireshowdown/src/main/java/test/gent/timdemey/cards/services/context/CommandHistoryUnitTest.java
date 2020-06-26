@@ -34,8 +34,6 @@ public class CommandHistoryUnitTest extends SolShowTestBase
     { 
         installSolShowCardPlugin();
         installMockContextService();
-        
-        
     }
 
     private IContextService ctxtServ;

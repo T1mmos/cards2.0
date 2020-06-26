@@ -181,9 +181,9 @@ public class SolShowPositionManager implements IPositionService
         }
         else if(cardStack.getCardStackType().equals(SolShowCardStackType.TURNOVER))
         {
-            x = gameLayout.act_tpadx + (int) (0.5 * gameLayout.act_cwidth) + gameLayout.act_swidth + gameLayout.act_soffsetx;
+            x = gameLayout.act_tpadx + gameLayout.act_swidth + gameLayout.act_soffsetx;
             y = gameLayout.act_tpady + 4 * (gameLayout.act_sheight + gameLayout.act_soffsety);
-            w = gameLayout.act_swidth;
+            w = gameLayout.act_swidth + (int) (0.5 * gameLayout.act_cwidth);
             h = gameLayout.act_sheight ;
         }
         else if(cardStack.getCardStackType().equals(SolShowCardStackType.LAYDOWN))

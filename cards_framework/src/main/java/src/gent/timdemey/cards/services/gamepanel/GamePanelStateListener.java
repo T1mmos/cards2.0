@@ -40,17 +40,18 @@ class GamePanelStateListener implements IStateListener
         }
         else if (property == ReadOnlyCardStack.Cards)
         {
-            if (change.addedValue != null)
+            //if (change.addedValue != null)
             {
-                ReadOnlyCard card = (ReadOnlyCard) change.addedValue;
-                gamePanelManager.animateCard(card);
-             //   ReadOnlyCard card = state.getCardGame().getCard(change.entityId);
-             //   gamePanelManager.animateCard(card);
-                /*ReadOnlyCardStack cardStack = state.getCardGame().getCardStack(change.entityId);
+               // ReadOnlyCard card = (ReadOnlyCard) change.addedValue;
+                
+               // ReadOnlyCard card = state.getCardGame().getCard(change.entityId);
+                
+                ReadOnlyCardStack cardStack = state.getCardGame().getCardStack(change.entityId);
 
                 for (ReadOnlyCard card : cardStack.getCards())
                 {
-                }*/
+                    gamePanelManager.animateCard(card);
+                }
             }
             
         }
