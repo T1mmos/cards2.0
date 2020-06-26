@@ -213,6 +213,7 @@ public class GamePanelService implements IGamePanelService
             LayeredArea layArea = posMan.getLayeredArea(scaleComp);
             
             setLayer(scaleComp, layArea.layer);
+            scaleComp.setMirror(layArea.mirror);
         }
 
         gamePanel.repaint();

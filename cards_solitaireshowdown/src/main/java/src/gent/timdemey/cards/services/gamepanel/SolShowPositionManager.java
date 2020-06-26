@@ -118,7 +118,7 @@ public class SolShowPositionManager implements IPositionService
             int width = la_card.width; 
             int height = gameLayout.act_scoretext_height;
             
-            return new LayeredArea(x, y, width, height, LAYER_ANIMATIONS);
+            return new LayeredArea(x, y, width, height, LAYER_ANIMATIONS, false);
         }
 
         throw new UnsupportedOperationException();
@@ -157,7 +157,7 @@ public class SolShowPositionManager implements IPositionService
             rect.height = gameLayout.act_cheight;
         }
 
-        return new LayeredArea(rect, LAYER_CARDS + card.getCardIndex());
+        return new LayeredArea(rect, LAYER_CARDS + card.getCardIndex(), false);
     }
 
     private LayeredArea getLayeredArea(ReadOnlyCardStack cardStack)
@@ -216,7 +216,7 @@ public class SolShowPositionManager implements IPositionService
             rect.y = gameLayout.act_theight - rect.y - rect.height;
         }            
 
-        return new LayeredArea(rect, LAYER_CARDSTACKS);
+        return new LayeredArea(rect, LAYER_CARDSTACKS, !isLocal);
     }
 
     @Override
