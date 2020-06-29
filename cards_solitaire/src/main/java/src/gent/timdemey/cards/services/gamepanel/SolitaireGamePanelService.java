@@ -33,7 +33,7 @@ public class SolitaireGamePanelService extends GamePanelService
 
         for (String stack : stacks)
         {
-            UUID id = idServ.createCardStackResourceId(stack);
+            UUID id = idServ.createCardStackScalableResourceId(stack);
             String filename = String.format(FILEPATH_CARDSTACK, stack.toLowerCase());
             preloadImage(id, filename);
         }
@@ -57,4 +57,5 @@ public class SolitaireGamePanelService extends GamePanelService
         }
     }
 
+    
 }

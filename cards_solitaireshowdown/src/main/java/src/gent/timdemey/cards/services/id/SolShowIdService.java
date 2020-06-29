@@ -6,7 +6,7 @@ public class SolShowIdService extends IdService
 {
 
     @Override
-    public UUID createCardStackResourceId(String cardStackType)
+    public UUID createCardStackScalableResourceId(String cardStackType)
     {
         return getUUID(RESID_CARDSTACK, cardStackType); 
     }

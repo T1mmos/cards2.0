@@ -1,5 +1,6 @@
 package gent.timdemey.cards.services.gamepanel;
 
+import java.awt.Dimension;
 import java.awt.Rectangle;
 
 import javax.swing.SwingUtilities;
@@ -9,13 +10,16 @@ import com.google.common.base.Preconditions;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.cardgame.SolitaireCardStackType;
+import gent.timdemey.cards.services.contract.GetCardScaleInfoRequest;
+import gent.timdemey.cards.services.contract.GetCardStackScaleInfoRequest;
+import gent.timdemey.cards.services.contract.GetScaleInfoRequest;
 import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaleman.IScalableComponent;
 import gent.timdemey.cards.services.scaleman.comps.CardScalableImageComponent;
 import gent.timdemey.cards.services.scaleman.comps.CardStackScalableImageComponent;
 
-public class SolitairePositionManager implements IPositionService
+public class SolitairePositionService implements IPositionService
 {
     private static final int LAYER_CARDSTACKS = 0;
     private static final int LAYER_CARDS = 200;
@@ -105,21 +109,40 @@ public class SolitairePositionManager implements IPositionService
         }
         throw new UnsupportedOperationException();
     }
-
-    private Rectangle getCardSize()
+    
+    @Override
+    public Dimension getDimension(GetScaleInfoRequest request)
     {
-        return new Rectangle(0, 0, gameLayout.act_cwidth, gameLayout.act_cheight);
+        if (request instanceof GetCardScaleInfoRequest)
+        {
+            // we don't need request.card, in this game all cards are equal in size
+            return getCardDimension();
+        }
+        else if (request instanceof GetCardStackScaleInfoRequest)
+        {
+            String csType = ((GetCardStackScaleInfoRequest) request).cardStack.getCardStackType();
+            return getCardStackDimension(csType);
+        }
+        else 
+        {
+            throw new UnsupportedOperationException(request.getClass().getSimpleName() + " is not supported, cannot get dimensions for it");
+        }
     }
 
-    private Rectangle getCardStackSize(String cardStackType)
+    private Dimension getCardDimension()
+    {
+        return new Dimension(gameLayout.act_cwidth, gameLayout.act_cheight);
+    }
+
+    private Dimension getCardStackDimension(String cardStackType)
     {
         if (cardStackType.equals(SolitaireCardStackType.MIDDLE))
         {
-            return new Rectangle(0, 0, gameLayout.act_swidth, 2 * gameLayout.act_sheight);
+            return new Dimension(gameLayout.act_swidth, 2 * gameLayout.act_sheight);
         }
         else
         {
-            return new Rectangle(0, 0, gameLayout.act_swidth, gameLayout.act_sheight);
+            return new Dimension(gameLayout.act_swidth, gameLayout.act_sheight);
         }
 
     }
@@ -128,7 +151,7 @@ public class SolitairePositionManager implements IPositionService
     {
         int stackNr = cardStack.getTypeNumber();
 
-        Rectangle size = getCardStackSize(cardStack.getCardStackType());
+        Dimension size = getCardStackDimension(cardStack.getCardStackType());
         Rectangle rect = new Rectangle(gameLayout.act_tpadx, gameLayout.act_tpady, size.width, size.height);
 
         if (cardStack.getCardStackType().equals(SolitaireCardStackType.DEPOT))
@@ -159,7 +182,7 @@ public class SolitairePositionManager implements IPositionService
         ReadOnlyCardStack cardStack = card.getCardStack();
 
         Rectangle rect = getBounds(cardStack);
-        Rectangle size = getCardSize();
+        Dimension size = getCardDimension();
         rect.width = size.width;
         rect.height = size.height;
 

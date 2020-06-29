@@ -11,5 +11,5 @@ public interface IAnimation
      * @param frac
      * @param comp
      */
-    public void tick (double frac, IScalableComponent comp);
+    public void tick (double frac, IScalableComponent<?> comp);
 }

@@ -1,5 +1,6 @@
 package gent.timdemey.cards.services.scaleman.text;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.util.UUID;
 
@@ -19,11 +20,18 @@ public class ScalableFontResource extends ScalableResource<Font>
         // we always rescale fonts
         return true;
     }
+    
+    @Override
+    protected Dimension canonical(Dimension dim)
+    {
+        // for a font, only the height matters
+        return new Dimension(0, dim.height);
+    }
 
     @Override
-    protected Font rescaleImpl(int width, int height)
+    protected Font rescaleImpl(Dimension target)
     {
-        float size = (float) height;
+        float size = (float) target.height;
         Font rescaled = getResource().raw.deriveFont(size);
         return rescaled;
     }

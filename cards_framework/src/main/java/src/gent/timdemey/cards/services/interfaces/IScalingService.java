@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
+import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.scaleman.IScalableComponent;
 import gent.timdemey.cards.services.scaleman.IScalableResource;
 
@@ -30,7 +31,7 @@ public interface IScalingService
      * waits for all rescale operations to finish before updating all
      * components at the same time on the UI thread.
      */
-    public void rescaleAllResources(Runnable callback);    
+    public void rescaleAsync(List<RescaleRequest> requests, Runnable callback);    
 
     /**
      * Get or creates once a scalable component for the given model object.
@@ -64,10 +65,7 @@ public interface IScalingService
      * Clears all links between ScalableImages and their managed objects. All
      * references to managed objects are cleared.
      */
-    public void clearManagedObjects();
-
-    public void setAllBounds();
-    
+    public void clearManagedObjects();    
 
     /**
      * Gets the component at the given position with the highest Z-order.

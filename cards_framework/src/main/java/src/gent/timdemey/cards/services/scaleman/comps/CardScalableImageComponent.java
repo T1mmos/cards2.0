@@ -29,8 +29,8 @@ public class CardScalableImageComponent extends ScalableImageComponent
     public final void update()
     {
         IIdService idServ = Services.get(IIdService.class);
-        UUID resId = card.isVisible() ? idServ.createCardFrontResourceId(card.getSuit(), card.getValue()) 
-                                       : idServ.createCardBackResourceId();
+        UUID resId = card.isVisible() ? idServ.createCardFrontScalableResourceId(card.getSuit(), card.getValue()) 
+                                       : idServ.createCardBackScalableResourceId();
         setScalableImageResource(resId);
     }
 }

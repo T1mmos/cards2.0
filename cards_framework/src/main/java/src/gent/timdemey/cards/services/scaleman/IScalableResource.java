@@ -1,5 +1,7 @@
 package gent.timdemey.cards.services.scaleman;
 
+import java.awt.Dimension;
+import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.services.contract.Resource;
@@ -14,12 +16,11 @@ public interface IScalableResource<R>
     
     /**
      * Rescales the original raw resource in the requested
-     * dimensions. The result may be cached by the implementation's caching policy (if any) so the rescaling
+     * dimension. The result may be cached by the implementation's caching policy (if any) so the rescaling
      * operation may be very fast.
-     * @param width
-     * @param height
+     * @param dim
      */
-    void rescale(int width, int height);
+    void rescale(Dimension dim);
     
     /**
      * Get the raw resource in the given dimensions. The returned resource may
@@ -28,11 +29,17 @@ public interface IScalableResource<R>
      * rescale operation on the UI thread optimized for speed.
      * @return
      */
-    R get(int width, int height);
+    R get(Dimension dim);
     
     /**
      * Get the actual resource in its original dimensions.
      * @return
      */
     Resource<R> getResource();
+    
+    /**
+     * Get all available dimensions of this resource.
+     * @return
+     */
+    List<Dimension> getDimensions();
 }

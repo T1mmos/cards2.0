@@ -17,7 +17,6 @@ public interface IGamePanelService extends IPreload
     public boolean getDrawDebug();
 
     public void animateCard(ReadOnlyCard card);    
-    public void animateCardScore(ReadOnlyCard card, int oldValue, int newValue);
 
     public int getLayer(IScalableComponent<?> scalableComponent);
     public void setLayer(IScalableComponent<?> component, int layerIndex);    

@@ -30,7 +30,7 @@ public class CardStackScalableImageComponent extends ScalableImageComponent
     public void update()
     {
         IIdService idServ = Services.get(IIdService.class);
-        UUID resId = idServ.createCardStackResourceId(cardStack.getCardStackType());
+        UUID resId = idServ.createCardStackScalableResourceId(cardStack.getCardStackType());
         setScalableImageResource(resId);
     }
 }

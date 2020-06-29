@@ -158,7 +158,7 @@ public abstract class ScalableComponent<R> implements IScalableComponent<R>
     }
 
     @Override
-    public final void setForeground(Color color)
+    public void setForeground(Color color)
     {
         getComponent().setForeground(color);
     }

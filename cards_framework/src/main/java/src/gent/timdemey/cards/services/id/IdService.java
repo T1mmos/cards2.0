@@ -20,31 +20,26 @@ public abstract class IdService implements IIdService
     
     
     @Override
-    public UUID createCardFrontResourceId(Suit suit, Value value)
+    public UUID createCardFrontScalableResourceId(Suit suit, Value value)
     {
         String suit_str = suit.getTextual();
         String value_str = value.getTextual();
         return getUUID(RESID_CARD_FRONTSIDE, value_str, suit_str);
     }
     
-    public UUID createCardFrontResourceId(ReadOnlyCard card)
-    {
-        return createCardFrontResourceId(card.getSuit(), card.getValue());
-    }
-
-    public UUID createCardBackResourceId()
+    public UUID createCardBackScalableResourceId()
     {
         return getUUID(RESID_CARD_BACKSIDE);
     }
     
     @Override
-    public UUID createCardComponentId(ReadOnlyCard card)
+    public UUID createCardScalableComponentId(ReadOnlyCard card)
     {
         return getUUID(COMPID_CARD, card.getId().toString());
     }
 
     @Override
-    public UUID createCardStackComponentId(ReadOnlyCardStack cardStack)
+    public UUID createCardStackScalableComponentId(ReadOnlyCardStack cardStack)
     {
         return getUUID(COMPID_CARDSTACK, cardStack.getId().toString());
     }
@@ -76,7 +71,7 @@ public abstract class IdService implements IIdService
     }
 
     @Override
-    public UUID createFontResourceId(String fontname)
+    public UUID createFontScalableResourceId(String fontname)
     {
         return getUUID(RESID_FONT, fontname);
     }

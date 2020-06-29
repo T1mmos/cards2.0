@@ -1,5 +1,6 @@
 package gent.timdemey.cards.services.scaleman.img;
 
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.util.UUID;
 
@@ -27,9 +28,9 @@ public class ScalableImageResource extends ScalableResource<BufferedImage>
     }
 
     @Override
-    protected BufferedImage rescaleImpl(int width, int height)
+    protected BufferedImage rescaleImpl(Dimension dim)
     {
-        BufferedImageScaler scaler = new BufferedImageScaler(resource.raw, width, height);
+        BufferedImageScaler scaler = new BufferedImageScaler(resource.raw, dim.width, dim.height);
         BufferedImage biScaled = scaler.getScaledInstance();
         return biScaled;
     }

@@ -1,7 +1,8 @@
 package gent.timdemey.cards.services.gamepanel;
 
-import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,13 +12,16 @@ import gent.timdemey.cards.model.entities.cards.Value;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.contract.FontResource;
+import gent.timdemey.cards.services.contract.GetCardScaleInfoRequest;
+import gent.timdemey.cards.services.contract.GetCardStackScaleInfoRequest;
+import gent.timdemey.cards.services.contract.GetScaleInfoRequest;
 import gent.timdemey.cards.services.contract.ImageResource;
 import gent.timdemey.cards.services.contract.LayeredArea;
+import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.gamepanel.animations.AnimationEnd;
-import gent.timdemey.cards.services.gamepanel.animations.ForegroundColorAnimation;
 import gent.timdemey.cards.services.gamepanel.animations.GamePanelAnimator;
-import gent.timdemey.cards.services.gamepanel.animations.IAnimation;
 import gent.timdemey.cards.services.gamepanel.animations.MovingAnimation;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
@@ -27,21 +31,17 @@ import gent.timdemey.cards.services.interfaces.IResourceService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.scaleman.IScalableComponent;
 import gent.timdemey.cards.services.scaleman.IScalableResource;
-import gent.timdemey.cards.services.scaleman.comps.CardScoreScalableTextComponent;
 import gent.timdemey.cards.services.scaleman.img.ScalableImageResource;
 import gent.timdemey.cards.services.scaleman.text.ScalableFontResource;
-import gent.timdemey.cards.services.scaleman.text.ScalableTextComponent;
 
 public class GamePanelService implements IGamePanelService
 {
     private static final int ANIMATION_TIME_CARD = 80;
-    private static final int ANIMATION_TIME_SCORE = 1200;
 
     private static final String FILEPATH_CARD_FRONTSIDE = "cards/edge_thick/%s_%s.png";
     private static final String FILEPATH_CARD_BACKSIDE = "backside_yellow.png";
-    private static final String FILEPATH_FONT_SCORE = "SMB2.ttf";
     
-    private final GamePanelAnimator animator;
+    protected final GamePanelAnimator animator;
 
     private GamePanelResizeListener resizeListener;
     private GamePanelMouseListener dragListener;
@@ -84,10 +84,6 @@ public class GamePanelService implements IGamePanelService
 
     protected void preloadFonts()
     {
-        IIdService idServ = Services.get(IIdService.class);
-        
-        // score font        
-        preloadFont(idServ.createFontResourceId(FILEPATH_FONT_SCORE), FILEPATH_FONT_SCORE);
     }    
     
     protected void preloadCards()
@@ -95,14 +91,14 @@ public class GamePanelService implements IGamePanelService
         IIdService idServ = Services.get(IIdService.class);
         
         // card back
-        preloadImage(idServ.createCardBackResourceId(), getCardBackFilePath());
+        preloadImage(idServ.createCardBackScalableResourceId(), getCardBackFilePath());
 
         // card fronts
         for (Suit suit : Suit.values())
         {
             for (Value value : Value.values()) // have fun reading the code lol
             {
-                UUID resId = idServ.createCardFrontResourceId(suit, value);
+                UUID resId = idServ.createCardFrontScalableResourceId(suit, value);
                 String filepath = getCardFrontFilePath(suit, value);
                 preloadImage(resId, filepath);
             }
@@ -120,11 +116,6 @@ public class GamePanelService implements IGamePanelService
     private String getCardBackFilePath()
     {
         return FILEPATH_CARD_BACKSIDE;
-    }
-    
-    private String getScoreFontFilePath ()
-    {
-        return FILEPATH_FONT_SCORE;
     }
 
     @Override
@@ -144,7 +135,7 @@ public class GamePanelService implements IGamePanelService
 
         resizeListener = new GamePanelResizeListener();
         dragListener = new GamePanelMouseListener();
-        gameEventListener = new GamePanelStateListener();
+        gameEventListener = createGamePanelStateListener();
 
         gamePanel.addComponentListener(resizeListener);
         gamePanel.addMouseMotionListener(dragListener);
@@ -157,6 +148,11 @@ public class GamePanelService implements IGamePanelService
         rescaleAsync();
     }
 
+    protected GamePanelStateListener createGamePanelStateListener()
+    {
+        return new GamePanelStateListener();
+    }
+    
     protected void addScalableComponents()
     {
         IScalingService scaleCompServ = Services.get(IScalingService.class);
@@ -204,16 +200,15 @@ public class GamePanelService implements IGamePanelService
         IPositionService posMan = Services.get(IPositionService.class);
         posMan.setMaxSize(maxWidth, maxHeight);
 
-        // now update the position of all components
-        IScalingService scaleCompService = Services.get(IScalingService.class);
-        scaleCompService.setAllBounds();
-        
+        // now update the position, layer and other properties of all components
+        IScalingService scaleCompService = Services.get(IScalingService.class);        
         for (IScalableComponent<?> scaleComp : scaleCompService.getComponents())
         {
             LayeredArea layArea = posMan.getLayeredArea(scaleComp);
-            
-            setLayer(scaleComp, layArea.layer);
+
+            scaleComp.setBounds(layArea.getBounds2D());
             scaleComp.setMirror(layArea.mirror);
+            setLayer(scaleComp, layArea.layer);
         }
 
         gamePanel.repaint();
@@ -236,10 +231,54 @@ public class GamePanelService implements IGamePanelService
         return drawDebug;
     }
 
-    public void rescaleAsync()
+    @Override
+    public final void rescaleAsync()
     {
-        IScalingService scaleCompServ = Services.get(IScalingService.class);
-        scaleCompServ.rescaleAllResources(() -> gamePanel.repaint());
+        IScalingService scaleServ = Services.get(IScalingService.class);
+        List<RescaleRequest> requests = createRescaleRequests();
+        scaleServ.rescaleAsync(requests, () -> gamePanel.repaint());
+    }
+    
+    protected List<RescaleRequest> createRescaleRequests()
+    {
+        IIdService idServ = Services.get(IIdService.class);
+        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState().getCardGame();
+        
+        List<RescaleRequest> requests = new ArrayList<RescaleRequest>();
+        
+        // cards
+        for (ReadOnlyCard card : cardGame.getCards())
+        {
+            GetScaleInfoRequest infoReq = new GetCardScaleInfoRequest(card);
+            UUID resId = idServ.createCardFrontScalableResourceId(card.getSuit(), card.getValue());
+            addRescaleRequest(requests, infoReq, resId);
+        }
+        
+        // card stacks
+        for (ReadOnlyCardStack cs : cardGame.getCardStacks())
+        {
+            GetScaleInfoRequest infoReq = new GetCardStackScaleInfoRequest(cs);
+            UUID resId = idServ.createCardStackScalableResourceId(cs.getCardStackType());
+            addRescaleRequest(requests, infoReq, resId);
+        }
+        
+        return requests;
+    }
+    
+    protected final void addRescaleRequest(List<RescaleRequest> requests, GetScaleInfoRequest request, UUID resId)
+    {
+        IPositionService posServ = Services.get(IPositionService.class);
+        IScalingService scaleServ = Services.get(IScalingService.class);
+        
+        // get dimension
+        Dimension dim = posServ.getDimension(request);
+        
+        // get the resource to rescale
+        IScalableResource<?> res = scaleServ.getScalableResource(resId);
+        
+        // add rescale request for resource / dimension combination
+        RescaleRequest rescReq = new RescaleRequest(res, dim);
+        requests.add(rescReq);
     }
 
     @Override
@@ -248,7 +287,7 @@ public class GamePanelService implements IGamePanelService
         IIdService uuidServ = Services.get(IIdService.class);
         IScalingService scaleCompServ = Services.get(IScalingService.class);
 
-        UUID compId = uuidServ.createCardComponentId(card);
+        UUID compId = uuidServ.createCardScalableComponentId(card);
         IScalableComponent<?> scaleComp = scaleCompServ.getScalableComponent(compId);
 
         LayeredArea layArea = Services.get(IPositionService.class).getLayeredArea(scaleComp);
@@ -256,7 +295,7 @@ public class GamePanelService implements IGamePanelService
         IPositionService posServ = Services.get(IPositionService.class);
        
         int layer = layArea.layer;
-        layer += posServ.getDragLayer();
+        layer += posServ.getAnimationLayer();
         
         setLayer(scaleComp, layer);
 
@@ -264,32 +303,6 @@ public class GamePanelService implements IGamePanelService
         MovingAnimation anim_pos = new MovingAnimation(scaleComp.getBounds().getLocation(), layArea.getLocation2D());
         AnimationEnd animEnd = new AnimationEnd(false, layerEnd);
         animator.animate(scaleComp, animEnd, ANIMATION_TIME_CARD, anim_pos);
-    }
-
-    @Override
-    public void animateCardScore(ReadOnlyCard card, int oldScore, int newScore)
-    {
-        IScalingService scaleServ = Services.get(IScalingService.class);
-        IIdService idServ = Services.get(IIdService.class);
-        
-        UUID resId = idServ.createFontResourceId(FILEPATH_FONT_SCORE);
-        ScalableFontResource scaleFontRes = (ScalableFontResource) scaleServ.getScalableResource(resId);
-        
-        int incr = newScore - oldScore;
-        ScalableTextComponent scaleTextComp = new CardScoreScalableTextComponent(UUID.randomUUID(), "+" + incr, scaleFontRes, card);
-
-        add(scaleTextComp);
-        IPositionService posServ = Services.get(IPositionService.class);
-       
-        LayeredArea layArea = posServ.getLayeredArea(scaleTextComp);
-        scaleTextComp.setBounds(layArea.getBounds2D());
-        setLayer(scaleTextComp, posServ.getAnimationLayer());
-        scaleTextComp.update();
-        
-        IAnimation anim_color = new ForegroundColorAnimation(new Color(50, 100, 50, 255), new Color(255, 165, 0, 0));
-        IAnimation anim_pos = new MovingAnimation(layArea.x, layArea.y, layArea.x, layArea.y - layArea.height);
-
-        animator.animate(scaleTextComp, new AnimationEnd(true, -1), ANIMATION_TIME_SCORE, anim_color, anim_pos);
     }
 
     @Override
@@ -313,6 +326,8 @@ public class GamePanelService implements IGamePanelService
     public void remove(IScalableComponent<?> comp)
     {
         gamePanel.remove(comp.getComponent());
+        gamePanel.revalidate();
+        gamePanel.repaint();
     }
 
 }

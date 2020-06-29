@@ -1,5 +1,6 @@
 package gent.timdemey.cards.services.scaleman.img;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -62,18 +63,17 @@ public abstract class ScalableImageComponent extends ScalableComponent<BufferedI
 
     public final void draw(Graphics2D g2)
     {
-        int width = getBounds().width;
-        int height = getBounds().height;
+        Dimension dim = getBounds().getSize();
         
-        BufferedImage bi = currentScaledResource.get(width, height);
+        BufferedImage bi = currentScaledResource.get(dim);
         
         if (!currentScaledResource.getResource().fallback)
         {
-            drawScaled(g2, bi, width, height);
+            drawScaled(g2, bi, dim);
         }
         else
         {
-            drawTiled(g2, bi, width, height);
+            drawTiled(g2, bi, dim);
         }
     }
     
@@ -84,8 +84,10 @@ public abstract class ScalableImageComponent extends ScalableComponent<BufferedI
      * @param width
      * @param height
      */
-    private void drawScaled(Graphics2D g2, BufferedImage image, int width, int height)
+    private void drawScaled(Graphics2D g2, BufferedImage image, Dimension dim)
     {
+        int width = dim.width;
+        int height = dim.height;
         Graphics2D g3 = (Graphics2D) g2.create();
         if(isMirror())
         {
@@ -114,15 +116,15 @@ public abstract class ScalableImageComponent extends ScalableComponent<BufferedI
         g3.dispose();
     }
 
-    private void drawTiled(Graphics2D g2, BufferedImage image, int width, int height)
+    private void drawTiled(Graphics2D g2, BufferedImage image, Dimension dim)
     {
         Graphics2D g3 = (Graphics2D) g2.create();
         
         int tileWidth = image.getWidth();
         int tileHeight = image.getHeight();
-        for (int y = 0; y < height; y += tileHeight)
+        for (int y = 0; y < dim.height; y += tileHeight)
         {
-            for (int x = 0; x < width; x += tileWidth)
+            for (int x = 0; x < dim.width; x += tileWidth)
             {
                 g3.drawImage(image, x, y, null);
             }

@@ -14,25 +14,26 @@ public class GamePanelAnimator
 {
     private final List<AnimationInfo> animationInfos;
     private final Timer timer;
-    
+
     public GamePanelAnimator()
     {
         animationInfos = new ArrayList<>();
-        timer = new Timer(15, e -> tick());
+        timer = new Timer(10, e -> tick());
     }
 
-    public void animate(IScalableComponent component, AnimationEnd end, int animationTime, IAnimation ...  animations)
+    public void animate(IScalableComponent<?> component, AnimationEnd end, int animationTime, IAnimation... animations)
     {
-        AnimationInfo animationInfo = new AnimationInfo(component, end, animationTime, System.currentTimeMillis(), animations);
-        animationInfos.add(animationInfo);        
+        AnimationInfo animationInfo = new AnimationInfo(component, end, animationTime, System.currentTimeMillis(),
+                animations);
+        animationInfos.add(animationInfo);
     }
-        
+
     public void start()
     {
-        timer.start();        
+        timer.start();
     }
-    
-    public void stop ()
+
+    public void stop()
     {
         timer.stop();
     }
@@ -42,17 +43,18 @@ public class GamePanelAnimator
         long currTickTime = System.currentTimeMillis();
 
         Iterator<AnimationInfo> i = animationInfos.iterator();
-        while (i.hasNext()) {
+        while (i.hasNext())
+        {
             AnimationInfo animInfo = i.next();
-            
+
             long dt = currTickTime - animInfo.tickStart;
             double frac = Math.min(1.0, 1.0 * dt / animInfo.animationTime);
-            
-            for(IAnimation animator : animInfo.animations)
+
+            for (IAnimation animator : animInfo.animations)
             {
                 animator.tick(frac, animInfo.component);
             }
-            
+
             if (frac == 1.0)
             {
                 i.remove();
@@ -68,5 +70,19 @@ public class GamePanelAnimator
                 }
             }
         }
+    }
+    
+    /**
+     * Get the components that are currently being animated.
+     * @return
+     */
+    public List<IScalableComponent<?>> getScalableComponents()
+    {
+        List<IScalableComponent<?>> comps = new ArrayList<>();
+        for (AnimationInfo info : animationInfos)
+        {
+            comps.add(info.component);
+        }
+        return comps;
     }
 }

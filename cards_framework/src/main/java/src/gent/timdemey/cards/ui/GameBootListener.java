@@ -45,9 +45,10 @@ public class GameBootListener implements IStateListener
                 
                 GamePanel gamePanel = gamePanelServ.createGamePanel();
                 frame.getContentPane().add(gamePanel, "push, grow");
+
+                frame.validate();
                 
                 gamePanelServ.fillGamePanel();
-                frame.validate();
             }
         }        
     }
