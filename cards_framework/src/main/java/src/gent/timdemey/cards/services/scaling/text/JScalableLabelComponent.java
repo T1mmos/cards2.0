@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.scaleman.text;
+package gent.timdemey.cards.services.scaling.text;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

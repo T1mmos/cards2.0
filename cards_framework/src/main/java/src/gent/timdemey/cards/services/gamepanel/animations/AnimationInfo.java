@@ -1,6 +1,6 @@
 package gent.timdemey.cards.services.gamepanel.animations;
 
-import gent.timdemey.cards.services.scaleman.IScalableComponent;
+import gent.timdemey.cards.services.scaling.IScalableComponent;
 
 class AnimationInfo 
 {

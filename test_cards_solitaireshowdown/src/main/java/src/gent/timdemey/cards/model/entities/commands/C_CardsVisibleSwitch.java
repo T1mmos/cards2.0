@@ -10,7 +10,7 @@ import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.IScalingService;
-import gent.timdemey.cards.services.scaleman.IScalableComponent;
+import gent.timdemey.cards.services.scaling.IScalableComponent;
 
 public class C_CardsVisibleSwitch extends CommandBase
 {

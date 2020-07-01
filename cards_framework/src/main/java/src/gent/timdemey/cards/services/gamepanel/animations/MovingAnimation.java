@@ -3,7 +3,7 @@ package gent.timdemey.cards.services.gamepanel.animations;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import gent.timdemey.cards.services.scaleman.IScalableComponent;
+import gent.timdemey.cards.services.scaling.IScalableComponent;
 
 public class MovingAnimation implements IAnimation
 {

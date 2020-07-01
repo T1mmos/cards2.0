@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.scaleman.img;
+package gent.timdemey.cards.services.scaling.img;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;

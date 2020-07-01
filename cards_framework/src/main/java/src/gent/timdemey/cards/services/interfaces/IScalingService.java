@@ -8,8 +8,8 @@ import java.util.UUID;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.contract.RescaleRequest;
-import gent.timdemey.cards.services.scaleman.IScalableComponent;
-import gent.timdemey.cards.services.scaleman.IScalableResource;
+import gent.timdemey.cards.services.scaling.IScalableComponent;
+import gent.timdemey.cards.services.scaling.IScalableResource;
 
 /**
  * Creates and manages JScalableImages. You create them by supplying any object

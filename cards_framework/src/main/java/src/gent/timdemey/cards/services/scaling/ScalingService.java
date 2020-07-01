@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.scaleman;
+package gent.timdemey.cards.services.scaling;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -30,9 +30,9 @@ import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
-import gent.timdemey.cards.services.scaleman.comps.CardScalableImageComponent;
-import gent.timdemey.cards.services.scaleman.comps.CardStackScalableImageComponent;
-import gent.timdemey.cards.services.scaleman.img.ScalableImageResource;
+import gent.timdemey.cards.services.scaling.comps.CardScalableImageComponent;
+import gent.timdemey.cards.services.scaling.comps.CardStackScalableImageComponent;
+import gent.timdemey.cards.services.scaling.img.ScalableImageResource;
 
 public final class ScalingService implements IScalingService
 {

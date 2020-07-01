@@ -22,10 +22,10 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
-import gent.timdemey.cards.services.scaleman.IScalableComponent;
-import gent.timdemey.cards.services.scaleman.comps.CardScalableImageComponent;
-import gent.timdemey.cards.services.scaleman.comps.CardStackScalableImageComponent;
-import gent.timdemey.cards.services.scaleman.img.ScalableImageComponent;
+import gent.timdemey.cards.services.scaling.IScalableComponent;
+import gent.timdemey.cards.services.scaling.comps.CardScalableImageComponent;
+import gent.timdemey.cards.services.scaling.comps.CardStackScalableImageComponent;
+import gent.timdemey.cards.services.scaling.img.ScalableImageComponent;
 
 class GamePanelMouseListener extends MouseAdapter
 {

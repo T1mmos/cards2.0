@@ -2,7 +2,7 @@ package gent.timdemey.cards.services.gamepanel.animations;
 
 import java.awt.Color;
 
-import gent.timdemey.cards.services.scaleman.IScalableComponent;
+import gent.timdemey.cards.services.scaling.IScalableComponent;
 
 public class ForegroundColorAnimation implements IAnimation 
 {

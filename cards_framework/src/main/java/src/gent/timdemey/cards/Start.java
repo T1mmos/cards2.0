@@ -22,7 +22,7 @@ import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.interfaces.ISerializationService;
 import gent.timdemey.cards.services.resources.ResourceRepository;
 import gent.timdemey.cards.services.resources.ResourceService;
-import gent.timdemey.cards.services.scaleman.ScalingService;
+import gent.timdemey.cards.services.scaling.ScalingService;
 import gent.timdemey.cards.ui.StartFrame;
 
 public class Start

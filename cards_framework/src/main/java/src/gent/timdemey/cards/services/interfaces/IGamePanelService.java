@@ -3,7 +3,7 @@ package gent.timdemey.cards.services.interfaces;
 import gent.timdemey.cards.IPreload;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.services.gamepanel.GamePanel;
-import gent.timdemey.cards.services.scaleman.IScalableComponent;
+import gent.timdemey.cards.services.scaling.IScalableComponent;
 
 public interface IGamePanelService extends IPreload
 {

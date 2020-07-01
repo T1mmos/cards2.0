@@ -22,10 +22,11 @@ import gent.timdemey.cards.services.contract.GetScaleInfoRequest;
 import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
-import gent.timdemey.cards.services.scaleman.IScalableComponent;
-import gent.timdemey.cards.services.scaleman.comps.CardScalableImageComponent;
-import gent.timdemey.cards.services.scaleman.comps.CardScoreScalableTextComponent;
-import gent.timdemey.cards.services.scaleman.comps.CardStackScalableImageComponent;
+import gent.timdemey.cards.services.scaling.IScalableComponent;
+import gent.timdemey.cards.services.scaling.comps.CardScalableImageComponent;
+import gent.timdemey.cards.services.scaling.comps.CardScoreScalableTextComponent;
+import gent.timdemey.cards.services.scaling.comps.CardStackScalableImageComponent;
+import gent.timdemey.cards.services.scaling.comps.SpecialCounterScalableTextComponent;
 
 public class SolShowPositionService implements IPositionService
 {
@@ -191,7 +192,11 @@ public class SolShowPositionService implements IPositionService
 
             return new LayeredArea(x, y, width, height, LAYER_ANIMATIONS, false);
         }
-
+        else if (scaleComp instanceof SpecialCounterScalableTextComponent)
+        {
+            // todo
+        }
+        
         throw new UnsupportedOperationException();
     }
 

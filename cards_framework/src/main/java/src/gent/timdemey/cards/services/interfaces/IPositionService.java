@@ -4,8 +4,8 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 
 import gent.timdemey.cards.services.contract.LayeredArea;
+import gent.timdemey.cards.services.scaling.IScalableComponent;
 import gent.timdemey.cards.services.contract.GetScaleInfoRequest;
-import gent.timdemey.cards.services.scaleman.IScalableComponent;
 
 /**
  * Calculates the entire game panel layout given a maximum width and height.

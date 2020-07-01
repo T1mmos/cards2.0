@@ -1,12 +1,12 @@
-package gent.timdemey.cards.services.scaleman.comps;
+package gent.timdemey.cards.services.scaling.comps;
 
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.services.interfaces.IIdService;
-import gent.timdemey.cards.services.scaleman.img.ScalableImageComponent;
-import gent.timdemey.cards.services.scaleman.img.ScalableImageResource;
+import gent.timdemey.cards.services.scaling.img.ScalableImageComponent;
+import gent.timdemey.cards.services.scaling.img.ScalableImageResource;
 
 public class CardScalableImageComponent extends ScalableImageComponent
 {

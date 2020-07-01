@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.scaleman.img;
+package gent.timdemey.cards.services.scaling.img;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -9,8 +9,8 @@ import java.util.UUID;
 import javax.swing.JComponent;
 
 import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.services.scaleman.IScalableResource;
-import gent.timdemey.cards.services.scaleman.ScalableComponent;
+import gent.timdemey.cards.services.scaling.IScalableResource;
+import gent.timdemey.cards.services.scaling.ScalableComponent;
 
 public abstract class ScalableImageComponent extends ScalableComponent<BufferedImage>
 {

@@ -2,7 +2,7 @@ package gent.timdemey.cards.services.contract;
 
 import java.awt.Dimension;
 
-import gent.timdemey.cards.services.scaleman.IScalableResource;
+import gent.timdemey.cards.services.scaling.IScalableResource;
 
 public class RescaleRequest
 {

@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.scaleman.text;
+package gent.timdemey.cards.services.scaling.text;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -10,8 +10,8 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import gent.timdemey.cards.services.scaleman.IScalableResource;
-import gent.timdemey.cards.services.scaleman.ScalableComponent;
+import gent.timdemey.cards.services.scaling.IScalableResource;
+import gent.timdemey.cards.services.scaling.ScalableComponent;
 
 public class ScalableTextComponent extends ScalableComponent<Font>
 {

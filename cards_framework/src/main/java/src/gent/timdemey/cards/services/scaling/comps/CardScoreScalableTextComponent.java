@@ -1,10 +1,10 @@
-package gent.timdemey.cards.services.scaleman.comps;
+package gent.timdemey.cards.services.scaling.comps;
 
 import java.util.UUID;
 
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
-import gent.timdemey.cards.services.scaleman.text.ScalableFontResource;
-import gent.timdemey.cards.services.scaleman.text.ScalableTextComponent;
+import gent.timdemey.cards.services.scaling.text.ScalableFontResource;
+import gent.timdemey.cards.services.scaling.text.ScalableTextComponent;
 
 public class CardScoreScalableTextComponent extends ScalableTextComponent
 {

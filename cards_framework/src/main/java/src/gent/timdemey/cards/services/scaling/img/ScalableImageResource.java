@@ -1,11 +1,11 @@
-package gent.timdemey.cards.services.scaleman.img;
+package gent.timdemey.cards.services.scaling.img;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.util.UUID;
 
 import gent.timdemey.cards.services.contract.Resource;
-import gent.timdemey.cards.services.scaleman.ScalableResource;
+import gent.timdemey.cards.services.scaling.ScalableResource;
 
 public class ScalableImageResource extends ScalableResource<BufferedImage>
 {

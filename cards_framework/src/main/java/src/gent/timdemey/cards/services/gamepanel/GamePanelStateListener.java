@@ -13,7 +13,7 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
-import gent.timdemey.cards.services.scaleman.comps.CardScalableImageComponent;
+import gent.timdemey.cards.services.scaling.comps.CardScalableImageComponent;
 
 class GamePanelStateListener implements IStateListener
 {

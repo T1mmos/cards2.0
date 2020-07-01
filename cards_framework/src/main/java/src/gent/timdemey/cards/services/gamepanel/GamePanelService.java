@@ -29,10 +29,10 @@ import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
-import gent.timdemey.cards.services.scaleman.IScalableComponent;
-import gent.timdemey.cards.services.scaleman.IScalableResource;
-import gent.timdemey.cards.services.scaleman.img.ScalableImageResource;
-import gent.timdemey.cards.services.scaleman.text.ScalableFontResource;
+import gent.timdemey.cards.services.scaling.IScalableComponent;
+import gent.timdemey.cards.services.scaling.IScalableResource;
+import gent.timdemey.cards.services.scaling.img.ScalableImageResource;
+import gent.timdemey.cards.services.scaling.text.ScalableFontResource;
 
 public class GamePanelService implements IGamePanelService
 {

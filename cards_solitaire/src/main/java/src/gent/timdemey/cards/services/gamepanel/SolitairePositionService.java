@@ -15,9 +15,9 @@ import gent.timdemey.cards.services.contract.GetCardStackScaleInfoRequest;
 import gent.timdemey.cards.services.contract.GetScaleInfoRequest;
 import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.interfaces.IPositionService;
-import gent.timdemey.cards.services.scaleman.IScalableComponent;
-import gent.timdemey.cards.services.scaleman.comps.CardScalableImageComponent;
-import gent.timdemey.cards.services.scaleman.comps.CardStackScalableImageComponent;
+import gent.timdemey.cards.services.scaling.IScalableComponent;
+import gent.timdemey.cards.services.scaling.comps.CardScalableImageComponent;
+import gent.timdemey.cards.services.scaling.comps.CardStackScalableImageComponent;
 
 public class SolitairePositionService implements IPositionService
 {

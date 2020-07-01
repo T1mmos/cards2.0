@@ -8,7 +8,7 @@ import javax.swing.Timer;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
-import gent.timdemey.cards.services.scaleman.IScalableComponent;
+import gent.timdemey.cards.services.scaling.IScalableComponent;
 
 public class GamePanelAnimator
 {
