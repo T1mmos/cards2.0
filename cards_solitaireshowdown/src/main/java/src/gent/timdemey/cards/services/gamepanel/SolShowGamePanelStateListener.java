@@ -13,14 +13,14 @@ import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.ChangeType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.services.interfaces.IGamePanelService;
+import gent.timdemey.cards.services.interfaces.ISolShowGamePanelService;
 
 public class SolShowGamePanelStateListener extends GamePanelStateListener
 {
     @Override
     public void onChange(ReadOnlyChange change)
     {
-        IGamePanelService gpServ = Services.get(IGamePanelService.class);
+        ISolShowGamePanelService gpServ = Services.get(ISolShowGamePanelService.class);
         IContextService contextService = Services.get(IContextService.class);
         Context context = contextService.getThreadContext();
         ReadOnlyState state = context.getReadOnlyState();
@@ -51,6 +51,10 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
                             gpServ.animateCard(card);    
                         }
                     }
+                }
+                else if (cardStack.getCardStackType().equals(SolShowCardStackType.SPECIAL))
+                {
+                    gpServ.animateSpecialScore(cardStack);
                 }
             }
             super.onChange(change);

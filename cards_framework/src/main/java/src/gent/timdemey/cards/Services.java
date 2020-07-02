@@ -1,8 +1,10 @@
 package gent.timdemey.cards;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 public final class Services
@@ -92,8 +94,8 @@ public final class Services
     
     public static boolean isInstalled(Class<?> iface)
     {
-        EntryKey entryKey = new EntryKey(iface, null);
-        return get().serviceMap.containsKey(entryKey);
+        Object value = find(iface, null);
+        return value != null;
     }
 
     public <T> void install(Class<T> iface, T implementation)
@@ -128,22 +130,47 @@ public final class Services
         return get(iface, null);
     }
 
-    public static <T> T get(Class<T> iface, Object param)
+    private static <T> T find(Class<T> iface, Object param)
     {
         EntryKey entryKey = new EntryKey(iface, param);
 
-        T value = (T) get().serviceMap.get(entryKey);
+        Map<EntryKey, Object> map = get().serviceMap;
+        T value = (T) map.get(entryKey);
+        if (value == null)
+        {
+            // iterate over the keys, maybe a child interface is installed
+            for (EntryKey ek : new HashSet<>(map.keySet()))
+            {
+                if (iface.isAssignableFrom(ek.clazz) && Objects.equal(param, ek.param))
+                {
+                    // install a new mapping for the requested interface, to speed up further lookups
+                    value = (T) map.get(ek);
+                    map.put(entryKey, value);
+                    break;
+                }
+            }
+        }
+        
+        return value;
+    }
+    
+    public static <T> T get(Class<T> iface, Object param)
+    {
+        T value = find(iface, param);
+        
         if (value == null)
         {
             throw new UnavailableServiceException(iface, param);
         }
-
+        
         return value;
     }
     
     public static void preload()
     {
-        for (Object obj : get().serviceMap.values())
+        // take a copy as parent interface request add more EntryKey to the service map. 
+        // this solves ConcurrentModificationExceptions and equally important we only want to preload once.
+        for (Object obj : new HashSet<>(get().serviceMap.values()))
         {
             if (obj instanceof IPreload)
             {

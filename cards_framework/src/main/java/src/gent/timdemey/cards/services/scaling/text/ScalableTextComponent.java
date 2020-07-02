@@ -15,7 +15,7 @@ import gent.timdemey.cards.services.scaling.ScalableComponent;
 
 public class ScalableTextComponent extends ScalableComponent<Font>
 {
-    private final String text;
+    private String text;
 
     public ScalableTextComponent(UUID id, String text, ScalableFontResource fontRes)
     {
@@ -46,17 +46,23 @@ public class ScalableTextComponent extends ScalableComponent<Font>
     {
         return text;
     }
+    
+    protected final void setText(String text)
+    {
+        this.text = text;
+    }
 
     @Override
     public void update()
     {
         Dimension dim = getBounds().getSize();
         IScalableResource<Font> res = getScalableResources().get(0);
-        Dimension fontDim = new Dimension(dim.width, dim.height - 10);
+        Dimension fontDim = new Dimension(dim.width, dim.height);
         Font font = res.get(fontDim);
         
         JLabel label = getLabel();        
         label.setFont(font);
+        label.setText(text);
         label.setPreferredSize(label.getPreferredSize());
         label.getParent().validate();
     }

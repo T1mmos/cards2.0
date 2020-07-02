@@ -34,7 +34,7 @@ public class JScalableLabelComponent extends JLabel
         FontRenderContext frc = g2d.getFontRenderContext();
         TextLayout tl = new TextLayout(super.getText(), g2d.getFont(), frc);
         Shape shape = tl.getOutline(null);
-        g2d.setStroke(new BasicStroke(getHeight() / 4));
+        g2d.setStroke(new BasicStroke(4));
         g2d.draw(shape);
         g2d.fill(shape);
         

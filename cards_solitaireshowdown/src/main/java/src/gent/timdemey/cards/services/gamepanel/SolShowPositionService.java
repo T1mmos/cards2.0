@@ -19,6 +19,7 @@ import gent.timdemey.cards.services.contract.GetCardScaleInfoRequest;
 import gent.timdemey.cards.services.contract.GetCardScoreScaleInfoRequest;
 import gent.timdemey.cards.services.contract.GetCardStackScaleInfoRequest;
 import gent.timdemey.cards.services.contract.GetScaleInfoRequest;
+import gent.timdemey.cards.services.contract.GetSpecialCounterScaleInfoRequest;
 import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
@@ -112,6 +113,10 @@ public class SolShowPositionService implements IPositionService
         {
             return getCardScoreDimension();
         }
+        else if (request instanceof GetSpecialCounterScaleInfoRequest)
+        {
+            return getSpecialCounterDimension();
+        }
         else
         {
             throw new UnsupportedOperationException(
@@ -124,6 +129,11 @@ public class SolShowPositionService implements IPositionService
         return new Dimension(gameLayout.act_cwidth, gameLayout.act_scoretext_height);
     }
 
+    private Dimension getSpecialCounterDimension()
+    {
+        return new Dimension(gameLayout.act_cwidth, gameLayout.act_cheight / 4);
+    }
+    
     private Dimension getCardStackDimension(String csType)
     {
         int w = 0, h = 0;
@@ -194,7 +204,27 @@ public class SolShowPositionService implements IPositionService
         }
         else if (scaleComp instanceof SpecialCounterScalableTextComponent)
         {
-            // todo
+            IContextService contextService = Services.get(IContextService.class);
+            Context context = contextService.getThreadContext();
+            ReadOnlyCardStack cardStack = ((SpecialCounterScalableTextComponent) scaleComp).getCardStack();
+            
+            UUID localId = context.getReadOnlyState().getLocalId();
+            UUID playerId = context.getReadOnlyState().getCardGame().getPlayerId(cardStack);
+            boolean isLocal = localId.equals(playerId);
+            
+            int x = gameLayout.act_tpadx;
+            int y = gameLayout.act_tpady + 3 * (gameLayout.act_sheight + gameLayout.act_soffsety) + 3* gameLayout.act_cheight / 8;
+            Dimension dim = getSpecialCounterDimension();
+            int width = dim.width;
+            int height = dim.height;
+            
+            if (!isLocal) // point-mirror
+            {
+                x = gameLayout.act_twidth - x - width;
+                y = gameLayout.act_theight - y - height;
+            }
+            
+            return new LayeredArea(x, y, width, height, LAYER_CARDSTACKS, false);
         }
         
         throw new UnsupportedOperationException();

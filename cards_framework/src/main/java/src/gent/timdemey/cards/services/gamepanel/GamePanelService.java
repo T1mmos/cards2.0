@@ -201,8 +201,8 @@ public class GamePanelService implements IGamePanelService
         posMan.setMaxSize(maxWidth, maxHeight);
 
         // now update the position, layer and other properties of all components
-        IScalingService scaleCompService = Services.get(IScalingService.class);        
-        for (IScalableComponent<?> scaleComp : scaleCompService.getComponents())
+        IScalingService scaleServ = Services.get(IScalingService.class);
+        for (IScalableComponent<?> scaleComp : scaleServ.getComponents())
         {
             LayeredArea layArea = posMan.getLayeredArea(scaleComp);
 

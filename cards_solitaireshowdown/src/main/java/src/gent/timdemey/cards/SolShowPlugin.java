@@ -9,10 +9,10 @@ import gent.timdemey.cards.services.gamepanel.SolShowPositionService;
 import gent.timdemey.cards.services.id.SolShowIdService;
 import gent.timdemey.cards.services.interfaces.ICardGameService;
 import gent.timdemey.cards.services.interfaces.ICommandService;
-import gent.timdemey.cards.services.interfaces.IGamePanelService;
-import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.ISerializationService;
+import gent.timdemey.cards.services.interfaces.ISolShowGamePanelService;
+import gent.timdemey.cards.services.interfaces.ISolShowIdService;
 
 public class SolShowPlugin implements ICardPlugin
 {
@@ -22,14 +22,14 @@ public class SolShowPlugin implements ICardPlugin
         App.getServices().install(ICommandService.class, new SolShowCommandService());
         App.getServices().install(ICardGameService.class, new SolShowCardGameService());
         App.getServices().install(ISerializationService.class, new SolShowSerializationService());
-        App.getServices().install(IIdService.class, new SolShowIdService());
+        App.getServices().install(ISolShowIdService.class, new SolShowIdService());
     }
 
     @Override
     public void installUiServices()
     {
         App.getServices().install(IPositionService.class, new SolShowPositionService());
-        App.getServices().install(IGamePanelService.class, new SolShowGamePanelService());
+        App.getServices().install(ISolShowGamePanelService.class, new SolShowGamePanelService());
     }
 
     @Override

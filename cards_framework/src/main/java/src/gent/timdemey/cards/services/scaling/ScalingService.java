@@ -138,6 +138,12 @@ public final class ScalingService implements IScalingService
     }
 
     @Override
+    public void addScalableComponent(IScalableComponent<?> scaleComp) 
+    {
+        components.put(scaleComp.getId(), scaleComp);
+    };
+    
+    @Override
     public IScalableResource<?> getScalableResource(UUID resId)
     {
         IScalableResource<?> res = resources.get(resId);

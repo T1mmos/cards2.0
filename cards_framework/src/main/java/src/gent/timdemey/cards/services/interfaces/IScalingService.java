@@ -52,6 +52,8 @@ public interface IScalingService
      * @param scaleRes
      */
     public void addScalableResource(IScalableResource<?> scaleRes);
+    
+    public void addScalableComponent(IScalableComponent<?> scaleComp);
             
     /**
      * Get a scalable component mapped to the given id.
