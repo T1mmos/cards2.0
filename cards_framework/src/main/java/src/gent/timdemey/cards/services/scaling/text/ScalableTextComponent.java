@@ -63,8 +63,12 @@ public class ScalableTextComponent extends ScalableComponent<Font>
         JLabel label = getLabel();        
         label.setFont(font);
         label.setText(text);
-        label.setPreferredSize(label.getPreferredSize());
+                
+        label.setSize(label.getPreferredSize());
         label.getParent().validate();
+        
+        //label.setBackground(Color.green);
+        //label.setOpaque(true);
     }
     
     @Override

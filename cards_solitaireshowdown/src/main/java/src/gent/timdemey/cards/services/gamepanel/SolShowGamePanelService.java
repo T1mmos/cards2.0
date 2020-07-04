@@ -122,6 +122,8 @@ public class SolShowGamePanelService extends GamePanelService implements ISolSho
 
             UUID compId = idServ.createSpecialCounterComponentId(cs);
             IScalableComponent<?> scaleCntr = new SpecialCounterScalableTextComponent(compId, cs, scaleFontRes);
+            scaleCntr.setForeground(Color.blue);
+            
             
             add(scaleCntr);  
             scaleServ.addScalableComponent(scaleCntr);
