@@ -6,10 +6,10 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import javax.swing.JComponent;
 
@@ -22,22 +22,14 @@ public abstract class ScalableComponent<R> implements IScalableComponent<R>
     private JComponent component = null;
     private boolean mirror = false;
     
-    protected final List<IScalableResource<R>> resources;
-
-    protected ScalableComponent(UUID id, IScalableResource<R> ... resources)
+    protected ScalableComponent(UUID id)
     {
         if(id == null)
         {
             throw new NullPointerException("id cannot be null");
         }
 
-        if (resources == null || resources.length == 0)
-        {
-            throw new NullPointerException("resources must contain at least 1 resource");
-        }
-
         this.id = id;
-        this.resources = Arrays.asList(resources);
     }
 
     @Override
@@ -58,13 +50,34 @@ public abstract class ScalableComponent<R> implements IScalableComponent<R>
 
     protected abstract void draw(Graphics2D g2);
     
-    public void drawDebug(Graphics2D g2)
+    public final void drawDebug(Graphics2D g2)
     {
         if(!Services.get(IGamePanelService.class).getDrawDebug())
         {
             return;
         }
 
+        drawDebugBoundaries(g2);
+           
+        List<String> debugStrings = getDebugStrings();
+        drawDebugStrings(g2, debugStrings);
+    }
+
+    protected List<String> getDebugStrings()
+    {
+        int width = getComponent().getWidth();
+        int height = getComponent().getHeight();
+        int x = getComponent().getX();
+        int y = getComponent().getY();
+        
+        IGamePanelService gpServ = Services.get(IGamePanelService.class);
+        int layer = gpServ.getLayer(this);
+        
+        return Arrays.asList("rect=" + x + "," + y + ", " + width + "x" + height, "layer=" + layer);
+    }
+    
+    protected void drawDebugBoundaries(Graphics2D g2)
+    {
         int width = getComponent().getWidth();
         int height = getComponent().getHeight();
         int x = getComponent().getX();
@@ -77,48 +90,28 @@ public abstract class ScalableComponent<R> implements IScalableComponent<R>
         g2.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 2.0f, new float[]
         { 5.0f, 5.0f }, 2.0f));
         g2.drawRect(0, 0, width - 1, height - 1);
-
-        IGamePanelService gpServ = Services.get(IGamePanelService.class);
-        int layer = gpServ.getLayer(this);
-
-        String[] strings = new String[] { "rect=" + x + "," + y + ", " + width + "x" + height, "layer=" + layer };
-        String[] extraStrings = addDebugStrings();
-
-        String[] allStrings;
-        if(extraStrings != null && extraStrings.length > 0)
-        {
-            allStrings = Stream.concat(Arrays.stream(strings), Arrays.stream(extraStrings)).toArray(String[]::new);
-        }
-        else
-        {
-            allStrings = strings;
-        }
-
-        drawDebugStrings(g2, allStrings);
     }
-
-    protected abstract String[] addDebugStrings();
-
-    private void drawDebugStrings(Graphics2D g2, String[] strings)
+    
+    private final void drawDebugStrings(Graphics2D g2, List<String> strings)
     {
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setColor(Color.white);
 
-        if(strings.length == 0)
+        if(strings.size() == 0)
         {
             return;
         }
 
         g2.setFont(Font.decode("Arial bold 8"));
         int hFat = g2.getFontMetrics().getHeight();
-        g2.drawString(strings[0], 5, hFat);
+        g2.drawString(strings.get(0), 5, hFat);
 
         g2.setFont(Font.decode("Arial 8"));
         int hSmall = g2.getFontMetrics().getHeight();
 
-        for (int i = 1; i < strings.length; i++)
+        for (int i = 1; i < strings.size(); i++)
         {
-            g2.drawString(strings[i], 5, hFat + i * hSmall);
+            g2.drawString(strings.get(i), 5, hFat + i * hSmall);
         }
     }
 
@@ -167,11 +160,5 @@ public abstract class ScalableComponent<R> implements IScalableComponent<R>
     public UUID getId()
     {
         return id;
-    }
-   
-    @Override
-    public List<IScalableResource<R>> getScalableResources()
-    {
-        return resources;
     }
 }

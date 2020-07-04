@@ -32,6 +32,7 @@ import gent.timdemey.cards.services.scaling.comps.CardScoreScalableTextComponent
 import gent.timdemey.cards.services.scaling.comps.SpecialCounterScalableTextComponent;
 import gent.timdemey.cards.services.scaling.text.ScalableFontResource;
 import gent.timdemey.cards.services.scaling.text.ScalableTextComponent;
+import gent.timdemey.cards.services.scaling.text.TextAlignment;
 
 public class SolShowGamePanelService extends GamePanelService implements ISolShowGamePanelService
 {
@@ -40,7 +41,7 @@ public class SolShowGamePanelService extends GamePanelService implements ISolSho
 
     private static final int ANIMATION_TIME_SCORE = 1200;
     private static final String FILEPATH_FONT_SCORE = "SMB2.ttf";
-    private static final String FILEPATH_FONT_SPECIALCOUNT = "SMB2.ttf";
+    private static final String FILEPATH_FONT_SPECIALCOUNT = "ChangaOne-Regular.ttf";
 
     @Override
     public void preload()
@@ -121,9 +122,19 @@ public class SolShowGamePanelService extends GamePanelService implements ISolSho
             ReadOnlyCardStack cs = cardGame.getCardStack(player.getId(), SolShowCardStackType.SPECIAL, 0);            
 
             UUID compId = idServ.createSpecialCounterComponentId(cs);
-            IScalableComponent<?> scaleCntr = new SpecialCounterScalableTextComponent(compId, cs, scaleFontRes);                        
-            add(scaleCntr);  
-            scaleServ.addScalableComponent(scaleCntr);
+            ScalableTextComponent textComp = new SpecialCounterScalableTextComponent(compId, cs, scaleFontRes); 
+            Color color = Color.decode("#CCE1F2");
+            textComp.setTextColor(color);
+            if (state.getLocalId().equals(state.getCardGame().getPlayerId(cs)))
+            {
+                textComp.setAlignment(TextAlignment.Right);
+            }
+            else
+            {
+                textComp.setAlignment(TextAlignment.Left);
+            }                
+            add(textComp);  
+            scaleServ.addScalableComponent(textComp);
         }
     }
 
@@ -163,6 +174,7 @@ public class SolShowGamePanelService extends GamePanelService implements ISolSho
         
         int incr = newScore - oldScore;
         ScalableTextComponent scaleTextComp = new CardScoreScalableTextComponent(UUID.randomUUID(), "+" + incr, scaleFontRes, card);
+        scaleTextComp.setAlignment(TextAlignment.Center);
 
         add(scaleTextComp);
         IPositionService posServ = Services.get(IPositionService.class);

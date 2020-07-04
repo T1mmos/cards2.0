@@ -1,7 +1,6 @@
 package gent.timdemey.cards.services.scaling;
 
 import java.awt.Rectangle;
-import java.util.List;
 import java.util.UUID;
 
 import javax.swing.JComponent;
@@ -23,12 +22,6 @@ public interface IScalableComponent<R>
      * @return
      */
     public UUID getId();
-        
-    /**
-     * Get a list of scalable resources needed by this IScalableComponent.
-     * @return
-     */
-    public List<IScalableResource<R>> getScalableResources();
     
     /**
      * Updates the component to match the model state.

@@ -131,7 +131,7 @@ public class SolShowPositionService implements IPositionService
 
     private Dimension getSpecialCounterDimension()
     {
-        return new Dimension(gameLayout.act_cwidth, gameLayout.act_cheight / 4);
+        return new Dimension(gameLayout.act_swidth, gameLayout.act_sheight / 3);
     }
     
     private Dimension getCardStackDimension(String csType)
@@ -189,11 +189,6 @@ public class SolShowPositionService implements IPositionService
             ReadOnlyCard card = cardScoreComp.getCard();
             LayeredArea la_card = getLayeredArea(card);
 
-            // for determine the width of the text, we should know the Graphics context
-            // for the time being just use the width of a card
-            String text = cardScoreComp.getText();
-            Font font = cardScoreComp.getScalableResources().get(0).getResource().raw;
-
             int x = la_card.x;
             int y = la_card.y - gameLayout.act_scoretext_height / 2;
             Dimension dim = getCardScoreDimension();
@@ -216,7 +211,7 @@ public class SolShowPositionService implements IPositionService
 
             int width = dim.width;
             int height = dim.height + 10;            
-            int x = gameLayout.act_tpadx;
+            int x = gameLayout.act_tpadx + gameLayout.act_swidth - width;
             int y = gameLayout.act_tpady + 3 * (gameLayout.act_sheight + gameLayout.act_soffsety) + (gameLayout.act_sheight - height) / 2;
                         
             if (!isLocal) // point-mirror

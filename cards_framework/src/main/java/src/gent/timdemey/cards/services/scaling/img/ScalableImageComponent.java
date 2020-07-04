@@ -4,6 +4,9 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.logging.Logger;
@@ -12,22 +15,25 @@ import gent.timdemey.cards.services.scaling.ScalableComponent;
 
 public abstract class ScalableImageComponent extends ScalableComponent<BufferedImage>
 {
-    private String file = null;
+    private final List<ScalableImageResource> imgResources;    
     private IScalableResource<BufferedImage> currentScaledResource;
     
     public ScalableImageComponent(UUID id, ScalableImageResource ... resources)
     {
-        super(id, resources);  
+        super(id);  
 
+        this.imgResources = Arrays.asList(resources);
         this.currentScaledResource = null;
     }
 
     @Override
-    protected String[] addDebugStrings()
+    protected List<String> getDebugStrings()
     {
-        return new String[] { String.format("file=%s", file) };
+        List<String> allStrings = new ArrayList<>(super.getDebugStrings());
+        allStrings.add(String.format("file=%s", currentScaledResource.getResource().filename));
+        return allStrings;
     }
-    
+        
     /**
      * Swap the image shown.
      * @param resourceId
@@ -35,7 +41,7 @@ public abstract class ScalableImageComponent extends ScalableComponent<BufferedI
     protected final void setScalableImageResource(UUID resourceId)
     {
         IScalableResource<BufferedImage> found = null;
-        for (IScalableResource<BufferedImage> resource : resources)
+        for (IScalableResource<BufferedImage> resource : imgResources)
         {
             if (resource.getId().equals(resourceId))
             {
