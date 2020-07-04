@@ -212,12 +212,13 @@ public class SolShowPositionService implements IPositionService
             UUID playerId = context.getReadOnlyState().getCardGame().getPlayerId(cardStack);
             boolean isLocal = localId.equals(playerId);
             
-            int x = gameLayout.act_tpadx;
-            int y = gameLayout.act_tpady + 3 * (gameLayout.act_sheight + gameLayout.act_soffsety) + 3* gameLayout.act_cheight / 8;
             Dimension dim = getSpecialCounterDimension();
+
             int width = dim.width;
-            int height = dim.height;
-            
+            int height = dim.height + 10;            
+            int x = gameLayout.act_tpadx;
+            int y = gameLayout.act_tpady + 3 * (gameLayout.act_sheight + gameLayout.act_soffsety) + (gameLayout.act_sheight - height) / 2;
+                        
             if (!isLocal) // point-mirror
             {
                 x = gameLayout.act_twidth - x - width;

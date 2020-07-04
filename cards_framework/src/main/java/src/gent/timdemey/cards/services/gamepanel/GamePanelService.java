@@ -194,7 +194,7 @@ public class GamePanelService implements IGamePanelService
     public void relayout()
     {
         // update the position service by supplying it with the latest game
-        // panel dimensions
+        // panel dimensions 
         int maxWidth = gamePanel.getWidth();
         int maxHeight = gamePanel.getHeight();
         IPositionService posMan = Services.get(IPositionService.class);

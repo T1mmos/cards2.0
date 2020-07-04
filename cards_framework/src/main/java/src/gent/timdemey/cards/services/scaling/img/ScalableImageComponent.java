@@ -6,8 +6,6 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.UUID;
 
-import javax.swing.JComponent;
-
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.services.scaling.IScalableResource;
 import gent.timdemey.cards.services.scaling.ScalableComponent;
@@ -22,12 +20,6 @@ public abstract class ScalableImageComponent extends ScalableComponent<BufferedI
         super(id, resources);  
 
         this.currentScaledResource = null;
-    }
-
-    @Override
-    protected JComponent createComponent()
-    {
-        return new JScalableImage(this);        
     }
 
     @Override
@@ -61,7 +53,8 @@ public abstract class ScalableImageComponent extends ScalableComponent<BufferedI
         currentScaledResource = found;
     }
 
-    public final void draw(Graphics2D g2)
+    @Override
+    protected final void draw(Graphics2D g2)
     {
         Dimension dim = getBounds().getSize();
         

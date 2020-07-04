@@ -3,13 +3,14 @@ package gent.timdemey.cards.services.gamepanel.animations;
 import java.awt.Color;
 
 import gent.timdemey.cards.services.scaling.IScalableComponent;
+import gent.timdemey.cards.services.scaling.text.ScalableTextComponent;
 
-public class ForegroundColorAnimation implements IAnimation 
+public class ForegroundColorAnimation implements IAnimation
 {
     final Color color_start;
     final Color color_end;
-    
-    public ForegroundColorAnimation (Color start, Color end)
+
+    public ForegroundColorAnimation(Color start, Color end)
     {
         this.color_start = start;
         this.color_end = end;
@@ -24,6 +25,11 @@ public class ForegroundColorAnimation implements IAnimation
         int a = (int) ( (1.0 - frac) * color_start.getAlpha() + frac * color_end.getAlpha() );
         
         Color color = new Color(r,g,b,a);
-        comp.setForeground(color);
+        
+        if (comp instanceof ScalableTextComponent)
+        {
+            ScalableTextComponent textComp = (ScalableTextComponent) comp;
+            textComp.setTextColor(color);
+        }
     }
 }

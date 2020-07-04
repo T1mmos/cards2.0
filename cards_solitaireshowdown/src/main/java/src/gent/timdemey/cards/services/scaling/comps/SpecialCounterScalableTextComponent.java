@@ -12,26 +12,21 @@ public class SpecialCounterScalableTextComponent extends ScalableTextComponent
 
     public SpecialCounterScalableTextComponent(UUID id, ReadOnlyCardStack cs, ScalableFontResource fontRes)
     {
-        super(id, getText(cs), fontRes);
+        super(id, "", fontRes);
         
         this.cardStack = cs;
+        update();
     }
     
     public ReadOnlyCardStack getCardStack()
     {
         return cardStack;
     }
-
-    private static String getText(ReadOnlyCardStack cs)
-    {
-        return "" +  cs.getCards().size();
-    }
     
     @Override
     public void update()
     {
-        setText(getText(cardStack));
-        
-        super.update();
+        String text = "" +  cardStack.getCards().size();
+        setText(text);
     }
 }

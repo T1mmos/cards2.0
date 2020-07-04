@@ -121,10 +121,7 @@ public class SolShowGamePanelService extends GamePanelService implements ISolSho
             ReadOnlyCardStack cs = cardGame.getCardStack(player.getId(), SolShowCardStackType.SPECIAL, 0);            
 
             UUID compId = idServ.createSpecialCounterComponentId(cs);
-            IScalableComponent<?> scaleCntr = new SpecialCounterScalableTextComponent(compId, cs, scaleFontRes);
-            scaleCntr.setForeground(Color.blue);
-            
-            
+            IScalableComponent<?> scaleCntr = new SpecialCounterScalableTextComponent(compId, cs, scaleFontRes);                        
             add(scaleCntr);  
             scaleServ.addScalableComponent(scaleCntr);
         }

@@ -44,14 +44,20 @@ public abstract class ScalableComponent<R> implements IScalableComponent<R>
     public final JComponent getComponent()
     {
         if(component == null)
-        {
+        { 
             component = createComponent();
         }
         return component;
     }
 
-    protected abstract JComponent createComponent();
+    protected final JComponent createComponent()
+    {
+        JScalableComponent jcomp = new JScalableComponent(this);        
+        return jcomp;
+    }
 
+    protected abstract void draw(Graphics2D g2);
+    
     public void drawDebug(Graphics2D g2)
     {
         if(!Services.get(IGamePanelService.class).getDrawDebug())
@@ -155,12 +161,6 @@ public abstract class ScalableComponent<R> implements IScalableComponent<R>
     {
         update();
         getComponent().repaint();
-    }
-
-    @Override
-    public void setForeground(Color color)
-    {
-        getComponent().setForeground(color);
     }
 
     @Override

@@ -21,4 +21,10 @@ public class CardScoreScalableTextComponent extends ScalableTextComponent
     {
         return card;
     }
+
+    @Override
+    public void update()
+    {
+        // text is set at constructor time and doesn't change with model changes
+    }
 }

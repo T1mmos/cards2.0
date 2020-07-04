@@ -1,6 +1,5 @@
 package gent.timdemey.cards.services.scaling;
 
-import java.awt.Color;
 import java.awt.Rectangle;
 import java.util.List;
 import java.util.UUID;
@@ -41,10 +40,4 @@ public interface IScalableComponent<R>
      * This method should not be called after calling e.g. setForeground.
      */
     public void repaint();
-    
-    /**
-     * Changes the foreground color of this component.
-     * @param color
-     */
-    public void setForeground(Color color);
 }
