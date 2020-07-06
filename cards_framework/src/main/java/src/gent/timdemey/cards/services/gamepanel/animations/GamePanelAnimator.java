@@ -27,6 +27,22 @@ public class GamePanelAnimator
                 animations);
         animationInfos.add(animationInfo);
     }
+    
+
+
+    public void stopAnimate(IScalableComponent<?> scaleComp)
+    {
+        Iterator<AnimationInfo> it = animationInfos.iterator();
+        while (it.hasNext())
+        {
+            AnimationInfo ai = it.next();
+            if (ai.component == scaleComp)
+            {
+                it.remove();
+                break;
+            }
+        }
+    }
 
     public void start()
     {

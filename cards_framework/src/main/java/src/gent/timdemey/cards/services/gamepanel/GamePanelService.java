@@ -304,6 +304,18 @@ public class GamePanelService implements IGamePanelService
         AnimationEnd animEnd = new AnimationEnd(false, layerEnd);
         animator.animate(scaleComp, animEnd, ANIMATION_TIME_CARD, anim_pos);
     }
+    
+    @Override
+    public void stopAnimation(ReadOnlyCard card)
+    {
+        IIdService uuidServ = Services.get(IIdService.class);
+        IScalingService scaleCompServ = Services.get(IScalingService.class);
+
+        UUID compId = uuidServ.createCardScalableComponentId(card);
+        IScalableComponent<?> scaleComp = scaleCompServ.getScalableComponent(compId);
+        
+        animator.stopAnimate(scaleComp);
+    }
 
     @Override
     public int getLayer(IScalableComponent<?> scalableComponent)

@@ -125,8 +125,7 @@ class GamePanelMouseListener extends MouseAdapter
             {
                 List<ReadOnlyCard> cards = stack.getCardsFrom(card);
 
-                dragStates.clear(); // ensure list is empty (might miss
-                                    // mouseReleased event)
+                dragStates.clear();
                 draggedComps.clear();
 
                 for (int i = 0; i < cards.size(); i++)
@@ -138,9 +137,11 @@ class GamePanelMouseListener extends MouseAdapter
                     int card_ystart = currScaleImg.getBounds().y;
 
                     int layer = posServ.getDragLayer();
+                    
+                    // ensure to stop any animations running for this card
+                    gpServ.stopAnimation(currentCard);                    
                     gpServ.setLayer(currScaleImg, layer + i);
-                //    gpServ.setZOrder(currScaleImg, i);
-
+                
                     CardDragState dragState = new CardDragState(card_xstart, card_ystart);
                     dragStates.add(dragState);
                     draggedComps.add(currScaleImg);
