@@ -37,9 +37,9 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
         }
         else if (property == ReadOnlyCardStack.Cards)
         {
+            ReadOnlyCardStack cardStack = state.getCardGame().getCardStack(change.entityId);
             if (change.changeType == ChangeType.Remove)
             {
-                ReadOnlyCardStack cardStack = state.getCardGame().getCardStack(change.entityId);
                 if (cardStack.getCardStackType().equals(SolShowCardStackType.TURNOVER))
                 {
                     int cnt = Math.min(cardStack.getCards().size(), 3);
@@ -48,7 +48,6 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
                         for (ReadOnlyCard card : cardStack.getHighestCards(cnt))
                         {
                             gpServ.animateCard(card);
-                            gpServ.animateCard(card);    
                         }
                     }
                 }
@@ -57,7 +56,29 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
                     gpServ.animateSpecialScore(cardStack);
                 }
             }
-            super.onChange(change);
+            else if (change.changeType == ChangeType.Add && cardStack.getCardStackType().equals(SolShowCardStackType.TURNOVER))
+            {
+                int cnt = Math.min(cardStack.getCards().size(), 6);
+                ReadOnlyCard addedCard = (ReadOnlyCard) change.addedValue;
+                if (cnt > 0)
+                {
+                    for (ReadOnlyCard card : cardStack.getHighestCards(cnt))
+                    {
+                        if (card != addedCard)
+                        {
+                            gpServ.animateCard(card);
+                        }
+                    }
+                }
+                gpServ.animateCard(addedCard);
+                
+               //ReadOnlyCard card = (ReadOnlyCard) change.addedValue;
+               // gpServ.animateCard(card);    
+            }
+            else
+            {
+                super.onChange(change);
+            }
         }
         else
         {
