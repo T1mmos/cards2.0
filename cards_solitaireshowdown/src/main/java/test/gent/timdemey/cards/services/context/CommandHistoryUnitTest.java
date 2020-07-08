@@ -17,6 +17,7 @@ import gent.timdemey.cards.model.entities.commands.C_SolShowMove;
 import gent.timdemey.cards.model.entities.commands.CommandExecution;
 import gent.timdemey.cards.model.entities.commands.CommandExecutionState;
 import gent.timdemey.cards.model.entities.commands.CommandHistory;
+import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.UDPServer;
 import gent.timdemey.cards.model.state.State;
@@ -71,6 +72,7 @@ public class CommandHistoryUnitTest extends SolShowTestBase
         // reset card game
         cardGame = SolShowCardGameHelper.createFixedSolShowCardGame(player1, player2);
         state.setCardGame(cardGame);
+        state.setGameState(GameState.Started);
         cs_p1depot = cardGame.getCardStack(SolShowTestIds.P1_DEPOT);
         cs_p1turnover = cardGame.getCardStack(SolShowTestIds.P1_TURNOVER);
         cs_p1special = cardGame.getCardStack(SolShowTestIds.P1_SPECIAL);
@@ -143,7 +145,7 @@ public class CommandHistoryUnitTest extends SolShowTestBase
         assertEquals(3, cmdHistory.getSize());
         
         // server accepts cmd3
-        cmdHistory.accept(cmd2.id, state);
+        cmdHistory.accept(cmd3.id, state);
         // test state
         assertEquals(2, cmdHistory.getAcceptedIndex());
         assertEquals(2, cmdHistory.getCurrentIndex());

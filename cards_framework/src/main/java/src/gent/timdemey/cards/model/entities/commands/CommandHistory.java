@@ -102,9 +102,10 @@ public class CommandHistory extends EntityBase
 
     private int indexOf(UUID id, boolean forwards)
     {
+        int startIdx = forwards ? 0 : getSize() - 1;
         int stopIdx = forwards ? getLastIndex() + 1 : -1;
         int incr = forwards ? 1 : -1;
-        for (int i = getCurrentIndex(); i != stopIdx; i += incr)
+        for (int i = startIdx; i != stopIdx; i += incr)
         {
             CommandExecution cmdExecution = execLine.get(i);
 
@@ -114,9 +115,7 @@ public class CommandHistory extends EntityBase
             }
         }
 
-        int min = Math.min(stopIdx, getCurrentIndex());
-        int max = Math.max(stopIdx, getCurrentIndex());
-        String msg = String.format("No CommandExecution found in the history between [{0} - {1}]", min, max);
+        String msg = String.format("No CommandExecution found in the command history for id=%s", id);
         throw new IllegalArgumentException(msg);
     }
 
@@ -371,6 +370,10 @@ public class CommandHistory extends EntityBase
                 throw new IllegalStateException("Cannot execute the command " + command.getName()
                         + " because of an error in state, reason: " + resp.reason);
             }
+            if (resp.execState == ExecutionState.No)
+            {
+                Logger.trace("Cannot execute command because: %s", resp.reason);
+            }
 
             if (execState == CommandExecutionState.Unexecuted)
             {
@@ -553,19 +556,31 @@ public class CommandHistory extends EntityBase
         {
             throw new IllegalStateException("Cannot remove!");
         }
+        
+        CommandExecution cmdExec = getCommandExecution(commandId);
+        
+        // a quarantined command is unexecuted so can be safely removed from the 
+        // command history, as if it never existed
+        if (cmdExec.getExecutionState() == CommandExecutionState.Quarantined)
+        {
+            execLine.remove(cmdExec);
+            return new ArrayList<>(); // there are no failures as no commands need to be redone
+        }
+        else
+        {
+            // undo all the commands [idx(commandId) <---- currentIdx]
+            undo(commandId, state);
 
-        // undo all the commands [idx(commandId) <---- currentIdx]
-        undo(commandId, state);
+            // enlist all unexecuted commands except the one to erase
+            List<CommandExecution> list = new ArrayList<>(execLine.subList(getCurrentIndex() + 2, getLastIndex() + 1));
 
-        // enlist all unexecuted commands except the one to erase
-        List<CommandExecution> list = new ArrayList<>(execLine.subList(getCurrentIndex() + 2, getLastIndex() + 1));
+            // remove the rejected command
+            execLine.remove(getCurrentIndex() + 1);
 
-        // remove the rejected command
-        execLine.remove(getCurrentIndex() + 1);
-
-        // redo all the unexecuted commands, failures are allowed
-        List<CommandExecution> fails = redo(list, state, false);
-        return fails;
+            // redo all the unexecuted commands, failures are allowed
+            List<CommandExecution> fails = redo(list, state, false);
+            return fails;
+        }
     }
 
     /**
