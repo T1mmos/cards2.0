@@ -13,7 +13,7 @@ import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.services.scaling.IScalableResource;
 import gent.timdemey.cards.services.scaling.ScalableComponent;
 
-public abstract class ScalableImageComponent extends ScalableComponent<BufferedImage>
+public abstract class ScalableImageComponent extends ScalableComponent
 {
     private final List<ScalableImageResource> imgResources;    
     private IScalableResource<BufferedImage> currentScaledResource;

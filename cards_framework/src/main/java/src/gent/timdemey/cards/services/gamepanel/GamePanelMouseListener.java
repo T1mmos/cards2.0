@@ -46,7 +46,7 @@ class GamePanelMouseListener extends MouseAdapter
     private int mouse_ystart;
 
     private final List<CardDragState> dragStates;
-    private final List<IScalableComponent<?>> draggedComps;
+    private final List<IScalableComponent> draggedComps;
 
     GamePanelMouseListener()
     {
@@ -68,7 +68,7 @@ class GamePanelMouseListener extends MouseAdapter
             for (int i = 0; i < dragStates.size(); i++)
             {
                 CardDragState state = dragStates.get(i);
-                IScalableComponent<?> scaleImg = draggedComps.get(i);
+                IScalableComponent scaleImg = draggedComps.get(i);
                 int card_x = state.xstart + dx;
                 int card_y = state.ystart + dy;
 
@@ -93,7 +93,7 @@ class GamePanelMouseListener extends MouseAdapter
 
         IPositionService posServ = Services.get(IPositionService.class);
         IScalingService scaleServ = Services.get(IScalingService.class);
-        IScalableComponent<?> scaleComp = scaleServ.getComponentAt(e.getPoint());
+        IScalableComponent scaleComp = scaleServ.getComponentAt(e.getPoint());
         IGamePanelService gpServ = Services.get(IGamePanelService.class);
 
         if (!(scaleComp instanceof ScalableImageComponent))
@@ -132,7 +132,7 @@ class GamePanelMouseListener extends MouseAdapter
                 {
                     ReadOnlyCard currentCard = cards.get(i);
 
-                    IScalableComponent<?> currScaleImg = Services.get(IScalingService.class).getOrCreateScalableComponent(currentCard);
+                    IScalableComponent currScaleImg = Services.get(IScalingService.class).getOrCreateScalableComponent(currentCard);
                     int card_xstart = currScaleImg.getBounds().x;
                     int card_ystart = currScaleImg.getBounds().y;
 
@@ -183,7 +183,7 @@ class GamePanelMouseListener extends MouseAdapter
 
         if (!draggedComps.isEmpty())
         {
-            IScalableComponent<?> scaleComp = draggedComps.get(0);
+            IScalableComponent scaleComp = draggedComps.get(0);
 
             int intersectAMax = 0;
             CommandBase cmdMove = null;
@@ -191,8 +191,8 @@ class GamePanelMouseListener extends MouseAdapter
             IGamePanelService gpServ = Services.get(IGamePanelService.class);
             IScalingService scaleServ = Services.get(IScalingService.class);
 
-            List<IScalableComponent<?>> overlapComps = scaleServ.getComponentsIn(scaleComp.getBounds());
-            for (IScalableComponent<?> comp : overlapComps)
+            List<IScalableComponent> overlapComps = scaleServ.getComponentsIn(scaleComp.getBounds());
+            for (IScalableComponent comp : overlapComps)
             {
                 if (!(comp instanceof ScalableImageComponent))
                 {

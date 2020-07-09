@@ -16,7 +16,7 @@ import javax.swing.JComponent;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 
-public abstract class ScalableComponent<R> implements IScalableComponent<R>
+public abstract class ScalableComponent implements IScalableComponent
 {
     private final UUID id;
     private JComponent component = null;
@@ -152,7 +152,7 @@ public abstract class ScalableComponent<R> implements IScalableComponent<R>
 
     public final void repaint()
     {
-        update();
+       // update();
         getComponent().repaint();
     }
 

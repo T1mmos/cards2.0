@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
@@ -23,6 +24,7 @@ import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.gamepanel.animations.AnimationEnd;
 import gent.timdemey.cards.services.gamepanel.animations.GamePanelAnimator;
 import gent.timdemey.cards.services.gamepanel.animations.MovingAnimation;
+import gent.timdemey.cards.services.interfaces.IAnimationService;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 import gent.timdemey.cards.services.interfaces.IIdService;
@@ -164,7 +166,7 @@ public class GamePanelService implements IGamePanelService
         for (int i = 0; i < cards.size(); i++)
         {
             ReadOnlyCard card = cards.get(i);
-            IScalableComponent<?> scaleComp = scaleCompServ.getOrCreateScalableComponent(card);
+            IScalableComponent scaleComp = scaleCompServ.getOrCreateScalableComponent(card);
             add(scaleComp);
         }
     }
@@ -202,7 +204,7 @@ public class GamePanelService implements IGamePanelService
 
         // now update the position, layer and other properties of all components
         IScalingService scaleServ = Services.get(IScalingService.class);
-        for (IScalableComponent<?> scaleComp : scaleServ.getComponents())
+        for (IScalableComponent scaleComp : scaleServ.getComponents())
         {
             LayeredArea layArea = posMan.getLayeredArea(scaleComp);
 
@@ -282,13 +284,27 @@ public class GamePanelService implements IGamePanelService
     }
 
     @Override
+    public void startAnimation(IScalableComponent scaleComp)
+    {
+        IAnimationService a;
+        a.getAnimationInfo(tick, comp)
+    }
+    
+    @Override
+    public void stopAnimation(IScalableComponent scaleComp)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    @Override
     public void animateCard(ReadOnlyCard card)
     {
         IIdService uuidServ = Services.get(IIdService.class);
         IScalingService scaleCompServ = Services.get(IScalingService.class);
 
         UUID compId = uuidServ.createCardScalableComponentId(card);
-        IScalableComponent<?> scaleComp = scaleCompServ.getScalableComponent(compId);
+        IScalableComponent scaleComp = scaleCompServ.getScalableComponent(compId);
 
         LayeredArea layArea = Services.get(IPositionService.class).getLayeredArea(scaleComp);
 
@@ -300,9 +316,9 @@ public class GamePanelService implements IGamePanelService
         setLayer(scaleComp, layer);
 
         int layerEnd = layArea.layer;
-        MovingAnimation anim_pos = new MovingAnimation(scaleComp.getBounds().getLocation(), layArea.getLocation2D());
+      //  MovingAnimation anim_pos = new MovingAnimation(scaleComp.getBounds().getLocation(), layArea.getLocation2D());
         AnimationEnd animEnd = new AnimationEnd(false, layerEnd);
-        animator.animate(scaleComp, animEnd, ANIMATION_TIME_CARD, anim_pos);
+        animator.animate(scaleComp, animEnd, ANIMATION_TIME_CARD);
     }
     
     @Override
@@ -312,34 +328,51 @@ public class GamePanelService implements IGamePanelService
         IScalingService scaleCompServ = Services.get(IScalingService.class);
 
         UUID compId = uuidServ.createCardScalableComponentId(card);
-        IScalableComponent<?> scaleComp = scaleCompServ.getScalableComponent(compId);
+        IScalableComponent scaleComp = scaleCompServ.getScalableComponent(compId);
         
         animator.stopAnimate(scaleComp);
     }
 
     @Override
-    public int getLayer(IScalableComponent<?> scalableComponent)
+    public int getLayer(IScalableComponent scalableComponent)
     {
         return gamePanel.getLayer((Component) scalableComponent.getComponent());
     }
 
-    public void setLayer(IScalableComponent<?> component, int layerIndex)
+    public void setLayer(IScalableComponent component, int layerIndex)
     {
         gamePanel.setLayer(component.getComponent(), layerIndex);
     }
 
     @Override
-    public void add(IScalableComponent<?> comp)
+    public void add(IScalableComponent comp)
     {
         gamePanel.add(comp.getComponent());
     }
 
     @Override
-    public void remove(IScalableComponent<?> comp)
+    public void remove(IScalableComponent comp)
     {
         gamePanel.remove(comp.getComponent());
         gamePanel.revalidate();
         gamePanel.repaint();
     }
 
+    /**
+     * Gets the next topmost, unoccupied animation layer.
+     * @return
+     */    
+    protected int getNextAnimationLayer()
+    {
+        IPositionService posServ = Services.get(IPositionService.class);
+    
+        Optional<Integer> maxLayerInUse = animator.getScalableComponents().stream().map(sc -> getLayer(sc)).max(Integer::compare);
+        int layer = posServ.getAnimationLayer();
+        if (maxLayerInUse.isPresent() && maxLayerInUse.get() > layer)
+        {
+            layer = maxLayerInUse.get() + 1;
+        }
+        
+        return layer;
+    }
 }

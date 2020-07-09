@@ -13,6 +13,7 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
+import gent.timdemey.cards.services.scaling.IScalableComponent;
 import gent.timdemey.cards.services.scaling.comps.CardScalableImageComponent;
 
 class GamePanelStateListener implements IStateListener
@@ -22,6 +23,7 @@ class GamePanelStateListener implements IStateListener
     {
         IGamePanelService gpServ = Services.get(IGamePanelService.class);
         IContextService contextService = Services.get(IContextService.class);
+        IScalingService scaleServ = Services.get(IScalingService.class);
         Context context = contextService.getThreadContext();
         ReadOnlyState state = context.getReadOnlyState();
         
@@ -30,9 +32,8 @@ class GamePanelStateListener implements IStateListener
         if (property == ReadOnlyCard.Visible)
         {            
             ReadOnlyCard card = state.getCardGame().getCard(change.entityId);
-            IScalingService scaleCompServ = Services.get(IScalingService.class);
             
-            CardScalableImageComponent cardComp = (CardScalableImageComponent) scaleCompServ.getOrCreateScalableComponent(card);
+            CardScalableImageComponent cardComp = (CardScalableImageComponent) scaleServ.getOrCreateScalableComponent(card);
             cardComp.update();
             cardComp.repaint();
         }
@@ -41,7 +42,9 @@ class GamePanelStateListener implements IStateListener
             if (change.changeType == ChangeType.Add)
             {
                 ReadOnlyCard card = (ReadOnlyCard) change.addedValue;
-                gpServ.animateCard(card);    
+                
+                IScalableComponent comp = scaleServ.getOrCreateScalableComponent(card);
+                gpServ.startAnimation(comp);    
             }
         }
         else if (property == ReadOnlyPlayer.Score)

@@ -39,7 +39,6 @@ public class SolShowGamePanelService extends GamePanelService implements ISolSho
     // reuse some of the Solitaire sprites for the time being
     private static final String FILEPATH_CARDSTACK = "stack_solitaire_%s.png";
 
-    private static final int ANIMATION_TIME_SCORE = 1200;
     private static final String FILEPATH_FONT_SCORE = "SMB2.ttf";
     private static final String FILEPATH_FONT_SPECIALCOUNT = "ChangaOne-Regular.ttf";
 
@@ -110,7 +109,7 @@ public class SolShowGamePanelService extends GamePanelService implements ISolSho
         for (int i = 0; i < cardstacks.size(); i++)
         {
             ReadOnlyCardStack cardstack = cardstacks.get(i);
-            IScalableComponent<?> scaleComp = scaleServ.getOrCreateScalableComponent(cardstack);
+            IScalableComponent scaleComp = scaleServ.getOrCreateScalableComponent(cardstack);
             add(scaleComp);
         }
         
@@ -174,28 +173,32 @@ public class SolShowGamePanelService extends GamePanelService implements ISolSho
         
         int incr = newScore - oldScore;
         ScalableTextComponent scaleTextComp = new CardScoreScalableTextComponent(UUID.randomUUID(), "+" + incr, scaleFontRes, card);
-        scaleTextComp.setAlignment(TextAlignment.Center);
 
-        add(scaleTextComp);
+        animateShortLived(scaleTextComp, ANIMATION_TIME_SCORE, anim_color, anim_pos);
         IPositionService posServ = Services.get(IPositionService.class);
-        
-        // find the next topmost layer to animate in
-        Optional<Integer> maxLayerInUse = animator.getScalableComponents().stream().map(sc -> getLayer(sc)).max(Integer::compare);
-        int layer = posServ.getAnimationLayer();
-        if (maxLayerInUse.isPresent() && maxLayerInUse.get() > layer)
-        {
-            layer = maxLayerInUse.get() + 1;
-        }
         
         LayeredArea layArea = posServ.getLayeredArea(scaleTextComp);
         scaleTextComp.setBounds(layArea.getBounds2D());
-        setLayer(scaleTextComp, layer);
+        add(scaleTextComp);
+        setLayer(scaleTextComp, getNextAnimationLayer());
         scaleTextComp.update();
         
-        IAnimation anim_color = new ForegroundColorAnimation(new Color(255,69,0,255), new Color(255,69,0, 0));
-        IAnimation anim_pos = new MovingAnimation(layArea.x, layArea.y, layArea.x, layArea.y - layArea.height);
+       
 
-        animator.animate(scaleTextComp, new AnimationEnd(true, -1), ANIMATION_TIME_SCORE, anim_color, anim_pos);
+        animator.animate(scaleTextComp, new AnimationEnd(true, -1), ANIMATION_TIME_SCORE);
+    }
+    
+    protected void animateShortLived(IScalableComponent scaleComp, int time, IAnimation... animations)
+    {
+        IPositionService posServ = Services.get(IPositionService.class);
+        
+        LayeredArea layArea = posServ.getLayeredArea(scaleComp);
+        scaleComp.setBounds(layArea.getBounds2D());
+        add(scaleComp);
+        setLayer(scaleComp, getNextAnimationLayer());
+        scaleComp.update();
+        
+        animator.animate(scaleComp, new AnimationEnd(true, -1), time, animations);
     }
 
     @Override
@@ -205,7 +208,7 @@ public class SolShowGamePanelService extends GamePanelService implements ISolSho
         UUID compId = idServ.createSpecialCounterComponentId(cardStack);
         
         IScalingService scaleServ= Services.get(IScalingService.class);
-        IScalableComponent<?> comp = scaleServ.getScalableComponent(compId);
+        IScalableComponent comp = scaleServ.getScalableComponent(compId);
                 
         LayeredArea layArea = Services.get(IPositionService.class).getLayeredArea(comp);               
         setLayer(comp, layArea.layer);

@@ -18,7 +18,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.services.scaling.ScalableComponent;
 
-public abstract class ScalableTextComponent extends ScalableComponent<Font>
+public abstract class ScalableTextComponent extends ScalableComponent
 {
     private final ScalableFontResource fontResource;
     private String text;
@@ -30,6 +30,7 @@ public abstract class ScalableTextComponent extends ScalableComponent<Font>
         super(id);
         this.text = text;
         this.fontResource = fontResource;
+        setAlignment(TextAlignment.Center);
     }
 
     @Override
@@ -114,7 +115,7 @@ public abstract class ScalableTextComponent extends ScalableComponent<Font>
         textColor = color;
     }
 
-    public void setAlignment(TextAlignment alignment)
+    public final void setAlignment(TextAlignment alignment)
     {
         this.alignment = alignment;
     }

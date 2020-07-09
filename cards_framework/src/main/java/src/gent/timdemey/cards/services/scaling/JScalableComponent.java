@@ -7,9 +7,9 @@ import javax.swing.JPanel;
 
 public final class JScalableComponent extends JPanel
 {
-    private final ScalableComponent<?> abstractor;
+    private final ScalableComponent abstractor;
 
-    public JScalableComponent(ScalableComponent<?> abstractor)
+    public JScalableComponent(ScalableComponent abstractor)
     {
         this.abstractor = abstractor;
         setOpaque(false);

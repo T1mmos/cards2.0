@@ -90,7 +90,7 @@ public class SolitairePositionService implements IPositionService
     }
     
     @Override
-    public LayeredArea getLayeredArea(IScalableComponent<?> scaleComp)
+    public LayeredArea getLayeredArea(IScalableComponent scaleComp)
     {
         if (scaleComp instanceof CardScalableImageComponent)
         {

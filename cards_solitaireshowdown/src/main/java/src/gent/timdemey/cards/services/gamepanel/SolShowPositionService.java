@@ -1,7 +1,6 @@
 package gent.timdemey.cards.services.gamepanel;
 
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Rectangle;
 import java.util.UUID;
 
@@ -171,7 +170,7 @@ public class SolShowPositionService implements IPositionService
     }
 
     @Override
-    public LayeredArea getLayeredArea(IScalableComponent<?> scaleComp)
+    public LayeredArea getLayeredArea(IScalableComponent scaleComp)
     {
         if (scaleComp instanceof CardScalableImageComponent)
         {

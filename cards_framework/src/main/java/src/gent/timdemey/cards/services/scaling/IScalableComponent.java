@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import javax.swing.JComponent;
 
-public interface IScalableComponent<R>
+public interface IScalableComponent
 {
     public void setMirror(boolean mirror);
     public boolean isMirror();

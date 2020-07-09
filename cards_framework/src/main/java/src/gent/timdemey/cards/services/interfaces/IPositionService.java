@@ -34,7 +34,7 @@ public interface IPositionService
      * @param id
      * @return
      */
-    public LayeredArea getLayeredArea(IScalableComponent<?> scaleComp);   
+    public LayeredArea getLayeredArea(IScalableComponent scaleComp);   
 
     /**
      * Gets the dimensions given a request that contains runtime context where a resource

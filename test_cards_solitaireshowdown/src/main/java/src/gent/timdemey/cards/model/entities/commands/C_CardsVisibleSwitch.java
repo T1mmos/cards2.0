@@ -34,8 +34,8 @@ public class C_CardsVisibleSwitch extends CommandBase
         } 
         
         IScalingService scaleServ = Services.get(IScalingService.class);
-        List<IScalableComponent<?>> comps = scaleServ.getComponents();
-        for(IScalableComponent<?> comp : comps)
+        List<IScalableComponent> comps = scaleServ.getComponents();
+        for(IScalableComponent comp : comps)
         {
             comp.update();
         }        

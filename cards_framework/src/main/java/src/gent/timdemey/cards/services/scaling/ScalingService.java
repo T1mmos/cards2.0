@@ -40,7 +40,7 @@ public final class ScalingService implements IScalingService
     private final Executor taskExecutor;
 
     protected final Map<UUID, IScalableResource<?>> resources;
-    protected final Map<UUID, IScalableComponent<?>> components;
+    protected final Map<UUID, IScalableComponent> components;
 
     protected final Map<UUID, UUID> model2comp;
 
@@ -126,7 +126,7 @@ public final class ScalingService implements IScalingService
     }
 
     @Override
-    public IScalableComponent<?> getScalableComponent(UUID compId)
+    public IScalableComponent getScalableComponent(UUID compId)
     {
         return components.get(compId);
     }
@@ -138,7 +138,7 @@ public final class ScalingService implements IScalingService
     }
 
     @Override
-    public void addScalableComponent(IScalableComponent<?> scaleComp) 
+    public void addScalableComponent(IScalableComponent scaleComp) 
     {
         components.put(scaleComp.getId(), scaleComp);
     };
@@ -157,15 +157,15 @@ public final class ScalingService implements IScalingService
     }
     
     @Override
-    public IScalableComponent<?> getComponentAt(Point p)
+    public IScalableComponent getComponentAt(Point p)
     {
         IGamePanelService gpServ = Services.get(IGamePanelService.class);
-        Iterator<IScalableComponent<?>> it = components.values().stream().sorted((x, y) -> {
+        Iterator<IScalableComponent> it = components.values().stream().sorted((x, y) -> {
             return gpServ.getLayer(y) - gpServ.getLayer(x);
         }).iterator();
         while (it.hasNext())
         {
-            IScalableComponent<?>scaleComp = it.next();
+            IScalableComponent scaleComp = it.next();
             if (scaleComp.getBounds().contains(p))
             {
                 return scaleComp;
@@ -175,32 +175,32 @@ public final class ScalingService implements IScalingService
     }
 
     @Override
-    public List<IScalableComponent<?>> getComponentsAt(Point p)
+    public List<IScalableComponent> getComponentsAt(Point p)
     {
         return components.values().stream().filter(s -> s.getBounds().contains(p)).collect(Collectors.toList());
     }
 
     @Override
-    public <T extends IScalableComponent<?>> List<T> getComponentsAt(Point p, Class<T> clazz)
+    public <T extends IScalableComponent> List<T> getComponentsAt(Point p, Class<T> clazz)
     {
         return components.values().stream().filter(s -> s.getBounds().contains(p) && clazz.isAssignableFrom(s.getClass())).map(s -> (T) s)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<IScalableComponent<?>> getComponentsIn(Rectangle rect)
+    public List<IScalableComponent> getComponentsIn(Rectangle rect)
     {
         return components.values().stream().filter(s -> s.getBounds().intersects(rect)).collect(Collectors.toList());
     }
     
     @Override
-    public List<IScalableComponent<?>> getComponents()
+    public List<IScalableComponent> getComponents()
     {
         return new ArrayList<>(components.values());
     }
 
     @Override
-    public IScalableComponent<?> getOrCreateScalableComponent(ReadOnlyCard card)
+    public IScalableComponent getOrCreateScalableComponent(ReadOnlyCard card)
     {
         IIdService uuidServ = Services.get(IIdService.class);
 
@@ -229,7 +229,7 @@ public final class ScalingService implements IScalingService
     }
     
     @Override
-    public IScalableComponent<?> getOrCreateScalableComponent(ReadOnlyCardStack cardstack)
+    public IScalableComponent getOrCreateScalableComponent(ReadOnlyCardStack cardstack)
     {
         IIdService idServ = Services.get(IIdService.class);
 

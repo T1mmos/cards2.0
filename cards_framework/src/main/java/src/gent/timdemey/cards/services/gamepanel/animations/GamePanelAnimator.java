@@ -7,35 +7,37 @@ import java.util.List;
 import javax.swing.Timer;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.services.contract.AnimationDescriptor;
+import gent.timdemey.cards.services.contract.IAnimation;
+import gent.timdemey.cards.services.interfaces.IAnimationService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 
 public class GamePanelAnimator
 {
-    private final List<AnimationInfo> animationInfos;
+    private final List<AnimationTracker> animTrackers;
     private final Timer timer;
 
     public GamePanelAnimator()
     {
-        animationInfos = new ArrayList<>();
+        animTrackers = new ArrayList<>();
         timer = new Timer(10, e -> tick());
     }
 
-    public void animate(IScalableComponent<?> component, AnimationEnd end, int animationTime, IAnimation... animations)
+    public void animate(IScalableComponent component)
     {
-        AnimationInfo animationInfo = new AnimationInfo(component, end, animationTime, System.currentTimeMillis(),
-                animations);
-        animationInfos.add(animationInfo);
+        IAnimationService s = Services.get(IAnimationService.class);
+        AnimationDescriptor descr = s.getAnimationDescriptor(component);
+        AnimationTracker tracker = new AnimationTracker(component, descr);
+        animTrackers.add(tracker);
     }
-    
 
-
-    public void stopAnimate(IScalableComponent<?> scaleComp)
+    public void stopAnimate(IScalableComponent scaleComp)
     {
-        Iterator<AnimationInfo> it = animationInfos.iterator();
+        Iterator<AnimationTracker> it = animTrackers.iterator();
         while (it.hasNext())
         {
-            AnimationInfo ai = it.next();
+            AnimationTracker ai = it.next();
             if (ai.component == scaleComp)
             {
                 it.remove();
@@ -57,18 +59,18 @@ public class GamePanelAnimator
     private void tick()
     {
         long currTickTime = System.currentTimeMillis();
-
-        Iterator<AnimationInfo> i = animationInfos.iterator();
+        
+        Iterator<AnimationTracker> i = animTrackers.iterator();
         while (i.hasNext())
         {
-            AnimationInfo animInfo = i.next();
+            AnimationTracker animTracker = i.next();
 
-            long dt = currTickTime - animInfo.tickStart;
-            double frac = Math.min(1.0, 1.0 * dt / animInfo.animationTime);
+            long dt = currTickTime - animTracker.start_time;
+            double frac = Math.min(1.0, 1.0 * dt / animTracker.descriptor.animationTime);
 
-            for (IAnimation animator : animInfo.animations)
+            for (IAnimation animation : animTracker.descriptor.animations)
             {
-                animator.tick(frac, animInfo.component);
+                animation.tick(frac, animTracker.component);
             }
 
             if (frac == 1.0)
@@ -76,28 +78,29 @@ public class GamePanelAnimator
                 i.remove();
 
                 IGamePanelService gpServ = Services.get(IGamePanelService.class);
-                if (animInfo.end.dispose)
+                if (animTracker.descriptor.end.dispose)
                 {
-                    gpServ.remove(animInfo.component);
+                    gpServ.remove(animTracker.component);
                 }
                 else
                 {
-                    gpServ.setLayer(animInfo.component, animInfo.end.layer);
+                    gpServ.setLayer(animTracker.component, animTracker.descriptor.end.layer);
                 }
             }
         }
     }
-    
+
     /**
      * Get the components that are currently being animated.
+     * 
      * @return
      */
-    public List<IScalableComponent<?>> getScalableComponents()
+    public List<IScalableComponent> getScalableComponents()
     {
-        List<IScalableComponent<?>> comps = new ArrayList<>();
-        for (AnimationInfo info : animationInfos)
+        List<IScalableComponent> comps = new ArrayList<>();
+        for (AnimationTracker tracker : animTrackers)
         {
-            comps.add(info.component);
+            comps.add(tracker.component);
         }
         return comps;
     }
