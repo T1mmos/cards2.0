@@ -12,7 +12,7 @@ public class Coords
     }
     
     /**
-     * Holds absolute coordinates and a reference rectangle.
+     * Holds absolute coordinates.
      * 
      * @author Tim
      */
