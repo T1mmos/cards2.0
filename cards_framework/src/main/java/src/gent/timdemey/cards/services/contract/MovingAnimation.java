@@ -1,9 +1,6 @@
 package gent.timdemey.cards.services.contract;
 
-import java.awt.Rectangle;
-
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.services.interfaces.IAnimationService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 
@@ -15,22 +12,17 @@ public class MovingAnimation implements IAnimation
     
     @Override
     public void tick(IScalableComponent comp, double frac, AnimationStart animStart)
-    {
-        IAnimationService animServ = Services.get(IAnimationService.class);
-        AnimationDescriptor x = animServ.getAnimationDescriptor(comp);
-        
-        // get the absolute coordinates of the component at the start of the animation,
-        // which are dynamic values according to the size of the container, which 
-        // can change while stuff is being animated. Hail relative coordinates!
+    {        
+        // convert the relative coordinates of the component at the start of the animation
+        // into absolute coordinates in the current reference frame, and interpolate 
+        // with the destination coordinates as returned by the IPositionService (which are
+        // already set in the current reference frame).
         IPositionService posServ = Services.get(IPositionService.class);
-        Coords absCoords = posServ.getAbsolute(animStart.coords);
+        Coords.Absolute bounds_total = posServ.getPackedBounds();
+        Coords.Absolute coords_src = Coords.toAbsolute(animStart.relcoords, bounds_total.getSize());
+        Coords.Absolute coords_dst = posServ.getLayeredArea(comp).coords;
        
-        
-        
-        animServ.getAnimationTick(comp)
-        int posx = (int) ( (1.0 - frac) * pos_start.getX() + frac * pos_end.getX() );
-        int posy = (int) ( (1.0 - frac) * pos_start.getY() + frac * pos_end.getY() );
-        Rectangle bounds = comp.getBounds();
-        comp.setBounds(posx, posy, bounds.width,  bounds.height);
+        Coords.Absolute coords_interp = Coords.interpolate(frac, coords_src, coords_dst);
+        comp.setCoords(coords_interp);
     }
 }

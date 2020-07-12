@@ -72,7 +72,6 @@ class GamePanelMouseListener extends MouseAdapter
                 int card_x = state.xstart + dx;
                 int card_y = state.ystart + dy;
 
-                
                 comp.setLocation(card_x, card_y);
             }
 
@@ -134,13 +133,13 @@ class GamePanelMouseListener extends MouseAdapter
                     ReadOnlyCard currentCard = cards.get(i);
 
                     IScalableComponent currScaleImg = Services.get(IScalingService.class).getOrCreateScalableComponent(currentCard);
-                    int card_xstart = currScaleImg.getBounds().x;
-                    int card_ystart = currScaleImg.getBounds().y;
+                    int card_xstart = currScaleImg.getCoords().getBounds().x;
+                    int card_ystart = currScaleImg.getCoords().getBounds().y;
 
                     int layer = posServ.getDragLayer();
                     
                     // ensure to stop any animations running for this card
-                    gpServ.stopAnimation(currentCard);                    
+                    gpServ.stopAnimation(currScaleImg);                    
                     gpServ.setLayer(currScaleImg, layer + i);
                 
                     CardDragState dragState = new CardDragState(card_xstart, card_ystart);
@@ -192,7 +191,7 @@ class GamePanelMouseListener extends MouseAdapter
             IGamePanelService gpServ = Services.get(IGamePanelService.class);
             IScalingService scaleServ = Services.get(IScalingService.class);
 
-            List<IScalableComponent> overlapComps = scaleServ.getComponentsIn(scaleComp.getBounds());
+            List<IScalableComponent> overlapComps = scaleServ.getComponentsIn(scaleComp.getCoords().getBounds());
             for (IScalableComponent comp : overlapComps)
             {
                 if (!(comp instanceof ScalableImageComponent))
@@ -237,7 +236,7 @@ class GamePanelMouseListener extends MouseAdapter
                 CommandBase cmdPush = operationsServ.getPushCommand(playerId, dstCardStack.getId(), roCards.getIds());
                 if (canExecute(context, cmdPush, "mouseReleased"))
                 {
-                    Rectangle intersection = scaleComp.getBounds().intersection(scaleImgComp.getBounds());
+                    Rectangle intersection = scaleComp.getCoords().getBounds().intersection(scaleImgComp.getCoords().getBounds());
                     int intersectA = intersection.width * intersection.height;
                     if (intersectA < intersectAMax)
                     {
@@ -258,8 +257,8 @@ class GamePanelMouseListener extends MouseAdapter
             {
                 for (int i = 0; i < draggedComps.size(); i++)
                 {
-                    CardScalableImageComponent scaleImg = (CardScalableImageComponent) draggedComps.get(i);
-                    gpServ.animateCard(scaleImg.getCard());
+                    CardScalableImageComponent scaleImg = (CardScalableImageComponent) draggedComps.get(i);                    
+                    gpServ.startAnimation(scaleImg);
                 }
             }
 

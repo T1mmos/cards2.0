@@ -40,7 +40,7 @@ public class SolShowAnimationService implements IAnimationService
             LayeredArea cardArea = posServ.getLayeredArea(cardComp);
             
             LayeredArea scoreArea = posServ.getLayeredArea(comp);            
-            Rectangle destRect = new Rectangle(scoreArea.x, scoreArea.y - cardArea.height / 2, scoreArea.width, scoreArea.height);
+            Rectangle destRect = new Rectangle(scoreArea.x, scoreArea.y - cardArea.coords.h / 2, scoreArea.width, scoreArea.height);
             
             MovingAnimation anim1 = new MovingAnimation(start, end)
             

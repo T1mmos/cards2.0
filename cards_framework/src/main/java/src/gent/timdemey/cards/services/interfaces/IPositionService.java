@@ -1,7 +1,6 @@
 package gent.timdemey.cards.services.interfaces;
 
 import java.awt.Dimension;
-import java.awt.Rectangle;
 
 import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.GetScaleInfoRequest;
@@ -25,10 +24,11 @@ public interface IPositionService
     public void setMaxSize(int maxWidth, int maxHeight);
 
     /**
-     * Returns the size of the container.
+     * Returns the packed bounding box of the container where all content exactly fits in without any 
+     * margins. 
      * @return
      */
-    public Rectangle getBounds();
+    public Coords.Absolute getPackedBounds();
 
     /**
      * Returns the bounds where an element identified by the given id should be positioned at.
@@ -36,14 +36,7 @@ public interface IPositionService
      * @return
      */
     public LayeredArea getLayeredArea(IScalableComponent scaleComp);
-   
-    /**
-     * Uses the given relative coordinates to create a new coordinates object with the
-     * matching absolute coordinates filled in.
-     * @param original
-     * @return
-     */
-    public Coords getAbsolute(Coords original);
+       
     /**
      * Gets the dimensions given a request that contains runtime context where a resource
      * could be used. This allows to pre-scale resources without knowing the actual

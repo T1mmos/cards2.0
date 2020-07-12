@@ -17,7 +17,7 @@ public class ForegroundColorAnimation implements IAnimation
     }
 
     @Override
-    public void tick(double frac, IScalableComponent comp)
+    public void tick(IScalableComponent comp, double frac, AnimationStart animStart)
     {
         int r = (int) ( (1.0 - frac) * color_start.getRed() + frac * color_end.getRed() );
         int g = (int) ( (1.0 - frac) * color_start.getGreen() + frac * color_end.getGreen() );

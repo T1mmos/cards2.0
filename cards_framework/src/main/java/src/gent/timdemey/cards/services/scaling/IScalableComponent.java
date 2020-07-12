@@ -7,15 +7,15 @@ import javax.swing.JComponent;
 import gent.timdemey.cards.services.contract.Coords;
 
 public interface IScalableComponent
-{
+{    
+    public JComponent getComponent();
+    
     public void setMirror(boolean mirror);
     public boolean isMirror();
         
-    public void setCoords(Coords coords);
-    //public void setLocation(int x, int y);    
-    
-    public JComponent getComponent();
-    public Coords getCoords();
+    public void setCoords(Coords.Absolute coords);
+    public Coords.Absolute getCoords();
+    public void setLocation(int x, int y);    
     
     /**
      * The unique id of this component. 

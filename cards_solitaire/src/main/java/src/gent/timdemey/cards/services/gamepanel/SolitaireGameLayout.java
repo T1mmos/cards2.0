@@ -4,8 +4,12 @@ final class SolitaireGameLayout {
 
     public int act_twidth;
     public int act_theight;
-    public int act_tpadx;
-    public int act_tpady;
+    public int act_cont_width;
+    public int act_cont_height;
+    public int act_cont_marginl;
+    public int act_cont_marginr;
+    public int act_cont_margint;
+    public int act_cont_marginb;
     
     public int act_cwidth;
     public int act_cheight;

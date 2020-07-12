@@ -4,11 +4,11 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 
 import javax.swing.JLayeredPane;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 
@@ -28,14 +28,14 @@ public class GamePanel extends JLayeredPane
 
         Graphics2D g2 = (Graphics2D) g;
         IPositionService posMan = Services.get(IPositionService.class);
-        Rectangle rect = posMan.getBounds();
+        Coords.Absolute coords = posMan.getPackedBounds();
 
         if (Services.get(IGamePanelService.class).getDrawDebug())
         {
             g2.setStroke(new BasicStroke(2.0f));
             g2.setColor(Color.ORANGE);
 
-            g2.drawRect(rect.x, rect.y, rect.width, rect.height);
+            g2.drawRect(coords.x, coords.y, coords.w, coords.h);
         }
     }
 }

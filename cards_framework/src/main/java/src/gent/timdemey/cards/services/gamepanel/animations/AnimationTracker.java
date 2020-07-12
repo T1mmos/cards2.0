@@ -22,11 +22,11 @@ class AnimationTracker
      */
     final AnimationStart animStart;
     
-    AnimationTracker(IScalableComponent component, AnimationDescriptor descriptor, Coords coords)
+    AnimationTracker(IScalableComponent component, AnimationDescriptor descriptor, Coords.Relative relcoords)
     {
         this.component = component;
         this.descriptor = descriptor;
         
-        this.animStart = new AnimationStart(System.currentTimeMillis(), coords);
+        this.animStart = new AnimationStart(System.currentTimeMillis(), relcoords);
     }    
 }

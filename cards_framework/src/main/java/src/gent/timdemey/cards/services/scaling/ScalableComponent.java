@@ -20,7 +20,7 @@ public abstract class ScalableComponent implements IScalableComponent
     private final UUID id;
     private JComponent component = null;
     private boolean mirror = false;
-    private Coords coords = null;
+    private Coords.Absolute coords = null;
     
     protected ScalableComponent(UUID id)
     {
@@ -116,24 +116,24 @@ public abstract class ScalableComponent implements IScalableComponent
     }
 
     @Override
-    public final void setCoords(Coords coords)
+    public final void setCoords(Coords.Absolute coords)
     {
         this.coords = coords;
         getComponent().setBounds(coords.getBounds());
     }
 
     @Override
-    public Coords getCoords()
+    public Coords.Absolute getCoords()
     {
         return coords;
-        // return getComponent().getBounds();
     }
 
-  /*  @Override
+    @Override
     public void setLocation(int x, int y)
     {
-        getComponent().setLocation(x, y);
-    }*/
+        Coords.Absolute coords_new = Coords.getAbsolute(x, y, coords.w, coords.h);
+        setCoords(coords_new);
+    }
 
     @Override
     public final void setMirror(boolean mirror)

@@ -10,6 +10,7 @@ import com.google.common.base.Preconditions;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.cardgame.SolitaireCardStackType;
+import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.GetCardScaleInfoRequest;
 import gent.timdemey.cards.services.contract.GetCardStackScaleInfoRequest;
 import gent.timdemey.cards.services.contract.GetScaleInfoRequest;
@@ -25,8 +26,8 @@ public class SolitairePositionService implements IPositionService
     private static final int LAYER_CARDS = 200;
     private static final int LAYER_DRAG = 10000;
     private static final int LAYER_ANIMATIONS = 20000;
-    
-    private SolitaireGameLayout gameLayout;
+
+    private SolitaireGameLayout gl;
 
     @Override
     public void setMaxSize(int maxWidth, int maxHeight)
@@ -49,81 +50,87 @@ public class SolitairePositionService implements IPositionService
         int base_tpady = 2;
 
         int base_twidth = 7 * base_swidth + 6 * base_spadx + 2 * base_tpadx;
-        int base_theight = 2 * base_sheight + 1 * base_spady + 12 * base_coffsetvisy + 0 * base_coffsetinvisy
-                + 2 * base_tpady;
+        int base_theight = 2 * base_sheight + 1 * base_spady + 12 * base_coffsetvisy + 0 * base_coffsetinvisy + 2 * base_tpady;
 
         // choose multiplier so everything fits according to base ratios, as
         // large as possible
-        gameLayout = new SolitaireGameLayout();
+        gl = new SolitaireGameLayout();
 
-        gameLayout.act_twidth = maxWidth;
-        gameLayout.act_theight = maxHeight;
-        int ratio_hor = (int) (1.0 * gameLayout.act_twidth / base_twidth);
-        int ratio_ver = (int) (1.0 * gameLayout.act_theight / base_theight);
+        gl.act_twidth = maxWidth;
+        gl.act_theight = maxHeight;
+        int ratio_hor = (int) (1.0 * gl.act_twidth / base_twidth);
+        int ratio_ver = (int) (1.0 * gl.act_theight / base_theight);
 
         int ratio = Math.min(ratio_hor, ratio_ver);
 
-        gameLayout.act_cwidth = ratio * base_cwidth;
-        gameLayout.act_cheight = ratio * base_cheight;
-        gameLayout.act_swidth = ratio * base_swidth;
-        gameLayout.act_sheight = ratio * base_sheight;
-        gameLayout.act_scoffsetx = ratio * base_scoffsetx;
-        gameLayout.act_scoffsety = ratio * base_scoffsety;
-        gameLayout.act_coffsetvisx = ratio * base_coffsetvisx;
-        gameLayout.act_coffsetvisy = ratio * base_coffsetvisy;
-        gameLayout.act_coffsetinvisx = ratio * base_coffsetinvisx;
-        gameLayout.act_coffsetinvisy = ratio * base_coffsetinvisy;
-        gameLayout.act_spadx = ratio * base_spadx;
-        gameLayout.act_spady = ratio * base_spady;
+        gl.act_cwidth = ratio * base_cwidth;
+        gl.act_cheight = ratio * base_cheight;
+        gl.act_swidth = ratio * base_swidth;
+        gl.act_sheight = ratio * base_sheight;
+        gl.act_scoffsetx = ratio * base_scoffsetx;
+        gl.act_scoffsety = ratio * base_scoffsety;
+        gl.act_coffsetvisx = ratio * base_coffsetvisx;
+        gl.act_coffsetvisy = ratio * base_coffsetvisy;
+        gl.act_coffsetinvisx = ratio * base_coffsetinvisx;
+        gl.act_coffsetinvisy = ratio * base_coffsetinvisy;
+        gl.act_spadx = ratio * base_spadx;
+        gl.act_spady = ratio * base_spady;
         // remaining space is distributed to the paddings, keeps everything
         // centered
-        gameLayout.act_tpadx = (gameLayout.act_twidth - 7 * gameLayout.act_swidth - 6 * gameLayout.act_spadx) / 2;
-        gameLayout.act_tpady = (gameLayout.act_theight - 2 * gameLayout.act_sheight - 1 * gameLayout.act_spady
-                - 12 * gameLayout.act_coffsetvisy - 0 * gameLayout.act_coffsetinvisy) / 2;
+        gl.act_cont_width = 7 * gl.act_swidth + 6 * gl.act_spadx;
+        gl.act_cont_height = 2 * gl.act_sheight + 1 * gl.act_spady + 12 * gl.act_coffsetvisy + 0 * gl.act_coffsetinvisy;
+        gl.act_cont_marginl = (gl.act_twidth - gl.act_cont_width) / 2;
+        gl.act_cont_marginr = gl.act_twidth - gl.act_cont_marginl;
+        gl.act_cont_margint = (gl.act_theight - gl.act_cont_height) / 2;
+        gl.act_cont_marginb = gl.act_theight - gl.act_cont_margint;
     }
 
     @Override
-    public Rectangle getBounds()
+    public Coords.Absolute getPackedBounds()
     {
-        return new Rectangle(gameLayout.act_tpadx, gameLayout.act_tpady,
-                gameLayout.act_twidth - 2 * gameLayout.act_tpadx, gameLayout.act_theight - 2 * gameLayout.act_tpady);
+        return Coords.getAbsolute(gl.act_cont_marginl, gl.act_cont_margint, gl.act_cont_width, gl.act_cont_height);
     }
-    
+
     @Override
     public LayeredArea getLayeredArea(IScalableComponent scaleComp)
     {
-        if (scaleComp instanceof CardScalableImageComponent)
+        Rectangle bounds;
+        int layer;
+        if(scaleComp instanceof CardScalableImageComponent)
         {
             ReadOnlyCard card = ((CardScalableImageComponent) scaleComp).getCard();
-            
-            Rectangle bounds = getBounds(card);
-            
-            return new LayeredArea(bounds, LAYER_CARDS + card.getCardIndex(), false);
+            bounds = getBounds(card);
+            layer = LAYER_CARDS + card.getCardIndex();
         }
-        else if (scaleComp instanceof CardStackScalableImageComponent)
+        else if(scaleComp instanceof CardStackScalableImageComponent)
         {
             ReadOnlyCardStack cardstack = ((CardStackScalableImageComponent) scaleComp).getCardStack();
-            Rectangle bounds = getBounds(cardstack);
-            return new LayeredArea(bounds, LAYER_CARDSTACKS, false);
-            
+            bounds = getBounds(cardstack);
+            layer = LAYER_CARDSTACKS;
         }
-        throw new UnsupportedOperationException();
+        else
+        {
+            throw new UnsupportedOperationException("Unsupported scalable component: " + scaleComp.getClass().getSimpleName());
+        }
+
+        Coords.Absolute coords = Coords.getAbsolute(bounds);
+        return new LayeredArea(coords, layer, false);
     }
-    
+
     @Override
     public Dimension getDimension(GetScaleInfoRequest request)
     {
-        if (request instanceof GetCardScaleInfoRequest)
+        if(request instanceof GetCardScaleInfoRequest)
         {
             // we don't need request.card, in this game all cards are equal in size
             return getCardDimension();
         }
-        else if (request instanceof GetCardStackScaleInfoRequest)
+        else if(request instanceof GetCardStackScaleInfoRequest)
         {
             String csType = ((GetCardStackScaleInfoRequest) request).cardStack.getCardStackType();
             return getCardStackDimension(csType);
         }
-        else 
+        else
         {
             throw new UnsupportedOperationException(request.getClass().getSimpleName() + " is not supported, cannot get dimensions for it");
         }
@@ -131,18 +138,18 @@ public class SolitairePositionService implements IPositionService
 
     private Dimension getCardDimension()
     {
-        return new Dimension(gameLayout.act_cwidth, gameLayout.act_cheight);
+        return new Dimension(gl.act_cwidth, gl.act_cheight);
     }
 
     private Dimension getCardStackDimension(String cardStackType)
     {
-        if (cardStackType.equals(SolitaireCardStackType.MIDDLE))
+        if(cardStackType.equals(SolitaireCardStackType.MIDDLE))
         {
-            return new Dimension(gameLayout.act_swidth, 2 * gameLayout.act_sheight);
+            return new Dimension(gl.act_swidth, 2 * gl.act_sheight);
         }
         else
         {
-            return new Dimension(gameLayout.act_swidth, gameLayout.act_sheight);
+            return new Dimension(gl.act_swidth, gl.act_sheight);
         }
 
     }
@@ -152,31 +159,31 @@ public class SolitairePositionService implements IPositionService
         int stackNr = cardStack.getTypeNumber();
 
         Dimension size = getCardStackDimension(cardStack.getCardStackType());
-        Rectangle rect = new Rectangle(gameLayout.act_tpadx, gameLayout.act_tpady, size.width, size.height);
+        Rectangle rect = new Rectangle(gl.act_cont_marginl, gl.act_cont_margint, size.width, size.height);
 
-        if (cardStack.getCardStackType().equals(SolitaireCardStackType.DEPOT))
+        if(cardStack.getCardStackType().equals(SolitaireCardStackType.DEPOT))
         {
             rect.x += 0;
             rect.y += 0;
         }
-        else if (cardStack.getCardStackType().equals(SolitaireCardStackType.TURNOVER))
+        else if(cardStack.getCardStackType().equals(SolitaireCardStackType.TURNOVER))
         {
-            rect.x += gameLayout.act_swidth + gameLayout.act_spadx;
+            rect.x += gl.act_swidth + gl.act_spadx;
             rect.y += 0;
         }
-        else if (cardStack.getCardStackType().equals(SolitaireCardStackType.LAYDOWN))
+        else if(cardStack.getCardStackType().equals(SolitaireCardStackType.LAYDOWN))
         {
-            rect.x += (3 + stackNr) * (gameLayout.act_swidth + gameLayout.act_spadx);
+            rect.x += (3 + stackNr) * (gl.act_swidth + gl.act_spadx);
             rect.y += 0;
         }
-        else if (cardStack.getCardStackType().equals(SolitaireCardStackType.MIDDLE))
+        else if(cardStack.getCardStackType().equals(SolitaireCardStackType.MIDDLE))
         {
-            rect.x += (stackNr) * (gameLayout.act_swidth + gameLayout.act_spadx);
-            rect.y += (gameLayout.act_sheight + gameLayout.act_spady);
+            rect.x += (stackNr) * (gl.act_swidth + gl.act_spadx);
+            rect.y += (gl.act_sheight + gl.act_spady);
         }
         return rect;
     }
-    
+
     private Rectangle getBounds(ReadOnlyCard card)
     {
         ReadOnlyCardStack cardStack = card.getCardStack();
@@ -186,11 +193,11 @@ public class SolitairePositionService implements IPositionService
         rect.width = size.width;
         rect.height = size.height;
 
-        if (cardStack.getCardStackType().equals(SolitaireCardStackType.MIDDLE))
+        if(cardStack.getCardStackType().equals(SolitaireCardStackType.MIDDLE))
         {
             int lowerInvisCnt;
             int lowerVisCnt;
-            if (card.isVisible())
+            if(card.isVisible())
             {
                 lowerInvisCnt = cardStack.getInvisibleCardCount();
                 lowerVisCnt = card.getCardIndex() - lowerInvisCnt;
@@ -201,14 +208,13 @@ public class SolitairePositionService implements IPositionService
                 lowerVisCnt = 0;
             }
 
-            rect.x += gameLayout.act_scoffsetx;
-            rect.y += gameLayout.act_scoffsety + lowerInvisCnt * gameLayout.act_coffsetinvisy
-                    + lowerVisCnt * gameLayout.act_coffsetvisy;
+            rect.x += gl.act_scoffsetx;
+            rect.y += gl.act_scoffsety + lowerInvisCnt * gl.act_coffsetinvisy + lowerVisCnt * gl.act_coffsetvisy;
         }
         else
         {
-            rect.x += gameLayout.act_scoffsetx;
-            rect.y += gameLayout.act_scoffsety;
+            rect.x += gl.act_scoffsetx;
+            rect.y += gl.act_scoffsety;
         }
 
         return rect;

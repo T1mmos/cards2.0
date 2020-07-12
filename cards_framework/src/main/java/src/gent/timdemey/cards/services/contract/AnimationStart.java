@@ -8,13 +8,13 @@ public class AnimationStart
     public final long time;
     
     /**
-     * Coordinates of the component when the animation started.
+     * Relative coordinates of the component when the animation started.
      */
-    public final Coords coords;
+    public final Coords.Relative relcoords;
     
-    public AnimationStart(long time, Coords coords)
+    public AnimationStart(long time, Coords.Relative coords)
     {
         this.time = time;
-        this.coords = coords;
+        this.relcoords = coords;
     }
 }

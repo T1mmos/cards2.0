@@ -21,10 +21,7 @@ import gent.timdemey.cards.services.contract.GetScaleInfoRequest;
 import gent.timdemey.cards.services.contract.ImageResource;
 import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.contract.RescaleRequest;
-import gent.timdemey.cards.services.gamepanel.animations.AnimationEnd;
 import gent.timdemey.cards.services.gamepanel.animations.GamePanelAnimator;
-import gent.timdemey.cards.services.gamepanel.animations.MovingAnimation;
-import gent.timdemey.cards.services.interfaces.IAnimationService;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 import gent.timdemey.cards.services.interfaces.IIdService;
@@ -291,42 +288,6 @@ public class GamePanelService implements IGamePanelService
     @Override
     public void stopAnimation(IScalableComponent scaleComp)
     {
-        animator.stopAnimate(scaleComp);
-    }
-    
-    @Override
-    public void animateCard(ReadOnlyCard card)
-    {
-        IIdService uuidServ = Services.get(IIdService.class);
-        IScalingService scaleCompServ = Services.get(IScalingService.class);
-
-        UUID compId = uuidServ.createCardScalableComponentId(card);
-        IScalableComponent scaleComp = scaleCompServ.getScalableComponent(compId);
-
-        LayeredArea layArea = Services.get(IPositionService.class).getLayeredArea(scaleComp);
-
-        IPositionService posServ = Services.get(IPositionService.class);
-       
-        int layer = layArea.layer;
-        layer += posServ.getAnimationLayer();
-        
-        setLayer(scaleComp, layer);
-
-        int layerEnd = layArea.layer;
-      //  MovingAnimation anim_pos = new MovingAnimation(scaleComp.getBounds().getLocation(), layArea.getLocation2D());
-        AnimationEnd animEnd = new AnimationEnd(false, layerEnd);
-        animator.animate(scaleComp, animEnd, ANIMATION_TIME_CARD);
-    }
-    
-    @Override
-    public void stopAnimation(ReadOnlyCard card)
-    {
-        IIdService uuidServ = Services.get(IIdService.class);
-        IScalingService scaleCompServ = Services.get(IScalingService.class);
-
-        UUID compId = uuidServ.createCardScalableComponentId(card);
-        IScalableComponent scaleComp = scaleCompServ.getScalableComponent(compId);
-        
         animator.stopAnimate(scaleComp);
     }
 

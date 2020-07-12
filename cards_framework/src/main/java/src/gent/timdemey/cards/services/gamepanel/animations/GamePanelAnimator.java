@@ -1,5 +1,6 @@
 package gent.timdemey.cards.services.gamepanel.animations;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -8,9 +9,11 @@ import javax.swing.Timer;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.AnimationDescriptor;
+import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.IAnimation;
 import gent.timdemey.cards.services.interfaces.IAnimationService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
+import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 
 public class GamePanelAnimator
@@ -26,9 +29,14 @@ public class GamePanelAnimator
 
     public void animate(IScalableComponent component)
     {
-        IAnimationService s = Services.get(IAnimationService.class);
-        AnimationDescriptor descr = s.getAnimationDescriptor(component);
-        AnimationTracker tracker = new AnimationTracker(component, descr, component.getCoords());
+        IAnimationService animServ = Services.get(IAnimationService.class);
+        IPositionService posServ = Services.get(IPositionService.class);
+        
+        AnimationDescriptor descr = animServ.getAnimationDescriptor(component);
+        Dimension totaldim = posServ.getPackedBounds().getSize();
+        
+        Coords.Relative relcoords = Coords.toRelative(component.getCoords(), totaldim);
+        AnimationTracker tracker = new AnimationTracker(component, descr, relcoords);
         animTrackers.add(tracker);
     }
 
