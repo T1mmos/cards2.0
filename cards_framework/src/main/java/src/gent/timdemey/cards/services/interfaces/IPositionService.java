@@ -3,9 +3,10 @@ package gent.timdemey.cards.services.interfaces;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 
+import gent.timdemey.cards.services.contract.Coords;
+import gent.timdemey.cards.services.contract.GetScaleInfoRequest;
 import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
-import gent.timdemey.cards.services.contract.GetScaleInfoRequest;
 
 /**
  * Calculates the entire game panel layout given a maximum width and height.
@@ -34,8 +35,15 @@ public interface IPositionService
      * @param id
      * @return
      */
-    public LayeredArea getLayeredArea(IScalableComponent scaleComp);   
-
+    public LayeredArea getLayeredArea(IScalableComponent scaleComp);
+   
+    /**
+     * Uses the given relative coordinates to create a new coordinates object with the
+     * matching absolute coordinates filled in.
+     * @param original
+     * @return
+     */
+    public Coords getAbsolute(Coords original);
     /**
      * Gets the dimensions given a request that contains runtime context where a resource
      * could be used. This allows to pre-scale resources without knowing the actual

@@ -166,7 +166,7 @@ public final class ScalingService implements IScalingService
         while (it.hasNext())
         {
             IScalableComponent scaleComp = it.next();
-            if (scaleComp.getBounds().contains(p))
+            if (scaleComp.getCoords().getBounds().contains(p))
             {
                 return scaleComp;
             }
@@ -177,20 +177,20 @@ public final class ScalingService implements IScalingService
     @Override
     public List<IScalableComponent> getComponentsAt(Point p)
     {
-        return components.values().stream().filter(s -> s.getBounds().contains(p)).collect(Collectors.toList());
+        return components.values().stream().filter(s -> s.getCoords().getBounds().contains(p)).collect(Collectors.toList());
     }
 
     @Override
     public <T extends IScalableComponent> List<T> getComponentsAt(Point p, Class<T> clazz)
     {
-        return components.values().stream().filter(s -> s.getBounds().contains(p) && clazz.isAssignableFrom(s.getClass())).map(s -> (T) s)
+        return components.values().stream().filter(s -> s.getCoords().getBounds().contains(p) && clazz.isAssignableFrom(s.getClass())).map(s -> (T) s)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<IScalableComponent> getComponentsIn(Rectangle rect)
     {
-        return components.values().stream().filter(s -> s.getBounds().intersects(rect)).collect(Collectors.toList());
+        return components.values().stream().filter(s -> s.getCoords().getBounds().intersects(rect)).collect(Collectors.toList());
     }
     
     @Override

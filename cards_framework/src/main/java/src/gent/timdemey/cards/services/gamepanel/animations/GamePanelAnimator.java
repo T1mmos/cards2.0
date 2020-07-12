@@ -28,7 +28,7 @@ public class GamePanelAnimator
     {
         IAnimationService s = Services.get(IAnimationService.class);
         AnimationDescriptor descr = s.getAnimationDescriptor(component);
-        AnimationTracker tracker = new AnimationTracker(component, descr);
+        AnimationTracker tracker = new AnimationTracker(component, descr, component.getCoords());
         animTrackers.add(tracker);
     }
 
@@ -65,12 +65,12 @@ public class GamePanelAnimator
         {
             AnimationTracker animTracker = i.next();
 
-            long dt = currTickTime - animTracker.start_time;
+            long dt = currTickTime - animTracker.animStart.time;
             double frac = Math.min(1.0, 1.0 * dt / animTracker.descriptor.animationTime);
 
             for (IAnimation animation : animTracker.descriptor.animations)
             {
-                animation.tick(frac, animTracker.component);
+                animation.tick(animTracker.component, frac, animTracker.animStart);
             }
 
             if (frac == 1.0)

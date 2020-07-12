@@ -1,21 +1,21 @@
 package gent.timdemey.cards.services.scaling;
 
-import java.awt.Rectangle;
 import java.util.UUID;
 
 import javax.swing.JComponent;
+
+import gent.timdemey.cards.services.contract.Coords;
 
 public interface IScalableComponent
 {
     public void setMirror(boolean mirror);
     public boolean isMirror();
         
-    public void setBounds(Rectangle rect);
-    public void setBounds(int x, int y, int w, int h);
-    public void setLocation(int x, int y);    
+    public void setCoords(Coords coords);
+    //public void setLocation(int x, int y);    
     
     public JComponent getComponent();
-    public Rectangle getBounds();
+    public Coords getCoords();
     
     /**
      * The unique id of this component. 

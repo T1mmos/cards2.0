@@ -2,21 +2,21 @@ package gent.timdemey.cards.services.gamepanel;
 
 final class SolShowGameLayout {
 
-    public int act_twidth;
-    public int act_theight;
-    public int act_tpadx;
-    public int act_tpady;
+    public int act_t_width;
+    public int act_t_height;
+    public int act_t_padx;
+    public int act_t_pady;
     
-    public int act_cwidth;
-    public int act_cheight;
-    public int act_swidth;
-    public int act_sheight;
-    public int act_scoffsetx;
-    public int act_scoffsety;
-    public int act_coffsetvisx;
-    public int act_coffsetvisy;
-    public int act_soffsetx; 
-    public int act_soffsety;
+    public int act_c_width;
+    public int act_c_height;
+    public int act_s_width;
+    public int act_s_height;
+    public int act_sc_offsetx;
+    public int act_sc_offsety;
+    public int act_c_offsetvisx;
+    public int act_c_offsetvisy;
+    public int act_s_offsetx; 
+    public int act_s_offsety;
     
     public int act_scoretext_height;
         

@@ -68,11 +68,12 @@ class GamePanelMouseListener extends MouseAdapter
             for (int i = 0; i < dragStates.size(); i++)
             {
                 CardDragState state = dragStates.get(i);
-                IScalableComponent scaleImg = draggedComps.get(i);
+                IScalableComponent comp = draggedComps.get(i);
                 int card_x = state.xstart + dx;
                 int card_y = state.ystart + dy;
 
-                scaleImg.setLocation(card_x, card_y);
+                
+                comp.setLocation(card_x, card_y);
             }
 
         }

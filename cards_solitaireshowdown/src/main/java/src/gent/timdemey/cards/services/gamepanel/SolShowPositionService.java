@@ -63,36 +63,36 @@ public class SolShowPositionService implements IPositionService
         // large as possible
         gameLayout = new SolShowGameLayout();
 
-        gameLayout.act_twidth = maxWidth;
-        gameLayout.act_theight = maxHeight;
-        int ratio_hor = (int) (1.0 * gameLayout.act_twidth / base_twidth);
-        int ratio_ver = (int) (1.0 * gameLayout.act_theight / base_theight);
+        gameLayout.act_t_width = maxWidth;
+        gameLayout.act_t_height = maxHeight;
+        int ratio_hor = (int) (1.0 * gameLayout.act_t_width / base_twidth);
+        int ratio_ver = (int) (1.0 * gameLayout.act_t_height / base_theight);
 
         int ratio = Math.min(ratio_hor, ratio_ver);
 
-        gameLayout.act_cwidth = ratio * base_cwidth;
-        gameLayout.act_cheight = ratio * base_cheight;
-        gameLayout.act_swidth = ratio * base_swidth;
-        gameLayout.act_sheight = ratio * base_sheight;
-        gameLayout.act_scoffsetx = ratio * base_scoffsetx;
-        gameLayout.act_scoffsety = ratio * base_scoffsety;
-        gameLayout.act_coffsetvisx = ratio * base_coffsetvisx;
-        gameLayout.act_coffsetvisy = ratio * base_coffsetvisy;
-        gameLayout.act_soffsetx = ratio * base_soffsetx;
-        gameLayout.act_soffsety = ratio * base_soffsety;
+        gameLayout.act_c_width = ratio * base_cwidth;
+        gameLayout.act_c_height = ratio * base_cheight;
+        gameLayout.act_s_width = ratio * base_swidth;
+        gameLayout.act_s_height = ratio * base_sheight;
+        gameLayout.act_sc_offsetx = ratio * base_scoffsetx;
+        gameLayout.act_sc_offsety = ratio * base_scoffsety;
+        gameLayout.act_c_offsetvisx = ratio * base_coffsetvisx;
+        gameLayout.act_c_offsetvisy = ratio * base_coffsetvisy;
+        gameLayout.act_s_offsetx = ratio * base_soffsetx;
+        gameLayout.act_s_offsety = ratio * base_soffsety;
         gameLayout.act_scoretext_height = ratio * base_scoretext_height;
 
         // remaining space is distributed to the paddings, keeps everything
         // centered
-        gameLayout.act_tpadx = (gameLayout.act_twidth - 8 * gameLayout.act_swidth - 7 * gameLayout.act_soffsetx) / 2;
-        gameLayout.act_tpady = (gameLayout.act_theight - 5 * gameLayout.act_sheight - 4 * gameLayout.act_soffsety) / 2;
+        gameLayout.act_t_padx = (gameLayout.act_t_width - 8 * gameLayout.act_s_width - 7 * gameLayout.act_s_offsetx) / 2;
+        gameLayout.act_t_pady = (gameLayout.act_t_height - 5 * gameLayout.act_s_height - 4 * gameLayout.act_s_offsety) / 2;
     }
 
     @Override
     public Rectangle getBounds()
     {
-        return new Rectangle(gameLayout.act_tpadx, gameLayout.act_tpady,
-                gameLayout.act_twidth - 2 * gameLayout.act_tpadx, gameLayout.act_theight - 2 * gameLayout.act_tpady);
+        return new Rectangle(gameLayout.act_t_padx, gameLayout.act_t_pady,
+                gameLayout.act_t_width - 2 * gameLayout.act_t_padx, gameLayout.act_t_height - 2 * gameLayout.act_t_pady);
     }
 
     @Override
@@ -125,12 +125,12 @@ public class SolShowPositionService implements IPositionService
 
     private Dimension getCardScoreDimension()
     {
-        return new Dimension(gameLayout.act_cwidth, gameLayout.act_scoretext_height);
+        return new Dimension(gameLayout.act_c_width, gameLayout.act_scoretext_height);
     }
 
     private Dimension getSpecialCounterDimension()
     {
-        return new Dimension(gameLayout.act_swidth, gameLayout.act_sheight / 3);
+        return new Dimension(gameLayout.act_s_width, gameLayout.act_s_height / 3);
     }
     
     private Dimension getCardStackDimension(String csType)
@@ -138,35 +138,35 @@ public class SolShowPositionService implements IPositionService
         int w = 0, h = 0;
         if (csType.equals(SolShowCardStackType.DEPOT))
         {
-            w = gameLayout.act_swidth;
-            h = gameLayout.act_sheight;
+            w = gameLayout.act_s_width;
+            h = gameLayout.act_s_height;
         }
         else if (csType.equals(SolShowCardStackType.TURNOVER))
         {
-            w = gameLayout.act_swidth + (int) (0.5 * gameLayout.act_cwidth);
-            h = gameLayout.act_sheight;
+            w = gameLayout.act_s_width + (int) (0.5 * gameLayout.act_c_width);
+            h = gameLayout.act_s_height;
         }
         else if (csType.equals(SolShowCardStackType.LAYDOWN))
         {
-            w = gameLayout.act_swidth;
-            h = gameLayout.act_sheight;
+            w = gameLayout.act_s_width;
+            h = gameLayout.act_s_height;
         }
         else if (csType.equals(SolShowCardStackType.MIDDLE))
         {
-            w = gameLayout.act_swidth;
-            h = 2 * gameLayout.act_sheight;
+            w = gameLayout.act_s_width;
+            h = 2 * gameLayout.act_s_height;
         }
         else if (csType.equals(SolShowCardStackType.SPECIAL))
         {
-            w = gameLayout.act_swidth;
-            h = gameLayout.act_sheight;
+            w = gameLayout.act_s_width;
+            h = gameLayout.act_s_height;
         }
         return new Dimension(w, h);
     }
 
     private Dimension getCardDimension()
     {
-        return new Dimension(gameLayout.act_cwidth, gameLayout.act_cheight);
+        return new Dimension(gameLayout.act_c_width, gameLayout.act_c_height);
     }
 
     @Override
@@ -210,13 +210,13 @@ public class SolShowPositionService implements IPositionService
 
             int width = dim.width;
             int height = dim.height + 10;            
-            int x = gameLayout.act_tpadx + gameLayout.act_swidth - width;
-            int y = gameLayout.act_tpady + 3 * (gameLayout.act_sheight + gameLayout.act_soffsety) + (gameLayout.act_sheight - height) / 2;
+            int x = gameLayout.act_t_padx + gameLayout.act_s_width - width;
+            int y = gameLayout.act_t_pady + 3 * (gameLayout.act_s_height + gameLayout.act_s_offsety) + (gameLayout.act_s_height - height) / 2;
                         
             if (!isLocal) // point-mirror
             {
-                x = gameLayout.act_twidth - x - width;
-                y = gameLayout.act_theight - y - height;
+                x = gameLayout.act_t_width - x - width;
+                y = gameLayout.act_t_height - y - height;
             }
             
             return new LayeredArea(x, y, width, height, LAYER_CARDSTACKS, false);
@@ -244,14 +244,14 @@ public class SolShowPositionService implements IPositionService
         int shift = shiftRight - shiftLeft;
         if (local)
         {
-            rect.x += gameLayout.act_scoffsetx + (isOffsetX ? shift * gameLayout.act_coffsetvisx : 0);
-            rect.y += gameLayout.act_scoffsety + (isOffsetY ? card.getCardIndex() * gameLayout.act_coffsetvisy : 0);
+            rect.x += gameLayout.act_sc_offsetx + (isOffsetX ? shift * gameLayout.act_c_offsetvisx : 0);
+            rect.y += gameLayout.act_sc_offsety + (isOffsetY ? card.getCardIndex() * gameLayout.act_c_offsetvisy : 0);
         }
         else
         {
-            rect.x += gameLayout.act_scoffsetx + (isOffsetX ? (2 - shift) * gameLayout.act_coffsetvisx : 0);
-            rect.y = rect.y + rect.height - gameLayout.act_scoffsety - gameLayout.act_cheight
-                    - (isOffsetY ? card.getCardIndex() * gameLayout.act_coffsetvisy : 0);
+            rect.x += gameLayout.act_sc_offsetx + (isOffsetX ? (2 - shift) * gameLayout.act_c_offsetvisx : 0);
+            rect.y = rect.y + rect.height - gameLayout.act_sc_offsety - gameLayout.act_c_height
+                    - (isOffsetY ? card.getCardIndex() * gameLayout.act_c_offsetvisy : 0);
         }
         
         // dimension
@@ -278,28 +278,28 @@ public class SolShowPositionService implements IPositionService
         int x = 0, y = 0;
         if (csType.equals(SolShowCardStackType.DEPOT))
         {
-            x = gameLayout.act_tpadx;
-            y = gameLayout.act_tpady + 4 * (gameLayout.act_sheight + gameLayout.act_soffsety);
+            x = gameLayout.act_t_padx;
+            y = gameLayout.act_t_pady + 4 * (gameLayout.act_s_height + gameLayout.act_s_offsety);
         }
         else if (csType.equals(SolShowCardStackType.TURNOVER))
         {
-            x = gameLayout.act_tpadx + gameLayout.act_swidth + gameLayout.act_soffsetx;
-            y = gameLayout.act_tpady + 4 * (gameLayout.act_sheight + gameLayout.act_soffsety);
+            x = gameLayout.act_t_padx + gameLayout.act_s_width + gameLayout.act_s_offsetx;
+            y = gameLayout.act_t_pady + 4 * (gameLayout.act_s_height + gameLayout.act_s_offsety);
         }
         else if (csType.equals(SolShowCardStackType.LAYDOWN))
         {
-            x = gameLayout.act_tpadx + (0 + stackNr) * (gameLayout.act_swidth + gameLayout.act_soffsetx);
-            y = gameLayout.act_tpady + 2 * (gameLayout.act_sheight + gameLayout.act_soffsety);
+            x = gameLayout.act_t_padx + (0 + stackNr) * (gameLayout.act_s_width + gameLayout.act_s_offsetx);
+            y = gameLayout.act_t_pady + 2 * (gameLayout.act_s_height + gameLayout.act_s_offsety);
         }
         else if (csType.equals(SolShowCardStackType.MIDDLE))
         {
-            x = gameLayout.act_tpadx + (4 + stackNr) * (gameLayout.act_swidth + gameLayout.act_soffsetx);
-            y = gameLayout.act_tpady + 3 * (gameLayout.act_sheight + gameLayout.act_soffsety);
+            x = gameLayout.act_t_padx + (4 + stackNr) * (gameLayout.act_s_width + gameLayout.act_s_offsetx);
+            y = gameLayout.act_t_pady + 3 * (gameLayout.act_s_height + gameLayout.act_s_offsety);
         }
         else if (cardStack.getCardStackType().equals(SolShowCardStackType.SPECIAL))
         {
-            x = gameLayout.act_tpadx + gameLayout.act_swidth + gameLayout.act_soffsetx;
-            y = gameLayout.act_tpady + 3 * (gameLayout.act_sheight + gameLayout.act_soffsety);
+            x = gameLayout.act_t_padx + gameLayout.act_s_width + gameLayout.act_s_offsetx;
+            y = gameLayout.act_t_pady + 3 * (gameLayout.act_s_height + gameLayout.act_s_offsety);
         }
 
         // dimension
@@ -308,8 +308,8 @@ public class SolShowPositionService implements IPositionService
 
         if (!isLocal) // point-mirror
         {
-            rect.x = gameLayout.act_twidth - rect.x - rect.width;
-            rect.y = gameLayout.act_theight - rect.y - rect.height;
+            rect.x = gameLayout.act_t_width - rect.x - rect.width;
+            rect.y = gameLayout.act_t_height - rect.y - rect.height;
         }
 
         return new LayeredArea(rect, LAYER_CARDSTACKS, !isLocal);

@@ -1,6 +1,8 @@
 package gent.timdemey.cards.services.gamepanel.animations;
 
 import gent.timdemey.cards.services.contract.AnimationDescriptor;
+import gent.timdemey.cards.services.contract.AnimationStart;
+import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 
 class AnimationTracker
@@ -16,14 +18,15 @@ class AnimationTracker
     final AnimationDescriptor descriptor;
     
     /**
-     * Time when the animation started.
+     * Holds values at the start of the animation, that can be used for all kind of interpolations.
      */
-    final long start_time;
+    final AnimationStart animStart;
     
-    AnimationTracker(IScalableComponent component, AnimationDescriptor descriptor)
+    AnimationTracker(IScalableComponent component, AnimationDescriptor descriptor, Coords coords)
     {
         this.component = component;
         this.descriptor = descriptor;
-        this.start_time = System.currentTimeMillis();
+        
+        this.animStart = new AnimationStart(System.currentTimeMillis(), coords);
     }    
 }

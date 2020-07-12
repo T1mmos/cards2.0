@@ -206,9 +206,8 @@ public class GamePanelService implements IGamePanelService
         IScalingService scaleServ = Services.get(IScalingService.class);
         for (IScalableComponent scaleComp : scaleServ.getComponents())
         {
-            LayeredArea layArea = posMan.getLayeredArea(scaleComp);
-
-            scaleComp.setBounds(layArea.getBounds2D());
+            LayeredArea layArea = posMan.getLayeredArea(scaleComp);            
+            scaleComp.setCoords(layArea.coords);
             scaleComp.setMirror(layArea.mirror);
             setLayer(scaleComp, layArea.layer);
         }
@@ -286,15 +285,13 @@ public class GamePanelService implements IGamePanelService
     @Override
     public void startAnimation(IScalableComponent scaleComp)
     {
-        IAnimationService a;
-        a.getAnimationInfo(tick, comp)
+        animator.animate(scaleComp);
     }
     
     @Override
     public void stopAnimation(IScalableComponent scaleComp)
     {
-        // TODO Auto-generated method stub
-        
+        animator.stopAnimate(scaleComp);
     }
     
     @Override

@@ -50,7 +50,7 @@ public abstract class ScalableTextComponent extends ScalableComponent
         super.drawDebugBoundaries(g2);
 
         // jlabel bounding box
-        Rectangle bounds = getBounds();
+        Rectangle bounds = getCoords().getBounds();
         g2.setColor(Color.blue);
         g2.drawRect(0, 0, bounds.width - 1, bounds.height - 1);
 
@@ -62,7 +62,7 @@ public abstract class ScalableTextComponent extends ScalableComponent
 
     private Font getFont()
     {
-        Rectangle bounds = getBounds();
+        Rectangle bounds = getCoords().getBounds();
 
         Dimension fontDim = new Dimension(0, bounds.height - 10);
         Font font = fontResource.get(fontDim);
@@ -71,7 +71,7 @@ public abstract class ScalableTextComponent extends ScalableComponent
 
     private Rectangle getTextBounds(Graphics2D g2)
     {
-        Rectangle bounds = getBounds();
+        Rectangle bounds = getCoords().getBounds();
 
         Font font = getFont();
         g2.setFont(font);

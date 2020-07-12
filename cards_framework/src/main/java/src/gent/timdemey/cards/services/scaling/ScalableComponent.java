@@ -4,9 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -14,6 +12,7 @@ import java.util.UUID;
 import javax.swing.JComponent;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 
 public abstract class ScalableComponent implements IScalableComponent
@@ -21,6 +20,7 @@ public abstract class ScalableComponent implements IScalableComponent
     private final UUID id;
     private JComponent component = null;
     private boolean mirror = false;
+    private Coords coords = null;
     
     protected ScalableComponent(UUID id)
     {
@@ -116,28 +116,24 @@ public abstract class ScalableComponent implements IScalableComponent
     }
 
     @Override
-    public final void setBounds(Rectangle rect)
+    public final void setCoords(Coords coords)
     {
-        getComponent().setBounds(rect);
+        this.coords = coords;
+        getComponent().setBounds(coords.getBounds());
     }
 
     @Override
-    public final void setBounds(int x, int y, int w, int h)
+    public Coords getCoords()
     {
-        getComponent().setBounds(x, y, w, h);
+        return coords;
+        // return getComponent().getBounds();
     }
 
-    @Override
-    public Rectangle getBounds()
-    {
-        return getComponent().getBounds();
-    }
-
-    @Override
+  /*  @Override
     public void setLocation(int x, int y)
     {
         getComponent().setLocation(x, y);
-    }
+    }*/
 
     @Override
     public final void setMirror(boolean mirror)

@@ -62,7 +62,7 @@ public abstract class ScalableImageComponent extends ScalableComponent
     @Override
     protected final void draw(Graphics2D g2)
     {
-        Dimension dim = getBounds().getSize();
+        Dimension dim = getCoords().getBounds().getSize();
         
         BufferedImage bi = currentScaledResource.get(dim);
         
