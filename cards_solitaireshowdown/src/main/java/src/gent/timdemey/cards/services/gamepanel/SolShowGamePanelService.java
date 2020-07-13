@@ -2,11 +2,9 @@ package gent.timdemey.cards.services.gamepanel;
 
 import java.awt.Color;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyPlayer;
@@ -15,32 +13,19 @@ import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.contract.GetCardScoreScaleInfoRequest;
 import gent.timdemey.cards.services.contract.GetScaleInfoRequest;
 import gent.timdemey.cards.services.contract.GetSpecialCounterScaleInfoRequest;
-import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.contract.RescaleRequest;
-import gent.timdemey.cards.services.gamepanel.animations.AnimationEnd;
-import gent.timdemey.cards.services.gamepanel.animations.ForegroundColorAnimation;
-import gent.timdemey.cards.services.gamepanel.animations.IAnimation;
-import gent.timdemey.cards.services.gamepanel.animations.MovingAnimation;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IIdService;
-import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
-import gent.timdemey.cards.services.interfaces.ISolShowGamePanelService;
 import gent.timdemey.cards.services.interfaces.ISolShowIdService;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
-import gent.timdemey.cards.services.scaling.comps.CardScoreScalableTextComponent;
 import gent.timdemey.cards.services.scaling.comps.SpecialCounterScalableTextComponent;
 import gent.timdemey.cards.services.scaling.text.ScalableFontResource;
 import gent.timdemey.cards.services.scaling.text.ScalableTextComponent;
 import gent.timdemey.cards.services.scaling.text.TextAlignment;
 
-public class SolShowGamePanelService extends GamePanelService implements ISolShowGamePanelService
+public class SolShowGamePanelService extends GamePanelService 
 {
-    // reuse some of the Solitaire sprites for the time being
-    private static final String FILEPATH_CARDSTACK = "stack_solitaire_%s.png";
-
-    private static final String FILEPATH_FONT_SCORE = "SMB2.ttf";
-    private static final String FILEPATH_FONT_SPECIALCOUNT = "ChangaOne-Regular.ttf";
 
     @Override
     public void preload()
@@ -59,10 +44,10 @@ public class SolShowGamePanelService extends GamePanelService implements ISolSho
         IIdService idServ = Services.get(IIdService.class);
         
         // score font        
-        preloadFont(idServ.createFontScalableResourceId(FILEPATH_FONT_SCORE), FILEPATH_FONT_SCORE);
+        preloadFont(idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SCORE), SolShowResource.FILEPATH_FONT_SCORE);
         
         // special stack counter font
-        preloadFont(idServ.createFontScalableResourceId(FILEPATH_FONT_SPECIALCOUNT), FILEPATH_FONT_SPECIALCOUNT);
+        preloadFont(idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SPECIALCOUNT), SolShowResource.FILEPATH_FONT_SPECIALCOUNT);
     }
     
     private void preloadCardStacks()
@@ -75,7 +60,7 @@ public class SolShowGamePanelService extends GamePanelService implements ISolSho
         for (String stack : solstacks)
         {
             UUID id = idServ.createCardStackScalableResourceId(stack);
-            String filename = String.format(FILEPATH_CARDSTACK, stack.toLowerCase());
+            String filename = String.format(SolShowResource.FILEPATH_CARDSTACK, stack.toLowerCase());
             preloadImage(id, filename);
         }
         
@@ -114,7 +99,7 @@ public class SolShowGamePanelService extends GamePanelService implements ISolSho
         }
         
         // special stack counter
-        UUID resId = idServ.createFontScalableResourceId(FILEPATH_FONT_SPECIALCOUNT);
+        UUID resId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SPECIALCOUNT);
         ScalableFontResource scaleFontRes = (ScalableFontResource) scaleServ.getScalableResource(resId);        
         for(ReadOnlyPlayer player : state.getPlayers())
         {
@@ -148,14 +133,14 @@ public class SolShowGamePanelService extends GamePanelService implements ISolSho
         // SolShow: card scores
         {
             GetScaleInfoRequest infoReq = new GetCardScoreScaleInfoRequest();
-            UUID resId = idServ.createFontScalableResourceId(FILEPATH_FONT_SCORE);
+            UUID resId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SCORE);
             addRescaleRequest(requests, infoReq, resId);
         }
         
         // SolShow: special stack counter
         {
             GetScaleInfoRequest infoReq = new GetSpecialCounterScaleInfoRequest();
-            UUID resId = idServ.createFontScalableResourceId(FILEPATH_FONT_SPECIALCOUNT);
+            UUID resId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SPECIALCOUNT);
             addRescaleRequest(requests, infoReq, resId);
         }
         
@@ -163,56 +148,9 @@ public class SolShowGamePanelService extends GamePanelService implements ISolSho
     }
     
     @Override
-    public void animateCardScore(ReadOnlyCard card, int oldScore, int newScore)
+    public void startAnimation(IScalableComponent scaleComp)
     {
-        IScalingService scaleServ = Services.get(IScalingService.class);
-        IIdService idServ = Services.get(IIdService.class);
-        
-        UUID resId = idServ.createFontScalableResourceId(FILEPATH_FONT_SCORE);
-        ScalableFontResource scaleFontRes = (ScalableFontResource) scaleServ.getScalableResource(resId);
-        
-        int incr = newScore - oldScore;
-        ScalableTextComponent scaleTextComp = new CardScoreScalableTextComponent(UUID.randomUUID(), "+" + incr, scaleFontRes, card);
-
-        animateShortLived(scaleTextComp, ANIMATION_TIME_SCORE, anim_color, anim_pos);
-        IPositionService posServ = Services.get(IPositionService.class);
-        
-        LayeredArea layArea = posServ.getLayeredArea(scaleTextComp);
-        scaleTextComp.setBounds(layArea.getBounds2D());
-        add(scaleTextComp);
-        setLayer(scaleTextComp, getNextAnimationLayer());
-        scaleTextComp.update();
-        
-       
-
-        animator.animate(scaleTextComp, new AnimationEnd(true, -1), ANIMATION_TIME_SCORE);
-    }
-    
-    protected void animateShortLived(IScalableComponent scaleComp, int time, IAnimation... animations)
-    {
-        IPositionService posServ = Services.get(IPositionService.class);
-        
-        LayeredArea layArea = posServ.getLayeredArea(scaleComp);
-        scaleComp.setBounds(layArea.getBounds2D());
-        add(scaleComp);
-        setLayer(scaleComp, getNextAnimationLayer());
-        scaleComp.update();
-        
-        animator.animate(scaleComp, new AnimationEnd(true, -1), time, animations);
-    }
-
-    @Override
-    public void animateSpecialScore(ReadOnlyCardStack cardStack)
-    {
-        ISolShowIdService idServ = Services.get(ISolShowIdService.class);
-        UUID compId = idServ.createSpecialCounterComponentId(cardStack);
-        
-        IScalingService scaleServ= Services.get(IScalingService.class);
-        IScalableComponent comp = scaleServ.getScalableComponent(compId);
-                
-        LayeredArea layArea = Services.get(IPositionService.class).getLayeredArea(comp);               
-        setLayer(comp, layArea.layer);
-
-        comp.update();
+        // TODO Auto-generated method stub
+        super.startAnimation(scaleComp);
     }
 }

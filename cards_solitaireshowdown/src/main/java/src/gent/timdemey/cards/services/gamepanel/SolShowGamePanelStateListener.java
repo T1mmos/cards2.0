@@ -13,15 +13,23 @@ import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.ChangeType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.services.interfaces.ISolShowGamePanelService;
+import gent.timdemey.cards.services.interfaces.IGamePanelService;
+import gent.timdemey.cards.services.interfaces.IScalingService;
+import gent.timdemey.cards.services.interfaces.ISolShowIdService;
+import gent.timdemey.cards.services.scaling.IScalableComponent;
+import gent.timdemey.cards.services.scaling.comps.CardScoreScalableTextComponent;
+import gent.timdemey.cards.services.scaling.text.ScalableFontResource;
+import gent.timdemey.cards.services.scaling.text.ScalableTextComponent;
 
 public class SolShowGamePanelStateListener extends GamePanelStateListener
 {
     @Override
     public void onChange(ReadOnlyChange change)
     {
-        ISolShowGamePanelService gpServ = Services.get(ISolShowGamePanelService.class);
+        IGamePanelService gpServ = Services.get(IGamePanelService.class);
         IContextService contextService = Services.get(IContextService.class);
+        IScalingService scaleServ = Services.get(IScalingService.class);
+        ISolShowIdService idServ = Services.get(ISolShowIdService.class);
         Context context = contextService.getThreadContext();
         ReadOnlyState state = context.getReadOnlyState();
         
@@ -33,7 +41,14 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
             UUID cardId = typed.entityId;
             
             ReadOnlyCard card = state.getCardGame().getCard(cardId);
-            ((SolShowGamePanelService) gpServ).animateCardScore(card, typed.oldValue, typed.newValue);
+                        
+            UUID resId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SCORE);
+            ScalableFontResource scaleFontRes = (ScalableFontResource) scaleServ.getScalableResource(resId);
+            
+            int incr = typed.newValue - typed.oldValue;
+            ScalableTextComponent scaleTextComp = new CardScoreScalableTextComponent(UUID.randomUUID(), "+" + incr, scaleFontRes, card);
+            
+            gpServ.startAnimation(scaleTextComp);
         }
         else if (property == ReadOnlyCardStack.Cards)
         {
@@ -47,13 +62,16 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
                     {
                         for (ReadOnlyCard card : cardStack.getHighestCards(cnt))
                         {
-                            gpServ.animateCard(card);
+                            IScalableComponent comp = scaleServ.getOrCreateScalableComponent(card);
+                            gpServ.startAnimation(comp);
                         }
                     }
                 }
                 else if (cardStack.getCardStackType().equals(SolShowCardStackType.SPECIAL))
                 {
-                    gpServ.animateSpecialScore(cardStack);
+                    UUID id = idServ.createSpecialCounterComponentId(cardStack);
+                    IScalableComponent comp = scaleServ.getScalableComponent(id);
+                    gpServ.startAnimation(comp);
                 }
             }
             else if (change.changeType == ChangeType.Add && cardStack.getCardStackType().equals(SolShowCardStackType.TURNOVER))
@@ -65,15 +83,14 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
                     for (ReadOnlyCard card : cardStack.getHighestCards(cnt))
                     {
                         if (card != addedCard)
-                        {
-                            gpServ.animateCard(card);
+                        {                            
+                            IScalableComponent comp = scaleServ.getOrCreateScalableComponent(card);
+                            gpServ.startAnimation(comp);                            
                         }
                     }
                 }
-                gpServ.animateCard(addedCard);
-                
-               //ReadOnlyCard card = (ReadOnlyCard) change.addedValue;
-               // gpServ.animateCard(card);    
+                IScalableComponent comp = scaleServ.getOrCreateScalableComponent(addedCard);
+                gpServ.startAnimation(comp);     
             }
             else
             {

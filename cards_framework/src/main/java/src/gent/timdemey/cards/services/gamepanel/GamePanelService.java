@@ -35,8 +35,6 @@ import gent.timdemey.cards.services.scaling.text.ScalableFontResource;
 
 public class GamePanelService implements IGamePanelService
 {
-    private static final int ANIMATION_TIME_CARD = 80;
-
     private static final String FILEPATH_CARD_FRONTSIDE = "cards/edge_thick/%s_%s.png";
     private static final String FILEPATH_CARD_BACKSIDE = "backside_yellow.png";
     

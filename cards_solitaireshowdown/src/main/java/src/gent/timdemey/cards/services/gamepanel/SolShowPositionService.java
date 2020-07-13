@@ -96,7 +96,7 @@ public class SolShowPositionService implements IPositionService
     @Override
     public Coords.Absolute getPackedBounds()
     {
-        return Coords.getAbsolute(gl.act_cont_marginleft, gl.act_cont_margintop, gl.act_cont_width, gl.act_cont_height, gl.act_max_width, gl.act_max_height);
+        return Coords.getAbsolute(gl.act_cont_marginleft, gl.act_cont_margintop, gl.act_cont_width, gl.act_cont_height);
     }
 
     @Override
@@ -191,13 +191,15 @@ public class SolShowPositionService implements IPositionService
             ReadOnlyCard card = cardScoreComp.getCard();
             LayeredArea la_card = getLayeredArea(card);
 
-            int x = la_card.x;
-            int y = la_card.y - gl.act_scoretext_height / 2;
+            int x = la_card.coords.x;
+            int y = la_card.coords.y - gl.act_scoretext_height / 2;
             Dimension dim = getCardScoreDimension();
-            int width = dim.width;
-            int height = dim.height + 10;
+            int w = dim.width;
+            int h = dim.height + 10;
 
-            return new LayeredArea(x, y, width, height, LAYER_ANIMATIONS, false);
+            Coords.Absolute coords = Coords.getAbsolute(x, y, w, h);
+            
+            return new LayeredArea(coords, LAYER_ANIMATIONS, false);
         }
         else if(scaleComp instanceof SpecialCounterScalableTextComponent)
         {
@@ -211,18 +213,19 @@ public class SolShowPositionService implements IPositionService
 
             Dimension dim = getSpecialCounterDimension();
 
-            int width = dim.width;
-            int height = dim.height + 10;
-            int x = gl.act_cont_marginleft + gl.act_s_width - width;
-            int y = gl.act_cont_margintop + 3 * (gl.act_s_height + gl.act_s_offsety) + (gl.act_s_height - height) / 2;
+            int w = dim.width;
+            int h = dim.height + 10;
+            int x = gl.act_cont_marginleft + gl.act_s_width - w;
+            int y = gl.act_cont_margintop + 3 * (gl.act_s_height + gl.act_s_offsety) + (gl.act_s_height - h) / 2;
 
             if(!isLocal) // point-mirror
             {
-                x = gl.act_max_width - x - width;
-                y = gl.act_max_height - y - height;
+                x = gl.act_max_width - x - w;
+                y = gl.act_max_height - y - h;
             }
 
-            return new LayeredArea(x, y, width, height, LAYER_CARDSTACKS, false);
+            Coords.Absolute coords = Coords.getAbsolute(x, y, w, h);
+            return new LayeredArea(coords, LAYER_CARDSTACKS, false);
         }
 
         throw new UnsupportedOperationException();
@@ -261,7 +264,8 @@ public class SolShowPositionService implements IPositionService
         rect.width = cardDim.width;
         rect.height = cardDim.height;
 
-        return new LayeredArea(rect, LAYER_CARDS + card.getCardIndex(), false);
+        Coords.Absolute coords = Coords.getAbsolute(rect);
+        return new LayeredArea(coords, LAYER_CARDS + card.getCardIndex(), false);
     }
 
     private LayeredArea getLayeredArea(ReadOnlyCardStack cardStack)
@@ -314,7 +318,8 @@ public class SolShowPositionService implements IPositionService
             rect.y = gl.act_max_height - rect.y - rect.height;
         }
 
-        return new LayeredArea(rect, LAYER_CARDSTACKS, !isLocal);
+        Coords.Absolute coords = Coords.getAbsolute(rect);
+        return new LayeredArea(coords, LAYER_CARDSTACKS, !isLocal);
     }
 
     @Override
