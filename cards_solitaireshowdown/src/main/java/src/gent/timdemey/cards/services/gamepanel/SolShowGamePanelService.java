@@ -146,11 +146,4 @@ public class SolShowGamePanelService extends GamePanelService
         
         return requests;
     }
-    
-    @Override
-    public void startAnimation(IScalableComponent scaleComp)
-    {
-        // TODO Auto-generated method stub
-        super.startAnimation(scaleComp);
-    }
 }

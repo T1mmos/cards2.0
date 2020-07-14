@@ -71,7 +71,7 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
                 {
                     UUID id = idServ.createSpecialCounterComponentId(cardStack);
                     IScalableComponent comp = scaleServ.getScalableComponent(id);
-                    gpServ.startAnimation(comp);
+                   // gpServ.startAnimation(comp);
                 }
             }
             else if (change.changeType == ChangeType.Add && cardStack.getCardStackType().equals(SolShowCardStackType.TURNOVER))
