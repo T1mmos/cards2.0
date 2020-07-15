@@ -18,9 +18,9 @@ public class MovingAnimation implements IAnimation
         // with the destination coordinates as returned by the IPositionService (which are
         // already set in the current reference frame).
         IPositionService posServ = Services.get(IPositionService.class);
-        Coords.Absolute bounds_total = posServ.getPackedBounds();
-        Coords.Absolute coords_src = Coords.toAbsolute(animStart.relcoords, bounds_total.getSize());
-        Coords.Absolute coords_dst = posServ.getLayeredArea(comp).coords;
+        
+        Coords.Absolute coords_src = posServ.getAbsoluteCoords(animStart.relcoords);
+        Coords.Absolute coords_dst = posServ.getEndLayeredArea(comp).coords;
        
         Coords.Absolute coords_interp = Coords.interpolate(frac, coords_src, coords_dst);
         comp.setCoords(coords_interp);

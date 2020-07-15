@@ -1,6 +1,5 @@
 package gent.timdemey.cards.services.gamepanel.animations;
 
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -11,6 +10,7 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.AnimationDescriptor;
 import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.IAnimation;
+import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.interfaces.IAnimationService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
@@ -32,10 +32,16 @@ public class GamePanelAnimator
         IAnimationService animServ = Services.get(IAnimationService.class);
         IPositionService posServ = Services.get(IPositionService.class);
         
-        AnimationDescriptor descr = animServ.getAnimationDescriptor(component);
-        Dimension totaldim = posServ.getPackedBounds().getSize();
+        AnimationDescriptor descr = animServ.getAnimationDescriptor(component); 
         
-        Coords.Relative relcoords = Coords.toRelative(component.getCoords(), totaldim);
+        Coords.Absolute abscoords = component.getCoords();
+        if (abscoords == null)
+        {
+            
+            
+        }
+        Coords.Relative relcoords = posServ.getRelativeCoords(component.getCoords());
+        
         AnimationTracker tracker = new AnimationTracker(component, descr, relcoords);
         animTrackers.add(tracker);
     }
@@ -86,13 +92,17 @@ public class GamePanelAnimator
                 i.remove();
 
                 IGamePanelService gpServ = Services.get(IGamePanelService.class);
-                if (animTracker.descriptor.end.dispose)
+                if (animTracker.descriptor.dispose)
                 {
                     gpServ.remove(animTracker.component);
                 }
                 else
                 {
-                    gpServ.setLayer(animTracker.component, animTracker.descriptor.end.layer);
+
+                    IPositionService posServ = Services.get(IPositionService.class);
+                    LayeredArea layArea = posServ.getEndLayeredArea(animTracker.component);
+                    
+                    gpServ.setLayer(animTracker.component, layArea.layer);
                 }
             }
         }

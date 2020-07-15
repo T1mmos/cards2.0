@@ -86,13 +86,36 @@ public class SolitairePositionService implements IPositionService
     }
 
     @Override
-    public Coords.Absolute getPackedBounds()
+    public Coords.Absolute getPackedCoords()
     {
         return Coords.getAbsolute(gl.act_cont_marginl, gl.act_cont_margint, gl.act_cont_width, gl.act_cont_height);
     }
+    
+    @Override
+    public Coords.Absolute getAbsoluteCoords(Coords.Relative relcoords)
+    {
+        Coords.Absolute absNoOffset = Coords.toAbsolute(relcoords, getPackedCoords().getSize());
+        Coords.Absolute absOffset = absNoOffset.translate(gl.act_cont_marginl, gl.act_cont_margint);
+        return absOffset;
+    }    
+    
+    @Override
+    public Coords.Relative getRelativeCoords(Coords.Absolute abscoords)
+    {
+        Coords.Absolute absNoOffset = abscoords.translate(-gl.act_cont_marginl, -gl.act_cont_margint);
+        Coords.Relative relCoords = Coords.toRelative(absNoOffset, getPackedCoords().getSize());
+        return relCoords;
+    }
+
 
     @Override
-    public LayeredArea getLayeredArea(IScalableComponent scaleComp)
+    public LayeredArea getStartLayeredArea(IScalableComponent scaleComp)
+    {
+        return getEndLayeredArea(scaleComp);
+    }
+    
+    @Override
+    public LayeredArea getEndLayeredArea(IScalableComponent scaleComp)
     {
         Rectangle bounds;
         int layer;

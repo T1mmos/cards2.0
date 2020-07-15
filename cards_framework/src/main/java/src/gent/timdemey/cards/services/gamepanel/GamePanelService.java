@@ -128,6 +128,7 @@ public class GamePanelService implements IGamePanelService
     @Override
     public void fillGamePanel()
     {
+        relayout();
         addScalableComponents();
 
         resizeListener = new GamePanelResizeListener();
@@ -201,10 +202,7 @@ public class GamePanelService implements IGamePanelService
         IScalingService scaleServ = Services.get(IScalingService.class);
         for (IScalableComponent scaleComp : scaleServ.getComponents())
         {
-            LayeredArea layArea = posMan.getLayeredArea(scaleComp);            
-            scaleComp.setCoords(layArea.coords);
-            scaleComp.setMirror(layArea.mirror);
-            setLayer(scaleComp, layArea.layer);
+            position(scaleComp);
         }
 
         gamePanel.repaint();
@@ -300,10 +298,20 @@ public class GamePanelService implements IGamePanelService
         gamePanel.setLayer(component.getComponent(), layerIndex);
     }
 
+    private void position(IScalableComponent comp)
+    {
+        IPositionService posServ = Services.get(IPositionService.class);
+        LayeredArea layArea = posServ.getStartLayeredArea(comp);            
+        comp.setCoords(layArea.coords);
+        comp.setMirror(layArea.mirror);
+        setLayer(comp, layArea.layer);
+    }
+    
     @Override
     public void add(IScalableComponent comp)
     {
         gamePanel.add(comp.getComponent());
+        position(comp);
     }
 
     @Override

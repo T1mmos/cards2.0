@@ -26,15 +26,21 @@ public class GamePanel extends JLayeredPane
     {
         super.paintComponent(g);
 
-        Graphics2D g2 = (Graphics2D) g;
-        IPositionService posMan = Services.get(IPositionService.class);
-        Coords.Absolute coords = posMan.getPackedBounds();
 
         if (Services.get(IGamePanelService.class).getDrawDebug())
         {
+            Graphics2D g2 = (Graphics2D) g;
+            IPositionService posMan = Services.get(IPositionService.class);
+            Coords.Absolute coords = posMan.getPackedCoords();
+            
+            // draw the full sized outer box
+            g2.setStroke(new BasicStroke(4.0f));
+            g2.setColor(Color.RED);
+            g2.drawRect(getX(), getY(), getWidth(), getHeight());
+            
+            // draw the packed box
             g2.setStroke(new BasicStroke(2.0f));
             g2.setColor(Color.ORANGE);
-
             g2.drawRect(coords.x, coords.y, coords.w, coords.h);
         }
     }

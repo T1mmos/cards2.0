@@ -2,18 +2,16 @@ package gent.timdemey.cards.services.contract;
 
 import java.util.List;
 
-import gent.timdemey.cards.services.gamepanel.animations.AnimationEnd;
-
 public class AnimationDescriptor
 {
-    public final AnimationEnd end;
     public final int animationTime;
     public final List<IAnimation> animations;
+    public final boolean dispose;
     
-    public AnimationDescriptor (AnimationEnd end, int animationTime, List<IAnimation> animations)
+    public AnimationDescriptor (int animationTime, List<IAnimation> animations, boolean dispose)
     {
         this.animationTime = animationTime;
-        this.end = end;
         this.animations = animations;
+        this.dispose = dispose;
     }
 }

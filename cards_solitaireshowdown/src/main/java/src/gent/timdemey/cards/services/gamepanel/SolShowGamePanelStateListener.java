@@ -12,8 +12,10 @@ import gent.timdemey.cards.readonlymodel.TypedChange;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.ChangeType;
 import gent.timdemey.cards.services.context.Context;
+import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
+import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.interfaces.ISolShowIdService;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
@@ -28,6 +30,7 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
     {
         IGamePanelService gpServ = Services.get(IGamePanelService.class);
         IContextService contextService = Services.get(IContextService.class);
+        IPositionService posServ = Services.get(IPositionService.class);
         IScalingService scaleServ = Services.get(IScalingService.class);
         ISolShowIdService idServ = Services.get(ISolShowIdService.class);
         Context context = contextService.getThreadContext();
@@ -46,9 +49,10 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
             ScalableFontResource scaleFontRes = (ScalableFontResource) scaleServ.getScalableResource(resId);
             
             int incr = typed.newValue - typed.oldValue;
-            ScalableTextComponent scaleTextComp = new CardScoreScalableTextComponent(UUID.randomUUID(), "+" + incr, scaleFontRes, card);
-            
-            gpServ.startAnimation(scaleTextComp);
+            ScalableTextComponent comp = new CardScoreScalableTextComponent(UUID.randomUUID(), "+" + incr, scaleFontRes, card);
+                        
+            gpServ.add(comp);
+            gpServ.startAnimation(comp);
         }
         else if (property == ReadOnlyCardStack.Cards)
         {

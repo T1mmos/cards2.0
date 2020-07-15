@@ -94,9 +94,27 @@ public class SolShowPositionService implements IPositionService
     }
 
     @Override
-    public Coords.Absolute getPackedBounds()
+    public Coords.Absolute getPackedCoords()
     {
         return Coords.getAbsolute(gl.act_cont_marginleft, gl.act_cont_margintop, gl.act_cont_width, gl.act_cont_height);
+    }
+    
+    @Override
+    public Coords.Absolute getAbsoluteCoords(Coords.Relative relcoords)
+    {
+        Coords.Absolute absNoOffset = Coords.toAbsolute(relcoords, getPackedCoords().getSize());
+        Coords.Absolute absOffset = absNoOffset.translate(gl.act_cont_marginleft, gl.act_cont_margintop);
+        return absOffset;
+    }    
+    
+    @Override
+    public Coords.Relative getRelativeCoords(Coords.Absolute abscoords)
+    {
+        int marginl = gl.act_cont_marginleft;
+        int margint = gl.act_cont_margintop;
+        Coords.Absolute absNoOffset = abscoords.translate(-marginl, -margint);
+        Coords.Relative relCoords = Coords.toRelative(absNoOffset, getPackedCoords().getSize());
+        return relCoords;
     }
 
     @Override
@@ -173,7 +191,36 @@ public class SolShowPositionService implements IPositionService
     }
 
     @Override
-    public LayeredArea getLayeredArea(IScalableComponent scaleComp)
+    public LayeredArea getStartLayeredArea(IScalableComponent scaleComp)
+    {
+        if(scaleComp instanceof CardScoreScalableTextComponent)
+        {
+            CardScoreScalableTextComponent cardScoreComp = ((CardScoreScalableTextComponent) scaleComp);
+            ReadOnlyCard card = cardScoreComp.getCard();
+            LayeredArea la_card = getLayeredArea(card);
+
+            Dimension dim = getCardScoreDimension();
+            
+            int x = la_card.coords.x;
+            int y = la_card.coords.y + dim.height / 2 - gl.act_scoretext_height / 2;
+            int w = dim.width;
+            int h = dim.height + 10;
+
+            Coords.Absolute coords = Coords.getAbsolute(x, y, w, h);
+            
+            return new LayeredArea(coords, LAYER_ANIMATIONS, false);
+        }
+        else
+        {
+            // for the time being return the end area. 
+            // E.g. for cards we could in the future implement this by centering all cards,
+            // so in the beginning of the game the cards "splash out" towards their final position.
+            return getEndLayeredArea(scaleComp);
+        }
+    }
+    
+    @Override
+    public LayeredArea getEndLayeredArea(IScalableComponent scaleComp)
     {
         if(scaleComp instanceof CardScalableImageComponent)
         {

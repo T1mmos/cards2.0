@@ -28,14 +28,37 @@ public interface IPositionService
      * margins. 
      * @return
      */
-    public Coords.Absolute getPackedBounds();
+    public Coords.Absolute getPackedCoords();
 
     /**
-     * Returns the bounds where an element identified by the given id should be positioned at.
+     * Given relative coordinates, converts them into absolute coordinates for size of the current container, 
+     * followed by adding offsets that keeps the packed container centered into its parent.
+     * @return
+     */
+    public Coords.Absolute getAbsoluteCoords(Coords.Relative relcoords);
+    
+    /**
+     * Given absolute coordinates, subtracts any offsets and converts this result into relative coordinates using 
+     * the size of the current container.
+     * @param scaleComp
+     * @return
+     */
+    public Coords.Relative getRelativeCoords(Coords.Absolute abscoords);
+    
+    /**
+     * Returns the bounds where the given component should be initially positioned at.
      * @param id
      * @return
      */
-    public LayeredArea getLayeredArea(IScalableComponent scaleComp);
+    public LayeredArea getStartLayeredArea(IScalableComponent scaleComp);
+    
+    /**
+     * Returns the bounds where the given component should be finally positioned at.
+     * All components should be supported by the implementation.
+     * @param id
+     * @return
+     */
+    public LayeredArea getEndLayeredArea(IScalableComponent scaleComp);
        
     /**
      * Gets the dimensions given a request that contains runtime context where a resource
@@ -51,11 +74,16 @@ public interface IPositionService
     public Dimension getDimension(GetScaleInfoRequest request);
     
     /**
-     * Gets the drag layer, the layer in which components should be positioned when 
+     * Gets the drag layer, the base / minimum layer in which components should be z-ordered when 
      * a component is manually dragged.
      * @return
      */
     public int getDragLayer();
     
+    /**
+     * Gets the animation layer, the base / minimum layer where all components currently being 
+     * animated should be z-ordered.
+     * @return
+     */
     public int getAnimationLayer();
 }
