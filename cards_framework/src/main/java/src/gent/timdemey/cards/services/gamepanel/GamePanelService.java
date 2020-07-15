@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.cards.Suit;
 import gent.timdemey.cards.model.entities.cards.Value;
 import gent.timdemey.cards.readonlymodel.IStateListener;

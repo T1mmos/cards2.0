@@ -13,7 +13,7 @@ import gent.timdemey.cards.services.scaling.comps.CardScoreScalableTextComponent
 
 public class SolShowAnimationService extends AnimationService
 {
-    private static final int TIME_CARDSCORE = 5000;
+    private static final int TIME_CARDSCORE = 1200;
     private static final Color COLOR_CARDSCORE_START = new Color(255, 69, 0, 255);
     private static final Color COLOR_CARDSCORE_END = new Color(255, 69, 0, 0);
 

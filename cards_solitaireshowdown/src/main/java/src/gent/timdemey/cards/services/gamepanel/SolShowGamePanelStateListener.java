@@ -12,7 +12,6 @@ import gent.timdemey.cards.readonlymodel.TypedChange;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.ChangeType;
 import gent.timdemey.cards.services.context.Context;
-import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
@@ -30,27 +29,26 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
     {
         IGamePanelService gpServ = Services.get(IGamePanelService.class);
         IContextService contextService = Services.get(IContextService.class);
-        IPositionService posServ = Services.get(IPositionService.class);
         IScalingService scaleServ = Services.get(IScalingService.class);
         ISolShowIdService idServ = Services.get(ISolShowIdService.class);
         Context context = contextService.getThreadContext();
         ReadOnlyState state = context.getReadOnlyState();
-        
+
         ReadOnlyProperty<?> property = change.property;
 
         if (property == ReadOnlyCard.Score)
         {
             TypedChange<Integer> typed = ReadOnlyCard.Score.cast(change);
             UUID cardId = typed.entityId;
-            
+
             ReadOnlyCard card = state.getCardGame().getCard(cardId);
-                        
+
             UUID resId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SCORE);
             ScalableFontResource scaleFontRes = (ScalableFontResource) scaleServ.getScalableResource(resId);
-            
+
             int incr = typed.newValue - typed.oldValue;
             ScalableTextComponent comp = new CardScoreScalableTextComponent(UUID.randomUUID(), "+" + incr, scaleFontRes, card);
-                        
+
             gpServ.add(comp);
             gpServ.startAnimation(comp);
         }
@@ -75,7 +73,7 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
                 {
                     UUID id = idServ.createSpecialCounterComponentId(cardStack);
                     IScalableComponent comp = scaleServ.getScalableComponent(id);
-                   // gpServ.startAnimation(comp);
+                    comp.update();
                 }
             }
             else if (change.changeType == ChangeType.Add && cardStack.getCardStackType().equals(SolShowCardStackType.TURNOVER))
@@ -87,14 +85,14 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
                     for (ReadOnlyCard card : cardStack.getHighestCards(cnt))
                     {
                         if (card != addedCard)
-                        {                            
+                        {
                             IScalableComponent comp = scaleServ.getOrCreateScalableComponent(card);
-                            gpServ.startAnimation(comp);                            
+                            gpServ.startAnimation(comp);
                         }
                     }
                 }
                 IScalableComponent comp = scaleServ.getOrCreateScalableComponent(addedCard);
-                gpServ.startAnimation(comp);     
+                gpServ.startAnimation(comp);
             }
             else
             {

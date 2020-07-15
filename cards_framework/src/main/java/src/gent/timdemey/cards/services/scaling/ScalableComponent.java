@@ -116,7 +116,7 @@ public abstract class ScalableComponent implements IScalableComponent
     }
 
     @Override
-    public final void setCoords(Coords.Absolute coords)
+    public void setCoords(Coords.Absolute coords)
     {
         this.coords = coords;
         getComponent().setBounds(coords.getBounds());

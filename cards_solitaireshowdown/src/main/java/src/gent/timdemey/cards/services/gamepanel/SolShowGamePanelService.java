@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyPlayer;

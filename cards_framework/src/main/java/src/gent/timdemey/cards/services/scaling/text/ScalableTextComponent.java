@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import gent.timdemey.cards.logging.Logger;
+import gent.timdemey.cards.services.contract.GetCardScaleInfoRequest;
+import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaling.ScalableComponent;
 
 public abstract class ScalableTextComponent extends ScalableComponent
@@ -60,11 +63,15 @@ public abstract class ScalableTextComponent extends ScalableComponent
         g2.drawRect(tb.x, tb.y, tb.width, tb.height);
     }
 
+    protected int getFontHeight()
+    {
+        return 10;
+    }
+    
     private Font getFont()
     {
-        Rectangle bounds = getCoords().getBounds();
-
-        Dimension fontDim = new Dimension(0, bounds.height - 10);
+        int fontHeight = getFontHeight();
+        Dimension fontDim = new Dimension(0, fontHeight);
         Font font = fontResource.get(fontDim);
         return font;
     }
@@ -108,6 +115,7 @@ public abstract class ScalableTextComponent extends ScalableComponent
     protected final void setText(String text)
     {
         this.text = text;
+        getComponent().repaint();
     }
 
     public void setTextColor(Color color)
@@ -126,6 +134,7 @@ public abstract class ScalableTextComponent extends ScalableComponent
         Graphics2D g2d = (Graphics2D) g.create();
 
         Font font = getFont();
+        
         g2d.setFont(font);
 
         Rectangle tb = getTextBounds(g);

@@ -55,7 +55,7 @@ public class SolShowPositionService implements IPositionService
         int base_soffsety = 2;
         int base_tpadx = 2; // (minimal) space edge playfield
         int base_tpady = 2;
-        int base_scoretext_height = 4;
+        int base_scoretext_height = 8;
 
         int base_twidth = 8 * base_swidth + 7 * base_soffsetx + 2 * base_tpadx;
         int base_theight = 5 * base_sheight + 4 * base_soffsety + 2 * base_tpady;
@@ -132,7 +132,9 @@ public class SolShowPositionService implements IPositionService
         }
         else if(request instanceof GetCardScoreScaleInfoRequest)
         {
-            return getCardScoreDimension();
+            Dimension compDim = getCardScoreDimension();
+            Dimension withMargins = new Dimension(compDim.width - 10, compDim.height - 10);
+            return withMargins;
         }
         else if(request instanceof GetSpecialCounterScaleInfoRequest)
         {
@@ -146,7 +148,7 @@ public class SolShowPositionService implements IPositionService
 
     private Dimension getCardScoreDimension()
     {
-        return new Dimension(gl.act_c_width, gl.act_scoretext_height);
+        return new Dimension(2 * gl.act_c_width, gl.act_scoretext_height);
     }
 
     private Dimension getSpecialCounterDimension()
@@ -194,21 +196,15 @@ public class SolShowPositionService implements IPositionService
     public LayeredArea getStartLayeredArea(IScalableComponent scaleComp)
     {
         if(scaleComp instanceof CardScoreScalableTextComponent)
-        {
-            CardScoreScalableTextComponent cardScoreComp = ((CardScoreScalableTextComponent) scaleComp);
-            ReadOnlyCard card = cardScoreComp.getCard();
-            LayeredArea la_card = getLayeredArea(card);
-
-            Dimension dim = getCardScoreDimension();
+        {            
+            LayeredArea endLayeredArea = getEndLayeredArea(scaleComp);
             
-            int x = la_card.coords.x;
-            int y = la_card.coords.y + dim.height / 2 - gl.act_scoretext_height / 2;
-            int w = dim.width;
-            int h = dim.height + 10;
-
+            int x = endLayeredArea.coords.x;
+            int y = endLayeredArea.coords.y + getCardDimension().height / 2;
+            int w = endLayeredArea.coords.w;
+            int h = endLayeredArea.coords.h;
             Coords.Absolute coords = Coords.getAbsolute(x, y, w, h);
-            
-            return new LayeredArea(coords, LAYER_ANIMATIONS, false);
+            return new LayeredArea(coords, LAYER_ANIMATIONS, false);       
         }
         else
         {
@@ -238,11 +234,11 @@ public class SolShowPositionService implements IPositionService
             ReadOnlyCard card = cardScoreComp.getCard();
             LayeredArea la_card = getLayeredArea(card);
 
-            int x = la_card.coords.x;
-            int y = la_card.coords.y - gl.act_scoretext_height / 2;
             Dimension dim = getCardScoreDimension();
+            int x = la_card.coords.x - (dim.width - la_card.coords.w) / 2;
+            int y = la_card.coords.y - getCardDimension().height / 2;
             int w = dim.width;
-            int h = dim.height + 10;
+            int h = dim.height;
 
             Coords.Absolute coords = Coords.getAbsolute(x, y, w, h);
             

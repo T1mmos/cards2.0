@@ -34,12 +34,7 @@ public class GamePanelAnimator
         
         AnimationDescriptor descr = animServ.getAnimationDescriptor(component); 
         
-        Coords.Absolute abscoords = component.getCoords();
-        if (abscoords == null)
-        {
-            
-            
-        }
+        Coords.Absolute abscoords = component.getCoords();        
         Coords.Relative relcoords = posServ.getRelativeCoords(component.getCoords());
         
         AnimationTracker tracker = new AnimationTracker(component, descr, relcoords);

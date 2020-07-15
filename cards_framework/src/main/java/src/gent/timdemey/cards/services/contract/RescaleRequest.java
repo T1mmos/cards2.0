@@ -42,4 +42,9 @@ public class RescaleRequest
         return true;
     }
 
+    @Override
+    public String toString()
+    {
+        return "RescaleRequest: file=" + scalableResource.getResource().filename + ", dim=" + dimension; 
+    }
 }
