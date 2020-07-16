@@ -27,11 +27,12 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.contract.RescaleRequest;
+import gent.timdemey.cards.services.contract.descriptors.ComponentDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
-import gent.timdemey.cards.services.scaling.comps.CardScalableImageComponent;
-import gent.timdemey.cards.services.scaling.comps.CardStackScalableImageComponent;
+import gent.timdemey.cards.services.scaling.img.ScalableImageComponent;
 import gent.timdemey.cards.services.scaling.img.ScalableImageResource;
 
 public final class ScalingService implements IScalingService
@@ -211,7 +212,7 @@ public final class ScalingService implements IScalingService
             compId = uuidServ.createCardScalableComponentId(card);
         }
 
-        CardScalableImageComponent comp = (CardScalableImageComponent) components.get(compId);
+        IScalableComponent comp = components.get(compId);
         if (comp == null)
         {
             UUID resFrontId = uuidServ.createCardFrontScalableResourceId(card.getSuit(), card.getValue());
@@ -220,7 +221,9 @@ public final class ScalingService implements IScalingService
             // create the component using its necessary image resources
             ScalableImageResource res_front = (ScalableImageResource) getScalableResource(resFrontId);
             ScalableImageResource res_back = (ScalableImageResource) getScalableResource(resBackId);
-            comp = new CardScalableImageComponent(compId, card, res_front, res_back);
+            ComponentDescriptor compDesc = new ComponentDescriptor(ComponentType.Card);
+            comp = new ScalableImageComponent(compId, compDesc, res_front, res_back);
+            comp.setPayload(card);
 
             components.put(compId, comp);
         }
@@ -240,14 +243,16 @@ public final class ScalingService implements IScalingService
             compId = idServ.createCardStackScalableComponentId(cardstack);
         }
 
-        CardStackScalableImageComponent comp = (CardStackScalableImageComponent) components.get(compId);
+        IScalableComponent comp = components.get(compId);
         if (comp == null)
         {
             UUID csResId = idServ.createCardStackScalableResourceId(cardstack.getCardStackType());
 
             // create the component using its necessary image resources
             ScalableImageResource res = (ScalableImageResource) getScalableResource(csResId);
-            comp = new CardStackScalableImageComponent(compId, cardstack, res);
+            ComponentDescriptor compDesc = new ComponentDescriptor(ComponentType.CardStack);
+            comp = new ScalableImageComponent(compId, compDesc, res);
+            comp.setPayload(cardstack);
 
             components.put(compId, comp);
         }

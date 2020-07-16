@@ -17,14 +17,13 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityList;
 import gent.timdemey.cards.services.context.Context;
+import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.interfaces.ICommandService;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
-import gent.timdemey.cards.services.scaling.comps.CardScalableImageComponent;
-import gent.timdemey.cards.services.scaling.comps.CardStackScalableImageComponent;
 import gent.timdemey.cards.services.scaling.img.ScalableImageComponent;
 
 class GamePanelMouseListener extends MouseAdapter
@@ -106,11 +105,11 @@ class GamePanelMouseListener extends MouseAdapter
 
         UUID playerId = context.getReadOnlyState().getLocalId();
 
-        if (scaleComp instanceof CardScalableImageComponent)
+        if (scaleComp.getComponentDescriptor().type == ComponentType.Card)
         {
-            CardScalableImageComponent cardImgComp = (CardScalableImageComponent) scaleComp;
+            ScalableImageComponent cardImgComp = (ScalableImageComponent) scaleComp;
 
-            ReadOnlyCard card = cardImgComp.getCard();
+            ReadOnlyCard card = (ReadOnlyCard) cardImgComp.getPayload();
             ReadOnlyCardStack stack = card.getCardStack();
 
             CommandBase cmdPull = operations.getPullCommand(playerId, stack.getId(), card.getId());
@@ -157,10 +156,9 @@ class GamePanelMouseListener extends MouseAdapter
             mouse_ystart = e.getY();
 
         }
-        else if (scaleComp instanceof CardStackScalableImageComponent)
+        else if (scaleComp.getComponentDescriptor().type == ComponentType.CardStack)
         {
-            CardStackScalableImageComponent csScaleComp = (CardStackScalableImageComponent) scaleComp;
-            CommandBase cmdUse = operations.getUseCommand(playerId, csScaleComp.getCardStack().getId(), null);
+            CommandBase cmdUse = operations.getUseCommand(playerId, ((ReadOnlyCardStack)scaleComp.getPayload()).getId(), null);
             if (canExecute(context, cmdUse, "mousePressed/cardstack"))
             {
                 context.schedule(cmdUse);
@@ -208,13 +206,13 @@ class GamePanelMouseListener extends MouseAdapter
 
                 // exclude overlaps that are not cards or cardstacks
                 ReadOnlyCardStack dstCardStack;
-                if (comp instanceof CardScalableImageComponent)
+                if (comp.getComponentDescriptor().type == ComponentType.Card)
                 {
-                    dstCardStack = ((CardScalableImageComponent) comp).getCard().getCardStack();
+                    dstCardStack = ((ReadOnlyCard) comp.getPayload()).getCardStack();
                 }
-                else if (comp instanceof CardStackScalableImageComponent)
+                else if (comp.getComponentDescriptor().type == ComponentType.CardStack)
                 {
-                    dstCardStack = ((CardStackScalableImageComponent) comp).getCardStack();
+                    dstCardStack = (ReadOnlyCardStack) comp.getPayload();
                 }
                 else
                 {
@@ -229,7 +227,7 @@ class GamePanelMouseListener extends MouseAdapter
                 }
                 visitedStackIds.add(dstCardStackId);
 
-                List<ReadOnlyCard> cards = draggedComps.stream().map(sc -> ((CardScalableImageComponent) sc).getCard()).collect(Collectors.toList());
+                List<ReadOnlyCard> cards = draggedComps.stream().map(sc -> (ReadOnlyCard) sc.getPayload()).collect(Collectors.toList());
                 ReadOnlyEntityList<ReadOnlyCard> roCards = new ReadOnlyEntityList<>(cards);
 
                 ICommandService operationsServ = Services.get(ICommandService.class);
@@ -257,8 +255,8 @@ class GamePanelMouseListener extends MouseAdapter
             {
                 for (int i = 0; i < draggedComps.size(); i++)
                 {
-                    CardScalableImageComponent scaleImg = (CardScalableImageComponent) draggedComps.get(i);                    
-                    gpServ.startAnimation(scaleImg);
+                    IScalableComponent comp = draggedComps.get(i);                    
+                    gpServ.startAnimation(comp);
                 }
             }
 

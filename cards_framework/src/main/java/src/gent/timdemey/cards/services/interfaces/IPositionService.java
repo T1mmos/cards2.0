@@ -4,7 +4,7 @@ import java.awt.Dimension;
 
 import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.LayeredArea;
-import gent.timdemey.cards.services.contract.resdecr.ResourceUsageDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.ComponentDescriptor;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 
 /**
@@ -71,7 +71,7 @@ public interface IPositionService
      * @param request
      * @return
      */
-    public Dimension getResourceDimension(ResourceUsageDescriptor request);
+    public Dimension getResourceDimension(ComponentDescriptor compDescriptor, String resourceUsage);
     
     /**
      * Gets the drag layer, the base / minimum layer in which components should be z-ordered when 

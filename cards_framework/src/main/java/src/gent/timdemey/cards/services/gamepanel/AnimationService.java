@@ -6,9 +6,9 @@ import java.util.List;
 import gent.timdemey.cards.services.contract.AnimationDescriptor;
 import gent.timdemey.cards.services.contract.IAnimation;
 import gent.timdemey.cards.services.contract.MovingAnimation;
+import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.interfaces.IAnimationService;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
-import gent.timdemey.cards.services.scaling.comps.CardScalableImageComponent;
 
 public class AnimationService implements IAnimationService
 {
@@ -17,7 +17,7 @@ public class AnimationService implements IAnimationService
     @Override
     public AnimationDescriptor getAnimationDescriptor(IScalableComponent comp)
     {
-        if (comp instanceof CardScalableImageComponent)
+        if (comp.getComponentDescriptor().type == ComponentType.Card)
         {
             MovingAnimation anim1 = new MovingAnimation();
             List<IAnimation> animations = Arrays.asList(anim1);

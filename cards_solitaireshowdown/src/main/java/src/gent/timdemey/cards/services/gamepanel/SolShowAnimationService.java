@@ -8,8 +8,8 @@ import gent.timdemey.cards.services.contract.AnimationDescriptor;
 import gent.timdemey.cards.services.contract.ForegroundColorAnimation;
 import gent.timdemey.cards.services.contract.IAnimation;
 import gent.timdemey.cards.services.contract.MovingAnimation;
+import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
-import gent.timdemey.cards.services.scaling.comps.CardScoreScalableTextComponent;
 
 public class SolShowAnimationService extends AnimationService
 {
@@ -20,7 +20,8 @@ public class SolShowAnimationService extends AnimationService
     @Override
     public AnimationDescriptor getAnimationDescriptor(IScalableComponent comp)
     {
-        if (comp instanceof CardScoreScalableTextComponent)
+        String compType = comp.getComponentDescriptor().type;
+        if (compType == ComponentType.CardScore)
         {            
             MovingAnimation anim1 = new MovingAnimation();
             ForegroundColorAnimation anim2 = new ForegroundColorAnimation(COLOR_CARDSCORE_START, COLOR_CARDSCORE_END);

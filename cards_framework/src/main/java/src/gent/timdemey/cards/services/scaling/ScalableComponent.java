@@ -13,30 +13,56 @@ import javax.swing.JComponent;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.Coords;
+import gent.timdemey.cards.services.contract.descriptors.ComponentDescriptor;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 
 public abstract class ScalableComponent implements IScalableComponent
 {
     private final UUID id;
+    private final ComponentDescriptor compDescriptor;
     private JComponent component = null;
     private boolean mirror = false;
     private Coords.Absolute coords = null;
-    
-    protected ScalableComponent(UUID id)
+    private Object payload = null;
+
+    protected ScalableComponent(UUID id, ComponentDescriptor compDescriptor)
     {
-        if(id == null)
+        if (id == null)
         {
             throw new NullPointerException("id cannot be null");
         }
+        if (compDescriptor == null)
+        {
+            throw new NullPointerException("compDescriptor cannot be null");
+        }
 
         this.id = id;
+        this.compDescriptor = compDescriptor;
     }
 
     @Override
+    public void setPayload(Object payload)
+    {
+        this.payload = payload;
+    }
+
+    @Override
+    public Object getPayload()
+    {
+        return payload;
+    }
+
+    @Override
+    public ComponentDescriptor getComponentDescriptor()
+    {
+        return compDescriptor;
+    }
+    
+    @Override
     public final JComponent getComponent()
     {
-        if(component == null)
-        { 
+        if (component == null)
+        {
             component = createComponent();
         }
         return component;
@@ -44,21 +70,21 @@ public abstract class ScalableComponent implements IScalableComponent
 
     protected final JComponent createComponent()
     {
-        JScalableComponent jcomp = new JScalableComponent(this);        
+        JScalableComponent jcomp = new JScalableComponent(this);
         return jcomp;
     }
 
     protected abstract void draw(Graphics2D g2);
-    
+
     public final void drawDebug(Graphics2D g2)
     {
-        if(!Services.get(IGamePanelService.class).getDrawDebug())
+        if (!Services.get(IGamePanelService.class).getDrawDebug())
         {
             return;
         }
 
         drawDebugBoundaries(g2);
-           
+
         List<String> debugStrings = getDebugStrings();
         drawDebugStrings(g2, debugStrings);
     }
@@ -69,35 +95,33 @@ public abstract class ScalableComponent implements IScalableComponent
         int height = getComponent().getHeight();
         int x = getComponent().getX();
         int y = getComponent().getY();
-        
+
         IGamePanelService gpServ = Services.get(IGamePanelService.class);
         int layer = gpServ.getLayer(this);
-        
+
         return Arrays.asList("rect=" + x + "," + y + ", " + width + "x" + height, "layer=" + layer);
     }
-    
+
     protected void drawDebugBoundaries(Graphics2D g2)
     {
         int width = getComponent().getWidth();
         int height = getComponent().getHeight();
-        int x = getComponent().getX();
-        int y = getComponent().getY();
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setColor(new Color(50, 50, 50, 100));
         g2.fillRect(0, 0, width, height);
 
-        g2.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 2.0f, new float[]
-        { 5.0f, 5.0f }, 2.0f));
+        g2.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 2.0f,
+                new float[] { 5.0f, 5.0f }, 2.0f));
         g2.drawRect(0, 0, width - 1, height - 1);
     }
-    
+
     private final void drawDebugStrings(Graphics2D g2, List<String> strings)
     {
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setColor(Color.white);
 
-        if(strings.size() == 0)
+        if (strings.size() == 0)
         {
             return;
         }
@@ -148,7 +172,7 @@ public abstract class ScalableComponent implements IScalableComponent
 
     public final void repaint()
     {
-       // update();
+        // update();
         getComponent().repaint();
     }
 

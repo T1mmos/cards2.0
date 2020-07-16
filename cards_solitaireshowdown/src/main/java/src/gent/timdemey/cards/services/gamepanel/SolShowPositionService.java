@@ -16,16 +16,14 @@ import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.LayeredArea;
-import gent.timdemey.cards.services.contract.resdecr.ResourceUsageDescriptor;
-import gent.timdemey.cards.services.contract.resdecr.ResourceUsageType;
-import gent.timdemey.cards.services.contract.resdescr.SolShowResourceUsageType;
+import gent.timdemey.cards.services.contract.descriptors.ComponentDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.ComponentType;
+import gent.timdemey.cards.services.contract.descriptors.ResourceUsage;
+import gent.timdemey.cards.services.contract.descriptors.SolShowComponentType;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
-import gent.timdemey.cards.services.scaling.comps.CardScalableImageComponent;
-import gent.timdemey.cards.services.scaling.comps.CardScoreScalableTextComponent;
-import gent.timdemey.cards.services.scaling.comps.CardStackScalableImageComponent;
-import gent.timdemey.cards.services.scaling.comps.SpecialCounterScalableTextComponent;
+import gent.timdemey.cards.services.scaling.text.ScalableTextComponent;
 
 public class SolShowPositionService implements IPositionService
 {
@@ -116,32 +114,46 @@ public class SolShowPositionService implements IPositionService
     }
 
     @Override
-    public Dimension getResourceDimension(ResourceUsageDescriptor request)
+    public Dimension getResourceDimension(ComponentDescriptor compDescriptor, String resourceUsage)
     {
-        if(request.type == ResourceUsageType.Card)
+        String compType = compDescriptor.type;
+        String compSubType = compDescriptor.subtype;
+        String resType = resourceUsage;
+        if(compType == ComponentType.Card)
         {
-            // we don't need request.card, in this game all cards are equal in size
-            return getCardDimension();
+            if (resourceUsage == ResourceUsage.IMG_FRONT || resourceUsage == ResourceUsage.IMG_BACK)
+            {
+                return getCardDimension();
+            }
         }
-        else if(request.type == ResourceUsageType.CardStack)
+        else if(compType == ComponentType.CardStack)
         {
-            String csType = request.subtype;
-            return getCardStackDimension(csType);
+            if (resourceUsage == ResourceUsage.IMG_FRONT)
+            {
+                String csType = compSubType;
+                return getCardStackDimension(csType);
+            }            
         }
-        else if(request.type == ResourceUsageType.ScoreCard)
+        else if(compType == ComponentType.CardScore)
         {
-            Dimension compDim = getCardScoreDimension();
-            Dimension withMargins = new Dimension(compDim.width - 10, compDim.height - 10);
-            return withMargins;
+            if (resourceUsage == ResourceUsage.MAIN_TEXT)
+            {
+                Dimension compDim = getCardScoreDimension();
+                Dimension withMargins = new Dimension(compDim.width - 10, compDim.height - 10);
+                return withMargins;
+            }               
         }
-        else if(request.type == SolShowResourceUsageType.ScoreSpecial)
+        else if(compType == SolShowComponentType.SpecialScore)
         {
-            return getSpecialCounterDimension();
+            if (resourceUsage == ResourceUsage.MAIN_TEXT)
+            {
+                return getSpecialCounterDimension();
+            }
         }
-        else
-        {
-            throw new UnsupportedOperationException(request.getClass().getSimpleName() + " is not supported, cannot get dimensions for it");
-        }
+
+        String msg = "Getting resources dimension failed: combination of ComponentType=%s, ComponentSubType=%s, ResourceUsage=%s is not supported.";
+        String msg_format = String.format(msg, compType, compSubType, resType);
+        throw new UnsupportedOperationException(msg_format);   
     }
 
     private Dimension getCardScoreDimension()
@@ -193,7 +205,9 @@ public class SolShowPositionService implements IPositionService
     @Override
     public LayeredArea getStartLayeredArea(IScalableComponent scaleComp)
     {
-        if(scaleComp instanceof CardScoreScalableTextComponent)
+        ComponentDescriptor compDesc = scaleComp.getComponentDescriptor();
+        String compType = compDesc.type;
+        if(compType == ComponentType.CardScore)
         {            
             LayeredArea endLayeredArea = getEndLayeredArea(scaleComp);
             
@@ -216,20 +230,23 @@ public class SolShowPositionService implements IPositionService
     @Override
     public LayeredArea getEndLayeredArea(IScalableComponent scaleComp)
     {
-        if(scaleComp instanceof CardScalableImageComponent)
+        ComponentDescriptor compDesc = scaleComp.getComponentDescriptor();
+        String compType = compDesc.type;
+        
+        if(compType == ComponentType.Card)
         {
-            ReadOnlyCard card = ((CardScalableImageComponent) scaleComp).getCard();
+            ReadOnlyCard card = (ReadOnlyCard) scaleComp.getPayload();
             return getLayeredArea(card);
         }
-        else if(scaleComp instanceof CardStackScalableImageComponent)
+        else if(compType == ComponentType.CardStack)
         {
-            ReadOnlyCardStack cardStack = ((CardStackScalableImageComponent) scaleComp).getCardStack();
+            ReadOnlyCardStack cardStack = (ReadOnlyCardStack) scaleComp.getPayload();
             return getLayeredArea(cardStack);
         }
-        else if(scaleComp instanceof CardScoreScalableTextComponent)
+        else if(compType == ComponentType.CardScore)
         {
-            CardScoreScalableTextComponent cardScoreComp = ((CardScoreScalableTextComponent) scaleComp);
-            ReadOnlyCard card = cardScoreComp.getCard();
+            ScalableTextComponent cardScoreComp = ((ScalableTextComponent) scaleComp);
+            ReadOnlyCard card = (ReadOnlyCard) cardScoreComp.getPayload();
             LayeredArea la_card = getLayeredArea(card);
 
             Dimension dim = getCardScoreDimension();
@@ -242,11 +259,11 @@ public class SolShowPositionService implements IPositionService
             
             return new LayeredArea(coords, LAYER_ANIMATIONS, false);
         }
-        else if(scaleComp instanceof SpecialCounterScalableTextComponent)
+        else if(compType == SolShowComponentType.SpecialScore)
         {
             IContextService contextService = Services.get(IContextService.class);
             Context context = contextService.getThreadContext();
-            ReadOnlyCardStack cardStack = ((SpecialCounterScalableTextComponent) scaleComp).getCardStack();
+            ReadOnlyCardStack cardStack = (ReadOnlyCardStack) scaleComp.getPayload();
 
             UUID localId = context.getReadOnlyState().getLocalId();
             UUID playerId = context.getReadOnlyState().getCardGame().getPlayerId(cardStack);

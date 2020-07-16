@@ -23,4 +23,5 @@ public interface IGamePanelService extends IPreload
     
     public void add(IScalableComponent comp);
     public void remove(IScalableComponent comp);
+    public void updateComponent(IScalableComponent comp);
 }

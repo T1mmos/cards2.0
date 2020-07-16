@@ -16,19 +16,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import gent.timdemey.cards.Services;
+import gent.timdemey.cards.services.contract.descriptors.ComponentDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.ResourceUsage;
+import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaling.ScalableComponent;
 
-public abstract class ScalableTextComponent extends ScalableComponent
-{
-    private final ScalableFontResource fontResource;
+public class ScalableTextComponent extends ScalableComponent
+{    
     private String text;
     private Color textColor;
     private TextAlignment alignment;
+    private final ComponentDescriptor compDescriptor;
+    private final ScalableFontResource fontResource;
 
-    public ScalableTextComponent(UUID id, String text, ScalableFontResource fontResource)
+    public ScalableTextComponent(UUID id, String text, ComponentDescriptor descriptor, ScalableFontResource fontResource)
     {
-        super(id);
+        super(id, descriptor);
         this.text = text;
+        this.compDescriptor = descriptor;
         this.fontResource = fontResource;
         setAlignment(TextAlignment.Center);
     }
@@ -59,15 +65,14 @@ public abstract class ScalableTextComponent extends ScalableComponent
         g2.setColor(Color.black);
         g2.drawRect(tb.x, tb.y, tb.width, tb.height);
     }
-
-    protected int getFontHeight()
-    {
-        return 10;
-    }
-    
+        
     private Font getFont()
     {
-        int fontHeight = getFontHeight();
+        IPositionService posServ = Services.get(IPositionService.class);
+        Dimension resDim = posServ.getResourceDimension(compDescriptor, ResourceUsage.MAIN_TEXT);
+        int fontHeight = resDim.height;
+        
+        // only interested in height for fonts as the width is depending on the text
         Dimension fontDim = new Dimension(0, fontHeight);
         Font font = fontResource.get(fontDim);
         return font;
@@ -109,7 +114,7 @@ public abstract class ScalableTextComponent extends ScalableComponent
         return text;
     }
 
-    protected final void setText(String text)
+    public final void setText(String text)
     {
         this.text = text;
         getComponent().repaint();

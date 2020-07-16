@@ -12,12 +12,11 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.cardgame.SolitaireCardStackType;
 import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.LayeredArea;
-import gent.timdemey.cards.services.contract.resdecr.ResourceUsageDescriptor;
-import gent.timdemey.cards.services.contract.resdecr.ResourceUsageType;
+import gent.timdemey.cards.services.contract.descriptors.ComponentDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.ComponentType;
+import gent.timdemey.cards.services.contract.descriptors.ResourceUsage;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
-import gent.timdemey.cards.services.scaling.comps.CardScalableImageComponent;
-import gent.timdemey.cards.services.scaling.comps.CardStackScalableImageComponent;
 
 public class SolitairePositionService implements IPositionService
 {
@@ -118,15 +117,15 @@ public class SolitairePositionService implements IPositionService
     {
         Rectangle bounds;
         int layer;
-        if(scaleComp instanceof CardScalableImageComponent)
+        if(scaleComp.getComponentDescriptor().type == ComponentType.Card)
         {
-            ReadOnlyCard card = ((CardScalableImageComponent) scaleComp).getCard();
+            ReadOnlyCard card = (ReadOnlyCard) scaleComp.getPayload();
             bounds = getBounds(card);
             layer = LAYER_CARDS + card.getCardIndex();
         }
-        else if(scaleComp instanceof CardStackScalableImageComponent)
+        else if(scaleComp.getComponentDescriptor().type == ComponentType.CardStack)
         {
-            ReadOnlyCardStack cardstack = ((CardStackScalableImageComponent) scaleComp).getCardStack();
+            ReadOnlyCardStack cardstack = (ReadOnlyCardStack) scaleComp.getPayload();
             bounds = getBounds(cardstack);
             layer = LAYER_CARDSTACKS;
         }
@@ -140,22 +139,27 @@ public class SolitairePositionService implements IPositionService
     }
 
     @Override
-    public Dimension getResourceDimension(ResourceUsageDescriptor request)
+    public Dimension getResourceDimension(ComponentDescriptor compDescriptor, String resourceUsage)
     {
-        if(request.type == ResourceUsageType.Card)
+        String compType = compDescriptor.type;
+        String compSubType = compDescriptor.subtype;
+        String resType = resourceUsage;
+        if(compType == ComponentType.Card)
         {
-            // we don't need request.card, in this game all cards are equal in size
-            return getCardDimension();
+            if (resType == ResourceUsage.IMG_BACK || resType == ResourceUsage.IMG_FRONT)
+            {
+                return getCardDimension();
+            }
         }
-        else if(request.type == ResourceUsageType.CardStack)
+        else if(compType == ComponentType.CardStack)
         {
-            String csType = request.subtype;
+            String csType = compSubType;
             return getCardStackDimension(csType);
         }
-        else
-        {
-            throw new UnsupportedOperationException(request.getClass().getSimpleName() + " is not supported, cannot get dimensions for it");
-        }
+        
+        String msg = "Getting resources dimension failed: combination of ComponentType=%s, ComponentSubType=%s, ResourceUsage=%s is not supported.";
+        String msg_format = String.format(msg, compType, compSubType, resType);
+        throw new UnsupportedOperationException(msg_format);        
     }
 
     private Dimension getCardDimension()

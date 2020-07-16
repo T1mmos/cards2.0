@@ -13,6 +13,8 @@ import gent.timdemey.cards.serialization.SerializationService;
 import gent.timdemey.cards.services.configman.ConfigManager;
 import gent.timdemey.cards.services.context.CommandNetworkService;
 import gent.timdemey.cards.services.context.ContextService;
+import gent.timdemey.cards.services.gamepanel.AnimationService;
+import gent.timdemey.cards.services.interfaces.IAnimationService;
 import gent.timdemey.cards.services.interfaces.IConfigManager;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.INetworkService;
@@ -157,5 +159,11 @@ public class Start
             services.install(INetworkService.class, nServ);
         }
         
+        // animations
+        if (!Services.isInstalled(IAnimationService.class))
+        {
+            IAnimationService animServ = new AnimationService();
+            services.install(IAnimationService.class, animServ);
+        }
     }
 }

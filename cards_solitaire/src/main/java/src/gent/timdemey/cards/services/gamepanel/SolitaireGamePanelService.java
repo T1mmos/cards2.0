@@ -54,8 +54,7 @@ public class SolitaireGamePanelService extends GamePanelService
             ReadOnlyCardStack cardstack = cardstacks.get(i);
             IScalableComponent scaleComp = scaleCompServ.getOrCreateScalableComponent(cardstack);
             add(scaleComp);
+            updateComponent(scaleComp);
         }
     }
-
-    
 }

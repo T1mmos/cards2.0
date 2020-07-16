@@ -12,13 +12,13 @@ import gent.timdemey.cards.readonlymodel.TypedChange;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.ChangeType;
 import gent.timdemey.cards.services.context.Context;
+import gent.timdemey.cards.services.contract.descriptors.ComponentDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
-import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.interfaces.ISolShowIdService;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
-import gent.timdemey.cards.services.scaling.comps.CardScoreScalableTextComponent;
 import gent.timdemey.cards.services.scaling.text.ScalableFontResource;
 import gent.timdemey.cards.services.scaling.text.ScalableTextComponent;
 
@@ -46,8 +46,11 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
             UUID resId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SCORE);
             ScalableFontResource scaleFontRes = (ScalableFontResource) scaleServ.getScalableResource(resId);
 
+            ComponentDescriptor descriptor = new ComponentDescriptor(ComponentType.CardScore);
             int incr = typed.newValue - typed.oldValue;
-            ScalableTextComponent comp = new CardScoreScalableTextComponent(UUID.randomUUID(), "+" + incr, scaleFontRes, card);
+            String text = "+" + incr;
+            ScalableTextComponent comp = new ScalableTextComponent(UUID.randomUUID(), text, descriptor, scaleFontRes);
+            comp.setPayload(card);
 
             gpServ.add(comp);
             gpServ.startAnimation(comp);
@@ -72,8 +75,9 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
                 else if (cardStack.getCardStackType().equals(SolShowCardStackType.SPECIAL))
                 {
                     UUID id = idServ.createSpecialCounterComponentId(cardStack);
-                    IScalableComponent comp = scaleServ.getScalableComponent(id);
-                    comp.update();
+                    ScalableTextComponent comp = (ScalableTextComponent) scaleServ.getScalableComponent(id);
+                    String text = "" +  cardStack.getCards().size();
+                    comp.setText(text);
                 }
             }
             else if (change.changeType == ChangeType.Add && cardStack.getCardStackType().equals(SolShowCardStackType.TURNOVER))

@@ -10,17 +10,18 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.logging.Logger;
+import gent.timdemey.cards.services.contract.descriptors.ComponentDescriptor;
 import gent.timdemey.cards.services.scaling.IScalableResource;
 import gent.timdemey.cards.services.scaling.ScalableComponent;
 
-public abstract class ScalableImageComponent extends ScalableComponent
+public class ScalableImageComponent extends ScalableComponent
 {
     private final List<ScalableImageResource> imgResources;    
     private IScalableResource<BufferedImage> currentScaledResource;
     
-    public ScalableImageComponent(UUID id, ScalableImageResource ... resources)
+    public ScalableImageComponent(UUID id, ComponentDescriptor compDescriptor, ScalableImageResource ... resources)
     {
-        super(id);  
+        super(id, compDescriptor);  
 
         this.imgResources = Arrays.asList(resources);
         this.currentScaledResource = null;
@@ -38,7 +39,7 @@ public abstract class ScalableImageComponent extends ScalableComponent
      * Swap the image shown.
      * @param resourceId
      */
-    protected final void setScalableImageResource(UUID resourceId)
+    public final void setScalableImageResource(UUID resourceId)
     {
         IScalableResource<BufferedImage> found = null;
         for (IScalableResource<BufferedImage> resource : imgResources)

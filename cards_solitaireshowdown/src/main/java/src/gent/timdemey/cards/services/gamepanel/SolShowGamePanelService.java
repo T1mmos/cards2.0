@@ -11,15 +11,15 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyPlayer;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.contract.RescaleRequest;
-import gent.timdemey.cards.services.contract.resdecr.ResourceUsageDescriptor;
-import gent.timdemey.cards.services.contract.resdecr.ResourceUsageType;
-import gent.timdemey.cards.services.contract.resdescr.SolShowResourceUsageType;
+import gent.timdemey.cards.services.contract.descriptors.ComponentDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.ComponentType;
+import gent.timdemey.cards.services.contract.descriptors.ResourceUsage;
+import gent.timdemey.cards.services.contract.descriptors.SolShowComponentType;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.interfaces.ISolShowIdService;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
-import gent.timdemey.cards.services.scaling.comps.SpecialCounterScalableTextComponent;
 import gent.timdemey.cards.services.scaling.text.ScalableFontResource;
 import gent.timdemey.cards.services.scaling.text.ScalableTextComponent;
 import gent.timdemey.cards.services.scaling.text.TextAlignment;
@@ -96,6 +96,7 @@ public class SolShowGamePanelService extends GamePanelService
             ReadOnlyCardStack cardstack = cardstacks.get(i);
             IScalableComponent scaleComp = scaleServ.getOrCreateScalableComponent(cardstack);
             add(scaleComp);
+            updateComponent(scaleComp);
         }
         
         // special stack counter
@@ -106,7 +107,9 @@ public class SolShowGamePanelService extends GamePanelService
             ReadOnlyCardStack cs = cardGame.getCardStack(player.getId(), SolShowCardStackType.SPECIAL, 0);            
 
             UUID compId = idServ.createSpecialCounterComponentId(cs);
-            ScalableTextComponent textComp = new SpecialCounterScalableTextComponent(compId, cs, scaleFontRes); 
+            ComponentDescriptor compDesc = new ComponentDescriptor(SolShowComponentType.SpecialScore);
+            ScalableTextComponent textComp = new ScalableTextComponent(compId, "NOTSET", compDesc, scaleFontRes); 
+            textComp.setPayload(cs);
             Color color = Color.decode("#CCE1F2");
             textComp.setTextColor(color);
             if (state.getLocalId().equals(state.getCardGame().getPlayerId(cs)))
@@ -119,6 +122,7 @@ public class SolShowGamePanelService extends GamePanelService
             }                
             add(textComp);  
             scaleServ.addScalableComponent(textComp);
+            updateComponent(textComp);
         }
     }
 
@@ -132,18 +136,32 @@ public class SolShowGamePanelService extends GamePanelService
         
         // SolShow: card scores
         {
-            ResourceUsageDescriptor descriptor = new ResourceUsageDescriptor(ResourceUsageType.ScoreCard);
+            ComponentDescriptor descriptor = new ComponentDescriptor(ComponentType.CardScore);
             UUID resId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SCORE);
-            addRescaleRequest(requests, descriptor, resId);
+            addRescaleRequest(requests, descriptor, ResourceUsage.MAIN_TEXT, resId);
         }
         
         // SolShow: special stack counter
         {
-            ResourceUsageDescriptor infoReq = new ResourceUsageDescriptor(SolShowResourceUsageType.ScoreSpecial);
+            ComponentDescriptor infoReq = new ComponentDescriptor(SolShowComponentType.SpecialScore);
             UUID resId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SPECIALCOUNT);
-            addRescaleRequest(requests, infoReq, resId);
+            addRescaleRequest(requests, infoReq, ResourceUsage.MAIN_TEXT, resId);
         }
         
         return requests;
+    }
+    
+    @Override
+    public void updateComponent(IScalableComponent comp)
+    {
+        if (comp.getComponentDescriptor().type == SolShowComponentType.SpecialScore)
+        {
+            ScalableTextComponent textComp = (ScalableTextComponent) comp;
+            ReadOnlyCardStack cs = (ReadOnlyCardStack) comp.getPayload();
+            textComp.setText("" + cs.getCards().size());
+            return;
+        }
+        
+        super.updateComponent(comp);
     }
 }

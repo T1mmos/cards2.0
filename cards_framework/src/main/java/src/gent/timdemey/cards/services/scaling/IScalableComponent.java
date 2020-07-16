@@ -5,14 +5,24 @@ import java.util.UUID;
 import javax.swing.JComponent;
 
 import gent.timdemey.cards.services.contract.Coords;
+import gent.timdemey.cards.services.contract.descriptors.ComponentDescriptor;
 
 public interface IScalableComponent
 {    
     public JComponent getComponent();
-    
+        
     public void setMirror(boolean mirror);
     public boolean isMirror();
         
+    public ComponentDescriptor getComponentDescriptor();
+    
+    /**
+     * Set an arbitrary object as a payload of this component.
+     * @param payload
+     */
+    public void setPayload(Object payload);
+    public Object getPayload();
+    
     public void setCoords(Coords.Absolute coords);
     public Coords.Absolute getCoords();
     public void setLocation(int x, int y);    
@@ -22,11 +32,6 @@ public interface IScalableComponent
      * @return
      */
     public UUID getId();
-    
-    /**
-     * Updates the component to match the model state.
-     */
-    public void update();
     
     /**
      * Repaints the rendered component after some resources have changed behind its back. (e.g. when the resources have been rescaled)
