@@ -11,10 +11,9 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.cardgame.SolitaireCardStackType;
 import gent.timdemey.cards.services.contract.Coords;
-import gent.timdemey.cards.services.contract.GetCardScaleInfoRequest;
-import gent.timdemey.cards.services.contract.GetCardStackScaleInfoRequest;
-import gent.timdemey.cards.services.contract.GetScaleInfoRequest;
 import gent.timdemey.cards.services.contract.LayeredArea;
+import gent.timdemey.cards.services.contract.resdecr.ResourceUsageDescriptor;
+import gent.timdemey.cards.services.contract.resdecr.ResourceUsageType;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 import gent.timdemey.cards.services.scaling.comps.CardScalableImageComponent;
@@ -141,16 +140,16 @@ public class SolitairePositionService implements IPositionService
     }
 
     @Override
-    public Dimension getDimension(GetScaleInfoRequest request)
+    public Dimension getResourceDimension(ResourceUsageDescriptor request)
     {
-        if(request instanceof GetCardScaleInfoRequest)
+        if(request.type == ResourceUsageType.Card)
         {
             // we don't need request.card, in this game all cards are equal in size
             return getCardDimension();
         }
-        else if(request instanceof GetCardStackScaleInfoRequest)
+        else if(request.type == ResourceUsageType.CardStack)
         {
-            String csType = ((GetCardStackScaleInfoRequest) request).cardStack.getCardStackType();
+            String csType = request.subtype;
             return getCardStackDimension(csType);
         }
         else

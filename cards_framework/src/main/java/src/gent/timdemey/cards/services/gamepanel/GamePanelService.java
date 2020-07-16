@@ -8,7 +8,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.cards.Suit;
 import gent.timdemey.cards.model.entities.cards.Value;
 import gent.timdemey.cards.readonlymodel.IStateListener;
@@ -16,12 +15,11 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.contract.FontResource;
-import gent.timdemey.cards.services.contract.GetCardScaleInfoRequest;
-import gent.timdemey.cards.services.contract.GetCardStackScaleInfoRequest;
-import gent.timdemey.cards.services.contract.GetScaleInfoRequest;
 import gent.timdemey.cards.services.contract.ImageResource;
 import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.contract.RescaleRequest;
+import gent.timdemey.cards.services.contract.resdecr.ResourceUsageDescriptor;
+import gent.timdemey.cards.services.contract.resdecr.ResourceUsageType;
 import gent.timdemey.cards.services.gamepanel.animations.GamePanelAnimator;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
@@ -244,7 +242,7 @@ public class GamePanelService implements IGamePanelService
         // cards
         for (ReadOnlyCard card : cardGame.getCards())
         {
-            GetScaleInfoRequest infoReq = new GetCardScaleInfoRequest(card);
+            ResourceUsageDescriptor infoReq = new ResourceUsageDescriptor(ResourceUsageType.Card);
             UUID resId = idServ.createCardFrontScalableResourceId(card.getSuit(), card.getValue());
             addRescaleRequest(requests, infoReq, resId);
         }
@@ -252,21 +250,22 @@ public class GamePanelService implements IGamePanelService
         // card stacks
         for (ReadOnlyCardStack cs : cardGame.getCardStacks())
         {
-            GetScaleInfoRequest infoReq = new GetCardStackScaleInfoRequest(cs);
-            UUID resId = idServ.createCardStackScalableResourceId(cs.getCardStackType());
+            String csType = cs.getCardStackType();
+            ResourceUsageDescriptor infoReq = new ResourceUsageDescriptor(ResourceUsageType.CardStack, csType);
+            UUID resId = idServ.createCardStackScalableResourceId(csType);
             addRescaleRequest(requests, infoReq, resId);
         }
         
         return requests;
     }
     
-    protected final void addRescaleRequest(List<RescaleRequest> requests, GetScaleInfoRequest request, UUID resId)
+    protected final void addRescaleRequest(List<RescaleRequest> requests, ResourceUsageDescriptor descriptor, UUID resId)
     {
         IPositionService posServ = Services.get(IPositionService.class);
         IScalingService scaleServ = Services.get(IScalingService.class);
         
         // get dimension
-        Dimension dim = posServ.getDimension(request);
+        Dimension dim = posServ.getResourceDimension(descriptor);
         
         // get the resource to rescale
         IScalableResource<?> res = scaleServ.getScalableResource(resId);

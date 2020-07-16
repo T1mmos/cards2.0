@@ -16,9 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.services.contract.GetCardScaleInfoRequest;
-import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaling.ScalableComponent;
 
 public abstract class ScalableTextComponent extends ScalableComponent

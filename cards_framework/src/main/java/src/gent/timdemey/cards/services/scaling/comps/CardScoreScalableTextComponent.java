@@ -4,8 +4,8 @@ import java.util.UUID;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
-import gent.timdemey.cards.services.contract.GetCardScaleInfoRequest;
-import gent.timdemey.cards.services.contract.GetCardScoreScaleInfoRequest;
+import gent.timdemey.cards.services.contract.resdecr.ResourceUsageDescriptor;
+import gent.timdemey.cards.services.contract.resdecr.ResourceUsageType;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaling.text.ScalableFontResource;
 import gent.timdemey.cards.services.scaling.text.ScalableTextComponent;
@@ -36,8 +36,8 @@ public class CardScoreScalableTextComponent extends ScalableTextComponent
     protected int getFontHeight()
     {
         IPositionService posServ = Services.get(IPositionService.class);
-        GetCardScoreScaleInfoRequest infoReq = new GetCardScoreScaleInfoRequest();
-        int height = posServ.getDimension(infoReq).height;
+        ResourceUsageDescriptor descriptor = new ResourceUsageDescriptor(ResourceUsageType.Card);
+        int height = posServ.getResourceDimension(descriptor).height;
         return height;
     }
 }

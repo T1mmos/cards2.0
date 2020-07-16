@@ -5,16 +5,15 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyPlayer;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
-import gent.timdemey.cards.services.contract.GetCardScoreScaleInfoRequest;
-import gent.timdemey.cards.services.contract.GetScaleInfoRequest;
-import gent.timdemey.cards.services.contract.GetSpecialCounterScaleInfoRequest;
 import gent.timdemey.cards.services.contract.RescaleRequest;
+import gent.timdemey.cards.services.contract.resdecr.ResourceUsageDescriptor;
+import gent.timdemey.cards.services.contract.resdecr.ResourceUsageType;
+import gent.timdemey.cards.services.contract.resdescr.SolShowResourceUsageType;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
@@ -133,14 +132,14 @@ public class SolShowGamePanelService extends GamePanelService
         
         // SolShow: card scores
         {
-            GetScaleInfoRequest infoReq = new GetCardScoreScaleInfoRequest();
+            ResourceUsageDescriptor descriptor = new ResourceUsageDescriptor(ResourceUsageType.ScoreCard);
             UUID resId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SCORE);
-            addRescaleRequest(requests, infoReq, resId);
+            addRescaleRequest(requests, descriptor, resId);
         }
         
         // SolShow: special stack counter
         {
-            GetScaleInfoRequest infoReq = new GetSpecialCounterScaleInfoRequest();
+            ResourceUsageDescriptor infoReq = new ResourceUsageDescriptor(SolShowResourceUsageType.ScoreSpecial);
             UUID resId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SPECIALCOUNT);
             addRescaleRequest(requests, infoReq, resId);
         }

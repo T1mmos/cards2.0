@@ -15,12 +15,10 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.Coords;
-import gent.timdemey.cards.services.contract.GetCardScaleInfoRequest;
-import gent.timdemey.cards.services.contract.GetCardScoreScaleInfoRequest;
-import gent.timdemey.cards.services.contract.GetCardStackScaleInfoRequest;
-import gent.timdemey.cards.services.contract.GetScaleInfoRequest;
-import gent.timdemey.cards.services.contract.GetSpecialCounterScaleInfoRequest;
 import gent.timdemey.cards.services.contract.LayeredArea;
+import gent.timdemey.cards.services.contract.resdecr.ResourceUsageDescriptor;
+import gent.timdemey.cards.services.contract.resdecr.ResourceUsageType;
+import gent.timdemey.cards.services.contract.resdescr.SolShowResourceUsageType;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
@@ -118,25 +116,25 @@ public class SolShowPositionService implements IPositionService
     }
 
     @Override
-    public Dimension getDimension(GetScaleInfoRequest request)
+    public Dimension getResourceDimension(ResourceUsageDescriptor request)
     {
-        if(request instanceof GetCardScaleInfoRequest)
+        if(request.type == ResourceUsageType.Card)
         {
             // we don't need request.card, in this game all cards are equal in size
             return getCardDimension();
         }
-        else if(request instanceof GetCardStackScaleInfoRequest)
+        else if(request.type == ResourceUsageType.CardStack)
         {
-            String csType = ((GetCardStackScaleInfoRequest) request).cardStack.getCardStackType();
+            String csType = request.subtype;
             return getCardStackDimension(csType);
         }
-        else if(request instanceof GetCardScoreScaleInfoRequest)
+        else if(request.type == ResourceUsageType.ScoreCard)
         {
             Dimension compDim = getCardScoreDimension();
             Dimension withMargins = new Dimension(compDim.width - 10, compDim.height - 10);
             return withMargins;
         }
-        else if(request instanceof GetSpecialCounterScaleInfoRequest)
+        else if(request.type == SolShowResourceUsageType.ScoreSpecial)
         {
             return getSpecialCounterDimension();
         }

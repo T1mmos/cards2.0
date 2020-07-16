@@ -3,8 +3,8 @@ package gent.timdemey.cards.services.interfaces;
 import java.awt.Dimension;
 
 import gent.timdemey.cards.services.contract.Coords;
-import gent.timdemey.cards.services.contract.GetScaleInfoRequest;
 import gent.timdemey.cards.services.contract.LayeredArea;
+import gent.timdemey.cards.services.contract.resdecr.ResourceUsageDescriptor;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 
 /**
@@ -63,15 +63,15 @@ public interface IPositionService
     /**
      * Gets the dimensions given a request that contains runtime context where a resource
      * could be used. This allows to pre-scale resources without knowing the actual
-     * components where they could be used in the future (those components may not even 
-     * exist yet). 
+     * components where they could be used nor is known what domain objects are linked
+     * to it. 
      * <p>A good example is an animation shown after a card is put down onto a stack:
      * this animation is short-lived and the component holding the shown resource does not
      * need to exist at the point in time where the container is resized.
      * @param request
      * @return
      */
-    public Dimension getDimension(GetScaleInfoRequest request);
+    public Dimension getResourceDimension(ResourceUsageDescriptor request);
     
     /**
      * Gets the drag layer, the base / minimum layer in which components should be z-ordered when 
