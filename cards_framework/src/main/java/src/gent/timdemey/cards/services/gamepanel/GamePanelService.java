@@ -129,8 +129,7 @@ public class GamePanelService implements IGamePanelService
     @Override
     public void fillGamePanel()
     {
-        relayout();
-        addScalableComponents();
+        updatePositionManager();
 
         resizeListener = new GamePanelResizeListener();
         dragListener = new GamePanelMouseListener();
@@ -141,10 +140,13 @@ public class GamePanelService implements IGamePanelService
         gamePanel.addMouseListener(dragListener);
         Services.get(IContextService.class).getThreadContext().addStateListener(gameEventListener);
 
-        relayout();
         animator.start();
 
         rescaleAsync();
+        
+
+        addScalableComponents();
+        positionComponents();
     }
 
     protected GamePanelStateListener createGamePanelStateListener()
@@ -190,9 +192,8 @@ public class GamePanelService implements IGamePanelService
         gamePanel = null;
         gameEventListener = null;
     }
-
-    @Override
-    public void relayout()
+    
+    private void updatePositionManager()
     {
         // update the position service by supplying it with the latest game
         // panel dimensions
@@ -200,15 +201,22 @@ public class GamePanelService implements IGamePanelService
         int maxHeight = gamePanel.getHeight();
         IPositionService posMan = Services.get(IPositionService.class);
         posMan.setMaxSize(maxWidth, maxHeight);
+    }
 
-        // now update the position, layer and other properties of all components
+    @Override
+    public void relayout()
+    {
+        updatePositionManager();
+        positionComponents();
+    }
+    
+    private void positionComponents()
+    {
         IScalingService scaleServ = Services.get(IScalingService.class);
         for (IScalableComponent scaleComp : scaleServ.getComponents())
         {
             position(scaleComp);
         }
-
-        gamePanel.repaint();
     }
 
     @Override

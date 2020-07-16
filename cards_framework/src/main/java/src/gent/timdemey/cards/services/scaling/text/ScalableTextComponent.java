@@ -22,7 +22,7 @@ import gent.timdemey.cards.services.contract.descriptors.ResourceUsage;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaling.ScalableComponent;
 
-public class ScalableTextComponent extends ScalableComponent
+public final class ScalableTextComponent extends ScalableComponent
 {    
     private String text;
     private Color textColor;

@@ -14,7 +14,7 @@ import gent.timdemey.cards.services.contract.descriptors.ComponentDescriptor;
 import gent.timdemey.cards.services.scaling.IScalableResource;
 import gent.timdemey.cards.services.scaling.ScalableComponent;
 
-public class ScalableImageComponent extends ScalableComponent
+public final class ScalableImageComponent extends ScalableComponent
 {
     private final List<ScalableImageResource> imgResources;    
     private IScalableResource<BufferedImage> currentScaledResource;

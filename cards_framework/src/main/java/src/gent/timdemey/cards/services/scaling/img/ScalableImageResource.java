@@ -7,7 +7,7 @@ import java.util.UUID;
 import gent.timdemey.cards.services.contract.Resource;
 import gent.timdemey.cards.services.scaling.ScalableResource;
 
-public class ScalableImageResource extends ScalableResource<BufferedImage>
+public final class ScalableImageResource extends ScalableResource<BufferedImage>
 {
 
     public ScalableImageResource(UUID id, Resource<BufferedImage> resource)

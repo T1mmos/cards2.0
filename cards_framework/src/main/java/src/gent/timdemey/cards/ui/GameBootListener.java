@@ -1,6 +1,7 @@
 package gent.timdemey.cards.ui;
 
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.IStateListener;
@@ -42,14 +43,13 @@ public class GameBootListener implements IStateListener
             else
             {
                 IGamePanelService gamePanelServ = Services.get(IGamePanelService.class);
-                
+
                 GamePanel gamePanel = gamePanelServ.createGamePanel();
                 frame.getContentPane().add(gamePanel, "push, grow");
-
                 frame.validate();
-                
-                gamePanelServ.fillGamePanel();
+
+                SwingUtilities.invokeLater(() -> gamePanelServ.fillGamePanel());
             }
-        }        
+        }
     }
 }

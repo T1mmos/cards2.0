@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 
 import com.google.common.base.Preconditions;
 
-class BufferedImageScaler
+final class BufferedImageScaler
 {
     private final BufferedImage srcImage;
     private final int targetWidth;

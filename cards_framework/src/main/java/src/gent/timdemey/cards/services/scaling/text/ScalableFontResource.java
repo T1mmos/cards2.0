@@ -7,7 +7,7 @@ import java.util.UUID;
 import gent.timdemey.cards.services.contract.Resource;
 import gent.timdemey.cards.services.scaling.ScalableResource;
 
-public class ScalableFontResource extends ScalableResource<Font>
+public final class ScalableFontResource extends ScalableResource<Font>
 {
     public ScalableFontResource(UUID id, Resource<Font> resource)
     {
