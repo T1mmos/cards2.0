@@ -12,11 +12,13 @@ import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.services.contract.GetResourceResponse;
 import gent.timdemey.cards.services.contract.descriptors.ComponentDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ResourceUsage;
 import gent.timdemey.cards.services.interfaces.IPositionService;
@@ -29,6 +31,11 @@ public final class ScalableTextComponent extends ScalableComponent
     private TextAlignment alignment;
     private final ComponentDescriptor compDescriptor;
     private final ScalableFontResource fontResource;
+    
+    // caches the drawn component so upon resizements, we are still able to 
+    // draw a fast-scaled image until the rescaled resource is set
+    private BufferedImage bufferedImage = null;
+    
 
     public ScalableTextComponent(UUID id, String text, ComponentDescriptor descriptor, ScalableFontResource fontResource)
     {
@@ -45,7 +52,7 @@ public final class ScalableTextComponent extends ScalableComponent
         List<String> allStrings = new ArrayList<>(super.getDebugStrings());
 
         allStrings.add(String.format("font=%s", fontResource.getResource().filename));
-        allStrings.add(String.format("fontsize=%s", getFont().getSize()));
+        allStrings.add(String.format("fontsize=%s", getFont().resource.getSize()));
 
         return allStrings;
     }
@@ -66,23 +73,21 @@ public final class ScalableTextComponent extends ScalableComponent
         g2.drawRect(tb.x, tb.y, tb.width, tb.height);
     }
         
-    private Font getFont()
+    private GetResourceResponse<Font> getFont()
     {
         IPositionService posServ = Services.get(IPositionService.class);
         Dimension resDim = posServ.getResourceDimension(compDescriptor, ResourceUsage.MAIN_TEXT);
-        int fontHeight = resDim.height;
         
         // only interested in height for fonts as the width is depending on the text
-        Dimension fontDim = new Dimension(0, fontHeight);
-        Font font = fontResource.get(fontDim);
-        return font;
+        GetResourceResponse<Font> resp = fontResource.get(resDim);
+        return resp;
     }
 
     private Rectangle getTextBounds(Graphics2D g2)
     {
         Rectangle bounds = getCoords().getBounds();
 
-        Font font = getFont();
+        Font font = getFont().resource;
         g2.setFont(font);
         // text bounding box
         FontMetrics fm = g2.getFontMetrics();
@@ -133,32 +138,44 @@ public final class ScalableTextComponent extends ScalableComponent
     @Override
     protected void draw(Graphics2D g)
     {
-        Graphics2D g2d = (Graphics2D) g.create();
+        GetResourceResponse<Font> resp = getFont();
+        Dimension dim = getCoords().getSize();
+        if (resp.found)
+        {
+            // update the buffered image
+            Font font = resp.resource;
+            
+            bufferedImage = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = bufferedImage.createGraphics();
+            
+            g2d.setFont(font);
 
-        Font font = getFont();
+            Rectangle tb = getTextBounds(g);
+
+            FontMetrics fm = g.getFontMetrics();
+            int ascent = fm.getAscent();
+            int descent = fm.getDescent();
+            g2d.translate(tb.x, +ascent -descent + tb.y);
+            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // text
+            FontRenderContext frc = g2d.getFontRenderContext();
+
+            TextLayout tl = new TextLayout(text, g2d.getFont(), frc);
+            Shape shape = tl.getOutline(null);
+
+            float strokeWidth = 1.0f * font.getSize() / 16;
+            g2d.setStroke(new BasicStroke(strokeWidth));
+            g2d.setColor(textColor);
+            g2d.fill(shape);
+            g2d.setColor(Color.darkGray);
+            g2d.draw(shape);
+            
+            g2d.dispose();
+        }
         
-        g2d.setFont(font);
-
-        Rectangle tb = getTextBounds(g);
-
-        FontMetrics fm = g.getFontMetrics();
-        int ascent = fm.getAscent();
-        int descent = fm.getDescent();
-        g2d.translate(tb.x, +ascent -descent + tb.y);
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        // text
-        FontRenderContext frc = g2d.getFontRenderContext();
-
-        TextLayout tl = new TextLayout(text, g2d.getFont(), frc);
-        Shape shape = tl.getOutline(null);
-
-        float strokeWidth = 1.0f * font.getSize() / 16;
-        g2d.setStroke(new BasicStroke(strokeWidth));
-        g2d.setColor(textColor);
-        g2d.fill(shape);
-        g2d.setColor(Color.darkGray);
-        g2d.draw(shape);
+        // draw the buffered image onto the graphics context and scale if necessary        
+        g.drawImage(bufferedImage, 0, 0, dim.width, dim.height, null);
     }
 }

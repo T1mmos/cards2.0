@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.util.List;
 import java.util.UUID;
 
+import gent.timdemey.cards.services.contract.GetResourceResponse;
 import gent.timdemey.cards.services.contract.Resource;
 
 public interface IScalableResource<R>
@@ -29,7 +30,7 @@ public interface IScalableResource<R>
      * rescale operation on the UI thread optimized for speed.
      * @return
      */
-    R get(Dimension dim);
+    GetResourceResponse<R> get(Dimension dim);
     
     /**
      * Get the actual resource in its original dimensions.

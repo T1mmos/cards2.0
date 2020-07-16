@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.logging.Logger;
+import gent.timdemey.cards.services.contract.GetResourceResponse;
 import gent.timdemey.cards.services.contract.descriptors.ComponentDescriptor;
 import gent.timdemey.cards.services.scaling.IScalableResource;
 import gent.timdemey.cards.services.scaling.ScalableComponent;
@@ -63,10 +64,10 @@ public final class ScalableImageComponent extends ScalableComponent
     @Override
     protected final void draw(Graphics2D g2)
     {
-        Dimension dim = getCoords().getBounds().getSize();
+        Dimension dim = getCoords().getSize();
         
-        BufferedImage bi = currentScaledResource.get(dim);
-        
+        GetResourceResponse<BufferedImage> resp = currentScaledResource.get(dim);
+        BufferedImage bi = resp.resource;
         if (!currentScaledResource.getResource().fallback)
         {
             drawScaled(g2, bi, dim);

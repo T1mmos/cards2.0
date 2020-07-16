@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import gent.timdemey.cards.services.contract.GetResourceResponse;
 import gent.timdemey.cards.services.contract.Resource;
 
 /**
@@ -80,15 +81,20 @@ public abstract class ScalableResource<R> implements IScalableResource<R>
     }
 
     @Override
-    public final R get(Dimension dim)
+    public final GetResourceResponse<R> get(Dimension dim)
     {
         Dimension canonical = canonical(dim);
         R rawRes = cache.get(canonical);
         if (rawRes == null)
         {
-            rawRes = resource.raw;
+            GetResourceResponse<R> resp = new GetResourceResponse<>(resource.raw, canonical, false);
+            return resp;
         }
-        return rawRes;
+        else
+        {
+            GetResourceResponse<R> resp = new GetResourceResponse<>(rawRes, canonical, true);
+            return resp;
+        }
     }
 
     @Override
