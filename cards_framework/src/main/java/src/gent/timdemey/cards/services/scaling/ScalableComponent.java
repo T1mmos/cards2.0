@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +16,7 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.descriptors.ComponentDescriptor;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
+import gent.timdemey.cards.services.scaling.debug.DebugDrawDefines;
 
 public abstract class ScalableComponent implements IScalableComponent
 {
@@ -82,6 +84,13 @@ public abstract class ScalableComponent implements IScalableComponent
         {
             return;
         }
+        Coords.Absolute coords = getCoords();
+        // dimmed overlay color, to make (white) debug text readable 
+        {
+            Graphics2D g = (Graphics2D) g2.create();
+            g.setColor(DebugDrawDefines.COLOR_DIMMED_COMPONENT_BACKGROUND);
+            g.fillRect(0,0, coords.w, coords.h);
+        }
 
         drawDebugBoundaries(g2);
 
@@ -104,16 +113,9 @@ public abstract class ScalableComponent implements IScalableComponent
 
     protected void drawDebugBoundaries(Graphics2D g2)
     {
-        int width = getComponent().getWidth();
-        int height = getComponent().getHeight();
-
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setColor(new Color(50, 50, 50, 100));
-        g2.fillRect(0, 0, width, height);
-
-        g2.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 2.0f,
-                new float[] { 5.0f, 5.0f }, 2.0f));
-        g2.drawRect(0, 0, width - 1, height - 1);
+        Rectangle bounds = getCoords().getBounds();
+        g2.setColor(DebugDrawDefines.COLOR_SCALABLECOMPONENT_BOUNDINGBOX);
+        g2.drawRect(0, 0, bounds.width - 1, bounds.height - 1);
     }
 
     private final void drawDebugStrings(Graphics2D g2, List<String> strings)

@@ -272,7 +272,7 @@ public class SolShowPositionService implements IPositionService
             Dimension dim = getSpecialCounterDimension();
 
             int w = dim.width;
-            int h = dim.height + 10;
+            int h = (int) (dim.height * 1.50);
             int x = gl.act_cont_marginleft + gl.act_s_width - w;
             int y = gl.act_cont_margintop + 3 * (gl.act_s_height + gl.act_s_offsety) + (gl.act_s_height - h) / 2;
 

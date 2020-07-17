@@ -10,6 +10,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.font.FontRenderContext;
+import java.awt.font.LineMetrics;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -23,6 +24,7 @@ import gent.timdemey.cards.services.contract.descriptors.ComponentDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ResourceUsage;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaling.ScalableComponent;
+import gent.timdemey.cards.services.scaling.debug.DebugDrawDefines;
 
 public final class ScalableTextComponent extends ScalableComponent
 {    
@@ -60,17 +62,25 @@ public final class ScalableTextComponent extends ScalableComponent
     @Override
     protected void drawDebugBoundaries(Graphics2D g2)
     {
-        super.drawDebugBoundaries(g2);
-
         // jlabel bounding box
-        Rectangle bounds = getCoords().getBounds();
-        g2.setColor(Color.blue);
-        g2.drawRect(0, 0, bounds.width - 1, bounds.height - 1);
+        {
+            Graphics2D g = (Graphics2D) g2.create();
+            Rectangle bounds = getCoords().getBounds();
+            g.setStroke(new BasicStroke());
+            g.setColor(DebugDrawDefines.COLOR_SCALABLETEXTCOMPONENT_BOUNDINGBOX);
+            g.drawRect(0, 0, bounds.width - 1, bounds.height - 1);
+        }
+        
 
-        // text bounding box
-        Rectangle tb = getTextBounds(g2);
-        g2.setColor(Color.black);
-        g2.drawRect(tb.x, tb.y, tb.width, tb.height);
+        // text soft bounding box
+        {
+            Graphics2D g = (Graphics2D) g2.create();
+            Rectangle tb = getTextBounds(g);
+            g.setColor(DebugDrawDefines.COLOR_SCALABLETEXTCOMPONENT_TEXTBOX);
+            g.setStroke(DebugDrawDefines.STROKE_DASHED);
+            g.drawRect(tb.x, tb.y, tb.width, tb.height);
+        }
+        
     }
         
     private GetResourceResponse<Font> getFont()
@@ -145,17 +155,15 @@ public final class ScalableTextComponent extends ScalableComponent
             // update the buffered image
             Font font = resp.resource;
             
-            bufferedImage = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
+            bufferedImage = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);            
             Graphics2D g2d = bufferedImage.createGraphics();
             
             g2d.setFont(font);
 
             Rectangle tb = getTextBounds(g);
-
             FontMetrics fm = g.getFontMetrics();
-            int ascent = fm.getAscent();
             int descent = fm.getDescent();
-            g2d.translate(tb.x, +ascent -descent + tb.y);
+            g2d.translate(tb.x, + tb.y + tb.height - descent);
             g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 

@@ -29,7 +29,7 @@ public class GamePanel extends JLayeredPane
 
         if (Services.get(IGamePanelService.class).getDrawDebug())
         {
-            Graphics2D g2 = (Graphics2D) g;
+            Graphics2D g2 = (Graphics2D) g.create();
             IPositionService posMan = Services.get(IPositionService.class);
             Coords.Absolute coords = posMan.getPackedCoords();
             

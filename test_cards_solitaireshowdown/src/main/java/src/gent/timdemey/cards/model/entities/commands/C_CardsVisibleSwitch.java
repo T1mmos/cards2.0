@@ -37,7 +37,7 @@ public class C_CardsVisibleSwitch extends CommandBase
         List<IScalableComponent> comps = scaleServ.getComponents();
         for(IScalableComponent comp : comps)
         {
-            comp.update();
+            //comp.update();
         }        
     }
 
