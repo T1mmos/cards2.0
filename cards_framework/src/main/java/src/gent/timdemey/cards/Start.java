@@ -49,7 +49,6 @@ public class Start
         Services services = new Services();
         App.init(services);
         Start.installBaseServices();
-        Loc.setLocale(Loc.AVAILABLE_LOCALES[0]);
 
         // determine plugin
         ICardPlugin plugin = getCardPlugin(args);
@@ -63,6 +62,10 @@ public class Start
 
         plugin.installServices();
         Start.installServices();
+        
+        Services.get(IResourceRepository.class).loadRepositories();
+        
+        Loc.setLocale(Loc.AVAILABLE_LOCALES[0]);
     }
 
     private static ICardPlugin getCardPlugin(String[] args)
@@ -112,8 +115,8 @@ public class Start
         logMan.setLogLevel(LogLevel.TRACE);
         App.getServices().install(ILogManager.class, logMan);
 
-        IResourceRepository resRepo = new ResourceRepository();
-        App.getServices().install(IResourceRepository.class, resRepo);
+   //     IResourceRepository resRepo = new ResourceRepository();
+      //  App.getServices().install(IResourceRepository.class, resRepo);
     }
 
     private static void installServices()

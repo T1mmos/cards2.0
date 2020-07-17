@@ -3,35 +3,63 @@ package gent.timdemey.cards.services.resources;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.services.interfaces.IResourceRepository;
 
 public class ResourceRepository implements IResourceRepository
 {
     private final Map<ResourceType, URLClassLoader> resourceLoaders = new HashMap<>();
 
-    private static URLClassLoader createResourceLoader(String... dirs)
-    {
-        URL[] urls = new URL[dirs.length];
-        for (int i = 0; i < urls.length; i++)
-        {
-            URL url = ResourceRepository.class.getResource(dirs[i]);
-            urls[i] = url;
-        }
-        URLClassLoader urlClassLoader = new URLClassLoader(urls);
-        return urlClassLoader;
-    }
-
     public ResourceRepository()
-    {
-        resourceLoaders.put(ResourceType.IMAGE, createResourceLoader("/img/"));
-        resourceLoaders.put(ResourceType.SOUND, createResourceLoader("/snd/"));
-        resourceLoaders.put(ResourceType.LOCALIZATION, createResourceLoader("/loc/"));
-        resourceLoaders.put(ResourceType.FONT, createResourceLoader("/fonts/"));
-    }
+    {        
+    }    
 
+    @Override
+    public final void loadRepositories()
+    {
+        Map<ResourceType, List<URL>> typeUrls = new HashMap<>();
+        buildUrlLists(typeUrls);
+        createResourceLoaders(typeUrls);
+    }
+    
+    protected void buildUrlLists (Map<ResourceType, List<URL>> typeUrls)
+    {
+        addUrl(typeUrls, ResourceType.IMAGE, ICardPlugin.class, "/img/");
+        addUrl(typeUrls, ResourceType.SOUND, ICardPlugin.class, "/snd/");
+        addUrl(typeUrls, ResourceType.LOCALIZATION, ICardPlugin.class, "/loc/");
+        addUrl(typeUrls, ResourceType.FONT, ICardPlugin.class,"/fonts/");
+    }
+    
+    protected static void addUrl (Map<ResourceType, List<URL>> typeUrls, ResourceType type, Class<?> clazz, String dir)
+    {
+        List<URL> urls = typeUrls.get(type);
+        if (urls == null)
+        {
+            urls = new ArrayList<>();
+            typeUrls.put(type, urls);
+        }
+        URL url = clazz.getResource(dir);
+        urls.add(url);
+    }
+    
+    private void createResourceLoaders(Map<ResourceType, List<URL>> typeUrls)
+    {
+        for (ResourceType type : typeUrls.keySet())
+        {
+            List<URL> urls = typeUrls.get(type);
+            URL[] urlArray = new URL[urls.size()];
+            urls.toArray(urlArray);
+            URLClassLoader urlClassLoader = new URLClassLoader(urlArray);
+            resourceLoaders.put(type, urlClassLoader);
+        }
+    }
+    
     @Override
     public InputStream getResourceAsStream(ResourceType type, String name)
     {
@@ -41,7 +69,7 @@ public class ResourceRepository implements IResourceRepository
         if (is == null)
         {
             throw new IllegalArgumentException(
-                    "Cannot find resource " + name + " in any of the paths " + resLoader.getURLs());
+                    "Cannot find resource " + name + " in any of the paths " + Arrays.toString(resLoader.getURLs()));
         }
 
         return is;

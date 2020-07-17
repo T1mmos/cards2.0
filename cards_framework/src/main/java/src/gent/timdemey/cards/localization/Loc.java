@@ -29,7 +29,7 @@ public class Loc
         LOCALE = locale;
 
         IResourceRepository resourceManager = Services.get(IResourceRepository.class);
-        ClassLoader resClassLoader = resourceManager.getResourceClassLoader(ResourceType.LOCALIZATION);
+        ClassLoader resClassLoader = resourceManager.getResourceClassLoader(ResourceType.LOCALIZATION);        
         ResourceBundle rb = ResourceBundle.getBundle(FILENAME_BASE, LOCALE, resClassLoader);
 
         BUNDLE = rb;

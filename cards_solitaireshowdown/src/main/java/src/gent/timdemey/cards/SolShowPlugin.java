@@ -13,8 +13,10 @@ import gent.timdemey.cards.services.interfaces.ICardGameService;
 import gent.timdemey.cards.services.interfaces.ICommandService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
+import gent.timdemey.cards.services.interfaces.IResourceRepository;
 import gent.timdemey.cards.services.interfaces.ISerializationService;
 import gent.timdemey.cards.services.interfaces.ISolShowIdService;
+import gent.timdemey.cards.services.resources.SolShowResourceRepository;
 
 public class SolShowPlugin implements ICardPlugin
 {
@@ -27,6 +29,7 @@ public class SolShowPlugin implements ICardPlugin
         App.getServices().install(ISolShowIdService.class, new SolShowIdService());
         App.getServices().install(IGamePanelService.class, new SolShowGamePanelService());
         App.getServices().install(IAnimationService.class, new SolShowAnimationService());
+        App.getServices().install(IResourceRepository.class, new SolShowResourceRepository());
     }
 
     @Override

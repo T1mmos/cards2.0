@@ -20,6 +20,8 @@ import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.interfaces.ISolShowIdService;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
+import gent.timdemey.cards.services.scaling.img.ScalableImageComponent;
+import gent.timdemey.cards.services.scaling.img.ScalableImageResource;
 import gent.timdemey.cards.services.scaling.text.ScalableFontResource;
 import gent.timdemey.cards.services.scaling.text.ScalableTextComponent;
 import gent.timdemey.cards.services.scaling.text.TextAlignment;
@@ -33,6 +35,7 @@ public class SolShowGamePanelService extends GamePanelService
         super.preload();
 
         preloadCardStacks();
+        preloadSpecialBackground();
     }
 
     @Override
@@ -72,6 +75,14 @@ public class SolShowGamePanelService extends GamePanelService
         String filename_special = "stack_solshow_special.png";
         preloadImage(resId_special, filename_special);
     }
+    
+    private void preloadSpecialBackground()
+    {
+        ISolShowIdService idServ = Services.get(ISolShowIdService.class);
+        UUID resId = idServ.createSpecialBackgroundResourceId();
+        String filename = "special_background.png";
+        preloadImage(resId, filename);
+    }
 
     protected GamePanelStateListener createGamePanelStateListener()
     {
@@ -99,31 +110,53 @@ public class SolShowGamePanelService extends GamePanelService
             updateComponent(scaleComp);
         }
         
-        // special stack counter
-        UUID resId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SPECIALCOUNT);
-        ScalableFontResource scaleFontRes = (ScalableFontResource) scaleServ.getScalableResource(resId);        
-        for(ReadOnlyPlayer player : state.getPlayers())
+        // special stack background and counter text
         {
-            ReadOnlyCardStack cs = cardGame.getCardStack(player.getId(), SolShowCardStackType.SPECIAL, 0);            
+            UUID textResId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SPECIALCOUNT);
+            UUID bgResId = idServ.createSpecialBackgroundResourceId();    
+            
+            ScalableFontResource textRes = (ScalableFontResource) scaleServ.getScalableResource(textResId);        
+            ScalableImageResource bgRes = (ScalableImageResource) scaleServ.getScalableResource(bgResId);
+            
+            for(ReadOnlyPlayer player : state.getPlayers())
+            {
+                ReadOnlyCardStack cs = cardGame.getCardStack(player.getId(), SolShowCardStackType.SPECIAL, 0);            
 
-            UUID compId = idServ.createSpecialCounterComponentId(cs);
-            ComponentDescriptor compDesc = new ComponentDescriptor(SolShowComponentType.SpecialScore);
-            ScalableTextComponent textComp = new ScalableTextComponent(compId, "NOTSET", compDesc, scaleFontRes); 
-            textComp.setPayload(cs);
-            Color color = Color.decode("#CCE1F2");
-            textComp.setTextColor(color);
-            if (state.getLocalId().equals(state.getCardGame().getPlayerId(cs)))
-            {
-                textComp.setAlignment(TextAlignment.Right);
+                UUID counterCompId = idServ.createSpecialCounterComponentId(cs);
+                UUID bgCompId = idServ.createSpecialBackgroundComponentId(cs);
+                
+                ComponentDescriptor counterCompDesc = new ComponentDescriptor(SolShowComponentType.SpecialScore);
+                ComponentDescriptor bgCompDesc = new ComponentDescriptor(SolShowComponentType.SpecialBackground);
+                
+                ScalableTextComponent textComp = new ScalableTextComponent(counterCompId, "NOTSET", counterCompDesc, textRes);
+                textComp.setPayload(cs);
+                Color color = Color.decode("#CCE1F2");
+                textComp.setTextColor(color);
+                
+                ScalableImageComponent imgComp = new ScalableImageComponent(bgCompId, bgCompDesc, bgRes);
+                imgComp.setPayload(cs);
+                
+                if (state.getLocalId().equals(player.getId()))
+                {
+                    textComp.setAlignment(TextAlignment.Right);
+                    imgComp.setMirror(false);
+                }
+                else
+                {
+                    textComp.setAlignment(TextAlignment.Left);
+                    imgComp.setMirror(true);
+                }                
+                
+                add(textComp);  
+                add(imgComp);
+                
+                scaleServ.addScalableComponent(textComp);
+                scaleServ.addScalableComponent(imgComp);
+                
+                updateComponent(textComp);
+                updateComponent(imgComp);
             }
-            else
-            {
-                textComp.setAlignment(TextAlignment.Left);
-            }                
-            add(textComp);  
-            scaleServ.addScalableComponent(textComp);
-            updateComponent(textComp);
-        }
+        }        
     }
 
     @Override
@@ -132,7 +165,7 @@ public class SolShowGamePanelService extends GamePanelService
         // cards, cardstacks
         List<RescaleRequest> requests = super.createRescaleRequests();
         
-        IIdService idServ = Services.get(IIdService.class);
+        ISolShowIdService idServ = Services.get(ISolShowIdService.class);
         
         // SolShow: card scores
         {
@@ -141,11 +174,15 @@ public class SolShowGamePanelService extends GamePanelService
             addRescaleRequest(requests, descriptor, ResourceUsage.MAIN_TEXT, resId);
         }
         
-        // SolShow: special stack counter
+        // SolShow: special stack counter + background
         {
-            ComponentDescriptor infoReq = new ComponentDescriptor(SolShowComponentType.SpecialScore);
-            UUID resId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SPECIALCOUNT);
-            addRescaleRequest(requests, infoReq, ResourceUsage.MAIN_TEXT, resId);
+            ComponentDescriptor counterReq = new ComponentDescriptor(SolShowComponentType.SpecialScore);
+            UUID counterResId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SPECIALCOUNT);
+            addRescaleRequest(requests, counterReq, ResourceUsage.MAIN_TEXT, counterResId);
+            
+            ComponentDescriptor bgReq = new ComponentDescriptor(SolShowComponentType.SpecialBackground);
+            UUID bgResId = idServ.createSpecialBackgroundResourceId();
+            addRescaleRequest(requests, bgReq, ResourceUsage.IMG_FRONT, bgResId);
         }
         
         return requests;
@@ -159,6 +196,14 @@ public class SolShowGamePanelService extends GamePanelService
             ScalableTextComponent textComp = (ScalableTextComponent) comp;
             ReadOnlyCardStack cs = (ReadOnlyCardStack) comp.getPayload();
             textComp.setText("" + cs.getCards().size());
+            return;
+        }
+        else if (comp.getComponentDescriptor().type == SolShowComponentType.SpecialBackground)
+        {
+            ISolShowIdService idServ = Services.get(ISolShowIdService.class);
+            ScalableImageComponent imgComp = (ScalableImageComponent) comp;
+            UUID bgResId = idServ.createSpecialBackgroundResourceId();
+            imgComp.setScalableImageResource(bgResId);         
             return;
         }
         

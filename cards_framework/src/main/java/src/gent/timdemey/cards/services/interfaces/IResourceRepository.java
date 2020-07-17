@@ -12,6 +12,8 @@ public interface IResourceRepository
         FONT
     }
     
+    public void loadRepositories();
+    
     public InputStream getResourceAsStream(ResourceType type, String name);
 
     public ClassLoader getResourceClassLoader(ResourceType type);

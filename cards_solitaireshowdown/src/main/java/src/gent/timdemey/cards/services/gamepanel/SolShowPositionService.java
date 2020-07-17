@@ -27,7 +27,8 @@ import gent.timdemey.cards.services.scaling.text.ScalableTextComponent;
 
 public class SolShowPositionService implements IPositionService
 {
-    private static final int LAYER_CARDSTACKS = 0;
+    private static final int LAYER_BACKGROUND_IMAGES = 50;
+    private static final int LAYER_CARDSTACKS = 100;
     private static final int LAYER_CARDS = 200;
     private static final int LAYER_DRAG = 10000;
     private static final int LAYER_ANIMATIONS = 20000;
@@ -150,6 +151,13 @@ public class SolShowPositionService implements IPositionService
                 return getSpecialCounterDimension();
             }
         }
+        else if (compType == SolShowComponentType.SpecialBackground)
+        {
+            if (resourceUsage == ResourceUsage.IMG_FRONT)
+            {
+                return getSpecialBackgroundDimension();
+            }
+        }
 
         String msg = "Getting resources dimension failed: combination of ComponentType=%s, ComponentSubType=%s, ResourceUsage=%s is not supported.";
         String msg_format = String.format(msg, compType, compSubType, resType);
@@ -164,6 +172,11 @@ public class SolShowPositionService implements IPositionService
     private Dimension getSpecialCounterDimension()
     {
         return new Dimension(gl.act_s_width, gl.act_s_height / 3);
+    }
+    
+    private Dimension getSpecialBackgroundDimension()
+    {
+        return new Dimension(3 * gl.act_s_width, gl.act_s_height);
     }
 
     private Dimension getCardStackDimension(String csType)
@@ -284,6 +297,32 @@ public class SolShowPositionService implements IPositionService
 
             Coords.Absolute coords = Coords.getAbsolute(x, y, w, h);
             return new LayeredArea(coords, LAYER_CARDSTACKS, false);
+        }
+        else if (compType == SolShowComponentType.SpecialBackground)
+        {
+            IContextService contextService = Services.get(IContextService.class);
+            Context context = contextService.getThreadContext();
+            ReadOnlyCardStack cardStack = (ReadOnlyCardStack) scaleComp.getPayload();
+            
+            UUID localId = context.getReadOnlyState().getLocalId();
+            UUID playerId = context.getReadOnlyState().getCardGame().getPlayerId(cardStack);
+            boolean isLocal = localId.equals(playerId);
+            
+            Dimension dim = getSpecialBackgroundDimension();
+
+            int w = dim.width;
+            int h = dim.height;
+            int x = gl.act_cont_marginleft;
+            int y = gl.act_cont_margintop + 3 * (gl.act_s_height + gl.act_s_offsety);
+
+            if(!isLocal) // point-mirror
+            {
+                x = gl.act_max_width - x - w;
+                y = gl.act_max_height - y - h;
+            }
+
+            Coords.Absolute coords = Coords.getAbsolute(x, y, w, h);
+            return new LayeredArea(coords, LAYER_BACKGROUND_IMAGES, false);
         }
 
         throw new UnsupportedOperationException();
