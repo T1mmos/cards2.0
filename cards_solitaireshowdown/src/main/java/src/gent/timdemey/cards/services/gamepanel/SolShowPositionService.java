@@ -322,7 +322,8 @@ public class SolShowPositionService implements IPositionService
             }
 
             Coords.Absolute coords = Coords.getAbsolute(x, y, w, h);
-            return new LayeredArea(coords, LAYER_BACKGROUND_IMAGES, false);
+            boolean mirror = !isLocal;
+            return new LayeredArea(coords, LAYER_BACKGROUND_IMAGES, mirror);
         }
 
         throw new UnsupportedOperationException();
@@ -381,12 +382,12 @@ public class SolShowPositionService implements IPositionService
         int x = 0, y = 0;
         if(csType.equals(SolShowCardStackType.DEPOT))
         {
-            x = gl.act_cont_marginleft;
+            x = gl.act_cont_marginleft + (int) (0.5 * gl.act_s_width);
             y = gl.act_cont_margintop + 4 * (gl.act_s_height + gl.act_s_offsety);
         }
         else if(csType.equals(SolShowCardStackType.TURNOVER))
         {
-            x = gl.act_cont_marginleft + gl.act_s_width + gl.act_s_offsetx;
+            x = gl.act_cont_marginleft + gl.act_s_width + gl.act_s_offsetx + (int) (0.5 * gl.act_s_width);
             y = gl.act_cont_margintop + 4 * (gl.act_s_height + gl.act_s_offsety);
         }
         else if(csType.equals(SolShowCardStackType.LAYDOWN))
@@ -396,7 +397,7 @@ public class SolShowPositionService implements IPositionService
         }
         else if(csType.equals(SolShowCardStackType.MIDDLE))
         {
-            x = gl.act_cont_marginleft + (4 + stackNr) * (gl.act_s_width + gl.act_s_offsetx);
+            x = gl.act_cont_marginleft + (int) ((4 + stackNr - 0.5) * (gl.act_s_width + gl.act_s_offsetx));
             y = gl.act_cont_margintop + 3 * (gl.act_s_height + gl.act_s_offsety);
         }
         else if(cardStack.getCardStackType().equals(SolShowCardStackType.SPECIAL))

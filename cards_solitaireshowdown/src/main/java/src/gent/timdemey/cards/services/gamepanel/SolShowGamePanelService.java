@@ -139,12 +139,10 @@ public class SolShowGamePanelService extends GamePanelService
                 if (state.getLocalId().equals(player.getId()))
                 {
                     textComp.setAlignment(TextAlignment.Right);
-                    imgComp.setMirror(false);
                 }
                 else
                 {
                     textComp.setAlignment(TextAlignment.Left);
-                    imgComp.setMirror(true);
                 }                
                 
                 add(textComp);  
