@@ -4,10 +4,6 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.util.UUID;
 
-import javax.swing.SwingUtilities;
-
-import com.google.common.base.Preconditions;
-
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
@@ -38,77 +34,28 @@ public class SolShowPositionService implements IPositionService
     @Override
     public void setMaxSize(int maxWidth, int maxHeight)
     {
-        Preconditions.checkState(SwingUtilities.isEventDispatchThread());
-
-        int base_cwidth = 16;
-        int base_cheight = 22;
-        int base_swidth = 18;
-        int base_sheight = 24;
-        int base_scoffsetx = 1;
-        int base_scoffsety = 1;
-        int base_coffsetvisx = 4; // not needed
-        int base_coffsetvisy = 3;
-        int base_soffsetx = 2;
-        int base_soffsety = 2;
-        int base_tpadx = 2; // (minimal) space edge playfield
-        int base_tpady = 2;
-        int base_scoretext_height = 8;
-
-        int base_twidth = 8 * base_swidth + 7 * base_soffsetx + 2 * base_tpadx;
-        int base_theight = 5 * base_sheight + 4 * base_soffsety + 2 * base_tpady;
-
-        // choose multiplier so everything fits according to base ratios, as
-        // large as possible
-        gl = new SolShowGameLayout();
-
-        gl.act_max_width = maxWidth;
-        gl.act_max_height = maxHeight;
-        int ratio_hor = (int) (1.0 * gl.act_max_width / base_twidth);
-        int ratio_ver = (int) (1.0 * gl.act_max_height / base_theight);
-
-        int ratio = Math.min(ratio_hor, ratio_ver);
-
-        gl.act_c_width = ratio * base_cwidth;
-        gl.act_c_height = ratio * base_cheight;
-        gl.act_s_width = ratio * base_swidth;
-        gl.act_s_height = ratio * base_sheight;
-        gl.act_sc_offsetx = ratio * base_scoffsetx;
-        gl.act_sc_offsety = ratio * base_scoffsety;
-        gl.act_c_offsetvisx = ratio * base_coffsetvisx;
-        gl.act_c_offsetvisy = ratio * base_coffsetvisy;
-        gl.act_s_offsetx = ratio * base_soffsetx;
-        gl.act_s_offsety = ratio * base_soffsety;
-        gl.act_scoretext_height = ratio * base_scoretext_height;
-
-        // remaining space is distributed to the paddings, keeps everything
-        // centered
-        gl.act_cont_width = 8 * gl.act_s_width + 7 * gl.act_s_offsetx;
-        gl.act_cont_marginleft = (gl.act_max_width - gl.act_cont_width) / 2;
-        gl.act_cont_marginright = gl.act_max_width - gl.act_cont_width - gl.act_cont_marginleft;
-        gl.act_cont_height = 5 * gl.act_s_height + 4 * gl.act_s_offsety;
-        gl.act_cont_margintop = (gl.act_max_height - gl.act_cont_height) / 2;
-        gl.act_cont_marginbottom = gl.act_max_height - gl.act_cont_height - gl.act_cont_margintop;
+        gl = SolShowGameLayout.create(maxWidth, maxHeight);      
     }
 
     @Override
     public Coords.Absolute getPackedCoords()
     {
-        return Coords.getAbsolute(gl.act_cont_marginleft, gl.act_cont_margintop, gl.act_cont_width, gl.act_cont_height);
+        return Coords.getAbsolute(gl.cont_marginleft, gl.cont_margintop, gl.cont_width, gl.cont_height);
     }
     
     @Override
     public Coords.Absolute getAbsoluteCoords(Coords.Relative relcoords)
     {
         Coords.Absolute absNoOffset = Coords.toAbsolute(relcoords, getPackedCoords().getSize());
-        Coords.Absolute absOffset = absNoOffset.translate(gl.act_cont_marginleft, gl.act_cont_margintop);
+        Coords.Absolute absOffset = absNoOffset.translate(gl.cont_marginleft, gl.cont_margintop);
         return absOffset;
     }    
     
     @Override
     public Coords.Relative getRelativeCoords(Coords.Absolute abscoords)
     {
-        int marginl = gl.act_cont_marginleft;
-        int margint = gl.act_cont_margintop;
+        int marginl = gl.cont_marginleft;
+        int margint = gl.cont_margintop;
         Coords.Absolute absNoOffset = abscoords.translate(-marginl, -margint);
         Coords.Relative relCoords = Coords.toRelative(absNoOffset, getPackedCoords().getSize());
         return relCoords;
@@ -166,17 +113,17 @@ public class SolShowPositionService implements IPositionService
 
     private Dimension getCardScoreDimension()
     {
-        return new Dimension(2 * gl.act_c_width, gl.act_scoretext_height);
+        return new Dimension(2 * gl.c_width, gl.scoretext_height);
     }
 
     private Dimension getSpecialCounterDimension()
     {
-        return new Dimension(gl.act_s_width, gl.act_s_height / 3);
+        return new Dimension(gl.s_width, gl.s_height / 3);
     }
     
     private Dimension getSpecialBackgroundDimension()
     {
-        return new Dimension(3 * gl.act_s_width, gl.act_s_height);
+        return new Dimension(3 * gl.s_width, gl.s_height);
     }
 
     private Dimension getCardStackDimension(String csType)
@@ -184,35 +131,35 @@ public class SolShowPositionService implements IPositionService
         int w = 0, h = 0;
         if(csType.equals(SolShowCardStackType.DEPOT))
         {
-            w = gl.act_s_width;
-            h = gl.act_s_height;
+            w = gl.s_width;
+            h = gl.s_height;
         }
         else if(csType.equals(SolShowCardStackType.TURNOVER))
         {
-            w = gl.act_s_width + (int) (0.5 * gl.act_c_width);
-            h = gl.act_s_height;
+            w = gl.s_width + (int) (0.5 * gl.c_width);
+            h = gl.s_height;
         }
         else if(csType.equals(SolShowCardStackType.LAYDOWN))
         {
-            w = gl.act_s_width;
-            h = gl.act_s_height;
+            w = gl.s_width;
+            h = gl.s_height;
         }
         else if(csType.equals(SolShowCardStackType.MIDDLE))
         {
-            w = gl.act_s_width;
-            h = 2 * gl.act_s_height;
+            w = gl.s_width;
+            h = 2 * gl.s_height;
         }
         else if(csType.equals(SolShowCardStackType.SPECIAL))
         {
-            w = gl.act_s_width;
-            h = gl.act_s_height;
+            w = gl.s_width;
+            h = gl.s_height;
         }
         return new Dimension(w, h);
     }
 
     private Dimension getCardDimension()
     {
-        return new Dimension(gl.act_c_width, gl.act_c_height);
+        return new Dimension(gl.c_width, gl.c_height);
     }
 
     @Override
@@ -286,13 +233,13 @@ public class SolShowPositionService implements IPositionService
 
             int w = dim.width;
             int h = (int) (dim.height * 1.50);
-            int x = gl.act_cont_marginleft + gl.act_s_width - w;
-            int y = gl.act_cont_margintop + 3 * (gl.act_s_height + gl.act_s_offsety) + (gl.act_s_height - h) / 2;
+            int x = gl.cont_marginleft + gl.s_width - w;
+            int y = gl.cont_margintop + 3 * (gl.s_height + gl.s_offsety) + (gl.s_height - h) / 2;
 
             if(!isLocal) // point-mirror
             {
-                x = gl.act_max_width - x - w;
-                y = gl.act_max_height - y - h;
+                x = gl.max_width - x - w;
+                y = gl.max_height - y - h;
             }
 
             Coords.Absolute coords = Coords.getAbsolute(x, y, w, h);
@@ -312,13 +259,13 @@ public class SolShowPositionService implements IPositionService
 
             int w = dim.width;
             int h = dim.height;
-            int x = gl.act_cont_marginleft;
-            int y = gl.act_cont_margintop + 3 * (gl.act_s_height + gl.act_s_offsety);
+            int x = gl.cont_marginleft;
+            int y = gl.cont_margintop + 3 * (gl.s_height + gl.s_offsety);
 
             if(!isLocal) // point-mirror
             {
-                x = gl.act_max_width - x - w;
-                y = gl.act_max_height - y - h;
+                x = gl.max_width - x - w;
+                y = gl.max_height - y - h;
             }
 
             Coords.Absolute coords = Coords.getAbsolute(x, y, w, h);
@@ -348,13 +295,13 @@ public class SolShowPositionService implements IPositionService
         int shift = shiftRight - shiftLeft;
         if(local)
         {
-            rect.x += gl.act_sc_offsetx + (isOffsetX ? shift * gl.act_c_offsetvisx : 0);
-            rect.y += gl.act_sc_offsety + (isOffsetY ? card.getCardIndex() * gl.act_c_offsetvisy : 0);
+            rect.x += gl.sc_offsetx + (isOffsetX ? shift * gl.c_offsetvisx : 0);
+            rect.y += gl.sc_offsety + (isOffsetY ? card.getCardIndex() * gl.c_offsetvisy : 0);
         }
         else
         {
-            rect.x += gl.act_sc_offsetx + (isOffsetX ? (2 - shift) * gl.act_c_offsetvisx : 0);
-            rect.y = rect.y + rect.height - gl.act_sc_offsety - gl.act_c_height - (isOffsetY ? card.getCardIndex() * gl.act_c_offsetvisy : 0);
+            rect.x += gl.sc_offsetx + (isOffsetX ? (2 - shift) * gl.c_offsetvisx : 0);
+            rect.y = rect.y + rect.height - gl.sc_offsety - gl.c_height - (isOffsetY ? card.getCardIndex() * gl.c_offsetvisy : 0);
         }
 
         // dimension
@@ -382,28 +329,28 @@ public class SolShowPositionService implements IPositionService
         int x = 0, y = 0;
         if(csType.equals(SolShowCardStackType.DEPOT))
         {
-            x = gl.act_cont_marginleft + (int) (0.5 * gl.act_s_width);
-            y = gl.act_cont_margintop + 4 * (gl.act_s_height + gl.act_s_offsety);
+            x = gl.cont_marginleft + (int) (0.5 * gl.s_width);
+            y = gl.cont_margintop + 4 * (gl.s_height + gl.s_offsety);
         }
         else if(csType.equals(SolShowCardStackType.TURNOVER))
         {
-            x = gl.act_cont_marginleft + gl.act_s_width + gl.act_s_offsetx + (int) (0.5 * gl.act_s_width);
-            y = gl.act_cont_margintop + 4 * (gl.act_s_height + gl.act_s_offsety);
+            x = gl.cont_marginleft + gl.s_width + gl.s_offsetx + (int) (0.5 * gl.s_width);
+            y = gl.cont_margintop + 4 * (gl.s_height + gl.s_offsety);
         }
         else if(csType.equals(SolShowCardStackType.LAYDOWN))
         {
-            x = gl.act_cont_marginleft + (0 + stackNr) * (gl.act_s_width + gl.act_s_offsetx);
-            y = gl.act_cont_margintop + 2 * (gl.act_s_height + gl.act_s_offsety);
+            x = gl.cont_marginleft + (0 + stackNr) * (gl.s_width + gl.s_offsetx);
+            y = gl.cont_margintop + 2 * (gl.s_height + gl.s_offsety);
         }
         else if(csType.equals(SolShowCardStackType.MIDDLE))
         {
-            x = gl.act_cont_marginleft + (int) ((4 + stackNr - 0.5) * (gl.act_s_width + gl.act_s_offsetx));
-            y = gl.act_cont_margintop + 3 * (gl.act_s_height + gl.act_s_offsety);
+            x = gl.cont_marginleft + (int) ((4 + stackNr - 0.5) * (gl.s_width + gl.s_offsetx));
+            y = gl.cont_margintop + 3 * (gl.s_height + gl.s_offsety);
         }
         else if(cardStack.getCardStackType().equals(SolShowCardStackType.SPECIAL))
         {
-            x = gl.act_cont_marginleft + gl.act_s_width + gl.act_s_offsetx;
-            y = gl.act_cont_margintop + 3 * (gl.act_s_height + gl.act_s_offsety);
+            x = gl.cont_marginleft + gl.s_width + gl.s_offsetx;
+            y = gl.cont_margintop + 3 * (gl.s_height + gl.s_offsety);
         }
 
         // dimension
@@ -412,8 +359,8 @@ public class SolShowPositionService implements IPositionService
 
         if(!isLocal) // point-mirror
         {
-            rect.x = gl.act_max_width - rect.x - rect.width;
-            rect.y = gl.act_max_height - rect.y - rect.height;
+            rect.x = gl.max_width - rect.x - rect.width;
+            rect.y = gl.max_height - rect.y - rect.height;
         }
 
         Coords.Absolute coords = Coords.getAbsolute(rect);

@@ -388,6 +388,7 @@ public class GamePanelService implements IGamePanelService
             cardStackComp.setScalableImageResource(resId);
             return;
         }
+        
         throw new UnsupportedOperationException("updateComponent not support for ComponentDescriptor " + cd);
     }
 }
