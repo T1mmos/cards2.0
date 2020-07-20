@@ -43,7 +43,13 @@ final class SolShowGameLayout
             int c_offsetvisy,
             int s_offsetx,
             int s_offsety,
-            int scoretext_height            
+            int scoretext_height    ,
+            act_area_laydown_width,
+            act_area_laydown_height,
+            act_area_personal_width,
+            act_area_personal_height,
+            act_area_player_width,
+            act_area_player_height 
     )
     {
         this.max_width = max_width;
@@ -129,7 +135,13 @@ final class SolShowGameLayout
                 act_c_offsetvisy,
                 act_s_offsetx,
                 act_s_offsety,
-                act_scoretext_height
+                act_scoretext_height,
+                act_area_laydown_width,
+                act_area_laydown_height,
+                act_area_personal_width,
+                act_area_personal_height,
+                act_area_player_width,
+                act_area_player_height 
         );
         return gl;
     }
