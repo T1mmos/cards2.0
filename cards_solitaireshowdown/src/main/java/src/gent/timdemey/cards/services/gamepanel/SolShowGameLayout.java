@@ -2,147 +2,140 @@ package gent.timdemey.cards.services.gamepanel;
 
 final class SolShowGameLayout
 {    
-    public final int max_width;
-    public final int max_height;
-    public final int cont_width;
-    public final int cont_height;
-    public final int cont_marginleft;
-    public final int cont_marginright;
-    public final int cont_margintop;
-    public final int cont_marginbottom;
-
-    public final int c_width;
-    public final int c_height;
-    public final int s_width;
-    public final int s_height;
-    public final int sc_offsetx;
-    public final int sc_offsety;
-    public final int c_offsetvisx;
-    public final int c_offsetvisy;
-    public final int s_offsetx;
-    public final int s_offsety;
-
-    public int scoretext_height;
-
-    private SolShowGameLayout(
-            int max_width,
-            int max_height,
-            int cont_width,
-            int cont_height,
-            int cont_marginleft,
-            int cont_marginright,
-            int cont_margintop,
-            int cont_marginbottom,
-            int c_width,
-            int c_height,
-            int s_width,
-            int s_height,
-            int sc_offsetx,
-            int sc_offsety,
-            int c_offsetvisx,
-            int c_offsetvisy,
-            int s_offsetx,
-            int s_offsety,
-            int scoretext_height    ,
-            act_area_laydown_width,
-            act_area_laydown_height,
-            act_area_personal_width,
-            act_area_personal_height,
-            act_area_player_width,
-            act_area_player_height 
-    )
+    private final class Base
     {
-        this.max_width = max_width;
-        this.max_height = max_height;
-        this.cont_width = cont_width;
-        this.cont_height = cont_height;
-        this.cont_marginleft = cont_marginleft;
-        this.cont_marginright = cont_marginright;
-        this.cont_margintop = cont_margintop;
-        this.cont_marginbottom = cont_marginbottom;
-
-        this.c_width = c_width;
-        this.c_height = c_height;
-        this.s_width = s_width;
-        this.s_height = s_height;
-        this.sc_offsetx = sc_offsetx;
-        this.sc_offsety = sc_offsety;
-        this.c_offsetvisx = c_offsetvisx;
-        this.c_offsetvisy = c_offsetvisy;
-        this.s_offsetx = s_offsetx;
-        this.s_offsety = s_offsety;
-        this.scoretext_height = scoretext_height;
+        static final int CWIDTH = 16;                           // card width
+        static final int CHEIGHT = 22;                          // card height
+        static final int SWIDTH = 18;                           // stack width
+        static final int SHEIGHT = 24;                          // base stack height
+        static final int SHEIGHTMIDDLE = 60;                    // middle stack height
+        
+        static final int SCOFFSETX = 1;                         // offset for a card relative to its stack, horizontally
+        static final int SCOFFSETY = 1;                         // offset for a card relative to its stack, vertically
+        static final int COFFSETX = 4;                          // offset for a card on top of another card, horizontally
+        static final int COFFSETY = 3;                          // offset for a card on top of another card, vertically
+        static final int SOFFSETX = 0;                          // offset for a cardstack relative to another cardstack, horizontally 
+        static final int SOFFSETY = 1;                          // offset for a cardstack relative to another cardstack, vertically
+        static final int SPSCOREHEIGHT = 8;                     // special score text height
+        
+        static final int AREA_LEFTX = 40;
+                
+        static final int AREAMARGIN_X = 2;                      // inter-region margin, horizontally
+        static final int AREAMARGIN_Y = 3;                      // inter-region margin, vertically    
+        static final int AREAPADDING_X = 1;
+        static final int AREAPADDING_Y = 1;
+        
+        static final int AREA_VS_Y = 10;
     }
     
-    static SolShowGameLayout create (int maxWidth, int maxHeight)
+    public static final String DIM_CARD = "DIM_CARD";
+    public static final String DIM_CARDSTACK = "DIM_CARDSTACK";
+    public static final String DIM_CARDSTACK_MIDDLE = "DIM_CARDSTACK_MIDDLE";
+    
+    public static final String RECT_AREA_CONTENT = "RECT_AREA_CONTENT";
+    
+    public static final String RECT_AREA_LEFT = "RECT_AREA_LEFT";
+    public static final String RECT_AREA_PLAYERREMOTE = "RECT_AREA_PLAYERREMOTE";
+    public static final String RECT_AREA_VS = "RECT_AREA_VS";
+    public static final String RECT_AREA_PLAYERLOCAL = "RECT_AREA_PLAYERLOCAL";
+
+    public static final String RECT_AREA_RIGHT = "RECT_AREA_RIGHT";
+    public static final String RECT_AREA_CARDSLAYDOWN = "RECT_AREA_CARDSLAYDOWN";
+    public static final String RECT_AREA_CARDSLOCAL = "RECT_AREA_CARDSLOCAL";
+    public static final String RECT_AREA_CARDSREMOTE = "RECT_AREA_CARDSREMOTE";
+    
+    public static final String RECT_SPECIALSCORE = "RECT_SPECIALSCORE"; 
+    
+    public static final String OFFSET_STACK_TO_CARD = "OFFSET_STACK_TO_CARD";
+    public static final String OFFSET_CARD_TO_CARD = "OFFSET_CARD_TO_CARD";
+    public static final String OFFSET_STACK_TO_STACK = "OFFSET_STACK_TO_STACK";
+    public static final String HEIGHT_SPECIALSCORE = "HEIGHT_SPECIALSCORE";
+    public static final String MARGIN_AREA = "MARGIN_AREA";
+    public static final String PADDING_AREA = "PADDING_AREA";
+    public static final String PADDING_CONTENT = "PADDING_CONTENT"; 
+
+    
+    public static Positions positions_base;
+    
+    static 
     {
-        // choose multiplier so everything fits according to base ratios, as
-        // large as possible
+        int area_left_x = 0; 
+        int area_left_y = 0;
+        int area_left_w = 40;
+        
+        int area_right_x = Base.AREA_LEFTX + Base.AREAMARGIN_X;
+        int area_right_y = 0;
+        int area_right_w = 8 * Base.SWIDTH + 7 * Base.SOFFSETX;
+        
+        int dim_personal_w = area_right_w;
+        int dim_personal_h = Base.SHEIGHTMIDDLE + 2 * Base.AREAPADDING_Y;
+        
+        int area_cardsremote_x = area_right_x;
+        int area_cardsremote_y = area_right_y;
+        int area_cardsremote_w = dim_personal_w;
+        int area_cardsremote_h = dim_personal_h;        
+        
+        int area_cardslaydown_x = area_right_x;
+        int area_cardslaydown_y = area_right_y + dim_personal_h + Base.AREAMARGIN_Y;
+        int area_cardslaydown_w = area_right_w;
+        int area_cardslaydown_h = 2 * Base.AREAPADDING_Y + Base.SHEIGHT;
 
-        int act_max_width = maxWidth;
-        int act_max_height = maxHeight;
-        int ratio_hor = (int) (1.0 * act_max_width / SolShowGameLayoutBaseDef.TWIDTH);
-        int ratio_ver = (int) (1.0 * act_max_height / SolShowGameLayoutBaseDef.THEIGHT);
+        int area_cardslocal_x = area_right_x;
+        int area_cardslocal_y = area_cardslaydown_y + area_cardslaydown_h + Base.AREAMARGIN_Y;
+        int area_cardslocal_w = dim_personal_w;
+        int area_cardslocal_h = dim_personal_h;
+        
+        int total_w = area_left_w + area_right_w;
+        int total_h = area_cardsremote_h + area_cardslaydown_h + area_cardslocal_h;
 
-        int ratio = Math.min(ratio_hor, ratio_ver);
-
-        int act_c_width = ratio * SolShowGameLayoutBaseDef.CWIDTH;
-        int act_c_height = ratio * SolShowGameLayoutBaseDef.CHEIGHT;
-        int act_s_width = ratio * SolShowGameLayoutBaseDef.SWIDTH;
-        int act_s_height = ratio * SolShowGameLayoutBaseDef.SHEIGHT;
-        int act_sc_offsetx = ratio * SolShowGameLayoutBaseDef.SCOFFSETX;
-        int act_sc_offsety = ratio * SolShowGameLayoutBaseDef.SCOFFSETY;
-        int act_c_offsetvisx = ratio * SolShowGameLayoutBaseDef.COFFSETX;
-        int act_c_offsetvisy = ratio * SolShowGameLayoutBaseDef.COFFSETY;
-        int act_s_offsetx = ratio * SolShowGameLayoutBaseDef.SOFFSETX;
-        int act_s_offsety = ratio * SolShowGameLayoutBaseDef.SOFFSETY;
-        int act_scoretext_height = ratio * SolShowGameLayoutBaseDef.SPSCOREHEIGHT;
+        int area_left_h = total_h;
+        int area_right_h = total_h;
         
-        int act_area_laydown_width = ratio * SolShowGameLayoutBaseDef.AREA_LAYDOWN_WIDTH;
-        int act_area_laydown_height = ratio * SolShowGameLayoutBaseDef.AREA_LAYDOWN_HEIGHT;
-        int act_area_personal_width = ratio * SolShowGameLayoutBaseDef.AREA_PERSONAL_HEIGHT;
-        int act_area_personal_height = ratio * SolShowGameLayoutBaseDef.AREA_PERSONAL_HEIGHT;
-        int act_area_player_width = ratio * SolShowGameLayoutBaseDef.AREA_PLAYER_WIDTH;
-        int act_area_player_height = ratio * SolShowGameLayoutBaseDef.AREA_PLAYER_HEIGHT;
+        int dim_player_w = area_left_w;
+        int dim_player_h = (area_left_h - Base.AREA_VS_Y - 2 * Base.AREAMARGIN_Y) / 2;
         
+        int area_playerremote_x = area_left_x;
+        int area_playerremote_y = area_left_y;
+        int area_playerremote_w = dim_player_w;
+        int area_playerremote_h = dim_player_h;        
         
-        // remaining space is distributed to the paddings, keeps everything
-        // centered
-        int act_cont_width = ratio * SolShowGameLayoutBaseDef.TWIDTH;
-        int act_cont_marginleft = (act_max_width - act_cont_width) / 2;
-        int act_cont_marginright = act_max_width - act_cont_width - act_cont_marginleft;
-        int act_cont_height = ratio * SolShowGameLayoutBaseDef.THEIGHT;
-        int act_cont_margintop = (act_max_height - act_cont_height) / 2;
-        int act_cont_marginbottom = act_max_height - act_cont_height - act_cont_margintop;        
+        int area_vs_x = area_left_x;
+        int area_vs_y = area_left_y + area_playerremote_h + Base.AREAMARGIN_Y;
+        int area_vs_w = area_left_w;
+        int area_vs_h = Base.AREA_VS_Y;
         
-        SolShowGameLayout gl = new SolShowGameLayout
-        (
-                act_max_width,
-                act_max_height,
-                act_cont_width,
-                act_cont_height,
-                act_cont_marginleft,
-                act_cont_marginright,
-                act_cont_margintop,
-                act_cont_marginbottom,
-                act_c_width,
-                act_c_height,
-                act_s_width,
-                act_s_height,
-                act_sc_offsetx,
-                act_sc_offsety,
-                act_c_offsetvisx,
-                act_c_offsetvisy,
-                act_s_offsetx,
-                act_s_offsety,
-                act_scoretext_height,
-                act_area_laydown_width,
-                act_area_laydown_height,
-                act_area_personal_width,
-                act_area_personal_height,
-                act_area_player_width,
-                act_area_player_height 
-        );
-        return gl;
+        int area_playerlocal_x = area_left_x;
+        int area_playerlocal_y = area_vs_y + area_vs_h + Base.AREAMARGIN_Y;
+        int area_playerlocal_w = area_left_w;
+        int area_playerlocal_h = dim_player_h;
+        
+        Positions.Builder builder = new Positions.Builder();
+        builder
+            .dimension(DIM_CARD, Base.CWIDTH, Base.CHEIGHT)
+            .dimension(DIM_CARDSTACK, Base.SWIDTH, Base.SHEIGHT)
+            .dimension(DIM_CARDSTACK_MIDDLE, Base.SWIDTH, Base.SHEIGHTMIDDLE)
+            .coordinate(OFFSET_STACK_TO_CARD, Base.SCOFFSETX, Base.SCOFFSETY)
+            .coordinate(OFFSET_CARD_TO_CARD, Base.COFFSETX, Base.COFFSETY)
+            .coordinate(OFFSET_STACK_TO_STACK, Base.SOFFSETX, Base.SOFFSETY)
+            .length(HEIGHT_SPECIALSCORE, Base.SPSCOREHEIGHT)
+            .coordinate(MARGIN_AREA, Base.AREAMARGIN_X, Base.AREAMARGIN_Y)
+            .coordinate(PADDING_AREA, Base.AREAPADDING_X, Base.AREAPADDING_Y)
+            .rectangle(RECT_AREA_LEFT, area_left_x, area_left_y, area_left_w, area_left_h)
+            .rectangle(RECT_AREA_RIGHT, area_right_x, area_right_y, area_right_w, area_right_h)
+            .rectangle(RECT_AREA_CARDSREMOTE, area_cardsremote_x, area_cardsremote_y, area_cardsremote_w, area_cardsremote_h)
+            .rectangle(RECT_AREA_CARDSLAYDOWN, area_cardslaydown_x, area_cardslaydown_y, area_cardslaydown_w, area_cardslaydown_h)
+            .rectangle(RECT_AREA_CARDSLOCAL, area_cardslocal_x, area_cardslocal_y, area_cardslocal_w, area_cardslocal_h)
+            .rectangle(RECT_AREA_PLAYERREMOTE, area_playerremote_x, area_playerremote_y, area_playerremote_w, area_playerremote_h)
+            .rectangle(RECT_AREA_VS, area_vs_x, area_vs_y, area_vs_w, area_vs_h)
+            .rectangle(RECT_AREA_PLAYERLOCAL, area_playerlocal_x, area_playerlocal_y, area_playerlocal_w, area_playerlocal_h)
+            .bound(total_w, total_h);
+        
+        positions_base = builder.build();
+    }
+    
+    static Positions create (int maxWidth, int maxHeight)
+    {
+        Positions positions = positions_base.calculate(maxWidth, maxHeight);
+        return positions;
     }
 }

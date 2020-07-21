@@ -29,33 +29,34 @@ public class SolShowPositionService implements IPositionService
     private static final int LAYER_DRAG = 10000;
     private static final int LAYER_ANIMATIONS = 20000;
 
-    private SolShowGameLayout gl;
+    private Positions pos;
 
     @Override
     public void setMaxSize(int maxWidth, int maxHeight)
     {
-        gl = SolShowGameLayout.create(maxWidth, maxHeight);      
+        pos = SolShowGameLayout.create(maxWidth, maxHeight);      
     }
 
     @Override
     public Coords.Absolute getPackedCoords()
     {
-        return Coords.getAbsolute(gl.cont_marginleft, gl.cont_margintop, gl.cont_width, gl.cont_height);
+        Rectangle rect = pos.getRectangle(SolShowGameLayout.RECT_AREA_CONTENT);
+        return Coords.getAbsolute(rect);
     }
     
     @Override
     public Coords.Absolute getAbsoluteCoords(Coords.Relative relcoords)
     {
         Coords.Absolute absNoOffset = Coords.toAbsolute(relcoords, getPackedCoords().getSize());
-        Coords.Absolute absOffset = absNoOffset.translate(gl.cont_marginleft, gl.cont_margintop);
+        Coords.Absolute absOffset = absNoOffset.translate(pos.getPadding().l, pos.getPadding().t);
         return absOffset;
     }    
     
     @Override
     public Coords.Relative getRelativeCoords(Coords.Absolute abscoords)
     {
-        int marginl = gl.cont_marginleft;
-        int margint = gl.cont_margintop;
+        int marginl = pos.getPadding().l;
+        int margint = pos.getPadding().t;
         Coords.Absolute absNoOffset = abscoords.translate(-marginl, -margint);
         Coords.Relative relCoords = Coords.toRelative(absNoOffset, getPackedCoords().getSize());
         return relCoords;
