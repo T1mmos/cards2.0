@@ -31,6 +31,7 @@ final class SolShowGameLayout
     public static final String DIM_CARD = "DIM_CARD";
     public static final String DIM_CARDSTACK = "DIM_CARDSTACK";
     public static final String DIM_CARDSTACK_MIDDLE = "DIM_CARDSTACK_MIDDLE";
+    public static final String DIM_CARDSCORE = "DIM_CARDSCORE";
     
     public static final String RECT_AREA_CONTENT = "RECT_AREA_CONTENT";
     
@@ -42,9 +43,11 @@ final class SolShowGameLayout
     public static final String RECT_AREA_RIGHT = "RECT_AREA_RIGHT";
     public static final String RECT_AREA_CARDSLAYDOWN = "RECT_AREA_CARDSLAYDOWN";
     public static final String RECT_AREA_CARDSLOCAL = "RECT_AREA_CARDSLOCAL";
-    public static final String RECT_AREA_CARDSREMOTE = "RECT_AREA_CARDSREMOTE";
-    
-    public static final String RECT_SPECIALSCORE = "RECT_SPECIALSCORE"; 
+    public static final String RECT_AREA_CARDSREMOTE = "RECT_AREA_CARDSREMOTE";    
+    public static final String RECT_SPECIALCOUNTERTEXT = "DIM_SPECIALCOUNTERTEXT";
+    public static final String RECT_SPECIALCOUNTERBACKGROUND = "RECT_SPECIALCOUNTERBACKGROUND";
+
+    public static final String RECT_STACK_DEPOT_0 = "RECT_STACK_DEPOT_0";
     
     public static final String OFFSET_STACK_TO_CARD = "OFFSET_STACK_TO_CARD";
     public static final String OFFSET_CARD_TO_CARD = "OFFSET_CARD_TO_CARD";
@@ -109,11 +112,27 @@ final class SolShowGameLayout
         int area_playerlocal_w = area_left_w;
         int area_playerlocal_h = dim_player_h;
         
+        int rect_specialscore_text_x = area_right_x;
+        int rect_specialscore_text_y = area_cardslocal_y + Base.CHEIGHT / 2;
+        int rect_specialscore_text_w = Base.CWIDTH;
+        int rect_specialscore_text_h = Base.CHEIGHT / 2;
+        
+        int rect_specialscore_bg_x = area_right_x;
+        int rect_specialscore_bg_y = area_cardslocal_y;
+        int rect_specialscore_bg_w = 3 * Base.SWIDTH;
+        int rect_specialscore_bg_h = Base.SHEIGHT;
+        
+        int rect_stack_depot_x = area_cardslocal_x;
+        int rect_stack_depot_y = area_cardslocal_y + Base.SHEIGHT;
+        int rect_stack_turnover_x = rect_stack_depot_x + 
+        
+        
         Positions.Builder builder = new Positions.Builder();
         builder
             .dimension(DIM_CARD, Base.CWIDTH, Base.CHEIGHT)
             .dimension(DIM_CARDSTACK, Base.SWIDTH, Base.SHEIGHT)
             .dimension(DIM_CARDSTACK_MIDDLE, Base.SWIDTH, Base.SHEIGHTMIDDLE)
+            .dimension(DIM_CARDSCORE, Base.CWIDTH, Base.CHEIGHT / 2)
             .coordinate(OFFSET_STACK_TO_CARD, Base.SCOFFSETX, Base.SCOFFSETY)
             .coordinate(OFFSET_CARD_TO_CARD, Base.COFFSETX, Base.COFFSETY)
             .coordinate(OFFSET_STACK_TO_STACK, Base.SOFFSETX, Base.SOFFSETY)
@@ -121,13 +140,18 @@ final class SolShowGameLayout
             .coordinate(MARGIN_AREA, Base.AREAMARGIN_X, Base.AREAMARGIN_Y)
             .coordinate(PADDING_AREA, Base.AREAPADDING_X, Base.AREAPADDING_Y)
             .rectangle(RECT_AREA_LEFT, area_left_x, area_left_y, area_left_w, area_left_h)
+            .rectangle(RECT_AREA_PLAYERREMOTE, area_playerremote_x, area_playerremote_y, area_playerremote_w, area_playerremote_h)
+            .rectangle(RECT_AREA_VS, area_vs_x, area_vs_y, area_vs_w, area_vs_h)
+            .rectangle(RECT_AREA_PLAYERLOCAL, area_playerlocal_x, area_playerlocal_y, area_playerlocal_w, area_playerlocal_h)
             .rectangle(RECT_AREA_RIGHT, area_right_x, area_right_y, area_right_w, area_right_h)
             .rectangle(RECT_AREA_CARDSREMOTE, area_cardsremote_x, area_cardsremote_y, area_cardsremote_w, area_cardsremote_h)
             .rectangle(RECT_AREA_CARDSLAYDOWN, area_cardslaydown_x, area_cardslaydown_y, area_cardslaydown_w, area_cardslaydown_h)
             .rectangle(RECT_AREA_CARDSLOCAL, area_cardslocal_x, area_cardslocal_y, area_cardslocal_w, area_cardslocal_h)
-            .rectangle(RECT_AREA_PLAYERREMOTE, area_playerremote_x, area_playerremote_y, area_playerremote_w, area_playerremote_h)
-            .rectangle(RECT_AREA_VS, area_vs_x, area_vs_y, area_vs_w, area_vs_h)
-            .rectangle(RECT_AREA_PLAYERLOCAL, area_playerlocal_x, area_playerlocal_y, area_playerlocal_w, area_playerlocal_h)
+            .rectangle(RECT_SPECIALCOUNTERTEXT, rect_specialscore_text_x, rect_specialscore_text_y, rect_specialscore_text_w, rect_specialscore_text_h)
+            .rectangle(RECT_SPECIALCOUNTERBACKGROUND, rect_specialscore_bg_x, rect_specialscore_bg_y, rect_specialscore_bg_w, rect_specialscore_bg_h)
+            .rectangle(RECT_STACK_DEPOT_0, area_cardslocal_x, rect_stack_depot_y, Base.SWIDTH, Base.SHEIGHT)
+            .rectangle(RECT_STACK_TURNOVER_0, area_cardslocal_x + Base.SWIDTH + Base.SOFFSETX, rect_stack_depot_y, w, h)
+            
             .bound(total_w, total_h);
         
         positions_base = builder.build();

@@ -87,8 +87,10 @@ public class SolShowPositionService implements IPositionService
         {
             if (resourceUsage == ResourceUsage.MAIN_TEXT)
             {
-                Dimension compDim = getCardScoreDimension();
-                Dimension withMargins = new Dimension(compDim.width - 10, compDim.height - 10);
+                Dimension compDim = pos.getDimension(SolShowGameLayout.DIM_CARDSCORE);
+                int x = (int) (4.0 * compDim.width / 5);
+                int y = (int) (4.0 * compDim.height / 5);
+                Dimension withMargins = new Dimension(x, y);
                 return withMargins;
             }               
         }
@@ -96,14 +98,14 @@ public class SolShowPositionService implements IPositionService
         {
             if (resourceUsage == ResourceUsage.MAIN_TEXT)
             {
-                return getSpecialCounterDimension();
+                return pos.getRectangle(SolShowGameLayout.RECT_SPECIALCOUNTERTEXT).getSize();
             }
         }
         else if (compType == SolShowComponentType.SpecialBackground)
         {
             if (resourceUsage == ResourceUsage.IMG_FRONT)
             {
-                return getSpecialBackgroundDimension();
+                return pos.getRectangle(SolShowGameLayout.RECT_SPECIALCOUNTERBACKGROUND).getSize();
             }
         }
 
@@ -111,22 +113,7 @@ public class SolShowPositionService implements IPositionService
         String msg_format = String.format(msg, compType, compSubType, resType);
         throw new UnsupportedOperationException(msg_format);   
     }
-
-    private Dimension getCardScoreDimension()
-    {
-        return new Dimension(2 * gl.c_width, gl.scoretext_height);
-    }
-
-    private Dimension getSpecialCounterDimension()
-    {
-        return new Dimension(gl.s_width, gl.s_height / 3);
-    }
     
-    private Dimension getSpecialBackgroundDimension()
-    {
-        return new Dimension(3 * gl.s_width, gl.s_height);
-    }
-
     private Dimension getCardStackDimension(String csType)
     {
         int w = 0, h = 0;
