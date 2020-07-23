@@ -33,8 +33,6 @@ final class SolShowGameLayout
     public static final String DIM_CARDSTACK_MIDDLE = "DIM_CARDSTACK_MIDDLE";
     public static final String DIM_CARDSCORE = "DIM_CARDSCORE";
     
-    public static final String RECT_AREA_CONTENT = "RECT_AREA_CONTENT";
-    
     public static final String RECT_AREA_LEFT = "RECT_AREA_LEFT";
     public static final String RECT_AREA_PLAYERREMOTE = "RECT_AREA_PLAYERREMOTE";
     public static final String RECT_AREA_VS = "RECT_AREA_VS";
@@ -120,12 +118,12 @@ final class SolShowGameLayout
         int area_playerlocal_x = area_left_x;
         int area_playerlocal_y = area_vs_y + area_vs_h + Base.AREAMARGIN_Y;
         int area_playerlocal_w = area_left_w;
-        int area_playerlocal_h = dim_player_h;
-        
-        int rect_specialscore_text_x = area_right_x;
-        int rect_specialscore_text_y = area_cardslocal_y + Base.CHEIGHT / 2;
+        int area_playerlocal_h = dim_player_h;        
+
+        int rect_specialscore_text_h = (int) (1.25 * Base.SPSCOREHEIGHT);
+        int rect_specialscore_text_x = area_right_x + Base.AREAMARGIN_X;
+        int rect_specialscore_text_y = area_cardslocal_y + (Base.CHEIGHT - rect_specialscore_text_h) / 2;
         int rect_specialscore_text_w = Base.CWIDTH;
-        int rect_specialscore_text_h = Base.CHEIGHT / 2;
         
         int rect_specialscore_bg_x = area_right_x;
         int rect_specialscore_bg_y = area_cardslocal_y;

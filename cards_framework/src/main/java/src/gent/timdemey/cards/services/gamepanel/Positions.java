@@ -290,6 +290,12 @@ public final class Positions
         return getValue(key, Rectangle.class);
     }
     
+    public Rectangle getRectangle(String formatKey, Object ... params)
+    {
+        String key = String.format(formatKey, params);
+        return getRectangle(key);
+    }
+    
     public Point getCoordinate(String key)
     {
         return getValue(key, Point.class);
