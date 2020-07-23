@@ -97,7 +97,7 @@ final class SolShowGameLayout
         int area_cardslocal_h = dim_personal_h;
         
         int total_w = area_left_w + area_right_w;
-        int total_h = area_cardsremote_h + area_cardslaydown_h + area_cardslocal_h;
+        int total_h = area_cardsremote_h + area_cardslaydown_h + area_cardslocal_h + 2 * Base.AREAMARGIN_Y;
 
         int area_left_h = total_h;
         int area_right_h = total_h;
@@ -125,18 +125,20 @@ final class SolShowGameLayout
         int rect_specialscore_text_y = area_cardslocal_y + (Base.CHEIGHT - rect_specialscore_text_h) / 2;
         int rect_specialscore_text_w = Base.CWIDTH;
         
-        int rect_specialscore_bg_x = area_right_x;
-        int rect_specialscore_bg_y = area_cardslocal_y;
+        int rect_specialscore_bg_x = area_right_x + Base.AREAMARGIN_X;
+        int rect_specialscore_bg_y = area_cardslocal_y + Base.AREAMARGIN_Y;
         int rect_specialscore_bg_w = 3 * Base.SWIDTH;
         int rect_specialscore_bg_h = Base.SHEIGHT;
         
         int rect_stack_depot_x = area_cardslocal_x + Base.AREAMARGIN_X;
-        int rect_stack_special_x = area_cardslocal_x + Base.AREAMARGIN_X + (int) (1.5 * Base.SWIDTH);
-        int rect_stack_turnover_x = rect_stack_depot_x + Base.SWIDTH + Base.SOFFSETX;
+        int rect_stack_depot_y = area_cardslocal_y + Base.AREAMARGIN_Y + (int) (1.5 * Base.SHEIGHT);
+        int rect_stack_special_x = area_cardslocal_x + Base.AREAMARGIN_X + Base.SWIDTH;
         int rect_stack_special_y = area_cardslocal_y + Base.AREAMARGIN_Y;
-        int rect_stack_depot_y = area_cardslocal_y + Base.AREAMARGIN_Y + Base.SHEIGHT + 1 * Base.SOFFSETY;
+        int rect_stack_turnover_x = rect_stack_depot_x + Base.SWIDTH + Base.SOFFSETX;
         int rect_stack_turnover_y = rect_stack_depot_y;
         int rect_stack_laydown_y = area_cardslaydown_y + Base.AREAPADDING_Y;
+        int rect_stack_middle_x = rect_stack_turnover_x + 2* Base.SWIDTH;
+        int rect_stack_middle_y = rect_stack_special_y;
         
         Positions.Builder builder = new Positions.Builder();
         builder
@@ -162,11 +164,11 @@ final class SolShowGameLayout
             .rectangle(RECT_SPECIALCOUNTERBACKGROUND, rect_specialscore_bg_x, rect_specialscore_bg_y, rect_specialscore_bg_w, rect_specialscore_bg_h)
             .rectangle(RECT_STACK_DEPOT_0, rect_stack_depot_x, rect_stack_depot_y, Base.SWIDTH, Base.SHEIGHT)
             .rectangle(RECT_STACK_SPECIAL_0, rect_stack_special_x, rect_stack_special_y, Base.SWIDTH, Base.SHEIGHT)
-            .rectangle(RECT_STACK_TURNOVER_0, rect_stack_turnover_x, rect_stack_depot_y, (int) (Base.SWIDTH + 0.5 * Base.CWIDTH), Base.SHEIGHT)
-            .rectangle(RECT_STACK_MIDDLE_0, area_cardslocal_x + 0 * (Base.SWIDTH + Base.SOFFSETX), rect_stack_turnover_y, Base.SWIDTH, Base.SHEIGHTMIDDLE)
-            .rectangle(RECT_STACK_MIDDLE_1, area_cardslocal_x + 1 * (Base.SWIDTH + Base.SOFFSETX), rect_stack_turnover_y, Base.SWIDTH, Base.SHEIGHTMIDDLE)
-            .rectangle(RECT_STACK_MIDDLE_2, area_cardslocal_x + 2 * (Base.SWIDTH + Base.SOFFSETX), rect_stack_turnover_y, Base.SWIDTH, Base.SHEIGHTMIDDLE)
-            .rectangle(RECT_STACK_MIDDLE_3, area_cardslocal_x + 3 * (Base.SWIDTH + Base.SOFFSETX), rect_stack_turnover_y, Base.SWIDTH, Base.SHEIGHTMIDDLE)
+            .rectangle(RECT_STACK_TURNOVER_0, rect_stack_turnover_x, rect_stack_turnover_y, (int) (Base.SWIDTH + 0.5 * Base.CWIDTH), Base.SHEIGHT)
+            .rectangle(RECT_STACK_MIDDLE_0, rect_stack_middle_x + 0 * (Base.SWIDTH + Base.SOFFSETX), rect_stack_middle_y, Base.SWIDTH, Base.SHEIGHTMIDDLE)
+            .rectangle(RECT_STACK_MIDDLE_1, rect_stack_middle_x + 1 * (Base.SWIDTH + Base.SOFFSETX), rect_stack_middle_y, Base.SWIDTH, Base.SHEIGHTMIDDLE)
+            .rectangle(RECT_STACK_MIDDLE_2, rect_stack_middle_x + 2 * (Base.SWIDTH + Base.SOFFSETX), rect_stack_middle_y, Base.SWIDTH, Base.SHEIGHTMIDDLE)
+            .rectangle(RECT_STACK_MIDDLE_3, rect_stack_middle_x + 3 * (Base.SWIDTH + Base.SOFFSETX), rect_stack_middle_y, Base.SWIDTH, Base.SHEIGHTMIDDLE)
             .rectangle(RECT_STACK_LAYDOWN_0, area_cardslaydown_x + 0 * (Base.SWIDTH + Base.SOFFSETX), rect_stack_laydown_y, Base.SWIDTH, Base.SHEIGHT)
             .rectangle(RECT_STACK_LAYDOWN_1, area_cardslaydown_x + 1 * (Base.SWIDTH + Base.SOFFSETX), rect_stack_laydown_y, Base.SWIDTH, Base.SHEIGHT)
             .rectangle(RECT_STACK_LAYDOWN_2, area_cardslaydown_x + 2 * (Base.SWIDTH + Base.SOFFSETX), rect_stack_laydown_y, Base.SWIDTH, Base.SHEIGHT)

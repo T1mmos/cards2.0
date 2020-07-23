@@ -228,9 +228,13 @@ public class SolShowPositionService implements IPositionService
         else
         {
             Rectangle playfield = pos.getRectangle(SolShowGameLayout.RECT_AREA_RIGHT);
-            int x = playfield.width - rect.x - rect.width;
-            int y = playfield.height - rect.y - rect.height;
-            return new Rectangle(x, y, rect.width, rect.height);
+            int transx = rect.x - playfield.x;
+            int transy = rect.y - playfield.y;
+            int x = playfield.width - transx - rect.width;
+            int y = playfield.height - transy - rect.height;
+            int transx2 = x + playfield.x;
+            int transy2 = y + playfield.y;
+            return new Rectangle(transx2, transy2, rect.width, rect.height);
         }
     }
 
