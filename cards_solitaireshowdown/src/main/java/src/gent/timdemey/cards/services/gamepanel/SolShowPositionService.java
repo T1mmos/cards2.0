@@ -9,6 +9,7 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
+import gent.timdemey.cards.readonlymodel.ReadOnlyPlayer;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.Coords;
@@ -25,6 +26,7 @@ import gent.timdemey.cards.services.scaling.text.ScalableTextComponent;
 public class SolShowPositionService implements IPositionService
 {
     private static final int LAYER_BACKGROUND_IMAGES = 50;
+    private static final int LAYER_HUD = 75;
     private static final int LAYER_CARDSTACKS = 100;
     private static final int LAYER_CARDS = 200;
     private static final int LAYER_DRAG = 10000;
@@ -109,6 +111,13 @@ public class SolShowPositionService implements IPositionService
                 return pos.getRectangle(SolShowGameLayout.RECT_SPECIALCOUNTERBACKGROUND).getSize();
             }
         }
+        else if (compType == SolShowComponentType.PlayerName)
+        {
+            if (resourceUsage == ResourceUsage.MAIN_TEXT)
+            {
+                return pos.getRectangle(SolShowGameLayout.RECT_PLAYERNAME_LOCAL).getSize();
+            }
+        }
 
         String msg = "Getting resources dimension failed: combination of ComponentType=%s, ComponentSubType=%s, ResourceUsage=%s is not supported.";
         String msg_format = String.format(msg, compType, compSubType, resType);
@@ -157,7 +166,11 @@ public class SolShowPositionService implements IPositionService
     {
         ComponentDescriptor compDesc = scaleComp.getComponentDescriptor();
         String compType = compDesc.type;
-
+        
+        IContextService contextService = Services.get(IContextService.class);
+        Context context = contextService.getThreadContext();
+        UUID localId = context.getReadOnlyState().getLocalId();
+        
         if (compType == ComponentType.Card)
         {
             ReadOnlyCard card = (ReadOnlyCard) scaleComp.getPayload();
@@ -185,12 +198,9 @@ public class SolShowPositionService implements IPositionService
             return new LayeredArea(coords, LAYER_ANIMATIONS, false);
         }
         else if (compType == SolShowComponentType.SpecialScore)
-        {
-            IContextService contextService = Services.get(IContextService.class);
-            Context context = contextService.getThreadContext();
+        {            
             ReadOnlyCardStack cardStack = (ReadOnlyCardStack) scaleComp.getPayload();
 
-            UUID localId = context.getReadOnlyState().getLocalId();
             UUID playerId = context.getReadOnlyState().getCardGame().getPlayerId(cardStack);
             boolean isLocal = localId.equals(playerId);
 
@@ -201,11 +211,8 @@ public class SolShowPositionService implements IPositionService
         }
         else if (compType == SolShowComponentType.SpecialBackground)
         {
-            IContextService contextService = Services.get(IContextService.class);
-            Context context = contextService.getThreadContext();
             ReadOnlyCardStack cardStack = (ReadOnlyCardStack) scaleComp.getPayload();
 
-            UUID localId = context.getReadOnlyState().getLocalId();
             UUID playerId = context.getReadOnlyState().getCardGame().getPlayerId(cardStack);
             boolean isLocal = localId.equals(playerId);
 
@@ -214,6 +221,16 @@ public class SolShowPositionService implements IPositionService
             Coords.Absolute coords = Coords.getAbsolute(rect2);
             boolean mirror = !isLocal;
             return new LayeredArea(coords, LAYER_BACKGROUND_IMAGES, mirror);
+        }
+        else if (compType == SolShowComponentType.PlayerName)
+        {
+            ReadOnlyPlayer player = (ReadOnlyPlayer) scaleComp.getPayload();
+            boolean isLocal = localId.equals(player.getId());
+            
+            String layoutId = isLocal ? SolShowGameLayout.RECT_PLAYERNAME_LOCAL : SolShowGameLayout.RECT_PLAYERNAME_REMOTE;
+            Rectangle rect = pos.getRectangle(layoutId);
+            Coords.Absolute coords = Coords.getAbsolute(rect);
+            return new LayeredArea(coords, LAYER_HUD, false);
         }
 
         throw new UnsupportedOperationException();

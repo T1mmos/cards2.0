@@ -154,7 +154,33 @@ public class SolShowGamePanelService extends GamePanelService
                 updateComponent(textComp);
                 updateComponent(imgComp);
             }
-        }        
+        }     
+       
+        // player names
+        {
+            ReadOnlyPlayer player_local = state.getLocalPlayer();
+            ReadOnlyPlayer player_remote = state.getRemotePlayers().get(0);
+            
+            UUID compId_local = idServ.createPlayerComponentId(player_local);
+            UUID compId_remote = idServ.createPlayerComponentId(player_remote);
+            
+            UUID textResId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_PLAYERNAME);
+            ScalableFontResource textRes = (ScalableFontResource) scaleServ.getScalableResource(textResId);     
+            
+            ComponentDescriptor cd_playerName = new ComponentDescriptor(SolShowComponentType.PlayerName);
+            
+            IScalableComponent scPlayerName_local = new ScalableTextComponent(compId_local, player_local.getName(), cd_playerName, textRes);
+            scPlayerName_local.setPayload(player_local);
+            add(scPlayerName_local);  
+            scaleServ.addScalableComponent(scPlayerName_local);
+            updateComponent(scPlayerName_local);
+            
+            IScalableComponent scPlayerName_remote = new ScalableTextComponent(compId_remote, player_remote.getName(), cd_playerName, textRes);
+            scPlayerName_remote.setPayload(player_remote);
+            add(scPlayerName_remote);  
+            scaleServ.addScalableComponent(scPlayerName_remote);
+            updateComponent(scPlayerName_remote);
+        }
     }
 
     @Override
@@ -183,12 +209,21 @@ public class SolShowGamePanelService extends GamePanelService
             addRescaleRequest(requests, bgReq, ResourceUsage.IMG_FRONT, bgResId);
         }
         
+        // SolShow: player name
+        {
+            ComponentDescriptor compDesc = new ComponentDescriptor(SolShowComponentType.PlayerName);
+            UUID pNameResId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_PLAYERNAME);
+            addRescaleRequest(requests, compDesc, ResourceUsage.MAIN_TEXT, pNameResId);
+        }
+        
         return requests;
     }
     
     @Override
     public void updateComponent(IScalableComponent comp)
     {
+        ISolShowIdService idServ = Services.get(ISolShowIdService.class);
+        
         if (comp.getComponentDescriptor().type == SolShowComponentType.SpecialScore)
         {
             ScalableTextComponent textComp = (ScalableTextComponent) comp;
@@ -198,10 +233,16 @@ public class SolShowGamePanelService extends GamePanelService
         }
         else if (comp.getComponentDescriptor().type == SolShowComponentType.SpecialBackground)
         {
-            ISolShowIdService idServ = Services.get(ISolShowIdService.class);
             ScalableImageComponent imgComp = (ScalableImageComponent) comp;
             UUID bgResId = idServ.createSpecialBackgroundResourceId();
             imgComp.setScalableImageResource(bgResId);         
+            return;
+        }
+        else if (comp.getComponentDescriptor().type == SolShowComponentType.PlayerName)
+        {
+            ScalableTextComponent textComp = (ScalableTextComponent) comp;
+            ReadOnlyPlayer player = (ReadOnlyPlayer) comp.getPayload();
+            textComp.setText(player.getName());         
             return;
         }
         

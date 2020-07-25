@@ -4,4 +4,5 @@ public class SolShowComponentType
 {
     public static final String SpecialScore = "SpecialScore";
     public static final String SpecialBackground = "SpecialBackground";
+    public static final String PlayerName = "PlayerName";
 }

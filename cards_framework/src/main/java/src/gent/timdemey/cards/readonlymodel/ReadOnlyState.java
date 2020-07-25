@@ -62,6 +62,11 @@ public class ReadOnlyState extends ReadOnlyEntityBase<State>
     {
         return entity.getLocalId();
     }
+    
+    public ReadOnlyPlayer getLocalPlayer()
+    {
+        return ReadOnlyEntityFactory.getOrCreatePlayer(entity.getLocalPlayer());
+    }
 
     public String getServerMessage()
     {

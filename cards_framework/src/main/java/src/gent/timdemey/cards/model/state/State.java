@@ -189,6 +189,11 @@ public class State extends EntityBase
     {
         return localIdRef.get();
     }
+    
+    public Player getLocalPlayer()
+    {
+        return getPlayers().get(getLocalId());
+    }
 
     public void setLocalId(UUID id)
     {
