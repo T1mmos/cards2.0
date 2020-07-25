@@ -18,7 +18,7 @@ final class SolShowGameLayout
         static final int SOFFSETY = 1;                          // offset for a cardstack relative to another cardstack, vertically
         static final int SPSCOREHEIGHT = 8;                     // special score text height
         
-        static final int AREA_LEFTX = 40;
+        static final int AREA_LEFTW = 40;
                 
         static final int AREAMARGIN_X = 2;                      // inter-region margin, horizontally
         static final int AREAMARGIN_Y = 3;                      // inter-region margin, vertically    
@@ -72,9 +72,8 @@ final class SolShowGameLayout
     {
         int area_left_x = 0; 
         int area_left_y = 0;
-        int area_left_w = 40;
         
-        int area_right_x = Base.AREA_LEFTX + Base.AREAMARGIN_X;
+        int area_right_x = Base.AREA_LEFTW + Base.AREAMARGIN_X;
         int area_right_y = 0;
         int area_right_w = 8 * Base.SWIDTH + 7 * Base.SOFFSETX;
         
@@ -87,22 +86,22 @@ final class SolShowGameLayout
         int area_cardsremote_h = dim_personal_h;        
         
         int area_cardslaydown_x = area_right_x;
-        int area_cardslaydown_y = area_right_y + dim_personal_h + Base.AREAMARGIN_Y;
+        int area_cardslaydown_y = area_right_y + dim_personal_h;
         int area_cardslaydown_w = area_right_w;
-        int area_cardslaydown_h = 2 * Base.AREAPADDING_Y + Base.SHEIGHT;
+        int area_cardslaydown_h = Base.SHEIGHT + 2 * Base.AREAPADDING_Y;
 
         int area_cardslocal_x = area_right_x;
-        int area_cardslocal_y = area_cardslaydown_y + area_cardslaydown_h + Base.AREAMARGIN_Y;
+        int area_cardslocal_y = area_cardslaydown_y + area_cardslaydown_h;
         int area_cardslocal_w = dim_personal_w;
         int area_cardslocal_h = dim_personal_h;
         
-        int total_w = area_left_w + area_right_w;
-        int total_h = area_cardsremote_h + area_cardslaydown_h + area_cardslocal_h + 2 * Base.AREAMARGIN_Y;
+        int total_w = area_right_x + area_right_w;
+        int total_h = area_cardsremote_h + area_cardslaydown_h + area_cardslocal_h;
 
         int area_left_h = total_h;
         int area_right_h = total_h;
         
-        int dim_player_w = area_left_w;
+        int dim_player_w = Base.AREA_LEFTW;
         int dim_player_h = (area_left_h - Base.AREA_VS_Y - 2 * Base.AREAMARGIN_Y) / 2;
         
         int area_playerremote_x = area_left_x;
@@ -112,12 +111,12 @@ final class SolShowGameLayout
         
         int area_vs_x = area_left_x;
         int area_vs_y = area_left_y + area_playerremote_h + Base.AREAMARGIN_Y;
-        int area_vs_w = area_left_w;
+        int area_vs_w = Base.AREA_LEFTW;
         int area_vs_h = Base.AREA_VS_Y;
         
         int area_playerlocal_x = area_left_x;
         int area_playerlocal_y = area_vs_y + area_vs_h + Base.AREAMARGIN_Y;
-        int area_playerlocal_w = area_left_w;
+        int area_playerlocal_w = Base.AREA_LEFTW;
         int area_playerlocal_h = dim_player_h;        
 
         int rect_specialscore_text_h = (int) (1.25 * Base.SPSCOREHEIGHT);
@@ -130,14 +129,14 @@ final class SolShowGameLayout
         int rect_specialscore_bg_w = 3 * Base.SWIDTH;
         int rect_specialscore_bg_h = Base.SHEIGHT;
         
-        int rect_stack_depot_x = area_cardslocal_x + Base.AREAMARGIN_X;
-        int rect_stack_depot_y = area_cardslocal_y + Base.AREAMARGIN_Y + (int) (1.5 * Base.SHEIGHT);
-        int rect_stack_special_x = area_cardslocal_x + Base.AREAMARGIN_X + Base.SWIDTH;
-        int rect_stack_special_y = area_cardslocal_y + Base.AREAMARGIN_Y;
+        int rect_stack_depot_x = area_cardslocal_x + Base.AREAPADDING_X + (int) (0.5 * Base.SWIDTH);
+        int rect_stack_depot_y = area_cardslocal_y + Base.AREAPADDING_Y + (int) (1.5 * Base.SHEIGHT);
+        int rect_stack_special_x = area_cardslocal_x + Base.AREAPADDING_X + Base.SWIDTH;
+        int rect_stack_special_y = area_cardslocal_y + Base.AREAPADDING_Y;
         int rect_stack_turnover_x = rect_stack_depot_x + Base.SWIDTH + Base.SOFFSETX;
         int rect_stack_turnover_y = rect_stack_depot_y;
         int rect_stack_laydown_y = area_cardslaydown_y + Base.AREAPADDING_Y;
-        int rect_stack_middle_x = rect_stack_turnover_x + 2* Base.SWIDTH;
+        int rect_stack_middle_x = rect_stack_turnover_x + (int) (2 * Base.SWIDTH);
         int rect_stack_middle_y = rect_stack_special_y;
         
         Positions.Builder builder = new Positions.Builder();
@@ -152,7 +151,7 @@ final class SolShowGameLayout
             .length(HEIGHT_SPECIALSCORE, Base.SPSCOREHEIGHT)
             .coordinate(MARGIN_AREA, Base.AREAMARGIN_X, Base.AREAMARGIN_Y)
             .coordinate(PADDING_AREA, Base.AREAPADDING_X, Base.AREAPADDING_Y)
-            .rectangle(RECT_AREA_LEFT, area_left_x, area_left_y, area_left_w, area_left_h)
+            .rectangle(RECT_AREA_LEFT, area_left_x, area_left_y, Base.AREA_LEFTW, area_left_h)
             .rectangle(RECT_AREA_PLAYERREMOTE, area_playerremote_x, area_playerremote_y, area_playerremote_w, area_playerremote_h)
             .rectangle(RECT_AREA_VS, area_vs_x, area_vs_y, area_vs_w, area_vs_h)
             .rectangle(RECT_AREA_PLAYERLOCAL, area_playerlocal_x, area_playerlocal_y, area_playerlocal_w, area_playerlocal_h)

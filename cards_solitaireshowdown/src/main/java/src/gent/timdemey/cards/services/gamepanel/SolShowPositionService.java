@@ -245,7 +245,7 @@ public class SolShowPositionService implements IPositionService
         ReadOnlyCardGame cardGame = context.getReadOnlyState().getCardGame();
 
         ReadOnlyCardStack cs = card.getCardStack();
-        Rectangle rect = getLayeredArea(cs).coords.getBounds();
+        Rectangle rect = pos.getRectangle("RECT_STACK_%s_%s", cs.getCardStackType(), cs.getTypeNumber());
 
         boolean isOffsetX = cs.getCardStackType().equals(SolShowCardStackType.TURNOVER);
         boolean isOffsetY = cs.getCardStackType().equals(SolShowCardStackType.MIDDLE);
@@ -256,8 +256,8 @@ public class SolShowPositionService implements IPositionService
         int shiftRight = Math.max(0, 3 - cs.getCardCountFrom(card));
         int shift = shiftRight - shiftLeft;
 
-        Point offsetsc = pos.getCoordinate(SolShowGameLayout.OFFSET_STACK_TO_CARD);
-        Point offsetcc = pos.getCoordinate(SolShowGameLayout.OFFSET_CARD_TO_CARD);
+        Point offsetsc = pos.getOffset(SolShowGameLayout.OFFSET_STACK_TO_CARD);
+        Point offsetcc = pos.getOffset(SolShowGameLayout.OFFSET_CARD_TO_CARD);
         rect.x += offsetsc.x + (isOffsetX ? shift * offsetcc.x : 0);
         rect.y += offsetsc.y + (isOffsetY ? card.getCardIndex() * offsetcc.y : 0);
         // dimension

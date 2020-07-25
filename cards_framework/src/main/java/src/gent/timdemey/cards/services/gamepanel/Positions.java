@@ -86,7 +86,7 @@ public final class Positions
             checkKeyNotReserved(key);
             checkPositive(length, "length");
 
-            entries.put(key, new Integer(length));
+            entries.put(key, Integer.valueOf(length));
             return this;
         }
 
@@ -259,14 +259,16 @@ public final class Positions
         }
 
         // add margins to center the content
+        
         Positions scaledPositions = new Positions(false, ratio, scaledEntries);
-        Rectangle scaledBounds = scaledPositions.getBounds();
+        Rectangle scaledBounds = scaledPositions.getValue(RECT_CONTENT, Rectangle.class);
         int margin_left = (maxWidth - scaledBounds.width) / 2;
         int margin_right = maxWidth - scaledBounds.width - margin_left;
         int margin_top = (maxHeight - scaledBounds.height) / 2;
         int margin_bottom = maxHeight - scaledBounds.height - margin_top;   
-        scaledEntries.put(RECT_CONTENT, new Rectangle(margin_left, margin_right, scaledBounds.width, scaledBounds.height));
-        scaledEntries.put(PADDING_CONTENT, new Rectangle(margin_left, margin_right, margin_top, margin_bottom));           
+        
+        scaledPositions.entries.put(RECT_CONTENT, new Rectangle(0, 0, scaledBounds.width, scaledBounds.height));
+        scaledPositions.entries.put(PADDING_CONTENT, new Padding(margin_left, margin_top, margin_right, margin_bottom));           
         return scaledPositions;
     }
 
@@ -277,7 +279,7 @@ public final class Positions
 
     public Dimension getDimension(String key)
     {
-        return getValue(key, Dimension.class);        
+        return new Dimension(getValue(key, Dimension.class));        
     }
     
     public int getLength(String key)
@@ -286,8 +288,12 @@ public final class Positions
     }
     
     public Rectangle getRectangle(String key)
-    {
-        return getValue(key, Rectangle.class);
+    {        
+        Rectangle rect = new Rectangle(getValue(key, Rectangle.class));
+        Padding padding = getPadding();
+        rect.x += padding.l;
+        rect.y += padding.t;
+        return rect;
     }
     
     public Rectangle getRectangle(String formatKey, Object ... params)
@@ -298,7 +304,11 @@ public final class Positions
     
     public Point getCoordinate(String key)
     {
-        return getValue(key, Point.class);
+        Point point = new Point(getValue(key, Point.class));
+        Padding padding = getPadding();
+        point.x += padding.l;
+        point.y += padding.t;
+        return point;
     }
     
     public Padding getPadding(String key)
@@ -308,11 +318,26 @@ public final class Positions
     
     public Rectangle getBounds()
     {
-        return getValue(RECT_CONTENT, Rectangle.class);
+        Rectangle rect = new Rectangle(getValue(RECT_CONTENT, Rectangle.class));
+        Padding padding = getPadding();
+        rect.x += padding.l;
+        rect.y += padding.t;
+        return rect;
     }
     
     public Padding getPadding()
     {
+        if (root)
+        {
+            return new Padding(0,0,0,0);
+        }
         return getValue(PADDING_CONTENT, Padding.class);
+    }
+
+    public Point getOffset(String key)
+    {
+        // this is an offset, so do not apply padding
+        Point point = new Point(getValue(key, Point.class));
+        return point;
     }
 }
