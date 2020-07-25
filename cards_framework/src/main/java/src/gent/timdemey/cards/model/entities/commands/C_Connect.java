@@ -68,6 +68,8 @@ public class C_Connect extends CommandBase
             Server server = new Server(pl);
             state.setServer(server);
             
+            state.setLocalName(playerName);
+            
             ITcpConnectionListener tcpConnListener = new CommandSchedulingTcpConnectionListener(ContextType.UI);
             TCP_ConnectionPool tcpConnPool = new TCP_ConnectionPool(type.name(), 1, tcpConnListener);
 
