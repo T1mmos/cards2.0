@@ -121,11 +121,11 @@ final class SolShowGameLayout
 
         int rect_specialscore_text_h = (int) (1.25 * Base.SPSCOREHEIGHT);
         int rect_specialscore_text_x = area_right_x + Base.AREAMARGIN_X;
-        int rect_specialscore_text_y = area_cardslocal_y + (Base.CHEIGHT - rect_specialscore_text_h) / 2;
-        int rect_specialscore_text_w = Base.CWIDTH;
+        int rect_specialscore_text_y = area_cardslocal_y + Base.AREAPADDING_Y + (Base.SHEIGHT - rect_specialscore_text_h) / 2;
+        int rect_specialscore_text_w = Base.SWIDTH - Base.AREAPADDING_X;
         
-        int rect_specialscore_bg_x = area_right_x + Base.AREAMARGIN_X;
-        int rect_specialscore_bg_y = area_cardslocal_y + Base.AREAMARGIN_Y;
+        int rect_specialscore_bg_x = area_right_x + Base.AREAPADDING_X;
+        int rect_specialscore_bg_y = area_cardslocal_y + Base.AREAPADDING_Y;
         int rect_specialscore_bg_w = 3 * Base.SWIDTH;
         int rect_specialscore_bg_h = Base.SHEIGHT;
         
@@ -144,7 +144,7 @@ final class SolShowGameLayout
             .dimension(DIM_CARD, Base.CWIDTH, Base.CHEIGHT)
             .dimension(DIM_CARDSTACK, Base.SWIDTH, Base.SHEIGHT)
             .dimension(DIM_CARDSTACK_MIDDLE, Base.SWIDTH, Base.SHEIGHTMIDDLE)
-            .dimension(DIM_CARDSCORE, Base.CWIDTH, Base.CHEIGHT / 2)
+            .dimension(DIM_CARDSCORE, 2 * Base.CWIDTH, Base.CHEIGHT / 2)
             .coordinate(OFFSET_STACK_TO_CARD, Base.SCOFFSETX, Base.SCOFFSETY)
             .coordinate(OFFSET_CARD_TO_CARD, Base.COFFSETX, Base.COFFSETY)
             .coordinate(OFFSET_STACK_TO_STACK, Base.SOFFSETX, Base.SOFFSETY)
