@@ -171,10 +171,12 @@ public class Coords
 
     private static int getAbsolute(BigDecimal frac, int totalnr)
     {
-        return frac.multiply(new BigDecimal(totalnr)).intValue();
+        BigDecimal relative = frac.multiply(new BigDecimal(totalnr));
+        int rounded = relative.setScale(0, RoundingMode.HALF_EVEN).intValue();
+        return rounded;
     }
 
-    public static Coords.Absolute interpolate(double frac, Absolute coords_src, Absolute coords_dst)
+    public static Coords.Absolute interpolate(double frac, Coords.Absolute coords_src, Coords.Absolute coords_dst)
     {
         /*
          * if (coords_src.totalw != coords_dst.totalw || coords_src.totalh !=
