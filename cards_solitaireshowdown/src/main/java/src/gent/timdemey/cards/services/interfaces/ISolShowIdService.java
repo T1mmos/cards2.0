@@ -12,4 +12,5 @@ public interface ISolShowIdService extends IIdService
     public UUID createSpecialBackgroundResourceId();
     public UUID createSpecialBackgroundComponentId(ReadOnlyCardStack cs);
     public UUID createPlayerComponentId(ReadOnlyPlayer player);
+    public UUID createTeamBackgroundResourceId(boolean remote);
 }

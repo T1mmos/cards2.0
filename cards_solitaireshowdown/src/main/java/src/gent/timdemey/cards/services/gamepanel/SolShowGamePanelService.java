@@ -34,8 +34,7 @@ public class SolShowGamePanelService extends GamePanelService
     {
         super.preload();
 
-        preloadCardStacks();
-        preloadSpecialBackground();
+        preloadImages();
     }
 
     @Override
@@ -53,37 +52,37 @@ public class SolShowGamePanelService extends GamePanelService
         preloadFont(idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SPECIALCOUNT), SolShowResource.FILEPATH_FONT_SPECIALCOUNT);
     }
     
-    private void preloadCardStacks()
+    private void preloadImages()
     {
-        IIdService idServ = Services.get(IIdService.class);
+        ISolShowIdService idServ = Services.get(ISolShowIdService.class);
 
+        // cardstacks depot, laydown, middle
         String[] solstacks = new String[]
-        { SolShowCardStackType.DEPOT, SolShowCardStackType.LAYDOWN, SolShowCardStackType.MIDDLE };
-        
+        { SolShowCardStackType.DEPOT, SolShowCardStackType.LAYDOWN, SolShowCardStackType.MIDDLE };        
         for (String stack : solstacks)
         {
             UUID id = idServ.createCardStackScalableResourceId(stack);
-            String filename = String.format(SolShowResource.FILEPATH_CARDSTACK, stack.toLowerCase());
+            String filename = String.format(SolShowResource.FILEPATH_IMG_CARDSTACK, stack.toLowerCase());
             preloadImage(id, filename);
         }
+        // cardstacks turnover and special
+        UUID rid_turnover = idServ.createCardStackScalableResourceId(SolShowCardStackType.TURNOVER);
+        preloadImage(rid_turnover, SolShowResource.FILEPATH_IMG_CARDSTACK_TURNOVER);
         
-        UUID resId_turnover = idServ.createCardStackScalableResourceId(SolShowCardStackType.TURNOVER);
-        String filename_turnover = "stack_solshow_turnover.png";
-        preloadImage(resId_turnover, filename_turnover);
+        UUID rid_special = idServ.createCardStackScalableResourceId(SolShowCardStackType.SPECIAL);
+        preloadImage(rid_special, SolShowResource.FILEPATH_IMG_CARDSTACK_SPECIAL);
         
-        UUID resId_special = idServ.createCardStackScalableResourceId(SolShowCardStackType.SPECIAL);
-        String filename_special = "stack_solshow_special.png";
-        preloadImage(resId_special, filename_special);
+        // special stack background star image
+        UUID rid_star = idServ.createSpecialBackgroundResourceId();
+        preloadImage(rid_star, SolShowResource.FILEPATH_IMG_BACKGROUND_SPECIAL);
+        
+        // remote and local player backgrounds
+        UUID rid_pbgremote = idServ.createTeamBackgroundResourceId(true);
+        UUID rid_pbglocal = idServ.createTeamBackgroundResourceId(false);     
+        preloadImage(rid_pbgremote, SolShowResource.FILEPATH_IMG_BACKGROUND_PLAYER_REMOTE);
+        preloadImage(rid_pbglocal,  SolShowResource.FILEPATH_IMG_BACKGROUND_PLAYER_LOCAL);
     }
     
-    private void preloadSpecialBackground()
-    {
-        ISolShowIdService idServ = Services.get(ISolShowIdService.class);
-        UUID resId = idServ.createSpecialBackgroundResourceId();
-        String filename = "special_background.png";
-        preloadImage(resId, filename);
-    }
-
     protected GamePanelStateListener createGamePanelStateListener()
     {
         return new SolShowGamePanelStateListener();
@@ -130,8 +129,10 @@ public class SolShowGamePanelService extends GamePanelService
                 
                 ScalableTextComponent textComp = new ScalableTextComponent(counterCompId, "NOTSET", counterCompDesc, textRes);
                 textComp.setPayload(cs);
-                Color color = Color.decode("#CCE1F2");
-                textComp.setTextColor(color);
+                Color colorInner = Color.decode(SolShowResource.COLOR_FONT_SPECIALCOUNT_INNER);
+                Color colorOuter = Color.decode(SolShowResource.COLOR_FONT_SPECIALCOUNT_OUTER);
+                textComp.setInnerColor(colorInner);
+                textComp.setOuterColor(colorOuter);
                 
                 ScalableImageComponent imgComp = new ScalableImageComponent(bgCompId, bgCompDesc, bgRes);
                 imgComp.setPayload(cs);
@@ -169,17 +170,24 @@ public class SolShowGamePanelService extends GamePanelService
             
             ComponentDescriptor cd_playerName = new ComponentDescriptor(SolShowComponentType.PlayerName);
             
-            IScalableComponent scPlayerName_local = new ScalableTextComponent(compId_local, player_local.getName(), cd_playerName, textRes);
-            scPlayerName_local.setPayload(player_local);
-            add(scPlayerName_local);  
-            scaleServ.addScalableComponent(scPlayerName_local);
-            updateComponent(scPlayerName_local);
+            Color colorInner = Color.decode(SolShowResource.COLOR_FONT_PLAYERNAME_INNER);
+            Color colorOuter = Color.decode(SolShowResource.COLOR_FONT_PLAYERNAME_OUTER);
             
-            IScalableComponent scPlayerName_remote = new ScalableTextComponent(compId_remote, player_remote.getName(), cd_playerName, textRes);
-            scPlayerName_remote.setPayload(player_remote);
-            add(scPlayerName_remote);  
-            scaleServ.addScalableComponent(scPlayerName_remote);
-            updateComponent(scPlayerName_remote);
+            ScalableTextComponent text_plocal = new ScalableTextComponent(compId_local, player_local.getName(), cd_playerName, textRes);
+            text_plocal.setPayload(player_local);
+            text_plocal.setInnerColor(colorInner);
+            text_plocal.setOuterColor(colorOuter);
+            add(text_plocal);  
+            scaleServ.addScalableComponent(text_plocal);
+            updateComponent(text_plocal);
+            
+            ScalableTextComponent text_premote = new ScalableTextComponent(compId_remote, player_remote.getName(), cd_playerName, textRes);
+            text_premote.setPayload(player_remote);
+            text_premote.setInnerColor(colorInner);
+            text_premote.setOuterColor(colorOuter);
+            add(text_premote);  
+            scaleServ.addScalableComponent(text_premote);
+            updateComponent(text_premote);
         }
     }
 

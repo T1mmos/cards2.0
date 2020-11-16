@@ -389,6 +389,6 @@ public class GamePanelService implements IGamePanelService
             return;
         }
         
-        throw new UnsupportedOperationException("updateComponent not support for ComponentDescriptor " + cd);
+        throw new UnsupportedOperationException("updateComponent not supported for ComponentDescriptor " + cd);
     }
 }

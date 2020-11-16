@@ -29,7 +29,7 @@ public class ForegroundColorAnimation implements IAnimation
         if (comp instanceof ScalableTextComponent)
         {
             ScalableTextComponent textComp = (ScalableTextComponent) comp;
-            textComp.setTextColor(color);
+            textComp.setInnerColor(color);
         }
     }
 }

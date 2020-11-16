@@ -10,7 +10,6 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.font.FontRenderContext;
-import java.awt.font.LineMetrics;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -29,7 +28,8 @@ import gent.timdemey.cards.services.scaling.debug.DebugDrawDefines;
 public final class ScalableTextComponent extends ScalableComponent
 {    
     private String text;
-    private Color textColor;
+    private Color textColorInner;
+    private Color textColorOuter;
     private TextAlignment alignment;
     private final ComponentDescriptor compDescriptor;
     private final ScalableFontResource fontResource;
@@ -135,9 +135,14 @@ public final class ScalableTextComponent extends ScalableComponent
         getComponent().repaint();
     }
 
-    public void setTextColor(Color color)
+    public void setInnerColor(Color color)
     {
-        textColor = color;
+        textColorInner = color;
+    }
+    
+    public void setOuterColor(Color color)
+    {
+        textColorOuter = color;
     }
 
     public final void setAlignment(TextAlignment alignment)
@@ -175,9 +180,9 @@ public final class ScalableTextComponent extends ScalableComponent
 
             float strokeWidth = 1.0f * font.getSize() / 16;
             g2d.setStroke(new BasicStroke(strokeWidth));
-            g2d.setColor(textColor);
+            g2d.setColor(textColorInner);
             g2d.fill(shape);
-            g2d.setColor(Color.darkGray);
+            g2d.setColor(textColorOuter);
             g2d.draw(shape);
             
             g2d.dispose();
