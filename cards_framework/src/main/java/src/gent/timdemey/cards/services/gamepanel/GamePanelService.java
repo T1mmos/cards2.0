@@ -20,7 +20,6 @@ import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
-import gent.timdemey.cards.services.contract.descriptors.ResourceUsage;
 import gent.timdemey.cards.services.gamepanel.animations.GamePanelAnimator;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
@@ -251,12 +250,12 @@ public class GamePanelService implements IGamePanelService
         for (ReadOnlyCard card : cardGame.getCards())
         {
             UUID resId = idServ.createCardFrontScalableResourceId(card.getSuit(), card.getValue());
-            addRescaleRequest(requests, ComponentTypes.CARD, ResourceUsage.IMG_FRONT, resId);
+            addRescaleRequest(requests, ComponentTypes.CARD, resId);
         }
         // cards - back
         {
             UUID resId = idServ.createCardBackScalableResourceId();
-            addRescaleRequest(requests, ComponentTypes.CARD, ResourceUsage.IMG_BACK, resId);
+            addRescaleRequest(requests, ComponentTypes.CARD, resId);
         }
         // card stacks
         for (ReadOnlyCardStack cs : cardGame.getCardStacks())
@@ -264,20 +263,19 @@ public class GamePanelService implements IGamePanelService
             String csType = cs.getCardStackType();
             ComponentType cd_cardstack = ComponentTypes.CARDSTACK.derive(csType);           
             UUID resId = idServ.createCardStackScalableResourceId(csType);
-            addRescaleRequest(requests, cd_cardstack, ResourceUsage.IMG_FRONT, resId);
+            addRescaleRequest(requests, cd_cardstack, resId);
         }
 
         return requests;
     }
 
-    protected final void addRescaleRequest(List<RescaleRequest> requests, ComponentType compType,
-            String resourceUsage, UUID resId)
+    protected final void addRescaleRequest(List<RescaleRequest> requests, ComponentType compType, UUID resId)
     {
         IPositionService posServ = Services.get(IPositionService.class);
         IScalingService scaleServ = Services.get(IScalingService.class);
 
         // get dimension
-        Dimension dim = posServ.getResourceDimension(compType, resourceUsage);
+        Dimension dim = posServ.getResourceDimension(compType);
 
         // get the resource to rescale
         IScalableResource<?> res = scaleServ.getScalableResource(resId);

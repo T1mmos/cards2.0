@@ -11,7 +11,9 @@ public class SolShowIdService extends IdService implements ISolShowIdService
     private static final String COMPID_SPECIALCOUNTER = "compid.specialcounter.%s";
     private static final String COMPID_SPECIALBACKGROUND = "compid.specialbackground.%s";
     private static final String COMPID_PLAYERNAME = "compid.playername.%s";
-
+    private static final String COMPID_PLAYERNAME_BACKGROUND = "compid.playername.background.%s";
+    private static final String COMPID_CARDAREA_BACKGROUND = "compid.cardarea.background.%s";
+    
     private static final String RESID_SPECIALBACKGROUND = "resid.specialcounter";
     private static final String RESID_PLAYERNAME_BACKGROUND = "resid.playername.background.%s";
     private static final String RESID_CARDAREA_BACKGROUND = "resid.cardarea.background.%s";
@@ -47,14 +49,26 @@ public class SolShowIdService extends IdService implements ISolShowIdService
     }
 
     @Override
-    public UUID createPlayerBgComponentId(boolean remote)
+    public UUID createPlayerBgResourceId(boolean remote)
     {
         return getUUID(RESID_PLAYERNAME_BACKGROUND, Boolean.toString(remote));
     }
 
     @Override
-    public UUID createCardAreaBgComponentId(boolean remote)
+    public UUID createCardAreaBgResourceId(boolean remote)
     {
         return getUUID(RESID_CARDAREA_BACKGROUND, Boolean.toString(remote));
+    }
+    
+    @Override
+    public UUID createPlayerBgComponentId(boolean remote)
+    {
+        return getUUID(COMPID_PLAYERNAME_BACKGROUND, Boolean.toString(remote));
+    }
+
+    @Override
+    public UUID createCardAreaBgComponentId(boolean remote)
+    {
+        return getUUID(COMPID_CARDAREA_BACKGROUND, Boolean.toString(remote));
     }
 }

@@ -71,7 +71,7 @@ public interface IPositionService
      * @param request
      * @return
      */
-    public Dimension getResourceDimension(ComponentType compType, String resourceUsage);
+    public Dimension getResourceDimension(ComponentType compType);
     
     /** 
      * Gets the drag layer, the base / minimum layer in which components should be z-ordered when 

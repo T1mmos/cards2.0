@@ -139,15 +139,11 @@ public class SolitairePositionService implements IPositionService
     }
 
     @Override
-    public Dimension getResourceDimension(ComponentType compType, String resourceUsage)
+    public Dimension getResourceDimension(ComponentType compType)
     {
-        String resType = resourceUsage;
         if(compType.hasTypeName(ComponentTypes.CARD))
         {
-            if (resType == ResourceUsage.IMG_BACK || resType == ResourceUsage.IMG_FRONT)
-            {
-                return getCardDimension();
-            }
+            return getCardDimension();
         }
         else if(compType.hasTypeName(ComponentTypes.CARDSTACK))
         {
@@ -155,8 +151,8 @@ public class SolitairePositionService implements IPositionService
             return getCardStackDimension(csType);
         }
         
-        String msg = "Getting resources dimension failed: combination of ComponentType=%s, ResourceUsage=%s is not supported.";
-        String msg_format = String.format(msg, compType, resType);
+        String msg = "Getting resources dimension failed: no implementation is available for ComponentType=%s";
+        String msg_format = String.format(msg, compType);
         throw new UnsupportedOperationException(msg_format);        
     }
 

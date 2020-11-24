@@ -48,6 +48,10 @@ final class SolShowGameLayout
     public static final String RECT_SPECIALCOUNTERBACKGROUND = "RECT_SPECIALCOUNTERBACKGROUND";
     public static final String RECT_PLAYERNAME_LOCAL = "RECT_PLAYERNAME_LOCAL";
     public static final String RECT_PLAYERNAME_REMOTE = "RECT_PLAYERNAME_REMOTE";
+    public static final String RECT_PLAYERBG_LOCAL = "RECT_PLAYERBG_LOCAL"; 
+    public static final String RECT_PLAYERBG_REMOTE = "RECT_PLAYERBG_REMOTE";
+    public static final String RECT_CARDAREABG_LOCAL = "RECT_CARDAREABG_LOCAL";
+    public static final String RECT_CARDAREABG_REMOTE = "RECT_CARDAREABG_REMOTE";
 
     public static final String RECT_STACK_DEPOT_0 = "RECT_STACK_DEPOT_0";
     public static final String RECT_STACK_SPECIAL_0 = "RECT_STACK_SPECIAL_0";
@@ -60,6 +64,7 @@ final class SolShowGameLayout
     public static final String RECT_STACK_LAYDOWN_1 = "RECT_STACK_LAYDOWN_1";
     public static final String RECT_STACK_LAYDOWN_2 = "RECT_STACK_LAYDOWN_2";
     public static final String RECT_STACK_LAYDOWN_3 = "RECT_STACK_LAYDOWN_3";
+
     
     public static final String OFFSET_STACK_TO_CARD = "OFFSET_STACK_TO_CARD";
     public static final String OFFSET_CARD_TO_CARD = "OFFSET_CARD_TO_CARD";
@@ -172,7 +177,10 @@ final class SolShowGameLayout
             .rectangle(RECT_AREA_VS, area_vs_x, area_vs_y, area_vs_w, area_vs_h)
             .rectangle(RECT_AREA_PLAYERLOCAL, area_playerlocal_x, area_playerlocal_y, area_playerlocal_w, area_playerlocal_h)
             .rectangle(RECT_PLAYERNAME_LOCAL, area_playernamelocal_x, area_playernamelocal_y, area_playernamelocal_w, area_playernamelocal_h)
-            
+            .rectangle(RECT_PLAYERBG_LOCAL, area_playerlocal_x, area_playerlocal_y, area_playerlocal_w, area_playerlocal_h)
+            .rectangle(RECT_PLAYERBG_REMOTE, area_playerremote_x, area_playerremote_y, area_playerremote_w, area_playerremote_h)
+            .rectangle(RECT_CARDAREABG_LOCAL, area_cardslocal_x, area_cardslocal_y, area_cardslocal_w, area_cardslocal_h)
+            .rectangle(RECT_CARDAREABG_REMOTE, area_cardsremote_x, area_cardsremote_y, area_cardsremote_w, area_cardsremote_h)
             
             .rectangle(RECT_AREA_RIGHT, area_right_x, area_right_y, area_right_w, area_right_h)
             .rectangle(RECT_AREA_CARDSREMOTE, area_cardsremote_x, area_cardsremote_y, area_cardsremote_w, area_cardsremote_h)

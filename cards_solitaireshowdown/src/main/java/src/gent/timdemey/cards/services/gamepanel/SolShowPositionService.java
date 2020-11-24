@@ -16,7 +16,6 @@ import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
-import gent.timdemey.cards.services.contract.descriptors.ResourceUsage;
 import gent.timdemey.cards.services.contract.descriptors.SolShowComponentTypes;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
@@ -25,10 +24,12 @@ import gent.timdemey.cards.services.scaling.text.ScalableTextComponent;
 
 public class SolShowPositionService implements IPositionService
 {
-    private static final int LAYER_BACKGROUND_IMAGES = 50;
-    private static final int LAYER_HUD = 75;
+    private static final int LAYER_BACKGROUND_IMAGES_LOW = 50;
+    private static final int LAYER_BACKGROUND_IMAGES_MIDDLE = 51;
+    private static final int LAYER_BACKGROUND_IMAGES_HIGH = 52;
     private static final int LAYER_CARDSTACKS = 100;
     private static final int LAYER_CARDS = 200;
+    private static final int LAYER_HUD = 1000;
     private static final int LAYER_DRAG = 10000;
     private static final int LAYER_ANIMATIONS = 20000;
 
@@ -66,59 +67,48 @@ public class SolShowPositionService implements IPositionService
     }
 
     @Override
-    public Dimension getResourceDimension(ComponentType compType, String resourceUsage)
+    public Dimension getResourceDimension(ComponentType compType)
     {
-        String resType = resourceUsage;
         if (compType.hasTypeName(ComponentTypes.CARD))
         {
-            if (resourceUsage == ResourceUsage.IMG_FRONT || resourceUsage == ResourceUsage.IMG_BACK)
-            {
-                return getCardDimension();
-            }
+            return getCardDimension();
         }
         else if (compType.hasTypeName(ComponentTypes.CARDSTACK))
         {
-            if (resourceUsage == ResourceUsage.IMG_FRONT)
-            {
-                String csType = compType.subType.typeName;
-                return getCardStackDimension(csType);
-            }
+            String csType = compType.subType.typeName;
+            return getCardStackDimension(csType);
         }
         else if (compType.hasTypeName(ComponentTypes.CARDSCORE))
         {
-            if (resourceUsage == ResourceUsage.MAIN_TEXT)
-            {
-                Dimension compDim = pos.getDimension(SolShowGameLayout.DIM_CARDSCORE);
-                int x = (int) (4.0 * compDim.width / 5);
-                int y = (int) (4.0 * compDim.height / 5);
-                Dimension withMargins = new Dimension(x, y);
-                return withMargins;
-            }
+            Dimension compDim = pos.getDimension(SolShowGameLayout.DIM_CARDSCORE);
+            int x = (int) (4.0 * compDim.width / 5);
+            int y = (int) (4.0 * compDim.height / 5);
+            Dimension withMargins = new Dimension(x, y);
+            return withMargins;
         }
         else if (compType.hasTypeName(SolShowComponentTypes.SPECIALSCORE))
         {
-            if (resourceUsage == ResourceUsage.MAIN_TEXT)
-            {
-                return new Dimension(0, pos.getLength(SolShowGameLayout.HEIGHT_SPECIALSCORE));
-            }
+            return new Dimension(0, pos.getLength(SolShowGameLayout.HEIGHT_SPECIALSCORE));
         }
         else if (compType.hasTypeName(SolShowComponentTypes.SPECIALBACKGROUND))
         {
-            if (resourceUsage == ResourceUsage.IMG_FRONT)
-            {
-                return pos.getRectangle(SolShowGameLayout.RECT_SPECIALCOUNTERBACKGROUND).getSize();
-            }
+            return pos.getRectangle(SolShowGameLayout.RECT_SPECIALCOUNTERBACKGROUND).getSize();
         }
         else if (compType.hasTypeName(SolShowComponentTypes.PLAYERNAME))
         {
-            if (resourceUsage == ResourceUsage.MAIN_TEXT)
-            {
-                return pos.getRectangle(SolShowGameLayout.RECT_PLAYERNAME_LOCAL).getSize();
-            }
+            return pos.getRectangle(SolShowGameLayout.RECT_PLAYERNAME_LOCAL).getSize();
+        }
+        else if (compType.hasTypeName(SolShowComponentTypes.CARDAREABG))
+        {
+            return pos.getRectangle(SolShowGameLayout.RECT_CARDAREABG_LOCAL).getSize();
+        }
+        else if (compType.hasTypeName(SolShowComponentTypes.PLAYERBG))
+        {
+            return pos.getRectangle(SolShowGameLayout.RECT_PLAYERBG_LOCAL).getSize();
         }
 
-        String msg = "Getting resources dimension failed: combination of ComponentType=%s, ResourceUsage=%s is not supported.";
-        String msg_format = String.format(msg, compType, resType);
+        String msg = "Getting resources dimension failed: no implementation available for ComponentType=%s";
+        String msg_format = String.format(msg, compType);
         throw new UnsupportedOperationException(msg_format);
     }
 
@@ -216,7 +206,7 @@ public class SolShowPositionService implements IPositionService
             Rectangle rect2 = toRemotePosition(rect, isLocal);
             Coords.Absolute coords = Coords.getAbsolute(rect2);
             boolean mirror = !isLocal;
-            return new LayeredArea(coords, LAYER_BACKGROUND_IMAGES, mirror);
+            return new LayeredArea(coords, LAYER_BACKGROUND_IMAGES_MIDDLE, mirror);
         }
         else if (compType.hasTypeName(SolShowComponentTypes.PLAYERNAME))
         {
@@ -228,8 +218,26 @@ public class SolShowPositionService implements IPositionService
             Coords.Absolute coords = Coords.getAbsolute(rect);
             return new LayeredArea(coords, LAYER_HUD, false);
         }
+        else if (compType.hasTypeName(SolShowComponentTypes.PLAYERBG))
+        {
+            ReadOnlyPlayer player = (ReadOnlyPlayer) scaleComp.getPayload();
+            boolean isLocal = localId.equals(player.getId());
+            String layoutId = isLocal ? SolShowGameLayout.RECT_PLAYERBG_LOCAL : SolShowGameLayout.RECT_PLAYERBG_REMOTE;
+            Rectangle rect = pos.getRectangle(layoutId);
+            Coords.Absolute coords = Coords.getAbsolute(rect);
+            return new LayeredArea(coords, LAYER_BACKGROUND_IMAGES_LOW, false);
+        }
+        else if (compType.hasTypeName(SolShowComponentTypes.CARDAREABG))
+        {
+            ReadOnlyPlayer player = (ReadOnlyPlayer) scaleComp.getPayload();
+            boolean isLocal = localId.equals(player.getId());
+            String layoutId = isLocal ? SolShowGameLayout.RECT_CARDAREABG_LOCAL : SolShowGameLayout.RECT_CARDAREABG_REMOTE;
+            Rectangle rect = pos.getRectangle(layoutId);
+            Coords.Absolute coords = Coords.getAbsolute(rect);
+            return new LayeredArea(coords, LAYER_BACKGROUND_IMAGES_LOW, false);
+        }
 
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Cannot calculate EndLayeredArea as no implementation is available for ComponentType: " + compType);
     }
 
     private Rectangle toRemotePosition(Rectangle rect, boolean local)

@@ -88,7 +88,7 @@ public final class ComponentType
     @Override
     public String toString()
     {
-        return "ComponentType [typeName=" + typeName + ", subType=" + subType + "]";
+        return "[typeName=" + typeName + ", subType=" + subType + "]";
     }
     
     

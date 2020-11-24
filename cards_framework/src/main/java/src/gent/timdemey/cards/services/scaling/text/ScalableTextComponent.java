@@ -20,7 +20,6 @@ import java.util.UUID;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.GetResourceResponse;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
-import gent.timdemey.cards.services.contract.descriptors.ResourceUsage;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaling.ScalableComponent;
 import gent.timdemey.cards.services.scaling.debug.DebugDrawDefines;
@@ -84,7 +83,7 @@ public final class ScalableTextComponent extends ScalableComponent
     private GetResourceResponse<Font> getFont()
     {
         IPositionService posServ = Services.get(IPositionService.class);
-        Dimension resDim = posServ.getResourceDimension(getComponentType(), ResourceUsage.MAIN_TEXT);
+        Dimension resDim = posServ.getResourceDimension(getComponentType());
         
         // only interested in height for fonts as the width is depending on the text
         GetResourceResponse<Font> resp = fontResource.get(resDim);
