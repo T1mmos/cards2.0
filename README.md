@@ -35,7 +35,13 @@ The cards are designed to replicate the cards as seen in the [original Solitaire
 * May 2020: Better handling of leaving players, lost connections, full lobbies, general cleanup of TCP connections in all these cases. Added score system. Support for animations other than cards. Added more card sprites for both front and back, and card stacks. (see [animated GIF 05/21/2020](screenshots/solitaireshowdown_05212020.gif?raw=true))
 * June 2020: The entire scalable component and scalable resource system has been reworked. Resources are now preloaded before the game is started, and scaled resources are being cached. This results in a more instant UI update when the game is rescaled and all resources are only scaled once in a particular dimension, even if they are being used by multiple components. Up to this point, only images were supported as a "scalable resource". Support was added for text: the font itself is the scalable resource here. The first use case for scalable text was added to Solitaire Showdown, and is seen in the animation that shows the increment in score, when laying down a card on a cardstack. (see [animated GIF 06/29/2020](screenshots/solitaireshowdown_06292020.gif?raw=true))
 * July 2020: Support for animations spanning resizements was added, so you can resize the window while animations are ongoing. This is the last part in making the game truely resizable at any moment. A counter for the SPECIAL stack in Solitaire Showdown was added as well. Font are handled better in terms of resizing the game. ScalableTextComponents now cache their content in a BufferedImage which is useful during rescale operations, to show a temporarily low-quality scaled version of the text until the resource (a font) is loaded. Work has begun on the HUD which means that the cards, the card stacks and their related imagery/text are no longer the only components on the playfield; the first added HUD items are the player names, positioned as in the original MSN game. 
+* November 2020: Summer has passed - back to work after a break of several months. Several visuals have been created. Animation trajectories are pixel perfect in all resolutions. Game is really starting to look like the original now.
 
 ## Latest animated GIF
 
 ![Screenshot Solitaire Showdown](screenshots/solitaireshowdown_07152020.gif)
+
+## Latest screenshot
+
+![Screenshot Solitaire Showdown](screenshots/solitaireshowdown_11242020.png)
+
