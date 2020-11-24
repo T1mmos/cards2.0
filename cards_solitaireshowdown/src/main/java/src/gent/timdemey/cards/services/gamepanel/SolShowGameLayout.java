@@ -119,7 +119,7 @@ final class SolShowGameLayout
         int area_playerremote_h = dim_player_h;      
         
         int area_playernameremote_x = area_playerremote_x + Base.AREAPADDING_X;
-        int area_playernameremote_y = area_playerremote_y + Base.AREAPADDING_Y;
+        int area_playernameremote_y = area_playerremote_y + 4 * Base.AREAPADDING_Y;
         int area_playernameremote_w = area_playerremote_w - 2 * Base.AREAPADDING_X;
         int area_playernameremote_h = Base.PHEIGHT;
         
@@ -134,7 +134,7 @@ final class SolShowGameLayout
         int area_playerlocal_h = dim_player_h;                
 
         int area_playernamelocal_x = area_playerlocal_x + Base.AREAPADDING_X;
-        int area_playernamelocal_y = area_playerlocal_y + Base.AREAPADDING_Y;
+        int area_playernamelocal_y = area_playerlocal_y + 4 * Base.AREAPADDING_Y;
         int area_playernamelocal_w = area_playerlocal_w - 2 * Base.AREAPADDING_X;
         int area_playernamelocal_h = Base.PHEIGHT;
 

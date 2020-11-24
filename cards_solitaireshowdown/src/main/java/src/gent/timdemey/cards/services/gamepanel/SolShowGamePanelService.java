@@ -1,6 +1,5 @@
 package gent.timdemey.cards.services.gamepanel;
 
-import java.awt.Color;
 import java.util.List;
 import java.util.UUID;
 
@@ -129,10 +128,8 @@ public class SolShowGamePanelService extends GamePanelService
                
                 ScalableTextComponent textComp = new ScalableTextComponent(counterCompId, "NOTSET", SolShowComponentTypes.SPECIALSCORE, textRes);
                 textComp.setPayload(cs);
-                Color colorInner = Color.decode(SolShowResource.COLOR_FONT_SPECIALCOUNT_INNER);
-                Color colorOuter = Color.decode(SolShowResource.COLOR_FONT_SPECIALCOUNT_OUTER);
-                textComp.setInnerColor(colorInner);
-                textComp.setOuterColor(colorOuter);      
+                textComp.setInnerColor(SolShowResource.COLOR_FONT_SPECIALCOUNT_INNER);
+                textComp.setOuterColor(SolShowResource.COLOR_FONT_SPECIALCOUNT_OUTER);      
                 if (local)
                 { 
                     textComp.setAlignment(TextAlignment.Right);
@@ -167,21 +164,18 @@ public class SolShowGamePanelService extends GamePanelService
             UUID textResId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_PLAYERNAME);
             ScalableFontResource textRes = (ScalableFontResource) scaleServ.getScalableResource(textResId);     
                         
-            Color colorInner = Color.decode(SolShowResource.COLOR_FONT_PLAYERNAME_INNER);
-            Color colorOuter = Color.decode(SolShowResource.COLOR_FONT_PLAYERNAME_OUTER);
-            
             ScalableTextComponent text_plocal = new ScalableTextComponent(compId_local, player_local.getName(), SolShowComponentTypes.PLAYERNAME, textRes);
             text_plocal.setPayload(player_local);
-            text_plocal.setInnerColor(colorInner);
-            text_plocal.setOuterColor(colorOuter);
+            text_plocal.setInnerColor(SolShowResource.COLOR_FONT_PLAYERNAME_INNER);
+            text_plocal.setOuterColor(SolShowResource.COLOR_FONT_PLAYERNAME_OUTER);
             add(text_plocal);  
             scaleServ.addScalableComponent(text_plocal);
             updateComponent(text_plocal);
             
             ScalableTextComponent text_premote = new ScalableTextComponent(compId_remote, player_remote.getName(), SolShowComponentTypes.PLAYERNAME, textRes);
             text_premote.setPayload(player_remote);
-            text_premote.setInnerColor(colorInner);
-            text_premote.setOuterColor(colorOuter);
+            text_premote.setInnerColor(SolShowResource.COLOR_FONT_PLAYERNAME_INNER);
+            text_premote.setOuterColor(SolShowResource.COLOR_FONT_PLAYERNAME_OUTER);
             add(text_premote);  
             scaleServ.addScalableComponent(text_premote);
             updateComponent(text_premote);
@@ -280,9 +274,7 @@ public class SolShowGamePanelService extends GamePanelService
     
     @Override
     public void updateComponent(IScalableComponent comp)
-    {
-        ISolShowIdService idServ = Services.get(ISolShowIdService.class);
-        
+    {        
         if (comp.getComponentType().hasTypeName(SolShowComponentTypes.SPECIALSCORE))
         {
             ScalableTextComponent textComp = (ScalableTextComponent) comp;

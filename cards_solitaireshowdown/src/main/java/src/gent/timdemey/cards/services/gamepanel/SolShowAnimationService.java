@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import gent.timdemey.cards.services.contract.AnimationDescriptor;
+import gent.timdemey.cards.services.contract.BorderColorAnimation;
 import gent.timdemey.cards.services.contract.ForegroundColorAnimation;
 import gent.timdemey.cards.services.contract.IAnimation;
 import gent.timdemey.cards.services.contract.MovingAnimation;
@@ -13,20 +14,23 @@ import gent.timdemey.cards.services.scaling.IScalableComponent;
 
 public class SolShowAnimationService extends AnimationService
 {
-    private static final int TIME_CARDSCORE = 1200;
-    private static final Color COLOR_CARDSCORE_START = new Color(255, 69, 0, 255);
-    private static final Color COLOR_CARDSCORE_END = new Color(255, 69, 0, 0);
-
     @Override
     public AnimationDescriptor getAnimationDescriptor(IScalableComponent comp)
     {
         if (comp.getComponentType().hasTypeName(ComponentTypes.CARDSCORE))
         {            
             MovingAnimation anim1 = new MovingAnimation();
-            ForegroundColorAnimation anim2 = new ForegroundColorAnimation(COLOR_CARDSCORE_START, COLOR_CARDSCORE_END);
-            List<IAnimation> animations = Arrays.asList(anim1, anim2);
             
-            AnimationDescriptor descr = new AnimationDescriptor(TIME_CARDSCORE, animations, true);
+            Color color_inner_start = SolShowResource.COLOR_ANIMATION_CARDSCORE_INNER_START;
+            Color color_inner_end = SolShowResource.COLOR_ANIMATION_CARDSCORE_INNER_END;
+            Color color_outer_start = SolShowResource.COLOR_ANIMATION_CARDSCORE_OUTER_START;
+            Color color_outer_end = SolShowResource.COLOR_ANIMATION_CARDSCORE_OUTER_END;
+            
+            ForegroundColorAnimation anim2 = new ForegroundColorAnimation(color_inner_start, color_inner_end);
+            BorderColorAnimation anim3 = new BorderColorAnimation(color_outer_start, color_outer_end);
+            List<IAnimation> animations = Arrays.asList(anim1, anim2, anim3);
+            
+            AnimationDescriptor descr = new AnimationDescriptor(SolShowResource.TIME_MS_ANIMATION_CARDSCORE, animations, true);
             return descr;
         }
         else 

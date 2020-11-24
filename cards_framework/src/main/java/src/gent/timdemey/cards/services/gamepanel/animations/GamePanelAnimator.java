@@ -32,13 +32,11 @@ public class GamePanelAnimator
         IAnimationService animServ = Services.get(IAnimationService.class);
         IPositionService posServ = Services.get(IPositionService.class);
         
-        AnimationDescriptor descr = animServ.getAnimationDescriptor(component); 
-        
-        Coords.Absolute abscoords = component.getCoords();        
-        Coords.Relative relcoords = posServ.getRelativeCoords(component.getCoords());
+        AnimationDescriptor descr = animServ.getAnimationDescriptor(component);        
+        Coords.Relative relcoords = posServ.getRelativeCoords(component.getCoords());        
         
         AnimationTracker tracker = new AnimationTracker(component, descr, relcoords);
-        animTrackers.add(tracker);
+        animTrackers.add(tracker);        
     }
 
     public void stopAnimate(IScalableComponent scaleComp)
