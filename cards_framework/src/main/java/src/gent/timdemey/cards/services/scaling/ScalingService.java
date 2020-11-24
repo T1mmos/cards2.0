@@ -27,8 +27,7 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.contract.RescaleRequest;
-import gent.timdemey.cards.services.contract.descriptors.ComponentDescriptor;
-import gent.timdemey.cards.services.contract.descriptors.ComponentType;
+import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
@@ -221,8 +220,7 @@ public final class ScalingService implements IScalingService
             // create the component using its necessary image resources
             ScalableImageResource res_front = (ScalableImageResource) getScalableResource(resFrontId);
             ScalableImageResource res_back = (ScalableImageResource) getScalableResource(resBackId);
-            ComponentDescriptor compDesc = new ComponentDescriptor(ComponentType.Card);
-            comp = new ScalableImageComponent(compId, compDesc, res_front, res_back);
+            comp = new ScalableImageComponent(compId, ComponentTypes.CARD, res_front, res_back);
             comp.setPayload(card);
 
             components.put(compId, comp);
@@ -250,8 +248,7 @@ public final class ScalingService implements IScalingService
 
             // create the component using its necessary image resources
             ScalableImageResource res = (ScalableImageResource) getScalableResource(csResId);
-            ComponentDescriptor compDesc = new ComponentDescriptor(ComponentType.CardStack);
-            comp = new ScalableImageComponent(compId, compDesc, res);
+            comp = new ScalableImageComponent(compId, ComponentTypes.CARDSTACK, res);
             comp.setPayload(cardstack);
 
             components.put(compId, comp);

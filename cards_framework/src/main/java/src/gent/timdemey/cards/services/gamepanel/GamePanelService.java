@@ -18,8 +18,8 @@ import gent.timdemey.cards.services.contract.FontResource;
 import gent.timdemey.cards.services.contract.ImageResource;
 import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.contract.RescaleRequest;
-import gent.timdemey.cards.services.contract.descriptors.ComponentDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
+import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.ResourceUsage;
 import gent.timdemey.cards.services.gamepanel.animations.GamePanelAnimator;
 import gent.timdemey.cards.services.interfaces.IContextService;
@@ -43,7 +43,7 @@ public class GamePanelService implements IGamePanelService
 
     private GamePanelResizeListener resizeListener;
     private GamePanelMouseListener dragListener;
-    private IStateListener gameEventListener;
+    private IStateListener stateListener;
     private boolean drawDebug = false;
     protected GamePanel gamePanel;
 
@@ -133,12 +133,12 @@ public class GamePanelService implements IGamePanelService
 
         resizeListener = new GamePanelResizeListener();
         dragListener = new GamePanelMouseListener();
-        gameEventListener = createGamePanelStateListener();
+        stateListener = Services.get(IStateListener.class);
 
         gamePanel.addComponentListener(resizeListener);
         gamePanel.addMouseMotionListener(dragListener);
         gamePanel.addMouseListener(dragListener);
-        Services.get(IContextService.class).getThreadContext().addStateListener(gameEventListener);
+        Services.get(IContextService.class).getThreadContext().addStateListener(stateListener);
 
         animator.start();
 
@@ -147,11 +147,6 @@ public class GamePanelService implements IGamePanelService
 
         addScalableComponents();
         positionComponents();
-    }
-
-    protected GamePanelStateListener createGamePanelStateListener()
-    {
-        return new GamePanelStateListener();
     }
 
     protected void addScalableComponents()
@@ -184,13 +179,13 @@ public class GamePanelService implements IGamePanelService
             gamePanel.removeMouseListener(dragListener);
         }
 
-        Services.get(IContextService.class).getThreadContext().removeStateListener(gameEventListener);
+        Services.get(IContextService.class).getThreadContext().removeStateListener(stateListener);
         Services.get(IScalingService.class).clearManagedObjects();
         resizeListener = null;
         dragListener = null;
         gamePanel.removeAll();
         gamePanel = null;
-        gameEventListener = null;
+        stateListener = null;
     }
     
     private void updatePositionManager()
@@ -253,22 +248,21 @@ public class GamePanelService implements IGamePanelService
         List<RescaleRequest> requests = new ArrayList<RescaleRequest>();
 
         // cards - fronts
-        ComponentDescriptor cd_card = new ComponentDescriptor(ComponentType.Card);
         for (ReadOnlyCard card : cardGame.getCards())
         {
             UUID resId = idServ.createCardFrontScalableResourceId(card.getSuit(), card.getValue());
-            addRescaleRequest(requests, cd_card, ResourceUsage.IMG_FRONT, resId);
+            addRescaleRequest(requests, ComponentTypes.CARD, ResourceUsage.IMG_FRONT, resId);
         }
         // cards - back
         {
             UUID resId = idServ.createCardBackScalableResourceId();
-            addRescaleRequest(requests, cd_card, ResourceUsage.IMG_BACK, resId);
+            addRescaleRequest(requests, ComponentTypes.CARD, ResourceUsage.IMG_BACK, resId);
         }
         // card stacks
         for (ReadOnlyCardStack cs : cardGame.getCardStacks())
         {
-            ComponentDescriptor cd_cardstack = new ComponentDescriptor(ComponentType.CardStack, cs.getCardStackType());
             String csType = cs.getCardStackType();
+            ComponentType cd_cardstack = ComponentTypes.CARDSTACK.derive(csType);           
             UUID resId = idServ.createCardStackScalableResourceId(csType);
             addRescaleRequest(requests, cd_cardstack, ResourceUsage.IMG_FRONT, resId);
         }
@@ -276,14 +270,14 @@ public class GamePanelService implements IGamePanelService
         return requests;
     }
 
-    protected final void addRescaleRequest(List<RescaleRequest> requests, ComponentDescriptor descriptor,
+    protected final void addRescaleRequest(List<RescaleRequest> requests, ComponentType compType,
             String resourceUsage, UUID resId)
     {
         IPositionService posServ = Services.get(IPositionService.class);
         IScalingService scaleServ = Services.get(IScalingService.class);
 
         // get dimension
-        Dimension dim = posServ.getResourceDimension(descriptor, resourceUsage);
+        Dimension dim = posServ.getResourceDimension(compType, resourceUsage);
 
         // get the resource to rescale
         IScalableResource<?> res = scaleServ.getScalableResource(resId);
@@ -363,8 +357,8 @@ public class GamePanelService implements IGamePanelService
     @Override
     public void updateComponent(IScalableComponent comp)
     {
-        ComponentDescriptor cd = comp.getComponentDescriptor();
-        if (cd.type == ComponentType.Card)
+        ComponentType compType = comp.getComponentType();
+        if (compType.hasTypeName(ComponentTypes.CARD))
         {
             ScalableImageComponent cardComp = (ScalableImageComponent) comp;
             ReadOnlyCard card = (ReadOnlyCard) cardComp.getPayload();
@@ -378,7 +372,7 @@ public class GamePanelService implements IGamePanelService
             return;
         }
         
-        if (cd.type == ComponentType.CardStack)
+        if (compType.hasTypeName(ComponentTypes.CARDSTACK))
         {
             ScalableImageComponent cardStackComp = (ScalableImageComponent) comp;
             ReadOnlyCardStack cardStack = (ReadOnlyCardStack) cardStackComp.getPayload();
@@ -389,6 +383,6 @@ public class GamePanelService implements IGamePanelService
             return;
         }
         
-        throw new UnsupportedOperationException("updateComponent not supported for ComponentDescriptor " + cd);
+        throw new UnsupportedOperationException("updateComponent not supported for ComponentType " + compType);
     }
 }

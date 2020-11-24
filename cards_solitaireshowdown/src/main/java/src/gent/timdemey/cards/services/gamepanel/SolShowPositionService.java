@@ -14,10 +14,10 @@ import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.LayeredArea;
-import gent.timdemey.cards.services.contract.descriptors.ComponentDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
+import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.ResourceUsage;
-import gent.timdemey.cards.services.contract.descriptors.SolShowComponentType;
+import gent.timdemey.cards.services.contract.descriptors.SolShowComponentTypes;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
@@ -66,27 +66,25 @@ public class SolShowPositionService implements IPositionService
     }
 
     @Override
-    public Dimension getResourceDimension(ComponentDescriptor compDescriptor, String resourceUsage)
+    public Dimension getResourceDimension(ComponentType compType, String resourceUsage)
     {
-        String compType = compDescriptor.type;
-        String compSubType = compDescriptor.subtype;
         String resType = resourceUsage;
-        if (compType == ComponentType.Card)
+        if (compType.hasTypeName(ComponentTypes.CARD))
         {
             if (resourceUsage == ResourceUsage.IMG_FRONT || resourceUsage == ResourceUsage.IMG_BACK)
             {
                 return getCardDimension();
             }
         }
-        else if (compType == ComponentType.CardStack)
+        else if (compType.hasTypeName(ComponentTypes.CARDSTACK))
         {
             if (resourceUsage == ResourceUsage.IMG_FRONT)
             {
-                String csType = compSubType;
+                String csType = compType.subType.typeName;
                 return getCardStackDimension(csType);
             }
         }
-        else if (compType == ComponentType.CardScore)
+        else if (compType.hasTypeName(ComponentTypes.CARDSCORE))
         {
             if (resourceUsage == ResourceUsage.MAIN_TEXT)
             {
@@ -97,21 +95,21 @@ public class SolShowPositionService implements IPositionService
                 return withMargins;
             }
         }
-        else if (compType == SolShowComponentType.SpecialScore)
+        else if (compType.hasTypeName(SolShowComponentTypes.SPECIALSCORE))
         {
             if (resourceUsage == ResourceUsage.MAIN_TEXT)
             {
                 return new Dimension(0, pos.getLength(SolShowGameLayout.HEIGHT_SPECIALSCORE));
             }
         }
-        else if (compType == SolShowComponentType.SpecialBackground)
+        else if (compType.hasTypeName(SolShowComponentTypes.SPECIALBACKGROUND))
         {
             if (resourceUsage == ResourceUsage.IMG_FRONT)
             {
                 return pos.getRectangle(SolShowGameLayout.RECT_SPECIALCOUNTERBACKGROUND).getSize();
             }
         }
-        else if (compType == SolShowComponentType.PlayerName)
+        else if (compType.hasTypeName(SolShowComponentTypes.PLAYERNAME))
         {
             if (resourceUsage == ResourceUsage.MAIN_TEXT)
             {
@@ -119,8 +117,8 @@ public class SolShowPositionService implements IPositionService
             }
         }
 
-        String msg = "Getting resources dimension failed: combination of ComponentType=%s, ComponentSubType=%s, ResourceUsage=%s is not supported.";
-        String msg_format = String.format(msg, compType, compSubType, resType);
+        String msg = "Getting resources dimension failed: combination of ComponentType=%s, ResourceUsage=%s is not supported.";
+        String msg_format = String.format(msg, compType, resType);
         throw new UnsupportedOperationException(msg_format);
     }
 
@@ -137,9 +135,8 @@ public class SolShowPositionService implements IPositionService
     @Override
     public LayeredArea getStartLayeredArea(IScalableComponent scaleComp)
     {
-        ComponentDescriptor compDesc = scaleComp.getComponentDescriptor();
-        String compType = compDesc.type;
-        if (compType == ComponentType.CardScore)
+        ComponentType compType = scaleComp.getComponentType();
+        if (compType.hasTypeName(ComponentTypes.CARDSCORE))
         {
             LayeredArea endLayeredArea = getEndLayeredArea(scaleComp);
 
@@ -164,24 +161,23 @@ public class SolShowPositionService implements IPositionService
     @Override
     public LayeredArea getEndLayeredArea(IScalableComponent scaleComp)
     {
-        ComponentDescriptor compDesc = scaleComp.getComponentDescriptor();
-        String compType = compDesc.type;
+        ComponentType compType = scaleComp.getComponentType();
         
         IContextService contextService = Services.get(IContextService.class);
         Context context = contextService.getThreadContext();
         UUID localId = context.getReadOnlyState().getLocalId();
         
-        if (compType == ComponentType.Card)
+        if (compType.hasTypeName(ComponentTypes.CARD))
         {
             ReadOnlyCard card = (ReadOnlyCard) scaleComp.getPayload();
             return getLayeredArea(card);
         }
-        else if (compType == ComponentType.CardStack)
+        else if (compType.hasTypeName(ComponentTypes.CARDSTACK))
         {
             ReadOnlyCardStack cardStack = (ReadOnlyCardStack) scaleComp.getPayload();
             return getLayeredArea(cardStack);
         }
-        else if (compType == ComponentType.CardScore)
+        else if (compType.hasTypeName(ComponentTypes.CARDSCORE))
         {
             ScalableTextComponent cardScoreComp = ((ScalableTextComponent) scaleComp);
             ReadOnlyCard card = (ReadOnlyCard) cardScoreComp.getPayload();
@@ -197,7 +193,7 @@ public class SolShowPositionService implements IPositionService
 
             return new LayeredArea(coords, LAYER_ANIMATIONS, false);
         }
-        else if (compType == SolShowComponentType.SpecialScore)
+        else if (compType.hasTypeName(SolShowComponentTypes.SPECIALSCORE))
         {            
             ReadOnlyCardStack cardStack = (ReadOnlyCardStack) scaleComp.getPayload();
 
@@ -209,7 +205,7 @@ public class SolShowPositionService implements IPositionService
             Coords.Absolute coords = Coords.getAbsolute(rect2);
             return new LayeredArea(coords, LAYER_CARDSTACKS, false);
         }
-        else if (compType == SolShowComponentType.SpecialBackground)
+        else if (compType.hasTypeName(SolShowComponentTypes.SPECIALBACKGROUND))
         {
             ReadOnlyCardStack cardStack = (ReadOnlyCardStack) scaleComp.getPayload();
 
@@ -222,7 +218,7 @@ public class SolShowPositionService implements IPositionService
             boolean mirror = !isLocal;
             return new LayeredArea(coords, LAYER_BACKGROUND_IMAGES, mirror);
         }
-        else if (compType == SolShowComponentType.PlayerName)
+        else if (compType.hasTypeName(SolShowComponentTypes.PLAYERNAME))
         {
             ReadOnlyPlayer player = (ReadOnlyPlayer) scaleComp.getPayload();
             boolean isLocal = localId.equals(player.getId());

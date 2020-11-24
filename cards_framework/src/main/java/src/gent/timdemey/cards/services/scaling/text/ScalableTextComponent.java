@@ -19,7 +19,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.GetResourceResponse;
-import gent.timdemey.cards.services.contract.descriptors.ComponentDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.descriptors.ResourceUsage;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaling.ScalableComponent;
@@ -31,7 +31,6 @@ public final class ScalableTextComponent extends ScalableComponent
     private Color textColorInner;
     private Color textColorOuter;
     private TextAlignment alignment;
-    private final ComponentDescriptor compDescriptor;
     private final ScalableFontResource fontResource;
     
     // caches the drawn component so upon resizements, we are still able to 
@@ -39,11 +38,10 @@ public final class ScalableTextComponent extends ScalableComponent
     private BufferedImage bufferedImage = null;
     
 
-    public ScalableTextComponent(UUID id, String text, ComponentDescriptor descriptor, ScalableFontResource fontResource)
+    public ScalableTextComponent(UUID id, String text, ComponentType compType, ScalableFontResource fontResource)
     {
-        super(id, descriptor);
+        super(id, compType);
         this.text = text;
-        this.compDescriptor = descriptor;
         this.fontResource = fontResource;
         setAlignment(TextAlignment.Center);
     }
@@ -86,7 +84,7 @@ public final class ScalableTextComponent extends ScalableComponent
     private GetResourceResponse<Font> getFont()
     {
         IPositionService posServ = Services.get(IPositionService.class);
-        Dimension resDim = posServ.getResourceDimension(compDescriptor, ResourceUsage.MAIN_TEXT);
+        Dimension resDim = posServ.getResourceDimension(getComponentType(), ResourceUsage.MAIN_TEXT);
         
         // only interested in height for fonts as the width is depending on the text
         GetResourceResponse<Font> resp = fontResource.get(resDim);

@@ -5,7 +5,7 @@ import java.util.UUID;
 import javax.swing.JComponent;
 
 import gent.timdemey.cards.services.contract.Coords;
-import gent.timdemey.cards.services.contract.descriptors.ComponentDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 
 public interface IScalableComponent
 {    
@@ -14,7 +14,7 @@ public interface IScalableComponent
     public void setMirror(boolean mirror);
     public boolean isMirror();
         
-    public ComponentDescriptor getComponentDescriptor();
+    public ComponentType getComponentType();
     
     /**
      * Set an arbitrary object as a payload of this component.

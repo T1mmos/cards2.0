@@ -13,6 +13,7 @@ import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyList;
+import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes;
 import gent.timdemey.cards.services.interfaces.ICardGameService;
 import gent.timdemey.cards.utils.CardDeckUtils;
 
@@ -34,7 +35,7 @@ public class SolitaireCardGameCreationService implements ICardGameService
         { // depot stack - all remaining cards = 52 - 28 = 24 cards
             List<Card> cards = allCards.subList(0, 24);
             cards.forEach(c -> c.visibleRef.set(false));
-            CardStack stack = new CardStack(SolitaireCardStackType.DEPOT, 0);
+            CardStack stack = new CardStack(SolitaireComponentTypes.DEPOT, 0);
             stack.cards.addAll(cards);
             for(Card card : cards)
             {
@@ -50,7 +51,7 @@ public class SolitaireCardGameCreationService implements ICardGameService
                 int end = 24 + skipCards + i + 1;
                 List<Card> cards = allCards.subList(start, end);
                 allCards.subList(start, end - 1).forEach(c -> c.visibleRef.set(false));
-                CardStack stack = new CardStack(SolitaireCardStackType.MIDDLE, i);
+                CardStack stack = new CardStack(SolitaireComponentTypes.MIDDLE, i);
                 stack.cards.addAll(cards);
                 for(Card card : cards)
                 {
@@ -60,13 +61,13 @@ public class SolitaireCardGameCreationService implements ICardGameService
             }
         }
         { // turnover stack - initially empty
-            CardStack stack = new CardStack(SolitaireCardStackType.TURNOVER, 0);            
+            CardStack stack = new CardStack(SolitaireComponentTypes.TURNOVER, 0);            
             stacks.add(stack);
         }
         { // laydown stacks - initially empty
             for (int i = 0; i < 4; i++)
             {
-                CardStack stack = new CardStack(SolitaireCardStackType.LAYDOWN, i);
+                CardStack stack = new CardStack(SolitaireComponentTypes.LAYDOWN, i);
                 stacks.add(stack);
             }
         }

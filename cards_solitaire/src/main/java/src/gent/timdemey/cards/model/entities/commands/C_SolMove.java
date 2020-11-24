@@ -8,12 +8,11 @@ import java.util.UUID;
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;
-import gent.timdemey.cards.model.entities.commands.C_Move;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.cardgame.SolitaireCardStackType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes;
 
 /**
  * Solitaire specific move command.
@@ -52,8 +51,8 @@ public class C_SolMove extends C_Move
         {
             String srcCardStackType = srcCardStack.cardStackType;
             String dstCardStackType = dstCardStack.cardStackType;
-            if (srcCardStackType.equals(SolitaireCardStackType.DEPOT)
-                    && dstCardStackType.equals(SolitaireCardStackType.TURNOVER))
+            if (srcCardStackType.equals(SolitaireComponentTypes.DEPOT)
+                    && dstCardStackType.equals(SolitaireComponentTypes.TURNOVER))
             {
                 if (srcCardStack.getCards().isEmpty())
                 {
@@ -69,8 +68,8 @@ public class C_SolMove extends C_Move
                 }
                 return CanExecuteResponse.yes();
             }
-            else if (srcCardStackType.equals(SolitaireCardStackType.TURNOVER)
-                    && dstCardStackType.equals(SolitaireCardStackType.DEPOT))
+            else if (srcCardStackType.equals(SolitaireComponentTypes.TURNOVER)
+                    && dstCardStackType.equals(SolitaireComponentTypes.DEPOT))
             {
                 if (srcCardStack.getCards().isEmpty())
                 {
@@ -107,11 +106,11 @@ public class C_SolMove extends C_Move
 
         if (transferCards == null)
         {
-            depotInvolved = (srcCardStack.cardStackType.equals(SolitaireCardStackType.DEPOT)
-                    && dstCardStack.cardStackType.equals(SolitaireCardStackType.TURNOVER))
-                    || (srcCardStack.cardStackType.equals(SolitaireCardStackType.TURNOVER)
-                            && dstCardStack.cardStackType.equals(SolitaireCardStackType.DEPOT));
-            visible = depotInvolved && dstCardStack.cardStackType.equals(SolitaireCardStackType.TURNOVER);
+            depotInvolved = (srcCardStack.cardStackType.equals(SolitaireComponentTypes.DEPOT)
+                    && dstCardStack.cardStackType.equals(SolitaireComponentTypes.TURNOVER))
+                    || (srcCardStack.cardStackType.equals(SolitaireComponentTypes.TURNOVER)
+                            && dstCardStack.cardStackType.equals(SolitaireComponentTypes.DEPOT));
+            visible = depotInvolved && dstCardStack.cardStackType.equals(SolitaireComponentTypes.TURNOVER);
             List<Card> cards = srcCardStack.getCards();
             Card card = srcCardStack.getCards().get(cardId);
             transferCards = new ArrayList<>(cards.subList(cards.indexOf(card), cards.size()));

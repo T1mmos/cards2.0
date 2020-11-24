@@ -7,10 +7,9 @@ import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardStack;
-import gent.timdemey.cards.model.entities.commands.C_Pull;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.cardgame.SolitaireCardStackType;
+import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes;
 
 public class C_SolPull extends C_Pull
 {
@@ -33,7 +32,7 @@ public class C_SolPull extends C_Pull
             return CanExecuteResponse.no("The source card isn't visible");
         }
         
-        if (srcType.equals(SolitaireCardStackType.TURNOVER) || srcType.equals(SolitaireCardStackType.LAYDOWN))
+        if (srcType.equals(SolitaireComponentTypes.TURNOVER) || srcType.equals(SolitaireComponentTypes.LAYDOWN))
         {
             if (cards.get(cards.size() - 1) != srcCard)
             {
@@ -41,7 +40,7 @@ public class C_SolPull extends C_Pull
             }
             return CanExecuteResponse.yes(); 
         }
-        else if (srcType.equals(SolitaireCardStackType.MIDDLE))
+        else if (srcType.equals(SolitaireComponentTypes.MIDDLE))
         {
             int cardIndex = cards.indexOf(srcCard);
             for (int i = cardIndex; i < cards.size() - 1; i++)

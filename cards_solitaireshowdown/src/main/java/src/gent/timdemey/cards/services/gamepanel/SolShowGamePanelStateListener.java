@@ -12,8 +12,7 @@ import gent.timdemey.cards.readonlymodel.TypedChange;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.ChangeType;
 import gent.timdemey.cards.services.context.Context;
-import gent.timdemey.cards.services.contract.descriptors.ComponentDescriptor;
-import gent.timdemey.cards.services.contract.descriptors.ComponentType;
+import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
@@ -46,10 +45,9 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
             UUID resId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SCORE);
             ScalableFontResource scaleFontRes = (ScalableFontResource) scaleServ.getScalableResource(resId);
 
-            ComponentDescriptor descriptor = new ComponentDescriptor(ComponentType.CardScore);
             int incr = typed.newValue - typed.oldValue;
             String text = "+" + incr;
-            ScalableTextComponent comp = new ScalableTextComponent(UUID.randomUUID(), text, descriptor, scaleFontRes);
+            ScalableTextComponent comp = new ScalableTextComponent(UUID.randomUUID(), text, ComponentTypes.CARDSCORE, scaleFontRes);
             comp.setPayload(card);
 
             gpServ.add(comp);

@@ -6,7 +6,7 @@ import java.util.UUID;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
-import gent.timdemey.cards.services.cardgame.SolitaireCardStackType;
+import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
@@ -28,8 +28,8 @@ public class SolitaireGamePanelService extends GamePanelService
     {
         IIdService idServ = Services.get(IIdService.class);
 
-        String[] stacks = new String[] { SolitaireCardStackType.DEPOT, SolitaireCardStackType.LAYDOWN, SolitaireCardStackType.MIDDLE,
-                SolitaireCardStackType.TURNOVER };
+        String[] stacks = new String[] { SolitaireComponentTypes.DEPOT, SolitaireComponentTypes.LAYDOWN, SolitaireComponentTypes.MIDDLE,
+                SolitaireComponentTypes.TURNOVER };
 
         for (String stack : stacks)
         {

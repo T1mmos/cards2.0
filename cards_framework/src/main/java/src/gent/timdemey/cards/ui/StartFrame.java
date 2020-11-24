@@ -17,11 +17,13 @@ import gent.timdemey.cards.App;
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.commands.C_ImportExportStateUI;
+import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.dialogs.DialogService;
 import gent.timdemey.cards.services.frame.FrameService;
 import gent.timdemey.cards.services.gamepanel.GamePanelService;
+import gent.timdemey.cards.services.gamepanel.GamePanelStateListener;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IDialogService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
@@ -66,6 +68,11 @@ public class StartFrame
         {
             IGamePanelService gamePanelMan = new GamePanelService();
             services.install(IGamePanelService.class, gamePanelMan);
+        }
+        if (!Services.isInstalled(IStateListener.class))
+        {
+            IStateListener stateListener = new GamePanelStateListener();
+            services.install(IStateListener.class, stateListener);
         }
     }
 

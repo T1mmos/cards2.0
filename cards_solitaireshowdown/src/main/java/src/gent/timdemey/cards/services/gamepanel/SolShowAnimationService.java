@@ -8,7 +8,7 @@ import gent.timdemey.cards.services.contract.AnimationDescriptor;
 import gent.timdemey.cards.services.contract.ForegroundColorAnimation;
 import gent.timdemey.cards.services.contract.IAnimation;
 import gent.timdemey.cards.services.contract.MovingAnimation;
-import gent.timdemey.cards.services.contract.descriptors.ComponentType;
+import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 
 public class SolShowAnimationService extends AnimationService
@@ -20,8 +20,7 @@ public class SolShowAnimationService extends AnimationService
     @Override
     public AnimationDescriptor getAnimationDescriptor(IScalableComponent comp)
     {
-        String compType = comp.getComponentDescriptor().type;
-        if (compType == ComponentType.CardScore)
+        if (comp.getComponentType().hasTypeName(ComponentTypes.CARDSCORE))
         {            
             MovingAnimation anim1 = new MovingAnimation();
             ForegroundColorAnimation anim2 = new ForegroundColorAnimation(COLOR_CARDSCORE_START, COLOR_CARDSCORE_END);

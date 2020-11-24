@@ -1,6 +1,5 @@
 package gent.timdemey.cards.services.scaling;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -14,32 +13,32 @@ import javax.swing.JComponent;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.Coords;
-import gent.timdemey.cards.services.contract.descriptors.ComponentDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
 import gent.timdemey.cards.services.scaling.debug.DebugDrawDefines;
 
 public abstract class ScalableComponent implements IScalableComponent
 {
     private final UUID id;
-    private final ComponentDescriptor compDescriptor;
+    private final ComponentType compType;
     private JComponent component = null;
     private boolean mirror = false;
     private Coords.Absolute coords = null;
     private Object payload = null;
 
-    protected ScalableComponent(UUID id, ComponentDescriptor compDescriptor)
+    protected ScalableComponent(UUID id, ComponentType compType)
     {
         if (id == null)
         {
             throw new NullPointerException("id cannot be null");
         }
-        if (compDescriptor == null)
+        if (compType == null)
         {
-            throw new NullPointerException("compDescriptor cannot be null");
+            throw new NullPointerException("compType cannot be null");
         }
 
         this.id = id;
-        this.compDescriptor = compDescriptor;
+        this.compType = compType;
     }
 
     @Override
@@ -55,9 +54,9 @@ public abstract class ScalableComponent implements IScalableComponent
     }
 
     @Override
-    public ComponentDescriptor getComponentDescriptor()
+    public ComponentType getComponentType()
     {
-        return compDescriptor;
+        return compType;
     }
     
     @Override

@@ -17,7 +17,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityList;
 import gent.timdemey.cards.services.context.Context;
-import gent.timdemey.cards.services.contract.descriptors.ComponentType;
+import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.interfaces.ICommandService;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IGamePanelService;
@@ -105,7 +105,7 @@ class GamePanelMouseListener extends MouseAdapter
 
         UUID playerId = context.getReadOnlyState().getLocalId();
 
-        if (scaleComp.getComponentDescriptor().type == ComponentType.Card)
+        if (scaleComp.getComponentType().hasTypeName(ComponentTypes.CARD))
         {
             ScalableImageComponent cardImgComp = (ScalableImageComponent) scaleComp;
 
@@ -156,7 +156,7 @@ class GamePanelMouseListener extends MouseAdapter
             mouse_ystart = e.getY();
 
         }
-        else if (scaleComp.getComponentDescriptor().type == ComponentType.CardStack)
+        else if (scaleComp.getComponentType().hasTypeName(ComponentTypes.CARDSTACK))
         {
             CommandBase cmdUse = operations.getUseCommand(playerId, ((ReadOnlyCardStack)scaleComp.getPayload()).getId(), null);
             if (canExecute(context, cmdUse, "mousePressed/cardstack"))
@@ -206,11 +206,11 @@ class GamePanelMouseListener extends MouseAdapter
 
                 // exclude overlaps that are not cards or cardstacks
                 ReadOnlyCardStack dstCardStack;
-                if (comp.getComponentDescriptor().type == ComponentType.Card)
+                if (comp.getComponentType().hasTypeName(ComponentTypes.CARD))
                 {
                     dstCardStack = ((ReadOnlyCard) comp.getPayload()).getCardStack();
                 }
-                else if (comp.getComponentDescriptor().type == ComponentType.CardStack)
+                else if (comp.getComponentType().hasTypeName(ComponentTypes.CARDSTACK))
                 {
                     dstCardStack = (ReadOnlyCardStack) comp.getPayload();
                 }

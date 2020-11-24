@@ -10,9 +10,11 @@ public class SolShowIdService extends IdService implements ISolShowIdService
 {
     private static final String COMPID_SPECIALCOUNTER = "compid.specialcounter.%s";
     private static final String COMPID_SPECIALBACKGROUND = "compid.specialbackground.%s";
-    private static final String RESID_SPECIALBACKGROUND = "resid.specialcounter";
     private static final String COMPID_PLAYERNAME = "compid.playername.%s";
-    private static final String RESID_TEAMBACKGROUND = "resid.teambackground.%s";
+
+    private static final String RESID_SPECIALBACKGROUND = "resid.specialcounter";
+    private static final String RESID_PLAYERNAME_BACKGROUND = "resid.playername.background.%s";
+    private static final String RESID_CARDAREA_BACKGROUND = "resid.cardarea.background.%s";
 
     @Override
     public UUID createCardStackScalableResourceId(String cardStackType)
@@ -39,14 +41,20 @@ public class SolShowIdService extends IdService implements ISolShowIdService
     }
 
     @Override
-    public UUID createPlayerComponentId(ReadOnlyPlayer player)
+    public UUID createPlayerNameComponentId(ReadOnlyPlayer player)
     {
         return getUUID(COMPID_PLAYERNAME, player.getId().toString());
     }
 
     @Override
-    public UUID createTeamBackgroundResourceId(boolean remote)
+    public UUID createPlayerBgComponentId(boolean remote)
     {
-        return getUUID(RESID_TEAMBACKGROUND, Boolean.toString(remote));
+        return getUUID(RESID_PLAYERNAME_BACKGROUND, Boolean.toString(remote));
+    }
+
+    @Override
+    public UUID createCardAreaBgComponentId(boolean remote)
+    {
+        return getUUID(RESID_CARDAREA_BACKGROUND, Boolean.toString(remote));
     }
 }

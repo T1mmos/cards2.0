@@ -11,7 +11,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.services.contract.GetResourceResponse;
-import gent.timdemey.cards.services.contract.descriptors.ComponentDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.scaling.IScalableResource;
 import gent.timdemey.cards.services.scaling.ScalableComponent;
 
@@ -20,14 +20,14 @@ public final class ScalableImageComponent extends ScalableComponent
     private final List<ScalableImageResource> imgResources;    
     private IScalableResource<BufferedImage> currentScaledResource;
     
-    public ScalableImageComponent(UUID id, ComponentDescriptor compDescriptor, ScalableImageResource ... resources)
+    public ScalableImageComponent(UUID id, ComponentType compType, ScalableImageResource ... resources)
     {
-        super(id, compDescriptor);  
+        super(id, compType);  
 
         this.imgResources = Arrays.asList(resources);
         this.currentScaledResource = null;
     }
-
+    
     @Override
     protected List<String> getDebugStrings()
     {
@@ -64,20 +64,20 @@ public final class ScalableImageComponent extends ScalableComponent
     @Override
     protected final void draw(Graphics2D g2)
     {
-        Dimension dim = getCoords().getSize();
+        Dimension currDim = getCoords().getSize();
         
-        GetResourceResponse<BufferedImage> resp = currentScaledResource.get(dim);
+        GetResourceResponse<BufferedImage> resp = currentScaledResource.get(currDim);
         BufferedImage bi = resp.resource;
         if (!currentScaledResource.getResource().fallback)
-        {
-            drawScaled(g2, bi, dim);
+        { 
+            drawScaled(g2, bi, currDim);           
         }
         else
         {
-            drawTiled(g2, bi, dim);
+            drawTiled(g2, bi, currDim);
         }
     }
-    
+           
     /**
      * Draw the image rescaled.
      * @param g2
@@ -85,21 +85,21 @@ public final class ScalableImageComponent extends ScalableComponent
      * @param width
      * @param height
      */
-    private void drawScaled(Graphics2D g2, BufferedImage image, Dimension dim)
+    private void drawScaled(Graphics2D g2, BufferedImage image, Dimension currDim)
     {
-        int width = dim.width;
-        int height = dim.height;
+        int currWidth = currDim.width;
+        int currHeight = currDim.height;
         Graphics2D g3 = (Graphics2D) g2.create();
         if(isMirror())
         {
             g3.scale(-1.0, -1.0);
-            g3.translate(-width, -height);
+            g3.translate(-currWidth, -currHeight);
         }
 
         int imgW = image.getWidth();
         int imgH = image.getHeight();
 
-        if(imgW == width && imgH == height)
+        if(imgW == currWidth && imgH == currHeight)
         {
             // best image quality
             g3.drawImage(image, 0, 0, null);
@@ -108,8 +108,8 @@ public final class ScalableImageComponent extends ScalableComponent
         {
             // quick rescale until bufferedimage is updated with high quality
             g3.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-            double sx = 1.0 * width / imgW;
-            double sy = 1.0 * height / imgH;
+            double sx = 1.0 * currWidth / imgW;
+            double sy = 1.0 * currHeight / imgH;
             g3.scale(sx, sy);
             g3.drawImage(image, 0, 0, null);
         }

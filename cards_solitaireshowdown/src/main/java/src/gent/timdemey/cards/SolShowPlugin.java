@@ -1,11 +1,13 @@
 package gent.timdemey.cards;
 
 import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.serialization.SolShowSerializationService;
 import gent.timdemey.cards.services.cardgame.SolShowCardGameService;
 import gent.timdemey.cards.services.commands.SolShowCommandService;
 import gent.timdemey.cards.services.gamepanel.SolShowAnimationService;
 import gent.timdemey.cards.services.gamepanel.SolShowGamePanelService;
+import gent.timdemey.cards.services.gamepanel.SolShowGamePanelStateListener;
 import gent.timdemey.cards.services.gamepanel.SolShowPositionService;
 import gent.timdemey.cards.services.id.SolShowIdService;
 import gent.timdemey.cards.services.interfaces.IAnimationService;
@@ -36,6 +38,7 @@ public class SolShowPlugin implements ICardPlugin
     public void installUiServices()
     {
         App.getServices().install(IPositionService.class, new SolShowPositionService());
+        App.getServices().install(IStateListener.class, new SolShowGamePanelStateListener());
     }
 
     @Override

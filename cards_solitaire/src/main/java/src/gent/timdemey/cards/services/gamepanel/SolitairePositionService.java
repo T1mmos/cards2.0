@@ -9,12 +9,12 @@ import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
-import gent.timdemey.cards.services.cardgame.SolitaireCardStackType;
 import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.LayeredArea;
-import gent.timdemey.cards.services.contract.descriptors.ComponentDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
+import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.ResourceUsage;
+import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 
@@ -117,13 +117,13 @@ public class SolitairePositionService implements IPositionService
     {
         Rectangle bounds;
         int layer;
-        if(scaleComp.getComponentDescriptor().type == ComponentType.Card)
+        if(scaleComp.getComponentType().hasTypeName(ComponentTypes.CARD))
         {
             ReadOnlyCard card = (ReadOnlyCard) scaleComp.getPayload();
             bounds = getBounds(card);
             layer = LAYER_CARDS + card.getCardIndex();
         }
-        else if(scaleComp.getComponentDescriptor().type == ComponentType.CardStack)
+        else if(scaleComp.getComponentType().hasTypeName(ComponentTypes.CARDSTACK))
         {
             ReadOnlyCardStack cardstack = (ReadOnlyCardStack) scaleComp.getPayload();
             bounds = getBounds(cardstack);
@@ -139,26 +139,24 @@ public class SolitairePositionService implements IPositionService
     }
 
     @Override
-    public Dimension getResourceDimension(ComponentDescriptor compDescriptor, String resourceUsage)
+    public Dimension getResourceDimension(ComponentType compType, String resourceUsage)
     {
-        String compType = compDescriptor.type;
-        String compSubType = compDescriptor.subtype;
         String resType = resourceUsage;
-        if(compType == ComponentType.Card)
+        if(compType.hasTypeName(ComponentTypes.CARD))
         {
             if (resType == ResourceUsage.IMG_BACK || resType == ResourceUsage.IMG_FRONT)
             {
                 return getCardDimension();
             }
         }
-        else if(compType == ComponentType.CardStack)
+        else if(compType.hasTypeName(ComponentTypes.CARDSTACK))
         {
-            String csType = compSubType;
+            String csType = compType.subType.typeName;
             return getCardStackDimension(csType);
         }
         
-        String msg = "Getting resources dimension failed: combination of ComponentType=%s, ComponentSubType=%s, ResourceUsage=%s is not supported.";
-        String msg_format = String.format(msg, compType, compSubType, resType);
+        String msg = "Getting resources dimension failed: combination of ComponentType=%s, ResourceUsage=%s is not supported.";
+        String msg_format = String.format(msg, compType, resType);
         throw new UnsupportedOperationException(msg_format);        
     }
 
@@ -169,7 +167,7 @@ public class SolitairePositionService implements IPositionService
 
     private Dimension getCardStackDimension(String cardStackType)
     {
-        if(cardStackType.equals(SolitaireCardStackType.MIDDLE))
+        if(cardStackType.equals(SolitaireComponentTypes.MIDDLE))
         {
             return new Dimension(gl.act_swidth, 2 * gl.act_sheight);
         }
@@ -187,22 +185,22 @@ public class SolitairePositionService implements IPositionService
         Dimension size = getCardStackDimension(cardStack.getCardStackType());
         Rectangle rect = new Rectangle(gl.act_cont_marginl, gl.act_cont_margint, size.width, size.height);
 
-        if(cardStack.getCardStackType().equals(SolitaireCardStackType.DEPOT))
+        if(cardStack.getCardStackType().equals(SolitaireComponentTypes.DEPOT))
         {
             rect.x += 0;
             rect.y += 0;
         }
-        else if(cardStack.getCardStackType().equals(SolitaireCardStackType.TURNOVER))
+        else if(cardStack.getCardStackType().equals(SolitaireComponentTypes.TURNOVER))
         {
             rect.x += gl.act_swidth + gl.act_spadx;
             rect.y += 0;
         }
-        else if(cardStack.getCardStackType().equals(SolitaireCardStackType.LAYDOWN))
+        else if(cardStack.getCardStackType().equals(SolitaireComponentTypes.LAYDOWN))
         {
             rect.x += (3 + stackNr) * (gl.act_swidth + gl.act_spadx);
             rect.y += 0;
         }
-        else if(cardStack.getCardStackType().equals(SolitaireCardStackType.MIDDLE))
+        else if(cardStack.getCardStackType().equals(SolitaireComponentTypes.MIDDLE))
         {
             rect.x += (stackNr) * (gl.act_swidth + gl.act_spadx);
             rect.y += (gl.act_sheight + gl.act_spady);
@@ -219,7 +217,7 @@ public class SolitairePositionService implements IPositionService
         rect.width = size.width;
         rect.height = size.height;
 
-        if(cardStack.getCardStackType().equals(SolitaireCardStackType.MIDDLE))
+        if(cardStack.getCardStackType().equals(SolitaireComponentTypes.MIDDLE))
         {
             int lowerInvisCnt;
             int lowerVisCnt;

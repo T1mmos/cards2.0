@@ -6,10 +6,9 @@ import java.util.UUID;
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.cards.Value;
-import gent.timdemey.cards.model.entities.commands.C_Push;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.cardgame.SolitaireCardStackType;
+import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes;
 
 public class C_SolPush extends C_Push
 {
@@ -23,7 +22,7 @@ public class C_SolPush extends C_Push
     {
         String dstType = dstCardStack.cardStackType;
 
-        if (dstType.equals(SolitaireCardStackType.MIDDLE))
+        if (dstType.equals(SolitaireComponentTypes.MIDDLE))
         {
             if (dstCardStack.getCards().isEmpty() && srcCards.get(0).value == Value.V_K
                     || !dstCardStack.getCards().isEmpty()
@@ -34,7 +33,7 @@ public class C_SolPush extends C_Push
                 return CanExecuteResponse.yes();
             }
         }
-        else if (dstType.equals(SolitaireCardStackType.LAYDOWN))
+        else if (dstType.equals(SolitaireComponentTypes.LAYDOWN))
         {
             if (srcCards.size() == 1)
             {
