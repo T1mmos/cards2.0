@@ -14,8 +14,8 @@ public class SolShowResource
     static final String FILEPATH_IMG_BACKGROUND_SPECIAL_LOCAL = "special_background_yellow.png";
     static final String FILEPATH_IMG_BACKGROUND_CARDAREA_REMOTE = "cardbackground_red.png"; 
     static final String FILEPATH_IMG_BACKGROUND_CARDAREA_LOCAL = "cardbackground_green.png";
-    static final String FILEPATH_IMG_BACKGROUND_PLAYER_REMOTE = "tiles_red100.png";//"background_player_red.png";
-    static final String FILEPATH_IMG_BACKGROUND_PLAYER_LOCAL = "tiles_red100.png";//"background_player_green.png";
+    static final String FILEPATH_IMG_BACKGROUND_PLAYER_REMOTE = "playerbackground_red.png";
+    static final String FILEPATH_IMG_BACKGROUND_PLAYER_LOCAL = "playerbackground_green.png";
     
     static final String COLOR_FONT_SPECIALCOUNT_INNER = "#CCE1F2";
     static final String COLOR_FONT_SPECIALCOUNT_OUTER = "#444444";
