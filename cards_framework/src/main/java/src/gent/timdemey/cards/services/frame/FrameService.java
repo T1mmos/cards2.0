@@ -139,7 +139,7 @@ public class FrameService implements IFrameService
     public BufferedImage getBackground()
     {
         IResourceService resServ = Services.get(IResourceService.class);
-        BufferedImage background = resServ.getImage("background_green_stripes.png").raw;
+        BufferedImage background = resServ.getImage("background.png").raw;
         return background;
     }
 }

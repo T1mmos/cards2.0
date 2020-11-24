@@ -14,7 +14,7 @@ public class SolShowIdService extends IdService implements ISolShowIdService
     private static final String COMPID_PLAYERNAME_BACKGROUND = "compid.playername.background.%s";
     private static final String COMPID_CARDAREA_BACKGROUND = "compid.cardarea.background.%s";
     
-    private static final String RESID_SPECIALBACKGROUND = "resid.specialcounter";
+    private static final String RESID_SPECIALBACKGROUND = "resid.specialcounter.%s";
     private static final String RESID_PLAYERNAME_BACKGROUND = "resid.playername.background.%s";
     private static final String RESID_CARDAREA_BACKGROUND = "resid.cardarea.background.%s";
 
@@ -31,9 +31,9 @@ public class SolShowIdService extends IdService implements ISolShowIdService
     }
 
     @Override
-    public UUID createSpecialBackgroundResourceId()
+    public UUID createSpecialBackgroundResourceId(boolean remote)
     {
-        return getUUID(RESID_SPECIALBACKGROUND);
+        return getUUID(RESID_SPECIALBACKGROUND, Boolean.toString(remote));
     }
 
     @Override

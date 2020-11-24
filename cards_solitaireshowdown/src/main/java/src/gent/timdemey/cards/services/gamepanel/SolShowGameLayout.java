@@ -149,7 +149,7 @@ final class SolShowGameLayout
         int rect_specialscore_bg_h = Base.SHEIGHT;
         
         int rect_stack_depot_x = area_cardslocal_x + Base.AREAPADDING_X + (int) (0.5 * Base.SWIDTH);
-        int rect_stack_depot_y = area_cardslocal_y + Base.AREAPADDING_Y + (int) (1.5 * Base.SHEIGHT);
+        int rect_stack_depot_y = area_cardslocal_y + Base.AREAPADDING_Y + (int) (1.25 * Base.SHEIGHT);
         int rect_stack_special_x = area_cardslocal_x + Base.AREAPADDING_X + Base.SWIDTH;
         int rect_stack_special_y = area_cardslocal_y + Base.AREAPADDING_Y;
         int rect_stack_turnover_x = rect_stack_depot_x + Base.SWIDTH + Base.SOFFSETX;

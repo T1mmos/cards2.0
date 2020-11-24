@@ -68,9 +68,11 @@ public class SolShowGamePanelService extends GamePanelService
         UUID rid_special = idServ.createCardStackScalableResourceId(SolShowCardStackType.SPECIAL);
         preloadImage(rid_special, SolShowResource.FILEPATH_IMG_CARDSTACK_SPECIAL);
         
-        // special stack background star image
-        UUID rid_star = idServ.createSpecialBackgroundResourceId();
-        preloadImage(rid_star, SolShowResource.FILEPATH_IMG_BACKGROUND_SPECIAL);
+        // special stack background star images
+        UUID rid_star_remote = idServ.createSpecialBackgroundResourceId(true);
+        UUID rid_star_local = idServ.createSpecialBackgroundResourceId(false);
+        preloadImage(rid_star_remote, SolShowResource.FILEPATH_IMG_BACKGROUND_SPECIAL_REMOTE);
+        preloadImage(rid_star_local, SolShowResource.FILEPATH_IMG_BACKGROUND_SPECIAL_LOCAL);
         
         // remote and local player backgrounds
         UUID rid_pbgremote = idServ.createPlayerBgResourceId(true);
@@ -113,46 +115,46 @@ public class SolShowGamePanelService extends GamePanelService
         
         // special stack background and counter text
         {
-            UUID textResId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SPECIALCOUNT);
-            UUID bgResId = idServ.createSpecialBackgroundResourceId();    
-            
-            ScalableFontResource textRes = (ScalableFontResource) scaleServ.getScalableResource(textResId);        
-            ScalableImageResource bgRes = (ScalableImageResource) scaleServ.getScalableResource(bgResId);
+            UUID textResId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SPECIALCOUNT);            
+            ScalableFontResource textRes = (ScalableFontResource) scaleServ.getScalableResource(textResId);  
             
             for(ReadOnlyPlayer player : state.getPlayers())
             {
                 ReadOnlyCardStack cs = cardGame.getCardStack(player.getId(), SolShowCardStackType.SPECIAL, 0);            
 
                 UUID counterCompId = idServ.createSpecialCounterComponentId(cs);
-                UUID bgCompId = idServ.createSpecialBackgroundComponentId(cs);
+                UUID bgCompId = idServ.createSpecialBackgroundComponentId(cs);                                         
                 
+                boolean local = state.getLocalId().equals(player.getId());
+               
                 ScalableTextComponent textComp = new ScalableTextComponent(counterCompId, "NOTSET", SolShowComponentTypes.SPECIALSCORE, textRes);
                 textComp.setPayload(cs);
                 Color colorInner = Color.decode(SolShowResource.COLOR_FONT_SPECIALCOUNT_INNER);
                 Color colorOuter = Color.decode(SolShowResource.COLOR_FONT_SPECIALCOUNT_OUTER);
                 textComp.setInnerColor(colorInner);
-                textComp.setOuterColor(colorOuter);
-                
-                ScalableImageComponent imgComp = new ScalableImageComponent(bgCompId, SolShowComponentTypes.SPECIALBACKGROUND, bgRes);
-                imgComp.setPayload(cs);
-                
-                if (state.getLocalId().equals(player.getId()))
-                {
+                textComp.setOuterColor(colorOuter);      
+                if (local)
+                { 
                     textComp.setAlignment(TextAlignment.Right);
                 }
                 else
                 {
                     textComp.setAlignment(TextAlignment.Left);
-                }                
+                }           
                 
-                add(textComp);  
+                UUID resid_spec_bg = idServ.createSpecialBackgroundResourceId(!local);
+                ScalableImageResource res_spec_bg = (ScalableImageResource) scaleServ.getScalableResource(resid_spec_bg);
+                ScalableImageComponent imgComp = new ScalableImageComponent(bgCompId, SolShowComponentTypes.SPECIALBACKGROUND, res_spec_bg);
+                imgComp.setPayload(cs);
+                imgComp.setScalableImageResource(resid_spec_bg);
+                
+                add(textComp);                  
                 add(imgComp);
                 
                 scaleServ.addScalableComponent(textComp);
                 scaleServ.addScalableComponent(imgComp);
                 
                 updateComponent(textComp);
-                updateComponent(imgComp);
             }
         }     
        
@@ -245,11 +247,13 @@ public class SolShowGamePanelService extends GamePanelService
         
         // special stack counter + background
         {
-            UUID counterResId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SPECIALCOUNT);
-            addRescaleRequest(requests, SolShowComponentTypes.SPECIALSCORE, counterResId);
+            UUID resid_spec_count = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SPECIALCOUNT);
+            addRescaleRequest(requests, SolShowComponentTypes.SPECIALSCORE, resid_spec_count);
             
-            UUID bgResId = idServ.createSpecialBackgroundResourceId();
-            addRescaleRequest(requests, SolShowComponentTypes.SPECIALBACKGROUND, bgResId);
+            UUID resid_spec_bg_remote = idServ.createSpecialBackgroundResourceId(true);
+            UUID resid_spec_bg_local = idServ.createSpecialBackgroundResourceId(false);
+            addRescaleRequest(requests, SolShowComponentTypes.SPECIALBACKGROUND, resid_spec_bg_remote);
+            addRescaleRequest(requests, SolShowComponentTypes.SPECIALBACKGROUND, resid_spec_bg_local);
         }
         
         // player names
@@ -287,10 +291,7 @@ public class SolShowGamePanelService extends GamePanelService
             return;
         }
         else if (comp.getComponentType().hasTypeName(SolShowComponentTypes.SPECIALBACKGROUND))
-        {
-            ScalableImageComponent imgComp = (ScalableImageComponent) comp;
-            UUID bgResId = idServ.createSpecialBackgroundResourceId();
-            imgComp.setScalableImageResource(bgResId);         
+        {      
             return;
         }
         else if (comp.getComponentType().hasTypeName(SolShowComponentTypes.PLAYERNAME))

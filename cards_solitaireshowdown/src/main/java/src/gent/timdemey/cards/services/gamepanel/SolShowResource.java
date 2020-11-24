@@ -10,9 +10,10 @@ public class SolShowResource
 
     static final String FILEPATH_IMG_CARDSTACK_TURNOVER = "stack_solshow_turnover.png";
     static final String FILEPATH_IMG_CARDSTACK_SPECIAL = "stack_solshow_special.png";
-    static final String FILEPATH_IMG_BACKGROUND_SPECIAL = "special_background.png";
-    static final String FILEPATH_IMG_BACKGROUND_CARDAREA_REMOTE = "tiles_red100.png"; //"background_cardarea_red.png";
-    static final String FILEPATH_IMG_BACKGROUND_CARDAREA_LOCAL = "tiles_red100.png";//"background_cardarea_green.png";
+    static final String FILEPATH_IMG_BACKGROUND_SPECIAL_REMOTE = "special_background_red.png";
+    static final String FILEPATH_IMG_BACKGROUND_SPECIAL_LOCAL = "special_background_yellow.png";
+    static final String FILEPATH_IMG_BACKGROUND_CARDAREA_REMOTE = "cardbackground_red.png"; 
+    static final String FILEPATH_IMG_BACKGROUND_CARDAREA_LOCAL = "cardbackground_green.png";
     static final String FILEPATH_IMG_BACKGROUND_PLAYER_REMOTE = "tiles_red100.png";//"background_player_red.png";
     static final String FILEPATH_IMG_BACKGROUND_PLAYER_LOCAL = "tiles_red100.png";//"background_player_green.png";
     
