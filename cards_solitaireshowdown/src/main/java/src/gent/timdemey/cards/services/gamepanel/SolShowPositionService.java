@@ -106,6 +106,10 @@ public class SolShowPositionService implements IPositionService
         {
             return pos.getRectangle(SolShowGameLayout.RECT_PLAYERBG_LOCAL).getSize();
         }
+        else if (compType.hasTypeName(SolShowComponentTypes.VS))
+        {
+            return pos.getRectangle(SolShowGameLayout.RECT_VS).getSize();
+        }
 
         String msg = "Getting resources dimension failed: no implementation available for ComponentType=%s";
         String msg_format = String.format(msg, compType);
@@ -236,7 +240,14 @@ public class SolShowPositionService implements IPositionService
             Coords.Absolute coords = Coords.getAbsolute(rect);
             return new LayeredArea(coords, LAYER_BACKGROUND_IMAGES_LOW, false);
         }
-
+        else if (compType.hasTypeName(SolShowComponentTypes.VS))
+        {
+            String layoutId = SolShowGameLayout.RECT_VS;
+            Rectangle rect = pos.getRectangle(layoutId);
+            Coords.Absolute coords = Coords.getAbsolute(rect);
+            return new LayeredArea(coords, LAYER_BACKGROUND_IMAGES_MIDDLE, false);
+        }
+        
         throw new UnsupportedOperationException("Cannot calculate EndLayeredArea as no implementation is available for ComponentType: " + compType);
     }
 

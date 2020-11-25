@@ -52,6 +52,7 @@ final class SolShowGameLayout
     public static final String RECT_PLAYERBG_REMOTE = "RECT_PLAYERBG_REMOTE";
     public static final String RECT_CARDAREABG_LOCAL = "RECT_CARDAREABG_LOCAL";
     public static final String RECT_CARDAREABG_REMOTE = "RECT_CARDAREABG_REMOTE";
+    public static final String RECT_VS = "RECT_VS"; 
 
     public static final String RECT_STACK_DEPOT_0 = "RECT_STACK_DEPOT_0";
     public static final String RECT_STACK_SPECIAL_0 = "RECT_STACK_SPECIAL_0";
@@ -72,7 +73,7 @@ final class SolShowGameLayout
     public static final String HEIGHT_SPECIALSCORE = "HEIGHT_SPECIALSCORE";
     public static final String MARGIN_AREA = "MARGIN_AREA";
     public static final String PADDING_AREA = "PADDING_AREA";
-    public static final String PADDING_CONTENT = "PADDING_CONTENT"; 
+    public static final String PADDING_CONTENT = "PADDING_CONTENT";
 
     
     public static Positions positions_base;
@@ -112,7 +113,7 @@ final class SolShowGameLayout
         
         int dim_player_w = Base.AREA_LEFTW;
         int dim_player_h = (area_left_h - Base.AREA_VS_Y - 2 * Base.AREAMARGIN_Y) / 2;
-        
+                
         int area_playerremote_x = area_left_x;
         int area_playerremote_y = area_left_y;
         int area_playerremote_w = dim_player_w;
@@ -124,12 +125,12 @@ final class SolShowGameLayout
         int area_playernameremote_h = Base.PHEIGHT;
         
         int area_vs_x = area_left_x;
-        int area_vs_y = area_left_y + area_playerremote_h + Base.AREAMARGIN_Y;
+        int area_vs_y = area_left_y + area_playerremote_h - Base.AREAMARGIN_Y;
         int area_vs_w = Base.AREA_LEFTW;
-        int area_vs_h = Base.AREA_VS_Y;
+        int area_vs_h = Base.AREA_VS_Y + 4 * Base.AREAMARGIN_Y;
         
         int area_playerlocal_x = area_left_x;
-        int area_playerlocal_y = area_vs_y + area_vs_h + Base.AREAMARGIN_Y;
+        int area_playerlocal_y = area_vs_y + area_vs_h - 1 * Base.AREAMARGIN_Y;
         int area_playerlocal_w = Base.AREA_LEFTW;
         int area_playerlocal_h = dim_player_h;                
 
@@ -181,6 +182,7 @@ final class SolShowGameLayout
             .rectangle(RECT_PLAYERBG_REMOTE, area_playerremote_x, area_playerremote_y, area_playerremote_w, area_playerremote_h)
             .rectangle(RECT_CARDAREABG_LOCAL, area_cardslocal_x, area_cardslocal_y, area_cardslocal_w, area_cardslocal_h)
             .rectangle(RECT_CARDAREABG_REMOTE, area_cardsremote_x, area_cardsremote_y, area_cardsremote_w, area_cardsremote_h)
+            .rectangle(RECT_VS, area_vs_x, area_vs_y, area_vs_w, area_vs_h)
             
             .rectangle(RECT_AREA_RIGHT, area_right_x, area_right_y, area_right_w, area_right_h)
             .rectangle(RECT_AREA_CARDSREMOTE, area_cardsremote_x, area_cardsremote_y, area_cardsremote_w, area_cardsremote_h)

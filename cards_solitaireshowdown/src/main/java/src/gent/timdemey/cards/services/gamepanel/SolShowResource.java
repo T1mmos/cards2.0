@@ -20,7 +20,8 @@ public class SolShowResource
     static final String FILEPATH_IMG_BACKGROUND_CARDAREA_LOCAL = "cardbackground_green.png";
     static final String FILEPATH_IMG_BACKGROUND_PLAYER_REMOTE = "playerbackground_red.png";
     static final String FILEPATH_IMG_BACKGROUND_PLAYER_LOCAL = "playerbackground_green.png";
-
+    static final String FILEPATH_IMG_BACKGROUND_VS = "vs.png";
+    
     static final Color COLOR_ANIMATION_CARDSCORE_INNER_START = ColorUtils.rgba("#FF7644FF");
     static final Color COLOR_ANIMATION_CARDSCORE_INNER_END = ColorUtils.rgba("#FF764488");
     static final Color COLOR_ANIMATION_CARDSCORE_OUTER_START =  ColorUtils.rgba("#FF0000FF");
@@ -31,7 +32,8 @@ public class SolShowResource
     static final Color COLOR_FONT_PLAYERNAME_OUTER = ColorUtils.rgb("#444444");
 
     static final int TIME_MS_ANIMATION_CARDSCORE = 1500;
-   
+
+       
     
     private SolShowResource()
     {

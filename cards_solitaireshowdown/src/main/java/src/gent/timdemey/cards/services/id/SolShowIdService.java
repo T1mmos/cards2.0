@@ -13,10 +13,12 @@ public class SolShowIdService extends IdService implements ISolShowIdService
     private static final String COMPID_PLAYERNAME = "compid.playername.%s";
     private static final String COMPID_PLAYERNAME_BACKGROUND = "compid.playername.background.%s";
     private static final String COMPID_CARDAREA_BACKGROUND = "compid.cardarea.background.%s";
+    private static final String COMPID_VS = "compid.vs";
     
     private static final String RESID_SPECIALBACKGROUND = "resid.specialcounter.%s";
     private static final String RESID_PLAYERNAME_BACKGROUND = "resid.playername.background.%s";
     private static final String RESID_CARDAREA_BACKGROUND = "resid.cardarea.background.%s";
+    private static final String RESID_VS = "resid.vs";
 
     @Override
     public UUID createCardStackScalableResourceId(String cardStackType)
@@ -70,5 +72,17 @@ public class SolShowIdService extends IdService implements ISolShowIdService
     public UUID createCardAreaBgComponentId(boolean remote)
     {
         return getUUID(COMPID_CARDAREA_BACKGROUND, Boolean.toString(remote));
+    }
+
+    @Override
+    public UUID createVsComponentId()
+    {
+        return getUUID(COMPID_VS);
+    }
+
+    @Override
+    public UUID createVsResourceId()
+    {
+        return getUUID(RESID_VS);
     }
 }

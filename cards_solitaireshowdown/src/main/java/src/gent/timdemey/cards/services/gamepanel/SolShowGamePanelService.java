@@ -73,15 +73,17 @@ public class SolShowGamePanelService extends GamePanelService
         preloadImage(rid_star_remote, SolShowResource.FILEPATH_IMG_BACKGROUND_SPECIAL_REMOTE);
         preloadImage(rid_star_local, SolShowResource.FILEPATH_IMG_BACKGROUND_SPECIAL_LOCAL);
         
-        // remote and local player backgrounds
+        // player-specific backgrounds and VS background
         UUID rid_pbgremote = idServ.createPlayerBgResourceId(true);
         UUID rid_pbglocal = idServ.createPlayerBgResourceId(false);    
         UUID rid_cabgremote = idServ.createCardAreaBgResourceId(true);
         UUID rid_cabglocal = idServ.createCardAreaBgResourceId(false);
+        UUID rid_vs = idServ.createVsResourceId();
         preloadImage(rid_pbgremote, SolShowResource.FILEPATH_IMG_BACKGROUND_PLAYER_REMOTE);
         preloadImage(rid_pbglocal,  SolShowResource.FILEPATH_IMG_BACKGROUND_PLAYER_LOCAL);
         preloadImage(rid_cabgremote, SolShowResource.FILEPATH_IMG_BACKGROUND_CARDAREA_REMOTE);
         preloadImage(rid_cabglocal, SolShowResource.FILEPATH_IMG_BACKGROUND_CARDAREA_LOCAL);
+        preloadImage(rid_vs, SolShowResource.FILEPATH_IMG_BACKGROUND_VS);
     }
     
     protected GamePanelStateListener createGamePanelStateListener()
@@ -187,41 +189,48 @@ public class SolShowGamePanelService extends GamePanelService
             UUID resid_cardareabg_local = idServ.createCardAreaBgResourceId(false);
             UUID resid_playerbg_remote = idServ.createPlayerBgResourceId(true);
             UUID resid_playerbg_local = idServ.createPlayerBgResourceId(false);
+            UUID resid_vs = idServ.createVsResourceId();
             
             UUID compid_cardareabg_remote = idServ.createCardAreaBgComponentId(true);
             UUID compid_cardareabg_local = idServ.createCardAreaBgComponentId(false);
             UUID compid_playerbg_remote = idServ.createPlayerBgComponentId(true);
             UUID compid_playerbg_local = idServ.createPlayerBgComponentId(false);
+            UUID compid_vs = idServ.createVsComponentId();
             
             ScalableImageResource res_cardareabg_remote = (ScalableImageResource) scaleServ.getScalableResource(resid_cardareabg_remote);
             ScalableImageResource res_cardareabg_local = (ScalableImageResource) scaleServ.getScalableResource(resid_cardareabg_local);
             ScalableImageResource res_playerbg_remote = (ScalableImageResource) scaleServ.getScalableResource(resid_playerbg_remote);
             ScalableImageResource res_playerbg_local = (ScalableImageResource) scaleServ.getScalableResource(resid_playerbg_local);
+            ScalableImageResource res_vs = (ScalableImageResource) scaleServ.getScalableResource(resid_vs);
             
             ScalableImageComponent img_cardareabg_remote = new ScalableImageComponent(compid_cardareabg_remote, SolShowComponentTypes.CARDAREABG, res_cardareabg_remote);
             ScalableImageComponent img_cardareabg_local = new ScalableImageComponent(compid_cardareabg_local, SolShowComponentTypes.CARDAREABG, res_cardareabg_local);
             ScalableImageComponent img_playerbg_remote = new ScalableImageComponent(compid_playerbg_remote, SolShowComponentTypes.PLAYERBG, res_playerbg_remote);
             ScalableImageComponent img_playerbg_local = new ScalableImageComponent(compid_playerbg_local, SolShowComponentTypes.PLAYERBG, res_playerbg_local);
+            ScalableImageComponent img_vs = new ScalableImageComponent(compid_vs, SolShowComponentTypes.VS, res_vs);
             
             img_cardareabg_remote.setPayload(player_remote);
             img_cardareabg_local.setPayload(player_local);
             img_playerbg_remote.setPayload(player_remote);
-            img_playerbg_local.setPayload(player_local);            
-            
+            img_playerbg_local.setPayload(player_local);
+                        
             img_cardareabg_remote.setScalableImageResource(resid_cardareabg_remote);
             img_cardareabg_local.setScalableImageResource(resid_cardareabg_local);
             img_playerbg_remote.setScalableImageResource(resid_playerbg_remote);
             img_playerbg_local.setScalableImageResource(resid_playerbg_local);            
-
+            img_vs.setScalableImageResource(resid_vs);
+            
             add(img_cardareabg_remote);  
             add(img_cardareabg_local);  
             add(img_playerbg_remote);  
             add(img_playerbg_local);
+            add(img_vs);
             
             scaleServ.addScalableComponent(img_cardareabg_remote);
             scaleServ.addScalableComponent(img_cardareabg_local);
             scaleServ.addScalableComponent(img_playerbg_remote);
             scaleServ.addScalableComponent(img_playerbg_local);
+            scaleServ.addScalableComponent(img_vs);
         }
     }
 
@@ -262,11 +271,13 @@ public class SolShowGamePanelService extends GamePanelService
             UUID resid_cardareabg_local = idServ.createCardAreaBgResourceId(false);
             UUID resid_playerbg_remote = idServ.createPlayerBgResourceId(true);
             UUID resid_playerbg_local = idServ.createPlayerBgResourceId(false);
+            UUID resid_vs = idServ.createVsResourceId();
             
             addRescaleRequest(requests, SolShowComponentTypes.CARDAREABG, resid_cardareabg_remote);
             addRescaleRequest(requests, SolShowComponentTypes.CARDAREABG, resid_cardareabg_local);
             addRescaleRequest(requests, SolShowComponentTypes.PLAYERBG, resid_playerbg_remote);
             addRescaleRequest(requests, SolShowComponentTypes.PLAYERBG, resid_playerbg_local);
+            addRescaleRequest(requests, SolShowComponentTypes.VS, resid_vs);
         }
         
         return requests;

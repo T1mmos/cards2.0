@@ -43,5 +43,5 @@ The cards are designed to replicate the cards as seen in the [original Solitaire
 
 ## Latest screenshot
 
-![Screenshot Solitaire Showdown](screenshots/solitaireshowdown_11242020.png)
+![Screenshot Solitaire Showdown](screenshots/solitaireshowdown_11252020.png)
 
