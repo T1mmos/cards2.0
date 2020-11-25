@@ -39,9 +39,5 @@ The cards are designed to replicate the cards as seen in the [original Solitaire
 
 ## Latest animated GIF
 
-![Screenshot Solitaire Showdown](screenshots/solitaireshowdown_07152020.gif)
-
-## Latest screenshot
-
-![Screenshot Solitaire Showdown](screenshots/solitaireshowdown_11252020.png)
+![Screenshot Solitaire Showdown](screenshots/solitaireshowdown_11252020.gif)
 
