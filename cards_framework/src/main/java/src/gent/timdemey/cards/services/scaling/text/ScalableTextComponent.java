@@ -66,8 +66,7 @@ public final class ScalableTextComponent extends ScalableComponent
             g.setStroke(new BasicStroke());
             g.setColor(DebugDrawDefines.COLOR_SCALABLETEXTCOMPONENT_BOUNDINGBOX);
             g.drawRect(0, 0, bounds.width - 1, bounds.height - 1);
-        }
-        
+        }        
 
         // text soft bounding box
         {

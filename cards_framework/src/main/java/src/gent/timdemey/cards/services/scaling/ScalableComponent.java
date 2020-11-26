@@ -26,13 +26,15 @@ public abstract class ScalableComponent implements IScalableComponent
     private Coords.Absolute coords = null;
     private Object payload = null;
 
+    private JMouseAdapter mouseAdapter = null;
+
     protected ScalableComponent(UUID id, ComponentType compType)
     {
-        if (id == null)
+        if(id == null)
         {
             throw new NullPointerException("id cannot be null");
         }
-        if (compType == null)
+        if(compType == null)
         {
             throw new NullPointerException("compType cannot be null");
         }
@@ -58,37 +60,31 @@ public abstract class ScalableComponent implements IScalableComponent
     {
         return compType;
     }
-    
+
     @Override
     public final JComponent getComponent()
     {
-        if (component == null)
+        if(component == null)
         {
-            component = createComponent();
+            component = new JScalableComponent(this);
         }
         return component;
-    }
-
-    protected final JComponent createComponent()
-    {
-        JScalableComponent jcomp = new JScalableComponent(this);
-        return jcomp;
     }
 
     protected abstract void draw(Graphics2D g2);
 
     public final void drawDebug(Graphics2D g2)
     {
-        if (!Services.get(IGamePanelService.class).getDrawDebug())
+        if(!Services.get(IGamePanelService.class).getDrawDebug())
         {
             return;
         }
         Coords.Absolute coords = getCoords();
-        // dimmed overlay color, to make (white) debug text readable 
+        // dimmed overlay color, to make (white) debug text readable
         {
             Graphics2D g = (Graphics2D) g2.create();
             g.setColor(DebugDrawDefines.COLOR_DIMMED_COMPONENT_BACKGROUND);
-            g.fillRect(0,0, coords.w, coords.h);
+            g.fillRect(0, 0, coords.w, coords.h);
         }
 
         drawDebugBoundaries(g2);
@@ -122,7 +118,7 @@ public abstract class ScalableComponent implements IScalableComponent
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setColor(Color.white);
 
-        if (strings.size() == 0)
+        if(strings.size() == 0)
         {
             return;
         }
@@ -182,4 +178,34 @@ public abstract class ScalableComponent implements IScalableComponent
     {
         return id;
     }
+
+    @Override
+    public final void add(IScalableComponentMouseListener listener)
+    {
+        if(mouseAdapter == null)
+        {
+            mouseAdapter = new JMouseAdapter();
+            getComponent().addMouseListener(mouseAdapter);
+            getComponent().addMouseMotionListener(mouseAdapter);
+            getComponent().addMouseWheelListener(mouseAdapter);
+        }
+
+        mouseAdapter.add(listener);
+    }
+
+    @Override
+    public final void remove(IScalableComponentMouseListener listener)
+    {
+        if(mouseAdapter == null)
+        {
+            return;
+        }
+
+        mouseAdapter.remove(listener);
+        if(!mouseAdapter.hasListeners())
+        {
+            mouseAdapter = null;
+        }
+    }
+
 }

@@ -38,4 +38,7 @@ public interface IScalableComponent
      * This method should not be called after calling e.g. setForeground.
      */
     public void repaint();
+    
+    public void add(IScalableComponentMouseListener listener);
+    public void remove(IScalableComponentMouseListener listener);
 }

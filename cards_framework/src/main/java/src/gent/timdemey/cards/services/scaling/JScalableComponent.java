@@ -5,11 +5,11 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
-public final class JScalableComponent extends JPanel
+final class JScalableComponent extends JPanel
 {
     private final ScalableComponent abstractor;
 
-    public JScalableComponent(ScalableComponent abstractor)
+    JScalableComponent(ScalableComponent abstractor)
     {
         this.abstractor = abstractor;
         setOpaque(false);
