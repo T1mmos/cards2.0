@@ -140,9 +140,9 @@ final class SolShowGameLayout
         int area_playernamelocal_h = Base.PHEIGHT;
 
         int rect_specialscore_text_h = (int) (1.25 * Base.SPSCOREHEIGHT);
-        int rect_specialscore_text_x = area_right_x + Base.AREAMARGIN_X;
+        int rect_specialscore_text_x = area_right_x + (int) (2.5 * Base.AREAMARGIN_X);
         int rect_specialscore_text_y = area_cardslocal_y + Base.AREAPADDING_Y + (Base.SHEIGHT - rect_specialscore_text_h) / 2;
-        int rect_specialscore_text_w = Base.SWIDTH - Base.AREAPADDING_X;
+        int rect_specialscore_text_w = Base.SWIDTH;
         
         int rect_specialscore_bg_x = area_right_x + Base.AREAPADDING_X;
         int rect_specialscore_bg_y = area_cardslocal_y + Base.AREAPADDING_Y;

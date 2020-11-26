@@ -131,15 +131,8 @@ public class SolShowGamePanelService extends GamePanelService
                 ScalableTextComponent textComp = new ScalableTextComponent(counterCompId, "NOTSET", SolShowComponentTypes.SPECIALSCORE, textRes);
                 textComp.setPayload(cs);
                 textComp.setInnerColor(SolShowResource.COLOR_FONT_SPECIALCOUNT_INNER);
-                textComp.setOuterColor(SolShowResource.COLOR_FONT_SPECIALCOUNT_OUTER);      
-                if (local)
-                { 
-                    textComp.setAlignment(TextAlignment.Right);
-                }
-                else
-                {
-                    textComp.setAlignment(TextAlignment.Left);
-                }           
+                textComp.setOuterColor(SolShowResource.COLOR_FONT_SPECIALCOUNT_OUTER);    
+                textComp.setAlignment(TextAlignment.Center);     
                 
                 UUID resid_spec_bg = idServ.createSpecialBackgroundResourceId(!local);
                 ScalableImageResource res_spec_bg = (ScalableImageResource) scaleServ.getScalableResource(resid_spec_bg);
