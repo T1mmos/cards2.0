@@ -169,7 +169,6 @@ public abstract class ScalableComponent implements IScalableComponent
 
     public final void repaint()
     {
-        // update();
         getComponent().repaint();
     }
 

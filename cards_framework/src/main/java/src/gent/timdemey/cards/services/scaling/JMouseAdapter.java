@@ -36,7 +36,6 @@ class JMouseAdapter implements MouseInputListener, MouseWheelListener
     @Override
     public void mouseClicked(MouseEvent e)
     {
-        
         foreach(l -> l.onMouseClicked());
     }
 

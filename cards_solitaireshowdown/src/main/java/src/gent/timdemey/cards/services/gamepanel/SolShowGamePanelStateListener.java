@@ -1,6 +1,5 @@
 package gent.timdemey.cards.services.gamepanel;
 
-import java.awt.Color;
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;

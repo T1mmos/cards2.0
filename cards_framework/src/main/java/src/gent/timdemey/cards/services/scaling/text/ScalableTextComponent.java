@@ -29,6 +29,11 @@ public final class ScalableTextComponent extends ScalableComponent
     private String text;
     private Color textColorInner;
     private Color textColorOuter;
+    private Color textColorInner_mouseover;
+    private Color textColorOuter_mouseover;
+    private Color textColorInner_mousePressed;
+    private Color textColorOuter_mousePressed;
+        
     private TextAlignment alignment;
     private final ScalableFontResource fontResource;
     
@@ -36,13 +41,19 @@ public final class ScalableTextComponent extends ScalableComponent
     // draw a fast-scaled image until the rescaled resource is set
     private BufferedImage bufferedImage = null;
     
+    private boolean mouseOver = false; 
+    private boolean mousePressed = false;
+    
+    private boolean changed = true;
+    
+    private ScalableTextComponentMouseListener internalMouseListener = null;
 
     public ScalableTextComponent(UUID id, String text, ComponentType compType, ScalableFontResource fontResource)
     {
         super(id, compType);
         this.text = text;
         this.fontResource = fontResource;
-        setAlignment(TextAlignment.Center);
+        setAlignment(TextAlignment.Center);        
     }
 
     @Override
@@ -75,8 +86,7 @@ public final class ScalableTextComponent extends ScalableComponent
             g.setColor(DebugDrawDefines.COLOR_SCALABLETEXTCOMPONENT_TEXTBOX);
             g.setStroke(DebugDrawDefines.STROKE_DASHED);
             g.drawRect(tb.x, tb.y, tb.width, tb.height);
-        }
-        
+        }        
     }
         
     private GetResourceResponse<Font> getFont()
@@ -128,22 +138,48 @@ public final class ScalableTextComponent extends ScalableComponent
     public final void setText(String text)
     {
         this.text = text;
-        getComponent().repaint();
+        changed = true;
     }
 
     public void setInnerColor(Color color)
     {
         textColorInner = color;
+        changed = true;
     }
     
     public void setOuterColor(Color color)
     {
         textColorOuter = color;
+        changed = true;
+    }
+    
+    public void setInnerColorMouseOver(Color color)
+    {
+        textColorInner_mouseover = color;
+        ensureMouseListener();
+        changed = true;
+    }
+    
+    public void setOuterColorMouseOver(Color color)
+    {
+        textColorOuter_mouseover = color;
+        ensureMouseListener();
+        changed = true;
+    }
+    
+    private void ensureMouseListener()
+    {
+        if (internalMouseListener == null)
+        {
+            internalMouseListener = new ScalableTextComponentMouseListener(this);
+            add(internalMouseListener);
+        }
     }
 
     public final void setAlignment(TextAlignment alignment)
     {
         this.alignment = alignment;
+        changed = true;
     }
 
     @Override
@@ -151,7 +187,7 @@ public final class ScalableTextComponent extends ScalableComponent
     {
         GetResourceResponse<Font> resp = getFont();
         Dimension dim = getCoords().getSize();
-        if (resp.found)
+        if (changed || (bufferedImage.getWidth() != dim.width || bufferedImage.getHeight() != dim.height) && resp.found)
         {
             // update the buffered image
             Font font = resp.resource;
@@ -176,15 +212,65 @@ public final class ScalableTextComponent extends ScalableComponent
 
             float strokeWidth = 1.0f * font.getSize() / 16;
             g2d.setStroke(new BasicStroke(strokeWidth));
-            g2d.setColor(textColorInner);
+            g2d.setColor(getInnerColor());
             g2d.fill(shape);
-            g2d.setColor(textColorOuter);
+            g2d.setColor(getOuterColor());
             g2d.draw(shape);
             
             g2d.dispose();
+            
+            changed = false;
         }
         
         // draw the buffered image onto the graphics context and scale if necessary        
         g.drawImage(bufferedImage, 0, 0, dim.width, dim.height, null);
+    }
+    
+    private Color getInnerColor()
+    {
+        if (mousePressed && textColorInner_mousePressed != null)
+        {
+            return textColorInner_mousePressed;         
+        }        
+        if (mouseOver && textColorInner_mouseover != null)
+        {    
+            return textColorInner_mouseover;            
+        }
+        
+        // default
+        return textColorInner;
+    }
+    
+    private Color getOuterColor()
+    {
+        if (mousePressed && textColorOuter_mousePressed != null)
+        {
+            return textColorOuter_mousePressed;         
+        }  
+        if (mouseOver && textColorOuter_mouseover != null)
+        {
+            return textColorOuter_mouseover;
+        }
+        
+        // default
+        return textColorOuter;
+    }
+
+    void setMouseInside(boolean inside)
+    {
+        if (mouseOver != inside)
+        {
+            mouseOver = inside;
+            changed = true;
+        }
+    }
+    
+    void setMousePressed(boolean pressed)
+    {
+        if (mousePressed != pressed)
+        {
+            mousePressed = pressed;
+            changed = true;   
+        }        
     }
 }
