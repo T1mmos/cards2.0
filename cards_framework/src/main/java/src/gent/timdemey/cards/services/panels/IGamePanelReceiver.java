@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.gamepanel;
+package gent.timdemey.cards.services.panels;
 
 import javax.swing.JComponent;
 

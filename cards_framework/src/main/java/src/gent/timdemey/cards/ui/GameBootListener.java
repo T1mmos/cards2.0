@@ -9,18 +9,15 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.context.Context;
-import gent.timdemey.cards.services.gamepanel.GamePanel;
+import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.services.interfaces.IGamePanelService;
+import gent.timdemey.cards.services.interfaces.IFrameService;
+import gent.timdemey.cards.services.interfaces.IPanelService;
 
 public class GameBootListener implements IStateListener
 {
-
-    private final JFrame frame;
-
-    GameBootListener(JFrame frame)
+    GameBootListener()
     {
-        this.frame = frame;
     }
 
     @Override
@@ -35,19 +32,16 @@ public class GameBootListener implements IStateListener
             ReadOnlyCardGame cardGame = state.getCardGame();
             if (cardGame == null)
             {
-                Services.get(IGamePanelService.class).destroyGamePanel();
-                frame.getContentPane().removeAll();
-                frame.repaint();
+                Services.get(IPanelService.class).destroyPanel(PanelDescriptors.GAME);
+                Services.get(IFrameService.class).setPanel(PanelDescriptors.MENU);
             }
             else
             {
-                IGamePanelService gamePanelServ = Services.get(IGamePanelService.class);
-
-                GamePanel gamePanel = gamePanelServ.createGamePanel();
-                frame.getContentPane().add(gamePanel, "push, grow");
-                frame.validate();
-
-                SwingUtilities.invokeLater(() -> gamePanelServ.fillGamePanel());
+                SwingUtilities.invokeLater(() -> 
+                {                 
+                    IFrameService frameServ = Services.get(IFrameService.class);
+                    frameServ.setPanel(PanelDescriptors.GAME);
+                });
             }
         }
     }

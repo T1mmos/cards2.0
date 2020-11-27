@@ -1,18 +1,18 @@
 package gent.timdemey.cards.services.interfaces;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.util.List;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
 
-import javax.swing.JMenuBar;
-
-import gent.timdemey.cards.ICardPlugin;
+import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 
 public interface IFrameService
 {
-    public List<Image> getFrameIcons();
-    
-    public JMenuBar getMenuBar(ICardPlugin plugin);
+    public JFrame getFrame();
+     
+    public void addPanel(PanelDescriptor pDesc, JComponent comp);
+    public PanelDescriptor getCurrentPanel();
+    public void setPanel(PanelDescriptor menu);
 
-    public BufferedImage getBackground();
+    public void setDrawDebug(boolean on);
+    public boolean getDrawDebug();
 }

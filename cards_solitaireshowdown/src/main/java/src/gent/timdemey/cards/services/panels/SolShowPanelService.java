@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.gamepanel;
+package gent.timdemey.cards.services.panels;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,6 +16,8 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.interfaces.ISolShowIdService;
+import gent.timdemey.cards.services.panels.PanelService;
+import gent.timdemey.cards.services.resources.SolShowResourceDefines;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 import gent.timdemey.cards.services.scaling.img.ScalableImageComponent;
 import gent.timdemey.cards.services.scaling.img.ScalableImageResource;
@@ -23,7 +25,7 @@ import gent.timdemey.cards.services.scaling.text.ScalableFontResource;
 import gent.timdemey.cards.services.scaling.text.ScalableTextComponent;
 import gent.timdemey.cards.services.scaling.text.TextAlignment;
 
-public class SolShowGamePanelService extends GamePanelService 
+public class SolShowPanelService extends PanelService 
 {
     @Override
     public void preload()
@@ -42,10 +44,10 @@ public class SolShowGamePanelService extends GamePanelService
         IIdService idServ = Services.get(IIdService.class);
         
         // score font        
-        preloadFont(idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SCORE), SolShowResource.FILEPATH_FONT_SCORE);
+        preloadFont(idServ.createFontScalableResourceId(SolShowResourceDefines.FILEPATH_FONT_SCORE), SolShowResourceDefines.FILEPATH_FONT_SCORE);
         
         // special stack counter font
-        preloadFont(idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SPECIALCOUNT), SolShowResource.FILEPATH_FONT_SPECIALCOUNT);
+        preloadFont(idServ.createFontScalableResourceId(SolShowResourceDefines.FILEPATH_FONT_SPECIALCOUNT), SolShowResourceDefines.FILEPATH_FONT_SPECIALCOUNT);
     }
     
     private void preloadImages()
@@ -58,20 +60,20 @@ public class SolShowGamePanelService extends GamePanelService
         for (String stack : solstacks)
         {
             UUID id = idServ.createCardStackScalableResourceId(stack);
-            String filename = String.format(SolShowResource.FILEPATH_IMG_CARDSTACK, stack.toLowerCase());
+            String filename = String.format(SolShowResourceDefines.FILEPATH_IMG_CARDSTACK, stack.toLowerCase());
             preloadImage(id, filename);
         }
         // cardstacks turnover and special
         UUID rid_turnover = idServ.createCardStackScalableResourceId(SolShowCardStackType.TURNOVER);
-        preloadImage(rid_turnover, SolShowResource.FILEPATH_IMG_CARDSTACK_TURNOVER);        
+        preloadImage(rid_turnover, SolShowResourceDefines.FILEPATH_IMG_CARDSTACK_TURNOVER);        
         UUID rid_special = idServ.createCardStackScalableResourceId(SolShowCardStackType.SPECIAL);
-        preloadImage(rid_special, SolShowResource.FILEPATH_IMG_CARDSTACK_SPECIAL);
+        preloadImage(rid_special, SolShowResourceDefines.FILEPATH_IMG_CARDSTACK_SPECIAL);
         
         // special stack background star images
         UUID rid_star_remote = idServ.createSpecialBackgroundResourceId(true);
         UUID rid_star_local = idServ.createSpecialBackgroundResourceId(false);
-        preloadImage(rid_star_remote, SolShowResource.FILEPATH_IMG_BACKGROUND_SPECIAL_REMOTE);
-        preloadImage(rid_star_local, SolShowResource.FILEPATH_IMG_BACKGROUND_SPECIAL_LOCAL);
+        preloadImage(rid_star_remote, SolShowResourceDefines.FILEPATH_IMG_BACKGROUND_SPECIAL_REMOTE);
+        preloadImage(rid_star_local, SolShowResourceDefines.FILEPATH_IMG_BACKGROUND_SPECIAL_LOCAL);
         
         // player-specific backgrounds and VS background
         UUID rid_pbgremote = idServ.createPlayerBgResourceId(true);
@@ -79,16 +81,11 @@ public class SolShowGamePanelService extends GamePanelService
         UUID rid_cabgremote = idServ.createCardAreaBgResourceId(true);
         UUID rid_cabglocal = idServ.createCardAreaBgResourceId(false);
         UUID rid_vs = idServ.createVsResourceId();
-        preloadImage(rid_pbgremote, SolShowResource.FILEPATH_IMG_BACKGROUND_PLAYER_REMOTE);
-        preloadImage(rid_pbglocal,  SolShowResource.FILEPATH_IMG_BACKGROUND_PLAYER_LOCAL);
-        preloadImage(rid_cabgremote, SolShowResource.FILEPATH_IMG_BACKGROUND_CARDAREA_REMOTE);
-        preloadImage(rid_cabglocal, SolShowResource.FILEPATH_IMG_BACKGROUND_CARDAREA_LOCAL);
-        preloadImage(rid_vs, SolShowResource.FILEPATH_IMG_BACKGROUND_VS);
-    }
-    
-    protected GamePanelStateListener createGamePanelStateListener()
-    {
-        return new SolShowGamePanelStateListener();
+        preloadImage(rid_pbgremote, SolShowResourceDefines.FILEPATH_IMG_BACKGROUND_PLAYER_REMOTE);
+        preloadImage(rid_pbglocal,  SolShowResourceDefines.FILEPATH_IMG_BACKGROUND_PLAYER_LOCAL);
+        preloadImage(rid_cabgremote, SolShowResourceDefines.FILEPATH_IMG_BACKGROUND_CARDAREA_REMOTE);
+        preloadImage(rid_cabglocal, SolShowResourceDefines.FILEPATH_IMG_BACKGROUND_CARDAREA_LOCAL);
+        preloadImage(rid_vs, SolShowResourceDefines.FILEPATH_IMG_BACKGROUND_VS);
     }
     
     @Override
@@ -116,7 +113,7 @@ public class SolShowGamePanelService extends GamePanelService
         
         // special stack background and counter text
         {
-            UUID textResId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SPECIALCOUNT);            
+            UUID textResId = idServ.createFontScalableResourceId(SolShowResourceDefines.FILEPATH_FONT_SPECIALCOUNT);            
             ScalableFontResource textRes = (ScalableFontResource) scaleServ.getScalableResource(textResId);  
             
             for(ReadOnlyPlayer player : state.getPlayers())
@@ -130,8 +127,8 @@ public class SolShowGamePanelService extends GamePanelService
                
                 ScalableTextComponent textComp = new ScalableTextComponent(counterCompId, "NOTSET", SolShowComponentTypes.SPECIALSCORE, textRes);
                 textComp.setPayload(cs);
-                textComp.setInnerColor(SolShowResource.COLOR_FONT_SPECIALCOUNT_INNER);
-                textComp.setOuterColor(SolShowResource.COLOR_FONT_SPECIALCOUNT_OUTER);    
+                textComp.setInnerColor(SolShowResourceDefines.COLOR_FONT_SPECIALCOUNT_INNER);
+                textComp.setOuterColor(SolShowResourceDefines.COLOR_FONT_SPECIALCOUNT_OUTER);    
                 textComp.setAlignment(TextAlignment.Center);     
                 
                 UUID resid_spec_bg = idServ.createSpecialBackgroundResourceId(!local);
@@ -156,21 +153,21 @@ public class SolShowGamePanelService extends GamePanelService
             UUID compId_remote = idServ.createPlayerNameComponentId(player_remote);
             
             
-            UUID textResId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_PLAYERNAME);
+            UUID textResId = idServ.createFontScalableResourceId(SolShowResourceDefines.FILEPATH_FONT_PLAYERNAME);
             ScalableFontResource textRes = (ScalableFontResource) scaleServ.getScalableResource(textResId);     
                         
             ScalableTextComponent text_plocal = new ScalableTextComponent(compId_local, player_local.getName(), SolShowComponentTypes.PLAYERNAME, textRes);
             text_plocal.setPayload(player_local);
-            text_plocal.setInnerColor(SolShowResource.COLOR_FONT_PLAYERNAME_INNER);
-            text_plocal.setOuterColor(SolShowResource.COLOR_FONT_PLAYERNAME_OUTER);
+            text_plocal.setInnerColor(SolShowResourceDefines.COLOR_FONT_PLAYERNAME_INNER);
+            text_plocal.setOuterColor(SolShowResourceDefines.COLOR_FONT_PLAYERNAME_OUTER);
             add(text_plocal);  
             scaleServ.addScalableComponent(text_plocal);
             updateComponent(text_plocal);
             
             ScalableTextComponent text_premote = new ScalableTextComponent(compId_remote, player_remote.getName(), SolShowComponentTypes.PLAYERNAME, textRes);
             text_premote.setPayload(player_remote);
-            text_premote.setInnerColor(SolShowResource.COLOR_FONT_PLAYERNAME_INNER);
-            text_premote.setOuterColor(SolShowResource.COLOR_FONT_PLAYERNAME_OUTER);
+            text_premote.setInnerColor(SolShowResourceDefines.COLOR_FONT_PLAYERNAME_INNER);
+            text_premote.setOuterColor(SolShowResourceDefines.COLOR_FONT_PLAYERNAME_OUTER);
             add(text_premote);  
             scaleServ.addScalableComponent(text_premote);
             updateComponent(text_premote);
@@ -237,13 +234,13 @@ public class SolShowGamePanelService extends GamePanelService
         
         // card scores
         {
-            UUID resId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SCORE);
+            UUID resId = idServ.createFontScalableResourceId(SolShowResourceDefines.FILEPATH_FONT_SCORE);
             addRescaleRequest(requests, ComponentTypes.CARDSCORE, resId);
         }
         
         // special stack counter + background
         {
-            UUID resid_spec_count = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SPECIALCOUNT);
+            UUID resid_spec_count = idServ.createFontScalableResourceId(SolShowResourceDefines.FILEPATH_FONT_SPECIALCOUNT);
             addRescaleRequest(requests, SolShowComponentTypes.SPECIALSCORE, resid_spec_count);
             
             UUID resid_spec_bg_remote = idServ.createSpecialBackgroundResourceId(true);
@@ -254,7 +251,7 @@ public class SolShowGamePanelService extends GamePanelService
         
         // player names
         {
-            UUID pNameResId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_PLAYERNAME);
+            UUID pNameResId = idServ.createFontScalableResourceId(SolShowResourceDefines.FILEPATH_FONT_PLAYERNAME);
             addRescaleRequest(requests, SolShowComponentTypes.PLAYERNAME, pNameResId);
         }
         

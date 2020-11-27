@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.gamepanel.animations;
+package gent.timdemey.cards.services.panels.animations;
 
 import gent.timdemey.cards.services.contract.AnimationDescriptor;
 import gent.timdemey.cards.services.contract.AnimationStart;

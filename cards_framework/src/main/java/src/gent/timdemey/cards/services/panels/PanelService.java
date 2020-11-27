@@ -1,11 +1,14 @@
-package gent.timdemey.cards.services.gamepanel;
+package gent.timdemey.cards.services.panels;
 
 import java.awt.Component;
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import javax.swing.JComponent;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.cards.Suit;
@@ -20,33 +23,37 @@ import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
-import gent.timdemey.cards.services.gamepanel.animations.GamePanelAnimator;
+import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.services.interfaces.IGamePanelService;
 import gent.timdemey.cards.services.interfaces.IIdService;
+import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
+import gent.timdemey.cards.services.panels.animations.GamePanelAnimator;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 import gent.timdemey.cards.services.scaling.IScalableResource;
 import gent.timdemey.cards.services.scaling.img.ScalableImageComponent;
 import gent.timdemey.cards.services.scaling.img.ScalableImageResource;
 import gent.timdemey.cards.services.scaling.text.ScalableFontResource;
 
-public class GamePanelService implements IGamePanelService
+public class PanelService implements IPanelService
 {
     private static final String FILEPATH_CARD_FRONTSIDE = "cards/edge_thick/%s_%s.png";
     private static final String FILEPATH_CARD_BACKSIDE = "cards/edge_thick/backside_yellow.png";
 
-    protected final GamePanelAnimator animator;
+    private final GamePanelAnimator animator;
 
     private GamePanelResizeListener resizeListener;
     private GamePanelMouseListener dragListener;
-    private IStateListener stateListener;
-    private boolean drawDebug = false;
-    protected GamePanel gamePanel;
+    // private IStateListener stateListener;
 
-    public GamePanelService()
+    // different panels
+    private GamePanel gamePanel;
+    private MenuPanel menuPanel;
+
+    public PanelService()
     {
         this.animator = new GamePanelAnimator();
     }
@@ -58,7 +65,7 @@ public class GamePanelService implements IGamePanelService
         preloadCards();
     }
 
-    protected void preloadImage(UUID resId, String path)
+    protected final void preloadImage(UUID resId, String path)
     {
         IResourceService resServ = Services.get(IResourceService.class);
         IScalingService scaleCompServ = Services.get(IScalingService.class);
@@ -68,7 +75,7 @@ public class GamePanelService implements IGamePanelService
         scaleCompServ.addScalableResource(scaleRes_back);
     }
 
-    protected void preloadFont(UUID resId, String path)
+    protected final void preloadFont(UUID resId, String path)
     {
         IResourceService resServ = Services.get(IResourceService.class);
         IScalingService scaleCompServ = Services.get(IScalingService.class);
@@ -116,44 +123,76 @@ public class GamePanelService implements IGamePanelService
     }
 
     @Override
-    public GamePanel createGamePanel()
+    public List<PanelDescriptor> getPanelDescriptors()
     {
-        if (gamePanel == null)
-        {
-            gamePanel = new GamePanel();
-        }
-        return gamePanel;
+        return Arrays.asList(new PanelDescriptor[]
+        { PanelDescriptors.GAME, PanelDescriptors.MENU });
     }
 
     @Override
-    public void fillGamePanel()
+    public JComponent getPanel(PanelDescriptor desc)
     {
-        updatePositionManager();
+        if(desc == PanelDescriptors.GAME)
+        {
+            if(gamePanel == null)
+            {
+                gamePanel = new GamePanel();
+                resizeListener = new GamePanelResizeListener();
+                dragListener = new GamePanelMouseListener();
+            }
+            return gamePanel;
+        }
 
-        resizeListener = new GamePanelResizeListener();
-        dragListener = new GamePanelMouseListener();
-        stateListener = Services.get(IStateListener.class);
+        if(desc == PanelDescriptors.MENU)
+        {
+            if(menuPanel == null)
+            {
+                menuPanel = new MenuPanel();
+            }
+            return menuPanel;
+        }
 
-        gamePanel.addComponentListener(resizeListener);
-        gamePanel.addMouseMotionListener(dragListener);
-        gamePanel.addMouseListener(dragListener);
-        Services.get(IContextService.class).getThreadContext().addStateListener(stateListener);
+        throw new IllegalArgumentException(String.format("Unsupported PanelDescriptor id: %s", desc.id));
+    }
 
-        animator.start();
+    @Override
+    public void onPanelShown(PanelDescriptor desc)
+    {
+        if(desc == PanelDescriptors.GAME)
+        {
+            gamePanel.addComponentListener(resizeListener);
+            gamePanel.addMouseMotionListener(dragListener);
+            gamePanel.addMouseListener(dragListener);
 
-        rescaleAsync();
-        
+            updatePositionManager();
 
-        addScalableComponents();
-        positionComponents();
+            IStateListener stateListener = Services.get(IStateListener.class);
+            Services.get(IContextService.class).getThreadContext().addStateListener(stateListener);
+
+            animator.start();
+
+            rescaleAsync();
+
+            addScalableComponents();
+            positionComponents();
+        }
+        else if(desc == PanelDescriptors.MENU)
+        {
+
+        }
+    }
+
+    @Override
+    public void onPanelHidden(PanelDescriptor desc)
+    {
+
     }
 
     protected void addScalableComponents()
     {
         IScalingService scaleCompServ = Services.get(IScalingService.class);
 
-        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState()
-                .getCardGame();
+        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState().getCardGame();
 
         // card components
         List<ReadOnlyCard> cards = cardGame.getCards();
@@ -167,26 +206,30 @@ public class GamePanelService implements IGamePanelService
     }
 
     @Override
-    public void destroyGamePanel()
+    public void destroyPanel(PanelDescriptor desc)
     {
         animator.stop();
 
-        if (gamePanel != null)
+        if(desc == PanelDescriptors.GAME)
         {
-            gamePanel.removeComponentListener(resizeListener);
-            gamePanel.removeMouseMotionListener(dragListener);
-            gamePanel.removeMouseListener(dragListener);
-        }
+            if(gamePanel != null)
+            {
+                gamePanel.removeComponentListener(resizeListener);
+                gamePanel.removeMouseMotionListener(dragListener);
+                gamePanel.removeMouseListener(dragListener);
+                gamePanel.removeAll();
 
-        Services.get(IContextService.class).getThreadContext().removeStateListener(stateListener);
-        Services.get(IScalingService.class).clearManagedObjects();
-        resizeListener = null;
-        dragListener = null;
-        gamePanel.removeAll();
-        gamePanel = null;
-        stateListener = null;
+                IStateListener stateListener = Services.get(IStateListener.class);
+                Services.get(IContextService.class).getThreadContext().removeStateListener(stateListener);
+                Services.get(IScalingService.class).clearManagedObjects();
+                resizeListener = null;
+                dragListener = null;
+
+                gamePanel = null;
+            }
+        }
     }
-    
+
     private void updatePositionManager()
     {
         // update the position service by supplying it with the latest game
@@ -203,7 +246,7 @@ public class GamePanelService implements IGamePanelService
         updatePositionManager();
         positionComponents();
     }
-    
+
     private void positionComponents()
     {
         IScalingService scaleServ = Services.get(IScalingService.class);
@@ -211,23 +254,6 @@ public class GamePanelService implements IGamePanelService
         {
             position(scaleComp);
         }
-    }
-
-    @Override
-    public void setDrawDebug(boolean on)
-    {
-        drawDebug = on;
-
-        if (gamePanel != null)
-        {
-            gamePanel.repaint();
-        }
-    }
-
-    @Override
-    public boolean getDrawDebug()
-    {
-        return drawDebug;
     }
 
     @Override
@@ -241,8 +267,7 @@ public class GamePanelService implements IGamePanelService
     protected List<RescaleRequest> createRescaleRequests()
     {
         IIdService idServ = Services.get(IIdService.class);
-        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState()
-                .getCardGame();
+        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState().getCardGame();
 
         List<RescaleRequest> requests = new ArrayList<RescaleRequest>();
 
@@ -261,7 +286,7 @@ public class GamePanelService implements IGamePanelService
         for (ReadOnlyCardStack cs : cardGame.getCardStacks())
         {
             String csType = cs.getCardStackType();
-            ComponentType cd_cardstack = ComponentTypes.CARDSTACK.derive(csType);           
+            ComponentType cd_cardstack = ComponentTypes.CARDSTACK.derive(csType);
             UUID resId = idServ.createCardStackScalableResourceId(csType);
             addRescaleRequest(requests, cd_cardstack, resId);
         }
@@ -341,10 +366,9 @@ public class GamePanelService implements IGamePanelService
     {
         IPositionService posServ = Services.get(IPositionService.class);
 
-        Optional<Integer> maxLayerInUse = animator.getScalableComponents().stream().map(sc -> getLayer(sc))
-                .max(Integer::compare);
+        Optional<Integer> maxLayerInUse = animator.getScalableComponents().stream().map(sc -> getLayer(sc)).max(Integer::compare);
         int layer = posServ.getAnimationLayer();
-        if (maxLayerInUse.isPresent() && maxLayerInUse.get() > layer)
+        if(maxLayerInUse.isPresent() && maxLayerInUse.get() > layer)
         {
             layer = maxLayerInUse.get() + 1;
         }
@@ -356,31 +380,31 @@ public class GamePanelService implements IGamePanelService
     public void updateComponent(IScalableComponent comp)
     {
         ComponentType compType = comp.getComponentType();
-        if (compType.hasTypeName(ComponentTypes.CARD))
+        if(compType.hasTypeName(ComponentTypes.CARD))
         {
             ScalableImageComponent cardComp = (ScalableImageComponent) comp;
             ReadOnlyCard card = (ReadOnlyCard) cardComp.getPayload();
 
             IIdService idServ = Services.get(IIdService.class);
             UUID resId = card.isVisible() ? idServ.createCardFrontScalableResourceId(card.getSuit(), card.getValue())
-                    : idServ.createCardBackScalableResourceId();
+                : idServ.createCardBackScalableResourceId();
             cardComp.setScalableImageResource(resId);
             cardComp.repaint();
 
             return;
         }
-        
-        if (compType.hasTypeName(ComponentTypes.CARDSTACK))
+
+        if(compType.hasTypeName(ComponentTypes.CARDSTACK))
         {
             ScalableImageComponent cardStackComp = (ScalableImageComponent) comp;
             ReadOnlyCardStack cardStack = (ReadOnlyCardStack) cardStackComp.getPayload();
-            
+
             IIdService idServ = Services.get(IIdService.class);
             UUID resId = idServ.createCardStackScalableResourceId(cardStack.getCardStackType());
             cardStackComp.setScalableImageResource(resId);
             return;
         }
-        
+
         throw new UnsupportedOperationException("updateComponent not supported for ComponentType " + compType);
     }
 }

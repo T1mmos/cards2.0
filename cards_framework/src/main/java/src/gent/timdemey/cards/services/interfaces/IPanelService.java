@@ -1,19 +1,23 @@
 package gent.timdemey.cards.services.interfaces;
 
+import java.util.List;
+
+import javax.swing.JComponent;
+
 import gent.timdemey.cards.IPreload;
-import gent.timdemey.cards.services.gamepanel.GamePanel;
+import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 
-public interface IGamePanelService extends IPreload
+public interface IPanelService extends IPreload
 {
-    public GamePanel createGamePanel();
-    public void fillGamePanel();
-    public void destroyGamePanel();
+    public List<PanelDescriptor> getPanelDescriptors();
+    public JComponent getPanel(PanelDescriptor desc);
+    public void onPanelShown(PanelDescriptor desc);
+    public void onPanelHidden(PanelDescriptor desc);
+    public void destroyPanel(PanelDescriptor desc);
 
     public void relayout();
     public void rescaleAsync();
-    public void setDrawDebug(boolean on);
-    public boolean getDrawDebug();
 
     public void startAnimation(IScalableComponent scaleComp);
     public void stopAnimation(IScalableComponent scaleComp);

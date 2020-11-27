@@ -5,6 +5,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.SwingUtilities;
@@ -20,14 +21,16 @@ import gent.timdemey.cards.model.entities.commands.C_ImportExportStateUI;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.dialogs.DialogService;
 import gent.timdemey.cards.services.frame.FrameService;
-import gent.timdemey.cards.services.gamepanel.GamePanelService;
-import gent.timdemey.cards.services.gamepanel.GamePanelStateListener;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IDialogService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
-import gent.timdemey.cards.services.interfaces.IGamePanelService;
+import gent.timdemey.cards.services.interfaces.IPanelService;
+import gent.timdemey.cards.services.panels.GamePanelStateListener;
+import gent.timdemey.cards.services.panels.PanelService;
 import gent.timdemey.cards.ui.actions.ActionFactory;
 import gent.timdemey.cards.ui.actions.ActionService;
 import gent.timdemey.cards.ui.actions.IActionFactory;
@@ -35,8 +38,6 @@ import gent.timdemey.cards.ui.actions.IActionService;
 
 public class StartFrame
 {
-    private static JFrame frame;
-
     private StartFrame()
     {
     }
@@ -44,9 +45,14 @@ public class StartFrame
     public static void installUiServices()
     {
         Services services = App.getServices();
+        if (!Services.isInstalled(IFrameService.class))
+        {
+            IFrameService frameServ = new FrameService();
+            services.install(IFrameService.class, frameServ);
+        }
         if (!Services.isInstalled(IDialogService.class))
         {
-            IDialogService dialogService = new DialogService(frame);
+            IDialogService dialogService = new DialogService();
             services.install(IDialogService.class, dialogService);
         }
         if (!Services.isInstalled(IActionService.class))
@@ -54,20 +60,16 @@ public class StartFrame
             IActionService actionService = new ActionService();
             services.install(IActionService.class, actionService);
         }
-        if (!Services.isInstalled(IFrameService.class))
-        {
-            IFrameService frameServ = new FrameService();
-            services.install(IFrameService.class, frameServ);
-        }
+        
         if (!Services.isInstalled(IActionFactory.class))
         {
             IActionFactory actionFactory = new ActionFactory();
             services.install(IActionFactory.class, actionFactory);
         }
-        if (!Services.isInstalled(IGamePanelService.class))
+        if (!Services.isInstalled(IPanelService.class))
         {
-            IGamePanelService gamePanelMan = new GamePanelService();
-            services.install(IGamePanelService.class, gamePanelMan);
+            IPanelService gamePanelMan = new PanelService();
+            services.install(IPanelService.class, gamePanelMan);
         }
         if (!Services.isInstalled(IStateListener.class))
         {
@@ -80,8 +82,6 @@ public class StartFrame
     {    
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
         ICardPlugin plugin = Services.get(ICardPlugin.class);        
-
-        frame = new JFrame();     
         
         WebLookAndFeel.install();
         IContextService ctxtServ = Services.get(IContextService.class);
@@ -91,27 +91,27 @@ public class StartFrame
         plugin.installUiServices();
         StartFrame.installUiServices();
         
+        IFrameService frameServ = Services.get(IFrameService.class);
+        IPanelService panelServ = Services.get(IPanelService.class);
+        
         Services.preload();
         
         C_ImportExportStateUI cmd_readConfig = new C_ImportExportStateUI(true);
         ctxt.schedule(cmd_readConfig);        
-        
-        IFrameService frameServ = Services.get(IFrameService.class);
-        BufferedImage background = frameServ.getBackground();                        
-        JMenuBar menuBar = frameServ.getMenuBar(plugin);
-        List<Image> images = frameServ.getFrameIcons();
-   
-        frame.setJMenuBar(menuBar);
-        frame.setTitle(String.format("%s v%d.%d", plugin.getName(), plugin.getMajorVersion(), plugin.getMinorVersion()));
-        frame.setSize(new Dimension(800, 600));
-        frame.setMinimumSize(new Dimension(300, 200));
-        frame.setLocationRelativeTo(null);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setContentPane(new BackgroundPanel(background));
-        frame.setIconImages(images);
-        frame.setVisible(true);
 
-        ctxt.addStateListener(new GameBootListener(frame));
+        JFrame frame = frameServ.getFrame();
+        // add different top-level panels (e.g. menu, game, overlay, ...)
+        List<PanelDescriptor> panelDescs = panelServ.getPanelDescriptors();
+        for (PanelDescriptor pDesc : panelDescs)
+        {
+            JComponent comp = panelServ.getPanel(pDesc);
+            frameServ.addPanel(pDesc, comp);
+        }
+
+        ctxt.addStateListener(new GameBootListener());
         ctxt.addStateListener(new StateExportListener());
+        
+        frameServ.setPanel(PanelDescriptors.MENU);
+        frame.setVisible(true);    
     }
 }

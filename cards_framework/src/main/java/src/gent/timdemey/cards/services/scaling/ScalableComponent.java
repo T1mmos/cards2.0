@@ -14,8 +14,9 @@ import javax.swing.JComponent;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
-import gent.timdemey.cards.services.interfaces.IGamePanelService;
-import gent.timdemey.cards.services.scaling.debug.DebugDrawDefines;
+import gent.timdemey.cards.services.interfaces.IFrameService;
+import gent.timdemey.cards.services.interfaces.IPanelService;
+import gent.timdemey.cards.utils.DebugDrawDefines;
 
 public abstract class ScalableComponent implements IScalableComponent
 {
@@ -75,7 +76,7 @@ public abstract class ScalableComponent implements IScalableComponent
 
     public final void drawDebug(Graphics2D g2)
     {
-        if(!Services.get(IGamePanelService.class).getDrawDebug())
+        if(!Services.get(IFrameService.class).getDrawDebug())
         {
             return;
         }
@@ -100,7 +101,7 @@ public abstract class ScalableComponent implements IScalableComponent
         int x = getComponent().getX();
         int y = getComponent().getY();
 
-        IGamePanelService gpServ = Services.get(IGamePanelService.class);
+        IPanelService gpServ = Services.get(IPanelService.class);
         int layer = gpServ.getLayer(this);
 
         return Arrays.asList("rect=" + x + "," + y + ", " + width + "x" + height, "layer=" + layer);

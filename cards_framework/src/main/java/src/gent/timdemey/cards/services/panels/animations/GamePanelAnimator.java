@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.gamepanel.animations;
+package gent.timdemey.cards.services.panels.animations;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,7 +12,7 @@ import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.IAnimation;
 import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.interfaces.IAnimationService;
-import gent.timdemey.cards.services.interfaces.IGamePanelService;
+import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 
@@ -84,7 +84,7 @@ public class GamePanelAnimator
             {
                 i.remove();
 
-                IGamePanelService gpServ = Services.get(IGamePanelService.class);
+                IPanelService gpServ = Services.get(IPanelService.class);
                 if (animTracker.descriptor.dispose)
                 {
                     gpServ.remove(animTracker.component);

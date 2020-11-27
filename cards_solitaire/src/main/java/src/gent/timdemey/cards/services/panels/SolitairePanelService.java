@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.gamepanel;
+package gent.timdemey.cards.services.panels;
 
 import java.util.List;
 import java.util.UUID;
@@ -10,9 +10,10 @@ import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
+import gent.timdemey.cards.services.panels.PanelService;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 
-public class SolitaireGamePanelService extends GamePanelService
+public class SolitairePanelService extends PanelService
 {
     private static final String FILEPATH_CARDSTACK = "stack_solitaire_%s.png";
 

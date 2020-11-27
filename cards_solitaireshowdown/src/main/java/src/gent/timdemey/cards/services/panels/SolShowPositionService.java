@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.gamepanel;
+package gent.timdemey.cards.services.panels;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -19,6 +19,7 @@ import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.SolShowComponentTypes;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
+import gent.timdemey.cards.services.panels.Positions;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 import gent.timdemey.cards.services.scaling.text.ScalableTextComponent;
 

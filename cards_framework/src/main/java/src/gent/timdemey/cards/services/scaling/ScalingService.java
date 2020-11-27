@@ -28,7 +28,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
-import gent.timdemey.cards.services.interfaces.IGamePanelService;
+import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.scaling.img.ScalableImageComponent;
@@ -159,7 +159,7 @@ public final class ScalingService implements IScalingService
     @Override
     public IScalableComponent getComponentAt(Point p)
     {
-        IGamePanelService gpServ = Services.get(IGamePanelService.class);
+        IPanelService gpServ = Services.get(IPanelService.class);
         Iterator<IScalableComponent> it = components.values().stream().sorted((x, y) -> {
             return gpServ.getLayer(y) - gpServ.getLayer(x);
         }).iterator();

@@ -19,7 +19,7 @@ import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.services.interfaces.IGamePanelService;
+import gent.timdemey.cards.services.interfaces.IFrameService;
 
 public class ActionService implements IActionService
 {
@@ -99,8 +99,8 @@ public class ActionService implements IActionService
         switch (id)
         {
         case Actions.ACTION_DEBUG_DRAWOUTLINES:
-            IGamePanelService manager = Services.get(IGamePanelService.class);
-            manager.setDrawDebug(!manager.getDrawDebug());
+            IFrameService frameServ = Services.get(IFrameService.class);
+            frameServ.setDrawDebug(!frameServ.getDrawDebug());
             break;
         case Actions.ACTION_DEBUG_GC:
             System.gc();

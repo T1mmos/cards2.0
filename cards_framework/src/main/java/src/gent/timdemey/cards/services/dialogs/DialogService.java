@@ -8,18 +8,17 @@ import javax.swing.SwingUtilities;
 
 import com.google.common.base.Preconditions;
 
+import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.services.interfaces.IDialogService;
+import gent.timdemey.cards.services.interfaces.IFrameService;
 
 public final class DialogService implements IDialogService
 {
-    private final JFrame frame;
-
-    public DialogService(JFrame frame)
+    public DialogService()
     {
-        this.frame = frame;
     }
 
     @Override
@@ -109,7 +108,8 @@ public final class DialogService implements IDialogService
         });
         t.start();*/
         
-        
+        IFrameService frameServ = Services.get(IFrameService.class);
+        JFrame frame = frameServ.getFrame();
         JDialog dialog = new JDialog(frame, title, true);
         DialogData<OUT> outData = dialogContent.show(dialog, data, closeTypes);
 

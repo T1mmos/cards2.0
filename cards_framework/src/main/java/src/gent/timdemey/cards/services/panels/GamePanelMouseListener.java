@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.gamepanel;
+package gent.timdemey.cards.services.panels;
 
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
@@ -20,7 +20,7 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.interfaces.ICommandService;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.services.interfaces.IGamePanelService;
+import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
@@ -93,7 +93,7 @@ class GamePanelMouseListener extends MouseAdapter
         IPositionService posServ = Services.get(IPositionService.class);
         IScalingService scaleServ = Services.get(IScalingService.class);
         IScalableComponent scaleComp = scaleServ.getComponentAt(e.getPoint());
-        IGamePanelService gpServ = Services.get(IGamePanelService.class);
+        IPanelService gpServ = Services.get(IPanelService.class);
 
         if (!(scaleComp instanceof ScalableImageComponent))
         {
@@ -154,7 +154,6 @@ class GamePanelMouseListener extends MouseAdapter
 
             mouse_xstart = e.getX();
             mouse_ystart = e.getY();
-
         }
         else if (scaleComp.getComponentType().hasTypeName(ComponentTypes.CARDSTACK))
         {
@@ -186,7 +185,7 @@ class GamePanelMouseListener extends MouseAdapter
             int intersectAMax = 0;
             CommandBase cmdMove = null;
             List<UUID> visitedStackIds = new ArrayList<>();
-            IGamePanelService gpServ = Services.get(IGamePanelService.class);
+            IPanelService gpServ = Services.get(IPanelService.class);
             IScalingService scaleServ = Services.get(IScalingService.class);
 
             List<IScalableComponent> overlapComps = scaleServ.getComponentsIn(scaleComp.getCoords().getBounds());

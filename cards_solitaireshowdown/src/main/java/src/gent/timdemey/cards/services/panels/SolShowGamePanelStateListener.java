@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.gamepanel;
+package gent.timdemey.cards.services.panels;
 
 import java.util.UUID;
 
@@ -14,9 +14,11 @@ import gent.timdemey.cards.services.context.ChangeType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.services.interfaces.IGamePanelService;
+import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.interfaces.ISolShowIdService;
+import gent.timdemey.cards.services.panels.GamePanelStateListener;
+import gent.timdemey.cards.services.resources.SolShowResourceDefines;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 import gent.timdemey.cards.services.scaling.text.ScalableFontResource;
 import gent.timdemey.cards.services.scaling.text.ScalableTextComponent;
@@ -26,7 +28,7 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
     @Override
     public void onChange(ReadOnlyChange change)
     {
-        IGamePanelService gpServ = Services.get(IGamePanelService.class);
+        IPanelService gpServ = Services.get(IPanelService.class);
         IContextService contextService = Services.get(IContextService.class);
         IScalingService scaleServ = Services.get(IScalingService.class);
         ISolShowIdService idServ = Services.get(ISolShowIdService.class);
@@ -42,7 +44,7 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
 
             ReadOnlyCard card = state.getCardGame().getCard(cardId);
 
-            UUID resId = idServ.createFontScalableResourceId(SolShowResource.FILEPATH_FONT_SCORE);
+            UUID resId = idServ.createFontScalableResourceId(SolShowResourceDefines.FILEPATH_FONT_SCORE);
             ScalableFontResource scaleFontRes = (ScalableFontResource) scaleServ.getScalableResource(resId);
 
             int incr = typed.newValue - typed.oldValue;

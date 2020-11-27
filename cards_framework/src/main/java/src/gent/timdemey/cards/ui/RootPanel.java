@@ -4,17 +4,16 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-import javax.swing.JPanel;
+import javax.swing.JLayeredPane;
 
 import net.miginfocom.swing.MigLayout;
 
-public class BackgroundPanel extends JPanel
+public class RootPanel extends JLayeredPane
 {
     private BufferedImage tile;
 
-    public BackgroundPanel(BufferedImage image)
+    public RootPanel(BufferedImage image)
     {
-        super(new MigLayout("insets 0"));
         tile = image;
     }
 

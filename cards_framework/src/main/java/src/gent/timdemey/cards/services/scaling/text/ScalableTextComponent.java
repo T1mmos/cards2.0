@@ -22,7 +22,7 @@ import gent.timdemey.cards.services.contract.GetResourceResponse;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaling.ScalableComponent;
-import gent.timdemey.cards.services.scaling.debug.DebugDrawDefines;
+import gent.timdemey.cards.utils.DebugDrawDefines;
 
 public final class ScalableTextComponent extends ScalableComponent
 {    
@@ -69,23 +69,24 @@ public final class ScalableTextComponent extends ScalableComponent
 
     @Override
     protected void drawDebugBoundaries(Graphics2D g2)
-    {
+    {        
+        Rectangle bounds = getCoords().getBounds();
+        
         // jlabel bounding box
         {
             Graphics2D g = (Graphics2D) g2.create();
-            Rectangle bounds = getCoords().getBounds();
             g.setStroke(new BasicStroke());
-            g.setColor(DebugDrawDefines.COLOR_SCALABLETEXTCOMPONENT_BOUNDINGBOX);
-            g.drawRect(0, 0, bounds.width - 1, bounds.height - 1);
+            g.setColor(DebugDrawDefines.COLOR_SCALABLETEXTCOMPONENT_OUTER);
+            g.drawRect(0, 0, bounds.width - 1, bounds.height - 1);            
         }        
 
         // text soft bounding box
         {
             Graphics2D g = (Graphics2D) g2.create();
             Rectangle tb = getTextBounds(g);
-            g.setColor(DebugDrawDefines.COLOR_SCALABLETEXTCOMPONENT_TEXTBOX);
+            g.setColor(DebugDrawDefines.COLOR_SCALABLETEXTCOMPONENT_INNER);
             g.setStroke(DebugDrawDefines.STROKE_DASHED);
-            g.drawRect(tb.x, tb.y, tb.width, tb.height);
+            g.drawRect(tb.x, tb.y, tb.width - 1, tb.height - 1);
         }        
     }
         
@@ -109,8 +110,13 @@ public final class ScalableTextComponent extends ScalableComponent
         FontMetrics fm = g2.getFontMetrics();
         Rectangle2D strRect = fm.getStringBounds(getText(), g2);
 
-        int w = (int) strRect.getWidth() - 1;
-        int h = (int) strRect.getHeight() - 1;
+        int w = (int) strRect.getWidth();
+        int h = (int) strRect.getHeight();
+        
+        if (h > bounds.height)
+        {
+            h = bounds.height;
+        }
 
         int x;
         if(alignment == TextAlignment.Left)
@@ -126,7 +132,7 @@ public final class ScalableTextComponent extends ScalableComponent
             x = bounds.width - w - 1;
         }
         int y = (bounds.height - h) / 2;
-
+        
         return new Rectangle(x, y, w, h);
     }
 
