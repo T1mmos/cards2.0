@@ -37,4 +37,15 @@ public class ColorUtils
     private ColorUtils()
     {
     }
+
+    public static Color interpolate(Color color_start, Color color_end, double frac)
+    {
+        int r = (int) ( (1.0 - frac) * color_start.getRed() + frac * color_end.getRed() );
+        int g = (int) ( (1.0 - frac) * color_start.getGreen() + frac * color_end.getGreen() );
+        int b = (int) ( (1.0 - frac) * color_start.getBlue() + frac * color_end.getBlue() );
+        int a = (int) ( (1.0 - frac) * color_start.getAlpha() + frac * color_end.getAlpha() );
+        
+        Color color = new Color(r,g,b,a);
+        return color;
+    }
 }

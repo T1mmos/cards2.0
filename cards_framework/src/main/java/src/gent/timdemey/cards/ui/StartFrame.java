@@ -83,7 +83,6 @@ public class StartFrame
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
         ICardPlugin plugin = Services.get(ICardPlugin.class);        
         
-        WebLookAndFeel.install();
         IContextService ctxtServ = Services.get(IContextService.class);
         ctxtServ.initialize(ContextType.UI);
         Context ctxt = ctxtServ.getThreadContext();

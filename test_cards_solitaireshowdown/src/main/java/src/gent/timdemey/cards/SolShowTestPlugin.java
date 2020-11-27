@@ -6,6 +6,8 @@ import gent.timdemey.cards.services.frame.SolShowTestFrameService;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.INetworkService;
+import gent.timdemey.cards.services.interfaces.IPanelService;
+import gent.timdemey.cards.services.panels.SolShowTestPanelService;
 import gent.timdemey.cards.test.mock.MockNetworkService;
 import gent.timdemey.cards.ui.actions.IActionFactory;
 import gent.timdemey.cards.ui.actions.IActionService;
@@ -22,6 +24,7 @@ public class SolShowTestPlugin extends SolShowPlugin
         App.getServices().install(IContextService.class, new ContextService());
         App.getServices().install(IActionService.class, new SolShowTestActionService());
         App.getServices().install(IFrameService.class, new SolShowTestFrameService());
+        App.getServices().install(IPanelService.class, new SolShowTestPanelService());
         App.getServices().install(INetworkService.class, new MockNetworkService());
     }
     

@@ -117,9 +117,10 @@ public final class Services
         EntryKey entryKey = new EntryKey(iface, param);
         if (serviceMap.containsKey(entryKey))
         {
-            String msg = "Service for interface %s (param=%s) already installed: %s";
-            String formatted = String.format(msg, iface.getSimpleName(), param, implementation.getClass().getSimpleName());
-            throw new IllegalStateException(formatted);
+            Object impl = serviceMap.get(entryKey);
+            String msg = "Service %s for interface %s (param=%s) cannot be installed: an implementation is already installed: %s";
+            String formatted = String.format(msg, implementation.getClass().getSimpleName(), iface.getSimpleName(), param, impl.getClass().getSimpleName());
+         //   throw new IllegalStateException(formatted);
         }
         
         serviceMap.put(entryKey, implementation);

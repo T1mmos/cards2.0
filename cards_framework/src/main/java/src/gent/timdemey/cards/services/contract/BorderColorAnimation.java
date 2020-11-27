@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 import gent.timdemey.cards.services.scaling.text.ScalableTextComponent;
+import gent.timdemey.cards.utils.ColorUtils;
 
 public class BorderColorAnimation implements IAnimation
 {
@@ -19,13 +20,8 @@ public class BorderColorAnimation implements IAnimation
     @Override
     public void tick(IScalableComponent comp, double frac, AnimationStart animStart)
     {
-        int r = (int) ( (1.0 - frac) * color_start.getRed() + frac * color_end.getRed() );
-        int g = (int) ( (1.0 - frac) * color_start.getGreen() + frac * color_end.getGreen() );
-        int b = (int) ( (1.0 - frac) * color_start.getBlue() + frac * color_end.getBlue() );
-        int a = (int) ( (1.0 - frac) * color_start.getAlpha() + frac * color_end.getAlpha() );
-        
-        Color color = new Color(r,g,b,a);
-        
+        Color color = ColorUtils.interpolate(color_start, color_end, frac);
+                
         if (comp instanceof ScalableTextComponent)
         {
             ScalableTextComponent textComp = (ScalableTextComponent) comp;

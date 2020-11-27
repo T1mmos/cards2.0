@@ -20,7 +20,7 @@ public final class ScalableFontResource extends ScalableResource<Font>
         // we always rescale fonts
         return true;
     }
-    
+
     @Override
     protected Dimension canonical(Dimension dim)
     {

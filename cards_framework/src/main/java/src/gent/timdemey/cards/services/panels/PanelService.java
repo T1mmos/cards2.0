@@ -2,14 +2,17 @@ package gent.timdemey.cards.services.panels;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
 
+import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.cards.Suit;
 import gent.timdemey.cards.model.entities.cards.Value;
@@ -32,11 +35,16 @@ import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.panels.animations.GamePanelAnimator;
+import gent.timdemey.cards.services.resources.ResourceDefines;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 import gent.timdemey.cards.services.scaling.IScalableResource;
 import gent.timdemey.cards.services.scaling.img.ScalableImageComponent;
 import gent.timdemey.cards.services.scaling.img.ScalableImageResource;
 import gent.timdemey.cards.services.scaling.text.ScalableFontResource;
+import gent.timdemey.cards.ui.actions.ActionDef;
+import gent.timdemey.cards.ui.actions.Actions;
+import gent.timdemey.cards.ui.actions.IActionFactory;
+import net.miginfocom.swing.MigLayout;
 
 public class PanelService implements IPanelService
 {
@@ -148,11 +156,48 @@ public class PanelService implements IPanelService
             if(menuPanel == null)
             {
                 menuPanel = new MenuPanel();
+                menuPanel.setLayout(new MigLayout("insets 0, align 50% 50%"));
+
+                List<String> actionNames = getMenuActionDefs();
+
+                MenuButtonMouseListener listener = new MenuButtonMouseListener();
+                IResourceService resServ = Services.get(IResourceService.class);
+                Font font = resServ.getFont(ResourceDefines.FILEPATH_FONT_MENU).raw.deriveFont(30f);
+
+                IActionFactory actFact = Services.get(IActionFactory.class);
+                for (String actionName : actionNames)
+                {
+                    ActionDef act_createmp = actFact.getActionDef(actionName);
+                    JButton button = new JButton(act_createmp.action);
+                    button.setContentAreaFilled(false);
+                    button.setBorder(null);
+                    button.setBorderPainted(false);
+                    button.setOpaque(false);
+
+                    button.addMouseListener(listener);
+                    button.setFont(font);
+
+                    menuPanel.add(button, "sg buts, wrap");
+                }
             }
             return menuPanel;
         }
 
         throw new IllegalArgumentException(String.format("Unsupported PanelDescriptor id: %s", desc.id));
+    }
+
+    protected List<String> getMenuActionDefs()
+    {
+        ICardPlugin cardPlugin = Services.get(ICardPlugin.class);
+        if(cardPlugin.getPlayerCount() > 1)
+        {
+            return Arrays.asList(Actions.ACTION_CREATE_MULTIPLAYER, Actions.ACTION_JOIN, Actions.ACTION_QUIT);
+        }
+        else
+        {
+            return Arrays.asList(Actions.ACTION_START, Actions.ACTION_QUIT);
+        }
+
     }
 
     @Override
