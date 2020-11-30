@@ -137,6 +137,8 @@ public class PanelService implements IPanelService
         { PanelDescriptors.GAME, PanelDescriptors.MENU });
     }
 
+   
+    
     @Override
     public JComponent getPanel(PanelDescriptor desc)
     {
@@ -145,8 +147,6 @@ public class PanelService implements IPanelService
             if(gamePanel == null)
             {
                 gamePanel = new GamePanel();
-                resizeListener = new GamePanelResizeListener();
-                dragListener = new GamePanelMouseListener();
             }
             return gamePanel;
         }
@@ -185,6 +185,74 @@ public class PanelService implements IPanelService
 
         throw new IllegalArgumentException(String.format("Unsupported PanelDescriptor id: %s", desc.id));
     }
+    
+
+    @Override
+    public void createPanel(PanelDescriptor desc)
+    {
+        if(desc == PanelDescriptors.GAME)
+        {                        
+            resizeListener = new GamePanelResizeListener();
+            dragListener = new GamePanelMouseListener();
+            
+            
+
+            updatePositionManager();
+
+            IStateListener stateListener = Services.get(IStateListener.class);
+            Services.get(IContextService.class).getThreadContext().addStateListener(stateListener);
+
+            animator.start();
+
+            rescaleResourcesAsync();
+            addScalableComponents();
+            positionComponents();
+        }
+    }
+    
+    @Override
+    public void destroyPanel(PanelDescriptor desc)
+    {
+        if(desc == PanelDescriptors.GAME)
+        {
+            if(gamePanel != null)
+            {
+                animator.stop();
+                
+                gamePanel.removeAll();
+
+                IStateListener stateListener = Services.get(IStateListener.class);
+                Services.get(IContextService.class).getThreadContext().removeStateListener(stateListener);
+              //  Services.get(IScalingService.class).clearManagedObjects();
+                
+                resizeListener = null;
+                dragListener = null;
+            }
+        }
+    }
+
+    @Override
+    public void onPanelShown(PanelDescriptor desc)
+    {
+        if(desc == PanelDescriptors.GAME)
+        {
+            gamePanel.addComponentListener(resizeListener);
+            gamePanel.addMouseMotionListener(dragListener);
+            gamePanel.addMouseListener(dragListener);
+        }
+    }
+
+    @Override
+    public void onPanelHidden(PanelDescriptor desc)
+    {
+        if (desc == PanelDescriptors.GAME)
+        {
+            gamePanel.removeComponentListener(resizeListener);
+            gamePanel.removeMouseMotionListener(dragListener);
+            gamePanel.removeMouseListener(dragListener);
+        }
+    }
+
 
     protected List<String> getMenuActionDefs()
     {
@@ -197,39 +265,6 @@ public class PanelService implements IPanelService
         {
             return Arrays.asList(Actions.ACTION_START, Actions.ACTION_QUIT);
         }
-
-    }
-
-    @Override
-    public void onPanelShown(PanelDescriptor desc)
-    {
-        if(desc == PanelDescriptors.GAME)
-        {
-            gamePanel.addComponentListener(resizeListener);
-            gamePanel.addMouseMotionListener(dragListener);
-            gamePanel.addMouseListener(dragListener);
-
-            updatePositionManager();
-
-            IStateListener stateListener = Services.get(IStateListener.class);
-            Services.get(IContextService.class).getThreadContext().addStateListener(stateListener);
-
-            animator.start();
-
-            rescaleAsync();
-
-            addScalableComponents();
-            positionComponents();
-        }
-        else if(desc == PanelDescriptors.MENU)
-        {
-
-        }
-    }
-
-    @Override
-    public void onPanelHidden(PanelDescriptor desc)
-    {
 
     }
 
@@ -249,32 +284,7 @@ public class PanelService implements IPanelService
             updateComponent(scaleComp);
         }
     }
-
-    @Override
-    public void destroyPanel(PanelDescriptor desc)
-    {
-        animator.stop();
-
-        if(desc == PanelDescriptors.GAME)
-        {
-            if(gamePanel != null)
-            {
-                gamePanel.removeComponentListener(resizeListener);
-                gamePanel.removeMouseMotionListener(dragListener);
-                gamePanel.removeMouseListener(dragListener);
-                gamePanel.removeAll();
-
-                IStateListener stateListener = Services.get(IStateListener.class);
-                Services.get(IContextService.class).getThreadContext().removeStateListener(stateListener);
-                Services.get(IScalingService.class).clearManagedObjects();
-                resizeListener = null;
-                dragListener = null;
-
-                gamePanel = null;
-            }
-        }
-    }
-
+    
     private void updatePositionManager()
     {
         // update the position service by supplying it with the latest game
@@ -302,7 +312,7 @@ public class PanelService implements IPanelService
     }
 
     @Override
-    public final void rescaleAsync()
+    public final void rescaleResourcesAsync()
     {
         IScalingService scaleServ = Services.get(IScalingService.class);
         List<RescaleRequest> requests = createRescaleRequests();

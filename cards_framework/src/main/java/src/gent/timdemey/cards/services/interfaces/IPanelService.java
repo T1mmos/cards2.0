@@ -14,10 +14,11 @@ public interface IPanelService extends IPreload
     public JComponent getPanel(PanelDescriptor desc);
     public void onPanelShown(PanelDescriptor desc);
     public void onPanelHidden(PanelDescriptor desc);
+    public void createPanel(PanelDescriptor game);
     public void destroyPanel(PanelDescriptor desc);
 
     public void relayout();
-    public void rescaleAsync();
+    public void rescaleResourcesAsync();
 
     public void startAnimation(IScalableComponent scaleComp);
     public void stopAnimation(IScalableComponent scaleComp);

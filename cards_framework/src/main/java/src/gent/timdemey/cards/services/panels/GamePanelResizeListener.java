@@ -97,7 +97,7 @@ class GamePanelResizeListener implements ComponentListener
     private void doUpdateUI(GamePanel gamePanel)
     {
         IPanelService gamePanelServ = Services.get(IPanelService.class);
-        SwingUtilities.invokeLater(() -> gamePanelServ.rescaleAsync());
+        SwingUtilities.invokeLater(() -> gamePanelServ.rescaleResourcesAsync());
     }
 
     @Override

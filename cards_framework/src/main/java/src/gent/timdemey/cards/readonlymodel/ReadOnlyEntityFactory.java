@@ -231,6 +231,11 @@ public class ReadOnlyEntityFactory
 
         T roEntity = (T) typedEntities.get(entity.id);
 
+        if (roEntity != null && roEntity.entity != entity)
+        {
+            roEntity = null;
+        }
+        
         if (roEntity == null)
         {
             roEntity = creator.CreateReadOnlyEntity(entity);

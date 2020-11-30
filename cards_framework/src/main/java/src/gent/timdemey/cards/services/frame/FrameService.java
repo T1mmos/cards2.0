@@ -95,7 +95,7 @@ public class FrameService implements IFrameService
         {
             JComponent currComp = panels.get(currPanelDesc);
             currComp.setVisible(false);
-            panelServ.onPanelHidden(desc);
+            panelServ.onPanelHidden(currPanelDesc);
         }
         
         JComponent comp = panels.get(desc);

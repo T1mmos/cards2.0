@@ -29,19 +29,19 @@ public class GameBootListener implements IStateListener
 
         if (change.property == ReadOnlyState.CardGame)
         {
+            IFrameService frameServ = Services.get(IFrameService.class);
+            IPanelService panelServ = Services.get(IPanelService.class);
+            
             ReadOnlyCardGame cardGame = state.getCardGame();
             if (cardGame == null)
             {
-                Services.get(IPanelService.class).destroyPanel(PanelDescriptors.GAME);
-                Services.get(IFrameService.class).setPanel(PanelDescriptors.MENU);
+                frameServ.setPanel(PanelDescriptors.MENU);
+                panelServ.destroyPanel(PanelDescriptors.GAME);
             }
             else
             {
-                SwingUtilities.invokeLater(() -> 
-                {                 
-                    IFrameService frameServ = Services.get(IFrameService.class);
-                    frameServ.setPanel(PanelDescriptors.GAME);
-                });
+                panelServ.createPanel(PanelDescriptors.GAME);                  
+                frameServ.setPanel(PanelDescriptors.GAME);            
             }
         }
     }
