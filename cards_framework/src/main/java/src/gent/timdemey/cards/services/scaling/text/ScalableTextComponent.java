@@ -211,17 +211,20 @@ public final class ScalableTextComponent extends ScalableComponent
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             // text
-            FontRenderContext frc = g2d.getFontRenderContext();
+            if (text != null && !text.isEmpty())
+            {
+                FontRenderContext frc = g2d.getFontRenderContext();
 
-            TextLayout tl = new TextLayout(text, g2d.getFont(), frc);
-            Shape shape = tl.getOutline(null);
+                TextLayout tl = new TextLayout(text, g2d.getFont(), frc);
+                Shape shape = tl.getOutline(null);
 
-            float strokeWidth = 1.0f * font.getSize() / 16;
-            g2d.setStroke(new BasicStroke(strokeWidth));
-            g2d.setColor(getInnerColor());
-            g2d.fill(shape);
-            g2d.setColor(getOuterColor());
-            g2d.draw(shape);
+                float strokeWidth = 1.0f * font.getSize() / 16;
+                g2d.setStroke(new BasicStroke(strokeWidth));
+                g2d.setColor(getInnerColor());
+                g2d.fill(shape);
+                g2d.setColor(getOuterColor());
+                g2d.draw(shape);                    
+            }               
             
             g2d.dispose();
             

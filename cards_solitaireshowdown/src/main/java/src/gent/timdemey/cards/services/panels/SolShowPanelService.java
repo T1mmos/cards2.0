@@ -290,7 +290,7 @@ public class SolShowPanelService extends PanelService
         {
             ScalableTextComponent textComp = (ScalableTextComponent) comp;
             ReadOnlyPlayer player = (ReadOnlyPlayer) comp.getPayload();
-            textComp.setText(player.getName());         
+            textComp.setText(player.getName());        
             return;
         }
         else if (comp.getComponentType().hasTypeName(SolShowComponentTypes.PLAYERBG) ||
