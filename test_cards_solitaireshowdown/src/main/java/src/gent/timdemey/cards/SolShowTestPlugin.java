@@ -17,22 +17,23 @@ import gent.timdemey.cards.ui.actions.SolShowTestActionService;
 public class SolShowTestPlugin extends SolShowPlugin 
 {
     @Override
-    public void installServices()
+    public void installServices(Services services)
     {
-        super.installServices();
+        super.installServices(services);
         
-        App.getServices().install(IContextService.class, new ContextService());
-        App.getServices().install(IActionService.class, new SolShowTestActionService());
-        App.getServices().install(IFrameService.class, new SolShowTestFrameService());
-        App.getServices().install(IPanelService.class, new SolShowTestPanelService());
-        App.getServices().install(INetworkService.class, new MockNetworkService());
+        services.install(IContextService.class, new ContextService());
+        services.install(IActionService.class, new SolShowTestActionService());
+        services.install(IFrameService.class, new SolShowTestFrameService());
+        services.install(IPanelService.class, new SolShowTestPanelService());
+        services.install(INetworkService.class, new MockNetworkService());
     }
     
     @Override
-    public void installUiServices()
+    public void installUiServices(Services services)
     {
-        super.installUiServices();
-        App.getServices().install(IActionFactory.class, new SolShowTestActionFactory());        
+        super.installUiServices(services);
+        
+        services.install(IActionFactory.class, new SolShowTestActionFactory());        
     }
     
     @Override

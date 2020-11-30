@@ -14,20 +14,19 @@ import gent.timdemey.cards.services.panels.SolitairePositionService;
 
 public class SolitairePlugin implements ICardPlugin
 {
-
     @Override
-    public void installServices()
-    {
-        App.getServices().install(ICommandService.class, new SolitaireCommandService());
-        App.getServices().install(ICardGameService.class, new SolitaireCardGameCreationService());
-        App.getServices().install(IIdService.class, new SolitaireIdService());
+    public void installServices(Services services)
+    {        
+        services.installIfAbsent(ICommandService.class, () -> new SolitaireCommandService());
+        services.installIfAbsent(ICardGameService.class, () -> new SolitaireCardGameCreationService());
+        services.installIfAbsent(IIdService.class, () -> new SolitaireIdService());
     }
 
     @Override
-    public void installUiServices()
+    public void installUiServices(Services services)
     {
-        App.getServices().install(IPositionService.class, new SolitairePositionService());
-        App.getServices().install(IPanelService.class, new SolitairePanelService());
+        App.getServices().installIfAbsent(IPositionService.class, () -> new SolitairePositionService());
+        App.getServices().installIfAbsent(IPanelService.class, () -> new SolitairePanelService());
     }
 
     @Override

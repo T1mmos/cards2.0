@@ -56,98 +56,11 @@ public final class DialogService implements IDialogService
     {
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
         Logger.info("Showing dialog with title: " + title);
-
-     /*   JPanel glass = new JPanel(new MigLayout("insets 0"));
-        Container root = frame.getRootPane();
-        
-        int width = root.getWidth();
-        int height = root.getHeight();
-        
-        BufferedImage bi = new BufferedImage(width, height,  BufferedImage.TYPE_INT_ARGB); 
-        Graphics2D g = (Graphics2D) bi.getGraphics();
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        root.paint(g);
-        
-        frame.setGlassPane(glass);
-        
-        glass.add(new JLabel("TEST"));
-        final Timer t = new Timer(100, null);
-        int max = 7;
-        t.addActionListener(new ActionListener()
-        {
-            int i = 2;
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-               
-                
-                int size = i;
-                float div = size*size;
-                float[] mask = new float[size*size];
-                float value = 1f / div;
-                Arrays.fill(mask, value);
-                Kernel kernel = new Kernel(size, size, mask);
-                BufferedImageOp op = new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null);
-                BufferedImage blurred = op.filter(bi, null);
-                ImageIcon img = new ImageIcon(blurred);
-
-                JLabel label = new JLabel(img);
-
-                glass.removeAll();
-                glass.add(label);
-
-                glass.validate();
-                glass.setVisible(true);
-                
-                if (++i == max)
-                {
-                    t.stop();
-                }
-            }
-        });
-        t.start();*/
         
         IFrameService frameServ = Services.get(IFrameService.class);
         JFrame frame = frameServ.getFrame();
         JDialog dialog = new JDialog(frame, title, true);
         DialogData<OUT> outData = dialogContent.show(dialog, data, closeTypes);
-
-       /* final Timer t2 = new Timer(100, null);
-        t2.addActionListener(new ActionListener()
-        {
-            int i = max - 1;
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                int size = i;
-                float div = size*size;
-                float[] mask = new float[size*size];
-                float value = 1f / div;
-                Arrays.fill(mask, value);
-                Kernel kernel = new Kernel(size, size, mask);
-                BufferedImageOp op = new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null);
-                BufferedImage blurred = op.filter(bi, null);
-                ImageIcon img = new ImageIcon(blurred);
-
-                JLabel label = new JLabel(img);
-
-                glass.removeAll();
-                glass.add(label);
-                glass.add(new JLabel("HEHEH"), "push, grow, wrap");
-
-                glass.validate();
-                
-                if (--i == 2)
-                {
-                    t2.stop();
-                    glass.setVisible(false);
-                }
-            }
-        });
-        t2.start();
-        */
-    //   
         
         return outData;
     }

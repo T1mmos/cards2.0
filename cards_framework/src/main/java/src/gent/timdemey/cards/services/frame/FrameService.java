@@ -27,8 +27,8 @@ import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 import gent.timdemey.cards.services.interfaces.IConfigManager;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
+import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.services.interfaces.IResourceService;
-import gent.timdemey.cards.services.resources.ResourceDefines;
 import gent.timdemey.cards.ui.RootPanel;
 import gent.timdemey.cards.ui.actions.ActionDef;
 import gent.timdemey.cards.ui.actions.Actions;
@@ -131,9 +131,10 @@ public class FrameService implements IFrameService
         List<Image> images = new ArrayList<>();
 
         IResourceService resServ = Services.get(IResourceService.class);
+        IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
         for (int dim : new int []{16,24,48,140})
-        {
-            ImageResource resp = resServ.getImage(String.format(ResourceDefines.APP_ICON, dim, dim));
+        {            
+            ImageResource resp = resServ.getImage(resLocServ.getAppIconFilePath(dim));
             images.add(resp.raw);
         }
 

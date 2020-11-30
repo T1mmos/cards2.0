@@ -4,16 +4,15 @@ import gent.timdemey.cards.model.state.State;
 
 public class MockCardPlugin implements ICardPlugin
 {
-
     @Override
-    public void installServices()
+    public void installServices(Services services)
     {
         // not necessary, the unit tests must install the required (mock)
         // services
     }
 
     @Override
-    public void installUiServices()
+    public void installUiServices(Services services)
     {
 
     }

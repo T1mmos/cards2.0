@@ -20,20 +20,14 @@ public class ResourceRepository implements IResourceRepository
     {        
     }    
 
-    @Override
-    public final void loadRepositories()
-    {
-        Map<ResourceType, List<URL>> typeUrls = new HashMap<>();
-        buildUrlLists(typeUrls);
-        createResourceLoaders(typeUrls);
-    }
+    
     
     protected void buildUrlLists (Map<ResourceType, List<URL>> typeUrls)
     {
         addUrl(typeUrls, ResourceType.IMAGE, ICardPlugin.class, "/img/");
         addUrl(typeUrls, ResourceType.SOUND, ICardPlugin.class, "/snd/");
         addUrl(typeUrls, ResourceType.LOCALIZATION, ICardPlugin.class, "/loc/");
-        addUrl(typeUrls, ResourceType.FONT, ICardPlugin.class,"/fonts/");
+        addUrl(typeUrls, ResourceType.FONT, ICardPlugin.class, "/fonts/");
     }
     
     protected static void addUrl (Map<ResourceType, List<URL>> typeUrls, ResourceType type, Class<?> clazz, String dir)
@@ -90,5 +84,18 @@ public class ResourceRepository implements IResourceRepository
                     "This resource manager currently doesn't support loading resource of type " + type);
         }
         return resLoader;
+    }
+
+    @Override
+    public void preload()
+    {
+        loadRepositories();
+    }
+    
+    private final void loadRepositories()
+    {
+        Map<ResourceType, List<URL>> typeUrls = new HashMap<>();
+        buildUrlLists(typeUrls);
+        createResourceLoaders(typeUrls);
     }
 }

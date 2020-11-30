@@ -23,22 +23,22 @@ import gent.timdemey.cards.services.resources.SolShowResourceRepository;
 public class SolShowPlugin implements ICardPlugin
 {
     @Override
-    public void installServices()
+    public void installServices(Services services)
     {
-        App.getServices().install(ICommandService.class, new SolShowCommandService());
-        App.getServices().install(ICardGameService.class, new SolShowCardGameService());
-        App.getServices().install(ISerializationService.class, new SolShowSerializationService());
-        App.getServices().install(ISolShowIdService.class, new SolShowIdService());
-        App.getServices().install(IPanelService.class, new SolShowPanelService());
-        App.getServices().install(IAnimationService.class, new SolShowAnimationService());
-        App.getServices().install(IResourceRepository.class, new SolShowResourceRepository());
+        services.installIfAbsent(ICommandService.class, () -> new SolShowCommandService());
+        services.installIfAbsent(ICardGameService.class, () -> new SolShowCardGameService());
+        services.installIfAbsent(ISerializationService.class, () -> new SolShowSerializationService());
+        services.installIfAbsent(ISolShowIdService.class, () -> new SolShowIdService());
+        services.installIfAbsent(IPanelService.class, () -> new SolShowPanelService());
+        services.installIfAbsent(IAnimationService.class, () -> new SolShowAnimationService());
+        services.installIfAbsent(IResourceRepository.class, () -> new SolShowResourceRepository());
     }
 
     @Override
-    public void installUiServices()
+    public void installUiServices(Services services)
     {
-        App.getServices().install(IPositionService.class, new SolShowPositionService());
-        App.getServices().install(IStateListener.class, new SolShowGamePanelStateListener());
+        services.installIfAbsent(IPositionService.class, () -> new SolShowPositionService());
+        services.installIfAbsent(IStateListener.class, () -> new SolShowGamePanelStateListener());
     }
 
     @Override

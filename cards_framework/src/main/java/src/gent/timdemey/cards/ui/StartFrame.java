@@ -1,22 +1,17 @@
 package gent.timdemey.cards.ui;
 
-import java.awt.Dimension;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JMenuBar;
 import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
 
-import com.alee.laf.WebLookAndFeel;
 import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.App;
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.model.entities.commands.C_ImportExportStateUI;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.services.context.Context;
@@ -42,40 +37,14 @@ public class StartFrame
     {
     }
 
-    public static void installUiServices()
+    public static void installUiServices(Services services)
     {
-        Services services = App.getServices();
-        if (!Services.isInstalled(IFrameService.class))
-        {
-            IFrameService frameServ = new FrameService();
-            services.install(IFrameService.class, frameServ);
-        }
-        if (!Services.isInstalled(IDialogService.class))
-        {
-            IDialogService dialogService = new DialogService();
-            services.install(IDialogService.class, dialogService);
-        }
-        if (!Services.isInstalled(IActionService.class))
-        {
-            IActionService actionService = new ActionService();
-            services.install(IActionService.class, actionService);
-        }
-        
-        if (!Services.isInstalled(IActionFactory.class))
-        {
-            IActionFactory actionFactory = new ActionFactory();
-            services.install(IActionFactory.class, actionFactory);
-        }
-        if (!Services.isInstalled(IPanelService.class))
-        {
-            IPanelService gamePanelMan = new PanelService();
-            services.install(IPanelService.class, gamePanelMan);
-        }
-        if (!Services.isInstalled(IStateListener.class))
-        {
-            IStateListener stateListener = new GamePanelStateListener();
-            services.install(IStateListener.class, stateListener);
-        }
+        services.installIfAbsent(IFrameService.class, () -> new FrameService());
+        services.installIfAbsent(IDialogService.class, () -> new DialogService());
+        services.installIfAbsent(IActionService.class, () -> new ActionService());
+        services.installIfAbsent(IActionFactory.class, () -> new ActionFactory());
+        services.installIfAbsent(IPanelService.class, () -> new PanelService());
+        services.installIfAbsent(IStateListener.class, () -> new GamePanelStateListener());
     }
 
     public static void StartUI()
@@ -87,13 +56,15 @@ public class StartFrame
         ctxtServ.initialize(ContextType.UI);
         Context ctxt = ctxtServ.getThreadContext();
         
-        plugin.installUiServices();
-        StartFrame.installUiServices();
+        Services services = App.getServices();
+        plugin.installUiServices(services);
+        StartFrame.installUiServices(services);
         
         IFrameService frameServ = Services.get(IFrameService.class);
         IPanelService panelServ = Services.get(IPanelService.class);
         
         Services.preload();
+        Loc.setLocale(Loc.AVAILABLE_LOCALES[0]);
         
         C_ImportExportStateUI cmd_readConfig = new C_ImportExportStateUI(true);
         ctxt.schedule(cmd_readConfig);        

@@ -3,6 +3,7 @@ package gent.timdemey.cards;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -98,6 +99,15 @@ public final class Services
         return value != null;
     }
 
+    public <T> void installIfAbsent(Class<T> iface, Supplier<T> creator)
+    {
+        if(!isInstalled(iface))
+        {
+            T impl = creator.get();
+            install(iface, impl);
+        }
+    }
+    
     public <T> void install(Class<T> iface, T implementation)
     {
         install(iface, null, implementation);

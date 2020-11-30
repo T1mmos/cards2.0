@@ -2,7 +2,9 @@ package gent.timdemey.cards.services.interfaces;
 
 import java.io.InputStream;
 
-public interface IResourceRepository
+import gent.timdemey.cards.IPreload;
+
+public interface IResourceRepository extends IPreload
 {
     public enum ResourceType
     {
@@ -11,8 +13,6 @@ public interface IResourceRepository
         LOCALIZATION,
         FONT
     }
-    
-    public void loadRepositories();
     
     public InputStream getResourceAsStream(ResourceType type, String name);
 

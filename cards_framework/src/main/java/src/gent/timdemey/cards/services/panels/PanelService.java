@@ -32,10 +32,10 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
+import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.services.interfaces.IResourceService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.panels.animations.GamePanelAnimator;
-import gent.timdemey.cards.services.resources.ResourceDefines;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 import gent.timdemey.cards.services.scaling.IScalableResource;
 import gent.timdemey.cards.services.scaling.img.ScalableImageComponent;
@@ -48,8 +48,6 @@ import net.miginfocom.swing.MigLayout;
 
 public class PanelService implements IPanelService
 {
-    private static final String FILEPATH_CARD_FRONTSIDE = "cards/edge_thick/%s_%s.png";
-    private static final String FILEPATH_CARD_BACKSIDE = "cards/edge_thick/backside_yellow.png";
 
     private final GamePanelAnimator animator;
 
@@ -101,9 +99,10 @@ public class PanelService implements IPanelService
     protected void preloadCards()
     {
         IIdService idServ = Services.get(IIdService.class);
+        IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
 
         // card back
-        preloadImage(idServ.createCardBackScalableResourceId(), getCardBackFilePath());
+        preloadImage(idServ.createCardBackScalableResourceId(), resLocServ.getCardBackFilePath());
 
         // card fronts
         for (Suit suit : Suit.values())
@@ -111,24 +110,11 @@ public class PanelService implements IPanelService
             for (Value value : Value.values()) // have fun reading the code lol
             {
                 UUID resId = idServ.createCardFrontScalableResourceId(suit, value);
-                String filepath = getCardFrontFilePath(suit, value);
-                preloadImage(resId, filepath);
+                preloadImage(resId, resLocServ.getCardFrontFilePath(suit, value));
             }
         }
     }
 
-    private String getCardFrontFilePath(Suit suit, Value value)
-    {
-        String suit_str = suit.name().substring(0, 1);
-        String value_str = value.getTextual();
-
-        return String.format(FILEPATH_CARD_FRONTSIDE, suit_str, value_str);
-    }
-
-    private String getCardBackFilePath()
-    {
-        return FILEPATH_CARD_BACKSIDE;
-    }
 
     @Override
     public List<PanelDescriptor> getPanelDescriptors()
@@ -161,8 +147,10 @@ public class PanelService implements IPanelService
                 List<String> actionNames = getMenuActionDefs();
 
                 MenuButtonMouseListener listener = new MenuButtonMouseListener();
+                IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
                 IResourceService resServ = Services.get(IResourceService.class);
-                Font font = resServ.getFont(ResourceDefines.FILEPATH_FONT_MENU).raw.deriveFont(30f);
+                
+                Font font = resServ.getFont(resLocServ.getMenuFontFilePath()).raw.deriveFont(30f);
 
                 IActionFactory actFact = Services.get(IActionFactory.class);
                 for (String actionName : actionNames)
