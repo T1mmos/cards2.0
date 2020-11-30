@@ -1,5 +1,6 @@
 package gent.timdemey.cards.services.frame;
 
+import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -54,7 +55,7 @@ public class FrameService implements IFrameService
             
             BufferedImage bg = getBackgroundImage();
             rootPanel = new RootPanel(bg);
-            rootPanel.setLayout(new MigLayout("insets 0"));
+            rootPanel.setLayout(new CardLayout());
             frame.setContentPane(rootPanel);
             
             JMenuBar menuBar = getMenuBar(plugin);
@@ -79,7 +80,7 @@ public class FrameService implements IFrameService
             panels = new HashMap<>();
         }
         
-        rootPanel.add(comp, "push, grow, hidemode 3");
+        rootPanel.add(comp);
         rootPanel.setLayer(comp, pDesc.layer, 0);
         
         comp.setVisible(false);
@@ -87,11 +88,11 @@ public class FrameService implements IFrameService
     }
     
     @Override
-    public void setPanel(PanelDescriptor desc)
+    public void showPanel(PanelDescriptor desc)
     {
         IPanelService panelServ = Services.get(IPanelService.class);
         
-        if (currPanelDesc != null)
+        if (currPanelDesc != null && !desc.overlay)
         {
             JComponent currComp = panels.get(currPanelDesc);
             currComp.setVisible(false);
@@ -103,6 +104,19 @@ public class FrameService implements IFrameService
         currPanelDesc = desc;
         
         panelServ.onPanelShown(desc);
+    }
+    
+    @Override
+    public void hidePanel(PanelDescriptor desc)
+    {
+        IPanelService panelServ = Services.get(IPanelService.class);
+        
+        if (desc.overlay)
+        {
+            JComponent currComp = panels.get(desc);
+            currComp.setVisible(false);
+            panelServ.onPanelHidden(desc);
+        }
     }
 
     @Override
@@ -116,8 +130,10 @@ public class FrameService implements IFrameService
     {
         drawDebug = on;
 
-        JComponent comp = panels.get(currPanelDesc);        
-        comp.repaint();        
+        for (JComponent comp : panels.values())
+        {
+            comp.repaint();
+        }
     }
 
     @Override

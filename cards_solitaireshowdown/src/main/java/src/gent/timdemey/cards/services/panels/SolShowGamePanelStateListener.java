@@ -77,6 +77,7 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
                     ScalableTextComponent comp = (ScalableTextComponent) scaleServ.getScalableComponent(id);
                     String text = "" +  cardStack.getCards().size();
                     comp.setText(text);
+                    comp.repaint();
                 }
             }
             else if (change.changeType == ChangeType.Add && cardStack.getCardStackType().equals(SolShowCardStackType.TURNOVER))

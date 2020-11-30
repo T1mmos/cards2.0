@@ -81,7 +81,7 @@ public class StartFrame
         ctxt.addStateListener(new GameBootListener());
         ctxt.addStateListener(new StateExportListener());
         
-        frameServ.setPanel(PanelDescriptors.MENU);
+        frameServ.showPanel(PanelDescriptors.MENU);
         frame.setVisible(true);    
     }
 }

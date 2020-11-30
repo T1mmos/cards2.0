@@ -11,7 +11,8 @@ public interface IFrameService
      
     public void addPanel(PanelDescriptor pDesc, JComponent comp);
     public PanelDescriptor getCurrentPanel();
-    public void setPanel(PanelDescriptor menu);
+    public void showPanel(PanelDescriptor desc);
+    public void hidePanel(PanelDescriptor desc);
 
     public void setDrawDebug(boolean on);
     public boolean getDrawDebug();

@@ -16,12 +16,12 @@ import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 
-public class GamePanelAnimator
+public class PanelAnimator
 {
     private final List<AnimationTracker> animTrackers;
     private final Timer timer;
 
-    public GamePanelAnimator()
+    public PanelAnimator()
     {
         animTrackers = new ArrayList<>();
         timer = new Timer(10, e -> tick());
@@ -36,7 +36,12 @@ public class GamePanelAnimator
         Coords.Relative relcoords = posServ.getRelativeCoords(component.getCoords());        
         
         AnimationTracker tracker = new AnimationTracker(component, descr, relcoords);
-        animTrackers.add(tracker);        
+        animTrackers.add(tracker);
+        
+        // must tick immediately to have the component updated so it doesn't show
+        // in wrong colors, wrong location, etc.
+        long currTickTime = System.currentTimeMillis();
+        tick(tracker, currTickTime);
     }
 
     public void stopAnimate(IScalableComponent scaleComp)
@@ -71,36 +76,45 @@ public class GamePanelAnimator
         while (i.hasNext())
         {
             AnimationTracker animTracker = i.next();
-
-            long dt = currTickTime - animTracker.animStart.time;
-            double frac = Math.min(1.0, 1.0 * dt / animTracker.descriptor.animationTime);
-
-            for (IAnimation animation : animTracker.descriptor.animations)
-            {
-                animation.tick(animTracker.component, frac, animTracker.animStart);
-            }
-
-            if (frac == 1.0)
+            boolean ended = tick(animTracker, currTickTime);
+            if (ended) 
             {
                 i.remove();
-
-                IPanelService pServ = Services.get(IPanelService.class);
-                if (animTracker.descriptor.dispose)
-                {
-                    pServ.remove(animTracker.component);
-                }
-                else
-                {
-
-                    IPositionService posServ = Services.get(IPositionService.class);
-                    LayeredArea layArea = posServ.getEndLayeredArea(animTracker.component);
-                    
-                    pServ.setLayer(animTracker.component, layArea.layer);
-                }
             }
         }
     }
 
+    private boolean tick(AnimationTracker animTracker, long currTickTime)
+    {
+        long dt = currTickTime - animTracker.animStart.time;
+        double frac = Math.min(1.0, 1.0 * dt / animTracker.descriptor.animationTime);
+
+        for (IAnimation animation : animTracker.descriptor.animations)
+        {
+            animation.tick(animTracker.component, frac, animTracker.animStart);
+        }
+
+        if (frac == 1.0)
+        {
+            IPanelService pServ = Services.get(IPanelService.class);
+            if (animTracker.descriptor.dispose)
+            {
+                pServ.remove(animTracker.component);
+            }
+            else
+            {
+
+                IPositionService posServ = Services.get(IPositionService.class);
+                LayeredArea layArea = posServ.getEndLayeredArea(animTracker.component);
+                
+                pServ.setLayer(animTracker.component, layArea.layer);
+            }
+            
+            return true;
+        }
+        
+        return false;
+    }
     /**
      * Get the components that are currently being animated.
      * 

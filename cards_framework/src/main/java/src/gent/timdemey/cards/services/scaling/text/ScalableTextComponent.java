@@ -43,11 +43,11 @@ public final class ScalableTextComponent extends ScalableComponent
     
     private boolean mouseOver = false; 
     private boolean mousePressed = false;
-    
-    private boolean changed = true;
-    
+        
     private ScalableTextComponentMouseListener internalMouseListener = null;
 
+    private boolean changed = true;
+    
     public ScalableTextComponent(UUID id, String text, ComponentType compType, ScalableFontResource fontResource)
     {
         super(id, compType);
@@ -193,7 +193,7 @@ public final class ScalableTextComponent extends ScalableComponent
     {
         GetResourceResponse<Font> resp = getFont();
         Dimension dim = getCoords().getSize();
-        if (changed || (bufferedImage.getWidth() != dim.width || bufferedImage.getHeight() != dim.height) && resp.found)
+        if ((changed || bufferedImage.getWidth() != dim.width || bufferedImage.getHeight() != dim.height) && resp.found)
         {
             // update the buffered image
             Font font = resp.resource;
@@ -227,8 +227,6 @@ public final class ScalableTextComponent extends ScalableComponent
             }               
             
             g2d.dispose();
-            
-            changed = false;
         }
         
         // draw the buffered image onto the graphics context and scale if necessary        
@@ -279,7 +277,7 @@ public final class ScalableTextComponent extends ScalableComponent
         if (mousePressed != pressed)
         {
             mousePressed = pressed;
-            changed = true;   
+            changed = true;
         }        
     }
 }

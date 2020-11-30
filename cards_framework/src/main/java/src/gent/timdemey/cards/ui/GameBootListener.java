@@ -32,13 +32,15 @@ public class GameBootListener implements IStateListener
             ReadOnlyCardGame cardGame = state.getCardGame();
             if (cardGame == null)
             {
-                frameServ.setPanel(PanelDescriptors.MENU);
+                frameServ.showPanel(PanelDescriptors.MENU);
                 panelServ.destroyPanel(PanelDescriptors.GAME);
             }
             else
             {
                 panelServ.createPanel(PanelDescriptors.GAME);
-                frameServ.setPanel(PanelDescriptors.GAME);
+                panelServ.createPanel(PanelDescriptors.LOAD);
+                frameServ.showPanel(PanelDescriptors.GAME);
+                frameServ.showPanel(PanelDescriptors.LOAD);
             }
         }
     }

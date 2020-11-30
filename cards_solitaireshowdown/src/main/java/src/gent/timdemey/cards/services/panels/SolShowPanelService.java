@@ -280,6 +280,7 @@ public class SolShowPanelService extends PanelService
             ScalableTextComponent textComp = (ScalableTextComponent) comp;
             ReadOnlyCardStack cs = (ReadOnlyCardStack) comp.getPayload();
             textComp.setText("" + cs.getCards().size());
+            textComp.repaint();
             return;
         }
         else if (comp.getComponentType().hasTypeName(SolShowComponentTypes.SPECIALBACKGROUND))

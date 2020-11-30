@@ -26,6 +26,7 @@ public class ForegroundColorAnimation implements IAnimation
         {
             ScalableTextComponent textComp = (ScalableTextComponent) comp;
             textComp.setInnerColor(color);
+            textComp.repaint();
         }
     }
 }

@@ -11,6 +11,8 @@ import java.util.UUID;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
@@ -31,13 +33,14 @@ import gent.timdemey.cards.services.contract.preload.PreloadOrderType;
 import gent.timdemey.cards.services.contract.res.FontResource;
 import gent.timdemey.cards.services.contract.res.ImageResource;
 import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.services.interfaces.IResourceService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
-import gent.timdemey.cards.services.panels.animations.GamePanelAnimator;
+import gent.timdemey.cards.services.panels.animations.PanelAnimator;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 import gent.timdemey.cards.services.scaling.IScalableResource;
 import gent.timdemey.cards.services.scaling.img.ScalableImageComponent;
@@ -51,7 +54,7 @@ import net.miginfocom.swing.MigLayout;
 public class PanelService implements IPanelService
 {
 
-    private final GamePanelAnimator animator;
+    private final PanelAnimator animator;
 
     private GamePanelResizeListener resizeListener;
     private GamePanelMouseListener dragListener;
@@ -59,11 +62,14 @@ public class PanelService implements IPanelService
 
     // different panels
     private GamePanel gamePanel;
+    private LoadPanel loadPanel;
     private MenuPanel menuPanel;
 
+    private boolean loaded = false;
+    
     public PanelService()
     {
-        this.animator = new GamePanelAnimator();
+        this.animator = new PanelAnimator();
     }
 
     @Override
@@ -123,7 +129,7 @@ public class PanelService implements IPanelService
     public List<PanelDescriptor> getPanelDescriptors()
     {
         return Arrays.asList(new PanelDescriptor[]
-        { PanelDescriptors.GAME, PanelDescriptors.MENU });
+        { PanelDescriptors.GAME, PanelDescriptors.LOAD, PanelDescriptors.MENU });
     }
 
    
@@ -140,6 +146,18 @@ public class PanelService implements IPanelService
             return gamePanel;
         }
 
+        if (desc == PanelDescriptors.LOAD) 
+        {
+            if(loadPanel == null)
+            {
+                loadPanel = new LoadPanel();
+                
+                loadPanel.setLayout(new MigLayout("insets 0, align 50% 50%"));
+                loadPanel.add(new JLabel("LOADING..."));
+            }
+            return loadPanel;
+        }
+        
         if(desc == PanelDescriptors.MENU)
         {
             if(menuPanel == null)
@@ -175,27 +193,23 @@ public class PanelService implements IPanelService
         }
 
         throw new IllegalArgumentException(String.format("Unsupported PanelDescriptor id: %s", desc.id));
-    }
-    
+    }    
 
     @Override
     public void createPanel(PanelDescriptor desc)
     {
-        if(desc == PanelDescriptors.GAME)
+        if (desc == PanelDescriptors.GAME)
         {                        
             resizeListener = new GamePanelResizeListener();
-            dragListener = new GamePanelMouseListener();
-            
-            updatePositionManager();
+            dragListener = new GamePanelMouseListener();            
 
             IStateListener stateListener = Services.get(IStateListener.class);
             Services.get(IContextService.class).getThreadContext().addStateListener(stateListener);
 
             animator.start();
 
+            updatePositionManager();
             rescaleResourcesAsync();
-            createScalableComponents();
-            positionScalableComponents();
         }
     }
     
@@ -207,7 +221,6 @@ public class PanelService implements IPanelService
             if(gamePanel != null)
             {
                 animator.stop();
-                
 
                 IStateListener stateListener = Services.get(IStateListener.class);
                 Services.get(IContextService.class).getThreadContext().removeStateListener(stateListener);
@@ -216,6 +229,14 @@ public class PanelService implements IPanelService
                 
                 resizeListener = null;
                 dragListener = null;
+                loaded = false;
+            }
+        }
+        else if (desc == PanelDescriptors.LOAD) 
+        {
+            if (loadPanel != null)
+            {
+                loadPanel = null;
             }
         }
     }
@@ -228,6 +249,12 @@ public class PanelService implements IPanelService
             gamePanel.addComponentListener(resizeListener);
             gamePanel.addMouseMotionListener(dragListener);
             gamePanel.addMouseListener(dragListener);
+            
+            gamePanel.repaint();
+        }
+        else if (desc == PanelDescriptors.LOAD) 
+        {
+            loadPanel.setVisible(true);
         }
     }
 
@@ -239,6 +266,10 @@ public class PanelService implements IPanelService
             gamePanel.removeComponentListener(resizeListener);
             gamePanel.removeMouseMotionListener(dragListener);
             gamePanel.removeMouseListener(dragListener);
+        }
+        else if (desc == PanelDescriptors.LOAD)
+        {
+            loadPanel.setVisible(false);
         }
     }
 
@@ -311,7 +342,24 @@ public class PanelService implements IPanelService
     {
         IScalingService scaleServ = Services.get(IScalingService.class);
         List<RescaleRequest> requests = createRescaleRequests();
-        scaleServ.rescaleAsync(requests, () -> gamePanel.repaint());
+        scaleServ.rescaleAsync(requests, () -> 
+        {
+            SwingUtilities.invokeLater(() -> onResourcesRescaled());           
+        });
+    }
+    
+    private void onResourcesRescaled()
+    {
+        if (!loaded)
+        {
+            loaded = true;
+            createScalableComponents();
+            positionScalableComponents();
+            IFrameService frameServ = Services.get(IFrameService.class);
+            frameServ.hidePanel(PanelDescriptors.LOAD);
+        }
+        
+        gamePanel.repaint();
     }
 
     protected List<RescaleRequest> createRescaleRequests()
