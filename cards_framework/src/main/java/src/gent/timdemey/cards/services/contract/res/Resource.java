@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.contract;
+package gent.timdemey.cards.services.contract.res;
 
 public abstract class Resource<T>
 {

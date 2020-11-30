@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.contract;
+package gent.timdemey.cards.services.contract.anim;
 
 import java.awt.Color;
 

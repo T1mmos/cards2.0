@@ -1,12 +1,20 @@
 package gent.timdemey.cards;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+
+import gent.timdemey.cards.services.contract.preload.IPreload;
+import gent.timdemey.cards.services.contract.preload.PreloadOrder;
+import gent.timdemey.cards.services.contract.preload.PreloadOrderType;
 
 public final class Services
 {
@@ -181,12 +189,55 @@ public final class Services
     {
         // take a copy as parent interface request add more EntryKey to the service map. 
         // this solves ConcurrentModificationExceptions and equally important we only want to preload once.
-        for (Object obj : new HashSet<>(get().serviceMap.values()))
+        List<IPreload> preloadables = get().serviceMap.values().stream()
+                .filter(obj -> obj instanceof IPreload)
+                .map(obj -> (IPreload) obj)
+                .collect(Collectors.toList());
+        
+        List<IPreload> pl_isolated =  preloadables.stream().filter(p -> readPreloadAnnotation(p) == PreloadOrderType.ISOLATED).collect(Collectors.toList());
+        List<IPreload> pl_dependent =  preloadables.stream().filter(p -> readPreloadAnnotation(p) == PreloadOrderType.DEPENDENT).collect(Collectors.toList());
+       
+        if (preloadables.size() != pl_isolated.size() + pl_dependent.size())
         {
-            if (obj instanceof IPreload)
+            throw new UnsupportedOperationException("The list of preloadables contains entries with unknown PreloadOrderType annotations");
+        }
+            
+        // load first all isolated preloadables
+        for (IPreload preloadable : pl_isolated)
+        {
+            preloadable.preload();
+        }
+        
+        // then load all preloadables that depend on others (currently only one dependency layer supported)
+        for (IPreload preloadable : pl_dependent)
+        {
+            preloadable.preload();
+        }
+    }
+    
+    private static PreloadOrderType readPreloadAnnotation(IPreload preloadable)
+    {
+        try
+        {
+            Method m = IPreload.class.getDeclaredMethods()[0];
+            Class<?> clz = preloadable.getClass();
+            while (true)
             {
-                ((IPreload) obj).preload();
+                Method m_impl = clz.getMethod(m.getName());
+                
+                PreloadOrder[] annots = m_impl.getAnnotationsByType(PreloadOrder.class);
+                if (annots.length == 1)
+                {
+                    return annots[0].order();
+                }
+                
+
+                clz = clz.getSuperclass();
             }
         }
+        catch (Exception e)
+        {
+            return PreloadOrderType.DEPENDENT;
+        }        
     }
 }

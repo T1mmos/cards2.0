@@ -4,7 +4,7 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.util.UUID;
 
-import gent.timdemey.cards.services.contract.Resource;
+import gent.timdemey.cards.services.contract.res.Resource;
 import gent.timdemey.cards.services.scaling.ScalableResource;
 
 public final class ScalableImageResource extends ScalableResource<BufferedImage>

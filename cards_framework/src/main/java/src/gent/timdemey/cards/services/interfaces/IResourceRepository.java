@@ -2,7 +2,7 @@ package gent.timdemey.cards.services.interfaces;
 
 import java.io.InputStream;
 
-import gent.timdemey.cards.IPreload;
+import gent.timdemey.cards.services.contract.preload.IPreload;
 
 public interface IResourceRepository extends IPreload
 {

@@ -15,8 +15,8 @@ import javax.imageio.ImageIO;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.services.contract.FontResource;
-import gent.timdemey.cards.services.contract.ImageResource;
+import gent.timdemey.cards.services.contract.res.FontResource;
+import gent.timdemey.cards.services.contract.res.ImageResource;
 import gent.timdemey.cards.services.interfaces.IResourceRepository;
 import gent.timdemey.cards.services.interfaces.IResourceRepository.ResourceType;
 import gent.timdemey.cards.services.interfaces.IResourceService;

@@ -3,9 +3,9 @@ package gent.timdemey.cards.services.panels;
 import java.util.Arrays;
 import java.util.List;
 
-import gent.timdemey.cards.services.contract.AnimationDescriptor;
-import gent.timdemey.cards.services.contract.IAnimation;
-import gent.timdemey.cards.services.contract.MovingAnimation;
+import gent.timdemey.cards.services.contract.anim.AnimationDescriptor;
+import gent.timdemey.cards.services.contract.anim.IAnimation;
+import gent.timdemey.cards.services.contract.anim.MovingAnimation;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.interfaces.IAnimationService;
 import gent.timdemey.cards.services.scaling.IScalableComponent;

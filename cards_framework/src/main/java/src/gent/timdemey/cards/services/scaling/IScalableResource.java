@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.services.contract.GetResourceResponse;
-import gent.timdemey.cards.services.contract.Resource;
+import gent.timdemey.cards.services.contract.res.Resource;
 
 public interface IScalableResource<R>
 {

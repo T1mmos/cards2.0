@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import gent.timdemey.cards.services.contract.GetResourceResponse;
-import gent.timdemey.cards.services.contract.Resource;
+import gent.timdemey.cards.services.contract.res.Resource;
 
 /**
  * An abstract IScalableResource that implements caching for quick access to the

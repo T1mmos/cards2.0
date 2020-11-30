@@ -7,10 +7,10 @@ import java.util.List;
 import javax.swing.Timer;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.services.contract.AnimationDescriptor;
 import gent.timdemey.cards.services.contract.Coords;
-import gent.timdemey.cards.services.contract.IAnimation;
 import gent.timdemey.cards.services.contract.LayeredArea;
+import gent.timdemey.cards.services.contract.anim.AnimationDescriptor;
+import gent.timdemey.cards.services.contract.anim.IAnimation;
 import gent.timdemey.cards.services.interfaces.IAnimationService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;

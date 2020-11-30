@@ -1,6 +1,6 @@
 package gent.timdemey.cards.services.interfaces;
 
-import gent.timdemey.cards.services.contract.AnimationDescriptor;
+import gent.timdemey.cards.services.contract.anim.AnimationDescriptor;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 
 public interface IAnimationService

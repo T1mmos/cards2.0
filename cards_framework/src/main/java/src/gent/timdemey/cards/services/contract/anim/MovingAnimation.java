@@ -1,6 +1,8 @@
-package gent.timdemey.cards.services.contract;
+package gent.timdemey.cards.services.contract.anim;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.services.contract.Coords;
+import gent.timdemey.cards.services.contract.Coords.Absolute;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 

@@ -4,11 +4,11 @@ import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
 
-import gent.timdemey.cards.services.contract.AnimationDescriptor;
-import gent.timdemey.cards.services.contract.BorderColorAnimation;
-import gent.timdemey.cards.services.contract.ForegroundColorAnimation;
-import gent.timdemey.cards.services.contract.IAnimation;
-import gent.timdemey.cards.services.contract.MovingAnimation;
+import gent.timdemey.cards.services.contract.anim.AnimationDescriptor;
+import gent.timdemey.cards.services.contract.anim.BorderColorAnimation;
+import gent.timdemey.cards.services.contract.anim.ForegroundColorAnimation;
+import gent.timdemey.cards.services.contract.anim.IAnimation;
+import gent.timdemey.cards.services.contract.anim.MovingAnimation;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.panels.AnimationService;
 import gent.timdemey.cards.services.resources.SolShowResourceDefines;

@@ -1,8 +1,8 @@
 package gent.timdemey.cards.services.panels.animations;
 
-import gent.timdemey.cards.services.contract.AnimationDescriptor;
-import gent.timdemey.cards.services.contract.AnimationStart;
 import gent.timdemey.cards.services.contract.Coords;
+import gent.timdemey.cards.services.contract.anim.AnimationDescriptor;
+import gent.timdemey.cards.services.contract.anim.AnimationStart;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 
 class AnimationTracker

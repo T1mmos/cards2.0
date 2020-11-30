@@ -4,8 +4,8 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
-import gent.timdemey.cards.IPreload;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
+import gent.timdemey.cards.services.contract.preload.IPreload;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 
 public interface IPanelService extends IPreload

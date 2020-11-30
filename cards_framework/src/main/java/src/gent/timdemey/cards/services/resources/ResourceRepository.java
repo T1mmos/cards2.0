@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import gent.timdemey.cards.ICardPlugin;
+import gent.timdemey.cards.services.contract.preload.PreloadOrder;
+import gent.timdemey.cards.services.contract.preload.PreloadOrderType;
 import gent.timdemey.cards.services.interfaces.IResourceRepository;
 
 public class ResourceRepository implements IResourceRepository
@@ -18,9 +20,7 @@ public class ResourceRepository implements IResourceRepository
 
     public ResourceRepository()
     {        
-    }    
-
-    
+    }
     
     protected void buildUrlLists (Map<ResourceType, List<URL>> typeUrls)
     {
@@ -86,6 +86,7 @@ public class ResourceRepository implements IResourceRepository
         return resLoader;
     }
 
+    @PreloadOrder(order = PreloadOrderType.ISOLATED)
     @Override
     public void preload()
     {

@@ -20,14 +20,16 @@ import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
-import gent.timdemey.cards.services.contract.FontResource;
-import gent.timdemey.cards.services.contract.ImageResource;
 import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
+import gent.timdemey.cards.services.contract.preload.PreloadOrder;
+import gent.timdemey.cards.services.contract.preload.PreloadOrderType;
+import gent.timdemey.cards.services.contract.res.FontResource;
+import gent.timdemey.cards.services.contract.res.ImageResource;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
@@ -65,6 +67,7 @@ public class PanelService implements IPanelService
     }
 
     @Override
+    @PreloadOrder(order = PreloadOrderType.DEPENDENT)
     public void preload()
     {
         preloadFonts();
