@@ -1,8 +1,5 @@
 package gent.timdemey.cards.ui;
 
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
@@ -31,7 +28,7 @@ public class GameBootListener implements IStateListener
         {
             IFrameService frameServ = Services.get(IFrameService.class);
             IPanelService panelServ = Services.get(IPanelService.class);
-            
+
             ReadOnlyCardGame cardGame = state.getCardGame();
             if (cardGame == null)
             {
@@ -40,8 +37,8 @@ public class GameBootListener implements IStateListener
             }
             else
             {
-                panelServ.createPanel(PanelDescriptors.GAME);                  
-                frameServ.setPanel(PanelDescriptors.GAME);            
+                panelServ.createPanel(PanelDescriptors.GAME);
+                frameServ.setPanel(PanelDescriptors.GAME);
             }
         }
     }

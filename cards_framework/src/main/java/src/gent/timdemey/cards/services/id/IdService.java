@@ -6,6 +6,7 @@ import gent.timdemey.cards.model.entities.cards.Suit;
 import gent.timdemey.cards.model.entities.cards.Value;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
+import gent.timdemey.cards.readonlymodel.ReadOnlyEntityBase;
 import gent.timdemey.cards.services.interfaces.IIdService;
 
 public abstract class IdService implements IIdService
@@ -33,18 +34,21 @@ public abstract class IdService implements IIdService
     }
     
     @Override
-    public UUID createCardScalableComponentId(ReadOnlyCard card)
+    public UUID createScalableComponentId(ReadOnlyEntityBase<?> entity)
     {
-        return getUUID(COMPID_CARD, card.getId().toString());
+        if (entity instanceof ReadOnlyCard)
+        {            
+            return getUUID(COMPID_CARD, entity.getId().toString());
+        }
+        else if (entity instanceof ReadOnlyCardStack)
+        {
+            return getUUID(COMPID_CARDSTACK, entity.getId().toString());
+        }
+        else
+        {
+            throw new UnsupportedOperationException("Cannot create a ScalableComponentId for unsupported type: " + entity.getClass().getSimpleName());
+        }
     }
-
-    @Override
-    public UUID createCardStackScalableComponentId(ReadOnlyCardStack cardStack)
-    {
-        return getUUID(COMPID_CARDSTACK, cardStack.getId().toString());
-    }
-    
-    
 /*
     @Override
     public UUID createCardStackComponentId(ReadOnlyCardStack cardStack)

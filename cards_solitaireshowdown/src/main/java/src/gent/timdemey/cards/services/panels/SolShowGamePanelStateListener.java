@@ -17,7 +17,6 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.interfaces.ISolShowIdService;
-import gent.timdemey.cards.services.panels.GamePanelStateListener;
 import gent.timdemey.cards.services.resources.SolShowResourceDefines;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 import gent.timdemey.cards.services.scaling.text.ScalableFontResource;
@@ -67,7 +66,7 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
                     {
                         for (ReadOnlyCard card : cardStack.getHighestCards(cnt))
                         {
-                            IScalableComponent comp = scaleServ.getOrCreateScalableComponent(card);
+                            IScalableComponent comp = scaleServ.getScalableComponent(card);
                             gpServ.startAnimation(comp);
                         }
                     }
@@ -90,12 +89,12 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
                     {
                         if (card != addedCard)
                         {
-                            IScalableComponent comp = scaleServ.getOrCreateScalableComponent(card);
+                            IScalableComponent comp = scaleServ.getScalableComponent(card);
                             gpServ.startAnimation(comp);
                         }
                     }
                 }
-                IScalableComponent comp = scaleServ.getOrCreateScalableComponent(addedCard);
+                IScalableComponent comp = scaleServ.getScalableComponent(addedCard);
                 gpServ.startAnimation(comp);
             }
             else

@@ -31,7 +31,7 @@ public class GamePanelStateListener implements IStateListener
         if (property == ReadOnlyCard.Visible)
         {            
             ReadOnlyCard card = state.getCardGame().getCard(change.entityId);            
-            IScalableComponent comp = scaleServ.getOrCreateScalableComponent(card);
+            IScalableComponent comp = scaleServ.getScalableComponent(card);
             gpServ.updateComponent(comp);
         }
         else if (property == ReadOnlyCardStack.Cards)
@@ -39,7 +39,7 @@ public class GamePanelStateListener implements IStateListener
             if (change.changeType == ChangeType.Add)
             {
                 ReadOnlyCard card = (ReadOnlyCard) change.addedValue;                
-                IScalableComponent comp = scaleServ.getOrCreateScalableComponent(card);
+                IScalableComponent comp = scaleServ.getScalableComponent(card);
                 gpServ.startAnimation(comp);    
             }
         }

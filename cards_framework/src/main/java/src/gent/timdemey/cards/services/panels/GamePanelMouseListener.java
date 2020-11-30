@@ -131,7 +131,7 @@ class GamePanelMouseListener extends MouseAdapter
                 {
                     ReadOnlyCard currentCard = cards.get(i);
 
-                    IScalableComponent currScaleImg = Services.get(IScalingService.class).getOrCreateScalableComponent(currentCard);
+                    IScalableComponent currScaleImg = Services.get(IScalingService.class).getScalableComponent(currentCard);
                     int card_xstart = currScaleImg.getCoords().getBounds().x;
                     int card_ystart = currScaleImg.getCoords().getBounds().y;
 

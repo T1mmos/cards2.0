@@ -34,18 +34,32 @@ public interface IScalingService
     public void rescaleAsync(List<RescaleRequest> requests, Runnable callback);    
 
     /**
-     * Get or creates once a scalable component for the given model object.
+     * Creates a scalable component for the given model object.
      * @param card
      * @return
      */
-    public IScalableComponent getOrCreateScalableComponent(ReadOnlyCard card);
+    public IScalableComponent createScalableComponent(ReadOnlyCard card);
+    
+    /**
+     * Gets a scalable component for the given model object.
+     * @param card
+     * @return
+     */
+    public IScalableComponent getScalableComponent(ReadOnlyCard card);
     
     /**
      * Get or creates once a scalable component for the given model object.
      * @param card
      * @return
      */
-    public IScalableComponent getOrCreateScalableComponent(ReadOnlyCardStack card);
+    public IScalableComponent createScalableComponent(ReadOnlyCardStack cardStack);
+    
+    /**
+     * Gets a scalable component for the given model object.
+     * @param card
+     * @return
+     */
+    public IScalableComponent getScalableComponent(ReadOnlyCardStack cardStack);
     
     /**
      * Adds a scalable resource.
@@ -64,11 +78,16 @@ public interface IScalingService
     public IScalableComponent getScalableComponent(UUID compId);
 
     /**
-     * Clears all links between ScalableImages and their managed objects. All
-     * references to managed objects are cleared.
+     * Clears the cache containing scalable components. 
      */
-    public void clearManagedObjects();    
-
+    public void clearComponentCache();    
+    
+    /**
+     * Clears the cache containing scalable resources. The component cache 
+     * needs to be cleared first. 
+     */
+    public void clearResourceCache();    
+    
     /**
      * Gets the component at the given position with the highest Z-order.
      * @param p

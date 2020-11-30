@@ -16,7 +16,6 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.interfaces.ISolShowIdService;
-import gent.timdemey.cards.services.panels.PanelService;
 import gent.timdemey.cards.services.resources.SolShowResourceDefines;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 import gent.timdemey.cards.services.scaling.img.ScalableImageComponent;
@@ -89,7 +88,7 @@ public class SolShowPanelService extends PanelService
     }
     
     @Override
-    protected void addScalableComponents()
+    protected void createScalableComponents()
     {
         IScalingService scaleServ = Services.get(IScalingService.class);
         ISolShowIdService idServ = Services.get(ISolShowIdService.class);
@@ -99,14 +98,14 @@ public class SolShowPanelService extends PanelService
         ReadOnlyPlayer player_local = state.getLocalPlayer();
         ReadOnlyPlayer player_remote = state.getRemotePlayers().get(0);        
         
-        super.addScalableComponents();
+        super.createScalableComponents();
         
         // cardstack components
         List<ReadOnlyCardStack> cardstacks = cardGame.getCardStacks();
         for (int i = 0; i < cardstacks.size(); i++)
         {
             ReadOnlyCardStack cardstack = cardstacks.get(i);
-            IScalableComponent scaleComp = scaleServ.getOrCreateScalableComponent(cardstack);
+            IScalableComponent scaleComp = scaleServ.createScalableComponent(cardstack);
             add(scaleComp);
             updateComponent(scaleComp);
         }

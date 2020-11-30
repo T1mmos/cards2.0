@@ -195,8 +195,6 @@ public class PanelService implements IPanelService
             resizeListener = new GamePanelResizeListener();
             dragListener = new GamePanelMouseListener();
             
-            
-
             updatePositionManager();
 
             IStateListener stateListener = Services.get(IStateListener.class);
@@ -205,8 +203,8 @@ public class PanelService implements IPanelService
             animator.start();
 
             rescaleResourcesAsync();
-            addScalableComponents();
-            positionComponents();
+            createScalableComponents();
+            positionScalableComponents();
         }
     }
     
@@ -219,11 +217,11 @@ public class PanelService implements IPanelService
             {
                 animator.stop();
                 
-                gamePanel.removeAll();
 
                 IStateListener stateListener = Services.get(IStateListener.class);
                 Services.get(IContextService.class).getThreadContext().removeStateListener(stateListener);
-              //  Services.get(IScalingService.class).clearManagedObjects();
+                
+                destroyScalableComponents();
                 
                 resizeListener = null;
                 dragListener = null;
@@ -268,7 +266,7 @@ public class PanelService implements IPanelService
 
     }
 
-    protected void addScalableComponents()
+    protected void createScalableComponents()
     {
         IScalingService scaleCompServ = Services.get(IScalingService.class);
 
@@ -279,10 +277,16 @@ public class PanelService implements IPanelService
         for (int i = 0; i < cards.size(); i++)
         {
             ReadOnlyCard card = cards.get(i);
-            IScalableComponent scaleComp = scaleCompServ.getOrCreateScalableComponent(card);
+            IScalableComponent scaleComp = scaleCompServ.createScalableComponent(card);
             add(scaleComp);
             updateComponent(scaleComp);
         }
+    }
+    
+    protected void destroyScalableComponents()
+    {
+        gamePanel.removeAll();
+        Services.get(IScalingService.class).clearComponentCache();
     }
     
     private void updatePositionManager()
@@ -299,10 +303,10 @@ public class PanelService implements IPanelService
     public void relayout()
     {
         updatePositionManager();
-        positionComponents();
+        positionScalableComponents();
     }
 
-    private void positionComponents()
+    private void positionScalableComponents()
     {
         IScalingService scaleServ = Services.get(IScalingService.class);
         for (IScalableComponent scaleComp : scaleServ.getComponents())

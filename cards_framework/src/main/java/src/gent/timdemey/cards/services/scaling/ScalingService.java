@@ -26,10 +26,11 @@ import com.google.common.base.Preconditions;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
+import gent.timdemey.cards.readonlymodel.ReadOnlyEntityBase;
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
-import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IIdService;
+import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.scaling.img.ScalableImageComponent;
 import gent.timdemey.cards.services.scaling.img.ScalableImageResource;
@@ -118,11 +119,21 @@ public final class ScalingService implements IScalingService
     }
 
     @Override
-    public void clearManagedObjects()
+    public void clearComponentCache()
     {
-        resources.clear();
         components.clear();
         model2comp.clear();
+    }
+    
+    @Override 
+    public void clearResourceCache()
+    {
+        if (components.size() > 0 || model2comp.size() > 0)
+        {
+            throw new IllegalStateException("Resources cache can only be cleared if no components exist that may be using them");
+        }
+        
+        resources.clear();
     }
 
     @Override
@@ -200,60 +211,98 @@ public final class ScalingService implements IScalingService
     }
 
     @Override
-    public IScalableComponent getOrCreateScalableComponent(ReadOnlyCard card)
+    public IScalableComponent createScalableComponent(ReadOnlyCard card)
     {
         IIdService uuidServ = Services.get(IIdService.class);
 
-        UUID compId = model2comp.get(card.getId());
-        if (compId == null)
-        {
-            // get the ids
-            compId = uuidServ.createCardScalableComponentId(card);
-        }
+        UUID compId = createComponentId(card);
 
         IScalableComponent comp = components.get(compId);
-        if (comp == null)
+        if (comp != null)
         {
-            UUID resFrontId = uuidServ.createCardFrontScalableResourceId(card.getSuit(), card.getValue());
-            UUID resBackId = uuidServ.createCardBackScalableResourceId();
-
-            // create the component using its necessary image resources
-            ScalableImageResource res_front = (ScalableImageResource) getScalableResource(resFrontId);
-            ScalableImageResource res_back = (ScalableImageResource) getScalableResource(resBackId);
-            comp = new ScalableImageComponent(compId, ComponentTypes.CARD, res_front, res_back);
-            comp.setPayload(card);
-
-            components.put(compId, comp);
+            throw new IllegalArgumentException("A scalable component already exist for the given model object: " + card);            
         }
+        
+        UUID resFrontId = uuidServ.createCardFrontScalableResourceId(card.getSuit(), card.getValue());
+        UUID resBackId = uuidServ.createCardBackScalableResourceId();
+
+        // create the component using its necessary image resources
+        ScalableImageResource res_front = (ScalableImageResource) getScalableResource(resFrontId);
+        ScalableImageResource res_back = (ScalableImageResource) getScalableResource(resBackId);
+        comp = new ScalableImageComponent(compId, ComponentTypes.CARD, res_front, res_back);
+        comp.setPayload(card);
+
+        components.put(compId, comp);
 
         return comp;
     }
     
     @Override
-    public IScalableComponent getOrCreateScalableComponent(ReadOnlyCardStack cardstack)
+    public IScalableComponent getScalableComponent(ReadOnlyCard card)
+    {
+        return getScalableComponent((ReadOnlyEntityBase<?>) card);
+    }
+    
+    @Override
+    public IScalableComponent createScalableComponent(ReadOnlyCardStack cardstack)
     {
         IIdService idServ = Services.get(IIdService.class);
 
-        UUID compId = model2comp.get(cardstack.getId());
+        UUID compId = createComponentId(cardstack);
+
+        IScalableComponent comp = components.get(compId);
+        if (comp != null)
+        {
+            throw new IllegalArgumentException("A scalable component already exist for the given model object: " + cardstack);            
+        }
+        
+        UUID csResId = idServ.createCardStackScalableResourceId(cardstack.getCardStackType());
+
+        // create the component using its necessary image resources
+        ScalableImageResource res = (ScalableImageResource) getScalableResource(csResId);
+        comp = new ScalableImageComponent(compId, ComponentTypes.CARDSTACK, res);
+        comp.setPayload(cardstack);
+
+        components.put(compId, comp);        
+
+        return comp;
+    }
+    
+    @Override
+    public IScalableComponent getScalableComponent(ReadOnlyCardStack cardStack)
+    {
+        return getScalableComponent((ReadOnlyEntityBase<?>) cardStack);
+    }
+    
+    private IScalableComponent getScalableComponent(ReadOnlyEntityBase<?> entity)
+    {
+        UUID compId = model2comp.get(entity.getId());
         if (compId == null)
         {
-            // get the ids
-            compId = idServ.createCardStackScalableComponentId(cardstack);
+            throw new IllegalArgumentException("A scalable component ID does not exist for the given model object: " + entity);      
         }
-
         IScalableComponent comp = components.get(compId);
         if (comp == null)
         {
-            UUID csResId = idServ.createCardStackScalableResourceId(cardstack.getCardStackType());
-
-            // create the component using its necessary image resources
-            ScalableImageResource res = (ScalableImageResource) getScalableResource(csResId);
-            comp = new ScalableImageComponent(compId, ComponentTypes.CARDSTACK, res);
-            comp.setPayload(cardstack);
-
-            components.put(compId, comp);
+            throw new IllegalArgumentException("A scalable component does not exist for the given model object: " + entity);    
+        }
+        
+        return comp;
+    }
+    
+    private UUID createComponentId(ReadOnlyEntityBase<?> entity)
+    {     
+        IIdService idServ = Services.get(IIdService.class);
+        UUID compId = model2comp.get(entity.getId());
+        if (compId != null)
+        {
+            throw new IllegalStateException("ComponentId "+entity.getId()+" shouldn't exist yet for entity: " + entity);
         }
 
-        return comp;
+        // get the ids
+        compId = idServ.createScalableComponentId(entity);
+        model2comp.put(entity.getId(), compId);
+        
+        return compId;
     }
 }

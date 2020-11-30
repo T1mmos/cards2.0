@@ -41,19 +41,19 @@ public class SolitairePanelService extends PanelService
     }
     
     @Override
-    protected void addScalableComponents()
+    protected void createScalableComponents()
     {
         IScalingService scaleCompServ = Services.get(IScalingService.class);
         ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState().getCardGame();
 
-        super.addScalableComponents();
+        super.createScalableComponents();
         
         // cardstack components
         List<ReadOnlyCardStack> cardstacks = cardGame.getCardStacks();
         for (int i = 0; i < cardstacks.size(); i++)
         {
             ReadOnlyCardStack cardstack = cardstacks.get(i);
-            IScalableComponent scaleComp = scaleCompServ.getOrCreateScalableComponent(cardstack);
+            IScalableComponent scaleComp = scaleCompServ.createScalableComponent(cardstack);
             add(scaleComp);
             updateComponent(scaleComp);
         }
