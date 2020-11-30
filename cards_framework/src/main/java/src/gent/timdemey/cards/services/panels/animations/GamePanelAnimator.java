@@ -84,10 +84,10 @@ public class GamePanelAnimator
             {
                 i.remove();
 
-                IPanelService gpServ = Services.get(IPanelService.class);
+                IPanelService pServ = Services.get(IPanelService.class);
                 if (animTracker.descriptor.dispose)
                 {
-                    gpServ.remove(animTracker.component);
+                    pServ.remove(animTracker.component);
                 }
                 else
                 {
@@ -95,7 +95,7 @@ public class GamePanelAnimator
                     IPositionService posServ = Services.get(IPositionService.class);
                     LayeredArea layArea = posServ.getEndLayeredArea(animTracker.component);
                     
-                    gpServ.setLayer(animTracker.component, layArea.layer);
+                    pServ.setLayer(animTracker.component, layArea.layer);
                 }
             }
         }

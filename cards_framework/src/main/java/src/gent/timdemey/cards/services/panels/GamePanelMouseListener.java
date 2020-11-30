@@ -93,7 +93,7 @@ class GamePanelMouseListener extends MouseAdapter
         IPositionService posServ = Services.get(IPositionService.class);
         IScalingService scaleServ = Services.get(IScalingService.class);
         IScalableComponent scaleComp = scaleServ.getComponentAt(e.getPoint());
-        IPanelService gpServ = Services.get(IPanelService.class);
+        IPanelService pServ = Services.get(IPanelService.class);
 
         if (!(scaleComp instanceof ScalableImageComponent))
         {
@@ -138,8 +138,8 @@ class GamePanelMouseListener extends MouseAdapter
                     int layer = posServ.getDragLayer();
                     
                     // ensure to stop any animations running for this card
-                    gpServ.stopAnimation(currScaleImg);                    
-                    gpServ.setLayer(currScaleImg, layer + i);
+                    pServ.stopAnimation(currScaleImg);                    
+                    pServ.setLayer(currScaleImg, layer + i);
                 
                     CardDragState dragState = new CardDragState(card_xstart, card_ystart);
                     dragStates.add(dragState);
@@ -185,7 +185,7 @@ class GamePanelMouseListener extends MouseAdapter
             int intersectAMax = 0;
             CommandBase cmdMove = null;
             List<UUID> visitedStackIds = new ArrayList<>();
-            IPanelService gpServ = Services.get(IPanelService.class);
+            IPanelService pServ = Services.get(IPanelService.class);
             IScalingService scaleServ = Services.get(IScalingService.class);
 
             List<IScalableComponent> overlapComps = scaleServ.getComponentsIn(scaleComp.getCoords().getBounds());
@@ -255,7 +255,7 @@ class GamePanelMouseListener extends MouseAdapter
                 for (int i = 0; i < draggedComps.size(); i++)
                 {
                     IScalableComponent comp = draggedComps.get(i);                    
-                    gpServ.startAnimation(comp);
+                    pServ.startAnimation(comp);
                 }
             }
 

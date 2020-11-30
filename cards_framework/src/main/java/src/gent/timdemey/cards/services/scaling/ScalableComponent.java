@@ -101,8 +101,8 @@ public abstract class ScalableComponent implements IScalableComponent
         int x = getComponent().getX();
         int y = getComponent().getY();
 
-        IPanelService gpServ = Services.get(IPanelService.class);
-        int layer = gpServ.getLayer(this);
+        IPanelService pServ = Services.get(IPanelService.class);
+        int layer = pServ.getLayer(this);
 
         return Arrays.asList("rect=" + x + "," + y + ", " + width + "x" + height, "layer=" + layer);
     }

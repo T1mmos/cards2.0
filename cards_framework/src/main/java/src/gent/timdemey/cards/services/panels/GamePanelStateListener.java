@@ -20,7 +20,7 @@ public class GamePanelStateListener implements IStateListener
     @Override
     public void onChange(ReadOnlyChange change)
     {
-        IPanelService gpServ = Services.get(IPanelService.class);
+        IPanelService pServ = Services.get(IPanelService.class);
         IContextService contextService = Services.get(IContextService.class);
         IScalingService scaleServ = Services.get(IScalingService.class);
         Context context = contextService.getThreadContext();
@@ -32,7 +32,7 @@ public class GamePanelStateListener implements IStateListener
         {            
             ReadOnlyCard card = state.getCardGame().getCard(change.entityId);            
             IScalableComponent comp = scaleServ.getScalableComponent(card);
-            gpServ.updateComponent(comp);
+            pServ.updateComponent(comp);
         }
         else if (property == ReadOnlyCardStack.Cards)
         {
@@ -40,7 +40,7 @@ public class GamePanelStateListener implements IStateListener
             {
                 ReadOnlyCard card = (ReadOnlyCard) change.addedValue;                
                 IScalableComponent comp = scaleServ.getScalableComponent(card);
-                gpServ.startAnimation(comp);    
+                pServ.startAnimation(comp);    
             }
         }
         else if (property == ReadOnlyPlayer.Score)

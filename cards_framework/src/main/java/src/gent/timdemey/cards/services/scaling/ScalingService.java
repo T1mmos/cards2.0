@@ -170,9 +170,9 @@ public final class ScalingService implements IScalingService
     @Override
     public IScalableComponent getComponentAt(Point p)
     {
-        IPanelService gpServ = Services.get(IPanelService.class);
+        IPanelService pServ = Services.get(IPanelService.class);
         Iterator<IScalableComponent> it = components.values().stream().sorted((x, y) -> {
-            return gpServ.getLayer(y) - gpServ.getLayer(x);
+            return pServ.getLayer(y) - pServ.getLayer(x);
         }).iterator();
         while (it.hasNext())
         {

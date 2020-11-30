@@ -27,7 +27,7 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
     @Override
     public void onChange(ReadOnlyChange change)
     {
-        IPanelService gpServ = Services.get(IPanelService.class);
+        IPanelService pServ = Services.get(IPanelService.class);
         IContextService contextService = Services.get(IContextService.class);
         IScalingService scaleServ = Services.get(IScalingService.class);
         ISolShowIdService idServ = Services.get(ISolShowIdService.class);
@@ -51,8 +51,8 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
             ScalableTextComponent comp = new ScalableTextComponent(UUID.randomUUID(), text, ComponentTypes.CARDSCORE, scaleFontRes);
             comp.setPayload(card);
 
-            gpServ.add(comp);
-            gpServ.startAnimation(comp);
+            pServ.add(comp);
+            pServ.startAnimation(comp);
         }
         else if (property == ReadOnlyCardStack.Cards)
         {
@@ -67,7 +67,7 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
                         for (ReadOnlyCard card : cardStack.getHighestCards(cnt))
                         {
                             IScalableComponent comp = scaleServ.getScalableComponent(card);
-                            gpServ.startAnimation(comp);
+                            pServ.startAnimation(comp);
                         }
                     }
                 }
@@ -90,12 +90,12 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
                         if (card != addedCard)
                         {
                             IScalableComponent comp = scaleServ.getScalableComponent(card);
-                            gpServ.startAnimation(comp);
+                            pServ.startAnimation(comp);
                         }
                     }
                 }
                 IScalableComponent comp = scaleServ.getScalableComponent(addedCard);
-                gpServ.startAnimation(comp);
+                pServ.startAnimation(comp);
             }
             else
             {
