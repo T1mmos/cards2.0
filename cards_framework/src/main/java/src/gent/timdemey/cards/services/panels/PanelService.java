@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -411,6 +412,8 @@ public class PanelService implements IPanelService
     @Override
     public void startAnimation(IScalableComponent scaleComp)
     {
+        int layer = getNextAnimationLayer();
+        setLayer(scaleComp, layer);
         animator.animate(scaleComp);
     }
 
@@ -466,7 +469,7 @@ public class PanelService implements IPanelService
 
         Optional<Integer> maxLayerInUse = animator.getScalableComponents().stream().map(sc -> getLayer(sc)).max(Integer::compare);
         int layer = posServ.getAnimationLayer();
-        if(maxLayerInUse.isPresent() && maxLayerInUse.get() > layer)
+        if(maxLayerInUse.isPresent())
         {
             layer = maxLayerInUse.get() + 1;
         }

@@ -1,5 +1,6 @@
 package gent.timdemey.cards.services.panels;
 
+import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
@@ -82,21 +83,22 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
             }
             else if (change.changeType == ChangeType.Add && cardStack.getCardStackType().equals(SolShowCardStackType.TURNOVER))
             {
-                int cnt = Math.min(cardStack.getCards().size(), 6);
-                ReadOnlyCard addedCard = (ReadOnlyCard) change.addedValue;
-                if (cnt > 0)
+                TypedChange<ReadOnlyCard> typed = ReadOnlyCardStack.Cards.cast(change);
+                List<ReadOnlyCard> addedCards = typed.addedValues;
+             
+                int addedCnt = Math.min(addedCards.size(), 3);
+                int animCnt = Math.min(cardStack.getCards().size(), 5);
+                int buriedCnt = Math.max(animCnt - addedCnt, 0);
+                List<ReadOnlyCard> animCards = cardStack.getHighestCards(animCnt);
+                
+                // animate from low to high
+                for (int idx = 0; idx < animCnt; idx++)
                 {
-                    for (ReadOnlyCard card : cardStack.getHighestCards(cnt))
-                    {
-                        if (card != addedCard)
-                        {
-                            IScalableComponent comp = scaleServ.getScalableComponent(card);
-                            pServ.startAnimation(comp);
-                        }
-                    }
+                    ReadOnlyCard animCard = animCards.get(idx);
+                    
+                    IScalableComponent animComp = scaleServ.getScalableComponent(animCard);
+                    pServ.startAnimation(animComp);                        
                 }
-                IScalableComponent comp = scaleServ.getScalableComponent(addedCard);
-                pServ.startAnimation(comp);
             }
             else
             {

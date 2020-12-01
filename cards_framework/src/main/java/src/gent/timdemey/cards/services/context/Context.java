@@ -1,11 +1,15 @@
 package gent.timdemey.cards.services.context;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.state.Property;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityFactory;
@@ -111,6 +115,63 @@ public final class Context
         stateListeners.remove(stateListener);
     }
 
+    private static class EntityPropertyChange
+    {
+        private final Property<?> property;
+        private final UUID entityId;
+        private final ChangeType changeType;
+        
+        private EntityPropertyChange ( Property<?> property, UUID entityId, ChangeType changeType)
+        {
+            this.property = property;
+            this.entityId = entityId;
+            this.changeType = changeType;
+        }
+
+        @Override
+        public int hashCode()
+        {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((changeType == null) ? 0 : changeType.hashCode());
+            result = prime * result + ((entityId == null) ? 0 : entityId.hashCode());
+            result = prime * result + ((property == null) ? 0 : property.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            EntityPropertyChange other = (EntityPropertyChange) obj;
+            if (changeType != other.changeType)
+                return false;
+            if (entityId == null)
+            {
+                if (other.entityId != null)
+                    return false;
+            }
+            else if (!entityId.equals(other.entityId))
+                return false;
+            if (property == null)
+            {
+                if (other.property != null)
+                    return false;
+            }
+            else if (!property.equals(other.property))
+                return false;
+            return true;
+        }
+      
+        
+        
+    }
+    
     // Callback from execution service that lets us know that a command or a chain
     // of commands was executed.
     // We can therefore now update the state listeners.
@@ -118,18 +179,39 @@ public final class Context
     {
         // get a list of all changes since the last reset()
         List<Change<?>> changes = changeTracker.getChangeList();
-        
+                
         // do not leak EntityBase objects, convert to readonly counterparts
         List<ReadOnlyChange> roChanges = new ArrayList<>();
+        
+        Map<EntityPropertyChange, List<Object>> stateRef2ListValues = new HashMap<>();
         for (Change<?> change : changes)
         {
-            ReadOnlyChange roChange = ReadOnlyEntityFactory.getReadOnlyChange(change);
-            if (roChange != null)
+            if (change.changeType == ChangeType.Add || change.changeType == ChangeType.Remove)
             {
+                EntityPropertyChange epc = new EntityPropertyChange(change.property, change.entityId, change.changeType);
+                List<Object> list = stateRef2ListValues.get(epc);
+                if (list == null)
+                {
+                    list = new ArrayList<Object>();
+                    stateRef2ListValues.put(epc, list);
+                }
+                
+                list.add(change.addedValue);
+            }           
+            else
+            {
+                ReadOnlyChange roChange = ReadOnlyEntityFactory.getReadOnlyChangeValue(change);
                 roChanges.add(roChange);
             }
         }
-
+        
+        for (EntityPropertyChange epc : stateRef2ListValues.keySet())
+        {
+            List<Object> addedValues = stateRef2ListValues.get(epc);
+            ReadOnlyChange roChange = ReadOnlyEntityFactory.getReadOnlyChangeListValue(epc.changeType, epc.property, epc.entityId, addedValues);
+            roChanges.add(roChange);
+        }
+               
         // reset the tracker before updating all listeners,
         // this way listeners themselves may schedule commands and 
         // will not cause stackoverflows

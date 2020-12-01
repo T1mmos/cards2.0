@@ -120,12 +120,10 @@ class GamePanelMouseListener extends MouseAdapter
             boolean pull = pullable && (!useable || useable && e.getClickCount() % 2 == 1);
             boolean use = useable && (!pullable || pullable && e.getClickCount() % 2 == 0);
 
+            
             if (pull)
             {
                 List<ReadOnlyCard> cards = stack.getCardsFrom(card);
-
-                dragStates.clear();
-                draggedComps.clear();
 
                 for (int i = 0; i < cards.size(); i++)
                 {
@@ -148,8 +146,23 @@ class GamePanelMouseListener extends MouseAdapter
             }
             else if (use)
             {
+                // stop ongoing animations for the cards that will be used.
+                // at this time we assume that all cards starting from the double-clicked card are used.
+                // if this is no longer the case then we would need to inspect the C_Use command.
+                List<ReadOnlyCard> cards = stack.getCardsFrom(card);
+                for (int i = 0; i < cards.size(); i++)
+                {
+                    ReadOnlyCard currentCard = cards.get(i);
+                    IScalableComponent currScaleImg = Services.get(IScalingService.class).getScalableComponent(currentCard);
+                                     
+                    // ensure to stop any animations running for this card. Don't change the layer here
+                    // it will either be its normal layer, or the dragged layer if the first click 
+                    // made the card(s) go into drag mode. The state listener will set the card's layer
+                    // to the animation layer after the model changed (induced by scheduling the use command).
+                    pServ.stopAnimation(currScaleImg);
+                }
+                
                 context.schedule(cmdUse);
-                draggedComps.clear();
             }
 
             mouse_xstart = e.getX();
@@ -247,10 +260,14 @@ class GamePanelMouseListener extends MouseAdapter
 
             if (cmdMove != null)
             {
+                // the cards will be animated towards their destination stack 
+                // by the state listener that will react to the model change
                 context.schedule(cmdMove);
             }
             else
             {
+                // there is no model change so we animate the cards back to their
+                // current stack
                 for (int i = 0; i < draggedComps.size(); i++)
                 {
                     IScalableComponent comp = draggedComps.get(i);                    

@@ -1,6 +1,7 @@
 package gent.timdemey.cards.readonlymodel;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import gent.timdemey.cards.logging.Logger;
@@ -101,10 +102,10 @@ public class ReadOnlyProperty<T>
         
         T oldValue = (T) change.oldValue;
         T newValue = (T) change.newValue;
-        T addedValue = (T) change.addedValue;
-        T removedValue = (T) change.removedValue;
+        List<T> addedValues = (List<T>) change.addedValues;
+        List<T> removedValues = (List<T>) change.removedValues;
         
-        TypedChange<T> changeT = new TypedChange<T>(change.changeType, this, change.entityId, oldValue, newValue, addedValue, removedValue);
+        TypedChange<T> changeT = new TypedChange<T>(change.changeType, this, change.entityId, oldValue, newValue, addedValues, removedValues);
         return changeT;
     }
     

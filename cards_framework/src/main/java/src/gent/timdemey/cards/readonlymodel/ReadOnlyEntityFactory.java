@@ -17,9 +17,11 @@ import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.model.entities.game.UDPServer;
+import gent.timdemey.cards.model.state.Property;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.model.state.StateListRef;
 import gent.timdemey.cards.services.context.Change;
+import gent.timdemey.cards.services.context.ChangeType;
 
 public class ReadOnlyEntityFactory
 {
@@ -132,7 +134,7 @@ public class ReadOnlyEntityFactory
         return GetOrCreateEntity(commandExecution, ce -> new ReadOnlyCommandExecution(ce));
     }
 
-    public static ReadOnlyChange getReadOnlyChange(Change<?> change)
+    public static ReadOnlyChange getReadOnlyChangeValue(Change<?> change)
     {
         // find ReadOnlyProperty
         ReadOnlyProperty<?> roProperty = ReadOnlyProperty.getReadOnlyProperty(change.property);
@@ -143,13 +145,46 @@ public class ReadOnlyEntityFactory
 
         Object oldValue = toReadOnly(change.oldValue);
         Object newValue = toReadOnly(change.newValue);
-        Object addedValue = toReadOnly(change.addedValue);
-        Object removedValue = toReadOnly(change.removedValue);
+        List<Object> addedValues = null;
+        List<Object> removedValues = null;
 
-        ReadOnlyChange roChange = new ReadOnlyChange(change.changeType, roProperty, change.entityId, oldValue, newValue, addedValue, removedValue);
+        ReadOnlyChange roChange = new ReadOnlyChange(change.changeType, roProperty, change.entityId, oldValue, newValue, addedValues, removedValues);
         return roChange;
     }
 
+    public static ReadOnlyChange getReadOnlyChangeListValue(ChangeType changeType, Property<?> property, UUID entityId, List<Object> values)
+    {
+        // find ReadOnlyProperty
+        ReadOnlyProperty<?> roProperty = ReadOnlyProperty.getReadOnlyProperty(property);
+        if (roProperty == null)
+        {
+            return null;
+        }
+
+        Object oldValue = null;
+        Object newValue = null;
+        List<Object> addedValues = toReadOnly(values);
+        List<Object> removedValues = null;
+
+        ReadOnlyChange roChange = new ReadOnlyChange(changeType, roProperty, entityId, oldValue, newValue, addedValues, removedValues);
+        return roChange;
+    }
+
+    public static List<Object> toReadOnly(List<Object> wrappees)
+    {
+        if (wrappees == null)
+        {
+            return null;
+        }
+        
+        List<Object> wrappers = new ArrayList<>();
+        for (Object obj : wrappees)
+        {
+            wrappers.add(toReadOnly(obj));
+        }
+        return wrappers;
+    }
+    
     public static Object toReadOnly(Object wrappee)
     {
         if (wrappee == null)

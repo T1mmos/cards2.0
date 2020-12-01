@@ -51,9 +51,13 @@ public class LobbyDialogContent extends DialogContent<Void, Void>
                 TypedChange<ReadOnlyPlayer> typed = ReadOnlyState.Players.cast(change);
                 if (typed.changeType == ChangeType.Add)
                 {
-                    ReadOnlyPlayer addedPlayer = typed.addedValue;                    
-                    JLabel jlabel = state.getLocalId().equals(addedPlayer.getId()) ? l_localPlayer : l_remotePlayer;
-                    jlabel.setText(addedPlayer.getName());
+                    List<ReadOnlyPlayer> addedPlayers = typed.addedValues;
+                    
+                    for (ReadOnlyPlayer addedPlayer : addedPlayers)
+                    {
+                        JLabel jlabel = state.getLocalId().equals(addedPlayer.getId()) ? l_localPlayer : l_remotePlayer;
+                        jlabel.setText(addedPlayer.getName());
+                    }
                 }
                 else if (typed.changeType == ChangeType.Remove)
                 {                    
