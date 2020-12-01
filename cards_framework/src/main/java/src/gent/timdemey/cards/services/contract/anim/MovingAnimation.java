@@ -26,5 +26,6 @@ public class MovingAnimation implements IAnimation
         Coords.Absolute coords_interp = Coords.interpolate(frac, coords_src, coords_dst);   
         
         comp.setCoords(coords_interp);
+        comp.getComponent().validate();
     }
 }
