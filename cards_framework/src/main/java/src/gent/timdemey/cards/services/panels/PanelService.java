@@ -12,10 +12,12 @@ import java.util.UUID;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.cards.Suit;
 import gent.timdemey.cards.model.entities.cards.Value;
 import gent.timdemey.cards.readonlymodel.IStateListener;
@@ -428,7 +430,23 @@ public class PanelService implements IPanelService
 
     public void setLayer(IScalableComponent component, int layerIndex)
     {
-        gamePanel.setLayer(component.getComponent(), layerIndex);
+        if (component instanceof ScalableImageComponent) 
+        {
+            Object o = component.getPayload();
+            if (o instanceof ReadOnlyCard)
+            {
+                ReadOnlyCard card = (ReadOnlyCard) o;
+                if (card.getSuit() == Suit.HEARTS && card.getValue() == Value.V_A)
+                {
+                    int lyr = gamePanel.getLayer(component.getComponent());
+                    Logger.info("setLayer: layer=%s", lyr);
+                    int a = 4;
+                }
+            }
+        }
+        
+            gamePanel.setLayer(component.getComponent(), layerIndex);
+            gamePanel.repaint();
     }
 
     private void position(IScalableComponent comp)

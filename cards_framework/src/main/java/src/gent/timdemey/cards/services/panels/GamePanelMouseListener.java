@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
+import gent.timdemey.cards.model.entities.commands.C_Use;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
@@ -148,8 +149,13 @@ class GamePanelMouseListener extends MouseAdapter
             }
             else if (use)
             {
-                context.schedule(cmdUse);
                 draggedComps.clear();
+                
+                for (IScalableComponent comp : draggedComps)
+                {
+                    pServ.stopAnimation(comp);              
+                }
+                context.schedule(cmdUse);
             }
 
             mouse_xstart = e.getX();
