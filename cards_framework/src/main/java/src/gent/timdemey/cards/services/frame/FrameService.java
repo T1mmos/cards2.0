@@ -1,7 +1,9 @@
 package gent.timdemey.cards.services.frame;
 
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -10,8 +12,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.Action;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -24,42 +28,70 @@ import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.services.configman.ConfigKey;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
+import gent.timdemey.cards.services.contract.preload.IPreload;
+import gent.timdemey.cards.services.contract.preload.PreloadOrder;
+import gent.timdemey.cards.services.contract.preload.PreloadOrderType;
+import gent.timdemey.cards.services.contract.res.FontResource;
 import gent.timdemey.cards.services.contract.res.ImageResource;
 import gent.timdemey.cards.services.interfaces.IConfigManager;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.services.interfaces.IResourceService;
-import gent.timdemey.cards.ui.RootPanel;
 import gent.timdemey.cards.ui.actions.ActionDef;
 import gent.timdemey.cards.ui.actions.Actions;
 import gent.timdemey.cards.ui.actions.IActionFactory;
+import net.miginfocom.swing.MigLayout;
 
-public class FrameService implements IFrameService
+public class FrameService implements IFrameService, IPreload
 {  
     private JFrame frame;
     private RootPanel rootPanel;
+    private CardPanel cardPanel;
+    private TitlePanel titlePanel;
     private Map<PanelDescriptor, JComponent> pDesc2Comps;
     private boolean drawDebug = false;
+    private Font titlefont;
     
     @Override
     public JFrame getFrame()
     {
         if (frame == null)
         {
-            ICardPlugin plugin = Services.get(ICardPlugin.class);
-            
             frame = new JFrame();
             
             BufferedImage bg = getBackgroundImage();
             rootPanel = new RootPanel(bg);
-            rootPanel.setLayout(new CardLayout());
+            rootPanel.setLayout(new MigLayout("insets 5, gapy 0"));
+            RootPanelMouseListener rpMouseListener = new RootPanelMouseListener();
+            rootPanel.addMouseListener(rpMouseListener);    
+            rootPanel.addMouseMotionListener(rpMouseListener);
             frame.setContentPane(rootPanel);
             
-            JMenuBar menuBar = getMenuBar(plugin);
-            frame.setJMenuBar(menuBar);
+            titlePanel = new TitlePanel();
+            titlePanel.setLayout(new MigLayout("insets 0"));
+            titlePanel.setOpaque(false);
+            JLabel title_icon = new JLabel(new ImageIcon(getFrameIcons().get(1)));
+            JLabel title_text = new JLabel(getTitle());
+            title_text.setFont(titlefont);
+            title_text.setForeground(Color.darkGray.darker());
+            titlePanel.add(title_icon, "gapx 10, left");
+            titlePanel.add(title_text, "gapx 10, pushx, left");
+            TitlePanelMouseListener tpMouseListener = new TitlePanelMouseListener();
+            titlePanel.addMouseListener(tpMouseListener);
+            titlePanel.addMouseMotionListener(tpMouseListener);
+            rootPanel.add(titlePanel, "pushx, grow, wrap");
             
-            frame.setTitle(String.format("%s v%d.%d", plugin.getName(), plugin.getMajorVersion(), plugin.getMinorVersion()));
+            cardPanel = new CardPanel();
+            cardPanel.setLayout(new CardLayout());
+            rootPanel.add(cardPanel, "push, grow");
+            
+            
+          //  JMenuBar menuBar = getMenuBar(plugin);
+          //  frame.setJMenuBar(menuBar);
+            
+            frame.setTitle(getTitle());
+            frame.setUndecorated(true);
             frame.setSize(new Dimension(800, 600));
             frame.setMinimumSize(new Dimension(300, 200));
             frame.setLocationRelativeTo(null);
@@ -78,8 +110,8 @@ public class FrameService implements IFrameService
             pDesc2Comps = new HashMap<>();
         }
         
-        rootPanel.add(comp);
-        rootPanel.setLayer(comp, pDesc.layer, 0);
+        cardPanel.add(comp);
+        cardPanel.setLayer(comp, pDesc.layer, 0);
         
         comp.setVisible(false);
         pDesc2Comps.put(pDesc, comp);
@@ -146,6 +178,13 @@ public class FrameService implements IFrameService
     public boolean getDrawDebug()
     {
         return drawDebug;
+    }
+    
+    protected String getTitle()
+    {
+        ICardPlugin plugin = Services.get(ICardPlugin.class);
+        String title = plugin.getName();
+        return title;
     }
     
     protected List<Image> getFrameIcons()
@@ -258,6 +297,16 @@ public class FrameService implements IFrameService
         IResourceService resServ = Services.get(IResourceService.class);
         BufferedImage background = resServ.getImage("background.png").raw;
         return background;
+    }
+
+    @PreloadOrder(order = PreloadOrderType.DEPENDENT)
+    @Override
+    public void preload()
+    {
+        IResourceService resServ = Services.get(IResourceService.class);
+
+        FontResource resp_font = resServ.getFont("foptitles.ttf");
+        titlefont = resp_font.raw.deriveFont(40f);
     }
 }
 

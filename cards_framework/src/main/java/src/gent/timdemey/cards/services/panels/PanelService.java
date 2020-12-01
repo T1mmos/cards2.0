@@ -274,7 +274,6 @@ public class PanelService implements IPanelService
         }
     }
 
-
     protected List<String> getMenuActionDefs()
     {
         ICardPlugin cardPlugin = Services.get(ICardPlugin.class);
