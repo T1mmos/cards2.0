@@ -242,7 +242,6 @@ class GamePanelMouseListener extends MouseAdapter
 
                     intersectAMax = intersectA;
                     cmdMove = operationsServ.getMoveCommand(playerId, cards.get(0).getCardStack().getId(), dstCardStack.getId(), cards.get(0).getId());
-
                 }
             }
 

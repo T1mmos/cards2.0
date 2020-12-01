@@ -10,7 +10,6 @@ public interface IFrameService
     public JFrame getFrame();
      
     public void addPanel(PanelDescriptor pDesc, JComponent comp);
-    public PanelDescriptor getCurrentPanel();
     public void showPanel(PanelDescriptor desc);
     public void hidePanel(PanelDescriptor desc);
 

@@ -40,8 +40,7 @@ public class FrameService implements IFrameService
 {  
     private JFrame frame;
     private RootPanel rootPanel;
-    private Map<PanelDescriptor, JComponent> panels;
-    private PanelDescriptor currPanelDesc;
+    private Map<PanelDescriptor, JComponent> pDesc2Comps;
     private boolean drawDebug = false;
     
     @Override
@@ -75,16 +74,16 @@ public class FrameService implements IFrameService
     @Override
     public void addPanel(PanelDescriptor pDesc, JComponent comp)
     {        
-        if (panels == null)
+        if (pDesc2Comps == null)
         {
-            panels = new HashMap<>();
+            pDesc2Comps = new HashMap<>();
         }
         
         rootPanel.add(comp);
         rootPanel.setLayer(comp, pDesc.layer, 0);
         
         comp.setVisible(false);
-        panels.put(pDesc, comp);
+        pDesc2Comps.put(pDesc, comp);
     }
     
     @Override
@@ -92,18 +91,32 @@ public class FrameService implements IFrameService
     {
         IPanelService panelServ = Services.get(IPanelService.class);
         
-        if (currPanelDesc != null && !desc.overlay)
+        // if this panel is not an overlay, hide all the others
+        if (!desc.overlay)
         {
-            JComponent currComp = panels.get(currPanelDesc);
-            currComp.setVisible(false);
-            panelServ.onPanelHidden(currPanelDesc);
+            for (PanelDescriptor pd : pDesc2Comps.keySet())
+            {
+                if (pd == desc)
+                {
+                    continue;
+                }
+                
+                JComponent cmp = pDesc2Comps.get(pd);
+                if (cmp.isVisible())
+                {
+                    cmp.setVisible(false);
+                    panelServ.onPanelHidden(pd);
+                }
+            }           
         }
         
-        JComponent comp = panels.get(desc);
-        comp.setVisible(true);
-        currPanelDesc = desc;
+        JComponent comp = pDesc2Comps.get(desc);
         
-        panelServ.onPanelShown(desc);
+        if (!comp.isVisible())
+        {
+            comp.setVisible(true);
+            panelServ.onPanelShown(desc);
+        }        
     }
     
     @Override
@@ -113,16 +126,10 @@ public class FrameService implements IFrameService
         
         if (desc.overlay)
         {
-            JComponent currComp = panels.get(desc);
+            JComponent currComp = pDesc2Comps.get(desc);
             currComp.setVisible(false);
             panelServ.onPanelHidden(desc);
         }
-    }
-
-    @Override
-    public PanelDescriptor getCurrentPanel()
-    {
-        return currPanelDesc;
     }
     
     @Override
@@ -130,7 +137,7 @@ public class FrameService implements IFrameService
     {
         drawDebug = on;
 
-        for (JComponent comp : panels.values())
+        for (JComponent comp : pDesc2Comps.values())
         {
             comp.repaint();
         }
