@@ -17,13 +17,11 @@ The game is still unfinished as specific required parts are not yet (fully) deve
 
 The main engine found in [cards_framework](../master/cards_framework) must be started with a [plugin](../master/cards_framework/src/main/java/src/gent/timdemey/cards/ICardPlugin.java) in order to run a game. Currently, two plugins are supported: 
 * Solitaire (single player - [screenshot](screenshots/solitaire_590x445.png?raw=true) - [plugin](../master/cards_solitaire/src/main/java/src/gent/timdemey/cards/SolitairePlugin.java))
-* Solitaire Showdown (1vs1 multiplayer - [animated GIF](screenshots/solitaireshowdown_05212020.gif?raw=true) - [plugin](../master/cards_solitaireshowdown/src/main/java/src/gent/timdemey/cards/SolShowPlugin.java))
+* Solitaire Showdown (1vs1 multiplayer - [animated GIF](screenshots/solitaireshowdown_11252020.gif?raw=true) - [plugin](../master/cards_solitaireshowdown/src/main/java/src/gent/timdemey/cards/SolShowPlugin.java))
 
-## Sprites
+## Latest animated GIF
 
-All in-game sprites were made by me. For example, all cards were made in Paint.NET, using a bunch of layers to switch between red and black colored card elements, to switch the card value, to add a gloss etc. Then, I saved 52 times to a PNG file, each time with different layers switched on and off, resulting in 52 cards in PNG format. Infact, this was the first thing done before writing any code.
-
-The cards are designed to replicate the cards as seen in the [original Solitaire Showdown game](screenshots/solshow_orig_game.jpg?raw=true).
+![Screenshot Solitaire Showdown](screenshots/solitaireshowdown_11252020.gif)
 
 ## Project History
 
@@ -38,7 +36,4 @@ The cards are designed to replicate the cards as seen in the [original Solitaire
 * November 2020: Summer has passed - back to work after a break of several months. Several visuals have been created. Animation trajectories are pixel perfect in all resolutions. Game is really starting to look like the original now.
 * December 2020: Multiple "root" panels are now supported: "menu", "loading" and "game" panels were added. With this feature, a menu was added which will fully replace the menubar, and a loading screen can now be overlayed. Several architectural and logical fixes related to drag/animation and Z-layering of components have been implemented, making animations behave correctly. 
 
-## Latest animated GIF
-
-![Screenshot Solitaire Showdown](screenshots/solitaireshowdown_11252020.gif)
 
