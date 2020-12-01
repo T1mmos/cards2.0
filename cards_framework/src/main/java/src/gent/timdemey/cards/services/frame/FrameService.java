@@ -34,7 +34,6 @@ import gent.timdemey.cards.ui.RootPanel;
 import gent.timdemey.cards.ui.actions.ActionDef;
 import gent.timdemey.cards.ui.actions.Actions;
 import gent.timdemey.cards.ui.actions.IActionFactory;
-import net.miginfocom.swing.MigLayout;
 
 public class FrameService implements IFrameService
 {  
