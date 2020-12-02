@@ -164,7 +164,7 @@ public class PanelService implements IPanelService
                 menuPanel = new MenuPanel();
                 menuPanel.setLayout(new MigLayout("insets 0, align 50% 50%"));
 
-                List<ActionDescriptor> actDescs = getMenuActionDefs();
+                List<ActionDescriptor> actDescs = getMenuActionDescriptors();
 
                 MenuButtonMouseListener listener = new MenuButtonMouseListener();
                 IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
@@ -183,6 +183,7 @@ public class PanelService implements IPanelService
 
                     button.addMouseListener(listener);
                     button.setFont(font);
+                    button.setIcon(null); // no icon in menu list
 
                     menuPanel.add(button, "sg buts, wrap");
                 }
@@ -271,7 +272,7 @@ public class PanelService implements IPanelService
         }
     }
 
-    protected List<ActionDescriptor> getMenuActionDefs()
+    protected List<ActionDescriptor> getMenuActionDescriptors()
     {
         ICardPlugin cardPlugin = Services.get(ICardPlugin.class);
         if(cardPlugin.getPlayerCount() > 1)

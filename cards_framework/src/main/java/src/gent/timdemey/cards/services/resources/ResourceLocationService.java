@@ -53,6 +53,12 @@ public class ResourceLocationService implements IResourceLocationService
     }
     
     @Override
+    public String getAppMaximizeUndoIconFilePath()
+    {
+        return "maximize_undo.png";
+    }
+    
+    @Override
     public String getAppTitleFontFilePath()
     {
         return "foptitles.ttf";
@@ -63,7 +69,6 @@ public class ResourceLocationService implements IResourceLocationService
     {
         return "close.png";
     }
-
 
     
 }

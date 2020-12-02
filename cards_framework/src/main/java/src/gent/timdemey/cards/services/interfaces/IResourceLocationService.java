@@ -11,6 +11,7 @@ public interface IResourceLocationService
     public String getAppIconFilePath(int dim);
     public String getAppMinimizeIconFilePath();
     public String getAppMaximizeIconFilePath();
+    public String getAppMaximizeUndoIconFilePath();
     public String getAppCloseIconFilePath();
     public String getAppTitleFontFilePath();
     

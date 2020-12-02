@@ -12,6 +12,9 @@ public interface IFrameService
     public void addPanel(PanelDescriptor pDesc, JComponent comp);
     public void showPanel(PanelDescriptor desc);
     public void hidePanel(PanelDescriptor desc);
+    
+    public void maximize();
+    public void minimize();
 
     public void setDrawDebug(boolean on);
     public boolean getDrawDebug();

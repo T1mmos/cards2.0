@@ -4,7 +4,9 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +47,11 @@ public class FrameService implements IFrameService, IPreload
     private Map<PanelDescriptor, JComponent> pDesc2Comps;
     private boolean drawDebug = false;
     private Font titlefont;
+    private boolean maximized;
+    private Rectangle bounds;
+    private JButton title_minimize;
+    private JButton title_maximize; 
+    private JButton title_close;
     
     private JButton createFrameButton(ActionDescriptor desc)
     {
@@ -82,9 +89,9 @@ public class FrameService implements IFrameService, IPreload
             titlePanel.setOpaque(false);
             JLabel title_icon = new JLabel(new ImageIcon(getFrameIcons().get(1)));
             JLabel title_text = new JLabel(getTitle());
-            JButton title_minimize = createFrameButton(ActionDescriptors.ad_minimize);
-            JButton title_maximize = createFrameButton(ActionDescriptors.ad_maximize);
-            JButton title_close = createFrameButton(ActionDescriptors.ad_quit);
+            title_minimize = createFrameButton(ActionDescriptors.ad_minimize);
+            title_maximize = createFrameButton(ActionDescriptors.ad_maximize);
+            title_close = createFrameButton(ActionDescriptors.ad_quit);
             
             title_minimize.setText("");
             title_maximize.setText("");
@@ -234,6 +241,43 @@ public class FrameService implements IFrameService, IPreload
         String fontName = resLocServ.getAppTitleFontFilePath();
         FontResource resp_font = resServ.getFont(fontName);
         titlefont = resp_font.raw.deriveFont(40f);
+    }
+
+    @Override
+    public void maximize()
+    {        
+        if (maximized)
+        {            
+            frame.setBounds(bounds);
+        }
+        else
+        {
+            bounds = frame.getBounds();
+            frame.setExtendedState(Frame.MAXIMIZED_BOTH);            
+        }
+        
+        maximized = !maximized;
+        
+        updateTitleMaximizeIcon();
+    }
+    
+    private void updateTitleMaximizeIcon()
+    {
+        IResourceService resServ = Services.get(IResourceService.class);
+        IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
+        
+        String filepath = maximized ? resLocServ.getAppMaximizeUndoIconFilePath() : resLocServ.getAppMaximizeIconFilePath();
+        
+        Image img = resServ.getImage(filepath).raw;
+        title_maximize.setIcon(new ImageIcon(img));
+    }
+
+    @Override
+    public void minimize()
+    {
+        maximized = false;
+        frame.setExtendedState(Frame.ICONIFIED);
+        updateTitleMaximizeIcon();
     }
 }
 

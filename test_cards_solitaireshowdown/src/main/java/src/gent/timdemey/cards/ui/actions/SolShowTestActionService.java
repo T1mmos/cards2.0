@@ -9,6 +9,17 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 public class SolShowTestActionService extends ActionService
 {
     @Override
+    protected ActionBase createAction(ActionDescriptor desc)
+    {
+        if (desc == SolShowTestActionDescriptors.ad_fakegame)
+        {
+            return new A_DebugFakeSolShowGame();
+        }    
+        
+        return super.createAction(desc);
+    }
+    
+    @Override
     public boolean canExecuteAction(ActionDescriptor desc)
     {
         if (desc == SolShowTestActionDescriptors.ad_fakegame ||
