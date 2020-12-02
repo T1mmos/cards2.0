@@ -7,7 +7,7 @@ public class A_DebugFakeSolShowGame extends ActionBase
 {
     public A_DebugFakeSolShowGame()
     {
-        super(SolShowTestActions.ACTION_FAKESOLSHOWGAME, "Fake SolShow game");
+        super(SolShowTestActionDescriptors.ad_fakegame, "Fake SolShow game");
     }
 
     @Override

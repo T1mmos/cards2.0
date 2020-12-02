@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -47,9 +46,9 @@ import gent.timdemey.cards.services.scaling.IScalableResource;
 import gent.timdemey.cards.services.scaling.img.ScalableImageComponent;
 import gent.timdemey.cards.services.scaling.img.ScalableImageResource;
 import gent.timdemey.cards.services.scaling.text.ScalableFontResource;
-import gent.timdemey.cards.ui.actions.ActionDef;
-import gent.timdemey.cards.ui.actions.Actions;
-import gent.timdemey.cards.ui.actions.IActionFactory;
+import gent.timdemey.cards.ui.actions.ActionDescriptor;
+import gent.timdemey.cards.ui.actions.ActionDescriptors;
+import gent.timdemey.cards.ui.actions.IActionService;
 import net.miginfocom.swing.MigLayout;
 
 public class PanelService implements IPanelService
@@ -59,7 +58,6 @@ public class PanelService implements IPanelService
 
     private GamePanelResizeListener resizeListener;
     private GamePanelMouseListener dragListener;
-    // private IStateListener stateListener;
 
     // different panels
     private GamePanel gamePanel;
@@ -166,7 +164,7 @@ public class PanelService implements IPanelService
                 menuPanel = new MenuPanel();
                 menuPanel.setLayout(new MigLayout("insets 0, align 50% 50%"));
 
-                List<String> actionNames = getMenuActionDefs();
+                List<ActionDescriptor> actDescs = getMenuActionDefs();
 
                 MenuButtonMouseListener listener = new MenuButtonMouseListener();
                 IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
@@ -174,11 +172,10 @@ public class PanelService implements IPanelService
                 
                 Font font = resServ.getFont(resLocServ.getMenuFontFilePath()).raw.deriveFont(30f);
 
-                IActionFactory actFact = Services.get(IActionFactory.class);
-                for (String actionName : actionNames)
+                IActionService actServ = Services.get(IActionService.class);
+                for (ActionDescriptor actDesc : actDescs)
                 {
-                    ActionDef act_createmp = actFact.getActionDef(actionName);
-                    JButton button = new JButton(act_createmp.action);
+                    JButton button = new JButton(actServ.getAction(actDesc));
                     button.setContentAreaFilled(false);
                     button.setBorder(null);
                     button.setBorderPainted(false);
@@ -274,16 +271,16 @@ public class PanelService implements IPanelService
         }
     }
 
-    protected List<String> getMenuActionDefs()
+    protected List<ActionDescriptor> getMenuActionDefs()
     {
         ICardPlugin cardPlugin = Services.get(ICardPlugin.class);
         if(cardPlugin.getPlayerCount() > 1)
         {
-            return Arrays.asList(Actions.ACTION_CREATE_MULTIPLAYER, Actions.ACTION_JOIN, Actions.ACTION_QUIT);
+            return Arrays.asList(ActionDescriptors.ad_create_mp, ActionDescriptors.ad_join, ActionDescriptors.ad_quit);
         }
         else
         {
-            return Arrays.asList(Actions.ACTION_START, Actions.ACTION_QUIT);
+            return Arrays.asList(ActionDescriptors.ad_start, ActionDescriptors.ad_quit);
         }
 
     }

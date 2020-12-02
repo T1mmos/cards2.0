@@ -1,7 +1,5 @@
 package gent.timdemey.cards.ui.actions;
 
-import gent.timdemey.cards.localization.Loc;
-import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCommandHistory;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
@@ -9,9 +7,9 @@ import gent.timdemey.cards.services.context.ContextType;
 
 public class A_Undo extends ActionBase
 {
-    protected A_Undo()
+    protected A_Undo(ActionDescriptor desc, String title)
     {
-        super(Actions.ACTION_UNDO, Loc.get(LocKey.Menu_undo));
+        super(desc, title);
     }
 
     @Override

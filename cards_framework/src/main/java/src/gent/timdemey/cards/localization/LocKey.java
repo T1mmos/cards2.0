@@ -60,6 +60,8 @@ public final class LocKey
     public static final LocKey Menu_redo = Menu("redo");  
     public static final LocKey Menu_join = Menu("join");  
     public static final LocKey Menu_leave = Menu("leave");  
+    public static final LocKey Menu_maximize = Menu("maximize");
+    public static final LocKey Menu_minimize = Menu("minimize");
        
     public static final LocKey TableColumnTitle_ipaddress = TableColumnTitle("ipaddress");
     public static final LocKey TableColumnTitle_lobbyPlayerCounts = TableColumnTitle("lobbyPlayerCounts");

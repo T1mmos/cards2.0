@@ -1,15 +1,15 @@
 package gent.timdemey.cards.ui.actions;
 
-import gent.timdemey.cards.localization.Loc;
-import gent.timdemey.cards.localization.LocKey;
+import javax.swing.Icon;
+
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.services.context.ContextType;
 
 public class A_QuitGame extends ActionBase
 {
-    protected A_QuitGame()
+    protected A_QuitGame(ActionDescriptor desc, String title, Icon icon)
     {
-        super(Actions.ACTION_QUIT, Loc.get(LocKey.Menu_quit));
+        super(desc, title, icon);
     }
 
     @Override

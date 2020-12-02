@@ -40,4 +40,30 @@ public class ResourceLocationService implements IResourceLocationService
         return FILEPATH_FONT_MENU;
     }
 
+    @Override
+    public String getAppMinimizeIconFilePath()
+    {
+        return "minimize.png";
+    }
+
+    @Override
+    public String getAppMaximizeIconFilePath()
+    {
+        return "maximize.png";
+    }
+    
+    @Override
+    public String getAppTitleFontFilePath()
+    {
+        return "foptitles.ttf";
+    }
+
+    @Override
+    public String getAppCloseIconFilePath()
+    {
+        return "close.png";
+    }
+
+
+    
 }

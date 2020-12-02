@@ -26,9 +26,7 @@ import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.panels.GamePanelStateListener;
 import gent.timdemey.cards.services.panels.PanelService;
-import gent.timdemey.cards.ui.actions.ActionFactory;
 import gent.timdemey.cards.ui.actions.ActionService;
-import gent.timdemey.cards.ui.actions.IActionFactory;
 import gent.timdemey.cards.ui.actions.IActionService;
 
 public class StartFrame
@@ -42,7 +40,6 @@ public class StartFrame
         services.installIfAbsent(IFrameService.class, () -> new FrameService());
         services.installIfAbsent(IDialogService.class, () -> new DialogService());
         services.installIfAbsent(IActionService.class, () -> new ActionService());
-        services.installIfAbsent(IActionFactory.class, () -> new ActionFactory());
         services.installIfAbsent(IPanelService.class, () -> new PanelService());
         services.installIfAbsent(IStateListener.class, () -> new GamePanelStateListener());
     }

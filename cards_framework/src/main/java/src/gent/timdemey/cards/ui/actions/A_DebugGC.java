@@ -1,15 +1,13 @@
 package gent.timdemey.cards.ui.actions;
 
-import gent.timdemey.cards.localization.Loc;
-import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.services.context.ContextType;
 
 public class A_DebugGC extends ActionBase
 {
-    protected A_DebugGC()
+    protected A_DebugGC(ActionDescriptor desc, String title)
     {
-        super(Actions.ACTION_DEBUG_GC, Loc.get(LocKey.DebugMenu_gc));
+        super(desc, title);
     }
 
     @Override

@@ -9,5 +9,11 @@ public interface IResourceLocationService
     public String getCardBackFilePath();
     
     public String getAppIconFilePath(int dim);
+    public String getAppMinimizeIconFilePath();
+    public String getAppMaximizeIconFilePath();
+    public String getAppCloseIconFilePath();
+    public String getAppTitleFontFilePath();
+    
     public String getMenuFontFilePath();
+    
 }

@@ -2,8 +2,6 @@ package gent.timdemey.cards.ui.actions;
 
 import javax.swing.SwingUtilities;
 
-import gent.timdemey.cards.localization.Loc;
-import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.context.ContextType;
@@ -16,11 +14,11 @@ import gent.timdemey.cards.services.context.ContextType;
  */
 public class A_CreateMultiplayerGame extends ActionBase
 {    
-    protected A_CreateMultiplayerGame()
+    protected A_CreateMultiplayerGame(ActionDescriptor desc, String title)
     {
-        super(Actions.ACTION_CREATE_MULTIPLAYER, Loc.get(LocKey.Menu_creategame));
+        super(desc, title);
     }
-
+    
     @Override
     public void onContextInitialized(ContextType type)
     {

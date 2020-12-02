@@ -1,16 +1,14 @@
 package gent.timdemey.cards.ui.actions;
 
-import gent.timdemey.cards.localization.Loc;
-import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.context.ContextType;
 
 public class A_StartGame extends ActionBase
 {
-    protected A_StartGame()
+    protected A_StartGame(ActionDescriptor desc, String title)
     {
-        super(Actions.ACTION_START, Loc.get(LocKey.Menu_newgame));
+        super(desc, title);
     }
 
     @Override

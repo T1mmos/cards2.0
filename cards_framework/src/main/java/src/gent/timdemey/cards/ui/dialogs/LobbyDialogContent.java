@@ -20,8 +20,8 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogContent;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.ui.actions.Actions;
-import gent.timdemey.cards.ui.actions.IActionFactory;
+import gent.timdemey.cards.ui.actions.ActionDescriptors;
+import gent.timdemey.cards.ui.actions.IActionService;
 import net.miginfocom.swing.MigLayout;
 
 public class LobbyDialogContent extends DialogContent<Void, Void>
@@ -87,11 +87,11 @@ public class LobbyDialogContent extends DialogContent<Void, Void>
     public LobbyDialogContent()
     {
         ReadOnlyState state = Services.get(IContextService.class).getThreadContext().getReadOnlyState();
-        IActionFactory actFact = Services.get(IActionFactory.class);
+        IActionService actServ = Services.get(IActionService.class);
         
         this.l_serverMsg = new JLabel(state.getServerMessage());
         this.l_localPlayer = new JLabel(state.getPlayers().get(state.getLocalId()).getName());
-        this.b_startGame = new JButton(actFact.getActionDef(Actions.ACTION_STARTMULTIPLAYER).action);
+        this.b_startGame = new JButton(actServ.getAction(ActionDescriptors.ad_startmp));
         
         String lobbyAdminName = state.getPlayers().get(state.getLobbyAdminId()).getName();
         this.l_waitingToStart = new JLabel(Loc.get(LocKey.Label_waitingToStart, lobbyAdminName));

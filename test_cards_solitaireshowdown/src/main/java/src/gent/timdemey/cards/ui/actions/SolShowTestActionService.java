@@ -9,34 +9,34 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 public class SolShowTestActionService extends ActionService
 {
     @Override
-    public boolean canExecuteAction(String id)
+    public boolean canExecuteAction(ActionDescriptor desc)
     {
-        switch (id)
+        if (desc == SolShowTestActionDescriptors.ad_fakegame ||
+            desc == SolShowTestActionDescriptors.ad_switchcvis)
         {
-            case SolShowTestActions.ACTION_FAKESOLSHOWGAME:
-            case SolShowTestActions.ACTION_SWITCHCARDSVISIBLE:
-                return true;                
-            default:
-                return super.canExecuteAction(id);
-        }
+            return true;
+        }                
+        
+        return super.canExecuteAction(desc);        
     }
     
     @Override
-    public void executeAction(String id)
+    public void executeAction(ActionDescriptor desc)
     {
         IContextService ctxtServ = Services.get(IContextService.class);       
         Context context = ctxtServ.getThreadContext();
         
-        switch (id)
+        if (desc == SolShowTestActionDescriptors.ad_fakegame)
         {
-            case SolShowTestActions.ACTION_FAKESOLSHOWGAME:                            
-                context.schedule(new C_FakeSolShowGame());
-                break;
-            case SolShowTestActions.ACTION_SWITCHCARDSVISIBLE:     
-                context.schedule(new C_CardsVisibleSwitch());
-                break;
-            default:
-                super.executeAction(id);
+            context.schedule(new C_FakeSolShowGame());
         }
+        else if (desc == SolShowTestActionDescriptors.ad_switchcvis)
+        {
+            context.schedule(new C_CardsVisibleSwitch());
+        }                
+        else            
+        {
+            super.executeAction(desc);
+        }     
     }
 }

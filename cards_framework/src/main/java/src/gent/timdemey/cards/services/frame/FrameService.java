@@ -13,34 +13,27 @@ import java.util.Map;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.localization.Loc;
-import gent.timdemey.cards.localization.LocKey;
-import gent.timdemey.cards.services.configman.ConfigKey;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 import gent.timdemey.cards.services.contract.preload.IPreload;
 import gent.timdemey.cards.services.contract.preload.PreloadOrder;
 import gent.timdemey.cards.services.contract.preload.PreloadOrderType;
 import gent.timdemey.cards.services.contract.res.FontResource;
 import gent.timdemey.cards.services.contract.res.ImageResource;
-import gent.timdemey.cards.services.interfaces.IConfigManager;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.services.interfaces.IResourceService;
-import gent.timdemey.cards.ui.actions.ActionDef;
-import gent.timdemey.cards.ui.actions.Actions;
-import gent.timdemey.cards.ui.actions.IActionFactory;
+import gent.timdemey.cards.ui.actions.ActionDescriptor;
+import gent.timdemey.cards.ui.actions.ActionDescriptors;
+import gent.timdemey.cards.ui.actions.IActionService;
 import net.miginfocom.swing.MigLayout;
 
 public class FrameService implements IFrameService, IPreload
@@ -53,13 +46,29 @@ public class FrameService implements IFrameService, IPreload
     private boolean drawDebug = false;
     private Font titlefont;
     
+    private JButton createFrameButton(ActionDescriptor desc)
+    {
+        IActionService actServ = Services.get(IActionService.class);     
+        Action act_minimize = actServ.getAction(desc);
+        
+        JButton button = new JButton(act_minimize);
+        Dimension dim = new Dimension(24, 24);
+        
+        button.setOpaque(false);
+        button.setContentAreaFilled(false);
+        button.setBorderPainted(false);        
+        button.setMinimumSize(dim);
+        button.setMaximumSize(dim);
+        return button;
+    }
+    
     @Override
     public JFrame getFrame()
     {
         if (frame == null)
         {
             frame = new JFrame();
-            
+                                    
             BufferedImage bg = getBackgroundImage();
             rootPanel = new RootPanel(bg);
             rootPanel.setLayout(new MigLayout("insets 5, gapy 0"));
@@ -73,10 +82,21 @@ public class FrameService implements IFrameService, IPreload
             titlePanel.setOpaque(false);
             JLabel title_icon = new JLabel(new ImageIcon(getFrameIcons().get(1)));
             JLabel title_text = new JLabel(getTitle());
+            JButton title_minimize = createFrameButton(ActionDescriptors.ad_minimize);
+            JButton title_maximize = createFrameButton(ActionDescriptors.ad_maximize);
+            JButton title_close = createFrameButton(ActionDescriptors.ad_quit);
+            
+            title_minimize.setText("");
+            title_maximize.setText("");
+            title_close.setText("");
+            
             title_text.setFont(titlefont);
             title_text.setForeground(Color.darkGray.darker());
             titlePanel.add(title_icon, "gapx 10, left");
             titlePanel.add(title_text, "gapx 10, pushx, left");
+            titlePanel.add(title_minimize, "align right, gapright 5");
+            titlePanel.add(title_maximize, "align right, gapright 5");
+            titlePanel.add(title_close, "align right, gapright 5");
             TitlePanelMouseListener tpMouseListener = new TitlePanelMouseListener();
             titlePanel.addMouseListener(tpMouseListener);
             titlePanel.addMouseMotionListener(tpMouseListener);
@@ -85,15 +105,11 @@ public class FrameService implements IFrameService, IPreload
             cardPanel = new CardPanel();
             cardPanel.setLayout(new CardLayout());
             rootPanel.add(cardPanel, "push, grow");
-            
-            
-          //  JMenuBar menuBar = getMenuBar(plugin);
-          //  frame.setJMenuBar(menuBar);
-            
+                        
             frame.setTitle(getTitle());
             frame.setUndecorated(true);
             frame.setSize(new Dimension(800, 600));
-            frame.setMinimumSize(new Dimension(300, 200));
+            frame.setMinimumSize(new Dimension(400, 200));
             frame.setLocationRelativeTo(null);
             frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             frame.setIconImages(getFrameIcons());
@@ -202,96 +218,6 @@ public class FrameService implements IFrameService, IPreload
         return images;
     }
 
-    protected JMenuBar getMenuBar(ICardPlugin plugin)
-    {
-        JMenuBar menuBar = new JMenuBar();
-
-        addMenuStart(menuBar, plugin);
-        addMenuEdit(menuBar, plugin);
-        addMenuDebug(menuBar, plugin);
-
-        return menuBar;
-    }    
-
-    protected void addMenuStart(JMenuBar menuBar, ICardPlugin plugin)
-    {
-        JMenu menu = createMenuStart(plugin);
-        menuBar.add(menu);
-    }
-
-    protected void addMenuEdit(JMenuBar menuBar, ICardPlugin plugin)
-    {
-        JMenu menu = createMenuEdit(plugin);
-        menuBar.add(menu);
-    }
-
-    protected void addMenuDebug(JMenuBar menuBar, ICardPlugin plugin)
-    {
-        if (!Services.get(IConfigManager.class).get(ConfigKey.DEBUG))
-        {
-            return;
-        }
-
-        JMenu menu = createMenuDebug(plugin);
-        menuBar.add(menu);
-    }
-
-    protected final void addToMenu(JMenu menu, String actionId)
-    {
-        IActionFactory actionFactory = Services.get(IActionFactory.class);
-        ActionDef actionDef = actionFactory.getActionDef(actionId);
-        Action action = actionDef.action;
-        KeyStroke accelerator = actionDef.accelerator;
-        
-        JMenuItem menu_create = new JMenuItem(action);
-        if (accelerator != null)
-        {
-            menu_create.setAccelerator(accelerator);
-        }
-        menu.add(menu_create);
-    }
-
-    protected JMenu createMenuStart(ICardPlugin plugin)
-    {
-        JMenu menu = new JMenu(Loc.get(LocKey.Menu_game));
-
-        if (plugin.getPlayerCount() > 1)
-        {
-            addToMenu(menu, Actions.ACTION_CREATE_MULTIPLAYER);
-            addToMenu(menu, Actions.ACTION_JOIN);
-            addToMenu(menu, Actions.ACTION_LEAVE);
-        }
-        else
-        {
-            addToMenu(menu, Actions.ACTION_START);
-        }
-
-        menu.addSeparator();
-        addToMenu(menu, Actions.ACTION_QUIT);
-        
-        return menu;
-    }
-
-    protected JMenu createMenuEdit(ICardPlugin plugin)
-    {
-        JMenu menu = new JMenu(Loc.get(LocKey.Menu_edit));
-
-        addToMenu(menu, Actions.ACTION_UNDO);
-        addToMenu(menu, Actions.ACTION_REDO);    
-
-        return menu;
-    }
-
-    protected JMenu createMenuDebug(ICardPlugin plugin)
-    {
-        JMenu menu = new JMenu(Loc.get(LocKey.DebugMenu_debug));
-
-        addToMenu(menu, Actions.ACTION_DEBUG_DRAWOUTLINES);
-        addToMenu(menu, Actions.ACTION_DEBUG_GC);
-
-        return menu;
-    }
-
     protected BufferedImage getBackgroundImage()
     {
         IResourceService resServ = Services.get(IResourceService.class);
@@ -304,8 +230,9 @@ public class FrameService implements IFrameService, IPreload
     public void preload()
     {
         IResourceService resServ = Services.get(IResourceService.class);
-
-        FontResource resp_font = resServ.getFont("foptitles.ttf");
+        IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
+        String fontName = resLocServ.getAppTitleFontFilePath();
+        FontResource resp_font = resServ.getFont(fontName);
         titlefont = resp_font.raw.deriveFont(40f);
     }
 }
