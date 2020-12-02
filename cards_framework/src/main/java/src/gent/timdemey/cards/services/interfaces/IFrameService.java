@@ -18,4 +18,8 @@ public interface IFrameService
 
     public void setDrawDebug(boolean on);
     public boolean getDrawDebug();
+
+    public void setLocation(int x, int y);
+
+    public void setBounds(int x, int y, int w, int h);
 }

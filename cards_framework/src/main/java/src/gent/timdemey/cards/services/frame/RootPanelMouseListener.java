@@ -70,8 +70,7 @@ public class RootPanelMouseListener implements MouseListener, MouseMotionListene
             }            
 
             IFrameService fServ = Services.get(IFrameService.class);
-            JFrame frame = fServ.getFrame();
-            frame.setBounds(x, y, w, h);
+            fServ.setBounds(x, y, w, h);
         }
     }
 
@@ -100,13 +99,10 @@ public class RootPanelMouseListener implements MouseListener, MouseMotionListene
             fServ.getFrame().setCursor(new Cursor(cursor));
         }
     }
-    
-    
-
+      
     @Override
     public void mouseClicked(MouseEvent e)
     {
-        
     }
 
     @Override
@@ -137,9 +133,7 @@ public class RootPanelMouseListener implements MouseListener, MouseMotionListene
 
     @Override
     public void mouseEntered(MouseEvent e)
-    {
-        // TODO Auto-generated method stub
-        
+    {       
     }
 
     @Override
@@ -150,6 +144,4 @@ public class RootPanelMouseListener implements MouseListener, MouseMotionListene
         IFrameService fServ = Services.get(IFrameService.class);
         fServ.getFrame().setCursor(new Cursor(cursor));
     }
-
-
 }

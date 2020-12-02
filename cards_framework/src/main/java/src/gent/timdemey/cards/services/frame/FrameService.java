@@ -256,13 +256,14 @@ public class FrameService implements IFrameService, IPreload
             frame.setExtendedState(Frame.MAXIMIZED_BOTH);            
         }
         
-        maximized = !maximized;
+        setMaximized(!maximized);
         
-        updateTitleMaximizeIcon();
     }
     
-    private void updateTitleMaximizeIcon()
+    private void setMaximized(boolean maximized)
     {
+        this.maximized = maximized;
+
         IResourceService resServ = Services.get(IResourceService.class);
         IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
         
@@ -271,13 +272,26 @@ public class FrameService implements IFrameService, IPreload
         Image img = resServ.getImage(filepath).raw;
         title_maximize.setIcon(new ImageIcon(img));
     }
-
+    
     @Override
     public void minimize()
     {
-        maximized = false;
         frame.setExtendedState(Frame.ICONIFIED);
-        updateTitleMaximizeIcon();
+        setMaximized(false);
+    }
+
+    @Override
+    public void setLocation(int x, int y)
+    {
+        frame.setLocation(x, y);
+        setMaximized(false);
+    }
+
+    @Override
+    public void setBounds(int x, int y, int w, int h)
+    {
+        frame.setBounds(x, y, w, h);
+        setMaximized(false);
     }
 }
 

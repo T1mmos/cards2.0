@@ -24,22 +24,17 @@ public class TitlePanelMouseListener implements MouseListener, MouseMotionListen
         int y = fy + dy;
 
         IFrameService fServ = Services.get(IFrameService.class);
-        JFrame frame = fServ.getFrame();
-        frame.setLocation(x, y);
+        fServ.setLocation(x, y);
     }
 
     @Override
     public void mouseMoved(MouseEvent e)
     {
-        // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void mouseClicked(MouseEvent e)
     {
-        // TODO Auto-generated method stub
-        
     }
 
     @Override
@@ -58,23 +53,15 @@ public class TitlePanelMouseListener implements MouseListener, MouseMotionListen
     @Override
     public void mouseReleased(MouseEvent e)
     {
-        // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void mouseEntered(MouseEvent e)
     {
-        // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void mouseExited(MouseEvent e)
     {
-        // TODO Auto-generated method stub
-        
     }
-
-
 }
