@@ -51,7 +51,7 @@ public final class DialogService implements IDialogService
     }    
     
     @Override
-    public <IN, OUT> DialogOutData<OUT> ShowAdvanced(String title, IN data, DialogContentCreator<IN, OUT> contentCreator)
+    public <IN, OUT> DialogOutData<OUT> ShowAdvanced(String title, IN data, PanelCreatorBase<IN, OUT> contentCreator)
     {
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
         Logger.info("Showing dialog with title: " + title);        

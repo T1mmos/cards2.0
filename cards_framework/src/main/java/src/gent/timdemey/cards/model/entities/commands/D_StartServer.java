@@ -12,8 +12,8 @@ import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogOutData;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IDialogService;
-import gent.timdemey.cards.ui.dialogs.StartServerDialogContent;
-import gent.timdemey.cards.ui.dialogs.StartServerDialogData;
+import gent.timdemey.cards.ui.panels.StartServerPanelCreator;
+import gent.timdemey.cards.ui.panels.StartServerPanelData;
 
 public class D_StartServer extends DialogCommandBase
 {
@@ -35,10 +35,10 @@ public class D_StartServer extends DialogCommandBase
     @Override
     protected void showDialog(Context context, ContextType type, State state)
     {
-        StartServerDialogContent content = new StartServerDialogContent(state.getLocalName());
+        StartServerPanelCreator content = new StartServerPanelCreator(state.getLocalName());
         IDialogService diagServ = Services.get(IDialogService.class);
         String title = Loc.get(LocKey.DialogTitle_creategame);
-        DialogOutData<StartServerDialogData> data = diagServ.ShowAdvanced(title, null, content);
+        DialogOutData<StartServerPanelData> data = diagServ.ShowAdvanced(title, null, content);
 
         if (data.closeType == DialogButtonType.Ok)
         {

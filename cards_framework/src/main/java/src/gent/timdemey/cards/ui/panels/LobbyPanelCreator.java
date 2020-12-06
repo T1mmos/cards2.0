@@ -1,4 +1,4 @@
-package gent.timdemey.cards.ui.dialogs;
+package gent.timdemey.cards.ui.panels;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -19,13 +19,13 @@ import gent.timdemey.cards.readonlymodel.TypedChange;
 import gent.timdemey.cards.services.context.ChangeType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
-import gent.timdemey.cards.services.dialogs.DialogContentCreator;
+import gent.timdemey.cards.services.dialogs.PanelCreatorBase;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.ui.actions.ActionDescriptors;
 import gent.timdemey.cards.ui.actions.IActionService;
 import net.miginfocom.swing.MigLayout;
 
-public class LobbyDialogContent extends DialogContentCreator<Void, Void>
+public class LobbyPanelCreator extends PanelCreatorBase<Void, Void>
 {
     private final JLabel l_serverMsg;
     private final JLabel l_localPlayer;
@@ -84,7 +84,7 @@ public class LobbyDialogContent extends DialogContentCreator<Void, Void>
         }
     }
     
-    public LobbyDialogContent()
+    public LobbyPanelCreator()
     {
         ReadOnlyState state = Services.get(IContextService.class).getThreadContext().getReadOnlyState();
         IActionService actServ = Services.get(IActionService.class);

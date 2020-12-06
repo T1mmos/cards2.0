@@ -1,6 +1,6 @@
-package gent.timdemey.cards.ui.dialogs;
+package gent.timdemey.cards.ui.panels;
 
-public class StartServerDialogData
+public class StartServerPanelData
 {
     public final String playerName; // name of player that started the server, automatically becomes lobby admin id and joins the game
     public final String srvname; // server name to broadcast
@@ -9,7 +9,7 @@ public class StartServerDialogData
     public final int tcpport; // tcp port to accepts clients on that want to join a game
     public final boolean autoconnect;
 
-    public StartServerDialogData(String playerName, String srvname, String srvmsg, int udpport, int tcpport, boolean autoconnect)
+    public StartServerPanelData(String playerName, String srvname, String srvmsg, int udpport, int tcpport, boolean autoconnect)
     {
         this.playerName = playerName;
         this.srvname = srvname;

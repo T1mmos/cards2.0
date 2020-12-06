@@ -4,7 +4,7 @@ import java.util.EnumSet;
 
 import javax.swing.JPanel;
 
-public abstract class DialogContentCreator<IN, OUT> implements IDialogContentCreator<IN, OUT>
+public abstract class PanelCreatorBase<IN, OUT> implements IPanelCreator<IN, OUT>
 {
     protected static final EnumSet<DialogButtonType> SET_OK_CANCEL = EnumSet.of(DialogButtonType.Cancel, DialogButtonType.Ok);
     protected static final EnumSet<DialogButtonType> SET_CANCEL = EnumSet.of(DialogButtonType.Cancel);
@@ -12,7 +12,7 @@ public abstract class DialogContentCreator<IN, OUT> implements IDialogContentCre
     
     protected DialogInData<IN> inData;
 
-    public DialogContentCreator()
+    public PanelCreatorBase()
     {
     }
     

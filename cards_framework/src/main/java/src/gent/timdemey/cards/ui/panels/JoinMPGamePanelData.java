@@ -1,13 +1,13 @@
-package gent.timdemey.cards.ui.dialogs;
+package gent.timdemey.cards.ui.panels;
 
 import gent.timdemey.cards.readonlymodel.ReadOnlyUDPServer;
 
-public class JoinMultiplayerGameData
+public class JoinMPGamePanelData
 {
     public final ReadOnlyUDPServer server;
     public final String playerName;
 
-    public JoinMultiplayerGameData(ReadOnlyUDPServer server, String playerName)
+    public JoinMPGamePanelData(ReadOnlyUDPServer server, String playerName)
     {
         this.server = server;
         this.playerName = playerName;

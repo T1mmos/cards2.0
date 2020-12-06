@@ -10,7 +10,7 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
 import gent.timdemey.cards.services.dialogs.DialogOutData;
-import gent.timdemey.cards.ui.dialogs.LobbyDialogContent;
+import gent.timdemey.cards.ui.panels.LobbyPanelCreator;
 
 public class D_ShowLobby extends DialogCommandBase
 {
@@ -37,7 +37,7 @@ public class D_ShowLobby extends DialogCommandBase
         Server server = state.getServer();
 
         String title = Loc.get(LocKey.DialogTitle_lobby, server.serverName);
-        DialogOutData<Void> data = dialogServ.ShowAdvanced(title, null, new LobbyDialogContent());
+        DialogOutData<Void> data = dialogServ.ShowAdvanced(title, null, new LobbyPanelCreator());
         if (data.closeType == DialogButtonType.Cancel)
         {
             CommandBase cmd = new C_Disconnect(DisconnectReason.LocalPlayerLeft);

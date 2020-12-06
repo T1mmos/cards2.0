@@ -4,7 +4,7 @@ import java.util.EnumSet;
 
 import javax.swing.JPanel;
 
-public interface IDialogContentCreator<IN, OUT>
+public interface IPanelCreator<IN, OUT>
 {
     public EnumSet<DialogButtonType> getButtonTypes();
     public JPanel createContent(DialogInData<IN> inData);   

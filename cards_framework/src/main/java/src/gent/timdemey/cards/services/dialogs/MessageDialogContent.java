@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 
 import net.miginfocom.swing.MigLayout;
 
-public class MessageDialogContent extends DialogContentCreator<String, Void>
+public class MessageDialogContent extends PanelCreatorBase<String, Void>
 {
     @Override
     public Void onClose(DialogButtonType dbType)

@@ -1,4 +1,4 @@
-package gent.timdemey.cards.ui.dialogs;
+package gent.timdemey.cards.ui.panels;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,11 +25,11 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.readonlymodel.ReadOnlyUDPServer;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
-import gent.timdemey.cards.services.dialogs.DialogContentCreator;
+import gent.timdemey.cards.services.dialogs.PanelCreatorBase;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import net.miginfocom.swing.MigLayout;
 
-public class JoinMultiplayerGameDialogContent extends DialogContentCreator<Void, JoinMultiplayerGameData>
+public class JoinMPGamePanelCreator extends PanelCreatorBase<Void, JoinMPGamePanelData>
 {
     private class ServersTableModel extends AbstractTableModel
     {
@@ -134,7 +134,7 @@ public class JoinMultiplayerGameDialogContent extends DialogContentCreator<Void,
     private final SelectionListener selectionListener;
     private final JTextField tf_name;
 
-    public JoinMultiplayerGameDialogContent()
+    public JoinMPGamePanelCreator()
     {
         this.scroll_server = new JScrollPane();
         this.tableModel = new ServersTableModel();
@@ -191,7 +191,7 @@ public class JoinMultiplayerGameDialogContent extends DialogContentCreator<Void,
     }
 
     @Override
-    public JoinMultiplayerGameData onClose(DialogButtonType dbType)
+    public JoinMPGamePanelData onClose(DialogButtonType dbType)
     {
         stopRequester();        
                 
@@ -205,7 +205,7 @@ public class JoinMultiplayerGameDialogContent extends DialogContentCreator<Void,
             ReadOnlyUDPServer server = Services.get(IContextService.class).getThreadContext().getReadOnlyState()
                     .getServers().get(row);
             String playerName = tf_name.getText();
-            return new JoinMultiplayerGameData(server, playerName);
+            return new JoinMPGamePanelData(server, playerName);
         }
         else
         {

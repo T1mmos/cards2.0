@@ -1,6 +1,6 @@
 package gent.timdemey.cards.services.interfaces;
 
-import gent.timdemey.cards.services.dialogs.DialogContentCreator;
+import gent.timdemey.cards.services.dialogs.PanelCreatorBase;
 import gent.timdemey.cards.services.dialogs.DialogOutData;
 
 public interface IDialogService
@@ -11,5 +11,5 @@ public interface IDialogService
 
     public DialogOutData<Void> ShowInternalError();
 
-    public <IN, OUT> DialogOutData<OUT> ShowAdvanced(String title, IN data, DialogContentCreator<IN, OUT> dialogContent);
+    public <IN, OUT> DialogOutData<OUT> ShowAdvanced(String title, IN data, PanelCreatorBase<IN, OUT> dialogContent);
 }

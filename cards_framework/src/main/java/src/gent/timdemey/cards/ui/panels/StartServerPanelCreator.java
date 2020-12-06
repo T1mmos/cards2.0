@@ -1,4 +1,4 @@
-package gent.timdemey.cards.ui.dialogs;
+package gent.timdemey.cards.ui.panels;
 
 import java.util.EnumSet;
 
@@ -11,17 +11,17 @@ import javax.swing.event.DocumentListener;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
-import gent.timdemey.cards.services.dialogs.DialogContentCreator;
+import gent.timdemey.cards.services.dialogs.PanelCreatorBase;
 import net.miginfocom.swing.MigLayout;
 
-public class StartServerDialogContent extends DialogContentCreator<Void, StartServerDialogData> implements DocumentListener
+public class StartServerPanelCreator extends PanelCreatorBase<Void, StartServerPanelData> implements DocumentListener
 {
     private final JTextField tf_srvname = new JTextField(30);
     private final JTextField tf_srvmsg = new JTextField(30);
     private final JTextField tf_pname = new JTextField(30);
     // private final JCheckBox cb_autoconnect = new JCheckBox(Loc.get(LocKey.CheckBox_autoconnect));
         
-    public StartServerDialogContent(String initialPname)
+    public StartServerPanelCreator(String initialPname)
     {
         tf_pname.setText(initialPname);
     }
@@ -50,7 +50,7 @@ public class StartServerDialogContent extends DialogContentCreator<Void, StartSe
     }
 
     @Override
-    public StartServerDialogData onClose(DialogButtonType dbType)
+    public StartServerPanelData onClose(DialogButtonType dbType)
     {
         tf_srvname.getDocument().removeDocumentListener(this);
         tf_pname.getDocument().removeDocumentListener(this);
@@ -58,7 +58,7 @@ public class StartServerDialogContent extends DialogContentCreator<Void, StartSe
         if (dbType == DialogButtonType.Ok)
         {
             boolean autoconnect = true; // we currently don't support starting a server without automatically being a player
-            return new StartServerDialogData(tf_pname.getText(), tf_srvname.getText(), tf_srvmsg.getText(), 9000, 9010, autoconnect);
+            return new StartServerPanelData(tf_pname.getText(), tf_srvname.getText(), tf_srvmsg.getText(), 9000, 9010, autoconnect);
         }
         else
         {
