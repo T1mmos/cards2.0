@@ -123,15 +123,12 @@ public class PanelService implements IPanelService
         }
     }
 
-
     @Override
     public List<PanelDescriptor> getPanelDescriptors()
     {
         return Arrays.asList(new PanelDescriptor[]
         { PanelDescriptors.GAME, PanelDescriptors.LOAD, PanelDescriptors.MENU });
     }
-
-   
     
     @Override
     public JComponent getPanel(PanelDescriptor desc)
@@ -456,11 +453,6 @@ public class PanelService implements IPanelService
         gamePanel.repaint();
     }
 
-    /**
-     * Gets the next topmost, unoccupied animation layer.
-     * 
-     * @return
-     */
     protected int getNextAnimationLayer()
     {
         IPositionService posServ = Services.get(IPositionService.class);

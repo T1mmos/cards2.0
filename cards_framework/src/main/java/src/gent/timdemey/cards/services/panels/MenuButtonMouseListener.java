@@ -16,22 +16,17 @@ public class MenuButtonMouseListener implements MouseListener
     @Override
     public void mouseClicked(MouseEvent e)
     {
-        // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void mousePressed(MouseEvent e)
     {
-        // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void mouseReleased(MouseEvent e)
     {
-        // TODO Auto-generated method stub
-        
+        finishAnimation(e);
     }
 
     @Override
@@ -55,6 +50,11 @@ public class MenuButtonMouseListener implements MouseListener
     @Override
     public void mouseExited(MouseEvent e)
     {
+        finishAnimation(e);
+    }
+
+    private void finishAnimation(MouseEvent e)
+    {
         JButton button = (JButton) e.getSource();
         MenuButtonAnimation animation = animations.get(button);
         if (animation == null)
@@ -64,5 +64,4 @@ public class MenuButtonMouseListener implements MouseListener
         
         animation.setForward(false);
     }
-
 }
