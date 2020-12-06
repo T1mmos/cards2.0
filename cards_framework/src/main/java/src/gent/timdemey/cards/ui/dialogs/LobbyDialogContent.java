@@ -1,5 +1,6 @@
 package gent.timdemey.cards.ui.dialogs;
 
+import java.util.EnumSet;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -18,13 +19,13 @@ import gent.timdemey.cards.readonlymodel.TypedChange;
 import gent.timdemey.cards.services.context.ChangeType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
-import gent.timdemey.cards.services.dialogs.DialogContent;
+import gent.timdemey.cards.services.dialogs.DialogContentCreator;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.ui.actions.ActionDescriptors;
 import gent.timdemey.cards.ui.actions.IActionService;
 import net.miginfocom.swing.MigLayout;
 
-public class LobbyDialogContent extends DialogContent<Void, Void>
+public class LobbyDialogContent extends DialogContentCreator<Void, Void>
 {
     private final JLabel l_serverMsg;
     private final JLabel l_localPlayer;
@@ -73,16 +74,15 @@ public class LobbyDialogContent extends DialogContent<Void, Void>
             {
                 if (change.newValue == null)
                 {
-                    close();
+                    inData.closeFunc.run();
                 }
             }
             else if (property == ReadOnlyState.CardGame)
             {
-                close();
+                inData.closeFunc.run();
             }
         }
     }
-
     
     public LobbyDialogContent()
     {
@@ -108,7 +108,7 @@ public class LobbyDialogContent extends DialogContent<Void, Void>
     }
 
     @Override
-    protected JPanel createContent(Void data)
+    public JPanel createContent()
     {
         IContextService contextService = Services.get(IContextService.class);
         Context context = contextService.getThreadContext();
@@ -132,7 +132,7 @@ public class LobbyDialogContent extends DialogContent<Void, Void>
     }
 
     @Override
-    protected void onShow()
+    public void onShow()
     {
         IContextService contextService = Services.get(IContextService.class);
         Context context = contextService.getThreadContext();
@@ -142,7 +142,7 @@ public class LobbyDialogContent extends DialogContent<Void, Void>
     }
 
     @Override
-    protected Void onClose(DialogButtonType dbType)
+    public Void onClose(DialogButtonType dbType)
     {
         IContextService contextService = Services.get(IContextService.class);
         Context context = contextService.getThreadContext();
@@ -152,4 +152,15 @@ public class LobbyDialogContent extends DialogContent<Void, Void>
         return null;
     }
 
+    @Override
+    public EnumSet<DialogButtonType> getButtonTypes()
+    {
+        return SET_CANCEL;
+    }
+
+    @Override
+    public boolean isButtonEnabled(DialogButtonType dbType)
+    {
+        return true;
+    }
 }

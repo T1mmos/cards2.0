@@ -1,7 +1,5 @@
 package gent.timdemey.cards.model.entities.commands;
 
-import java.util.EnumSet;
-
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.commands.C_Disconnect.DisconnectReason;
@@ -11,7 +9,7 @@ import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
-import gent.timdemey.cards.services.dialogs.DialogData;
+import gent.timdemey.cards.services.dialogs.DialogOutData;
 import gent.timdemey.cards.ui.dialogs.LobbyDialogContent;
 
 public class D_ShowLobby extends DialogCommandBase
@@ -39,8 +37,7 @@ public class D_ShowLobby extends DialogCommandBase
         Server server = state.getServer();
 
         String title = Loc.get(LocKey.DialogTitle_lobby, server.serverName);
-        DialogData<Void> data = dialogServ.ShowAdvanced(title, null, new LobbyDialogContent(),
-                EnumSet.of(DialogButtonType.Cancel));
+        DialogOutData<Void> data = dialogServ.ShowAdvanced(title, null, new LobbyDialogContent());
         if (data.closeType == DialogButtonType.Cancel)
         {
             CommandBase cmd = new C_Disconnect(DisconnectReason.LocalPlayerLeft);

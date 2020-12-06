@@ -2,6 +2,7 @@ package gent.timdemey.cards.ui.dialogs;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.EnumSet;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -24,11 +25,11 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.readonlymodel.ReadOnlyUDPServer;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
-import gent.timdemey.cards.services.dialogs.DialogContent;
+import gent.timdemey.cards.services.dialogs.DialogContentCreator;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import net.miginfocom.swing.MigLayout;
 
-public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMultiplayerGameData>
+public class JoinMultiplayerGameDialogContent extends DialogContentCreator<Void, JoinMultiplayerGameData>
 {
     private class ServersTableModel extends AbstractTableModel
     {
@@ -120,7 +121,7 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMu
         @Override
         public void valueChanged(ListSelectionEvent e)
         {
-            checkOk();
+            inData.verifyButtonFunc.accept(DialogButtonType.Ok);
         }
     }
 
@@ -146,7 +147,7 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMu
     }
 
     @Override
-    protected JPanel createContent(Void parameter)
+    public JPanel createContent()
     {
         JPanel panel = new JPanel(new MigLayout("insets 0"));
         JLabel lb_srvname = new JLabel(Loc.get(LocKey.Label_serversfound));
@@ -164,10 +165,15 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMu
     }
 
     @Override
-    protected boolean isOk()
+    public boolean isButtonEnabled(DialogButtonType dbType)
     {
-        int row = table_servers.getSelectedRow();
-        return row != -1;
+        if (dbType == DialogButtonType.Ok)
+        {
+            int row = table_servers.getSelectedRow();
+            return row != -1;
+        }
+         
+        return true;
     }
     
     private void stopRequester()
@@ -185,7 +191,7 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMu
     }
 
     @Override
-    protected JoinMultiplayerGameData onClose(DialogButtonType dbType)
+    public JoinMultiplayerGameData onClose(DialogButtonType dbType)
     {
         stopRequester();        
                 
@@ -208,7 +214,7 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMu
     }
 
     @Override
-    protected void onShow()
+    public void onShow()
     {
         Services.get(IContextService.class).getThreadContext().addStateListener(serversStateListener);
         
@@ -216,5 +222,11 @@ public class JoinMultiplayerGameDialogContent extends DialogContent<Void, JoinMu
         table_servers.getSelectionModel().addListSelectionListener(selectionListener);
 
         startRequester();
+    }
+
+    @Override
+    public EnumSet<DialogButtonType> getButtonTypes()
+    {
+        return SET_OK_CANCEL;
     }
 }

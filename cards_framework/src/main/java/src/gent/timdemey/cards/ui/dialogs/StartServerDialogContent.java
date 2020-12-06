@@ -1,5 +1,7 @@
 package gent.timdemey.cards.ui.dialogs;
 
+import java.util.EnumSet;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -9,10 +11,10 @@ import javax.swing.event.DocumentListener;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
-import gent.timdemey.cards.services.dialogs.DialogContent;
+import gent.timdemey.cards.services.dialogs.DialogContentCreator;
 import net.miginfocom.swing.MigLayout;
 
-public class StartServerDialogContent extends DialogContent<Void, StartServerDialogData> implements DocumentListener
+public class StartServerDialogContent extends DialogContentCreator<Void, StartServerDialogData> implements DocumentListener
 {
     private final JTextField tf_srvname = new JTextField(30);
     private final JTextField tf_srvmsg = new JTextField(30);
@@ -25,7 +27,7 @@ public class StartServerDialogContent extends DialogContent<Void, StartServerDia
     }
     
     @Override
-    protected JPanel createContent(Void parameter)
+    public JPanel createContent()
     {
         JPanel panel = new JPanel(new MigLayout("insets 0"));
 
@@ -48,7 +50,7 @@ public class StartServerDialogContent extends DialogContent<Void, StartServerDia
     }
 
     @Override
-    protected StartServerDialogData onClose(DialogButtonType dbType)
+    public StartServerDialogData onClose(DialogButtonType dbType)
     {
         tf_srvname.getDocument().removeDocumentListener(this);
         tf_pname.getDocument().removeDocumentListener(this);
@@ -65,32 +67,44 @@ public class StartServerDialogContent extends DialogContent<Void, StartServerDia
     }
 
     @Override
-    protected boolean isOk()
-    {
-        return !tf_srvname.getText().trim().isEmpty() && !tf_pname.getText().trim().isEmpty();
-    }
-
-    @Override
     public void insertUpdate(DocumentEvent e)
     {
-        checkOk();
+        verify(DialogButtonType.Ok);
     }
 
     @Override
     public void removeUpdate(DocumentEvent e)
     {
-        checkOk();
+        verify(DialogButtonType.Ok);
     }
 
     @Override
     public void changedUpdate(DocumentEvent e)
     {
-        checkOk();
+        verify(DialogButtonType.Ok);
     }
 
     @Override
-    protected void onShow()
+    public void onShow()
     {
+    }
 
+    @Override
+    public EnumSet<DialogButtonType> getButtonTypes()
+    {
+        return SET_OK_CANCEL;
+    }
+
+    @Override
+    public boolean isButtonEnabled(DialogButtonType dbType)
+    {
+        if (dbType == DialogButtonType.Ok)
+        {
+            return !tf_srvname.getText().trim().isEmpty() && !tf_pname.getText().trim().isEmpty();
+        }        
+        else
+        {
+            return true;
+        }
     }
 }

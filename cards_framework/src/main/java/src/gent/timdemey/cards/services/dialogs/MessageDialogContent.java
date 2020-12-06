@@ -1,32 +1,45 @@
 package gent.timdemey.cards.services.dialogs;
 
+import java.util.EnumSet;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import net.miginfocom.swing.MigLayout;
 
-public class MessageDialogContent extends DialogContent<String, Void>
+public class MessageDialogContent extends DialogContentCreator<String, Void>
 {
-
     @Override
-    protected JPanel createContent(String parameter)
-    {
-        JPanel content = new JPanel(new MigLayout("insets 0"));
-
-        content.add(new JLabel(parameter), "push, wrap");
-
-        return content;
-    }
-
-    @Override
-    protected Void onClose(DialogButtonType dbType)
+    public Void onClose(DialogButtonType dbType)
     {
         return null;
     }
 
     @Override
-    protected void onShow()
+    public void onShow()
     {
 
+    }
+
+    @Override
+    public EnumSet<DialogButtonType> getButtonTypes()
+    {
+        return SET_OK;
+    }
+
+    @Override
+    public boolean isButtonEnabled(DialogButtonType dbType)
+    {
+        return true;
+    }
+
+    @Override
+    protected JPanel createContent()
+    {
+        JPanel content = new JPanel(new MigLayout("insets 0"));
+
+        content.add(new JLabel(inData.data_in), "push, wrap");
+
+        return content;
     }
 }

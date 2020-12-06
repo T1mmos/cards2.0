@@ -11,7 +11,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyUDPServer;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.dialogs.DialogButtonType;
-import gent.timdemey.cards.services.dialogs.DialogData;
+import gent.timdemey.cards.services.dialogs.DialogOutData;
 import gent.timdemey.cards.services.interfaces.IDialogService;
 import gent.timdemey.cards.ui.dialogs.JoinMultiplayerGameData;
 import gent.timdemey.cards.ui.dialogs.JoinMultiplayerGameDialogContent;
@@ -39,15 +39,14 @@ public class D_Connect extends DialogCommandBase
         JoinMultiplayerGameDialogContent content = new JoinMultiplayerGameDialogContent();
         IDialogService diagServ = Services.get(IDialogService.class);
         String title = Loc.get(LocKey.DialogTitle_joingame);
-        DialogData<JoinMultiplayerGameData> data = diagServ.ShowAdvanced(title, null, content,
-                DialogButtonType.BUTTONS_OK_CANCEL);
+        DialogOutData<JoinMultiplayerGameData> data = diagServ.ShowAdvanced(title, null, content);
 
         if (data.closeType == DialogButtonType.Ok)
         {
-            ReadOnlyUDPServer udpServer = data.payload.server;
+            ReadOnlyUDPServer udpServer = data.data_out.server;
             Server server = udpServer.getServer();
             C_Connect cmd = new C_Connect(state.getLocalId(), server.id, server.inetAddress,
-                    server.tcpport, server.serverName, data.payload.playerName);
+                    server.tcpport, server.serverName, data.data_out.playerName);
             schedule(ContextType.UI, cmd);
         }
     }
