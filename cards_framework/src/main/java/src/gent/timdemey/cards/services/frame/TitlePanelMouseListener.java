@@ -17,13 +17,33 @@ public class TitlePanelMouseListener implements MouseListener, MouseMotionListen
     @Override
     public void mouseDragged(MouseEvent e)
     {
+        IFrameService fServ = Services.get(IFrameService.class);
+        
+        // first ensure that the frame isn't maximized, and if a change is necessary, position the frame
+        // so the mouse grabs the title bar exactly in the middle
+        {
+            JFrame frame = fServ.getFrame();
+            int fx2 = frame.getX();
+            int fy2 = frame.getY();
+            fServ.unmaximize();            
+            int fx3 = frame.getX();
+            int fy3 = frame.getY();
+            
+            if (fx2 != fx3 || fy2 != fy3)
+            {
+                // the unmaximize had an effect, so set the frame's X coordinate so the mouse is in the center
+                int fw = frame.getWidth();                
+                fx = e.getX() - fw / 2;    
+            }
+        }
+        
         int dx = e.getXOnScreen() - sx;
         int dy = e.getYOnScreen() - sy;
-        
+            
         int x = fx + dx;
         int y = fy + dy;
-
-        IFrameService fServ = Services.get(IFrameService.class);
+        
+        
         fServ.setLocation(x, y);
     }
 
@@ -35,6 +55,11 @@ public class TitlePanelMouseListener implements MouseListener, MouseMotionListen
     @Override
     public void mouseClicked(MouseEvent e)
     {
+        if (e.getClickCount() == 2)
+        {
+            IFrameService fServ = Services.get(IFrameService.class);
+            fServ.maximize();
+        }
     }
 
     @Override
@@ -47,12 +72,17 @@ public class TitlePanelMouseListener implements MouseListener, MouseMotionListen
         sy = e.getYOnScreen();
         
         fx = frame.getX();
-        fy = frame.getY();
+        fy = frame.getY();       
     }
 
     @Override
     public void mouseReleased(MouseEvent e)
     {
+        if (e.getYOnScreen() < 3)
+        {
+            IFrameService fServ = Services.get(IFrameService.class);
+            fServ.maximize();
+        }
     }
 
     @Override

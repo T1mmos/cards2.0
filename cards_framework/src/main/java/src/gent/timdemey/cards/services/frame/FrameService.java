@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -248,7 +249,7 @@ public class FrameService implements IFrameService, IPreload
     {        
         if (maximized)
         {            
-            frame.setBounds(bounds);
+            setBounds(bounds);
         }
         else
         {
@@ -256,8 +257,17 @@ public class FrameService implements IFrameService, IPreload
             frame.setExtendedState(Frame.MAXIMIZED_BOTH);            
         }
         
-        setMaximized(!maximized);
-        
+        setMaximized(!maximized);        
+    }
+
+    @Override
+    public void unmaximize()
+    {
+        if (maximized)
+        {            
+            setBounds(bounds);
+            setMaximized(false);
+        }
     }
     
     private void setMaximized(boolean maximized)
@@ -284,14 +294,37 @@ public class FrameService implements IFrameService, IPreload
     public void setLocation(int x, int y)
     {
         frame.setLocation(x, y);
-        setMaximized(false);
     }
 
+    private void setBounds(Rectangle bounds)
+    {
+        setBounds(bounds.x, bounds.y, bounds.width, bounds.height);        
+    }
+    
     @Override
     public void setBounds(int x, int y, int w, int h)
     {
-        frame.setBounds(x, y, w, h);
-        setMaximized(false);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        
+        if (x < 0)
+        {
+            x = 0;
+        }
+        if (y < 0)
+        {
+            y = 0;
+        }
+        if (x + w >= screenSize.width)
+        {
+            x = screenSize.width - w;
+        }
+        if (y + h >= screenSize.height)
+        {
+            y = screenSize.height - h;
+        }
+        
+        bounds = new Rectangle(x, y, w, h);
+        frame.setBounds(bounds);
     }
 }
 

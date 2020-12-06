@@ -15,11 +15,13 @@ public interface IFrameService
     
     public void maximize();
     public void minimize();
-
+    public void unmaximize();
+    
     public void setDrawDebug(boolean on);
     public boolean getDrawDebug();
 
     public void setLocation(int x, int y);
 
     public void setBounds(int x, int y, int w, int h);
+
 }
