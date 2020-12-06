@@ -177,6 +177,7 @@ public class PanelService implements IPanelService
                 {
                     JButton button = new JButton(actServ.getAction(actDesc));
                     button.setContentAreaFilled(false);
+                    button.setFocusPainted(false);
                     button.setBorder(null);
                     button.setBorderPainted(false);
                     button.setOpaque(false);
