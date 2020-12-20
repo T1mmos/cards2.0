@@ -1,7 +1,5 @@
 package gent.timdemey.cards.ui;
 
-import java.util.List;
-
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -18,12 +16,12 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
-import gent.timdemey.cards.services.dialogs.DialogService;
 import gent.timdemey.cards.services.frame.FrameService;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IDialogService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
+import gent.timdemey.cards.services.panels.DialogService;
 import gent.timdemey.cards.services.panels.GamePanelStateListener;
 import gent.timdemey.cards.services.panels.PanelService;
 import gent.timdemey.cards.ui.actions.ActionService;
@@ -68,12 +66,10 @@ public class StartFrame
 
         JFrame frame = frameServ.getFrame();
         // add different top-level panels (e.g. menu, game, overlay, ...)
-        List<PanelDescriptor> panelDescs = panelServ.getPanelDescriptors();
-        for (PanelDescriptor pDesc : panelDescs)
-        {
-            JComponent comp = panelServ.getPanel(pDesc);
-            frameServ.addPanel(pDesc, comp);
-        }
+        PanelDescriptor<?,?> panelDesc = panelServ.getDefaultPanelDescriptor();
+        JComponent comp = panelServ.getPanelManager(panelDesc);
+        frameServ.addPanel(panelDesc, comp);
+        frameServ.showPanel(panelDesc);
 
         ctxt.addStateListener(new GameBootListener());
         ctxt.addStateListener(new StateExportListener());

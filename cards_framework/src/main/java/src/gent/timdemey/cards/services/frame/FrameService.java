@@ -146,6 +146,7 @@ public class FrameService implements IFrameService, IPreload
     {
         IPanelService panelServ = Services.get(IPanelService.class);
         
+        
         // if this panel is not an overlay, hide all the others
         if (!desc.overlay)
         {

@@ -18,6 +18,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityList;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
+import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.ICommandService;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
@@ -92,9 +93,11 @@ class GamePanelMouseListener extends MouseAdapter
 
         IPositionService posServ = Services.get(IPositionService.class);
         IScalingService scaleServ = Services.get(IScalingService.class);
-        IScalableComponent scaleComp = scaleServ.getComponentAt(e.getPoint());
-        IPanelService pServ = Services.get(IPanelService.class);
-
+        IPanelService panelServ = Services.get(IPanelService.class);
+        IPanelManager<Void, Void> gamePanelMgr = panelServ.getPanelManager(PanelDescriptors.GAME);
+        
+        IScalableComponent scaleComp = scaleServ.getComponentAt(e.getPoint());   
+        
         if (!(scaleComp instanceof ScalableImageComponent))
         {
             return;
@@ -136,8 +139,8 @@ class GamePanelMouseListener extends MouseAdapter
                     int layer = posServ.getDragLayer();
                     
                     // ensure to stop any animations running for this card
-                    pServ.stopAnimation(currScaleImg);                    
-                    pServ.setLayer(currScaleImg, layer + i);
+                    gamePanelMgr.stopAnimation(currScaleImg);                    
+                    gamePanelMgr.setLayer(currScaleImg, layer + i);
                 
                     CardDragState dragState = new CardDragState(card_xstart, card_ystart);
                     dragStates.add(dragState);
@@ -159,7 +162,7 @@ class GamePanelMouseListener extends MouseAdapter
                     // it will either be its normal layer, or the dragged layer if the first click 
                     // made the card(s) go into drag mode. The state listener will set the card's layer
                     // to the animation layer after the model changed (induced by scheduling the use command).
-                    pServ.stopAnimation(currScaleImg);
+                    gamePanelMgr.stopAnimation(currScaleImg);
                 }
                 
                 context.schedule(cmdUse);
@@ -271,7 +274,7 @@ class GamePanelMouseListener extends MouseAdapter
                 for (int i = 0; i < draggedComps.size(); i++)
                 {
                     IScalableComponent comp = draggedComps.get(i);                    
-                    pServ.startAnimation(comp);
+                    gamePanelMgr.startAnimation(comp);
                 }
             }
 

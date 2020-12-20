@@ -8,10 +8,10 @@ import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.dialogs.DialogButtonType;
-import gent.timdemey.cards.services.dialogs.DialogOutData;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IDialogService;
+import gent.timdemey.cards.services.panels.PanelButtonType;
+import gent.timdemey.cards.services.panels.PanelOutData;
 import gent.timdemey.cards.ui.panels.StartServerPanelCreator;
 import gent.timdemey.cards.ui.panels.StartServerPanelData;
 
@@ -38,9 +38,9 @@ public class D_StartServer extends DialogCommandBase
         StartServerPanelCreator content = new StartServerPanelCreator(state.getLocalName());
         IDialogService diagServ = Services.get(IDialogService.class);
         String title = Loc.get(LocKey.DialogTitle_creategame);
-        DialogOutData<StartServerPanelData> data = diagServ.ShowAdvanced(title, null, content);
+        PanelOutData<StartServerPanelData> data = diagServ.ShowAdvanced(title, null, content);
 
-        if (data.closeType == DialogButtonType.Ok)
+        if (data.closeType == PanelButtonType.Ok)
         {
             C_StartServer cmd_startServer = new C_StartServer(state.getLocalId(), data.data_out.playerName, data.data_out.srvname, data.data_out.srvmsg,
                     data.data_out.udpport, data.data_out.tcpport, data.data_out.autoconnect);

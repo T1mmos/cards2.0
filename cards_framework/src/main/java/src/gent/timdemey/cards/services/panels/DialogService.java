@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.dialogs;
+package gent.timdemey.cards.services.panels;
 
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -35,23 +36,23 @@ public final class DialogService implements IDialogService
     }
 
     @Override
-    public DialogOutData<Void> ShowMessage(String title, String message)
+    public PanelOutData<Void> ShowMessage(String title, String message)
     {
-        MessageDialogContent dialogContent = new MessageDialogContent();
+        MessagePanelManager dialogContent = new MessagePanelManager();
         return ShowAdvanced(title, message, dialogContent);
     }
 
     @Override
-    public DialogOutData<Void> ShowInternalError()
+    public PanelOutData<Void> ShowInternalError()
     {
-        MessageDialogContent dialogContent = new MessageDialogContent();
+        MessagePanelManager dialogContent = new MessagePanelManager();
         String title = Loc.get(LocKey.DialogTitle_generalerror);
         String msg = Loc.get(LocKey.DialogMessage_generalerror);
         return ShowAdvanced(title, msg, dialogContent);
     }    
     
     @Override
-    public <IN, OUT> DialogOutData<OUT> ShowAdvanced(String title, IN data, PanelCreatorBase<IN, OUT> contentCreator)
+    public <IN, OUT> PanelOutData<OUT> ShowAdvanced(String title, IN data, IDataPanelManager<IN, OUT> panelMgr)
     {
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
         Logger.info("Showing dialog with title: " + title);        
@@ -62,16 +63,16 @@ public final class DialogService implements IDialogService
         JDialog dialog = new JDialog(frame, title, true);
         
         // create a reference to the out data of the dialog
-        DialogOutData<OUT> outData = new DialogOutData<>();
+        PanelOutData<OUT> outData = new PanelOutData<>();
         
         // create the buttons that need to be shown according to the content creator
-        EnumSet<DialogButtonType> dbTypes = contentCreator.getButtonTypes();
-        Map<DialogButtonType, JButton> buttons = new HashMap<>();        
-        for (DialogButtonType dbType : dbTypes)
+        EnumSet<PanelButtonType> dbTypes = panelMgr.getButtonTypes();
+        Map<PanelButtonType, JButton> buttons = new HashMap<>();        
+        for (PanelButtonType dbType : dbTypes)
         {
             ActionListener hehe = (e) -> 
             {
-                OUT out = contentCreator.onClose(dbType);
+                OUT out = panelMgr.onClose(dbType);
                 outData.data_out = out;
                 outData.closeType = dbType;
                 
@@ -86,7 +87,7 @@ public final class DialogService implements IDialogService
         }
         
         // prepare the incoming data
-        DialogInData<IN> inData = new DialogInData<>();
+        PanelInData<IN> inData = new PanelInData<>();
         inData.data_in = data;
         inData.verifyButtonFunc = (btnType) ->
         {
@@ -96,18 +97,19 @@ public final class DialogService implements IDialogService
                 return;
             }
             
-            boolean enabled = contentCreator.isButtonEnabled(btnType);
+            boolean enabled = panelMgr.isButtonEnabled(btnType);
             button.setEnabled(enabled);
         };
         
         // create the entire panel, add the custom content and the buttons
         JPanel allContent = new JPanel(new MigLayout("insets 5"));        
-        JPanel customContent = contentCreator.createContent(inData);
+        panelMgr.onCreating(inData);
+        JComponent customContent = panelMgr.create();
         allContent.add(customContent, "grow, push, wrap");
         String mig_first = "span, split " + dbTypes.size() + ", pushx, align center, sg buts";
         String mig_sg = "sg buts";
         int cnt = 0;
-        for (DialogButtonType dbType : dbTypes)
+        for (PanelButtonType dbType : dbTypes)
         {           
             JButton button = buttons.get(dbType);
             allContent.add(button, cnt++ == 0 ? mig_first : mig_sg);
@@ -122,15 +124,15 @@ public final class DialogService implements IDialogService
         dialog.pack();
         dialog.setLocationRelativeTo(dialog.getParent());
         dialog.setResizable(false);
-        contentCreator.onShow();
+        panelMgr.onShow();
         dialog.setVisible(true);
         
         // closed via X-button -> none of the button callbacks was called 
         if (outData.closeType == null)
         {   
-            OUT payload = contentCreator.onClose(DialogButtonType.Cancel);
+            OUT payload = panelMgr.onClose(PanelButtonType.Cancel);
             outData.data_out = payload;
-            outData.closeType = DialogButtonType.Cancel;
+            outData.closeType = PanelButtonType.Cancel;
         }
         
         // finally return the out data

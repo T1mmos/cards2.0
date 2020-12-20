@@ -24,12 +24,12 @@ import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.readonlymodel.ReadOnlyUDPServer;
-import gent.timdemey.cards.services.dialogs.DialogButtonType;
-import gent.timdemey.cards.services.dialogs.PanelCreatorBase;
 import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.services.panels.DataPanelManagerBase;
+import gent.timdemey.cards.services.panels.PanelButtonType;
 import net.miginfocom.swing.MigLayout;
 
-public class JoinMPGamePanelCreator extends PanelCreatorBase<Void, JoinMPGamePanelData>
+public class JoinMPGamePanelCreator extends DataPanelManagerBase<Void, JoinMPGamePanelData>
 {
     private class ServersTableModel extends AbstractTableModel
     {
@@ -121,7 +121,7 @@ public class JoinMPGamePanelCreator extends PanelCreatorBase<Void, JoinMPGamePan
         @Override
         public void valueChanged(ListSelectionEvent e)
         {
-            inData.verifyButtonFunc.accept(DialogButtonType.Ok);
+            inData.verifyButtonFunc.accept(PanelButtonType.Ok);
         }
     }
 
@@ -147,7 +147,7 @@ public class JoinMPGamePanelCreator extends PanelCreatorBase<Void, JoinMPGamePan
     }
 
     @Override
-    public JPanel createContent()
+    public JPanel create()
     {
         JPanel panel = new JPanel(new MigLayout("insets 0"));
         JLabel lb_srvname = new JLabel(Loc.get(LocKey.Label_serversfound));
@@ -165,9 +165,9 @@ public class JoinMPGamePanelCreator extends PanelCreatorBase<Void, JoinMPGamePan
     }
 
     @Override
-    public boolean isButtonEnabled(DialogButtonType dbType)
+    public boolean isButtonEnabled(PanelButtonType dbType)
     {
-        if (dbType == DialogButtonType.Ok)
+        if (dbType == PanelButtonType.Ok)
         {
             int row = table_servers.getSelectedRow();
             return row != -1;
@@ -191,7 +191,7 @@ public class JoinMPGamePanelCreator extends PanelCreatorBase<Void, JoinMPGamePan
     }
 
     @Override
-    public JoinMPGamePanelData onClose(DialogButtonType dbType)
+    public JoinMPGamePanelData onClose(PanelButtonType dbType)
     {
         stopRequester();        
                 
@@ -199,7 +199,7 @@ public class JoinMPGamePanelCreator extends PanelCreatorBase<Void, JoinMPGamePan
         button_refresh.removeActionListener(refreshListener);
         table_servers.getSelectionModel().removeListSelectionListener(selectionListener);
 
-        if (dbType == DialogButtonType.Ok)
+        if (dbType == PanelButtonType.Ok)
         {
             int row = table_servers.getSelectedRow();
             ReadOnlyUDPServer server = Services.get(IContextService.class).getThreadContext().getReadOnlyState()
@@ -225,7 +225,7 @@ public class JoinMPGamePanelCreator extends PanelCreatorBase<Void, JoinMPGamePan
     }
 
     @Override
-    public EnumSet<DialogButtonType> getButtonTypes()
+    public EnumSet<PanelButtonType> getButtonTypes()
     {
         return SET_OK_CANCEL;
     }

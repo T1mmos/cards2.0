@@ -1,9 +1,9 @@
-package gent.timdemey.cards.services.dialogs;
+package gent.timdemey.cards.services.panels;
 
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 
-public enum DialogButtonType
+public enum PanelButtonType
 {
     Ok(LocKey.Button_ok), 
     Cancel(LocKey.Button_cancel), 
@@ -13,7 +13,7 @@ public enum DialogButtonType
 
     final String loctext;
 
-    private DialogButtonType(LocKey lockey)
+    private PanelButtonType(LocKey lockey)
     {
         this.loctext = Loc.get(lockey);
     }

@@ -8,8 +8,8 @@ import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.dialogs.DialogButtonType;
-import gent.timdemey.cards.services.dialogs.DialogOutData;
+import gent.timdemey.cards.services.panels.PanelButtonType;
+import gent.timdemey.cards.services.panels.PanelOutData;
 import gent.timdemey.cards.ui.panels.LobbyPanelCreator;
 
 public class D_ShowLobby extends DialogCommandBase
@@ -37,8 +37,8 @@ public class D_ShowLobby extends DialogCommandBase
         Server server = state.getServer();
 
         String title = Loc.get(LocKey.DialogTitle_lobby, server.serverName);
-        DialogOutData<Void> data = dialogServ.ShowAdvanced(title, null, new LobbyPanelCreator());
-        if (data.closeType == DialogButtonType.Cancel)
+        PanelOutData<Void> data = dialogServ.ShowAdvanced(title, null, new LobbyPanelCreator());
+        if (data.closeType == PanelButtonType.Cancel)
         {
             CommandBase cmd = new C_Disconnect(DisconnectReason.LocalPlayerLeft);
             schedule(ContextType.UI, cmd);

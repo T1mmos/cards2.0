@@ -1,32 +1,19 @@
 package gent.timdemey.cards.services.interfaces;
 
-import java.util.List;
-
-import javax.swing.JComponent;
-
+import gent.timdemey.cards.services.contract.descriptors.DataPanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 import gent.timdemey.cards.services.contract.preload.IPreload;
-import gent.timdemey.cards.services.scaling.IScalableComponent;
+import gent.timdemey.cards.services.panels.IDataPanelManager;
+import gent.timdemey.cards.services.panels.IPanelManager;
 
 public interface IPanelService extends IPreload
 {
-    public List<PanelDescriptor> getPanelDescriptors();
-    public JComponent getPanel(PanelDescriptor desc);
-    public void onPanelShown(PanelDescriptor desc);
-    public void onPanelHidden(PanelDescriptor desc);
-    public void createPanel(PanelDescriptor game);
-    public void destroyPanel(PanelDescriptor desc);
-
+    public PanelDescriptor getDefaultPanelDescriptor();
+    public IPanelManager getPanelManager(PanelDescriptor panelDesc);
+    public <IN, OUT> IDataPanelManager<IN, OUT> getPanelManager(DataPanelDescriptor<IN, OUT> panelDesc);
+    
     public void relayout();
     public void rescaleResourcesAsync();
 
-    public void startAnimation(IScalableComponent scaleComp);
-    public void stopAnimation(IScalableComponent scaleComp);
 
-    public int getLayer(IScalableComponent scaleComp);
-    public void setLayer(IScalableComponent scaleComp, int layerIndex);    
-    
-    public void add(IScalableComponent comp);
-    public void remove(IScalableComponent comp);
-    public void updateComponent(IScalableComponent comp);
 }

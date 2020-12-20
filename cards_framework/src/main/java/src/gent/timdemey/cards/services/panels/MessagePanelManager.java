@@ -1,16 +1,17 @@
-package gent.timdemey.cards.services.dialogs;
+package gent.timdemey.cards.services.panels;
 
 import java.util.EnumSet;
 
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import net.miginfocom.swing.MigLayout;
 
-public class MessageDialogContent extends PanelCreatorBase<String, Void>
+public class MessagePanelManager extends DataPanelManagerBase<String, Void>
 {
     @Override
-    public Void onClose(DialogButtonType dbType)
+    public Void onClose(PanelButtonType dbType)
     {
         return null;
     }
@@ -22,19 +23,19 @@ public class MessageDialogContent extends PanelCreatorBase<String, Void>
     }
 
     @Override
-    public EnumSet<DialogButtonType> getButtonTypes()
+    public EnumSet<PanelButtonType> getButtonTypes()
     {
         return SET_OK;
     }
 
     @Override
-    public boolean isButtonEnabled(DialogButtonType dbType)
+    public boolean isButtonEnabled(PanelButtonType dbType)
     {
         return true;
     }
 
     @Override
-    protected JPanel createContent()
+    public JComponent create()
     {
         JPanel content = new JPanel(new MigLayout("insets 0"));
 
@@ -42,4 +43,6 @@ public class MessageDialogContent extends PanelCreatorBase<String, Void>
 
         return content;
     }
+
+  
 }

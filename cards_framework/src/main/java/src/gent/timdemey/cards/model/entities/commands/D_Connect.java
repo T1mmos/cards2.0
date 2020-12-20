@@ -10,9 +10,9 @@ import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.readonlymodel.ReadOnlyUDPServer;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.dialogs.DialogButtonType;
-import gent.timdemey.cards.services.dialogs.DialogOutData;
 import gent.timdemey.cards.services.interfaces.IDialogService;
+import gent.timdemey.cards.services.panels.PanelButtonType;
+import gent.timdemey.cards.services.panels.PanelOutData;
 import gent.timdemey.cards.ui.panels.JoinMPGamePanelCreator;
 import gent.timdemey.cards.ui.panels.JoinMPGamePanelData;
 
@@ -39,9 +39,9 @@ public class D_Connect extends DialogCommandBase
         JoinMPGamePanelCreator content = new JoinMPGamePanelCreator();
         IDialogService diagServ = Services.get(IDialogService.class);
         String title = Loc.get(LocKey.DialogTitle_joingame);
-        DialogOutData<JoinMPGamePanelData> data = diagServ.ShowAdvanced(title, null, content);
+        PanelOutData<JoinMPGamePanelData> data = diagServ.ShowAdvanced(title, null, content);
 
-        if (data.closeType == DialogButtonType.Ok)
+        if (data.closeType == PanelButtonType.Ok)
         {
             ReadOnlyUDPServer udpServer = data.data_out.server;
             Server server = udpServer.getServer();

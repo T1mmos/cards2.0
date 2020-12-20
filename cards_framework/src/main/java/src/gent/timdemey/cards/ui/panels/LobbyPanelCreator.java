@@ -18,14 +18,14 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.readonlymodel.TypedChange;
 import gent.timdemey.cards.services.context.ChangeType;
 import gent.timdemey.cards.services.context.Context;
-import gent.timdemey.cards.services.dialogs.DialogButtonType;
-import gent.timdemey.cards.services.dialogs.PanelCreatorBase;
 import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.services.panels.DataPanelManagerBase;
+import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.ui.actions.ActionDescriptors;
 import gent.timdemey.cards.ui.actions.IActionService;
 import net.miginfocom.swing.MigLayout;
 
-public class LobbyPanelCreator extends PanelCreatorBase<Void, Void>
+public class LobbyPanelCreator extends DataPanelManagerBase<Void, Void>
 {
     private final JLabel l_serverMsg;
     private final JLabel l_localPlayer;
@@ -108,7 +108,7 @@ public class LobbyPanelCreator extends PanelCreatorBase<Void, Void>
     }
 
     @Override
-    public JPanel createContent()
+    public JPanel create()
     {
         IContextService contextService = Services.get(IContextService.class);
         Context context = contextService.getThreadContext();
@@ -142,7 +142,7 @@ public class LobbyPanelCreator extends PanelCreatorBase<Void, Void>
     }
 
     @Override
-    public Void onClose(DialogButtonType dbType)
+    public Void onClose(PanelButtonType dbType)
     {
         IContextService contextService = Services.get(IContextService.class);
         Context context = contextService.getThreadContext();
@@ -153,13 +153,13 @@ public class LobbyPanelCreator extends PanelCreatorBase<Void, Void>
     }
 
     @Override
-    public EnumSet<DialogButtonType> getButtonTypes()
+    public EnumSet<PanelButtonType> getButtonTypes()
     {
         return SET_CANCEL;
     }
 
     @Override
-    public boolean isButtonEnabled(DialogButtonType dbType)
+    public boolean isButtonEnabled(PanelButtonType dbType)
     {
         return true;
     }

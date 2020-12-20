@@ -13,6 +13,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.readonlymodel.TypedChange;
 import gent.timdemey.cards.services.context.ChangeType;
 import gent.timdemey.cards.services.context.Context;
+import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
@@ -24,6 +25,7 @@ public class GamePanelStateListener implements IStateListener
     public void onChange(ReadOnlyChange change)
     {
         IPanelService pServ = Services.get(IPanelService.class);
+        IPanelManager gpMan = pServ.getPanelManager(PanelDescriptors.GAME);
         IContextService contextService = Services.get(IContextService.class);
         IScalingService scaleServ = Services.get(IScalingService.class);
         Context context = contextService.getThreadContext();
@@ -35,7 +37,7 @@ public class GamePanelStateListener implements IStateListener
         {            
             ReadOnlyCard card = state.getCardGame().getCard(change.entityId);            
             IScalableComponent comp = scaleServ.getScalableComponent(card);
-            pServ.updateComponent(comp);
+            gpMan.updateComponent(comp);
         }
         else if (property == ReadOnlyCardStack.Cards)
         {
@@ -46,7 +48,7 @@ public class GamePanelStateListener implements IStateListener
                 for (ReadOnlyCard card : cards)
                 {
                     IScalableComponent comp = scaleServ.getScalableComponent(card);
-                    pServ.startAnimation(comp);    
+                    gpMan.startAnimation(comp);    
                 }
             }
         }
