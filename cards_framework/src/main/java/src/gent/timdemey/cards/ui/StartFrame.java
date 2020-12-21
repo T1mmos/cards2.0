@@ -1,6 +1,5 @@
 package gent.timdemey.cards.ui;
 
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
@@ -66,9 +65,8 @@ public class StartFrame
 
         JFrame frame = frameServ.getFrame();
         // add different top-level panels (e.g. menu, game, overlay, ...)
-        PanelDescriptor<?,?> panelDesc = panelServ.getDefaultPanelDescriptor();
-        JComponent comp = panelServ.getPanelManager(panelDesc);
-        frameServ.addPanel(panelDesc, comp);
+        PanelDescriptor panelDesc = panelServ.getDefaultPanelDescriptor();
+        //frameServ.addPanel(panelDesc);
         frameServ.showPanel(panelDesc);
 
         ctxt.addStateListener(new GameBootListener());

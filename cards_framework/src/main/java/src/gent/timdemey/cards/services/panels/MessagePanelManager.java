@@ -17,7 +17,7 @@ public class MessagePanelManager extends DataPanelManagerBase<String, Void>
     }
 
     @Override
-    public void onShow()
+    public void onShown()
     {
 
     }
@@ -34,14 +34,37 @@ public class MessagePanelManager extends DataPanelManagerBase<String, Void>
         return true;
     }
 
+
     @Override
-    public JComponent create()
+    public boolean isCreated()
+    {
+        // we can't reuse a message panel
+        return false;
+    }
+    
+    @Override
+    public JComponent getOrCreate()
     {
         JPanel content = new JPanel(new MigLayout("insets 0"));
 
         content.add(new JLabel(inData.data_in), "push, wrap");
 
         return content;
+    }
+
+
+    @Override
+    public void onHidden()
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void destroy()
+    {
+        // TODO Auto-generated method stub
+        
     }
 
   

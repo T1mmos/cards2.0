@@ -32,12 +32,6 @@ public class MenuPanelManager extends DataPanelManagerBase<Void, Void>
     }
 
     @Override
-    public void onShow()
-    {
-        
-    }
-
-    @Override
     public Void onClose(PanelButtonType dbType)
     {
         // TODO Auto-generated method stub
@@ -52,7 +46,13 @@ public class MenuPanelManager extends DataPanelManagerBase<Void, Void>
     }
 
     @Override
-    public JComponent create()
+    public boolean isCreated()
+    {
+        return menuPanel != null;
+    }
+
+    @Override
+    public JComponent getOrCreate()
     {
         menuPanel = new PanelBase(PanelDescriptors.MENU);
         menuPanel.setLayout(new MigLayout("insets 0, align 50% 50%"));
@@ -86,6 +86,18 @@ public class MenuPanelManager extends DataPanelManagerBase<Void, Void>
     }
     
 
+    @Override
+    public void onHidden()
+    {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    @Override
+    public void onShown()
+    {
+        
+    }
 
     protected List<ActionDescriptor> getMenuActionDescriptors()
     {
@@ -100,6 +112,9 @@ public class MenuPanelManager extends DataPanelManagerBase<Void, Void>
         }
 
     }
+    
+
+
 
     @Override
     public void preload()

@@ -10,9 +10,7 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -24,6 +22,7 @@ import javax.swing.WindowConstants;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.services.contract.descriptors.DataPanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 import gent.timdemey.cards.services.contract.preload.IPreload;
 import gent.timdemey.cards.services.contract.preload.PreloadOrder;
@@ -34,6 +33,10 @@ import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.services.interfaces.IResourceService;
+import gent.timdemey.cards.services.panels.IDataPanelManager;
+import gent.timdemey.cards.services.panels.IPanelManager;
+import gent.timdemey.cards.services.panels.PanelInData;
+import gent.timdemey.cards.services.panels.PanelOutData;
 import gent.timdemey.cards.ui.actions.ActionDescriptor;
 import gent.timdemey.cards.ui.actions.ActionDescriptors;
 import gent.timdemey.cards.ui.actions.IActionService;
@@ -45,7 +48,6 @@ public class FrameService implements IFrameService, IPreload
     private RootPanel rootPanel;
     private CardPanel cardPanel;
     private TitlePanel titlePanel;
-    private Map<PanelDescriptor, JComponent> pDesc2Comps;
     private boolean drawDebug = false;
     private Font titlefont;
     private boolean maximized;
@@ -126,53 +128,87 @@ public class FrameService implements IFrameService, IPreload
         return frame;
     }
 
-    @Override
-    public void addPanel(PanelDescriptor pDesc, JComponent comp)
+   /* private void addPanel(PanelDescriptor desc)
     {        
-        if (pDesc2Comps == null)
-        {
-            pDesc2Comps = new HashMap<>();
-        }
         
-        cardPanel.add(comp);
-        cardPanel.setLayer(comp, pDesc.layer, 0);
+    }*/
+    
+    @Override
+    public void removePanel(PanelDescriptor desc)
+    {
+        IPanelService panelServ = Services.get(IPanelService.class);
+        IPanelManager panelMgr = panelServ.getPanelManager(desc);
         
-        comp.setVisible(false);
-        pDesc2Comps.put(pDesc, comp);
+        JComponent comp = panelMgr.getOrCreate();
+        cardPanel.remove(comp);        
     }
     
     @Override
     public void showPanel(PanelDescriptor desc)
     {
         IPanelService panelServ = Services.get(IPanelService.class);
+        IPanelManager panelMgr = panelServ.getPanelManager(desc);
         
+        // add the component if not yet added        
+        JComponent comp = panelMgr.getOrCreate();
+        if (comp.getParent() == null)
+        {
+            cardPanel.add(comp);
+            cardPanel.setLayer(comp, desc.layer, 0);
+            
+            // by default the panel is not visible
+            comp.setVisible(false);
+        }
         
-        // if this panel is not an overlay, hide all the others
+        // hide other panels is this panel is not just a (transparent) overlay
         if (!desc.overlay)
         {
-            for (PanelDescriptor pd : pDesc2Comps.keySet())
+            List<PanelDescriptor> panelDescs = panelServ.getPanelDescriptors();
+            for (PanelDescriptor pd : panelDescs)
             {
+                // don't hide the panel that needs to show
                 if (pd == desc)
+                {                                       
+                    continue;
+                }
+                
+                IPanelManager pMan = panelServ.getPanelManager(pd);
+                
+                // if the panel doesn't exist, it was never added to the card layout
+                if (!pMan.isCreated())
                 {
                     continue;
                 }
                 
-                JComponent cmp = pDesc2Comps.get(pd);
+                // hide the component
+                JComponent cmp = pMan.getOrCreate();
                 if (cmp.isVisible())
                 {
                     cmp.setVisible(false);
-                    panelServ.onPanelHidden(pd);
-                }
-            }           
+                    pMan.onHidden();
+                }                
+            }
         }
         
-        JComponent comp = pDesc2Comps.get(desc);
-        
+        // set the visibility of the panel if necessary
         if (!comp.isVisible())
         {
             comp.setVisible(true);
-            panelServ.onPanelShown(desc);
-        }        
+            panelMgr.onShown();
+        }
+    }
+    
+    @Override
+    public <IN, OUT> PanelOutData<OUT> showPanel(DataPanelDescriptor<IN, OUT> desc, PanelInData<IN> data)
+    {
+        IPanelService panelServ = Services.get(IPanelService.class);
+        IDataPanelManager<IN, OUT> panelMgr = panelServ.getPanelManager(desc);
+        
+        panelMgr.onCreating(data);
+        
+         panelMgr.getButtonTypes()
+        
+        panelMgr.ge
     }
     
     @Override
@@ -180,22 +216,41 @@ public class FrameService implements IFrameService, IPreload
     {
         IPanelService panelServ = Services.get(IPanelService.class);
         
-        if (desc.overlay)
+        // if hiding a non-overlay, we don't know what to show, so we prohibit it
+        if (!desc.overlay)
         {
-            JComponent currComp = pDesc2Comps.get(desc);
-            currComp.setVisible(false);
-            panelServ.onPanelHidden(desc);
+            throw new IllegalArgumentException("You can only hide panels that are overlays");
         }
+
+        // the panel should exist
+        IPanelManager panelMgr = panelServ.getPanelManager(desc);        
+        if (!panelMgr.isCreated())
+        {
+            throw new IllegalArgumentException("Attempted to hide a panel which has not been created yet");
+        }
+        
+        // hide the panel
+        JComponent comp = panelMgr.getOrCreate();
+        comp.setVisible(false);
+        panelMgr.onHidden();
     }
     
     @Override
     public void setDrawDebug(boolean on)
     {
         drawDebug = on;
-
-        for (JComponent comp : pDesc2Comps.values())
+        
+        IPanelService panelServ = Services.get(IPanelService.class);
+        List<PanelDescriptor> pDescs = panelServ.getPanelDescriptors();
+        
+        for (PanelDescriptor pd : pDescs)
         {
-            comp.repaint();
+            IPanelManager pMan = panelServ.getPanelManager(pd);
+            if (pMan.isCreated())
+            {
+                JComponent comp = pMan.getOrCreate();
+                comp.repaint();
+            }
         }
     }
 
@@ -230,7 +285,9 @@ public class FrameService implements IFrameService, IPreload
     protected BufferedImage getBackgroundImage()
     {
         IResourceService resServ = Services.get(IResourceService.class);
-        BufferedImage background = resServ.getImage("background.png").raw;
+        IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
+        String bgpath = resLocServ.getAppBackgroundImageFilePath();
+        BufferedImage background = resServ.getImage(bgpath).raw;
         return background;
     }
 

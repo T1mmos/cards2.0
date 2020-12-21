@@ -88,7 +88,7 @@ public class StartServerPanelCreator extends DataPanelManagerBase<Void, StartSer
     }
 
     @Override
-    public void onShow()
+    public void onShown()
     {
     }
 

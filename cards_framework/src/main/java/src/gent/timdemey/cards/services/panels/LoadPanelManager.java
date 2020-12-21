@@ -11,20 +11,16 @@ import net.miginfocom.swing.MigLayout;
 
 public class LoadPanelManager extends PanelManagerBase
 {
-
     private PanelBase loadPanel;
     
     @Override
-    public void onShow()
+    public boolean isCreated()
     {
-
-        
-        loadPanel.setVisible(true);
+        return loadPanel != null;
     }
 
-
     @Override
-    public JComponent create()
+    public JComponent getOrCreate()
     {
         loadPanel = new PanelBase(PanelDescriptors.LOAD);
         loadPanel.setOpaque(false); 
@@ -33,6 +29,19 @@ public class LoadPanelManager extends PanelManagerBase
         
         return loadPanel;
     }
+    
+    @Override
+    public void onShown()
+    {
+    }
+   
+
+    @Override
+    public void onHidden()
+    {
+        
+    }
+
 
     @Override
     public void preload()
@@ -73,5 +82,6 @@ public class LoadPanelManager extends PanelManagerBase
         // TODO Auto-generated method stub
         
     }
+
 
 }

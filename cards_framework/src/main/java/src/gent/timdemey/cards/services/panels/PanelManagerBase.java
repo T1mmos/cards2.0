@@ -2,14 +2,11 @@ package gent.timdemey.cards.services.panels;
 
 import java.util.List;
 
-import javax.swing.JComponent;
-
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 
-public class PanelManagerBase implements IPanelManager
+public abstract class PanelManagerBase implements IPanelManager
 {
-
     @Override
     public void preload()
     {
@@ -18,21 +15,7 @@ public class PanelManagerBase implements IPanelManager
     }
 
     @Override
-    public JComponent create()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void onShow()
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void destroy()
+    public void onShown()
     {
         // TODO Auto-generated method stub
         
@@ -98,21 +81,6 @@ public class PanelManagerBase implements IPanelManager
     public void setLayer(IScalableComponent scaleComp, int layerIndex)
     {
         // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void add(IScalableComponent comp)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void remove(IScalableComponent comp)
-    {
-        // TODO Auto-generated method stub
-        
     }
 
     @Override

@@ -147,7 +147,7 @@ public class JoinMPGamePanelCreator extends DataPanelManagerBase<Void, JoinMPGam
     }
 
     @Override
-    public JPanel create()
+    public JPanel getOrCreate()
     {
         JPanel panel = new JPanel(new MigLayout("insets 0"));
         JLabel lb_srvname = new JLabel(Loc.get(LocKey.Label_serversfound));
@@ -214,7 +214,7 @@ public class JoinMPGamePanelCreator extends DataPanelManagerBase<Void, JoinMPGam
     }
 
     @Override
-    public void onShow()
+    public void onShown()
     {
         Services.get(IContextService.class).getThreadContext().addStateListener(serversStateListener);
         

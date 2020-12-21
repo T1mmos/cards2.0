@@ -117,4 +117,12 @@ public class PanelService implements IPanelService
         foreach(panelMgrs, IPanelManager::relayout); 
     }
 
+    @Override
+    public List<PanelDescriptor> getPanelDescriptors()
+    {
+        List<PanelDescriptor> allPanelMgrs = new ArrayList<>();
+        allPanelMgrs.addAll(panelMgrs.keySet());
+        allPanelMgrs.addAll(dataPanelMgrs.keySet());
+        return allPanelMgrs;
+    }
 }

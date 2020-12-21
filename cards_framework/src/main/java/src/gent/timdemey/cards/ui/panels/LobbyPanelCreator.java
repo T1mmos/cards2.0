@@ -108,7 +108,7 @@ public class LobbyPanelCreator extends DataPanelManagerBase<Void, Void>
     }
 
     @Override
-    public JPanel create()
+    public JPanel getOrCreate()
     {
         IContextService contextService = Services.get(IContextService.class);
         Context context = contextService.getThreadContext();
@@ -132,7 +132,7 @@ public class LobbyPanelCreator extends DataPanelManagerBase<Void, Void>
     }
 
     @Override
-    public void onShow()
+    public void onShown()
     {
         IContextService contextService = Services.get(IContextService.class);
         Context context = contextService.getThreadContext();

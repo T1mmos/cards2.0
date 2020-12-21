@@ -2,7 +2,6 @@ package gent.timdemey.cards.services.panels;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +20,6 @@ import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
-import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
@@ -54,7 +52,7 @@ public class GamePanelManager extends DataPanelManagerBase<Void, Void>
     }
         
     @Override
-    public void onShow()
+    public void onShown()
     {
         gamePanel.addComponentListener(resizeListener);
         gamePanel.addMouseMotionListener(dragListener);
@@ -80,7 +78,13 @@ public class GamePanelManager extends DataPanelManagerBase<Void, Void>
     }
 
     @Override
-    public JComponent create()
+    public boolean isCreated()
+    {
+        return gamePanel != null;
+    }
+    
+    @Override
+    public JComponent getOrCreate()
     {
         gamePanel = new GamePanel();
         resizeListener = new GamePanelResizeListener();
@@ -185,15 +189,13 @@ public class GamePanelManager extends DataPanelManagerBase<Void, Void>
         gamePanel = null;
     }
     
-    @Override
-    public void add(IScalableComponent comp)
+    private void add(IScalableComponent comp)
     {
         gamePanel.add(comp.getComponent());
         position(comp);
     }
 
-    @Override
-    public void remove(IScalableComponent comp)
+    private void remove(IScalableComponent comp)
     {
         gamePanel.remove(comp.getComponent());
         gamePanel.revalidate();

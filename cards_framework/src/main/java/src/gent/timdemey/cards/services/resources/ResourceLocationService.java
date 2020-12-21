@@ -70,5 +70,11 @@ public class ResourceLocationService implements IResourceLocationService
         return "close.png";
     }
 
+    @Override
+    public String getAppBackgroundImageFilePath()
+    {
+        return "background.png";
+    }
+
     
 }

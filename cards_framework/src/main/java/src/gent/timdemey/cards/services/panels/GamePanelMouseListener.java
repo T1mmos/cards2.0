@@ -94,7 +94,7 @@ class GamePanelMouseListener extends MouseAdapter
         IPositionService posServ = Services.get(IPositionService.class);
         IScalingService scaleServ = Services.get(IScalingService.class);
         IPanelService panelServ = Services.get(IPanelService.class);
-        IPanelManager<Void, Void> gamePanelMgr = panelServ.getPanelManager(PanelDescriptors.GAME);
+        IPanelManager gamePanelMgr = panelServ.getPanelManager(PanelDescriptors.GAME);
         
         IScalableComponent scaleComp = scaleServ.getComponentAt(e.getPoint());   
         
@@ -201,7 +201,6 @@ class GamePanelMouseListener extends MouseAdapter
             int intersectAMax = 0;
             CommandBase cmdMove = null;
             List<UUID> visitedStackIds = new ArrayList<>();
-            IPanelService pServ = Services.get(IPanelService.class);
             IScalingService scaleServ = Services.get(IScalingService.class);
 
             List<IScalableComponent> overlapComps = scaleServ.getComponentsIn(scaleComp.getCoords().getBounds());
@@ -269,8 +268,9 @@ class GamePanelMouseListener extends MouseAdapter
             }
             else
             {
-                // there is no model change so we animate the cards back to their
-                // current stack
+                // there is no model change so we animate the cards back to their current stack
+                IPanelService panelServ = Services.get(IPanelService.class);
+                IPanelManager gamePanelMgr = panelServ.getPanelManager(PanelDescriptors.GAME);
                 for (int i = 0; i < draggedComps.size(); i++)
                 {
                     IScalableComponent comp = draggedComps.get(i);                    
