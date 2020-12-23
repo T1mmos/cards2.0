@@ -11,7 +11,7 @@ public interface IFrameService
 {
     public JFrame getFrame();
      
-    // public void addPanel(PanelDescriptor desc);
+    public void addPanel(PanelDescriptor desc);
     public void showPanel(PanelDescriptor desc);
     public <IN, OUT> PanelOutData<OUT> showPanel(DataPanelDescriptor<IN, OUT> desc, PanelInData<IN> data);
     public void hidePanel(PanelDescriptor desc);
@@ -26,4 +26,6 @@ public interface IFrameService
 
     public void setLocation(int x, int y);
     public void setBounds(int x, int y, int w, int h);
+
+    public void updatePositionService();
 }

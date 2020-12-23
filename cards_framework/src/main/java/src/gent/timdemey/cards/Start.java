@@ -8,25 +8,35 @@ import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.logging.LogLevel;
 import gent.timdemey.cards.logging.LogManager;
 import gent.timdemey.cards.logging.Logger;
+import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.serialization.SerializationService;
 import gent.timdemey.cards.services.configman.ConfigManager;
 import gent.timdemey.cards.services.context.CommandNetworkService;
 import gent.timdemey.cards.services.context.ContextService;
+import gent.timdemey.cards.services.frame.FrameService;
 import gent.timdemey.cards.services.interfaces.IAnimationService;
 import gent.timdemey.cards.services.interfaces.IConfigManager;
 import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.services.interfaces.IDialogService;
+import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.INetworkService;
+import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.services.interfaces.IResourceRepository;
 import gent.timdemey.cards.services.interfaces.IResourceService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.interfaces.ISerializationService;
 import gent.timdemey.cards.services.panels.AnimationService;
+import gent.timdemey.cards.services.panels.DialogService;
+import gent.timdemey.cards.services.panels.GamePanelStateListener;
+import gent.timdemey.cards.services.panels.PanelService;
 import gent.timdemey.cards.services.resources.ResourceLocationService;
 import gent.timdemey.cards.services.resources.ResourceRepository;
 import gent.timdemey.cards.services.resources.ResourceService;
 import gent.timdemey.cards.services.scaling.ScalingService;
-import gent.timdemey.cards.ui.StartFrame;
+import gent.timdemey.cards.ui.StartUI;
+import gent.timdemey.cards.ui.actions.ActionService;
+import gent.timdemey.cards.ui.actions.IActionService;
 
 public class Start
 {
@@ -43,16 +53,11 @@ public class Start
             System.err.println("Cannot load plugin class. Terminating.");
             return;
         }
-        
-        SwingUtilities.invokeLater(() -> bootUI(plugin));
-    }
 
-    public static void bootUI(ICardPlugin plugin)
-    {
         installAllServices(plugin);
-        StartFrame.StartUI();
+        SwingUtilities.invokeLater(StartUI::startUI);
     }
-
+    
     private static void installAllServices(ICardPlugin plugin)
     {
         // create Services and set singleton
@@ -132,5 +137,10 @@ public class Start
         services.installIfAbsent(ISerializationService.class, () -> new SerializationService());
         services.installIfAbsent(INetworkService.class, () -> new CommandNetworkService());        
         services.installIfAbsent(IAnimationService.class, () -> new AnimationService()); 
+        services.installIfAbsent(IFrameService.class, () -> new FrameService());
+        services.installIfAbsent(IDialogService.class, () -> new DialogService());
+        services.installIfAbsent(IActionService.class, () -> new ActionService());
+        services.installIfAbsent(IPanelService.class, () -> new PanelService());
+        services.installIfAbsent(IStateListener.class, () -> new GamePanelStateListener());
     }
 }

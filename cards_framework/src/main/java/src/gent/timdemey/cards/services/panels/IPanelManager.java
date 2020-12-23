@@ -12,16 +12,17 @@ public interface IPanelManager
     public void preload();
    
     public boolean isCreated();
-    public JComponent getOrCreate();
+    public JComponent create();
+    public JComponent get();
     public void onShown(); 
     public void onHidden();
     public void destroy();
     
     public void createRescaleRequests(List<? super RescaleRequest> requests);
+    
     public void createScalableComponents();
     public void positionScalableComponents();
-    void relayout();
-    public void onResourcesRescaled();    
+    public void repaintScalableComponents();
 
     public void startAnimation(IScalableComponent scaleComp);
     public void stopAnimation(IScalableComponent scaleComp);

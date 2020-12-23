@@ -22,16 +22,13 @@ import javax.swing.WindowConstants;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.DataPanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
-import gent.timdemey.cards.services.contract.preload.IPreload;
-import gent.timdemey.cards.services.contract.preload.PreloadOrder;
-import gent.timdemey.cards.services.contract.preload.PreloadOrderType;
 import gent.timdemey.cards.services.contract.res.FontResource;
 import gent.timdemey.cards.services.contract.res.ImageResource;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
+import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.services.interfaces.IResourceService;
 import gent.timdemey.cards.services.panels.IDataPanelManager;
@@ -43,14 +40,13 @@ import gent.timdemey.cards.ui.actions.ActionDescriptors;
 import gent.timdemey.cards.ui.actions.IActionService;
 import net.miginfocom.swing.MigLayout;
 
-public class FrameService implements IFrameService, IPreload
+public class FrameService implements IFrameService
 {  
     private JFrame frame;
     private RootPanel rootPanel;
     private CardPanel cardPanel;
     private TitlePanel titlePanel;
     private boolean drawDebug = false;
-    private Font titlefont;
     private boolean maximized;
     private Rectangle bounds;
     private JButton title_minimize;
@@ -78,6 +74,12 @@ public class FrameService implements IFrameService, IPreload
     {
         if (frame == null)
         {
+            IResourceService resServ = Services.get(IResourceService.class);
+            IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
+            String fontName = resLocServ.getAppTitleFontFilePath();
+            FontResource resp_font = resServ.getFont(fontName);
+            Font titlefont = resp_font.raw.deriveFont(40f);
+            
             frame = new JFrame();
                                     
             BufferedImage bg = getBackgroundImage();
@@ -130,10 +132,24 @@ public class FrameService implements IFrameService, IPreload
         return frame;
     }
 
-   /* private void addPanel(PanelDescriptor desc)
+    @Override
+    public void addPanel(PanelDescriptor desc)
     {        
+        IPanelService panelServ = Services.get(IPanelService.class);
+        IPanelManager panelMgr = panelServ.getPanelManager(desc);
         
-    }*/
+        JComponent comp = panelMgr.create();
+        if (comp.getParent() != null)
+        {
+            throw new IllegalStateException("The component to add already has a parent!");
+        }
+
+        // by default the panel is not visible
+        comp.setVisible(false);
+        
+        cardPanel.add(comp);
+        cardPanel.setLayer(comp, desc.layer, 0);
+    }
     
     @Override
     public void removePanel(PanelDescriptor desc)
@@ -141,7 +157,12 @@ public class FrameService implements IFrameService, IPreload
         IPanelService panelServ = Services.get(IPanelService.class);
         IPanelManager panelMgr = panelServ.getPanelManager(desc);
         
-        JComponent comp = panelMgr.getOrCreate();
+        JComponent comp = panelMgr.get();
+        if (comp.getParent() != cardPanel)
+        {
+            throw new IllegalStateException("The component is not a child of the card panel");
+        }
+        
         cardPanel.remove(comp);        
     }
     
@@ -151,16 +172,8 @@ public class FrameService implements IFrameService, IPreload
         IPanelService panelServ = Services.get(IPanelService.class);
         IPanelManager panelMgr = panelServ.getPanelManager(desc);
         
-        // add the component if not yet added        
-        JComponent comp = panelMgr.getOrCreate();
-        if (comp.getParent() == null)
-        {
-            cardPanel.add(comp);
-            cardPanel.setLayer(comp, desc.layer, 0);
-            
-            // by default the panel is not visible
-            comp.setVisible(false);
-        }
+        // grab the component    
+        JComponent comp = panelMgr.get();
         
         // hide other panels is this panel is not just a (transparent) overlay
         if (!desc.overlay)
@@ -183,7 +196,7 @@ public class FrameService implements IFrameService, IPreload
                 }
                 
                 // hide the component
-                JComponent cmp = pMan.getOrCreate();
+                JComponent cmp = pMan.get();
                 if (cmp.isVisible())
                 {
                     cmp.setVisible(false);
@@ -195,31 +208,11 @@ public class FrameService implements IFrameService, IPreload
         // set the visibility of the panel if necessary
         if (!comp.isVisible())
         {
-            comp.setVisible(true);
-            
-            
-            List<RescaleRequest> requests = new ArrayList<>();
-            panelMgr.createRescaleRequests(requests);
-            panelServ.rescaleResourcesAsync(() -> onResourcesRescaled());
-            
+            comp.setVisible(true);            
             panelMgr.onShown();
         }
     }
 
-    
-    
-    private void onResourcesRescaled()
-    {
-        if (firstRescale)
-        {
-            
-            foreach(panelMgrs, IPanelManager::createScalableComponents);  
-            foreach(panelMgrs, IPanelManager::positionScalableComponents);            
-            firstRescale = false;      
-        }
-
-        foreach(panelMgrs, pm -> pm.getOrCreate().repaint());     
-    }
     
     @Override
     public <IN, OUT> PanelOutData<OUT> showPanel(DataPanelDescriptor<IN, OUT> desc, PanelInData<IN> data)
@@ -229,9 +222,10 @@ public class FrameService implements IFrameService, IPreload
         
         panelMgr.onCreating(data);
         
-        panelMgr.getButtonTypes()
+       // panelMgr.getButtonTypes()
         
-        panelMgr.ge
+      //  panelMgr.ge
+        return null;
     }
     
     @Override
@@ -253,7 +247,7 @@ public class FrameService implements IFrameService, IPreload
         }
         
         // hide the panel
-        JComponent comp = panelMgr.getOrCreate();
+        JComponent comp = panelMgr.get();
         comp.setVisible(false);
         panelMgr.onHidden();
     }
@@ -271,7 +265,7 @@ public class FrameService implements IFrameService, IPreload
             IPanelManager pMan = panelServ.getPanelManager(pd);
             if (pMan.isCreated())
             {
-                JComponent comp = pMan.getOrCreate();
+                JComponent comp = pMan.get();
                 comp.repaint();
             }
         }
@@ -312,17 +306,6 @@ public class FrameService implements IFrameService, IPreload
         String bgpath = resLocServ.getAppBackgroundImageFilePath();
         BufferedImage background = resServ.getImage(bgpath).raw;
         return background;
-    }
-
-    @PreloadOrder(order = PreloadOrderType.DEPENDENT)
-    @Override
-    public void preload()
-    {
-        IResourceService resServ = Services.get(IResourceService.class);
-        IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
-        String fontName = resLocServ.getAppTitleFontFilePath();
-        FontResource resp_font = resServ.getFont(fontName);
-        titlefont = resp_font.raw.deriveFont(40f);
     }
 
     @Override
@@ -406,6 +389,13 @@ public class FrameService implements IFrameService, IPreload
         
         bounds = new Rectangle(x, y, w, h);
         frame.setBounds(bounds);
+    }
+
+    @Override
+    public void updatePositionService()
+    {
+        IPositionService posServ = Services.get(IPositionService.class);
+        posServ.setMaxSize(cardPanel.getWidth(), cardPanel.getHeight());
     }
 }
 

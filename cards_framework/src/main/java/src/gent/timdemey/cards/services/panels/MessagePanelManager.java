@@ -17,12 +17,6 @@ public class MessagePanelManager extends DataPanelManagerBase<String, Void>
     }
 
     @Override
-    public void onShown()
-    {
-
-    }
-
-    @Override
     public EnumSet<PanelButtonType> getButtonTypes()
     {
         return SET_OK;
@@ -34,7 +28,6 @@ public class MessagePanelManager extends DataPanelManagerBase<String, Void>
         return true;
     }
 
-
     @Override
     public boolean isCreated()
     {
@@ -43,7 +36,7 @@ public class MessagePanelManager extends DataPanelManagerBase<String, Void>
     }
     
     @Override
-    public JComponent getOrCreate()
+    public JComponent create()
     {
         JPanel content = new JPanel(new MigLayout("insets 0"));
 
@@ -51,13 +44,11 @@ public class MessagePanelManager extends DataPanelManagerBase<String, Void>
 
         return content;
     }
-
-
+    
     @Override
-    public void onHidden()
+    public JComponent get()
     {
-        // TODO Auto-generated method stub
-        
+        return null;
     }
 
     @Override

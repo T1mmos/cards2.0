@@ -5,7 +5,6 @@ import gent.timdemey.cards.model.state.State;
 public interface ICardPlugin
 {
     public void installServices(Services services);
-    public void installUiServices(Services services);
     
     public int getPlayerCount();
 

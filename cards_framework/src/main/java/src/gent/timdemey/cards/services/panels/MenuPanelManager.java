@@ -2,7 +2,6 @@ package gent.timdemey.cards.services.panels;
 
 import java.awt.Font;
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -10,7 +9,6 @@ import javax.swing.JComponent;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.services.interfaces.IResourceService;
@@ -19,30 +17,14 @@ import gent.timdemey.cards.ui.actions.ActionDescriptors;
 import gent.timdemey.cards.ui.actions.IActionService;
 import net.miginfocom.swing.MigLayout;
 
-public class MenuPanelManager extends DataPanelManagerBase<Void, Void>
+public class MenuPanelManager extends PanelManagerBase
 {
-
     private PanelBase menuPanel;
-    
-    @Override
-    public EnumSet<PanelButtonType> getButtonTypes()
-    {
-        // there are no standard buttons
-        return null;
-    }
 
     @Override
-    public Void onClose(PanelButtonType dbType)
+    public void destroy()
     {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public boolean isButtonEnabled(PanelButtonType dbType)
-    {
-        // there are no standard buttons
-        return false;
+        menuPanel = null;
     }
 
     @Override
@@ -52,7 +34,7 @@ public class MenuPanelManager extends DataPanelManagerBase<Void, Void>
     }
 
     @Override
-    public JComponent getOrCreate()
+    public JComponent create()
     {
         menuPanel = new PanelBase(PanelDescriptors.MENU);
         menuPanel.setLayout(new MigLayout("insets 0, align 50% 50%"));
@@ -85,20 +67,12 @@ public class MenuPanelManager extends DataPanelManagerBase<Void, Void>
         return menuPanel;
     }
     
-
     @Override
-    public void onHidden()
+    public JComponent get()
     {
-        // TODO Auto-generated method stub
-        
+        return menuPanel;
     }
     
-    @Override
-    public void onShown()
-    {
-        
-    }
-
     protected List<ActionDescriptor> getMenuActionDescriptors()
     {
         ICardPlugin cardPlugin = Services.get(ICardPlugin.class);
@@ -110,52 +84,5 @@ public class MenuPanelManager extends DataPanelManagerBase<Void, Void>
         {
             return Arrays.asList(ActionDescriptors.ad_start, ActionDescriptors.ad_quit);
         }
-
     }
-    
-
-
-
-    @Override
-    public void preload()
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void destroy()
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void createRescaleRequests(List<? super RescaleRequest> requests)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void createScalableComponents()
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void positionScalableComponents()
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void onResourcesRescaled()
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
-}
+ }

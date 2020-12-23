@@ -20,10 +20,8 @@ import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
-import gent.timdemey.cards.services.frame.CardPanelResizeListener;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IIdService;
-import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
@@ -81,7 +79,7 @@ public class GamePanelManager extends DataPanelManagerBase<Void, Void>
     }
     
     @Override
-    public JComponent getOrCreate()
+    public JComponent create()
     {
         gamePanel = new GamePanel();
         dragListener = new GamePanelMouseListener(); 
@@ -89,13 +87,15 @@ public class GamePanelManager extends DataPanelManagerBase<Void, Void>
 
         IStateListener stateListener = Services.get(IStateListener.class);
         Services.get(IContextService.class).getThreadContext().addStateListener(stateListener);
-
-        IPanelService panelServ = Services.get(IPanelService.class);
-
         animator.start();
         
-        updatePositionManager();
-        rescaleResourcesAsync();
+        return gamePanel;
+    }
+    
+    @Override
+    public JComponent get()
+    {
+        return gamePanel;
     }
     
     @Override
@@ -194,19 +194,6 @@ public class GamePanelManager extends DataPanelManagerBase<Void, Void>
         gamePanel.remove(comp.getComponent());
         gamePanel.revalidate();
         gamePanel.repaint();
-    }
-
-    @Override
-    public void relayout()
-    {
-        // update the position service by supplying it with the latest game
-        // panel dimensions
-        int maxWidth = gamePanel.getWidth();
-        int maxHeight = gamePanel.getHeight();
-        IPositionService posMan = Services.get(IPositionService.class);
-        posMan.setMaxSize(maxWidth, maxHeight);
-        
-        positionScalableComponents();
     }
     
     private void position(IScalableComponent comp)
@@ -309,9 +296,8 @@ public class GamePanelManager extends DataPanelManagerBase<Void, Void>
     }
 
     @Override
-    public void onResourcesRescaled()
+    public void repaintScalableComponents()
     {
-
         gamePanel.repaint();
     }
 }

@@ -104,7 +104,7 @@ public final class DialogService implements IDialogService
         // create the entire panel, add the custom content and the buttons
         JPanel allContent = new JPanel(new MigLayout("insets 5"));        
         panelMgr.onCreating(inData);
-        JComponent customContent = panelMgr.getOrCreate();
+        JComponent customContent = panelMgr.create();
         allContent.add(customContent, "grow, push, wrap");
         String mig_first = "span, split " + dbTypes.size() + ", pushx, align center, sg buts";
         String mig_sg = "sg buts";

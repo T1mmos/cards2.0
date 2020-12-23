@@ -4,6 +4,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -27,12 +28,13 @@ import net.miginfocom.swing.MigLayout;
 
 public class LobbyPanelCreator extends DataPanelManagerBase<Void, Void>
 {
-    private final JLabel l_serverMsg;
-    private final JLabel l_localPlayer;
-    private final JLabel l_remotePlayer;
-    private final JButton b_startGame;
+    private JPanel panel;
     
-    private final JLabel l_waitingToStart;
+    private JLabel l_serverMsg;
+    private JLabel l_localPlayer;
+    private JLabel l_remotePlayer;
+    private JButton b_startGame;    
+    private JLabel l_waitingToStart;
 
     private IStateListener stateListener = null;
 
@@ -86,7 +88,18 @@ public class LobbyPanelCreator extends DataPanelManagerBase<Void, Void>
     
     public LobbyPanelCreator()
     {
-        ReadOnlyState state = Services.get(IContextService.class).getThreadContext().getReadOnlyState();
+        
+    }
+
+    @Override
+    public JPanel create()
+    {
+        IContextService contextService = Services.get(IContextService.class);
+        Context context = contextService.getThreadContext();
+        ReadOnlyState state = context.getReadOnlyState();
+        
+        panel = new JPanel(new MigLayout("insets 0"));
+        
         IActionService actServ = Services.get(IActionService.class);
         
         this.l_serverMsg = new JLabel(state.getServerMessage());
@@ -105,16 +118,6 @@ public class LobbyPanelCreator extends DataPanelManagerBase<Void, Void>
         {
             this.l_remotePlayer = new JLabel();
         }
-    }
-
-    @Override
-    public JPanel getOrCreate()
-    {
-        IContextService contextService = Services.get(IContextService.class);
-        Context context = contextService.getThreadContext();
-        ReadOnlyState state = context.getReadOnlyState();
-        
-        JPanel panel = new JPanel(new MigLayout("insets 0"));
 
         panel.add(l_serverMsg, "span, push, grow, wrap");
         panel.add(l_localPlayer, "align left");
@@ -128,6 +131,12 @@ public class LobbyPanelCreator extends DataPanelManagerBase<Void, Void>
             panel.add(l_waitingToStart, "spanx, pushx, align right");
         }
 
+        return panel;
+    }
+    
+    @Override
+    public JComponent get()
+    {
         return panel;
     }
 
@@ -162,5 +171,18 @@ public class LobbyPanelCreator extends DataPanelManagerBase<Void, Void>
     public boolean isButtonEnabled(PanelButtonType dbType)
     {
         return true;
+    }
+
+    @Override
+    public boolean isCreated()
+    {
+        return panel != null;
+    }
+
+    @Override
+    public void destroy()
+    {
+        panel.removeAll();        
+        panel = null;
     }
 }

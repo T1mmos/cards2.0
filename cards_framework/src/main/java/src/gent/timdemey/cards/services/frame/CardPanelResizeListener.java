@@ -8,6 +8,7 @@ import java.util.TimerTask;
 import javax.swing.SwingUtilities;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 
 class CardPanelResizeListener implements ComponentListener
@@ -31,7 +32,7 @@ class CardPanelResizeListener implements ComponentListener
 
     private Timer timer;
     private TimerTask relayoutTask;
-    private TimerTask scaleTask;
+    private TimerTask rescaleTask;
 
     private long msLastRelayout = 0;
 
@@ -60,44 +61,52 @@ class CardPanelResizeListener implements ComponentListener
         if (diff > MS_WAIT_RELAYOUT)
         {
             msLastRelayout = System.currentTimeMillis();
-            SwingUtilities.invokeLater(() -> Services.get(IPanelService.class).relayout());
+            
         }
         else
         {
             relayoutTask = new TimerTask()
             {
-
                 @Override
                 public void run()
                 {
-                    SwingUtilities.invokeLater(() -> Services.get(IPanelService.class).relayout());
+                    relayout();
                 }
             };
             timer.schedule(relayoutTask, MS_WAIT_RELAYOUT);
         }
 
-        if (scaleTask != null)
+        if (rescaleTask != null)
         {
-            scaleTask.cancel();
+            rescaleTask.cancel();
         }
 
-        scaleTask = new TimerTask()
+        rescaleTask = new TimerTask()
         {
 
             @Override
             public void run()
             {
-                doUpdateUI();                
+                rescale();                
             }
         };
 
-        timer.schedule(scaleTask, MS_WAIT_RELAYOUT + MS_WAIT_SCALE);
+        timer.schedule(rescaleTask, MS_WAIT_RELAYOUT + MS_WAIT_SCALE);
     }
     
-    private void doUpdateUI()
+    private void relayout()
     {
-        IPanelService gamePanelServ = Services.get(IPanelService.class);
-        SwingUtilities.invokeLater(() -> gamePanelServ.rescaleResourcesAsync());
+        IFrameService frameServ = Services.get(IFrameService.class);
+        frameServ.updatePositionService();
+        
+        IPanelService panelServ = Services.get(IPanelService.class);
+        SwingUtilities.invokeLater(() -> panelServ.positionScalableComponents());
+    }
+    
+    private void rescale()
+    {
+        IPanelService panelServ = Services.get(IPanelService.class);
+        SwingUtilities.invokeLater(() -> panelServ.rescaleResourcesAsync(panelServ::repaintScalableComponents));
     }
 
     @Override

@@ -15,6 +15,13 @@ public abstract class PanelManagerBase implements IPanelManager
     }
 
     @Override
+    public void onHidden()
+    {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    @Override
     public void onShown()
     {
         // TODO Auto-generated method stub
@@ -43,19 +50,12 @@ public abstract class PanelManagerBase implements IPanelManager
     }
 
     @Override
-    public void relayout()
+    public void repaintScalableComponents()
     {
         // TODO Auto-generated method stub
         
     }
-
-    @Override
-    public void onResourcesRescaled()
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
+    
     @Override
     public void startAnimation(IScalableComponent scaleComp)
     {

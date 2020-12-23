@@ -23,8 +23,6 @@ public class PanelService implements IPanelService
     private Map<PanelDescriptor, IPanelManager> panelMgrs;
     private Map<DataPanelDescriptor<?, ?>, IDataPanelManager<?,?>> dataPanelMgrs;
     
-    private boolean firstRescale = true;
-    
     public PanelService()
     {
     }
@@ -84,13 +82,25 @@ public class PanelService implements IPanelService
             SwingUtilities.invokeLater(callback);           
         });
     }
-    
-   
 
     @Override
-    public void relayout()
+    public void createScalableComponents()
     {
-        foreach(panelMgrs, IPanelManager::relayout); 
+        foreach(panelMgrs, IPanelManager::createScalableComponents);
+    }
+    
+    @Override
+    public void positionScalableComponents()
+    {
+        foreach(panelMgrs, IPanelManager::positionScalableComponents); 
+    }
+    
+
+
+    @Override
+    public void repaintScalableComponents()
+    {
+        foreach(panelMgrs, IPanelManager::repaintScalableComponents); 
     }
 
     @Override
