@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.panels;
+package gent.timdemey.cards.services.frame;
 
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -10,7 +10,7 @@ import javax.swing.SwingUtilities;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 
-class GamePanelResizeListener implements ComponentListener
+class CardPanelResizeListener implements ComponentListener
 {
 
     // relayout time window for a resize event. if a new resize event enters
@@ -87,14 +87,14 @@ class GamePanelResizeListener implements ComponentListener
             @Override
             public void run()
             {
-                doUpdateUI((GamePanel) e.getComponent());                
+                doUpdateUI();                
             }
         };
 
         timer.schedule(scaleTask, MS_WAIT_RELAYOUT + MS_WAIT_SCALE);
     }
     
-    private void doUpdateUI(GamePanel gamePanel)
+    private void doUpdateUI()
     {
         IPanelService gamePanelServ = Services.get(IPanelService.class);
         SwingUtilities.invokeLater(() -> gamePanelServ.rescaleResourcesAsync());

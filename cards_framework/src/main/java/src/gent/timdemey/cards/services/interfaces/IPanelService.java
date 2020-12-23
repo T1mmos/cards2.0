@@ -17,5 +17,5 @@ public interface IPanelService extends IPreload
     public <IN, OUT> IDataPanelManager<IN, OUT> getPanelManager(DataPanelDescriptor<IN, OUT> panelDesc);    
     
     public void relayout();
-    public void rescaleResourcesAsync();
+    public void rescaleResourcesAsync(Runnable callback);
 }

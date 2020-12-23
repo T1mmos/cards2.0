@@ -22,6 +22,7 @@ import javax.swing.WindowConstants;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.DataPanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 import gent.timdemey.cards.services.contract.preload.IPreload;
@@ -114,6 +115,7 @@ public class FrameService implements IFrameService, IPreload
             
             cardPanel = new CardPanel();
             cardPanel.setLayout(new CardLayout());
+            cardPanel.addComponentListener(new CardPanelResizeListener());
             rootPanel.add(cardPanel, "push, grow");
                         
             frame.setTitle(getTitle());
@@ -194,8 +196,29 @@ public class FrameService implements IFrameService, IPreload
         if (!comp.isVisible())
         {
             comp.setVisible(true);
+            
+            
+            List<RescaleRequest> requests = new ArrayList<>();
+            panelMgr.createRescaleRequests(requests);
+            panelServ.rescaleResourcesAsync(() -> onResourcesRescaled());
+            
             panelMgr.onShown();
         }
+    }
+
+    
+    
+    private void onResourcesRescaled()
+    {
+        if (firstRescale)
+        {
+            
+            foreach(panelMgrs, IPanelManager::createScalableComponents);  
+            foreach(panelMgrs, IPanelManager::positionScalableComponents);            
+            firstRescale = false;      
+        }
+
+        foreach(panelMgrs, pm -> pm.getOrCreate().repaint());     
     }
     
     @Override
@@ -206,7 +229,7 @@ public class FrameService implements IFrameService, IPreload
         
         panelMgr.onCreating(data);
         
-         panelMgr.getButtonTypes()
+        panelMgr.getButtonTypes()
         
         panelMgr.ge
     }

@@ -15,7 +15,6 @@ import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.contract.preload.PreloadOrder;
 import gent.timdemey.cards.services.contract.preload.PreloadOrderType;
-import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 
@@ -75,41 +74,18 @@ public class PanelService implements IPanelService
     }
     
     @Override
-    public final void rescaleResourcesAsync()
+    public final void rescaleResourcesAsync(Runnable callback)
     {
         IScalingService scaleServ = Services.get(IScalingService.class);
-        List<RescaleRequest> requests = createRescaleRequests();
+        List<RescaleRequest> requests = new ArrayList<>();
+        foreach(panelMgrs, mgr -> mgr.createRescaleRequests(requests));
         scaleServ.rescaleAsync(requests, () -> 
         {
-            SwingUtilities.invokeLater(() -> onResourcesRescaled());           
+            SwingUtilities.invokeLater(callback);           
         });
     }
     
-    private void onResourcesRescaled()
-    {
-        if (firstRescale)
-        {
-            foreach(panelMgrs, IPanelManager::createScalableComponents);  
-            foreach(panelMgrs, IPanelManager::positionScalableComponents);  
-             
-            firstRescale = false;      
-        }
-            
-        IFrameService frameServ = Services.get(IFrameService.class);
-        frameServ.hidePanel(PanelDescriptors.LOAD);
-        
-
-        foreach(panelMgrs, IPanelManager::onResourcesRescaled);     
-    }
-
-    protected List<RescaleRequest> createRescaleRequests()
-    {
-        List<RescaleRequest> requests = new ArrayList<>();
-
-        foreach(panelMgrs, mgr -> mgr.createRescaleRequests(requests));
-       
-        return requests;
-    }
+   
 
     @Override
     public void relayout()

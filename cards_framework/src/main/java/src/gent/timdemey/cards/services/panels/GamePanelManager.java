@@ -20,6 +20,7 @@ import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
+import gent.timdemey.cards.services.frame.CardPanelResizeListener;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
@@ -33,10 +34,8 @@ import gent.timdemey.cards.services.scaling.img.ScalableImageComponent;
 
 public class GamePanelManager extends DataPanelManagerBase<Void, Void>
 {
-
     private GamePanel gamePanel;
     private PanelAnimator animator;
-    private GamePanelResizeListener resizeListener;
     private GamePanelMouseListener dragListener;
 
     @Override
@@ -54,7 +53,6 @@ public class GamePanelManager extends DataPanelManagerBase<Void, Void>
     @Override
     public void onShown()
     {
-        gamePanel.addComponentListener(resizeListener);
         gamePanel.addMouseMotionListener(dragListener);
         gamePanel.addMouseListener(dragListener);
         
@@ -64,7 +62,6 @@ public class GamePanelManager extends DataPanelManagerBase<Void, Void>
     @Override
     public Void onClose(PanelButtonType dbType)
     {
-        gamePanel.removeComponentListener(resizeListener);
         gamePanel.removeMouseMotionListener(dragListener);
         gamePanel.removeMouseListener(dragListener);
         
@@ -87,7 +84,6 @@ public class GamePanelManager extends DataPanelManagerBase<Void, Void>
     public JComponent getOrCreate()
     {
         gamePanel = new GamePanel();
-        resizeListener = new GamePanelResizeListener();
         dragListener = new GamePanelMouseListener(); 
         animator = new PanelAnimator();           
 
@@ -97,7 +93,6 @@ public class GamePanelManager extends DataPanelManagerBase<Void, Void>
         IPanelService panelServ = Services.get(IPanelService.class);
 
         animator.start();
-
         
         updatePositionManager();
         rescaleResourcesAsync();
@@ -184,7 +179,6 @@ public class GamePanelManager extends DataPanelManagerBase<Void, Void>
         gamePanel.removeAll();
         Services.get(IScalingService.class).clearComponentCache();
         
-        resizeListener = null;
         dragListener = null;
         gamePanel = null;
     }
@@ -201,8 +195,9 @@ public class GamePanelManager extends DataPanelManagerBase<Void, Void>
         gamePanel.revalidate();
         gamePanel.repaint();
     }
-    
-    private void updatePositionManager()
+
+    @Override
+    public void relayout()
     {
         // update the position service by supplying it with the latest game
         // panel dimensions
@@ -210,12 +205,7 @@ public class GamePanelManager extends DataPanelManagerBase<Void, Void>
         int maxHeight = gamePanel.getHeight();
         IPositionService posMan = Services.get(IPositionService.class);
         posMan.setMaxSize(maxWidth, maxHeight);
-    }
-
-    @Override
-    public void relayout()
-    {
-        updatePositionManager();
+        
         positionScalableComponents();
     }
     
