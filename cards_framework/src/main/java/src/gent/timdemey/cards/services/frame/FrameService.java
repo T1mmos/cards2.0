@@ -204,6 +204,7 @@ public class FrameService implements IFrameService
         if (!panelMgr.isVisible())
         {
             panelMgr.setVisible(true);    
+            
         }
     }
 

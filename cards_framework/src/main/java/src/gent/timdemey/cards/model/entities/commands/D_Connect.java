@@ -1,5 +1,7 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import javax.swing.SwingUtilities;
+
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
