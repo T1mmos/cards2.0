@@ -171,10 +171,7 @@ public class FrameService implements IFrameService
     {
         IPanelService panelServ = Services.get(IPanelService.class);
         IPanelManager panelMgr = panelServ.getPanelManager(desc);
-        
-        // grab the component    
-        JComponent comp = panelMgr.get();
-        
+                
         // hide other panels is this panel is not just a (transparent) overlay
         if (!desc.overlay)
         {
@@ -196,20 +193,17 @@ public class FrameService implements IFrameService
                 }
                 
                 // hide the component
-                JComponent cmp = pMan.get();
-                if (cmp.isVisible())
+                if (pMan.isVisible())
                 {
-                    cmp.setVisible(false);
-                    pMan.onHidden();
+                    pMan.setVisible(false);
                 }                
             }
         }
         
         // set the visibility of the panel if necessary
-        if (!comp.isVisible())
+        if (!panelMgr.isVisible())
         {
-            comp.setVisible(true);            
-            panelMgr.onShown();
+            panelMgr.setVisible(true);    
         }
     }
 
@@ -220,7 +214,7 @@ public class FrameService implements IFrameService
         IPanelService panelServ = Services.get(IPanelService.class);
         IDataPanelManager<IN, OUT> panelMgr = panelServ.getPanelManager(desc);
         
-        panelMgr.onCreating(data);
+        panelMgr.load(data);
         
        // panelMgr.getButtonTypes()
         
@@ -247,9 +241,7 @@ public class FrameService implements IFrameService
         }
         
         // hide the panel
-        JComponent comp = panelMgr.get();
-        comp.setVisible(false);
-        panelMgr.onHidden();
+        panelMgr.setVisible(false);
     }
     
     @Override

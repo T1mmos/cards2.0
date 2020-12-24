@@ -24,12 +24,6 @@ public class SolShowTestPlugin extends SolShowPlugin
     }
     
     @Override
-    public void installUiServices(Services services)
-    {
-        super.installUiServices(services);     
-    }
-    
-    @Override
     public String getName()
     {
         return "SolShow TEST";

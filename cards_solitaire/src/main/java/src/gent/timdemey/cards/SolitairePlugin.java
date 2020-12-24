@@ -20,13 +20,9 @@ public class SolitairePlugin implements ICardPlugin
         services.installIfAbsent(ICommandService.class, () -> new SolitaireCommandService());
         services.installIfAbsent(ICardGameService.class, () -> new SolitaireCardGameCreationService());
         services.installIfAbsent(IIdService.class, () -> new SolitaireIdService());
-    }
-
-    @Override
-    public void installUiServices(Services services)
-    {
-        App.getServices().installIfAbsent(IPositionService.class, () -> new SolitairePositionService());
-        App.getServices().installIfAbsent(IPanelService.class, () -> new SolitairePanelService());
+        
+        services.installIfAbsent(IPositionService.class, () -> new SolitairePositionService());
+        services.installIfAbsent(IPanelService.class, () -> new SolitairePanelService());
     }
 
     @Override

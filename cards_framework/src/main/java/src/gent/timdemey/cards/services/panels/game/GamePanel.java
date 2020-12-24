@@ -1,21 +1,23 @@
-package gent.timdemey.cards.services.panels;
+package gent.timdemey.cards.services.panels.game;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
-import javax.swing.JLayeredPane;
-
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.Coords;
+import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
+import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.utils.DebugDrawDefines;
 
-public class GamePanel extends JLayeredPane
+public class GamePanel extends PanelBase
 {
     GamePanel()
     {
+        super(PanelDescriptors.GAME);
+
         setLayout(null); // absolute positioning
         setOpaque(false);
     }
@@ -23,6 +25,7 @@ public class GamePanel extends JLayeredPane
     @Override
     protected void paintComponent(Graphics g)
     {
+        // draws outer box in draw debug mode
         super.paintComponent(g);
         
         if (Services.get(IFrameService.class).getDrawDebug())
@@ -30,12 +33,7 @@ public class GamePanel extends JLayeredPane
             Graphics2D g2 = (Graphics2D) g.create();
             IPositionService posMan = Services.get(IPositionService.class);
             Coords.Absolute coords = posMan.getPackedCoords();
-            
-            // draw the full sized outer box
-            g2.setStroke(new BasicStroke(4.0f));
-            g2.setColor(DebugDrawDefines.COLOR_PANEL_GAME_OUTER);
-            g2.drawRect(getX(), getY(), getWidth(), getHeight());
-            
+                        
             // draw the packed box
             g2.setStroke(new BasicStroke(2.0f));
             g2.setColor(DebugDrawDefines.COLOR_PANEL_GAME_INNER);

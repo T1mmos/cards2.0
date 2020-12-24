@@ -14,10 +14,12 @@ import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.ChangeType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
+import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.interfaces.ISolShowIdService;
+import gent.timdemey.cards.services.panels.game.GamePanelStateListener;
 import gent.timdemey.cards.services.resources.SolShowResourceDefines;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 import gent.timdemey.cards.services.scaling.text.ScalableFontResource;
@@ -49,11 +51,14 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
 
             int incr = typed.newValue - typed.oldValue;
             String text = "+" + incr;
+            IPanelService panelServ = Services.get(IPanelService.class);
+            IPanelManager panelMgr = panelServ.getPanelManager(PanelDescriptors.GAME);
             ScalableTextComponent comp = new ScalableTextComponent(UUID.randomUUID(), text, ComponentTypes.CARDSCORE, scaleFontRes);
+            comp.setPanelManager(panelMgr);
             comp.setPayload(card);
 
-            pServ.add(comp);
-            pServ.startAnimation(comp);
+            panelMgr.add(comp);
+            panelMgr.startAnimation(comp);
         }
         else if (property == ReadOnlyCardStack.Cards)
         {
@@ -68,7 +73,7 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
                         for (ReadOnlyCard card : cardStack.getHighestCards(cnt))
                         {
                             IScalableComponent comp = scaleServ.getScalableComponent(card);
-                            pServ.startAnimation(comp);
+                            comp.getPanelManager().startAnimation(comp);
                         }
                     }
                 }
@@ -82,13 +87,8 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
                 }
             }
             else if (change.changeType == ChangeType.Add && cardStack.getCardStackType().equals(SolShowCardStackType.TURNOVER))
-            {
-                TypedChange<ReadOnlyCard> typed = ReadOnlyCardStack.Cards.cast(change);
-                List<ReadOnlyCard> addedCards = typed.addedValues;
-             
-                int addedCnt = Math.min(addedCards.size(), 3);
+            {             
                 int animCnt = Math.min(cardStack.getCards().size(), 5);
-                int buriedCnt = Math.max(animCnt - addedCnt, 0);
                 List<ReadOnlyCard> animCards = cardStack.getHighestCards(animCnt);
                 
                 // animate from low to high
@@ -97,7 +97,7 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
                     ReadOnlyCard animCard = animCards.get(idx);
                     
                     IScalableComponent animComp = scaleServ.getScalableComponent(animCard);
-                    pServ.startAnimation(animComp);                        
+                    animComp.getPanelManager().startAnimation(animComp);                        
                 }
             }
             else

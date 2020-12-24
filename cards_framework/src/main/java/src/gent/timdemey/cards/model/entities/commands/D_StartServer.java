@@ -12,8 +12,8 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IDialogService;
 import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.services.panels.PanelOutData;
-import gent.timdemey.cards.ui.panels.StartServerPanelCreator;
-import gent.timdemey.cards.ui.panels.StartServerPanelData;
+import gent.timdemey.cards.services.panels.mp.StartServerPanelManager;
+import gent.timdemey.cards.services.panels.mp.StartServerPanelData;
 
 public class D_StartServer extends DialogCommandBase
 {
@@ -35,7 +35,7 @@ public class D_StartServer extends DialogCommandBase
     @Override
     protected void showDialog(Context context, ContextType type, State state)
     {
-        StartServerPanelCreator content = new StartServerPanelCreator(state.getLocalName());
+        StartServerPanelManager content = new StartServerPanelManager(state.getLocalName());
         IDialogService diagServ = Services.get(IDialogService.class);
         String title = Loc.get(LocKey.DialogTitle_creategame);
         PanelOutData<StartServerPanelData> data = diagServ.ShowAdvanced(title, null, content);

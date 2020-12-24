@@ -1,13 +1,10 @@
-package gent.timdemey.cards.services.panels;
+package gent.timdemey.cards.services.panels.game;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.swing.JComponent;
+import javax.swing.JLayeredPane;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.cards.Suit;
@@ -16,7 +13,6 @@ import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
-import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
@@ -25,65 +21,48 @@ import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
+import gent.timdemey.cards.services.panels.PanelManagerBase;
 import gent.timdemey.cards.services.panels.animations.PanelAnimator;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
-import gent.timdemey.cards.services.scaling.IScalableResource;
 import gent.timdemey.cards.services.scaling.img.ScalableImageComponent;
 
-public class GamePanelManager extends DataPanelManagerBase<Void, Void>
+public class GamePanelManager extends PanelManagerBase
 {
     private GamePanel gamePanel;
     private PanelAnimator animator;
     private GamePanelMouseListener dragListener;
-
-    @Override
-    public EnumSet<PanelButtonType> getButtonTypes()
-    {
-        return null;
-    }
-
+        
     @Override
     public void preload()
     {
-        
-    }
-        
-    @Override
-    public void onShown()
-    {
-        gamePanel.addMouseMotionListener(dragListener);
-        gamePanel.addMouseListener(dragListener);
-        
-        gamePanel.repaint();
-    }
-
-    @Override
-    public Void onClose(PanelButtonType dbType)
-    {
-        gamePanel.removeMouseMotionListener(dragListener);
-        gamePanel.removeMouseListener(dragListener);
-        
-        return null;
-    }
-
-    @Override
-    public boolean isButtonEnabled(PanelButtonType dbType)
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isCreated()
-    {
-        return gamePanel != null;
+        preloadImages();
+        preloadFonts();
     }
     
     @Override
-    public JComponent create()
+    public void setVisible(boolean visible)
+    {
+        if (visible)
+        {
+            gamePanel.addMouseMotionListener(dragListener);
+            gamePanel.addMouseListener(dragListener);
+            gamePanel.setVisible(true);
+            gamePanel.repaint();
+        }
+        else
+        {
+            gamePanel.setVisible(false);
+            gamePanel.removeMouseListener(dragListener);
+            gamePanel.removeMouseListener(dragListener);
+        }        
+    }    
+
+    @Override
+    public JLayeredPane create()
     {
         gamePanel = new GamePanel();
         dragListener = new GamePanelMouseListener(); 
-        animator = new PanelAnimator();           
+        animator = new PanelAnimator(this);           
 
         IStateListener stateListener = Services.get(IStateListener.class);
         Services.get(IContextService.class).getThreadContext().addStateListener(stateListener);
@@ -93,7 +72,7 @@ public class GamePanelManager extends DataPanelManagerBase<Void, Void>
     }
     
     @Override
-    public JComponent get()
+    public JLayeredPane get()
     {
         return gamePanel;
     }
@@ -110,12 +89,11 @@ public class GamePanelManager extends DataPanelManagerBase<Void, Void>
         for (int i = 0; i < cards.size(); i++)
         {
             ReadOnlyCard card = cards.get(i);
-            IScalableComponent scaleComp = scaleCompServ.createScalableComponent(card);
+            IScalableComponent scaleComp = scaleCompServ.createScalableComponent(card, this);
             add(scaleComp);
             updateComponent(scaleComp);
         }
-    }
-    
+    }    
 
     @Override
     public void updateComponent(IScalableComponent comp)
@@ -149,6 +127,11 @@ public class GamePanelManager extends DataPanelManagerBase<Void, Void>
         throw new UnsupportedOperationException("updateComponent not supported for ComponentType " + compType);
     }
 
+    protected void preloadImages()
+    {
+        preloadCards();
+    }
+    
     protected void preloadCards()
     {
         IIdService idServ = Services.get(IIdService.class);
@@ -168,6 +151,10 @@ public class GamePanelManager extends DataPanelManagerBase<Void, Void>
         }
     }
 
+    protected void preloadFonts()
+    {
+    }
+    
     @Override
     public void destroy()
     {
@@ -181,28 +168,6 @@ public class GamePanelManager extends DataPanelManagerBase<Void, Void>
         
         dragListener = null;
         gamePanel = null;
-    }
-    
-    private void add(IScalableComponent comp)
-    {
-        gamePanel.add(comp.getComponent());
-        position(comp);
-    }
-
-    private void remove(IScalableComponent comp)
-    {
-        gamePanel.remove(comp.getComponent());
-        gamePanel.revalidate();
-        gamePanel.repaint();
-    }
-    
-    private void position(IScalableComponent comp)
-    {
-        IPositionService posServ = Services.get(IPositionService.class);
-        LayeredArea layArea = posServ.getStartLayeredArea(comp);
-        comp.setCoords(layArea.coords);
-        comp.setMirror(layArea.mirror);
-        setLayer(comp, layArea.layer);
     }
 
     protected int getNextAnimationLayer()
@@ -245,7 +210,6 @@ public class GamePanelManager extends DataPanelManagerBase<Void, Void>
         }
     }
 
-
     public void startAnimation(IScalableComponent scaleComp)
     {
         int layer = getNextAnimationLayer();
@@ -257,47 +221,6 @@ public class GamePanelManager extends DataPanelManagerBase<Void, Void>
     {
         animator.stopAnimate(scaleComp);
     }
-
     
-    public int getLayer(IScalableComponent scalableComponent)
-    {
-        return gamePanel.getLayer((Component) scalableComponent.getComponent());
-    }
-
-    public void setLayer(IScalableComponent component, int layerIndex)
-    {
-        gamePanel.setLayer(component.getComponent(), layerIndex);
-    }
     
-    protected final void addRescaleRequest(List<? super RescaleRequest> requests, ComponentType compType, UUID resId)
-    {
-        IPositionService posServ = Services.get(IPositionService.class);
-        IScalingService scaleServ = Services.get(IScalingService.class);
-
-        // get dimension
-        Dimension dim = posServ.getResourceDimension(compType);
-
-        // get the resource to rescale
-        IScalableResource<?> res = scaleServ.getScalableResource(resId);
-
-        // add rescale request for resource / dimension combination
-        RescaleRequest rescReq = new RescaleRequest(res, dim);
-        requests.add(rescReq);
-    }
-
-    @Override
-    public void positionScalableComponents()
-    {
-        IScalingService scaleServ = Services.get(IScalingService.class);
-        for (IScalableComponent scaleComp : scaleServ.getComponents())
-        {
-            position(scaleComp);
-        }
-    }
-
-    @Override
-    public void repaintScalableComponents()
-    {
-        gamePanel.repaint();
-    }
 }

@@ -1,4 +1,4 @@
-package gent.timdemey.cards.ui.panels;
+package gent.timdemey.cards.services.panels.mp;
 
 public class StartServerPanelData
 {

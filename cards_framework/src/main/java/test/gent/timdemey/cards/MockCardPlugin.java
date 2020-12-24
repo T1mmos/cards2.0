@@ -12,12 +12,6 @@ public class MockCardPlugin implements ICardPlugin
     }
 
     @Override
-    public void installUiServices(Services services)
-    {
-
-    }
-
-    @Override
     public int getPlayerCount()
     {
         // assume multiplayer

@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.panels;
+package gent.timdemey.cards.services.panels.game;
 
 import java.util.List;
 
@@ -17,6 +17,7 @@ import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
+import gent.timdemey.cards.services.panels.IPanelManager;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 
 public class GamePanelStateListener implements IStateListener

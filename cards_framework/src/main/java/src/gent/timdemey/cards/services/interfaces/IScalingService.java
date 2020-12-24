@@ -8,6 +8,7 @@ import java.util.UUID;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.contract.RescaleRequest;
+import gent.timdemey.cards.services.panels.IPanelManager;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 import gent.timdemey.cards.services.scaling.IScalableResource;
 
@@ -38,7 +39,7 @@ public interface IScalingService
      * @param card
      * @return
      */
-    public IScalableComponent createScalableComponent(ReadOnlyCard card);
+    public IScalableComponent createScalableComponent(ReadOnlyCard card, IPanelManager panelManager);
     
     /**
      * Gets a scalable component for the given model object.
@@ -52,7 +53,7 @@ public interface IScalingService
      * @param card
      * @return
      */
-    public IScalableComponent createScalableComponent(ReadOnlyCardStack cardStack);
+    public IScalableComponent createScalableComponent(ReadOnlyCardStack cardStack, IPanelManager panelManager);
     
     /**
      * Gets a scalable component for the given model object.

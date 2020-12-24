@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.panels;
+package gent.timdemey.cards.services.panels.menu;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;

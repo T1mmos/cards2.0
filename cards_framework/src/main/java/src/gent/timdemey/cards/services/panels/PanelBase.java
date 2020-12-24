@@ -4,14 +4,14 @@ import java.awt.BasicStroke;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
-import javax.swing.JComponent;
+import javax.swing.JLayeredPane;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.utils.DebugDrawDefines;
 
-public class PanelBase extends JComponent
+public class PanelBase extends JLayeredPane
 {
     private final PanelDescriptor panelDesc;
     

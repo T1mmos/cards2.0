@@ -32,11 +32,6 @@ public class SolShowPlugin implements ICardPlugin
         services.installIfAbsent(IPanelService.class, () -> new SolShowPanelService());
         services.installIfAbsent(IAnimationService.class, () -> new SolShowAnimationService());
         services.installIfAbsent(IResourceRepository.class, () -> new SolShowResourceRepository());
-    }
-
-    @Override
-    public void installUiServices(Services services)
-    {
         services.installIfAbsent(IPositionService.class, () -> new SolShowPositionService());
         services.installIfAbsent(IStateListener.class, () -> new SolShowGamePanelStateListener());
     }

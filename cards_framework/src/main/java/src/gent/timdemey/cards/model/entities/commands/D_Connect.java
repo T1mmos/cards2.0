@@ -13,8 +13,8 @@ import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.IDialogService;
 import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.services.panels.PanelOutData;
-import gent.timdemey.cards.ui.panels.JoinMPGamePanelCreator;
-import gent.timdemey.cards.ui.panels.JoinMPGamePanelData;
+import gent.timdemey.cards.services.panels.mp.JoinMPGamePanelData;
+import gent.timdemey.cards.services.panels.mp.JoinMPGamePanelManager;
 
 public class D_Connect extends DialogCommandBase
 {
@@ -36,7 +36,7 @@ public class D_Connect extends DialogCommandBase
     @Override
     protected void showDialog(Context context, ContextType type, State state)
     {
-        JoinMPGamePanelCreator content = new JoinMPGamePanelCreator();
+        JoinMPGamePanelManager content = new JoinMPGamePanelManager();
         IDialogService diagServ = Services.get(IDialogService.class);
         String title = Loc.get(LocKey.DialogTitle_joingame);
         PanelOutData<JoinMPGamePanelData> data = diagServ.ShowAdvanced(title, null, content);

@@ -32,6 +32,7 @@ import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
+import gent.timdemey.cards.services.panels.IPanelManager;
 import gent.timdemey.cards.services.scaling.img.ScalableImageComponent;
 import gent.timdemey.cards.services.scaling.img.ScalableImageResource;
 
@@ -171,8 +172,8 @@ public final class ScalingService implements IScalingService
     public IScalableComponent getComponentAt(Point p)
     {
         IPanelService pServ = Services.get(IPanelService.class);
-        Iterator<IScalableComponent> it = components.values().stream().sorted((x, y) -> {
-            return pServ.getLayer(y) - pServ.getLayer(x);
+        Iterator<IScalableComponent> it = components.values().stream().filter(s -> s.getPanelManager().isVisible()).sorted((x, y) -> {
+            return y.getPanelManager().getLayer(y) - x.getPanelManager().getLayer(x);
         }).iterator();
         while (it.hasNext())
         {
@@ -188,20 +189,20 @@ public final class ScalingService implements IScalingService
     @Override
     public List<IScalableComponent> getComponentsAt(Point p)
     {
-        return components.values().stream().filter(s -> s.getCoords().getBounds().contains(p)).collect(Collectors.toList());
+        return components.values().stream().filter(s -> s.getPanelManager().isVisible() && s.getCoords().getBounds().contains(p)).collect(Collectors.toList());
     }
 
     @Override
     public <T extends IScalableComponent> List<T> getComponentsAt(Point p, Class<T> clazz)
     {
-        return components.values().stream().filter(s -> s.getCoords().getBounds().contains(p) && clazz.isAssignableFrom(s.getClass())).map(s -> (T) s)
+        return components.values().stream().filter(s -> s.getPanelManager().isVisible() && s.getCoords().getBounds().contains(p) && clazz.isAssignableFrom(s.getClass())).map(s -> (T) s)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<IScalableComponent> getComponentsIn(Rectangle rect)
     {
-        return components.values().stream().filter(s -> s.getCoords().getBounds().intersects(rect)).collect(Collectors.toList());
+        return components.values().stream().filter(s -> s.getPanelManager().isVisible() && s.getCoords().getBounds().intersects(rect)).collect(Collectors.toList());
     }
     
     @Override
@@ -211,7 +212,7 @@ public final class ScalingService implements IScalingService
     }
 
     @Override
-    public IScalableComponent createScalableComponent(ReadOnlyCard card)
+    public IScalableComponent createScalableComponent(ReadOnlyCard card, IPanelManager panelManager)
     {
         IIdService uuidServ = Services.get(IIdService.class);
 
@@ -230,6 +231,7 @@ public final class ScalingService implements IScalingService
         ScalableImageResource res_front = (ScalableImageResource) getScalableResource(resFrontId);
         ScalableImageResource res_back = (ScalableImageResource) getScalableResource(resBackId);
         comp = new ScalableImageComponent(compId, ComponentTypes.CARD, res_front, res_back);
+        comp.setPanelManager(panelManager);
         comp.setPayload(card);
 
         components.put(compId, comp);
@@ -244,7 +246,7 @@ public final class ScalingService implements IScalingService
     }
     
     @Override
-    public IScalableComponent createScalableComponent(ReadOnlyCardStack cardstack)
+    public IScalableComponent createScalableComponent(ReadOnlyCardStack cardstack, IPanelManager panelManager)
     {
         IIdService idServ = Services.get(IIdService.class);
 
@@ -261,6 +263,7 @@ public final class ScalingService implements IScalingService
         // create the component using its necessary image resources
         ScalableImageResource res = (ScalableImageResource) getScalableResource(csResId);
         comp = new ScalableImageComponent(compId, ComponentTypes.CARDSTACK, res);
+        comp.setPanelManager(panelManager);
         comp.setPayload(cardstack);
 
         components.put(compId, comp);        

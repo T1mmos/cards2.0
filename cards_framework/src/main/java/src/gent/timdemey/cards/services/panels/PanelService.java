@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import javax.swing.SwingUtilities;
 
@@ -17,6 +18,10 @@ import gent.timdemey.cards.services.contract.preload.PreloadOrder;
 import gent.timdemey.cards.services.contract.preload.PreloadOrderType;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
+import gent.timdemey.cards.services.panels.game.GamePanelManager;
+import gent.timdemey.cards.services.panels.load.LoadPanelManager;
+import gent.timdemey.cards.services.panels.menu.MenuPanelManager;
+import gent.timdemey.cards.services.panels.message.MessagePanelManager;
 
 public class PanelService implements IPanelService
 {
@@ -32,16 +37,27 @@ public class PanelService implements IPanelService
     public void preload()
     {
         panelMgrs = new HashMap<>();
-        panelMgrs.put(PanelDescriptors.GAME, new GamePanelManager());
-        panelMgrs.put(PanelDescriptors.LOAD, new LoadPanelManager());
-        panelMgrs.put(PanelDescriptors.MENU, new MenuPanelManager());
+        addAbsentPanelManagers();        
         
         dataPanelMgrs = new HashMap<>();
         // add...
-        
-        foreach(panelMgrs, IPanelManager::preload);
-        foreach(dataPanelMgrs, IPanelManager::preload);
-    }    
+    }
+    
+    protected void addAbsentPanelManagers()
+    {
+        addPanelManagerIfAbsent(PanelDescriptors.GAME, () -> new GamePanelManager());
+        addPanelManagerIfAbsent(PanelDescriptors.LOAD, () -> new LoadPanelManager());
+        addPanelManagerIfAbsent(PanelDescriptors.MENU, () -> new MenuPanelManager());
+        addPanelManagerIfAbsent(PanelDescriptors.MESSAGE, () -> new MessagePanelManager());
+    }
+    
+    protected final void addPanelManagerIfAbsent (PanelDescriptor pd, Supplier<PanelManagerBase> creator)
+    {
+        if (!panelMgrs.containsKey(pd))
+        {
+            panelMgrs.put(pd, creator.get());
+        }
+    }
     
     private void foreach(Map<? extends PanelDescriptor, ? extends IPanelManager> panelMgrs, Consumer<IPanelManager> func)
     {

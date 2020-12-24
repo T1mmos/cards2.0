@@ -8,15 +8,17 @@ import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 
 public interface IPanelManager
-{
+{   
     public void preload();
-   
+    
     public boolean isCreated();
     public JComponent create();
     public JComponent get();
-    public void onShown(); 
-    public void onHidden();
     public void destroy();
+    
+
+    public void setVisible(boolean b);
+    public boolean isVisible();
     
     public void createRescaleRequests(List<? super RescaleRequest> requests);
     
@@ -30,9 +32,11 @@ public interface IPanelManager
     public int getLayer(IScalableComponent scaleComp);
     public void setLayer(IScalableComponent scaleComp, int layerIndex);    
     
- /*   public void add(IScalableComponent comp);
+    public void add(IScalableComponent comp);
     public void remove(IScalableComponent comp);
-*/
+
     public void updateComponent(IScalableComponent comp);
+
+
 
 }

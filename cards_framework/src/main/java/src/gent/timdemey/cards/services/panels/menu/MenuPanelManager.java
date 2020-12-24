@@ -1,17 +1,19 @@
-package gent.timdemey.cards.services.panels;
+package gent.timdemey.cards.services.panels.menu;
 
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JComponent;
+import javax.swing.JLayeredPane;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.services.interfaces.IResourceService;
+import gent.timdemey.cards.services.panels.PanelBase;
+import gent.timdemey.cards.services.panels.PanelManagerBase;
 import gent.timdemey.cards.ui.actions.ActionDescriptor;
 import gent.timdemey.cards.ui.actions.ActionDescriptors;
 import gent.timdemey.cards.ui.actions.IActionService;
@@ -34,7 +36,7 @@ public class MenuPanelManager extends PanelManagerBase
     }
 
     @Override
-    public JComponent create()
+    public JLayeredPane create()
     {
         menuPanel = new PanelBase(PanelDescriptors.MENU);
         menuPanel.setLayout(new MigLayout("insets 0, align 50% 50%"));
@@ -68,7 +70,7 @@ public class MenuPanelManager extends PanelManagerBase
     }
     
     @Override
-    public JComponent get()
+    public JLayeredPane get()
     {
         return menuPanel;
     }
@@ -84,5 +86,23 @@ public class MenuPanelManager extends PanelManagerBase
         {
             return Arrays.asList(ActionDescriptors.ad_start, ActionDescriptors.ad_quit);
         }
+    }
+
+    @Override
+    public void setVisible(boolean b)
+    {
+        menuPanel.setVisible(b);
+    }
+
+    @Override
+    public boolean isVisible()
+    {
+        return menuPanel.isVisible();
+    }
+
+    @Override
+    public void preload()
+    {
+        
     }
  }

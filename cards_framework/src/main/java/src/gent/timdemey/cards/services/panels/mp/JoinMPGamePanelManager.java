@@ -1,10 +1,11 @@
-package gent.timdemey.cards.ui.panels;
+package gent.timdemey.cards.services.panels.mp;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.EnumSet;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -29,7 +30,7 @@ import gent.timdemey.cards.services.panels.DataPanelManagerBase;
 import gent.timdemey.cards.services.panels.PanelButtonType;
 import net.miginfocom.swing.MigLayout;
 
-public class JoinMPGamePanelCreator extends DataPanelManagerBase<Void, JoinMPGamePanelData>
+public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGamePanelData>
 {
     private class ServersTableModel extends AbstractTableModel
     {
@@ -125,18 +126,24 @@ public class JoinMPGamePanelCreator extends DataPanelManagerBase<Void, JoinMPGam
         }
     }
 
-    private final JScrollPane scroll_server;
-    private final JTable table_servers;
-    private final ServersTableModel tableModel;
-    private final JButton button_refresh;
-    private final ServersStateListener serversStateListener;
-    private final ActionListener refreshListener;
-    private final SelectionListener selectionListener;
-    private final JTextField tf_name;
+    private JPanel contentPanel;
+    private ServersTableModel tableModel;
+    private JTable table_servers;
+    private JButton button_refresh;
+    private ServersStateListener serversStateListener;
+    private ActionListener refreshListener;
+    private SelectionListener selectionListener;
+    private JTextField tf_name;
 
-    public JoinMPGamePanelCreator()
+    public JoinMPGamePanelManager()
     {
-        this.scroll_server = new JScrollPane();
+    }
+
+    @Override
+    public JComponent create()
+    {        
+        JScrollPane scroll_server = new JScrollPane();
+
         this.tableModel = new ServersTableModel();
         this.table_servers = new JTable(tableModel);
         this.button_refresh = new JButton(Loc.get(LocKey.Button_refresh));
@@ -144,24 +151,20 @@ public class JoinMPGamePanelCreator extends DataPanelManagerBase<Void, JoinMPGam
         this.refreshListener = new RefreshListener();
         this.selectionListener = new SelectionListener();
         this.tf_name = new JTextField(20);
-    }
-
-    @Override
-    public JPanel getOrCreate()
-    {
-        JPanel panel = new JPanel(new MigLayout("insets 0"));
+        
+        this.contentPanel = new JPanel(new MigLayout("insets 0"));
         JLabel lb_srvname = new JLabel(Loc.get(LocKey.Label_serversfound));
         JLabel lb_playerName = new JLabel(Loc.get(LocKey.Label_playername));
 
         scroll_server.setViewportView(table_servers);
 
-        panel.add(lb_srvname, "pushx, growx");
-        panel.add(button_refresh, "wrap");
-        panel.add(scroll_server, "span, hmin 150, push, grow, span, wrap");
-        panel.add(lb_playerName, "span, split 2");
-        panel.add(tf_name, "pushx, wrap");
+        contentPanel.add(lb_srvname, "pushx, growx");
+        contentPanel.add(button_refresh, "wrap");
+        contentPanel.add(scroll_server, "span, hmin 150, push, grow, span, wrap");
+        contentPanel.add(lb_playerName, "span, split 2");
+        contentPanel.add(tf_name, "pushx, wrap");
 
-        return panel;
+        return contentPanel;
     }
 
     @Override
@@ -214,7 +217,7 @@ public class JoinMPGamePanelCreator extends DataPanelManagerBase<Void, JoinMPGam
     }
 
     @Override
-    public void onShown()
+    public void setVisible(boolean b)
     {
         Services.get(IContextService.class).getThreadContext().addStateListener(serversStateListener);
         
@@ -228,5 +231,24 @@ public class JoinMPGamePanelCreator extends DataPanelManagerBase<Void, JoinMPGam
     public EnumSet<PanelButtonType> getButtonTypes()
     {
         return SET_OK_CANCEL;
+    }
+
+    @Override
+    public JComponent get()
+    {
+        return contentPanel;
+    }
+
+    @Override
+    public void destroy()
+    {
+        this.contentPanel = null;
+    }
+
+    @Override
+    public void preload()
+    {
+        // TODO Auto-generated method stub
+        
     }
 }

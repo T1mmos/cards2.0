@@ -16,12 +16,15 @@ import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
+import gent.timdemey.cards.services.panels.IPanelManager;
 import gent.timdemey.cards.utils.DebugDrawDefines;
 
 public abstract class ScalableComponent implements IScalableComponent
 {
     private final UUID id;
     private final ComponentType compType;
+    
+    private IPanelManager panelManager;
     private JComponent component = null;
     private boolean mirror = false;
     private Coords.Absolute coords = null;
@@ -60,6 +63,18 @@ public abstract class ScalableComponent implements IScalableComponent
     public ComponentType getComponentType()
     {
         return compType;
+    }
+    
+    @Override
+    public IPanelManager getPanelManager()
+    {
+        return panelManager;
+    }
+    
+    @Override
+    public void setPanelManager(IPanelManager panelManager)
+    {
+        this.panelManager = panelManager;
     }
 
     @Override
@@ -102,7 +117,7 @@ public abstract class ScalableComponent implements IScalableComponent
         int y = getComponent().getY();
 
         IPanelService pServ = Services.get(IPanelService.class);
-        int layer = pServ.getLayer(this);
+        int layer = panelManager.getLayer(this);
 
         return Arrays.asList("rect=" + x + "," + y + ", " + width + "x" + height, "layer=" + layer);
     }

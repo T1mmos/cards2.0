@@ -8,9 +8,4 @@ import gent.timdemey.cards.ui.actions.SolShowTestActionDescriptors;
 
 public class SolShowTestPanelService extends SolShowPanelService
 {
-    @Override
-    protected List<ActionDescriptor> getMenuActionDescriptors()
-    {
-        return Arrays.asList(SolShowTestActionDescriptors.ad_fakegame);
-    }
 }

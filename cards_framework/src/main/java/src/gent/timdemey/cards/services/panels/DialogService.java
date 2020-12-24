@@ -21,6 +21,7 @@ import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.services.interfaces.IDialogService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
+import gent.timdemey.cards.services.panels.message.MessagePanelManager;
 import net.miginfocom.swing.MigLayout;
 
 public final class DialogService implements IDialogService
@@ -103,7 +104,7 @@ public final class DialogService implements IDialogService
         
         // create the entire panel, add the custom content and the buttons
         JPanel allContent = new JPanel(new MigLayout("insets 5"));        
-        panelMgr.onCreating(inData);
+        panelMgr.load(inData);
         JComponent customContent = panelMgr.create();
         allContent.add(customContent, "grow, push, wrap");
         String mig_first = "span, split " + dbTypes.size() + ", pushx, align center, sg buts";
@@ -124,7 +125,7 @@ public final class DialogService implements IDialogService
         dialog.pack();
         dialog.setLocationRelativeTo(dialog.getParent());
         dialog.setResizable(false);
-        panelMgr.onShown();
+        panelMgr.setVisible(true);
         dialog.setVisible(true);
         
         // closed via X-button -> none of the button callbacks was called 

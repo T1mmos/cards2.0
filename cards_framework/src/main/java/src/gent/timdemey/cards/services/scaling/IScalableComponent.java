@@ -6,6 +6,7 @@ import javax.swing.JComponent;
 
 import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
+import gent.timdemey.cards.services.panels.IPanelManager;
 
 public interface IScalableComponent
 {    
@@ -15,6 +16,9 @@ public interface IScalableComponent
     public boolean isMirror();
         
     public ComponentType getComponentType();
+    
+    public IPanelManager getPanelManager();
+    public void setPanelManager(IPanelManager panelManager);
     
     /**
      * Set an arbitrary object as a payload of this component.

@@ -1,4 +1,4 @@
-package gent.timdemey.cards.ui.panels;
+package gent.timdemey.cards.services.panels.mp;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -26,7 +26,7 @@ import gent.timdemey.cards.ui.actions.ActionDescriptors;
 import gent.timdemey.cards.ui.actions.IActionService;
 import net.miginfocom.swing.MigLayout;
 
-public class LobbyPanelCreator extends DataPanelManagerBase<Void, Void>
+public class LobbyPanelManager extends DataPanelManagerBase<Void, Void>
 {
     private JPanel panel;
     
@@ -86,7 +86,7 @@ public class LobbyPanelCreator extends DataPanelManagerBase<Void, Void>
         }
     }
     
-    public LobbyPanelCreator()
+    public LobbyPanelManager()
     {
         
     }
@@ -141,15 +141,17 @@ public class LobbyPanelCreator extends DataPanelManagerBase<Void, Void>
     }
 
     @Override
-    public void onShown()
+    public void setVisible(boolean b)
     {
+        super.setVisible(b);
+        
         IContextService contextService = Services.get(IContextService.class);
         Context context = contextService.getThreadContext();
 
         this.stateListener = new LobbyDialogStateListener();
         context.addStateListener(stateListener);
     }
-
+    
     @Override
     public Void onClose(PanelButtonType dbType)
     {
@@ -171,12 +173,6 @@ public class LobbyPanelCreator extends DataPanelManagerBase<Void, Void>
     public boolean isButtonEnabled(PanelButtonType dbType)
     {
         return true;
-    }
-
-    @Override
-    public boolean isCreated()
-    {
-        return panel != null;
     }
 
     @Override

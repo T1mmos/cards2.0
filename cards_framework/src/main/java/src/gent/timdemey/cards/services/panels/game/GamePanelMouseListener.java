@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.panels;
+package gent.timdemey.cards.services.panels.game;
 
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
@@ -24,6 +24,7 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
+import gent.timdemey.cards.services.panels.IPanelManager;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 import gent.timdemey.cards.services.scaling.img.ScalableImageComponent;
 
@@ -95,6 +96,7 @@ class GamePanelMouseListener extends MouseAdapter
         IScalingService scaleServ = Services.get(IScalingService.class);
         IPanelService panelServ = Services.get(IPanelService.class);
         IPanelManager gamePanelMgr = panelServ.getPanelManager(PanelDescriptors.GAME);
+        
         
         IScalableComponent scaleComp = scaleServ.getComponentAt(e.getPoint());   
         

@@ -14,17 +14,20 @@ import gent.timdemey.cards.services.contract.anim.IAnimation;
 import gent.timdemey.cards.services.interfaces.IAnimationService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
+import gent.timdemey.cards.services.panels.IPanelManager;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 
 public class PanelAnimator
 {
     private final List<AnimationTracker> animTrackers;
     private final Timer timer;
+    private final IPanelManager panelManager;
 
-    public PanelAnimator()
+    public PanelAnimator(IPanelManager panelManager)
     {
-        animTrackers = new ArrayList<>();
-        timer = new Timer(10, e -> tick());
+        this.animTrackers = new ArrayList<>();
+        this.timer = new Timer(10, e -> tick());
+        this.panelManager = panelManager;
     }
 
     public void animate(IScalableComponent component)
@@ -96,10 +99,9 @@ public class PanelAnimator
 
         if (frac == 1.0)
         {
-            IPanelService pServ = Services.get(IPanelService.class);
             if (animTracker.descriptor.dispose)
             {
-                pServ.remove(animTracker.component);
+                panelManager.remove(animTracker.component);
             }
             else
             {
@@ -107,7 +109,7 @@ public class PanelAnimator
                 IPositionService posServ = Services.get(IPositionService.class);
                 LayeredArea layArea = posServ.getEndLayeredArea(animTracker.component);
                 
-                pServ.setLayer(animTracker.component, layArea.layer);
+                panelManager.setLayer(animTracker.component, layArea.layer);
             }
             
             return true;
@@ -115,6 +117,7 @@ public class PanelAnimator
         
         return false;
     }
+    
     /**
      * Get the components that are currently being animated.
      * 
