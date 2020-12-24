@@ -79,7 +79,8 @@ public final class DialogService implements IDialogService
                 
                 dialog.setVisible(false);
             };
-            JButton button = new JButton(dbType.loctext); 
+            String loctext = Loc.get(dbType.lockey);
+            JButton button = new JButton(loctext); 
             
             button.addActionListener(hehe);
             button.setMinimumSize(new Dimension(75, 20));

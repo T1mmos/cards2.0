@@ -22,11 +22,11 @@ import gent.timdemey.cards.services.panels.game.GamePanelManager;
 import gent.timdemey.cards.services.panels.load.LoadPanelManager;
 import gent.timdemey.cards.services.panels.menu.MenuPanelManager;
 import gent.timdemey.cards.services.panels.message.MessagePanelManager;
+import gent.timdemey.cards.services.panels.mp.JoinMPGamePanelManager;
 
 public class PanelService implements IPanelService
 {
     private Map<PanelDescriptor, IPanelManager> panelMgrs;
-    private Map<DataPanelDescriptor<?, ?>, IDataPanelManager<?,?>> dataPanelMgrs;
     
     public PanelService()
     {
@@ -38,9 +38,6 @@ public class PanelService implements IPanelService
     {
         panelMgrs = new HashMap<>();
         addAbsentPanelManagers();        
-        
-        dataPanelMgrs = new HashMap<>();
-        // add...
     }
     
     protected void addAbsentPanelManagers()
@@ -49,6 +46,7 @@ public class PanelService implements IPanelService
         addPanelManagerIfAbsent(PanelDescriptors.LOAD, () -> new LoadPanelManager());
         addPanelManagerIfAbsent(PanelDescriptors.MENU, () -> new MenuPanelManager());
         addPanelManagerIfAbsent(PanelDescriptors.MESSAGE, () -> new MessagePanelManager());
+        addPanelManagerIfAbsent(PanelDescriptors.CONNECT, () -> new JoinMPGamePanelManager());
     }
     
     protected final void addPanelManagerIfAbsent (PanelDescriptor pd, Supplier<PanelManagerBase> creator)
@@ -63,7 +61,10 @@ public class PanelService implements IPanelService
     {
         for (IPanelManager panelMgr : panelMgrs.values())
         {
-            func.accept(panelMgr);
+            if (panelMgr.isCreated())
+            {
+                func.accept(panelMgr);
+            }
         }
     }
 
@@ -83,7 +84,7 @@ public class PanelService implements IPanelService
     @Override
     public <IN, OUT> IDataPanelManager<IN, OUT> getPanelManager(DataPanelDescriptor<IN, OUT> panelDesc)
     {
-        IDataPanelManager<IN, OUT> panelMgr = (IDataPanelManager<IN, OUT>) dataPanelMgrs.get(panelDesc);
+        IDataPanelManager<IN, OUT> panelMgr = (IDataPanelManager<IN, OUT>) panelMgrs.get(panelDesc);
         return panelMgr;
     }
     
@@ -122,9 +123,6 @@ public class PanelService implements IPanelService
     @Override
     public List<PanelDescriptor> getPanelDescriptors()
     {
-        List<PanelDescriptor> allPanelMgrs = new ArrayList<>();
-        allPanelMgrs.addAll(panelMgrs.keySet());
-        allPanelMgrs.addAll(dataPanelMgrs.keySet());
-        return allPanelMgrs;
+        return new ArrayList<>(panelMgrs.keySet());
     }
 }

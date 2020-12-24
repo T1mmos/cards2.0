@@ -10,7 +10,9 @@ import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.readonlymodel.ReadOnlyUDPServer;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IDialogService;
+import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.services.panels.PanelOutData;
 import gent.timdemey.cards.services.panels.mp.JoinMPGamePanelData;
@@ -36,10 +38,14 @@ public class D_Connect extends DialogCommandBase
     @Override
     protected void showDialog(Context context, ContextType type, State state)
     {
-        JoinMPGamePanelManager content = new JoinMPGamePanelManager();
+        JoinMPGamePanelManager panelManager = new JoinMPGamePanelManager();
         IDialogService diagServ = Services.get(IDialogService.class);
         String title = Loc.get(LocKey.DialogTitle_joingame);
-        PanelOutData<JoinMPGamePanelData> data = diagServ.ShowAdvanced(title, null, content);
+        
+        IFrameService frameServ = Services.get(IFrameService.class);
+        frameServ.addPanel(PanelDescriptors.CONNECT);        
+        PanelOutData<JoinMPGamePanelData> data = frameServ.showPanel(PanelDescriptors.CONNECT, null);
+        // PanelOutData<JoinMPGamePanelData> data = diagServ.ShowAdvanced(title, null, panelManager);
 
         if (data.closeType == PanelButtonType.Ok)
         {
