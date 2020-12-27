@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JLayeredPane;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
@@ -86,18 +85,6 @@ public class MenuPanelManager extends PanelManagerBase
         {
             return Arrays.asList(ActionDescriptors.ad_start, ActionDescriptors.ad_quit);
         }
-    }
-
-    @Override
-    public void setVisible(boolean b)
-    {
-        menuPanel.setVisible(b);
-    }
-
-    @Override
-    public boolean isVisible()
-    {
-        return menuPanel.isVisible();
     }
 
     @Override

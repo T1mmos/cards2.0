@@ -14,8 +14,9 @@ public interface IPanelManager
     public PanelBase get();
     public void destroy();    
 
-    public void setVisible(boolean b);
-    public boolean isVisible();
+    public void onShown();
+    public void onHidden();
+   // public boolean isVisible();
     
     public void createRescaleRequests(List<? super RescaleRequest> requests);
     

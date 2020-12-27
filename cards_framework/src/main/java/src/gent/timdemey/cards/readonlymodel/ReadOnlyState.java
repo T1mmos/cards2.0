@@ -82,4 +82,9 @@ public class ReadOnlyState extends ReadOnlyEntityBase<State>
     {
         return entity.getLobbyAdminId();
     }
+
+    public String getLocalName()
+    {
+        return entity.getLocalName();
+    }
 }

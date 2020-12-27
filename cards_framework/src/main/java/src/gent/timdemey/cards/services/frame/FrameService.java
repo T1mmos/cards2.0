@@ -15,6 +15,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.function.Consumer;
 
 import javax.swing.Action;
@@ -63,6 +64,8 @@ public class FrameService implements IFrameService
     private JButton title_minimize;
     private JButton title_maximize; 
     private JButton title_close;
+    
+    private Stack<PanelBase> dialogs = new Stack<>();
         
     private JButton createFrameButton(ActionDescriptor desc)
     {
@@ -207,7 +210,13 @@ public class FrameService implements IFrameService
     public <IN, OUT> void showPanel(DataPanelDescriptor<IN, OUT> desc, IN data, Consumer<PanelOutData<OUT>> onClose)
     {                
         PanelBase pb = createDialog(desc, data, onClose);
+        dialogs.push(pb);
         showInternal(desc, pb, true);
+    }
+    
+    private boolean isOverlay (PanelDescriptor desc)
+    {
+        return desc instanceof DataPanelDescriptor<?,?>;
     }
     
     private void showInternal(PanelDescriptor desc, PanelBase pb, boolean add)
@@ -223,10 +232,9 @@ public class FrameService implements IFrameService
             cardPanel.invalidate();
             cardPanel.validate();
         }
-        
-        
+                
         // hide other panels if this panel is not just a (transparent) overlay
-        if (!desc.overlay)
+        if (!isOverlay(desc))
         {
             List<PanelDescriptor> panelDescs = panelServ.getPanelDescriptors();
             for (PanelDescriptor pd : panelDescs)
@@ -246,18 +254,13 @@ public class FrameService implements IFrameService
                 }
                 
                 // hide the component
-                if (pMan.isVisible())
-                {
-                    pMan.setVisible(false);
-                }                
+                pMan.onHidden();
             }
         }
         
-        // set the visibility of the panel if necessary
-        if (!panelMgr.isVisible())
-        {
-            panelMgr.setVisible(true);    
-        }
+        // show the panel and notify its manager
+        panelMgr.get().setVisible(true);
+        panelMgr.onShown();
     }    
     
     @Override
@@ -266,7 +269,8 @@ public class FrameService implements IFrameService
         IPanelService panelServ = Services.get(IPanelService.class);
         
         // if hiding a non-overlay, we don't know what to show, so we prohibit it
-        if (!desc.overlay)
+        boolean overlay = isOverlay(desc);
+        if (!overlay)
         {
             throw new IllegalArgumentException("You can only hide panels that are overlays");
         }
@@ -278,8 +282,24 @@ public class FrameService implements IFrameService
             throw new IllegalArgumentException("Attempted to hide a panel which has not been created yet");
         }
         
-        // hide the panel
-        panelMgr.setVisible(false);
+        PanelBase pb;
+        if (overlay)
+        {
+            pb = dialogs.pop();
+            cardPanel.remove(pb);
+        }
+        else
+        {
+            pb = panelMgr.get();
+        }
+
+        cardPanel.invalidate();
+        cardPanel.validate();
+        cardPanel.repaint();
+        
+        // hide the panel and notify its manager
+        pb.setVisible(false);
+        panelMgr.onHidden();
     }
     
     @Override
@@ -448,10 +468,7 @@ public class FrameService implements IFrameService
     {
         IPanelService panelServ = Services.get(IPanelService.class);
         IDataPanelManager<IN, OUT> dpMan = panelServ.getPanelManager(desc);
-       
-        // create a reference to the out data of the dialog
-        
-        
+               
         // create the buttons that need to be shown according to the content creator
         EnumSet<PanelButtonType> dbTypes = dpMan.getButtonTypes();
         Map<PanelButtonType, JButton> buttons = new HashMap<>();        
@@ -502,8 +519,9 @@ public class FrameService implements IFrameService
         // create the entire panel, add the custom content and the buttons
         PanelBase allContent = new PanelBase(desc);
         allContent.setLayout(new MigLayout("insets 5"));
-        dpMan.load(panelInData);
+        
         PanelBase customContent = dpMan.create();
+        dpMan.load(panelInData);
         allContent.add(customContent, "grow, push, wrap");
         String mig_first = "span, split " + dbTypes.size() + ", pushx, align center, sg buts";
         String mig_sg = "sg buts";
@@ -516,6 +534,8 @@ public class FrameService implements IFrameService
             // enabled/disable the button
             panelInData.verifyButtonFunc.accept(dbType);
         }
+        
+        allContent.setBackground(Color.blue);
         
         return allContent;
     }

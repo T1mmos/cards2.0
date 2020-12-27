@@ -141,10 +141,8 @@ public class LobbyPanelManager extends DataPanelManagerBase<Void, Void>
     }
 
     @Override
-    public void setVisible(boolean b)
+    public void onShown()
     {
-        super.setVisible(b);
-        
         IContextService contextService = Services.get(IContextService.class);
         Context context = contextService.getThreadContext();
 
@@ -153,13 +151,18 @@ public class LobbyPanelManager extends DataPanelManagerBase<Void, Void>
     }
     
     @Override
-    public Void onClose(PanelButtonType dbType)
+    public void onHidden()
     {
         IContextService contextService = Services.get(IContextService.class);
         Context context = contextService.getThreadContext();
 
         context.removeStateListener(stateListener);
         stateListener = null;
+    }
+    
+    @Override
+    public Void onClose(PanelButtonType dbType)
+    {        
         return null;
     }
 

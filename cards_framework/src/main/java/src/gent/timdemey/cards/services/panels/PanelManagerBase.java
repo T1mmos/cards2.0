@@ -5,8 +5,6 @@ import java.awt.Dimension;
 import java.util.List;
 import java.util.UUID;
 
-import javax.swing.JLayeredPane;
-
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.contract.RescaleRequest;
@@ -28,17 +26,15 @@ public abstract class PanelManagerBase implements IPanelManager
     {
         return get() != null;
     }
-    
+        
     @Override
-    public boolean isVisible()
+    public void onShown()
     {
-        return get().isVisible();
     }
     
     @Override
-    public void setVisible(boolean b)
+    public void onHidden()
     {
-        get().setVisible(b);
     }
     
     @Override

@@ -1,5 +1,7 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import java.util.UUID;
+
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
@@ -8,11 +10,11 @@ import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.services.interfaces.IDialogService;
+import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.services.panels.PanelOutData;
-import gent.timdemey.cards.services.panels.mp.StartServerPanelManager;
 import gent.timdemey.cards.services.panels.mp.StartServerPanelData;
 
 public class D_StartServer extends DialogCommandBase
@@ -35,14 +37,20 @@ public class D_StartServer extends DialogCommandBase
     @Override
     protected void showDialog(Context context, ContextType type, State state)
     {
-        StartServerPanelManager content = new StartServerPanelManager(state.getLocalName());
-        IDialogService diagServ = Services.get(IDialogService.class);
-        String title = Loc.get(LocKey.DialogTitle_creategame);
-        PanelOutData<StartServerPanelData> data = diagServ.ShowAdvanced(title, null, content);
-
+        IFrameService frameServ = Services.get(IFrameService.class);
+        String title = Loc.get(LocKey.DialogTitle_creategame); // todo
+        IContextService ctxtServ = Services.get(IContextService.class);        
+        String name = ctxtServ.getThreadContext().getReadOnlyState().getLocalName();     
+        frameServ.showPanel(PanelDescriptors.START_SERVER, name, this::onClose);
+    }
+    
+    private void onClose(PanelOutData<StartServerPanelData> data)
+    {
         if (data.closeType == PanelButtonType.Ok)
         {
-            C_StartServer cmd_startServer = new C_StartServer(state.getLocalId(), data.data_out.playerName, data.data_out.srvname, data.data_out.srvmsg,
+            IContextService ctxtServ = Services.get(IContextService.class);
+            UUID localId = ctxtServ.getThreadContext().getReadOnlyState().getLocalId();
+            C_StartServer cmd_startServer = new C_StartServer(localId, data.data_out.playerName, data.data_out.srvname, data.data_out.srvmsg,
                     data.data_out.udpport, data.data_out.tcpport, data.data_out.autoconnect);
 
             schedule(ContextType.UI, cmd_startServer);

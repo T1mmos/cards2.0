@@ -30,7 +30,6 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyEntityBase;
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.interfaces.IIdService;
-import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.panels.IPanelManager;
 import gent.timdemey.cards.services.scaling.img.ScalableImageComponent;
@@ -171,8 +170,7 @@ public final class ScalingService implements IScalingService
     @Override
     public IScalableComponent getComponentAt(Point p)
     {
-        IPanelService pServ = Services.get(IPanelService.class);
-        Iterator<IScalableComponent> it = components.values().stream().filter(s -> s.getPanelManager().isVisible()).sorted((x, y) -> {
+        Iterator<IScalableComponent> it = components.values().stream().filter(s -> s.getPanelManager().isCreated() && s.getPanelManager().get().isVisible()).sorted((x, y) -> {
             return y.getPanelManager().getLayer(y) - x.getPanelManager().getLayer(x);
         }).iterator();
         while (it.hasNext())
@@ -189,20 +187,20 @@ public final class ScalingService implements IScalingService
     @Override
     public List<IScalableComponent> getComponentsAt(Point p)
     {
-        return components.values().stream().filter(s -> s.getPanelManager().isVisible() && s.getCoords().getBounds().contains(p)).collect(Collectors.toList());
+        return components.values().stream().filter(s -> s.getPanelManager().isCreated() && s.getPanelManager().get().isVisible() && s.getCoords().getBounds().contains(p)).collect(Collectors.toList());
     }
 
     @Override
     public <T extends IScalableComponent> List<T> getComponentsAt(Point p, Class<T> clazz)
     {
-        return components.values().stream().filter(s -> s.getPanelManager().isVisible() && s.getCoords().getBounds().contains(p) && clazz.isAssignableFrom(s.getClass())).map(s -> (T) s)
+        return components.values().stream().filter(s -> s.getPanelManager().isCreated() && s.getPanelManager().get().isVisible() && s.getCoords().getBounds().contains(p) && clazz.isAssignableFrom(s.getClass())).map(s -> (T) s)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<IScalableComponent> getComponentsIn(Rectangle rect)
     {
-        return components.values().stream().filter(s -> s.getPanelManager().isVisible() && s.getCoords().getBounds().intersects(rect)).collect(Collectors.toList());
+        return components.values().stream().filter(s -> s.getPanelManager().isCreated() && s.getPanelManager().get().isVisible() && s.getCoords().getBounds().intersects(rect)).collect(Collectors.toList());
     }
     
     @Override

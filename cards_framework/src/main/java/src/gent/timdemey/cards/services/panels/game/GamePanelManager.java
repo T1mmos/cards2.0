@@ -39,23 +39,22 @@ public class GamePanelManager extends PanelManagerBase
     }
     
     @Override
-    public void setVisible(boolean visible)
+    public void onShown()
     {
-        if (visible)
-        {
-            gamePanel.addMouseMotionListener(dragListener);
-            gamePanel.addMouseListener(dragListener);
-            gamePanel.setVisible(true);
-            gamePanel.repaint();
-        }
-        else
-        {
-            gamePanel.setVisible(false);
-            gamePanel.removeMouseListener(dragListener);
-            gamePanel.removeMouseListener(dragListener);
-        }        
+        gamePanel.addMouseMotionListener(dragListener);
+        gamePanel.addMouseListener(dragListener);
+        gamePanel.setVisible(true);
+        gamePanel.repaint();      
     }    
 
+    @Override
+    public void onHidden()
+    {
+        gamePanel.setVisible(false);
+        gamePanel.removeMouseListener(dragListener);
+        gamePanel.removeMouseListener(dragListener);
+    }
+    
     @Override
     public PanelBase create()
     {

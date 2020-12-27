@@ -59,19 +59,5 @@ public class MessagePanelManager extends DataPanelManagerBase<String, Void>
     public void destroy()
     {
         contentPanel = null;
-    }
-
-    @Override
-    public void setVisible(boolean b)
-    {
-        contentPanel.setVisible(b);
-    }
-
-    @Override
-    public boolean isVisible()
-    {
-        return contentPanel.isVisible();
-    }
-
-  
+    }  
 }

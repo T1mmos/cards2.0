@@ -196,12 +196,6 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
     @Override
     public JoinMPGamePanelData onClose(PanelButtonType dbType)
     {
-        stopRequester();        
-                
-        Services.get(IContextService.class).getThreadContext().removeStateListener(serversStateListener);
-        button_refresh.removeActionListener(refreshListener);
-        table_servers.getSelectionModel().removeListSelectionListener(selectionListener);
-
         if (dbType == PanelButtonType.Ok)
         {
             int row = table_servers.getSelectedRow();
@@ -215,9 +209,9 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
             return null;
         }
     }
-
+    
     @Override
-    public void setVisible(boolean b)
+    public void onShown()
     {
         Services.get(IContextService.class).getThreadContext().addStateListener(serversStateListener);
         
@@ -225,6 +219,16 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
         table_servers.getSelectionModel().addListSelectionListener(selectionListener);
 
         startRequester();
+    }
+    
+    @Override
+    public void onHidden()
+    {
+        stopRequester();        
+        
+        Services.get(IContextService.class).getThreadContext().removeStateListener(serversStateListener);
+        button_refresh.removeActionListener(refreshListener);
+        table_servers.getSelectionModel().removeListSelectionListener(selectionListener);
     }
 
     @Override

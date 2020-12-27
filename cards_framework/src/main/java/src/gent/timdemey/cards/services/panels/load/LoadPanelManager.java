@@ -20,9 +20,8 @@ public class LoadPanelManager extends PanelManagerBase
     @Override
     public PanelBase create()
     {
-        loadPanel = new PanelBase(PanelDescriptors.LOAD);
+        loadPanel = new PanelBase(PanelDescriptors.LOAD, new MigLayout("insets 100, align 50% 50%"));
         loadPanel.setOpaque(false); 
-        loadPanel.setLayout(new MigLayout("insets 0, align 50% 50%"));
         loadPanel.add(new JLabel("LOADING..."));
         
         return loadPanel;
