@@ -42,8 +42,7 @@ public class D_ShowLobby extends DialogCommandBase
         String title = Loc.get(LocKey.DialogTitle_lobby, server.serverName);
      
         IFrameService frameServ = Services.get(IFrameService.class);
-        frameServ.showPanel(PanelDescriptors.LOBBY, null, this::onClose);
-       
+        frameServ.showPanel(PanelDescriptors.LOBBY, null, this::onClose);       
     }
 
     private void onClose(PanelOutData<Void> outData)

@@ -12,6 +12,6 @@ public final class PanelDescriptors
     public static final DataPanelDescriptor<Void, JoinMPGamePanelData> CONNECT = new DataPanelDescriptor<>("Connect", 800);
     public static final PanelDescriptor JOINMP = new PanelDescriptor("JoinMP", 800);
     public static final DataPanelDescriptor<Void, Void> LOBBY = new DataPanelDescriptor<>("Lobby", 900);
-    public static final DataPanelDescriptor<String, StartServerPanelData> START_SERVER= new DataPanelDescriptor<>("StartServer", 900);
+    public static final DataPanelDescriptor<String, StartServerPanelData> START_SERVER = new DataPanelDescriptor<>("StartServer", 900);
 }
 

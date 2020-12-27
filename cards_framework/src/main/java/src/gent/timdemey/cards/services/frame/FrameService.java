@@ -253,8 +253,11 @@ public class FrameService implements IFrameService
                     continue;
                 }
                 
-                // hide the component
-                pMan.onHidden();
+                if (pMan.get().isVisible())
+                {
+                    // hide the component
+                    hidePanel(pd); 
+                }
             }
         }
         
@@ -267,13 +270,6 @@ public class FrameService implements IFrameService
     public void hidePanel(PanelDescriptor desc)
     {
         IPanelService panelServ = Services.get(IPanelService.class);
-        
-        // if hiding a non-overlay, we don't know what to show, so we prohibit it
-        boolean overlay = isOverlay(desc);
-        if (!overlay)
-        {
-            throw new IllegalArgumentException("You can only hide panels that are overlays");
-        }
 
         // the panel should exist
         IPanelManager panelMgr = panelServ.getPanelManager(desc);        
@@ -282,6 +278,7 @@ public class FrameService implements IFrameService
             throw new IllegalArgumentException("Attempted to hide a panel which has not been created yet");
         }
         
+        boolean overlay = isOverlay(desc);
         PanelBase pb;
         if (overlay)
         {
@@ -292,12 +289,18 @@ public class FrameService implements IFrameService
         {
             pb = panelMgr.get();
         }
+        
+        if (!pb.isVisible())
+        {
+            throw new IllegalStateException("Attempted to hide a panel which is not visible");
+        }
 
         cardPanel.invalidate();
         cardPanel.validate();
         cardPanel.repaint();
         
         // hide the panel and notify its manager
+        
         pb.setVisible(false);
         panelMgr.onHidden();
     }
