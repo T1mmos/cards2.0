@@ -9,7 +9,7 @@ import gent.timdemey.cards.services.interfaces.IDialogService;
 
 public abstract class DialogCommandBase extends CommandBase
 {
-    protected IDialogService dialogServ;
+   // protected IFrameSer dialogServ;
 
     protected DialogCommandBase()
     {
@@ -31,7 +31,7 @@ public abstract class DialogCommandBase extends CommandBase
     {
         CheckContext(type, ContextType.UI);
 
-        dialogServ = Services.get(IDialogService.class);
+    //    dialogServ = Services.get(IDialogService.class);
         showDialog(context, type, state);
     }
 

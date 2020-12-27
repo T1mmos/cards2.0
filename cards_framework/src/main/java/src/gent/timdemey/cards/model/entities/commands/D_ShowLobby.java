@@ -1,5 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.commands.C_Disconnect.DisconnectReason;
@@ -8,6 +9,8 @@ import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
+import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.services.panels.PanelOutData;
 import gent.timdemey.cards.services.panels.mp.LobbyPanelManager;
@@ -37,12 +40,18 @@ public class D_ShowLobby extends DialogCommandBase
         Server server = state.getServer();
 
         String title = Loc.get(LocKey.DialogTitle_lobby, server.serverName);
-        PanelOutData<Void> data = dialogServ.ShowAdvanced(title, null, new LobbyPanelManager());
-        if (data.closeType == PanelButtonType.Cancel)
+     
+        IFrameService frameServ = Services.get(IFrameService.class);
+        frameServ.showPanel(PanelDescriptors.LOBBY, null, this::onClose);
+       
+    }
+
+    private void onClose(PanelOutData<Void> outData)
+    {
+        if (outData.closeType == PanelButtonType.Cancel)
         {
             CommandBase cmd = new C_Disconnect(DisconnectReason.LocalPlayerLeft);
             schedule(ContextType.UI, cmd);
         }
     }
-
 }

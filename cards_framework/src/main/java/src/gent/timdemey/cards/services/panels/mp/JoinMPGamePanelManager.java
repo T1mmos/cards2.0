@@ -5,9 +5,7 @@ import java.awt.event.ActionListener;
 import java.util.EnumSet;
 
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -25,8 +23,10 @@ import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.readonlymodel.ReadOnlyUDPServer;
+import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.panels.DataPanelManagerBase;
+import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelButtonType;
 import net.miginfocom.swing.MigLayout;
 
@@ -126,7 +126,7 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
         }
     }
 
-    private JPanel contentPanel;
+    private PanelBase contentPanel;
     private ServersTableModel tableModel;
     private JTable table_servers;
     private JButton button_refresh;
@@ -140,7 +140,7 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
     }
 
     @Override
-    public JComponent create()
+    public PanelBase create()
     {        
         JScrollPane scroll_server = new JScrollPane();
 
@@ -152,7 +152,7 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
         this.selectionListener = new SelectionListener();
         this.tf_name = new JTextField(20);
         
-        this.contentPanel = new JPanel(new MigLayout("insets 0"));
+        this.contentPanel = new PanelBase(PanelDescriptors.JOINMP, new MigLayout("insets 0"));
         JLabel lb_srvname = new JLabel(Loc.get(LocKey.Label_serversfound));
         JLabel lb_playerName = new JLabel(Loc.get(LocKey.Label_playername));
 
@@ -234,7 +234,7 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
     }
 
     @Override
-    public JComponent get()
+    public PanelBase get()
     {
         return contentPanel;
     }

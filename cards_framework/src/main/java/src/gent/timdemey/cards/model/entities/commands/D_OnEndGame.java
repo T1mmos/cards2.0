@@ -2,12 +2,14 @@ package gent.timdemey.cards.model.entities.commands;
 
 import java.util.UUID;
 
+import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IFrameService;
 
 public class D_OnEndGame extends DialogCommandBase
 {
@@ -39,6 +41,7 @@ public class D_OnEndGame extends DialogCommandBase
             msg = Loc.get(LocKey.DialogMessage_youlose);
         }
         
-        dialogServ.ShowMessage(title, msg);
+        IFrameService frameServ = Services.get(IFrameService.class);
+        frameServ.showMessage(title, msg);
     }
 }

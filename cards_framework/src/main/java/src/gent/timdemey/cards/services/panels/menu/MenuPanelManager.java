@@ -36,7 +36,7 @@ public class MenuPanelManager extends PanelManagerBase
     }
 
     @Override
-    public JLayeredPane create()
+    public PanelBase create()
     {
         menuPanel = new PanelBase(PanelDescriptors.MENU);
         menuPanel.setLayout(new MigLayout("insets 0, align 50% 50%"));
@@ -70,7 +70,7 @@ public class MenuPanelManager extends PanelManagerBase
     }
     
     @Override
-    public JLayeredPane get()
+    public PanelBase get()
     {
         return menuPanel;
     }

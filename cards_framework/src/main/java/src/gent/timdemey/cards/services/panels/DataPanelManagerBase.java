@@ -25,12 +25,6 @@ public abstract class DataPanelManagerBase<IN, OUT> extends PanelManagerBase imp
         inData.verifyButtonFunc.accept(dbType);
     }
     
-    protected final void close()
-    {
-        inData.closeFunc.run();
-    }
-    
-    
     @Override
     public void preload()
     {

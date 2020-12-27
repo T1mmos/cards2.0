@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.swing.JLayeredPane;
-
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.cards.Suit;
 import gent.timdemey.cards.model.entities.cards.Value;
@@ -21,6 +19,7 @@ import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
+import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelManagerBase;
 import gent.timdemey.cards.services.panels.animations.PanelAnimator;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
@@ -58,7 +57,7 @@ public class GamePanelManager extends PanelManagerBase
     }    
 
     @Override
-    public JLayeredPane create()
+    public PanelBase create()
     {
         gamePanel = new GamePanel();
         dragListener = new GamePanelMouseListener(); 
@@ -72,7 +71,7 @@ public class GamePanelManager extends PanelManagerBase
     }
     
     @Override
-    public JLayeredPane get()
+    public PanelBase get()
     {
         return gamePanel;
     }

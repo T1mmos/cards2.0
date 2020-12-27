@@ -3,7 +3,6 @@ package gent.timdemey.cards.services.panels.message;
 import java.util.EnumSet;
 
 import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
 
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.panels.DataPanelManagerBase;
@@ -13,7 +12,7 @@ import net.miginfocom.swing.MigLayout;
 
 public class MessagePanelManager extends DataPanelManagerBase<String, Void>
 {
-    private JLayeredPane contentPanel;
+    private PanelBase contentPanel;
     
     @Override
     public Void onClose(PanelButtonType dbType)
@@ -41,7 +40,7 @@ public class MessagePanelManager extends DataPanelManagerBase<String, Void>
     }
     
     @Override
-    public JLayeredPane create()
+    public PanelBase create()
     {
         contentPanel = new PanelBase(PanelDescriptors.MESSAGE);
         contentPanel.setLayout(new MigLayout("insets 0"));
@@ -51,7 +50,7 @@ public class MessagePanelManager extends DataPanelManagerBase<String, Void>
     }
     
     @Override
-    public JLayeredPane get()
+    public PanelBase get()
     {
         return contentPanel;
     }

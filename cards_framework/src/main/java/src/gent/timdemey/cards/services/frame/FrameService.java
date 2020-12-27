@@ -1,16 +1,21 @@
 package gent.timdemey.cards.services.frame;
 
-import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -18,12 +23,16 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.WindowConstants;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.localization.Loc;
+import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.services.contract.descriptors.DataPanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.contract.res.FontResource;
 import gent.timdemey.cards.services.contract.res.ImageResource;
 import gent.timdemey.cards.services.interfaces.IFrameService;
@@ -33,6 +42,8 @@ import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.services.interfaces.IResourceService;
 import gent.timdemey.cards.services.panels.IDataPanelManager;
 import gent.timdemey.cards.services.panels.IPanelManager;
+import gent.timdemey.cards.services.panels.PanelBase;
+import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.services.panels.PanelInData;
 import gent.timdemey.cards.services.panels.PanelOutData;
 import gent.timdemey.cards.ui.actions.ActionDescriptor;
@@ -44,7 +55,7 @@ public class FrameService implements IFrameService
 {  
     private JFrame frame;
     private RootPanel rootPanel;
-    private CardPanel cardPanel;
+    private JLayeredPane cardPanel;
     private TitlePanel titlePanel;
     private boolean drawDebug = false;
     private boolean maximized;
@@ -52,7 +63,7 @@ public class FrameService implements IFrameService
     private JButton title_minimize;
     private JButton title_maximize; 
     private JButton title_close;
-    
+        
     private JButton createFrameButton(ActionDescriptor desc)
     {
         IActionService actServ = Services.get(IActionService.class);     
@@ -115,8 +126,8 @@ public class FrameService implements IFrameService
             titlePanel.addMouseMotionListener(tpMouseListener);
             rootPanel.add(titlePanel, "pushx, grow, wrap");
             
-            cardPanel = new CardPanel();
-            cardPanel.setLayout(new CardLayout());
+            cardPanel = new JLayeredPane();
+            cardPanel.setLayout(new MigLayout());
             cardPanel.addComponentListener(new CardPanelResizeListener());
             rootPanel.add(cardPanel, "push, grow");
                         
@@ -132,23 +143,22 @@ public class FrameService implements IFrameService
         return frame;
     }
 
-    @Override
-    public void addPanel(PanelDescriptor desc)
-    {        
-        IPanelService panelServ = Services.get(IPanelService.class);
-        IPanelManager panelMgr = panelServ.getPanelManager(desc);
-        
-        JComponent comp = panelMgr.create();
-        if (comp.getParent() != null)
+    
+    private PanelBase get(PanelDescriptor desc)
+    {
+        for (Component comp : cardPanel.getComponents())
         {
-            throw new IllegalStateException("The component to add already has a parent!");
+            if (comp instanceof PanelBase)
+            {
+                PanelBase pb = (PanelBase) comp;
+                if (pb.panelDesc == desc)
+                {
+                    return pb;
+                }
+            }
         }
-
-        // by default the panel is not visible
-        comp.setVisible(false);
         
-        cardPanel.add(comp);
-        cardPanel.setLayer(comp, desc.layer, 0);
+        return null;
     }
     
     @Override
@@ -169,10 +179,53 @@ public class FrameService implements IFrameService
     @Override
     public void showPanel(PanelDescriptor desc)
     {
+        if (desc instanceof DataPanelDescriptor<?, ?>)
+        {
+            throw new IllegalArgumentException("This method is not intended for data panels");
+        }
+        
         IPanelService panelServ = Services.get(IPanelService.class);
         IPanelManager panelMgr = panelServ.getPanelManager(desc);
-                
-        // hide other panels is this panel is not just a (transparent) overlay
+                        
+        PanelBase pb = get(desc);
+        boolean add = false;
+        if (pb == null)
+        {
+            add = true;
+            pb = panelMgr.create();
+            if (pb.getParent() != null)
+            {
+                throw new IllegalStateException("The component to add already has a parent!");
+            }
+        }      
+        
+        showInternal(desc, pb, add);
+    }
+
+    
+    @Override
+    public <IN, OUT> void showPanel(DataPanelDescriptor<IN, OUT> desc, IN data, Consumer<PanelOutData<OUT>> onClose)
+    {                
+        PanelBase pb = createDialog(desc, data, onClose);
+        showInternal(desc, pb, true);
+    }
+    
+    private void showInternal(PanelDescriptor desc, PanelBase pb, boolean add)
+    {        
+        IPanelService panelServ = Services.get(IPanelService.class);
+        IPanelManager panelMgr = panelServ.getPanelManager(desc);
+        
+        // add it to the miglayout
+        if (add)
+        {
+            cardPanel.add(pb, "pos 0 0 100% 100%");
+            cardPanel.setLayer(pb, desc.layer);
+            cardPanel.invalidate();
+            cardPanel.validate();
+        }
+        
+        
+        // hide other panels if this panel is not just a (transparent) overlay
         if (!desc.overlay)
         {
             List<PanelDescriptor> panelDescs = panelServ.getPanelDescriptors();
@@ -186,7 +239,7 @@ public class FrameService implements IFrameService
                 
                 IPanelManager pMan = panelServ.getPanelManager(pd);
                 
-                // if the panel doesn't exist, it was never added to the card layout
+                // if the panel doesn't exist, it was never added to the card panel
                 if (!pMan.isCreated())
                 {
                     continue;
@@ -204,24 +257,8 @@ public class FrameService implements IFrameService
         if (!panelMgr.isVisible())
         {
             panelMgr.setVisible(true);    
-            
         }
-    }
-
-    
-    @Override
-    public <IN, OUT> PanelOutData<OUT> showPanel(DataPanelDescriptor<IN, OUT> desc, PanelInData<IN> data)
-    {
-        IPanelService panelServ = Services.get(IPanelService.class);
-        IDataPanelManager<IN, OUT> panelMgr = panelServ.getPanelManager(desc);
-        
-        panelMgr.load(data);
-        
-       // panelMgr.getButtonTypes()
-        
-      //  panelMgr.ge
-        return null;
-    }
+    }    
     
     @Override
     public void hidePanel(PanelDescriptor desc)
@@ -389,6 +426,98 @@ public class FrameService implements IFrameService
     {
         IPositionService posServ = Services.get(IPositionService.class);
         posServ.setMaxSize(cardPanel.getWidth(), cardPanel.getHeight());
+    }
+    
+    @Override
+    public void showMessage(String title, String message)
+    {
+        // todo use title
+        showPanel(PanelDescriptors.MESSAGE, message, c -> {});
+    }
+    
+    @Override
+    public void showInternalError()
+    {
+       // String title = Loc.get(LocKey.DialogTitle_generalerror); // todo
+        String msg = Loc.get(LocKey.DialogMessage_generalerror);
+        
+        showPanel(PanelDescriptors.MESSAGE, msg, c -> {});
+    }    
+    
+    private <IN, OUT> PanelBase createDialog(DataPanelDescriptor<IN, OUT> desc, IN inData, Consumer<PanelOutData<OUT>> callback)
+    {
+        IPanelService panelServ = Services.get(IPanelService.class);
+        IDataPanelManager<IN, OUT> dpMan = panelServ.getPanelManager(desc);
+       
+        // create a reference to the out data of the dialog
+        
+        
+        // create the buttons that need to be shown according to the content creator
+        EnumSet<PanelButtonType> dbTypes = dpMan.getButtonTypes();
+        Map<PanelButtonType, JButton> buttons = new HashMap<>();        
+        for (PanelButtonType dbType : dbTypes)
+        {
+            ActionListener action_close = (e) -> 
+            {
+                PanelOutData<OUT> outData = new PanelOutData<>();
+                OUT out = dpMan.onClose(dbType);
+                outData.data_out = out;
+                outData.closeType = dbType;
+                
+                hidePanel(desc);
+                callback.accept(outData);
+            };
+            String loctext = Loc.get(dbType.lockey);
+            JButton button = new JButton(loctext); 
+            
+            button.addActionListener(action_close);
+            button.setMinimumSize(new Dimension(75, 20));
+            
+            buttons.put(dbType, button);            
+        }
+        
+        // prepare the incoming data
+        PanelInData<IN> panelInData = new PanelInData<>();
+        panelInData.data_in = inData;
+        panelInData.verifyButtonFunc = (btnType) ->
+        {
+            JButton button = buttons.get(btnType);
+            if (button == null)
+            {
+                return;
+            }
+            
+            boolean enabled = dpMan.isButtonEnabled(btnType);
+            button.setEnabled(enabled);
+        }; 
+        panelInData.closeFunc = () -> 
+        {
+            PanelOutData<OUT> outData = new PanelOutData<>();
+            outData.closeType = PanelButtonType.Forced;
+            outData.data_out = null;
+            hidePanel(desc);
+            callback.accept(outData);
+        };
+        
+        // create the entire panel, add the custom content and the buttons
+        PanelBase allContent = new PanelBase(desc);
+        allContent.setLayout(new MigLayout("insets 5"));
+        dpMan.load(panelInData);
+        PanelBase customContent = dpMan.create();
+        allContent.add(customContent, "grow, push, wrap");
+        String mig_first = "span, split " + dbTypes.size() + ", pushx, align center, sg buts";
+        String mig_sg = "sg buts";
+        int cnt = 0;
+        for (PanelButtonType dbType : dbTypes)
+        {           
+            JButton button = buttons.get(dbType);
+            allContent.add(button, cnt++ == 0 ? mig_first : mig_sg);
+            
+            // enabled/disable the button
+            panelInData.verifyButtonFunc.accept(dbType);
+        }
+        
+        return allContent;
     }
 }
 

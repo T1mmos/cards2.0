@@ -1,10 +1,8 @@
 package gent.timdemey.cards.model.entities.commands;
 
-import javax.swing.SwingUtilities;
+import java.util.UUID;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.localization.Loc;
-import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.entities.game.Server;
@@ -13,12 +11,11 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyUDPServer;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
-import gent.timdemey.cards.services.interfaces.IDialogService;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.services.panels.PanelOutData;
 import gent.timdemey.cards.services.panels.mp.JoinMPGamePanelData;
-import gent.timdemey.cards.services.panels.mp.JoinMPGamePanelManager;
 
 public class D_Connect extends DialogCommandBase
 {
@@ -39,21 +36,23 @@ public class D_Connect extends DialogCommandBase
 
     @Override
     protected void showDialog(Context context, ContextType type, State state)
-    {
-        JoinMPGamePanelManager panelManager = new JoinMPGamePanelManager();
-        IDialogService diagServ = Services.get(IDialogService.class);
-        String title = Loc.get(LocKey.DialogTitle_joingame);
-        
+    {        
         IFrameService frameServ = Services.get(IFrameService.class);
-        frameServ.addPanel(PanelDescriptors.CONNECT);        
-        PanelOutData<JoinMPGamePanelData> data = frameServ.showPanel(PanelDescriptors.CONNECT, null);
-        // PanelOutData<JoinMPGamePanelData> data = diagServ.ShowAdvanced(title, null, panelManager);
-
+        //frameServ.addPanel(PanelDescriptors.CONNECT);        
+        frameServ.showPanel(PanelDescriptors.CONNECT, null, this::onClose);
+        // PanelOutData<JoinMPGamePanelData> data = diagServ.ShowAdvanced(title, null, panelManager);        
+    }
+    
+    private void onClose(PanelOutData<JoinMPGamePanelData> data)
+    {
+        IContextService ctxtServ = Services.get(IContextService.class);
+        UUID localId = ctxtServ.getThreadContext().getReadOnlyState().getLocalId();
+        
         if (data.closeType == PanelButtonType.Ok)
         {
             ReadOnlyUDPServer udpServer = data.data_out.server;
             Server server = udpServer.getServer();
-            C_Connect cmd = new C_Connect(state.getLocalId(), server.id, server.inetAddress,
+            C_Connect cmd = new C_Connect(localId, server.id, server.inetAddress,
                     server.tcpport, server.serverName, data.data_out.playerName);
             schedule(ContextType.UI, cmd);
         }

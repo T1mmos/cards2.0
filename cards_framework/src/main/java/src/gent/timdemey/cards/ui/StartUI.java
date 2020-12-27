@@ -52,7 +52,7 @@ public class StartUI
         // add and show the default panel
         IPanelService panelServ = Services.get(IPanelService.class);
         PanelDescriptor panelDesc = panelServ.getDefaultPanelDescriptor();
-        frameServ.addPanel(panelDesc);
+        //frameServ.addPanel(panelDesc);
         frameServ.showPanel(panelDesc);
     }
 }

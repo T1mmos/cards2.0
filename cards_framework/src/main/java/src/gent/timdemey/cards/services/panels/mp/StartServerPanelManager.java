@@ -4,14 +4,15 @@ import java.util.EnumSet;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
+import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.panels.DataPanelManagerBase;
+import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelButtonType;
 import net.miginfocom.swing.MigLayout;
 
@@ -20,7 +21,7 @@ public class StartServerPanelManager extends DataPanelManagerBase<Void, StartSer
     private JTextField tf_srvname;
     private JTextField tf_srvmsg;
     private JTextField tf_pname;
-    private JPanel contentPanel;
+    private PanelBase contentPanel;
         
     public StartServerPanelManager(String initialPname)
     {
@@ -28,12 +29,12 @@ public class StartServerPanelManager extends DataPanelManagerBase<Void, StartSer
     }
     
     @Override
-    public JPanel create()
+    public PanelBase create()
     {
         this.tf_srvname = new JTextField(30);
         this.tf_srvmsg = new JTextField(30);
         this.tf_pname = new JTextField(30);
-        this.contentPanel = new JPanel(new MigLayout("insets 0"));
+        this.contentPanel = new PanelBase(PanelDescriptors.START_SERVER, new MigLayout("insets 0"));
 
         JLabel lb_srvname = new JLabel(Loc.get(LocKey.Label_servername));
         JLabel lb_srvmsg = new JLabel(Loc.get(LocKey.Label_servermsg));
@@ -108,7 +109,7 @@ public class StartServerPanelManager extends DataPanelManagerBase<Void, StartSer
     }
 
     @Override
-    public JComponent get()
+    public PanelBase get()
     {
         return contentPanel;
     }

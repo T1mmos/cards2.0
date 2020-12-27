@@ -2,8 +2,6 @@ package gent.timdemey.cards.services.panels;
 
 import java.util.List;
 
-import javax.swing.JComponent;
-
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 
@@ -12,10 +10,9 @@ public interface IPanelManager
     public void preload();
     
     public boolean isCreated();
-    public JComponent create();
-    public JComponent get();
-    public void destroy();
-    
+    public PanelBase create();
+    public PanelBase get();
+    public void destroy();    
 
     public void setVisible(boolean b);
     public boolean isVisible();

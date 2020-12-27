@@ -1,7 +1,6 @@
 package gent.timdemey.cards.services.panels.load;
 
 import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
 
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.panels.PanelBase;
@@ -10,7 +9,7 @@ import net.miginfocom.swing.MigLayout;
 
 public class LoadPanelManager extends PanelManagerBase
 {
-    private JLayeredPane loadPanel;
+    private PanelBase loadPanel;
     
     @Override
     public boolean isCreated()
@@ -19,7 +18,7 @@ public class LoadPanelManager extends PanelManagerBase
     }
 
     @Override
-    public JLayeredPane create()
+    public PanelBase create()
     {
         loadPanel = new PanelBase(PanelDescriptors.LOAD);
         loadPanel.setOpaque(false); 
@@ -36,7 +35,7 @@ public class LoadPanelManager extends PanelManagerBase
     }
 
     @Override
-    public JLayeredPane get()
+    public PanelBase get()
     {
         return loadPanel;
     }

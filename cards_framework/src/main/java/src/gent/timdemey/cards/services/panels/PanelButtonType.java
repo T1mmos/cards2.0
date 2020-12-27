@@ -10,7 +10,7 @@ public enum PanelButtonType
     No(LocKey.Button_no), 
     Forced(LocKey.Button_cancel);
 
-    final LocKey lockey;
+    public final LocKey lockey;
 
     private PanelButtonType(LocKey lockey)
     {

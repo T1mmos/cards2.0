@@ -3,6 +3,7 @@ package gent.timdemey.cards.services.panels;
 import java.awt.BasicStroke;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.LayoutManager;
 
 import javax.swing.JLayeredPane;
 
@@ -13,11 +14,17 @@ import gent.timdemey.cards.utils.DebugDrawDefines;
 
 public class PanelBase extends JLayeredPane
 {
-    private final PanelDescriptor panelDesc;
+    public final PanelDescriptor panelDesc;
     
     public PanelBase (PanelDescriptor panelDesc)
     {
         this.panelDesc = panelDesc;
+    }
+    
+    public PanelBase (PanelDescriptor panelDesc, LayoutManager lm)
+    {
+        this.panelDesc = panelDesc;
+        setLayout(lm);
     }
     
     @Override

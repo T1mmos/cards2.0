@@ -4,9 +4,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
@@ -19,8 +17,10 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.readonlymodel.TypedChange;
 import gent.timdemey.cards.services.context.ChangeType;
 import gent.timdemey.cards.services.context.Context;
+import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.panels.DataPanelManagerBase;
+import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.ui.actions.ActionDescriptors;
 import gent.timdemey.cards.ui.actions.IActionService;
@@ -28,7 +28,7 @@ import net.miginfocom.swing.MigLayout;
 
 public class LobbyPanelManager extends DataPanelManagerBase<Void, Void>
 {
-    private JPanel panel;
+    private PanelBase panel;
     
     private JLabel l_serverMsg;
     private JLabel l_localPlayer;
@@ -92,13 +92,13 @@ public class LobbyPanelManager extends DataPanelManagerBase<Void, Void>
     }
 
     @Override
-    public JPanel create()
+    public PanelBase create()
     {
         IContextService contextService = Services.get(IContextService.class);
         Context context = contextService.getThreadContext();
         ReadOnlyState state = context.getReadOnlyState();
         
-        panel = new JPanel(new MigLayout("insets 0"));
+        panel = new PanelBase(PanelDescriptors.LOBBY, new MigLayout("insets 0"));
         
         IActionService actServ = Services.get(IActionService.class);
         
@@ -135,7 +135,7 @@ public class LobbyPanelManager extends DataPanelManagerBase<Void, Void>
     }
     
     @Override
-    public JComponent get()
+    public PanelBase get()
     {
         return panel;
     }
