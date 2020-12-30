@@ -2,6 +2,8 @@ package gent.timdemey.cards.ui;
 
 import javax.swing.SwingUtilities;
 
+import com.alee.laf.WebLookAndFeel;
+import com.alee.skin.dark.WebDarkSkin;
 import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.Services;
@@ -23,6 +25,9 @@ public class StartUI
     public static void startUI()
     {    
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
+        
+        // WebLAF
+        WebLookAndFeel.install(WebDarkSkin.class);
         
         // let all services preload
         Services.preload();
