@@ -19,11 +19,11 @@ public class StartUI
     private StartUI()
     {
     }
-
+    
     public static void startUI()
     {    
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
-                               
+        
         // let all services preload
         Services.preload();
         

@@ -65,17 +65,15 @@ public class SolShowGamePanelManager extends GamePanelManager
                 
                 boolean local = state.getLocalId().equals(player.getId());
                
-                ScalableTextComponent textComp = new ScalableTextComponent(counterCompId, "NOTSET", SolShowComponentTypes.SPECIALSCORE, textRes);
-                textComp.setPayload(cs);
+                ScalableTextComponent textComp = scaleServ.createScalableTextComponent(counterCompId, SolShowComponentTypes.SPECIALSCORE, "NOTSET", this, cs, textRes);
                 textComp.setInnerColor(SolShowResourceDefines.COLOR_FONT_SPECIALCOUNT_INNER);
                 textComp.setOuterColor(SolShowResourceDefines.COLOR_FONT_SPECIALCOUNT_OUTER);    
                 textComp.setAlignment(TextAlignment.Center);     
                 
                 UUID resid_spec_bg = idServ.createSpecialBackgroundResourceId(!local);
                 ScalableImageResource res_spec_bg = (ScalableImageResource) scaleServ.getScalableResource(resid_spec_bg);
-                ScalableImageComponent imgComp = new ScalableImageComponent(bgCompId, SolShowComponentTypes.SPECIALBACKGROUND, res_spec_bg);
-                imgComp.setPayload(cs);
-                imgComp.setScalableImageResource(resid_spec_bg);
+                
+                ScalableImageComponent imgComp = scaleServ.createScalableImageComponent(bgCompId, SolShowComponentTypes.SPECIALBACKGROUND, this, cs, res_spec_bg);
                 
                 add(textComp);                  
                 add(imgComp);
@@ -96,7 +94,7 @@ public class SolShowGamePanelManager extends GamePanelManager
             UUID textResId = idServ.createFontScalableResourceId(SolShowResourceDefines.FILEPATH_FONT_PLAYERNAME);
             ScalableFontResource textRes = (ScalableFontResource) scaleServ.getScalableResource(textResId);     
                         
-            ScalableTextComponent text_plocal = new ScalableTextComponent(compId_local, player_local.getName(), SolShowComponentTypes.PLAYERNAME, textRes);
+            ScalableTextComponent text_plocal = scaleServ.createScalableTextComponent(compId_local, SolShowComponentTypes.PLAYERNAME, player_local.getName(), this, player_local, textRes);
             text_plocal.setPayload(player_local);
             text_plocal.setInnerColor(SolShowResourceDefines.COLOR_FONT_PLAYERNAME_INNER);
             text_plocal.setOuterColor(SolShowResourceDefines.COLOR_FONT_PLAYERNAME_OUTER);
@@ -104,8 +102,7 @@ public class SolShowGamePanelManager extends GamePanelManager
             scaleServ.addScalableComponent(text_plocal);
             updateComponent(text_plocal);
             
-            ScalableTextComponent text_premote = new ScalableTextComponent(compId_remote, player_remote.getName(), SolShowComponentTypes.PLAYERNAME, textRes);
-            text_premote.setPayload(player_remote);
+            ScalableTextComponent text_premote = scaleServ.createScalableTextComponent(compId_remote, SolShowComponentTypes.PLAYERNAME, player_remote.getName(), this, player_remote, textRes);
             text_premote.setInnerColor(SolShowResourceDefines.COLOR_FONT_PLAYERNAME_INNER);
             text_premote.setOuterColor(SolShowResourceDefines.COLOR_FONT_PLAYERNAME_OUTER);
             add(text_premote);  
@@ -133,17 +130,12 @@ public class SolShowGamePanelManager extends GamePanelManager
             ScalableImageResource res_playerbg_local = (ScalableImageResource) scaleServ.getScalableResource(resid_playerbg_local);
             ScalableImageResource res_vs = (ScalableImageResource) scaleServ.getScalableResource(resid_vs);
             
-            ScalableImageComponent img_cardareabg_remote = new ScalableImageComponent(compid_cardareabg_remote, SolShowComponentTypes.CARDAREABG, res_cardareabg_remote);
-            ScalableImageComponent img_cardareabg_local = new ScalableImageComponent(compid_cardareabg_local, SolShowComponentTypes.CARDAREABG, res_cardareabg_local);
-            ScalableImageComponent img_playerbg_remote = new ScalableImageComponent(compid_playerbg_remote, SolShowComponentTypes.PLAYERBG, res_playerbg_remote);
-            ScalableImageComponent img_playerbg_local = new ScalableImageComponent(compid_playerbg_local, SolShowComponentTypes.PLAYERBG, res_playerbg_local);
-            ScalableImageComponent img_vs = new ScalableImageComponent(compid_vs, SolShowComponentTypes.VS, res_vs);
-            
-            img_cardareabg_remote.setPayload(player_remote);
-            img_cardareabg_local.setPayload(player_local);
-            img_playerbg_remote.setPayload(player_remote);
-            img_playerbg_local.setPayload(player_local);
-                        
+            ScalableImageComponent img_cardareabg_remote = scaleServ.createScalableImageComponent(compid_cardareabg_remote, SolShowComponentTypes.CARDAREABG, this, player_remote, res_cardareabg_remote);
+            ScalableImageComponent img_cardareabg_local = scaleServ.createScalableImageComponent(compid_cardareabg_local, SolShowComponentTypes.CARDAREABG, this, player_local, res_cardareabg_local); 
+            ScalableImageComponent img_playerbg_remote = scaleServ.createScalableImageComponent(compid_playerbg_remote, SolShowComponentTypes.PLAYERBG, this, player_remote, res_playerbg_remote);
+            ScalableImageComponent img_playerbg_local = scaleServ.createScalableImageComponent(compid_playerbg_local, SolShowComponentTypes.PLAYERBG, this, player_local, res_playerbg_local); 
+            ScalableImageComponent img_vs = scaleServ.createScalableImageComponent(compid_vs, SolShowComponentTypes.VS, this, null, res_vs); 
+                                    
             img_cardareabg_remote.setScalableImageResource(resid_cardareabg_remote);
             img_cardareabg_local.setScalableImageResource(resid_cardareabg_local);
             img_playerbg_remote.setScalableImageResource(resid_playerbg_remote);

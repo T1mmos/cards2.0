@@ -28,12 +28,15 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityBase;
 import gent.timdemey.cards.services.contract.RescaleRequest;
+import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.panels.IPanelManager;
 import gent.timdemey.cards.services.scaling.img.ScalableImageComponent;
 import gent.timdemey.cards.services.scaling.img.ScalableImageResource;
+import gent.timdemey.cards.services.scaling.text.ScalableFontResource;
+import gent.timdemey.cards.services.scaling.text.ScalableTextComponent;
 
 public final class ScalingService implements IScalingService
 {
@@ -228,12 +231,33 @@ public final class ScalingService implements IScalingService
         // create the component using its necessary image resources
         ScalableImageResource res_front = (ScalableImageResource) getScalableResource(resFrontId);
         ScalableImageResource res_back = (ScalableImageResource) getScalableResource(resBackId);
-        comp = new ScalableImageComponent(compId, ComponentTypes.CARD, res_front, res_back);
-        comp.setPanelManager(panelManager);
-        comp.setPayload(card);
+        
+        return createScalableImageComponent(compId, ComponentTypes.CARD, panelManager, card, res_front, res_back);
+    }
+    
+    @Override
+    public final ScalableImageComponent createScalableImageComponent(UUID compId, ComponentType compType, IPanelManager panelMgr, Object payload, ScalableImageResource ... imgResources)
+    {
+        ScalableImageComponent comp = new ScalableImageComponent(compId, compType, imgResources);
+        comp.setPanelManager(panelMgr);
+        comp.setPayload(payload);
 
+        if (imgResources.length == 1)
+        {
+            comp.setScalableImageResource(imgResources[0].id);
+        }
+        
         components.put(compId, comp);
+        return comp;
+    }
 
+
+    @Override
+    public ScalableTextComponent createScalableTextComponent(UUID compId, ComponentType compType, String text, IPanelManager panelMgr, Object payload, ScalableFontResource fontRes)
+    {
+        ScalableTextComponent comp = new ScalableTextComponent(compId, text, compType, fontRes);
+        comp.setPanelManager(panelMgr);
+        comp.setPayload(payload);
         return comp;
     }
     
@@ -260,13 +284,7 @@ public final class ScalingService implements IScalingService
 
         // create the component using its necessary image resources
         ScalableImageResource res = (ScalableImageResource) getScalableResource(csResId);
-        comp = new ScalableImageComponent(compId, ComponentTypes.CARDSTACK, res);
-        comp.setPanelManager(panelManager);
-        comp.setPayload(cardstack);
-
-        components.put(compId, comp);        
-
-        return comp;
+        return createScalableImageComponent(compId, ComponentTypes.CARDSTACK, panelManager, cardstack, res);
     }
     
     @Override

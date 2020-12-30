@@ -65,7 +65,19 @@ public class FrameService implements IFrameService
     private JButton title_maximize; 
     private JButton title_close;
     
-    private Stack<PanelBase> dialogs = new Stack<>();
+    private static class OpenPanel
+    {
+        private final PanelDescriptor panelDesc;
+        private final PanelBase panel;
+        
+        private OpenPanel(PanelDescriptor panelDesc, PanelBase panel)
+        {
+            this.panelDesc = panelDesc;
+            this.panel = panel;
+        }
+    }
+    
+    private Stack<OpenPanel> openPanels = new Stack<>();
         
     private JButton createFrameButton(ActionDescriptor desc)
     {
@@ -205,12 +217,22 @@ public class FrameService implements IFrameService
         showInternal(desc, pb, add);
     }
 
+    @Override
+    public PanelDescriptor getCurrentPanel()
+    {
+        if (openPanels.size() == 0)
+        {
+            return null;
+        }
+        
+        return openPanels.peek().panelDesc;
+    }
     
     @Override
     public <IN, OUT> void showPanel(DataPanelDescriptor<IN, OUT> desc, IN data, Consumer<PanelOutData<OUT>> onClose)
     {                
         PanelBase pb = createDialog(desc, data, onClose);
-        dialogs.push(pb);
+        openPanels.push(new OpenPanel(desc, pb));
         showInternal(desc, pb, true);
     }
     
@@ -282,7 +304,8 @@ public class FrameService implements IFrameService
         PanelBase pb;
         if (overlay)
         {
-            pb = dialogs.pop();
+            OpenPanel curr = openPanels.pop();
+            pb = curr.panel;
             cardPanel.remove(pb);
         }
         else

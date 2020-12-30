@@ -8,9 +8,14 @@ import java.util.UUID;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.contract.RescaleRequest;
+import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.panels.IPanelManager;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 import gent.timdemey.cards.services.scaling.IScalableResource;
+import gent.timdemey.cards.services.scaling.img.ScalableImageComponent;
+import gent.timdemey.cards.services.scaling.img.ScalableImageResource;
+import gent.timdemey.cards.services.scaling.text.ScalableFontResource;
+import gent.timdemey.cards.services.scaling.text.ScalableTextComponent;
 
 /**
  * Creates and manages JScalableImages. You create them by supplying any object
@@ -61,6 +66,19 @@ public interface IScalingService
      * @return
      */
     public IScalableComponent getScalableComponent(ReadOnlyCardStack cardStack);
+    
+    /**
+     * Creates a scalable image component.
+     * @param compId
+     * @param compType
+     * @param panelMgr
+     * @param payload
+     * @param imgResources
+     * @return
+     */
+    public ScalableImageComponent createScalableImageComponent(UUID compId, ComponentType compType, IPanelManager panelMgr, Object payload, ScalableImageResource ... imgResources);
+    
+    public ScalableTextComponent createScalableTextComponent(UUID compId, ComponentType compType, String text, IPanelManager panelMgr, Object payload, ScalableFontResource textRes);
     
     /**
      * Adds a scalable resource.
@@ -126,5 +144,6 @@ public interface IScalingService
      * @return
      */
     public IScalableResource<?> getScalableResource(UUID resId);
+
    
 }

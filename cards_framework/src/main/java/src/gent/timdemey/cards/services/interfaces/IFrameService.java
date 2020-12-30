@@ -18,6 +18,7 @@ public interface IFrameService
     public void showInternalError();
     public void hidePanel(PanelDescriptor desc);
     public void removePanel(PanelDescriptor desc);   
+    public PanelDescriptor getCurrentPanel();
 
     public void maximize();
     public void minimize();

@@ -17,17 +17,17 @@ import gent.timdemey.cards.services.scaling.ScalableComponent;
 
 public final class ScalableImageComponent extends ScalableComponent
 {
-    private final List<ScalableImageResource> imgResources;    
+    private final List<ScalableImageResource> imgResources;
     private IScalableResource<BufferedImage> currentScaledResource;
-    
-    public ScalableImageComponent(UUID id, ComponentType compType, ScalableImageResource ... resources)
+
+    public ScalableImageComponent(UUID id, ComponentType compType, ScalableImageResource... resources)
     {
-        super(id, compType);  
+        super(id, compType);
 
         this.imgResources = Arrays.asList(resources);
         this.currentScaledResource = null;
     }
-    
+
     @Override
     protected List<String> getDebugStrings()
     {
@@ -35,9 +35,10 @@ public final class ScalableImageComponent extends ScalableComponent
         allStrings.add(String.format("file=%s", currentScaledResource.getResource().filename));
         return allStrings;
     }
-        
+
     /**
      * Swap the image shown.
+     * 
      * @param resourceId
      */
     public final void setScalableImageResource(UUID resourceId)
@@ -45,19 +46,19 @@ public final class ScalableImageComponent extends ScalableComponent
         IScalableResource<BufferedImage> found = null;
         for (IScalableResource<BufferedImage> resource : imgResources)
         {
-            if (resource.getId().equals(resourceId))
+            if(resource.getId().equals(resourceId))
             {
                 found = resource;
                 break;
             }
         }
-        
-        if (found == null)
+
+        if(found == null)
         {
             Logger.error("Resource with id=%s not found", resourceId);
-            return;            
+            return;
         }
-        
+
         currentScaledResource = found;
     }
 
@@ -65,21 +66,22 @@ public final class ScalableImageComponent extends ScalableComponent
     protected final void draw(Graphics2D g2)
     {
         Dimension currDim = getCoords().getSize();
-        
+
         GetResourceResponse<BufferedImage> resp = currentScaledResource.get(currDim);
         BufferedImage bi = resp.resource;
-        if (!currentScaledResource.getResource().fallback)
-        { 
-            drawScaled(g2, bi, currDim);           
+        if(!currentScaledResource.getResource().fallback)
+        {
+            drawScaled(g2, bi, currDim);
         }
         else
         {
             drawTiled(g2, bi, currDim);
         }
     }
-           
+
     /**
      * Draw the image rescaled.
+     * 
      * @param g2
      * @param image
      * @param width
@@ -113,14 +115,14 @@ public final class ScalableImageComponent extends ScalableComponent
             g3.scale(sx, sy);
             g3.drawImage(image, 0, 0, null);
         }
-        
+
         g3.dispose();
     }
 
     private void drawTiled(Graphics2D g2, BufferedImage image, Dimension dim)
     {
         Graphics2D g3 = (Graphics2D) g2.create();
-        
+
         int tileWidth = image.getWidth();
         int tileHeight = image.getHeight();
         for (int y = 0; y < dim.height; y += tileHeight)
@@ -130,7 +132,7 @@ public final class ScalableImageComponent extends ScalableComponent
                 g3.drawImage(image, x, y, null);
             }
         }
-        
+
         g3.dispose();
     }
 }

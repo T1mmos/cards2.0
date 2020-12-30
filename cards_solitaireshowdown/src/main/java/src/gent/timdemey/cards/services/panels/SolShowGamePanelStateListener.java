@@ -53,7 +53,7 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
             String text = "+" + incr;
             IPanelService panelServ = Services.get(IPanelService.class);
             IPanelManager panelMgr = panelServ.getPanelManager(PanelDescriptors.GAME);
-            ScalableTextComponent comp = new ScalableTextComponent(UUID.randomUUID(), text, ComponentTypes.CARDSCORE, scaleFontRes);
+            ScalableTextComponent comp = scaleServ.createScalableTextComponent(UUID.randomUUID(), ComponentTypes.CARDSCORE, "NOTSET", panelMgr, null, scaleFontRes);
             comp.setPanelManager(panelMgr);
             comp.setPayload(card);
 

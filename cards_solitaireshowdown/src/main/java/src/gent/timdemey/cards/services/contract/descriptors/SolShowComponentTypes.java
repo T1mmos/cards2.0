@@ -1,7 +1,7 @@
 package gent.timdemey.cards.services.contract.descriptors;
 
-public class SolShowComponentTypes 
-{    
+public class SolShowComponentTypes
+{
     public static final String TYPENAME_SPECIALSCORE = "SPECIALSCORE";
     public static final String TYPENAME_SPECIALBACKGROUND = "SPECIALBACKGROUND";
     public static final String TYPENAME_PLAYERNAME = "PLAYERNAME";

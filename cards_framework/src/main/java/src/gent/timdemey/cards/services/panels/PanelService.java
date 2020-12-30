@@ -40,6 +40,8 @@ public class PanelService implements IPanelService
     {
         panelMgrs = new HashMap<>();
         addAbsentPanelManagers();        
+        
+        foreach(IPanelManager::preload, false);
     }
     
     protected void addAbsentPanelManagers()
@@ -61,11 +63,11 @@ public class PanelService implements IPanelService
         }
     }
     
-    private void foreach(Map<? extends PanelDescriptor, ? extends IPanelManager> panelMgrs, Consumer<IPanelManager> func)
+    private void foreach(Consumer<IPanelManager> func, boolean onlyIfCreated)
     {
         for (IPanelManager panelMgr : panelMgrs.values())
         {
-            if (panelMgr.isCreated())
+            if (!onlyIfCreated || panelMgr.isCreated())
             {
                 func.accept(panelMgr);
             }
@@ -97,7 +99,7 @@ public class PanelService implements IPanelService
     {
         IScalingService scaleServ = Services.get(IScalingService.class);
         List<RescaleRequest> requests = new ArrayList<>();
-        foreach(panelMgrs, mgr -> mgr.createRescaleRequests(requests));
+        foreach(mgr -> mgr.createRescaleRequests(requests), true);
         scaleServ.rescaleAsync(requests, () -> 
         {
             SwingUtilities.invokeLater(callback);           
@@ -107,13 +109,13 @@ public class PanelService implements IPanelService
     @Override
     public void createScalableComponents()
     {
-        foreach(panelMgrs, IPanelManager::createScalableComponents);
+        foreach(IPanelManager::createScalableComponents, true);
     }
     
     @Override
     public void positionScalableComponents()
     {
-        foreach(panelMgrs, IPanelManager::positionScalableComponents); 
+        foreach(IPanelManager::positionScalableComponents, true); 
     }
     
 
@@ -121,7 +123,7 @@ public class PanelService implements IPanelService
     @Override
     public void repaintScalableComponents()
     {
-        foreach(panelMgrs, IPanelManager::repaintScalableComponents); 
+        foreach(IPanelManager::repaintScalableComponents, true); 
     }
 
     @Override

@@ -39,7 +39,7 @@ public class GameBootListener implements IStateListener
             else
             {
                 frameServ.showPanel(PanelDescriptors.GAME);
-                frameServ.showPanel(PanelDescriptors.LOAD);              
+             //   frameServ.showPanel(PanelDescriptors.LOAD);              
                 
                 // and now we can start rescaling the resources according to the
                 // dimensions
@@ -52,7 +52,6 @@ public class GameBootListener implements IStateListener
     private static void onRescaledResources ()
     {
         IPanelService panelServ = Services.get(IPanelService.class);
-        IFrameService frameServ = Services.get(IFrameService.class);
         
         // add different top-level panels (e.g. menu, game, overlay, ...)        
         for (PanelDescriptor pd : panelServ.getPanelDescriptors())
@@ -64,8 +63,5 @@ public class GameBootListener implements IStateListener
         // the components that use them
         panelServ.createScalableComponents();
         panelServ.positionScalableComponents();
-        
-        // finally bring the main panel alive
-        frameServ.getFrame().setVisible(true);
     }
 }
