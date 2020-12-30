@@ -218,14 +218,17 @@ public class FrameService implements IFrameService
         }      
         
         showInternal(desc, pb, add);
+        
+        refresh();
     }
     
     @Override
     public <IN, OUT> void showPanel(DataPanelDescriptor<IN, OUT> desc, IN data, Consumer<PanelOutData<OUT>> onClose)
     {                
         PanelBase pb = createDialog(desc, data, onClose);
-        dialogs.push(new OpenPanel(desc, pb));
         showInternal(desc, pb, true);
+        
+        refresh();
     }
         
     private void showInternal(PanelDescriptor desc, PanelBase pb, boolean add)
@@ -236,25 +239,62 @@ public class FrameService implements IFrameService
         // add it to the miglayout
         if (add)
         {
+            int layer = 0;
+            if (desc.panelType == PanelType.Overlay)
+            {
+                layer = 0;
+            }
+            if (desc.panelType == PanelType.Dialog)
+            {
+                layer = 100 + dialogs.size();
+            }
+            else if (desc.panelType == PanelType.Overlay)
+            {
+                layer = 200 + overlays.size();
+            }
+            
             cardPanel.add(pb, "pos 0 0 100% 100%");
-            cardPanel.setLayer(pb, desc.layer);
+            cardPanel.setLayer(pb, layer);
             cardPanel.invalidate();
             cardPanel.validate();
         }
                 
-        // in case of a root panel, all open dialogs and overlays are hidden
+        // in case of a root panel, all open dialogs, overlays, and current panel are closed
         if (desc.panelType == PanelType.Root)
         {
             while (!dialogs.empty())
             {
-                OpenPanel op = dialogs.peek();
-                hidePanel(op.panelDesc);
+                closePanelInternal(PanelType.Dialog);
             }
             while (!overlays.empty())
             {
-                OpenPanel op = dialogs.peek();
-                hidePanel(op.panelDesc);
+                closePanelInternal(PanelType.Overlay);
             }
+            if (currPanel != null)
+            {
+                closePanelInternal(PanelType.Root);
+            }
+            currPanel = new OpenPanel(desc, pb);
+        }
+        else if (desc.panelType == PanelType.Dialog)
+        {
+            // hide the root panel or dialog below this one
+            if (dialogs.size() == 0)
+            {
+                currPanel.panel.setVisible(false);
+            }
+            else
+            {
+                OpenPanel below = dialogs.peek();
+                below.panel.setVisible(false);
+                panelServ.getPanelManager(below.panelDesc).onHidden();
+            }
+            
+            dialogs.push(new OpenPanel(desc, pb));
+        }
+        else if (desc.panelType == PanelType.Overlay)
+        {
+            overlays.push(new OpenPanel(desc, pb));
         }
         
         // show the panel and notify its manager
@@ -262,61 +302,84 @@ public class FrameService implements IFrameService
         panelMgr.onShown();
     }    
     
-    @Override
-    public void closePanel()
+    public void closePanel(PanelType panelType)
     {
-        closePanelInternal();
-
+        if (panelType == PanelType.Root)
+        {
+            throw new IllegalArgumentException("Not allowed to close a panel of type " + panelType + ", as there always need to be exactly one visible");
+        }
+        
+        closePanelInternal(panelType);
+        refresh();
+    }
+    
+    private void refresh()
+    {
         cardPanel.invalidate();
         cardPanel.validate();
         cardPanel.repaint();
     }
     
-    public void closePanel(PanelType)
-    {
-        closePanelInternal();
-
-        cardPanel.invalidate();
-        cardPanel.validate();
-        cardPanel.repaint();
-    }
-    
-    private void closePanelInternal()
+    private void closePanelInternal(PanelType panelType)
     {
         IPanelService panelServ = Services.get(IPanelService.class);
 
+        OpenPanel op;
+        if (panelType == PanelType.Dialog && !dialogs.isEmpty())
+        {
+            op = dialogs.pop();
+        }
+        else if (panelType == PanelType.Overlay && !overlays.isEmpty())
+        {
+            op = overlays.pop();
+        }
+        else if (panelType == PanelType.Root)
+        {
+            op = currPanel;
+        }
+        else
+        {
+            throw new IllegalArgumentException("Cannot close panel of type " + panelType + ", no such panels are open");
+        }        
+                
         // the panel should exist
-        IPanelManager panelMgr = panelServ.getPanelManager(desc);        
+        IPanelManager panelMgr = panelServ.getPanelManager(op.panelDesc);
         if (!panelMgr.isCreated())
         {
             throw new IllegalArgumentException("Attempted to hide a panel which has not been created yet");
         }
         
-        PanelBase pb;
-        if (desc.panelType == PanelType.Dialog)
-        {
-            OpenPanel curr = dialogs.pop();
-            pb = curr.panel;
-            cardPanel.remove(pb);
-        }
-        else if (desc.panelType == PanelType.Overlay)
-        {
-            OpenPanel curr = overlays.pop();
-            pb = curr.panel;
-            cardPanel.remove(pb);
-        }
-        else
-        {
-            pb = panelMgr.get();
-        }
-        
+        PanelBase pb = op.panel;
         if (!pb.isVisible())
         {
             throw new IllegalStateException("Attempted to hide a panel which is not visible");
         }
         
-        // hide the panel and notify its manager        
-        pb.setVisible(false);
+        // hide it, remove if panel is of temporary nature
+        if (panelType == PanelType.Root)
+        {
+            pb.setVisible(false);
+            currPanel = null;
+        }
+        else 
+        {
+            cardPanel.remove(pb);
+            
+            // make topmost dialog visible again
+            if (!dialogs.isEmpty())
+            {
+                OpenPanel topmost = dialogs.peek();
+                topmost.panel.setVisible(true);
+                panelServ.getPanelManager(topmost.panelDesc).onShown();
+            }
+            else
+            {
+                currPanel.panel.setVisible(true);
+                panelServ.getPanelManager(currPanel.panelDesc).onShown();
+            }
+        }
+        
+        // notify the panel manager
         panelMgr.onHidden();
     }
     
@@ -499,7 +562,7 @@ public class FrameService implements IFrameService
                 outData.data_out = out;
                 outData.closeType = dbType;
                 
-                hidePanel(desc);
+                closePanel(PanelType.Dialog);
                 callback.accept(outData);
             };
             String loctext = Loc.get(dbType.lockey);
@@ -530,7 +593,7 @@ public class FrameService implements IFrameService
             PanelOutData<OUT> outData = new PanelOutData<>();
             outData.closeType = PanelButtonType.Forced;
             outData.data_out = null;
-            hidePanel(desc);
+            closePanel(PanelType.Dialog);
             callback.accept(outData);
         };
         
