@@ -1,10 +1,15 @@
 package gent.timdemey.cards.services.panels.menu;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JButton;
+
+import com.alee.laf.button.ButtonPainter;
+import com.alee.laf.button.WebButton;
+import com.alee.managers.style.StyleId;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
@@ -51,15 +56,16 @@ public class MenuPanelManager extends PanelManagerBase
         IActionService actServ = Services.get(IActionService.class);
         for (ActionDescriptor actDesc : actDescs)
         {
-            JButton button = new JButton(actServ.getAction(actDesc));
+            WebButton button = new WebButton(actServ.getAction(actDesc));
+         //   button.setForeground(Color.black);
+            
             button.setContentAreaFilled(false);
             button.setFocusPainted(false);
             button.setBorder(null);
             button.setBorderPainted(false);
             button.setOpaque(false);
-
             button.addMouseListener(listener);
-            button.setFont(font);
+      //     button.setFont(font);
             button.setIcon(null); // no icon in menu list
 
             menuPanel.add(button, "sg buts, wrap");

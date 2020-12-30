@@ -25,7 +25,11 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
 import javax.swing.WindowConstants;
+
+import com.alee.laf.button.WebButton;
+import com.alee.managers.style.StyleId;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
@@ -57,7 +61,7 @@ public class FrameService implements IFrameService
     private JFrame frame;
     private RootPanel rootPanel;
     private JLayeredPane cardPanel;
-    private TitlePanel titlePanel;
+    private JPanel titlePanel;
     private boolean drawDebug = false;
     private boolean maximized;
     private Rectangle bounds;
@@ -84,12 +88,8 @@ public class FrameService implements IFrameService
         IActionService actServ = Services.get(IActionService.class);     
         Action act_minimize = actServ.getAction(desc);
         
-        JButton button = new JButton(act_minimize);
-        Dimension dim = new Dimension(24, 24);
-        
-        button.setOpaque(false);
-        button.setContentAreaFilled(false);
-        button.setBorderPainted(false);        
+        WebButton button = new WebButton(StyleId.buttonUndecorated, act_minimize);
+        Dimension dim = new Dimension(24, 24);           
         button.setMinimumSize(dim);
         button.setMaximumSize(dim);
         return button;
@@ -116,7 +116,7 @@ public class FrameService implements IFrameService
             rootPanel.addMouseMotionListener(rpMouseListener);
             frame.setContentPane(rootPanel);
             
-            titlePanel = new TitlePanel();
+            titlePanel = new JPanel();
             titlePanel.setLayout(new MigLayout("insets 0"));
             titlePanel.setOpaque(false);
             JLabel title_icon = new JLabel(new ImageIcon(getFrameIcons().get(1)));
