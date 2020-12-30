@@ -13,7 +13,6 @@ import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.services.panels.PanelOutData;
-import gent.timdemey.cards.services.panels.mp.LobbyPanelManager;
 
 public class D_ShowLobby extends DialogCommandBase
 {

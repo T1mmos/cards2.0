@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
-
 public class RootPanel extends JPanel
 { 
     private final BufferedImage tile;

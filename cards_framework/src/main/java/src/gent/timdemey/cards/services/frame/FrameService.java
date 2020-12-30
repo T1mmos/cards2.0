@@ -38,6 +38,7 @@ import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.services.contract.descriptors.DataPanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
+import gent.timdemey.cards.services.contract.descriptors.PanelType;
 import gent.timdemey.cards.services.contract.res.FontResource;
 import gent.timdemey.cards.services.contract.res.ImageResource;
 import gent.timdemey.cards.services.interfaces.IFrameService;
@@ -81,7 +82,9 @@ public class FrameService implements IFrameService
         }
     }
     
-    private Stack<OpenPanel> openPanels = new Stack<>();
+    private OpenPanel currPanel = null;
+    private Stack<OpenPanel> dialogs = new Stack<>();
+    private Stack<OpenPanel> overlays  = new Stack<>();
         
     private JButton createFrameButton(ActionDescriptor desc)
     {
@@ -216,31 +219,15 @@ public class FrameService implements IFrameService
         
         showInternal(desc, pb, add);
     }
-
-    @Override
-    public PanelDescriptor getCurrentPanel()
-    {
-        if (openPanels.size() == 0)
-        {
-            return null;
-        }
-        
-        return openPanels.peek().panelDesc;
-    }
     
     @Override
     public <IN, OUT> void showPanel(DataPanelDescriptor<IN, OUT> desc, IN data, Consumer<PanelOutData<OUT>> onClose)
     {                
         PanelBase pb = createDialog(desc, data, onClose);
-        openPanels.push(new OpenPanel(desc, pb));
+        dialogs.push(new OpenPanel(desc, pb));
         showInternal(desc, pb, true);
     }
-    
-    private boolean isOverlay (PanelDescriptor desc)
-    {
-        return desc instanceof DataPanelDescriptor<?,?>;
-    }
-    
+        
     private void showInternal(PanelDescriptor desc, PanelBase pb, boolean add)
     {        
         IPanelService panelServ = Services.get(IPanelService.class);
@@ -255,31 +242,18 @@ public class FrameService implements IFrameService
             cardPanel.validate();
         }
                 
-        // hide other panels if this panel is not just a (transparent) overlay
-        if (!isOverlay(desc))
+        // in case of a root panel, all open dialogs and overlays are hidden
+        if (desc.panelType == PanelType.Root)
         {
-            List<PanelDescriptor> panelDescs = panelServ.getPanelDescriptors();
-            for (PanelDescriptor pd : panelDescs)
+            while (!dialogs.empty())
             {
-                // don't hide the panel that needs to show
-                if (pd == desc)
-                {                                       
-                    continue;
-                }
-                
-                IPanelManager pMan = panelServ.getPanelManager(pd);
-                
-                // if the panel doesn't exist, it was never added to the card panel
-                if (!pMan.isCreated())
-                {
-                    continue;
-                }
-                
-                if (pMan.get().isVisible())
-                {
-                    // hide the component
-                    hidePanel(pd); 
-                }
+                OpenPanel op = dialogs.peek();
+                hidePanel(op.panelDesc);
+            }
+            while (!overlays.empty())
+            {
+                OpenPanel op = dialogs.peek();
+                hidePanel(op.panelDesc);
             }
         }
         
@@ -289,7 +263,25 @@ public class FrameService implements IFrameService
     }    
     
     @Override
-    public void hidePanel(PanelDescriptor desc)
+    public void closePanel()
+    {
+        closePanelInternal();
+
+        cardPanel.invalidate();
+        cardPanel.validate();
+        cardPanel.repaint();
+    }
+    
+    public void closePanel(PanelType)
+    {
+        closePanelInternal();
+
+        cardPanel.invalidate();
+        cardPanel.validate();
+        cardPanel.repaint();
+    }
+    
+    private void closePanelInternal()
     {
         IPanelService panelServ = Services.get(IPanelService.class);
 
@@ -300,11 +292,16 @@ public class FrameService implements IFrameService
             throw new IllegalArgumentException("Attempted to hide a panel which has not been created yet");
         }
         
-        boolean overlay = isOverlay(desc);
         PanelBase pb;
-        if (overlay)
+        if (desc.panelType == PanelType.Dialog)
         {
-            OpenPanel curr = openPanels.pop();
+            OpenPanel curr = dialogs.pop();
+            pb = curr.panel;
+            cardPanel.remove(pb);
+        }
+        else if (desc.panelType == PanelType.Overlay)
+        {
+            OpenPanel curr = overlays.pop();
             pb = curr.panel;
             cardPanel.remove(pb);
         }
@@ -317,13 +314,8 @@ public class FrameService implements IFrameService
         {
             throw new IllegalStateException("Attempted to hide a panel which is not visible");
         }
-
-        cardPanel.invalidate();
-        cardPanel.validate();
-        cardPanel.repaint();
         
-        // hide the panel and notify its manager
-        
+        // hide the panel and notify its manager        
         pb.setVisible(false);
         panelMgr.onHidden();
     }

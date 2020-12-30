@@ -3,17 +3,17 @@ package gent.timdemey.cards.services.contract.descriptors;
 public class PanelDescriptor
 {
     public final String id;
-    public final int layer;
+    public final PanelType panelType;
     
-    public PanelDescriptor(String id, int layer)
+    public PanelDescriptor(String id, PanelType panelType)
     {
         this.id = id;
-        this.layer = layer;
+        this.panelType = panelType;
     }
     
     @Override
-    public String toString()
+    public final String toString()
     {
-        return String.format("PanelDescriptor [id=%s, layer=%s]", id, layer);
+        return String.format("%s [id=%s, PanelType=%s]", getClass().getSimpleName(), id, panelType);
     }
 }   
