@@ -1,7 +1,6 @@
 package gent.timdemey.cards.services.panels;
 
 import java.util.EnumSet;
-import java.util.function.Consumer;
 
 public interface IDataPanelManager<IN, OUT> extends IPanelManager
 {

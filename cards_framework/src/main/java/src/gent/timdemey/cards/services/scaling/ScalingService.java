@@ -92,7 +92,10 @@ public final class ScalingService implements IScalingService
     @Override
     public void rescaleAsync(List<RescaleRequest> requests, Runnable callback)
     {
+        // the rescale requests might need access to the game domain object, only accessible
+        // from the EDT - the rescale itself is offloaded on a worker thread
         Preconditions.checkState(SwingUtilities.isEventDispatchThread());
+        
         List<CompletableFuture<?>> futures = new ArrayList<CompletableFuture<?>>();
 
         // find out the necessary scales of all resources by looking at the

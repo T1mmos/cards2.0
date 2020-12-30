@@ -8,6 +8,7 @@ import java.util.TimerTask;
 import javax.swing.SwingUtilities;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 
@@ -50,32 +51,28 @@ class CardPanelResizeListener implements ComponentListener
             timer = new Timer("Resize Rescale Timer Thread");
         }
 
+        
+
+        long time = System.currentTimeMillis();
+        long diff = time - msLastRelayout;
+        long wait_relayout = Math.max(MS_WAIT_RELAYOUT - diff, 0);
+        
         if (relayoutTask != null)
         {
             relayoutTask.cancel();
             relayoutTask = null;
         }
-
-        long time = System.currentTimeMillis();
-        long diff = time - msLastRelayout;
-        if (diff > MS_WAIT_RELAYOUT)
+        
+        relayoutTask = new TimerTask()
         {
-            msLastRelayout = System.currentTimeMillis();
-            
-        }
-        else
-        {
-            relayoutTask = new TimerTask()
+            @Override
+            public void run()
             {
-                @Override
-                public void run()
-                {
-                    relayout();
-                }
-            };
-            timer.schedule(relayoutTask, MS_WAIT_RELAYOUT);
-        }
-
+                relayout();
+            }
+        };
+        timer.schedule(relayoutTask, wait_relayout);
+        
         if (rescaleTask != null)
         {
             rescaleTask.cancel();
@@ -83,30 +80,40 @@ class CardPanelResizeListener implements ComponentListener
 
         rescaleTask = new TimerTask()
         {
-
             @Override
             public void run()
             {
+                msLastRelayout = System.currentTimeMillis();
                 rescale();                
             }
         };
 
-        timer.schedule(rescaleTask, MS_WAIT_RELAYOUT + MS_WAIT_SCALE);
+        timer.schedule(rescaleTask, wait_relayout + MS_WAIT_SCALE);
     }
     
     private void relayout()
     {
+        Logger.trace("CardPanelResizeListener::relayout BEGIN");
         IFrameService frameServ = Services.get(IFrameService.class);
         frameServ.updatePositionService();
         
         IPanelService panelServ = Services.get(IPanelService.class);
         SwingUtilities.invokeLater(() -> panelServ.positionScalableComponents());
+        Logger.trace("CardPanelResizeListener::relayout END");
     }
     
     private void rescale()
     {
+        Logger.trace("CardPanelResizeListener::rescale BEGIN");
         IPanelService panelServ = Services.get(IPanelService.class);
-        SwingUtilities.invokeLater(() -> panelServ.rescaleResourcesAsync(panelServ::repaintScalableComponents));
+        SwingUtilities.invokeLater(() -> panelServ.rescaleResourcesAsync(this::onRescaled));
+        Logger.trace("CardPanelResizeListener::rescale END");
+    }
+    
+    private void onRescaled()
+    {
+        IPanelService panelServ = Services.get(IPanelService.class);
+        panelServ.repaintScalableComponents();
     }
 
     @Override

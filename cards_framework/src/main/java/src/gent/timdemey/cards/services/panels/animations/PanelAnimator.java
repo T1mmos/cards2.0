@@ -12,7 +12,6 @@ import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.contract.anim.AnimationDescriptor;
 import gent.timdemey.cards.services.contract.anim.IAnimation;
 import gent.timdemey.cards.services.interfaces.IAnimationService;
-import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.panels.IPanelManager;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
