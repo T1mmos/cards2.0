@@ -100,6 +100,7 @@ public class Start
             return null;
         }
 
+        @SuppressWarnings("unchecked")
         Class<? extends ICardPlugin> pluginClazz = (Class<? extends ICardPlugin>) clazz;
         ICardPlugin plugin = null;
         try

@@ -19,15 +19,13 @@ import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.SolShowComponentTypes;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
-import gent.timdemey.cards.services.panels.Positions;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 import gent.timdemey.cards.services.scaling.text.ScalableTextComponent;
 
 public class SolShowPositionService implements IPositionService
 {
     private static final int LAYER_BACKGROUND_IMAGES_LOW = 50;
-    private static final int LAYER_BACKGROUND_IMAGES_MIDDLE = 51;
-    private static final int LAYER_BACKGROUND_IMAGES_HIGH = 52;
+    private static final int LAYER_BACKGROUND_IMAGES_HIGH = 51;
     private static final int LAYER_CARDSTACKS = 100;
     private static final int LAYER_CARDS = 200;
     private static final int LAYER_HUD = 1000;
@@ -211,7 +209,7 @@ public class SolShowPositionService implements IPositionService
             Rectangle rect2 = toRemotePosition(rect, isLocal);
             Coords.Absolute coords = Coords.getAbsolute(rect2);
             boolean mirror = !isLocal;
-            return new LayeredArea(coords, LAYER_BACKGROUND_IMAGES_MIDDLE, mirror);
+            return new LayeredArea(coords, LAYER_BACKGROUND_IMAGES_HIGH, mirror);
         }
         else if (compType.hasTypeName(SolShowComponentTypes.PLAYERNAME))
         {
@@ -246,7 +244,7 @@ public class SolShowPositionService implements IPositionService
             String layoutId = SolShowGameLayout.RECT_VS;
             Rectangle rect = pos.getRectangle(layoutId);
             Coords.Absolute coords = Coords.getAbsolute(rect);
-            return new LayeredArea(coords, LAYER_BACKGROUND_IMAGES_MIDDLE, false);
+            return new LayeredArea(coords, LAYER_BACKGROUND_IMAGES_HIGH, false);
         }
         
         throw new UnsupportedOperationException("Cannot calculate EndLayeredArea as no implementation is available for ComponentType: " + compType);

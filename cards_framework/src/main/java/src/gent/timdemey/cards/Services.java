@@ -137,7 +137,7 @@ public final class Services
             Object impl = serviceMap.get(entryKey);
             String msg = "Service %s for interface %s (param=%s) cannot be installed: an implementation is already installed: %s";
             String formatted = String.format(msg, implementation.getClass().getSimpleName(), iface.getSimpleName(), param, impl.getClass().getSimpleName());
-         //   throw new IllegalStateException(formatted);
+            throw new IllegalStateException(formatted);
         }
         
         serviceMap.put(entryKey, implementation);

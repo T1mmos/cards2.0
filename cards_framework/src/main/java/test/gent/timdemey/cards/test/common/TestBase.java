@@ -43,10 +43,10 @@ public class TestBase
             }
         };
         ctxtService.initialize(ContextType.UI);
-        App.getServices().install(IContextService.class, ctxtService);
-        App.getServices().install(INetworkService.class, new MockNetworkService());
-        App.getServices().install(ILogManager.class, new MockLogManager());
-        App.getServices().install(ICardGameService.class, new ICardGameService()
+        App.getServices().installIfAbsent(IContextService.class, () -> ctxtService);
+        App.getServices().installIfAbsent(INetworkService.class,  () -> new MockNetworkService());
+        App.getServices().installIfAbsent(ILogManager.class,  () -> new MockLogManager());
+        App.getServices().installIfAbsent(ICardGameService.class,  () -> new ICardGameService()
         {
             
             @Override

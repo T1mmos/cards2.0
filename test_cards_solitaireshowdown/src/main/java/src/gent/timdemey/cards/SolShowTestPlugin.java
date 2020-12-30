@@ -15,12 +15,12 @@ public class SolShowTestPlugin extends SolShowPlugin
     @Override
     public void installServices(Services services)
     {
-        super.installServices(services);
+        services.installIfAbsent(IContextService.class, () -> new ContextService());
+        services.installIfAbsent(IActionService.class, () -> new SolShowTestActionService());
+        services.installIfAbsent(INetworkService.class, () -> new MockNetworkService());
+        services.installIfAbsent(IPanelService.class, () -> new SolShowTestPanelService());
         
-        services.install(IContextService.class, new ContextService());
-        services.install(IActionService.class, new SolShowTestActionService());
-        services.install(INetworkService.class, new MockNetworkService());
-        services.install(IPanelService.class, new SolShowTestPanelService());
+        super.installServices(services);
     }
     
     @Override

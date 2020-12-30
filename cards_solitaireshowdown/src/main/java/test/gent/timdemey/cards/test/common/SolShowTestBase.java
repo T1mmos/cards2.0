@@ -8,6 +8,6 @@ public class SolShowTestBase extends TestBase
 {
     public static void installSolShowCardPlugin()
     {
-        App.getServices().install(ICardPlugin.class, new SolShowPlugin());
+        App.getServices().installIfAbsent(ICardPlugin.class, () -> new SolShowPlugin());
     }
 }

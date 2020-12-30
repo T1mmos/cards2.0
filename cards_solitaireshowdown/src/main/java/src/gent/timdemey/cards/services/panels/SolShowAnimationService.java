@@ -10,7 +10,6 @@ import gent.timdemey.cards.services.contract.anim.ForegroundColorAnimation;
 import gent.timdemey.cards.services.contract.anim.IAnimation;
 import gent.timdemey.cards.services.contract.anim.MovingAnimation;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
-import gent.timdemey.cards.services.panels.AnimationService;
 import gent.timdemey.cards.services.resources.SolShowResourceDefines;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 

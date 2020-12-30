@@ -95,10 +95,13 @@ class CardPanelResizeListener implements ComponentListener
     {
         Logger.trace("CardPanelResizeListener::relayout BEGIN");
         IFrameService frameServ = Services.get(IFrameService.class);
-        frameServ.updatePositionService();
+        IPanelService panelServ = Services.get(IPanelService.class);        
         
-        IPanelService panelServ = Services.get(IPanelService.class);
-        SwingUtilities.invokeLater(() -> panelServ.positionScalableComponents());
+        SwingUtilities.invokeLater(() -> 
+        {
+            frameServ.updatePositionService();
+            panelServ.positionScalableComponents();
+        });
         Logger.trace("CardPanelResizeListener::relayout END");
     }
     

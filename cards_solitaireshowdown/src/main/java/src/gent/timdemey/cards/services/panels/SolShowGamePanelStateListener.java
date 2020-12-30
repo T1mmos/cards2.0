@@ -30,7 +30,6 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
     @Override
     public void onChange(ReadOnlyChange change)
     {
-        IPanelService pServ = Services.get(IPanelService.class);
         IContextService contextService = Services.get(IContextService.class);
         IScalingService scaleServ = Services.get(IScalingService.class);
         ISolShowIdService idServ = Services.get(ISolShowIdService.class);
