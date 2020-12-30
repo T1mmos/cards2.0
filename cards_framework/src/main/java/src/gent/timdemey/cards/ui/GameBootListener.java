@@ -33,13 +33,10 @@ public class GameBootListener implements IStateListener
             if (cardGame == null)
             {
                 frameServ.showPanel(PanelDescriptors.MENU);
-                frameServ.removePanel(PanelDescriptors.GAME);
-                frameServ.removePanel(PanelDescriptors.LOAD);
             }
             else
             {
-                frameServ.showPanel(PanelDescriptors.GAME);
-             //   frameServ.showPanel(PanelDescriptors.LOAD);              
+                frameServ.showPanel(PanelDescriptors.GAME);          
                 
                 // and now we can start rescaling the resources according to the
                 // dimensions

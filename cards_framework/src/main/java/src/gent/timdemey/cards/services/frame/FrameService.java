@@ -19,6 +19,7 @@ import java.util.Stack;
 import java.util.function.Consumer;
 
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -27,6 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
+import javax.swing.border.Border;
 
 import com.alee.laf.button.WebButton;
 import com.alee.managers.style.StyleId;
@@ -35,6 +37,7 @@ import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.services.contract.descriptors.DataPanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
@@ -69,6 +72,9 @@ public class FrameService implements IFrameService
     private JButton title_minimize;
     private JButton title_maximize; 
     private JButton title_close;
+    
+    private Border frameBorder;
+    private RootPanelMouseListener rpMouseListener;
     
     private static class OpenPanel
     {
@@ -113,8 +119,10 @@ public class FrameService implements IFrameService
                                     
             BufferedImage bg = getBackgroundImage();
             rootPanel = new RootPanel(bg);
+            frameBorder = BorderFactory.createLineBorder(Color.gray, 1, false);
+            rootPanel.setBorder(frameBorder);
             rootPanel.setLayout(new MigLayout("insets 5, gapy 0"));
-            RootPanelMouseListener rpMouseListener = new RootPanelMouseListener();
+            rpMouseListener = new RootPanelMouseListener();
             rootPanel.addMouseListener(rpMouseListener);    
             rootPanel.addMouseMotionListener(rpMouseListener);
             frame.setContentPane(rootPanel);
@@ -133,12 +141,12 @@ public class FrameService implements IFrameService
             title_close.setText("");
             
             title_text.setFont(titlefont);
-            title_text.setForeground(Color.darkGray.darker());
+            title_text.setForeground(Color.white.darker());
             titlePanel.add(title_icon, "gapx 10, left");
             titlePanel.add(title_text, "gapx 10, pushx, left");
-            titlePanel.add(title_minimize, "align right, gapright 5");
-            titlePanel.add(title_maximize, "align right, gapright 5");
-            titlePanel.add(title_close, "align right, gapright 5");
+            titlePanel.add(title_minimize, "align center top, gapright 5");
+            titlePanel.add(title_maximize, "align center top, gapright 5");
+            titlePanel.add(title_close, "align center top");
             TitlePanelMouseListener tpMouseListener = new TitlePanelMouseListener();
             titlePanel.addMouseListener(tpMouseListener);
             titlePanel.addMouseMotionListener(tpMouseListener);
@@ -339,7 +347,8 @@ public class FrameService implements IFrameService
         }
         else
         {
-            throw new IllegalArgumentException("Cannot close panel of type " + panelType + ", no such panels are open");
+            Logger.warn("Attempted to close panel of type %s, but no such panels are open; ignoring the request", panelType);
+            return;
         }        
                 
         // the panel should exist
@@ -467,8 +476,21 @@ public class FrameService implements IFrameService
     
     private void setMaximized(boolean maximized)
     {
-        this.maximized = maximized;
-
+        this.maximized = maximized;               
+        
+        if (maximized)
+        {
+            rootPanel.removeMouseListener(rpMouseListener);    
+            rootPanel.removeMouseMotionListener(rpMouseListener);
+            rootPanel.setBorder(null);
+        }
+        else
+        {
+            rootPanel.addMouseListener(rpMouseListener);    
+            rootPanel.addMouseMotionListener(rpMouseListener);
+            rootPanel.setBorder(frameBorder);
+        }
+        
         IResourceService resServ = Services.get(IResourceService.class);
         IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
         
