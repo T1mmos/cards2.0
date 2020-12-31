@@ -78,7 +78,7 @@ public final class ScalingService implements IScalingService
         public Thread newThread(Runnable r)
         {
             Thread thr =  new Thread(r, "Scalable Image Task Slave #" + count++);
-            //thr.setDaemon(true);
+            thr.setDaemon(true);
             return thr;
         }
     }
