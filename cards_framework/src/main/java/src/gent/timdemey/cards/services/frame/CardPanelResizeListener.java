@@ -48,10 +48,8 @@ class CardPanelResizeListener implements ComponentListener
     {
         if (timer == null)
         {
-            timer = new Timer("Resize Rescale Timer Thread");
+            timer = new Timer("Resize Rescale Timer Thread", true);
         }
-
-        
 
         long time = System.currentTimeMillis();
         long diff = time - msLastRelayout;

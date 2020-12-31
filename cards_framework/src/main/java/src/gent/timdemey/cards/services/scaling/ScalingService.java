@@ -5,9 +5,9 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -18,6 +18,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.SwingUtilities;
 
@@ -76,7 +77,9 @@ public final class ScalingService implements IScalingService
         @Override
         public Thread newThread(Runnable r)
         {
-            return new Thread(r, "Scalable Image Task Slave #" + count++);
+            Thread thr =  new Thread(r, "Scalable Image Task Slave #" + count++);
+            //thr.setDaemon(true);
+            return thr;
         }
     }
 
@@ -176,37 +179,50 @@ public final class ScalingService implements IScalingService
     @Override
     public IScalableComponent getComponentAt(Point p)
     {
-        Iterator<IScalableComponent> it = components.values().stream().filter(s -> s.getPanelManager().isCreated() && s.getPanelManager().get().isVisible()).sorted((x, y) -> {
-            return y.getPanelManager().getLayer(y) - x.getPanelManager().getLayer(x);
-        }).iterator();
-        while (it.hasNext())
-        {
-            IScalableComponent scaleComp = it.next();
-            if (scaleComp.getCoords().getBounds().contains(p))
-            {
-                return scaleComp;
-            }
-        }
-        return null;
+        Optional<IScalableComponent> comp = getComponentsAtStream(p)
+            .sorted((x, y) -> y.getPanelManager().getLayer(y) - x.getPanelManager().getLayer(x))
+            .findFirst();
+       
+        return comp.isEmpty() ? null : comp.get();
+    }
+    
+    private Stream<IScalableComponent> getComponentsAtStream(Point p)
+    {
+        return components.values().stream()
+            .filter(s -> s.getCoords().getBounds().contains(p))
+            .filter(this::filterPanelManager);
+    }
+    
+    private Stream<IScalableComponent> getComponentsInStream(Rectangle rect)
+    {
+        return components.values().stream()
+            .filter(s -> s.getCoords().getBounds().intersects(rect))
+            .filter(this::filterPanelManager);
+    }
+    
+    private boolean filterPanelManager(IScalableComponent s)
+    {
+        return s.getPanelManager() != null && s.getPanelManager().isCreated() && s.getPanelManager().get().isVisible();
     }
 
     @Override
     public List<IScalableComponent> getComponentsAt(Point p)
     {
-        return components.values().stream().filter(s -> s.getPanelManager().isCreated() && s.getPanelManager().get().isVisible() && s.getCoords().getBounds().contains(p)).collect(Collectors.toList());
+        return getComponentsAtStream(p).collect(Collectors.toList());
     }
 
     @Override
     public <T extends IScalableComponent> List<T> getComponentsAt(Point p, Class<T> clazz)
     {
-        return components.values().stream().filter(s -> s.getPanelManager().isCreated() && s.getPanelManager().get().isVisible() && s.getCoords().getBounds().contains(p) && clazz.isAssignableFrom(s.getClass())).map(s -> (T) s)
-                .collect(Collectors.toList());
+        return getComponentsAtStream(p)
+            .filter(s -> clazz.isAssignableFrom(s.getClass())).map(s -> (T) s)
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<IScalableComponent> getComponentsIn(Rectangle rect)
     {
-        return components.values().stream().filter(s -> s.getPanelManager().isCreated() && s.getPanelManager().get().isVisible() && s.getCoords().getBounds().intersects(rect)).collect(Collectors.toList());
+        return getComponentsInStream(rect).collect(Collectors.toList());
     }
     
     @Override
