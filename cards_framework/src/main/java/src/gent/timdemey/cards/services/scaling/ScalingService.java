@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 import com.google.common.base.Preconditions;
@@ -177,13 +178,18 @@ public final class ScalingService implements IScalingService
     }
     
     @Override
-    public IScalableComponent getComponentAt(Point p)
-    {
-        Optional<IScalableComponent> comp = getComponentsAtStream(p)
-            .sorted((x, y) -> y.getPanelManager().getLayer(y) - x.getPanelManager().getLayer(x))
-            .findFirst();
-       
-        return comp.isEmpty() ? null : comp.get();
+    public IScalableComponent getComponentAt(IPanelManager panelMgr, Point p)
+    {        
+        JComponent jcomp = (JComponent) panelMgr.get().getComponentAt(p);
+        if (!(jcomp instanceof JScalableComponent))
+        {
+            return null;
+        }
+        
+        JScalableComponent jscomp = (JScalableComponent) jcomp;
+        ScalableComponent scomp = jscomp.getScalableComponent();
+        
+       return scomp;
     }
     
     private Stream<IScalableComponent> getComponentsAtStream(Point p)

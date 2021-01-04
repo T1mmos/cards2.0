@@ -48,7 +48,7 @@ class CardPanelResizeListener implements ComponentListener
     {
         if (timer == null)
         {
-            timer = new Timer("Resize Rescale Timer Thread", true);
+            timer = new Timer("Resize Rescale Timer", true);
         }
 
         long time = System.currentTimeMillis();

@@ -98,7 +98,7 @@ class GamePanelMouseListener extends MouseAdapter
         IPanelManager gamePanelMgr = panelServ.getPanelManager(PanelDescriptors.GAME);
         
         
-        IScalableComponent scaleComp = scaleServ.getComponentAt(e.getPoint());   
+        IScalableComponent scaleComp = scaleServ.getComponentAt(gamePanelMgr, e.getPoint());   
         
         if (!(scaleComp instanceof ScalableImageComponent))
         {

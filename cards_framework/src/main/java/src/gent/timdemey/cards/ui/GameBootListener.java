@@ -49,13 +49,7 @@ public class GameBootListener implements IStateListener
     private static void onRescaledResources ()
     {
         IPanelService panelServ = Services.get(IPanelService.class);
-        
-        // add different top-level panels (e.g. menu, game, overlay, ...)        
-        for (PanelDescriptor pd : panelServ.getPanelDescriptors())
-        {
-        //    frameServ.addPanel(pd);
-        }
-        
+                
         // the resources have loaded and are rescaled, so create and position 
         // the components that use them
         panelServ.createScalableComponents();

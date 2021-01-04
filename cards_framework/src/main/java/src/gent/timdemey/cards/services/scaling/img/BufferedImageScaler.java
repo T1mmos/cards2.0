@@ -1,6 +1,9 @@
 package gent.timdemey.cards.services.scaling.img;
 
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
@@ -53,8 +56,10 @@ final class BufferedImageScaler
 
     BufferedImage getScaledInstance()
     {
-        int type = (srcImage.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB
-                : BufferedImage.TYPE_INT_ARGB;
+        GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice device = env.getDefaultScreenDevice();
+        GraphicsConfiguration config = device.getDefaultConfiguration();
+
         BufferedImage ret = (BufferedImage) srcImage;
         int w, h;
         if (higherQuality)
@@ -93,7 +98,7 @@ final class BufferedImageScaler
                 }
             }
 
-            BufferedImage tmp = new BufferedImage(w, h, type);
+            BufferedImage tmp = config.createCompatibleImage(w, h, Transparency.TRANSLUCENT);
             Graphics2D g2 = tmp.createGraphics();
             g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
             g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);

@@ -106,13 +106,14 @@ public interface IScalingService
      * needs to be cleared first. 
      */
     public void clearResourceCache();    
-    
+        
     /**
-     * Gets the component at the given position with the highest Z-order.
+     * Gets the component managed by the given panel manager 
+     * at the given position with the highest Z-order.
      * @param p
      * @return
      */
-    public IScalableComponent getComponentAt(Point p);
+    public IScalableComponent getComponentAt(IPanelManager panelMgr, Point p);
         
     /**
      * Get all components found at the given position, disregarding their Z-order.

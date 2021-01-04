@@ -3,8 +3,10 @@ package gent.timdemey.cards.services.panels.animations;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
-import javax.swing.Timer;
+import javax.swing.SwingUtilities;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.Coords;
@@ -19,13 +21,12 @@ import gent.timdemey.cards.services.scaling.IScalableComponent;
 public class PanelAnimator
 {
     private final List<AnimationTracker> animTrackers;
-    private final Timer timer;
+    private Timer timer = null;
     private final IPanelManager panelManager;
 
     public PanelAnimator(IPanelManager panelManager)
     {
         this.animTrackers = new ArrayList<>();
-        this.timer = new Timer(10, e -> tick());
         this.panelManager = panelManager;
     }
 
@@ -62,12 +63,23 @@ public class PanelAnimator
 
     public void start()
     {
-        timer.start();
+        timer = new Timer("Animation Timer", true);
+        timer.schedule(new AnimationTask(), 0, 15);
+    }
+    
+    private class AnimationTask extends TimerTask
+    {
+        @Override
+        public void run()
+        {
+            SwingUtilities.invokeLater(() -> tick());
+        }            
     }
 
     public void stop()
     {
-        timer.stop();
+        timer.cancel();
+        timer = null;
     }
 
     private void tick()
@@ -104,7 +116,6 @@ public class PanelAnimator
             }
             else
             {
-
                 IPositionService posServ = Services.get(IPositionService.class);
                 LayeredArea layArea = posServ.getEndLayeredArea(animTracker.component);
                 

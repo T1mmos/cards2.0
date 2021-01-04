@@ -1,7 +1,12 @@
 package gent.timdemey.cards.logging;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class LogManager implements ILogManager
 {
+    public static final String DATE_FORMAT_NOW = "yyyy-MM-dd HH:mm:ss.SSS";
+    
     private LogLevel logLevel = LogLevel.DEBUG;
 
     @Override
@@ -56,12 +61,19 @@ public class LogManager implements ILogManager
     private void append(LogLevel lvl, Object msg)
     {
         String thrname = Thread.currentThread().getName();
-        String formatted = String.format("%-7s %-40s :: %s", lvl.name(), thrname, msg);
+        String formatted = String.format("%s %-7s %-25s :: %s", now(), lvl.name(), thrname, msg);
         System.out.println(formatted);
     }
 
     public void setLogLevel(LogLevel lvl)
     {
         this.logLevel = lvl;
+    }
+    
+    private static String now() 
+    {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_NOW);
+        return sdf.format(cal.getTime());
     }
 }

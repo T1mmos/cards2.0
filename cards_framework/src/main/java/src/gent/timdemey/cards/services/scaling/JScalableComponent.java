@@ -14,6 +14,11 @@ final class JScalableComponent extends JPanel
         this.abstractor = abstractor;
         setOpaque(false);
     }
+    
+    public ScalableComponent getScalableComponent()
+    {
+        return abstractor;
+    }    
 
     @Override
     protected void paintComponent(Graphics g)
