@@ -3,8 +3,6 @@ package gent.timdemey.cards.model.entities.commands;
 import java.util.List;
 import java.util.UUID;
 
-import com.google.common.base.Preconditions;
-
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
@@ -24,7 +22,10 @@ public class C_SolPull extends C_Pull
         String srcType = srcCardStack.cardStackType;
         List<Card> cards = srcCardStack.getCards();        
 
-        Preconditions.checkArgument(cards.contains(srcCard));
+        if (!cards.contains(srcCard))
+        {
+            throw new IllegalStateException("cards does not contain srcCard");
+        }
         
         // Can only pull visible cards
         if (!srcCard.visibleRef.get())

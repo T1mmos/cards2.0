@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.google.common.base.Preconditions;
-
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
@@ -32,13 +30,23 @@ public class C_Composite extends CommandBase
 
     private C_Composite(List<CommandBase> commands)
     {
-        Preconditions.checkNotNull(commands);
-        Preconditions.checkArgument(commands.size() > 0);
-
-        for (CommandBase cmd : commands)
+        if (commands == null)
         {
-            Preconditions.checkNotNull(cmd);
+            throw new IllegalArgumentException("commands");
         }
+        if (commands.size() == 0)
+        {
+            throw new IllegalArgumentException("commands");
+        }
+        for (int i = 0; i < commands.size(); i++)
+        {
+            CommandBase cmd = commands.get(i);
+            if (cmd == null)
+            {
+                throw new IllegalArgumentException("command[" + i + "]");
+            }
+        }
+        
         this.commands = commands;
     }
 

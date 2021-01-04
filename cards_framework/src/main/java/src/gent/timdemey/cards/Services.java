@@ -5,11 +5,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.services.contract.preload.IPreload;
 import gent.timdemey.cards.services.contract.preload.PreloadOrder;
@@ -33,7 +31,10 @@ public final class Services
 
         private EntryKey(Class<?> clazz, Object param)
         {
-            Preconditions.checkNotNull(clazz);
+            if (clazz == null)
+            {
+                throw new IllegalArgumentException("clazz");
+            }
             
             this.clazz = clazz;
             this.param = param;
@@ -159,7 +160,7 @@ public final class Services
             // iterate over the keys, maybe a child interface is installed
             for (EntryKey ek : new HashSet<>(map.keySet()))
             {
-                if (iface.isAssignableFrom(ek.clazz) && Objects.equal(param, ek.param))
+                if (iface.isAssignableFrom(ek.clazz) && Objects.equals(param, ek.param))
                 {
                     // install a new mapping for the requested interface, to speed up further lookups
                     value = (T) map.get(ek);

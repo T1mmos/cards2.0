@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.google.common.base.Preconditions;
-
 import gent.timdemey.cards.model.entities.cards.payload.P_CardStack;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.state.EntityStateListRef;
@@ -36,8 +34,11 @@ public class CardStack extends EntityBase
     }
 
     public Card getLowestCard()
-    {
-        Preconditions.checkState(!cards.isEmpty());
+    {   
+        if (cards.isEmpty())
+        {
+            throw new IllegalStateException("cards cannot be empty");
+        }
 
         Card card = cards.get(0);
         return card;
@@ -51,14 +52,20 @@ public class CardStack extends EntityBase
     
     public Card getHighestCard()
     {
-        Preconditions.checkState(!cards.isEmpty());
+        if (cards.isEmpty())
+        {
+            throw new IllegalStateException("cards cannot be empty");
+        }
 
         return cards.get(cards.size() - 1);
     }
 
     public EntityStateListRef<Card> getCardsFrom(Card card)
     {
-        Preconditions.checkArgument(cards.contains(card));
+        if (!cards.contains(card))
+        {
+            throw new IllegalStateException("this cardstack doesn't contain the given card");
+        }
 
         int idx = cards.indexOf(card);
         return EntityStateListRef.asReadOnly(cards.subList(idx, cards.size()));
@@ -66,14 +73,20 @@ public class CardStack extends EntityBase
 
     public List<Card> getHighestCards(int count)
     {
-        Preconditions.checkArgument(0 < count && count <= cards.size());
+        if (!(0 < count && count <= cards.size()))
+        {
+            throw new IllegalStateException("cannot return " + count + " cards as this cardstack only contains " + cards.size() + " cards");
+        }
 
         return new ArrayList<>(cards.subList(cards.size() - count, cards.size()));
     }
 
     public int getCardCountFrom(Card card)
     {
-        Preconditions.checkArgument(cards.contains(card));
+        if (!cards.contains(card))
+        {
+            throw new IllegalStateException("this cardstack doesn't contain the given card");
+        }
 
         int idx = cards.indexOf(card);
         return cards.size() - idx;

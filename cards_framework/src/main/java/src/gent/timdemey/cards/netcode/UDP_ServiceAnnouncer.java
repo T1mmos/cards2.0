@@ -8,8 +8,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.C_UDP_Request;
@@ -53,10 +51,29 @@ public final class UDP_ServiceAnnouncer
             e.printStackTrace();
             return;
         }
-        ThreadFactory thrFactRcv = new ThreadFactoryBuilder().setNameFormat("Server :: UDP Receive %d")
-                .setDaemon(true).build();
-        ThreadFactory thrFactSnd = new ThreadFactoryBuilder().setNameFormat("Server :: UDP Send %d")
-                .setDaemon(true).build();
+        ThreadFactory thrFactRcv = new ThreadFactory()
+        {
+            
+            @Override
+            public Thread newThread(Runnable runnable)
+            {
+                Thread thread = new Thread(runnable, "Server :: UDP Receiver");
+                thread.setDaemon(true);
+                return thread;
+            }
+        };
+        
+        ThreadFactory thrFactSnd = new ThreadFactory()
+        {
+            
+            @Override
+            public Thread newThread(Runnable runnable)
+            {
+                Thread thread = new Thread(runnable, "Server :: UDP Sender");
+                thread.setDaemon(true);
+                return thread;
+            }
+        };
 
         execServSend = Executors.newSingleThreadExecutor(thrFactSnd);
 

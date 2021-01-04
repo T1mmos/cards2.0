@@ -13,8 +13,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
-import com.google.common.base.Preconditions;
-
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.logging.Logger;
@@ -33,9 +31,11 @@ public final class TCP_ConnectionPool
 
     public TCP_ConnectionPool(String name, int maxConnections, ITcpConnectionListener connListener)
     {
-        Preconditions.checkNotNull(connListener,
-                "You cannot use a TCP_ConnectionPool if you do not specify a callback to be invoked upon new incoming connections");
-        
+        if (connListener == null)
+        {
+            throw new IllegalArgumentException("You cannot use a TCP_ConnectionPool if you do not specify a callback to be invoked upon new incoming connections");
+        }
+              
         this.name = name;
         this.halfConns = Collections.synchronizedList(new ArrayList<>());
         this.uuid2conn = new ConcurrentHashMap<>();
@@ -112,7 +112,10 @@ public final class TCP_ConnectionPool
 
     void addConnection(Socket socket)
     {
-        Preconditions.checkNotNull(socket);
+        if (socket == null)
+        {
+            throw new IllegalArgumentException("socket");
+        }
 
         execServ.submit(() ->
         {
@@ -179,9 +182,16 @@ public final class TCP_ConnectionPool
 
     public TCP_Connection getConnection(UUID remote)
     {
-        Preconditions.checkNotNull(remote);
+        if (remote == null)
+        {
+            throw new IllegalArgumentException("remote");
+        }
+        
         TCP_Connection conn = uuid2conn.get(remote);
-        Preconditions.checkNotNull(conn, "No connection in the pool for UUID: " + remote);
+        if (conn == null)
+        {
+            throw new IllegalStateException("No connection in the pool for UUID: " + remote);
+        }
 
         return conn;
     }
@@ -206,12 +216,18 @@ public final class TCP_ConnectionPool
 
     public void closeConnection(UUID remote)
     {
-        Preconditions.checkNotNull(remote);
+        if (remote == null)
+        {
+            throw new IllegalArgumentException("remote");
+        }
 
         execServ.submit(() ->
         {
             TCP_Connection conn = uuid2conn.get(remote);
-            Preconditions.checkNotNull(conn, "No connection in the pool for UUID: " + remote);
+            if (conn == null)
+            {
+                throw new IllegalStateException("No connection in the pool for UUID: " + remote);
+            }
 
             TCP_Connection tcpConnection = uuid2conn.get(remote);
             locallyClosing.add(remote);

@@ -8,8 +8,6 @@ import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 
-import com.google.common.base.Preconditions;
-
 final class BufferedImageScaler
 {
     private final BufferedImage srcImage;
@@ -19,10 +17,19 @@ final class BufferedImageScaler
 
     BufferedImageScaler(BufferedImage srcImage, int targetWidth, int targetHeight)
     {
-        Preconditions.checkNotNull(srcImage);
-        Preconditions.checkArgument(targetWidth > 0);
-        Preconditions.checkNotNull(targetHeight > 0);
-
+        if (srcImage == null)
+        {
+            throw new IllegalArgumentException("srcImage");
+        }
+        if (targetWidth <= 0)
+        {
+            throw new IllegalArgumentException("targetWidth");
+        }
+        if (targetHeight <= 0)
+        {
+            throw new IllegalArgumentException("targetHeight");
+        }
+        
         int maxWidth = srcImage.getWidth();
         int maxHeight = srcImage.getHeight();
 

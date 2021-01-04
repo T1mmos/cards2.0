@@ -3,8 +3,7 @@ package gent.timdemey.cards.services.context;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import com.google.common.base.Objects;
+import java.util.Objects;
 
 import gent.timdemey.cards.model.state.StateListRef;
 import gent.timdemey.cards.model.state.StateValueRef;
@@ -82,7 +81,7 @@ public class StateChangeTracker implements IChangeTracker
             startValue = oldValue;
         }
 
-        if (Objects.equal(startValue, newValue))
+        if (Objects.equals(startValue, newValue))
         {
             // old change + new change leads to no change overall, so we can clear the
             // previous and

@@ -4,7 +4,6 @@ import javax.swing.SwingUtilities;
 
 import com.alee.laf.WebLookAndFeel;
 import com.alee.skin.dark.WebDarkSkin;
-import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
@@ -24,7 +23,10 @@ public class StartUI
     
     public static void startUI()
     {    
-        Preconditions.checkState(SwingUtilities.isEventDispatchThread());
+        if (!SwingUtilities.isEventDispatchThread())
+        {
+            throw new IllegalStateException("This method must be called from the EDT");
+        }
         
         // WebLAF
         WebLookAndFeel.install(WebDarkSkin.class);

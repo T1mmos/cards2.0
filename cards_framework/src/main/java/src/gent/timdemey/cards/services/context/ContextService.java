@@ -9,8 +9,6 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.swing.SwingUtilities;
 
-import com.google.common.base.Preconditions;
-
 import gent.timdemey.cards.services.interfaces.IContextService;
 
 /**
@@ -84,7 +82,10 @@ public class ContextService implements IContextService
     @Override
     public void initialize(ContextType type)
     {
-        Preconditions.checkState(isUiThread(), "You must initialize from the UI thread!");
+        if (!isUiThread())
+        {
+            throw new IllegalStateException("You must initialize from the UI thread!");
+        }
 
         ICommandExecutor cmdExecutor = null;
         if (type == ContextType.UI)

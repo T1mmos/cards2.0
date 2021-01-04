@@ -7,8 +7,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.google.common.base.Preconditions;
-
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.state.State;
 
@@ -23,7 +21,10 @@ abstract class CommandExecutorBase implements ICommandExecutor
 
         private CommandTask(CommandBase command, State state, boolean highprio)
         {
-            Preconditions.checkNotNull(command);
+            if (command == null)
+            {
+                throw new IllegalArgumentException("command");
+            }
 
             this.command = command;
             this.state = state;

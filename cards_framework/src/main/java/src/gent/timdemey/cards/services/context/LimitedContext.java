@@ -1,7 +1,5 @@
 package gent.timdemey.cards.services.context;
 
-import com.google.common.base.Preconditions;
-
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
@@ -17,8 +15,14 @@ public class LimitedContext
 
     public LimitedContext(ContextType contextType, ICommandExecutor cmdExecServ)
     {
-        Preconditions.checkNotNull(contextType);
-        Preconditions.checkNotNull(cmdExecServ);
+        if (contextType == null)
+        {
+            throw new IllegalArgumentException("contextType");
+        }
+        if (cmdExecServ == null)
+        {
+            throw new IllegalArgumentException("cmdExecServ");
+        }
 
         this.contextType = contextType;
         this.cmdExecServ = cmdExecServ;

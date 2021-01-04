@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import com.google.common.base.Preconditions;
-
 import gent.timdemey.cards.model.entities.cards.payload.P_CardGame;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.state.EntityStateListRef;
@@ -110,8 +108,14 @@ public class CardGame extends EntityBase
 
     public List<CardStack> getCardStacks(UUID playerId, String cardStackType)
     {
-        Preconditions.checkNotNull(playerId);
-        Preconditions.checkNotNull(cardStackType);
+        if (playerId == null)
+        {
+            throw new IllegalArgumentException("playerId");
+        }
+        if (cardStackType == null)
+        {
+            throw new IllegalArgumentException("cardStackType");
+        }
 
         List<CardStack> cardStacks = new ArrayList<>();
 
@@ -170,8 +174,14 @@ public class CardGame extends EntityBase
 
     public CardStack getCardStack(UUID playerId, String cardStackType, int typeNumber)
     {
-        Preconditions.checkNotNull(playerId);
-        Preconditions.checkNotNull(cardStackType);
+        if (playerId == null)
+        {
+            throw new IllegalArgumentException("playerId");
+        }
+        if (cardStackType == null)
+        {
+            throw new IllegalArgumentException("cardStackType");
+        }
 
         List<CardStack> cardStacks = getCardStacks(playerId, cardStackType);
         for (CardStack cs : cardStacks)

@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import com.google.common.base.Preconditions;
-
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
@@ -22,10 +20,22 @@ public class SolitaireCardGameCreationService implements ICardGameService
     @Override
     public List<PlayerConfiguration> createStacks(List<UUID> playerIds, List<List<Card>> playerCards)
     {
-        Preconditions.checkNotNull(playerCards);
-        Preconditions.checkNotNull(playerCards);
-        Preconditions.checkArgument(playerCards.size() == 1);
-        Preconditions.checkArgument(playerCards.size() == 1);
+        if (playerIds == null)
+        {
+            throw new IllegalArgumentException("playerIds");
+        }
+        if (playerIds.size() != 1)
+        {
+            throw new IllegalArgumentException("playerIds.size is " + playerIds.size());
+        }
+        if (playerCards == null)
+        {
+            throw new IllegalArgumentException("playerCards");
+        }
+        if (playerCards.size() != 1)
+        {
+            throw new IllegalArgumentException("playerCards.size is " + playerCards.size());
+        }
 
         UUID playerId = playerIds.get(0);
         List<Card> allCards = playerCards.get(0);

@@ -3,8 +3,6 @@ package gent.timdemey.cards.model.entities.commands;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.base.Preconditions;
-
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.state.State;
@@ -19,11 +17,21 @@ public class C_SetVisible extends CommandBase
 
     public C_SetVisible(List<Card> cards, boolean visible)
     {
-        Preconditions.checkNotNull(cards);
-        for (Card card : cards)
+        if (cards == null)
         {
-            Preconditions.checkNotNull(card);
-            Preconditions.checkArgument(card.visibleRef.get() != visible);
+            throw new IllegalArgumentException("cards");
+        }
+        for (int i = 0; i < cards.size(); i++)
+        {
+            Card card = cards.get(i);
+            if (card == null)
+            {
+                throw new IllegalArgumentException("cards[" + i + "]");
+            }
+            if (card.visibleRef.get() == visible)
+            {
+                throw new IllegalArgumentException("cards[" + i + "] visibility is already set to " + visible);
+            }
         }
 
         this.cards = new ArrayList<>(cards);

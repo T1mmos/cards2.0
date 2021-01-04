@@ -4,8 +4,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.UUID;
 
-import com.google.common.base.Preconditions;
-
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
@@ -46,13 +44,31 @@ public class C_StartServer extends CommandBase
 
     public C_StartServer(UUID playerId, String playerName, String srvname, String srvmsg, int udpport, int tcpport, boolean autoconnect)
     {
-        Preconditions.checkArgument(playerId != null);
-        Preconditions.checkArgument(playerName != null);
-        Preconditions.checkArgument(srvname != null && !srvname.isEmpty());
-        Preconditions.checkArgument(udpport > 1024);
-        Preconditions.checkArgument(tcpport > 1024);
-        Preconditions.checkArgument(udpport != tcpport);
-
+        if (playerId == null)
+        {
+            throw new IllegalArgumentException("playerId");
+        }
+        if (playerName == null)
+        {
+            throw new IllegalArgumentException("playerName");
+        }
+        if (srvname == null || srvname.isEmpty())
+        {
+            throw new IllegalArgumentException("srvname");
+        }        
+        if (udpport <= 1024)
+        {
+            throw new IllegalArgumentException("udpport");
+        }
+        if (tcpport <= 1024)
+        {
+            throw new IllegalArgumentException("tcpport");
+        }
+        if (udpport == tcpport)
+        {
+            throw new IllegalArgumentException("tcpport equals udpport");
+        }
+        
         this.playerId = playerId;
         this.playerName = playerName;
         this.srvname = srvname;

@@ -3,10 +3,6 @@ package gent.timdemey.cards.services.panels;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 
-import javax.swing.SwingUtilities;
-
-import com.google.common.base.Preconditions;
-
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.contract.Coords;
@@ -29,8 +25,6 @@ public class SolitairePositionService implements IPositionService
     @Override
     public void setMaxSize(int maxWidth, int maxHeight)
     {
-        Preconditions.checkState(SwingUtilities.isEventDispatchThread());
-
         int base_cwidth = 16; // card dimensions
         int base_cheight = 22;
         int base_swidth = 18; // stack holder dimensions

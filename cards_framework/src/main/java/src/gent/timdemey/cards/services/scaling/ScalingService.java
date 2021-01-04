@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -22,8 +21,6 @@ import java.util.stream.Stream;
 
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
-
-import com.google.common.base.Preconditions;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
@@ -98,7 +95,10 @@ public final class ScalingService implements IScalingService
     {
         // the rescale requests might need access to the game domain object, only accessible
         // from the EDT - the rescale itself is offloaded on a worker thread
-        Preconditions.checkState(SwingUtilities.isEventDispatchThread());
+        if (!SwingUtilities.isEventDispatchThread())
+        {
+            throw new IllegalStateException("This method must be called from the EDT");
+        }
         
         List<CompletableFuture<?>> futures = new ArrayList<CompletableFuture<?>>();
 

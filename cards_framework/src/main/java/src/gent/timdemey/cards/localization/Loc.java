@@ -5,8 +5,6 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import com.google.common.base.Preconditions;
-
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.interfaces.IResourceRepository;
 import gent.timdemey.cards.services.interfaces.IResourceRepository.ResourceType;
@@ -23,8 +21,14 @@ public class Loc
 
     public static void setLocale(Locale locale)
     {
-        Preconditions.checkState(LOCALE == null);
-        Preconditions.checkState(BUNDLE == null);
+        if (LOCALE != null)
+        {
+            throw new IllegalStateException("Locale should not have been set yet");
+        }
+        if (BUNDLE != null)
+        {
+            throw new IllegalStateException("Bundle should not have been set yet");
+        }
 
         LOCALE = locale;
 
@@ -42,7 +46,10 @@ public class Loc
 
     private static String getPriv(LocKey key, Object... params)
     {
-        Preconditions.checkNotNull(key);
+        if (key == null)
+        {
+            throw new IllegalArgumentException("key");
+        }
         String full = key.full;
         
         if (LOCALE == null)
