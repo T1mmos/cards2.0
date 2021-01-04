@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -458,7 +459,9 @@ public class FrameService implements IFrameService
         else
         {
             bounds = frame.getBounds();
-            frame.setExtendedState(Frame.MAXIMIZED_BOTH);            
+            frame.setExtendedState(Frame.MAXIMIZED_BOTH);          
+            Rectangle maxBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+            frame.setBounds(maxBounds);
         }
         
         setMaximized(!maximized);        

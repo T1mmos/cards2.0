@@ -1,5 +1,7 @@
 package gent.timdemey.cards.services.frame;
 
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -43,7 +45,6 @@ public class TitlePanelMouseListener implements MouseListener, MouseMotionListen
         int x = fx + dx;
         int y = fy + dy;
         
-        
         fServ.setLocation(x, y);
     }
 
@@ -78,10 +79,48 @@ public class TitlePanelMouseListener implements MouseListener, MouseMotionListen
     @Override
     public void mouseReleased(MouseEvent e)
     {
-        if (e.getYOnScreen() < 3)
-        {
-            IFrameService fServ = Services.get(IFrameService.class);
+        Rectangle maxBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+        boolean snapTop = e.getYOnScreen() < 3;
+        boolean snapBottom = maxBounds.height - 3 <= e.getYOnScreen();
+        boolean snapLeft = e.getXOnScreen() < 3;
+        boolean snapRight = maxBounds.width - 3 <= e.getXOnScreen();  
+      
+        IFrameService fServ = Services.get(IFrameService.class);
+        if (snapTop && !snapLeft && !snapRight)
+        {            
             fServ.maximize();
+        }
+        else if (snapLeft || snapRight)
+        {
+            int x, y, w, h;
+            if (snapTop) 
+            {
+                y = 0;
+                h = maxBounds.height / 2;
+            }
+            else if (snapBottom)
+            {
+                y = maxBounds.height / 2;
+                h = maxBounds.height / 2;
+            }
+            else
+            {
+                y = 0;
+                h = maxBounds.height;
+            }
+            
+            if (snapLeft)
+            {
+                x = 0;
+                w = maxBounds.width / 2;
+            }
+            else // snapRight
+            {
+                x = maxBounds.width / 2;
+                w = maxBounds.width / 2;
+            }
+            
+            fServ.setBounds(x, y, w, h);
         }
     }
 
