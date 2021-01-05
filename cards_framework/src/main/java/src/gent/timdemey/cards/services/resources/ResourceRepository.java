@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import gent.timdemey.cards.ICardPlugin;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.services.contract.preload.PreloadOrder;
 import gent.timdemey.cards.services.contract.preload.PreloadOrderType;
 import gent.timdemey.cards.services.interfaces.IResourceRepository;
@@ -32,13 +33,22 @@ public class ResourceRepository implements IResourceRepository
     
     protected static void addUrl (Map<ResourceType, List<URL>> typeUrls, ResourceType type, Class<?> clazz, String dir)
     {
+        URL url = clazz.getResource(dir);
+        if (url == null)
+        {
+            Logger.error("Can't build URL for directory %s (ResourceType=%s, Class=%s)", dir, type, clazz.getSimpleName());
+            return;
+        }
+        
         List<URL> urls = typeUrls.get(type);
         if (urls == null)
         {
             urls = new ArrayList<>();
             typeUrls.put(type, urls);
         }
-        URL url = clazz.getResource(dir);
+        
+        
+        
         urls.add(url);
     }
     
@@ -59,7 +69,16 @@ public class ResourceRepository implements IResourceRepository
     {
         URLClassLoader resLoader = getUrlClassLoader(type);
 
-        InputStream is = resLoader.getResourceAsStream(name);
+        InputStream is;
+        try 
+        {
+            is = resLoader.getResourceAsStream(name);
+        }
+        catch (Exception ex)
+        {
+            Logger.error(ex);
+            is = null;
+        }
         if (is == null)
         {
             throw new IllegalArgumentException(

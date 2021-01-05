@@ -5,10 +5,12 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.EnumSet;
 
 import javax.swing.JFrame;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.services.contract.SnapSide;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 
 public class TitlePanelMouseListener implements MouseListener, MouseMotionListener
@@ -23,21 +25,16 @@ public class TitlePanelMouseListener implements MouseListener, MouseMotionListen
         
         // first ensure that the frame isn't maximized, and if a change is necessary, position the frame
         // so the mouse grabs the title bar exactly in the middle
+        
+        if (fServ.isSnapped())
         {
-            JFrame frame = fServ.getFrame();
-            int fx2 = frame.getX();
-            int fy2 = frame.getY();
-            fServ.unmaximize();            
-            int fx3 = frame.getX();
-            int fy3 = frame.getY();
+            fServ.unsnap();
             
-            if (fx2 != fx3 || fy2 != fy3)
-            {
-                // the unmaximize had an effect, so set the frame's X coordinate so the mouse is in the center
-                int fw = frame.getWidth();                
-                fx = e.getX() - fw / 2;    
-            }
+            JFrame frame = fServ.getFrame();
+            int fw = frame.getWidth();                
+            fx = e.getXOnScreen() - fw / 2;   
         }
+        
         
         int dx = e.getXOnScreen() - sx;
         int dy = e.getYOnScreen() - sy;
@@ -85,43 +82,29 @@ public class TitlePanelMouseListener implements MouseListener, MouseMotionListen
         boolean snapLeft = e.getXOnScreen() < 3;
         boolean snapRight = maxBounds.width - 3 <= e.getXOnScreen();  
       
-        IFrameService fServ = Services.get(IFrameService.class);
-        if (snapTop && !snapLeft && !snapRight)
-        {            
-            fServ.maximize();
-        }
-        else if (snapLeft || snapRight)
+        EnumSet<SnapSide> snapsides = EnumSet.noneOf(SnapSide.class);
+        if (snapTop)
         {
-            int x, y, w, h;
-            if (snapTop) 
-            {
-                y = 0;
-                h = maxBounds.height / 2;
-            }
-            else if (snapBottom)
-            {
-                y = maxBounds.height / 2;
-                h = maxBounds.height / 2;
-            }
-            else
-            {
-                y = 0;
-                h = maxBounds.height;
-            }
-            
-            if (snapLeft)
-            {
-                x = 0;
-                w = maxBounds.width / 2;
-            }
-            else // snapRight
-            {
-                x = maxBounds.width / 2;
-                w = maxBounds.width / 2;
-            }
-            
-            fServ.setBounds(x, y, w, h);
+            snapsides.add(SnapSide.TOP);
         }
+        if (snapBottom)
+        {
+            snapsides.add(SnapSide.BOTTOM);
+        }
+        if (snapLeft)
+        {
+            snapsides.add(SnapSide.LEFT);
+        }
+        if (snapRight)
+        {
+            snapsides.add(SnapSide.RIGHT);
+        }
+
+        if (snapsides.size() > 0)
+        {
+            IFrameService fServ = Services.get(IFrameService.class);
+            fServ.snap(snapsides);    
+        }        
     }
 
     @Override

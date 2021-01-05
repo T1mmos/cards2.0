@@ -39,6 +39,7 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.logging.Logger;
+import gent.timdemey.cards.services.contract.SnapSide;
 import gent.timdemey.cards.services.contract.descriptors.DataPanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
@@ -68,12 +69,12 @@ public class FrameService implements IFrameService
     private JLayeredPane cardPanel;
     private JPanel titlePanel;
     private boolean drawDebug = false;
-    private boolean maximized;
-    private Rectangle bounds;
     private JButton title_minimize;
     private JButton title_maximize; 
     private JButton title_close;
-    
+
+    private Rectangle prevBounds;
+    private EnumSet<SnapSide> snaps = null;
     private Border frameBorder;
     private RootPanelMouseListener rpMouseListener;
     
@@ -448,39 +449,120 @@ public class FrameService implements IFrameService
         BufferedImage background = resServ.getImage(bgpath).raw;
         return background;
     }
-
+    
     @Override
-    public void maximize()
-    {        
-        if (maximized)
-        {            
-            setBounds(bounds);
-        }
-        else
+    public boolean isSnapped()
+    {
+        return snaps != null;
+    }
+    
+    @Override
+    public void snap(EnumSet<SnapSide> snapsides)
+    {
+        if (snapsides == null || snapsides.size() == 0)
         {
-            bounds = frame.getBounds();
-            frame.setExtendedState(Frame.MAXIMIZED_BOTH);          
-            Rectangle maxBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-            frame.setBounds(maxBounds);
+            throw new IllegalArgumentException("snapsides");
         }
         
-        setMaximized(!maximized);        
+        boolean snapTop = snapsides.contains(SnapSide.TOP);
+        boolean snapBottom = snapsides.contains(SnapSide.BOTTOM);
+        boolean snapLeft = snapsides.contains(SnapSide.LEFT);
+        boolean snapRight = snapsides.contains(SnapSide.RIGHT);
+        if (snapTop && snapBottom)
+        {
+            throw new IllegalArgumentException("cannot snap to both TOP and BOTTOM");
+        }
+        if (snapLeft && snapRight)
+        {
+            throw new IllegalArgumentException("cannot snap to both LEFT and RIGHT");
+        }
+
+        saveBounds();
+        Rectangle maxBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+        
+        if (snapTop && !snapLeft && !snapRight)
+        {           
+            saveBounds();  
+            frame.setBounds(maxBounds);
+            frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+            setMaximized(true);  
+        }
+        else if (snapLeft || snapRight)
+        {
+            int x, y, w, h;
+            if (snapTop) 
+            {
+                y = 0;
+                h = maxBounds.height / 2;
+            }
+            else if (snapBottom)
+            {
+                y = maxBounds.height / 2;
+                h = maxBounds.height / 2;
+            }
+            else
+            {
+                y = 0;
+                h = maxBounds.height;
+            }
+            
+            if (snapLeft)
+            {
+                x = 0;
+                w = maxBounds.width / 2;
+            }
+            else // snapRight
+            {
+                x = maxBounds.width / 2;
+                w = maxBounds.width / 2;
+            }
+
+            setBounds(x, y, w, h);
+        }
+        
+        snaps = snapsides;
     }
 
     @Override
-    public void unmaximize()
+    public void unsnap()
     {
-        if (maximized)
+        if (snaps == null)
         {            
-            setBounds(bounds);
-            setMaximized(false);
+            throw new IllegalStateException("The frame isn't currently snapped");
         }
+        
+        snaps = null;
+        restoreBounds();
+        setMaximized(false);
+    }
+
+    private void restoreBounds()
+    {
+        setBounds(prevBounds);
+        prevBounds = null;
+    }
+    
+    private void saveBounds()
+    {
+        prevBounds = frame.getBounds();
+    }
+    
+    @Override
+    public void maximize()
+    {        
+        boolean maximized = snaps != null && snaps.size() == 1 && snaps.contains(SnapSide.TOP);
+        if (maximized)
+        {
+            unsnap();
+        }
+        else
+        {
+            snap(EnumSet.of(SnapSide.TOP));
+        }      
     }
     
     private void setMaximized(boolean maximized)
     {
-        this.maximized = maximized;               
-        
         if (maximized)
         {
             rootPanel.removeMouseListener(rpMouseListener);    
@@ -543,8 +625,7 @@ public class FrameService implements IFrameService
             y = screenSize.height - h;
         }
         
-        bounds = new Rectangle(x, y, w, h);
-        frame.setBounds(bounds);
+        frame.setBounds(x, y, w, h);
     }
 
     @Override

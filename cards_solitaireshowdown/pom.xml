@@ -10,11 +10,10 @@
 		<relativePath>../cards_framework/pom.xml</relativePath>
 	</parent>
 
-
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>cards_solitaireshowdown</groupId>
+    <packaging>pom</packaging>
 	<artifactId>cards_solitaireshowdown</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+    <name>cards_solitaireshowdown</name>
 	<build>
 		<plugins>
 			
