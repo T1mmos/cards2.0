@@ -70,7 +70,7 @@ public abstract class IdService implements IIdService
 
     protected UUID getUUID(String id_template, String ... args)
     {
-        String id_str = String.format(id_template, args);
+        String id_str = String.format(id_template, (Object[]) args);
         return getUUID(id_str);
     }
 

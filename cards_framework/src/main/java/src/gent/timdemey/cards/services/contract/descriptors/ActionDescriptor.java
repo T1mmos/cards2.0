@@ -1,4 +1,4 @@
-package gent.timdemey.cards.ui.actions;
+package gent.timdemey.cards.services.contract.descriptors;
 
 import javax.swing.KeyStroke;
 

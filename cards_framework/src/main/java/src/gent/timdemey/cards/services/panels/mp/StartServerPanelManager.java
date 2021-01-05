@@ -1,6 +1,5 @@
 package gent.timdemey.cards.services.panels.mp;
 
-import java.awt.Color;
 import java.util.EnumSet;
 
 import javax.swing.JLabel;
@@ -8,11 +7,9 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.panels.DataPanelManagerBase;
 import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelButtonType;

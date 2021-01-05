@@ -2,6 +2,7 @@ package gent.timdemey.cards.ui.actions;
 
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.contract.descriptors.SolShowTestActionDescriptors;
 
 public class A_DebugFakeSolShowGame extends ActionBase
 {

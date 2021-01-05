@@ -1,6 +1,6 @@
-package gent.timdemey.cards.ui.actions;
+package gent.timdemey.cards.services.contract.descriptors;
 
-public class SolShowTestActionDescriptors
+public final class SolShowTestActionDescriptors
 {
     public static final String ACTION_FAKESOLSHOWGAME = "action.fakesolshowgame";
     public static final String ACTION_SWITCHCARDSVISIBLE = "action.switchcardsvisible";

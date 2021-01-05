@@ -47,15 +47,33 @@ public class ResourceLocationService implements IResourceLocationService
     }
 
     @Override
+    public String getAppMinimizeRolloverIconFilePath()
+    {
+        return "minimize_blue.png";
+    }
+    
+    @Override
     public String getAppMaximizeIconFilePath()
     {
         return "maximize.png";
     }
     
     @Override
-    public String getAppMaximizeUndoIconFilePath()
+    public String getAppMaximizeRolloverIconFilePath()
     {
-        return "maximize_undo.png";
+        return "maximize_blue.png";
+    }
+    
+    @Override
+    public String getAppUnmaximizeIconFilePath()
+    {
+        return "unmaximize.png";
+    }
+    
+    @Override
+    public String getAppUnmaximizeRolloverIconFilePath()
+    {
+        return "unmaximize_blue.png";
     }
     
     @Override
@@ -69,12 +87,16 @@ public class ResourceLocationService implements IResourceLocationService
     {
         return "close.png";
     }
+    
+    @Override
+    public String getAppCloseRolloverIconFilePath()
+    {
+        return "close_red.png";
+    }
 
     @Override
     public String getAppBackgroundImageFilePath()
     {
         return "background_darkgray.png";
     }
-
-    
 }

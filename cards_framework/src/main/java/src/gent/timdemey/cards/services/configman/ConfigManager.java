@@ -4,7 +4,7 @@ import gent.timdemey.cards.services.interfaces.IConfigManager;
 
 public class ConfigManager implements IConfigManager
 {
-
+    @SuppressWarnings("unchecked")
     @Override
     public <T> T get(ConfigKey<T> key)
     {

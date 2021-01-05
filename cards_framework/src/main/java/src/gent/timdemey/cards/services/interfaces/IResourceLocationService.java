@@ -12,9 +12,13 @@ public interface IResourceLocationService
     
     public String getAppIconFilePath(int dim);
     public String getAppMinimizeIconFilePath();
+    public String getAppMinimizeRolloverIconFilePath();
     public String getAppMaximizeIconFilePath();
-    public String getAppMaximizeUndoIconFilePath();
+    public String getAppMaximizeRolloverIconFilePath();
+    public String getAppUnmaximizeIconFilePath();
+    public String getAppUnmaximizeRolloverIconFilePath();
     public String getAppCloseIconFilePath();
+    public String getAppCloseRolloverIconFilePath();
     public String getAppTitleFontFilePath();
     
     public String getMenuFontFilePath();    

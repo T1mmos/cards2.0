@@ -1,4 +1,4 @@
-package gent.timdemey.cards.ui;
+    package gent.timdemey.cards.ui;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.IStateListener;
@@ -6,7 +6,6 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.context.Context;
-import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;

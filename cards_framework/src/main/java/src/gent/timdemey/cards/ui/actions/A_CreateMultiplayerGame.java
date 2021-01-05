@@ -5,6 +5,7 @@ import javax.swing.SwingUtilities;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
 
 /**
  * Action to start hosting / creating a server.
@@ -12,7 +13,7 @@ import gent.timdemey.cards.services.context.ContextType;
  * @author Timmos
  *
  */
-public class A_CreateMultiplayerGame extends ActionBase
+class A_CreateMultiplayerGame extends ActionBase
 {    
     protected A_CreateMultiplayerGame(ActionDescriptor desc, String title)
     {

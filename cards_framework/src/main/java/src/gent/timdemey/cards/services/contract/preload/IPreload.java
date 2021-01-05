@@ -1,7 +1,5 @@
 package gent.timdemey.cards.services.contract.preload;
 
-import java.util.List;
-
 public interface IPreload
 {
     /**

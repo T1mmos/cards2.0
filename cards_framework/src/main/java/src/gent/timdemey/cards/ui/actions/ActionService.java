@@ -4,7 +4,6 @@ import java.awt.Image;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.Action;
 import javax.swing.ImageIcon;
 
 import gent.timdemey.cards.Services;
@@ -23,6 +22,8 @@ import gent.timdemey.cards.model.entities.commands.D_StartServer;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
@@ -30,16 +31,14 @@ import gent.timdemey.cards.services.interfaces.IResourceService;
 
 public class ActionService implements IActionService
 {
-    
-
     private Map<ActionDescriptor, CommandBase> desc2commands = new HashMap<>();
     private Map<ActionDescriptor, ActionBase> desc2actions = new HashMap<>();
     private Map<ActionDescriptor, Runnable> desc2code = new HashMap<>();
 
     @Override
-    public Action getAction(ActionDescriptor desc)
+    public ActionBase getAction(ActionDescriptor desc)
     {
-        Action action = mapToAction(desc);
+        ActionBase action = mapToAction(desc);
         return action;
     }
 
@@ -88,7 +87,7 @@ public class ActionService implements IActionService
         throw new UnsupportedOperationException("No immediate action or command is mapped onto descriptor " + desc);        
     }
 
-    private Action mapToAction(ActionDescriptor desc)
+    private ActionBase mapToAction(ActionDescriptor desc)
     {
         ActionBase action = desc2actions.get(desc);
         
@@ -112,7 +111,6 @@ public class ActionService implements IActionService
     protected ActionBase createAction(ActionDescriptor desc)
     {
         IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
-        IResourceService resServ = Services.get(IResourceService.class);
         
         if (desc == ActionDescriptors.ad_create_mp)
         {
@@ -120,11 +118,11 @@ public class ActionService implements IActionService
         }
         else if (desc == ActionDescriptors.ad_debugdraw)
         {
-            return new A_DebugDrawDebugLines(ActionDescriptors.ad_debugdraw, Loc.get(LocKey.DebugMenu_debug));
+            return new ActionBase(ActionDescriptors.ad_debugdraw, Loc.get(LocKey.DebugMenu_debug));
         }
         else if (desc == ActionDescriptors.ad_gc)
         {
-            return new A_DebugGC(ActionDescriptors.ad_gc, Loc.get(LocKey.DebugMenu_gc));
+            return new ActionBase(ActionDescriptors.ad_gc, Loc.get(LocKey.DebugMenu_gc));
         }
         else if (desc == ActionDescriptors.ad_join)
         {
@@ -136,21 +134,21 @@ public class ActionService implements IActionService
         }
         else if (desc == ActionDescriptors.ad_maximize)
         {
-            String filepath = resLocServ.getAppMaximizeIconFilePath();
-            Image img = resServ.getImage(filepath).raw;
-            return new A_Maximize(ActionDescriptors.ad_maximize, Loc.get(LocKey.Menu_maximize), new ImageIcon(img));
+            ImageIcon img_maximize = getImageIcon(resLocServ.getAppMaximizeIconFilePath());
+            ImageIcon img_maximize_rollover = getImageIcon(resLocServ.getAppMaximizeRolloverIconFilePath());
+            return new ActionBase(ActionDescriptors.ad_maximize, Loc.get(LocKey.Menu_maximize), img_maximize, img_maximize_rollover);
         }
         else if (desc == ActionDescriptors.ad_minimize)
         {
-            String filepath = resLocServ.getAppMinimizeIconFilePath();
-            Image img = resServ.getImage(filepath).raw;
-            return new A_Minimize(ActionDescriptors.ad_minimize, Loc.get(LocKey.Menu_minimize), new ImageIcon(img));
+            ImageIcon img_minimize = getImageIcon(resLocServ.getAppMinimizeIconFilePath());
+            ImageIcon img_minimize_rollover = getImageIcon(resLocServ.getAppMinimizeRolloverIconFilePath());
+            return new ActionBase(ActionDescriptors.ad_minimize, Loc.get(LocKey.Menu_minimize), img_minimize, img_minimize_rollover);
         }
         else if (desc == ActionDescriptors.ad_quit)
         {
-            String filepath = resLocServ.getAppCloseIconFilePath();
-            Image img = resServ.getImage(filepath).raw;
-            return new A_QuitGame(ActionDescriptors.ad_quit, Loc.get(LocKey.Menu_quit), new ImageIcon(img));
+            ImageIcon img_close = getImageIcon(resLocServ.getAppCloseIconFilePath());
+            ImageIcon img_close_rollover = getImageIcon(resLocServ.getAppCloseRolloverIconFilePath());
+            return new ActionBase(ActionDescriptors.ad_quit, Loc.get(LocKey.Menu_quit), img_close, img_close_rollover);
         }
         else if (desc == ActionDescriptors.ad_redo)
         {
@@ -170,6 +168,15 @@ public class ActionService implements IActionService
         }
         
         return null;
+    }
+    
+    private ImageIcon getImageIcon(String filepath)
+    {
+        IResourceService resServ = Services.get(IResourceService.class);
+        
+        Image img = resServ.getImage(filepath).raw;
+        ImageIcon imgIcon = new ImageIcon(img);
+        return imgIcon;
     }
 
     private CommandBase mapToCommand(ActionDescriptor desc)

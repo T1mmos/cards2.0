@@ -1,7 +1,6 @@
 package gent.timdemey.cards.services.contract.anim;
 
 import gent.timdemey.cards.services.contract.Coords;
-import gent.timdemey.cards.services.contract.Coords.Relative;
 
 public class AnimationStart
 {

@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.function.Consumer;
 
-import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -40,6 +39,8 @@ import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.services.contract.SnapSide;
+import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.DataPanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
@@ -57,8 +58,7 @@ import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.services.panels.PanelInData;
 import gent.timdemey.cards.services.panels.PanelOutData;
-import gent.timdemey.cards.ui.actions.ActionDescriptor;
-import gent.timdemey.cards.ui.actions.ActionDescriptors;
+import gent.timdemey.cards.ui.actions.ActionBase;
 import gent.timdemey.cards.ui.actions.IActionService;
 import net.miginfocom.swing.MigLayout;
 
@@ -97,9 +97,11 @@ public class FrameService implements IFrameService
     private JButton createFrameButton(ActionDescriptor desc)
     {
         IActionService actServ = Services.get(IActionService.class);     
-        Action act_minimize = actServ.getAction(desc);
+        ActionBase action = actServ.getAction(desc);
         
-        WebButton button = new WebButton(StyleId.buttonUndecorated, act_minimize);
+        WebButton button = new WebButton(StyleId.buttonUndecorated, action);
+        button.setRolloverIcon(action.icon_rollover);
+        
         Dimension dim = new Dimension(24, 24);           
         button.setMinimumSize(dim);
         button.setMaximumSize(dim);
@@ -134,7 +136,7 @@ public class FrameService implements IFrameService
             titlePanel.setOpaque(false);
             JLabel title_icon = new JLabel(new ImageIcon(getFrameIcons().get(1)));
             JLabel title_text = new JLabel(getTitle());
-            title_minimize = createFrameButton(ActionDescriptors.ad_minimize);
+            title_minimize = createFrameButton(ActionDescriptors.ad_minimize);            
             title_maximize = createFrameButton(ActionDescriptors.ad_maximize);
             title_close = createFrameButton(ActionDescriptors.ad_quit);
             
@@ -579,7 +581,7 @@ public class FrameService implements IFrameService
         IResourceService resServ = Services.get(IResourceService.class);
         IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
         
-        String filepath = maximized ? resLocServ.getAppMaximizeUndoIconFilePath() : resLocServ.getAppMaximizeIconFilePath();
+        String filepath = maximized ? resLocServ.getAppUnmaximizeIconFilePath() : resLocServ.getAppMaximizeIconFilePath();
         
         Image img = resServ.getImage(filepath).raw;
         title_maximize.setIcon(new ImageIcon(img));

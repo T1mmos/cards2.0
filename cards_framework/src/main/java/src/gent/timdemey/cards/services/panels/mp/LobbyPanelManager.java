@@ -17,12 +17,12 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.readonlymodel.TypedChange;
 import gent.timdemey.cards.services.context.ChangeType;
 import gent.timdemey.cards.services.context.Context;
+import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.panels.DataPanelManagerBase;
 import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelButtonType;
-import gent.timdemey.cards.ui.actions.ActionDescriptors;
 import gent.timdemey.cards.ui.actions.IActionService;
 import net.miginfocom.swing.MigLayout;
 

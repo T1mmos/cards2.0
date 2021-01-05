@@ -10,7 +10,6 @@ import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
-import gent.timdemey.cards.services.panels.game.GamePanelManager;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 
 public class SolitaireGamePanelManager extends GamePanelManager

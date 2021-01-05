@@ -28,7 +28,9 @@ public class StateChangeTracker implements IChangeTracker
                 continue;
             }
 
-            return (Change<X>) chng;
+            @SuppressWarnings("unchecked")
+            Change<X> chngX = (Change<X>) chng;
+            return chngX;
         }
 
         return null;
@@ -45,6 +47,8 @@ public class StateChangeTracker implements IChangeTracker
                 continue;
             }
 
+            
+            @SuppressWarnings("unchecked")
             Change<X> chngX = (Change<X>) chng;
 
             // only need the changes to the list that relate to the given element

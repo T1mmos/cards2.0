@@ -90,6 +90,7 @@ public class PanelService implements IPanelService
     @Override
     public <IN, OUT> IDataPanelManager<IN, OUT> getPanelManager(DataPanelDescriptor<IN, OUT> panelDesc)
     {
+        @SuppressWarnings("unchecked")
         IDataPanelManager<IN, OUT> panelMgr = (IDataPanelManager<IN, OUT>) panelMgrs.get(panelDesc);
         return panelMgr;
     }

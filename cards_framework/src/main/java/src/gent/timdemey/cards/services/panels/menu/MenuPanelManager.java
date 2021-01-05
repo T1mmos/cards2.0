@@ -1,25 +1,20 @@
 package gent.timdemey.cards.services.panels.menu;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.JButton;
-
-import com.alee.laf.button.ButtonPainter;
 import com.alee.laf.button.WebButton;
-import com.alee.managers.style.StyleId;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.services.interfaces.IResourceService;
 import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelManagerBase;
-import gent.timdemey.cards.ui.actions.ActionDescriptor;
-import gent.timdemey.cards.ui.actions.ActionDescriptors;
 import gent.timdemey.cards.ui.actions.IActionService;
 import net.miginfocom.swing.MigLayout;
 

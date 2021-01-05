@@ -1,6 +1,6 @@
 package gent.timdemey.cards.ui.actions;
 
-import javax.swing.Action;
+import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
 
 public interface IActionService
 {
@@ -8,5 +8,5 @@ public interface IActionService
 
     public void executeAction(ActionDescriptor desc);    
     
-    public Action getAction(ActionDescriptor desc);
+    public ActionBase getAction(ActionDescriptor desc);
 }
