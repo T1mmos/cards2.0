@@ -418,7 +418,7 @@ public class CommandHistory extends EntityBase
             cmdExecution.setExecutionState(nextState);
             if (execState != CommandExecutionState.Quarantined && resp.canExecute())
             {
-                command.preExecute(state);
+                command.execute(state);
             }
         }
 
@@ -505,7 +505,7 @@ public class CommandHistory extends EntityBase
 
         // now add the command execution
         CommandExecution cmdExecution = new CommandExecution(cmd, execState);
-        cmdExecution.getCommand().preExecute(state);
+        cmdExecution.getCommand().execute(state);
 
         // we cannot just add at the end of the execution line, because there can be
         // quarantined commands which are beyond the current index pointer.
@@ -647,8 +647,8 @@ public class CommandHistory extends EntityBase
                     "The CommandExecution is Accepted, yet can't execute it in the current state where all previous commands are Accepted, because: "
                             + resp.reason);
         }
-        command.preExecute(state);
-        command.postExecute(state);
+        command.execute(state);
+        command.onAccepted(state);
         execLine.add(getCurrentIndex() + 1, commandExec);
         setCurrentIndex(getCurrentIndex() + 1);
         setAcceptedIndex(getAcceptedIndex() + 1);
@@ -700,11 +700,14 @@ public class CommandHistory extends EntityBase
                                 + ": " + resp.reason);
             }
 
-            cmd.preExecute(state);
+            cmd.execute(state);
             setCurrentIndex(getCurrentIndex() + 1);
         }
 
-        cmd.postExecute(state);
+        // a command awaiting acceptance hasn't yet executed its postExecute 
+        // (TODO: infact we should also rollback here, because postExecute may alter the state in such 
+        // way that subsequent commands cannot longer be executed.)
+        cmd.onAccepted(state);
         cmdExecution.setExecutionState(CommandExecutionState.Accepted);
         setAcceptedIndex(currAcptIdx + 1);
     }

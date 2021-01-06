@@ -33,7 +33,7 @@ public final class C_Undo extends CommandBase
     }
 
     @Override
-    protected void preExecute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type, State state)
     {
         state.getCommandHistory().undo(state);
     }

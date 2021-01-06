@@ -64,7 +64,7 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
                 }
                 else if (typed.changeType == ChangeType.Remove)
                 {                    
-                    l_remotePlayer.setText(null);
+                    l_remotePlayer.setText(Loc.get(LocKey.Label_emptyPlayer));
                 }
             }
             else if (property == ReadOnlyState.ServerMsg && change.changeType == ChangeType.Set)
@@ -103,7 +103,7 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
         IActionService actServ = Services.get(IActionService.class);
         
         this.l_serverMsg = new JLabel(state.getServerMessage());
-        this.l_localPlayer = new JLabel(state.getPlayers().get(state.getLocalId()).getName());
+        this.l_localPlayer = new JLabel(state.getPlayers().get(state.getLocalId()).getName(), JLabel.RIGHT);
         this.b_startGame = new JButton(actServ.getAction(ActionDescriptors.ad_startmp));
         
         String lobbyAdminName = state.getPlayers().get(state.getLobbyAdminId()).getName();
@@ -116,12 +116,15 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
         }
         else
         {
-            this.l_remotePlayer = new JLabel();
+            this.l_remotePlayer = new JLabel(Loc.get(LocKey.Label_emptyPlayer));
         }
+        
+        JLabel labelVS = new JLabel(Loc.get(LocKey.Label_vs));
 
-        panel.add(l_serverMsg, "span, push, grow, wrap");
-        panel.add(l_localPlayer, "align left");
-        panel.add(l_remotePlayer, "align right, wrap");
+        panel.add(l_serverMsg, "span 3, grow, wrap");
+        panel.add(l_localPlayer, "align right, sg names");
+        panel.add(labelVS, "align center, gapx 10 10");
+        panel.add(l_remotePlayer, "align left, push, wrap, sg names");
         if (state.getLocalId().equals(state.getLobbyAdminId()))
         {
             panel.add(b_startGame, "spanx, pushx, align right");

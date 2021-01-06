@@ -35,7 +35,7 @@ public class C_ImportExportStateUI extends CommandBase
     }
 
     @Override
-    protected void preExecute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type, State state)
     {
         CheckContext(type, ContextType.UI);
         

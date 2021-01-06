@@ -23,6 +23,8 @@ public final class LocKey
     public static final LocKey Label_servermsg = Label("servermsg");
     public static final LocKey Label_playername = Label("playername");    
     public static final LocKey Label_waitingToStart = Label("waitingtostart");
+    public static final LocKey Label_vs = Label("vs");
+    public static final LocKey Label_emptyPlayer = Label("emptyplayer");
     
     public static final LocKey DialogMessage_connectionlost = DialogMessage("connectionlost");
     public static final LocKey DialogMessage_commandundone = DialogMessage("commandundone");

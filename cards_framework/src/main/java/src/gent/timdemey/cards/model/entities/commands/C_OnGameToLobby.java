@@ -56,7 +56,7 @@ public class C_OnGameToLobby extends CommandBase
     }
 
     @Override
-    public void preExecute(Context context, ContextType type, State state)
+    public void execute(Context context, ContextType type, State state)
     {
         state.setCardGame(null);
         state.setGameState(GameState.Lobby);

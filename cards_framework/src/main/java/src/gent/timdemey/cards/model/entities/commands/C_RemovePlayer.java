@@ -46,7 +46,7 @@ public class C_RemovePlayer extends CommandBase
     }
 
     @Override
-    public void preExecute(Context context, ContextType contextType, State state)
+    public void execute(Context context, ContextType contextType, State state)
     {
         Player player_removed = removePlayer(state, playerId);
 

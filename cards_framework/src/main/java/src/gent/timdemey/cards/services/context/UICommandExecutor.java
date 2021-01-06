@@ -121,7 +121,8 @@ class UICommandExecutor implements ICommandExecutor
         else
         {
             // execute the command here
-            command.preExecute(state);
+            command.execute(state);
+            command.onAccepted(state);
         }
 
         // update the listeners
@@ -129,6 +130,8 @@ class UICommandExecutor implements ICommandExecutor
         {
             execListener.onExecuted();
         }
+        
+        command.onExecuted();
     }
 
     private void HandleReexecutionFails(List<CommandExecution> fails)

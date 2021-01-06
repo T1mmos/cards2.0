@@ -57,7 +57,7 @@ class ServerCommandExecutor extends CommandExecutorBase
             }
             else if (cmdType == CommandType.DEFAULT)
             {
-                command.preExecute(state);
+                command.execute(state);
             }
         }
         else if (resp.execState == ExecutionState.No)

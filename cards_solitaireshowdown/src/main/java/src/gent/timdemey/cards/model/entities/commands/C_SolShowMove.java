@@ -120,7 +120,7 @@ public class C_SolShowMove extends C_Move
     }
 
     @Override
-    protected void preExecute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type, State state)
     {
         CardGame cardGame = state.getCardGame();
         CardStack srcCardStack = cardGame.getCardStack(srcCardStackId);
@@ -190,7 +190,7 @@ public class C_SolShowMove extends C_Move
     }
     
     @Override
-    public void postExecute(Context context, ContextType type, State state)
+    public void onAccepted(Context context, ContextType type, State state)
     {
         CardGame cardGame = state.getCardGame();
         CardStack srcCardStack = cardGame.getCardStack(srcCardStackId);

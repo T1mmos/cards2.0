@@ -67,7 +67,7 @@ public class C_Composite extends CommandBase
             {
                 try
                 {
-                    commands.get(i).preExecute(context, type, state);
+                    commands.get(i).execute(context, type, state);
                 }
                 catch (Exception e)
                 {
@@ -104,11 +104,11 @@ public class C_Composite extends CommandBase
     }
 
     @Override
-    public void preExecute(Context context, ContextType type, State state)
+    public void execute(Context context, ContextType type, State state)
     {
         for (int i = 0; i < commands.size(); i++)
         {
-            commands.get(i).preExecute(context, type, state);
+            commands.get(i).execute(context, type, state);
         }
     }
 

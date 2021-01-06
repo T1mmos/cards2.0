@@ -8,7 +8,7 @@ import gent.timdemey.cards.model.entities.commands.payload.P_TCP_NOK;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.IDialogService;
+import gent.timdemey.cards.services.interfaces.IFrameService;
 
 public class C_TCP_NOK extends CommandBase
 {
@@ -37,7 +37,7 @@ public class C_TCP_NOK extends CommandBase
     }
 
     @Override
-    protected void preExecute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type, State state)
     {
         state.setServer(null);
         state.setTcpConnectionPool(null);  
@@ -56,7 +56,7 @@ public class C_TCP_NOK extends CommandBase
         
         if (title != null && msg != null)
         {
-            Services.get(IDialogService.class).ShowMessage(title, msg);
+            Services.get(IFrameService.class).showMessage(title, msg);
         }
         
         D_Connect cmd_connect = new D_Connect();

@@ -37,7 +37,7 @@ public class C_OnLobbyToGame extends CommandBase
     }
 
     @Override
-    protected void preExecute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type, State state)
     {        
         state.setCardGame(cardGame);
         state.setGameState(GameState.Started);

@@ -45,7 +45,7 @@ public class C_SetVisible extends CommandBase
     }
 
     @Override
-    protected void preExecute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type, State state)
     {
         for (Card card : cards)
         {

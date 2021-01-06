@@ -21,7 +21,7 @@ public class C_FakeSolShowGame extends CommandBase
     }
 
     @Override
-    protected void preExecute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type, State state)
     {
         Player player0 = PlayerHelper.getFixedPlayer(0);
         Player player1 = PlayerHelper.getFixedPlayer(1);

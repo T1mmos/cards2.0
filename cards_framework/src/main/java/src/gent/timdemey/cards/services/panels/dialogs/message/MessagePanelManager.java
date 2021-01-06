@@ -35,8 +35,7 @@ public class MessagePanelManager extends DataPanelManagerBase<MessagePanelData, 
     @Override
     public boolean isPanelCreated()
     {
-        // we can't reuse a message panel
-        return false;
+        return contentPanel != null;
     }
     
     @Override

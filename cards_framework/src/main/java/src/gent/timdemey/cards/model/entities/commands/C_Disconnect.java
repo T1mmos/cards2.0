@@ -9,7 +9,7 @@ import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.IDialogService;
+import gent.timdemey.cards.services.interfaces.IFrameService;
 
 /**
  * Leave the lobby and as such, fully disconnect from the server. All client
@@ -60,7 +60,7 @@ public class C_Disconnect extends CommandBase
     }
 
     @Override
-    protected void preExecute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type, State state)
     {
         CheckContext(type, ContextType.UI);
 
@@ -74,7 +74,11 @@ public class C_Disconnect extends CommandBase
         state.setLobbyAdminId(null);
         state.setServer(null);
         state.setServerMessage(null);
-
+    }
+    
+    @Override
+    public void onExecuted()
+    {
         String title = null;
         String msg = null;        
         switch(reason)
@@ -98,10 +102,10 @@ public class C_Disconnect extends CommandBase
         
         if (title != null && msg != null)
         {
-            Services.get(IDialogService.class).ShowMessage(title, msg);
+            Services.get(IFrameService.class).showMessage(title, msg);
         }
     }
-
+    
     @Override
     public String toDebugString()
     {

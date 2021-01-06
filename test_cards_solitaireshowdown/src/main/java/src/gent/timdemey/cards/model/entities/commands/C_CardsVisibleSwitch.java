@@ -19,7 +19,7 @@ public class C_CardsVisibleSwitch extends CommandBase
     }
 
     @Override
-    protected void preExecute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type, State state)
     {
         SolShowTestState testState = (SolShowTestState) state;
         List<Card> cards = testState.getCardGame().getCards();

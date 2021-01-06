@@ -10,7 +10,7 @@ import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.IDialogService;
+import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.utils.Debug;
 
 public class D_OnReexecutionFail extends DialogCommandBase
@@ -33,7 +33,7 @@ public class D_OnReexecutionFail extends DialogCommandBase
     {
         String title = Loc.get(LocKey.DialogTitle_commandundone);
         String msg = Loc.get(LocKey.DialogMessage_commandundone);
-        Services.get(IDialogService.class).ShowMessage(title, msg);
+        Services.get(IFrameService.class).showMessage(title, msg);
     }
 
     @Override

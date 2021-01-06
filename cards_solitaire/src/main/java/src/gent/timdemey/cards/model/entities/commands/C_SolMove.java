@@ -98,7 +98,7 @@ public class C_SolMove extends C_Move
     }
 
     @Override
-    protected void preExecute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type, State state)
     {
         CardGame cardGame = state.getCardGame();
         CardStack srcCardStack = cardGame.getCardStacks().get(srcCardStackId);

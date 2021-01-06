@@ -37,7 +37,7 @@ public class C_OnLobbyPlayerJoined extends CommandBase
     }
 
     @Override
-    public void preExecute(Context context, ContextType type, State state)
+    public void execute(Context context, ContextType type, State state)
     {
         CheckContext(type, ContextType.UI);
         state.getPlayers().add(player);

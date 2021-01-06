@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -66,6 +67,7 @@ import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.services.panels.PanelInData;
 import gent.timdemey.cards.services.panels.PanelOutData;
+import gent.timdemey.cards.services.panels.dialogs.message.MessagePanelData;
 import net.miginfocom.swing.MigLayout;
 
 public class FrameService implements IFrameService, IPreload
@@ -269,7 +271,7 @@ public class FrameService implements IFrameService, IPreload
     public <IN, OUT> void showPanel(DataPanelDescriptor<IN, OUT> desc, IN data, Consumer<PanelOutData<OUT>> onClose)
     {                
         PanelBase pb = createDialogPanel(desc, data, onClose);
-              
+        
         showInternal(desc, pb, true);
         
         refresh();
@@ -288,13 +290,13 @@ public class FrameService implements IFrameService, IPreload
             {
                 layer = 0;
             }
-            if (desc.panelType == PanelType.Dialog)
+            else if (desc.panelType == PanelType.Dialog)
             {
                 layer = 100 + dialogs.size();
-            }
+            }            
             else if (desc.panelType == PanelType.Overlay)
             {
-                layer = 200 + overlays.size();
+                layer = 300 + overlays.size();
             }
             
             frameBodyPanel.add(pb, "pos 0 0 100% 100%");
@@ -303,7 +305,8 @@ public class FrameService implements IFrameService, IPreload
             frameBodyPanel.validate();
         }
                 
-        // in case of a root panel, all open dialogs, overlays, and current panel are closed
+        // in case of a root panel, all open dialogs, overlays, and current panel are closed.
+        // do not close persistent dialogs
         if (desc.panelType == PanelType.Root)
         {
             while (!dialogs.empty())
@@ -391,7 +394,7 @@ public class FrameService implements IFrameService, IPreload
         IPanelManager panelMgr = panelServ.getPanelManager(op.panelDesc);
         if (!panelMgr.isPanelCreated())
         {
-            throw new IllegalArgumentException("Attempted to hide a panel which has not been created yet");
+            throw new IllegalArgumentException("Attempted to hide a panel which has not been created yet: " + panelType);
         }
         
         PanelBase pb = op.panel;
@@ -697,17 +700,18 @@ public class FrameService implements IFrameService, IPreload
     @Override
     public void showMessage(String title, String message)
     {
-        // todo use title
-        showPanel(PanelDescriptors.MESSAGE, message, c -> {});
+        MessagePanelData payload = new MessagePanelData(title, message);
+        showPanel(PanelDescriptors.MESSAGE, payload, c -> {});
     }
     
     @Override
     public void showInternalError()
     {
-       // String title = Loc.get(LocKey.DialogTitle_generalerror); // todo
+        String title = Loc.get(LocKey.DialogTitle_generalerror);
         String msg = Loc.get(LocKey.DialogMessage_generalerror);
+        MessagePanelData payload = new MessagePanelData(title, msg);
         
-        showPanel(PanelDescriptors.MESSAGE, msg, c -> {});
+        showPanel(PanelDescriptors.MESSAGE, payload, c -> {});
     }    
     
     private <IN, OUT> PanelBase createDialogPanel(DataPanelDescriptor<IN, OUT> desc, IN inData, Consumer<PanelOutData<OUT>> callback)
@@ -717,24 +721,28 @@ public class FrameService implements IFrameService, IPreload
                
         // create the buttons that need to be shown according to the content creator
         EnumSet<PanelButtonType> dbTypes = dpMan.getButtonTypes();
-        Map<PanelButtonType, JButton> buttons = new HashMap<>();        
+        Map<PanelButtonType, JButton> buttons = new HashMap<>();   
+        
+        // function to generate a runnable which is run after the dialog was closed somehow
+        Function<PanelButtonType, Runnable> closeFuncSupplier = (btnType) -> () ->
+        {
+            PanelOutData<OUT> outData = new PanelOutData<>();
+            OUT out = dpMan.onClose(btnType);
+            outData.closeType = btnType;
+            outData.data_out = out;
+            closePanel(PanelType.Dialog);
+            callback.accept(outData);
+        };
+        
+        // prepare the buttons
         for (PanelButtonType dbType : dbTypes)
         {
-            ActionListener action_close = (e) -> 
-            {
-                PanelOutData<OUT> outData = new PanelOutData<>();
-                OUT out = dpMan.onClose(dbType);
-                outData.data_out = out;
-                outData.closeType = dbType;
-                
-                closePanel(PanelType.Dialog);
-                callback.accept(outData);
-            };
+            ActionListener action_close = (e) -> closeFuncSupplier.apply(dbType).run();
+            
             String loctext = Loc.get(dbType.lockey);
             JButton button = new JButton(loctext); 
             
-            button.addActionListener(action_close);
-            
+            button.addActionListener(action_close);            
             buttons.put(dbType, button);            
         }
         
@@ -752,21 +760,14 @@ public class FrameService implements IFrameService, IPreload
             boolean enabled = dpMan.isButtonEnabled(btnType);
             button.setEnabled(enabled);
         }; 
-        panelInData.closeFunc = () -> 
-        {
-            PanelOutData<OUT> outData = new PanelOutData<>();
-            outData.closeType = PanelButtonType.Forced;
-            outData.data_out = null;
-            closePanel(PanelType.Dialog);
-            callback.accept(outData);
-        };
+        panelInData.closeFunc = closeFuncSupplier.apply(PanelButtonType.Forced);
         
+        // let the dialog panel manager load given the input data
         dpMan.load(panelInData);
 
         // create the entire panel, add the custom content and the buttons
         PanelBase dialogPanel = new PanelBase(desc);
-        dialogPanel.setLayout(new MigLayout("insets 0"));
-        
+        dialogPanel.setLayout(new MigLayout("insets 0"));        
         JPanel marginPanel = new RootPanel(getDialogBackgroundImage());        
         marginPanel.setLayout(new MigLayout("insets 20"));
         dialogPanel.add(marginPanel, "hmax 400, align center, push, alignx center, aligny center");

@@ -53,21 +53,40 @@ public abstract class CommandBase extends EntityBase
 
     protected abstract CanExecuteResponse canExecute(Context context, ContextType type, State state);
 
-    public final void preExecute(State state)
+    public final void execute(State state)
     {
         Context context = getContext();
-        preExecute(context, context.getContextType(), state);
+        execute(context, context.getContextType(), state);
     }
 
-    protected abstract void preExecute(Context context, ContextType type, State state);
+    protected abstract void execute(Context context, ContextType type, State state);
 
-    public final void postExecute(State state)
+    /**
+     * Called after {@link #execute(State)} but only after the server has accepted the command.
+     * Commands may implement logic that can only be run client-side after the server confirmed
+     * that the command's logic has been accepted.
+     * <p>A good example is revealing cards of a cardstack only after it was confirmed by the server
+     * that the top card's removal was a valid action.     
+     * @param state
+     */
+    public final void onAccepted(State state)
     {
         Context context = getContext();
-        postExecute(context, context.getContextType(), state);
+        onAccepted(context, context.getContextType(), state);
     }
 
-    public void postExecute(Context context, ContextType type, State state)
+    public void onAccepted(Context context, ContextType type, State state)
+    {
+        // override when necessary
+    }
+    
+    /**
+     * Called after this command's logic ({@link #execute(State)} and {@link #onAccepted(State)}) has completely run
+     * and all execution listeners have been notified.
+     * This method should never alter state, as no execution listeners would be notified about such change(s). For
+     * example, this method can be implemented to spawn a dialog after all listeners have run their logic.
+     */
+    public void onExecuted()
     {
         // override when necessary
     }

@@ -18,7 +18,7 @@ public class C_ClearServerList extends CommandBase
     }
 
     @Override
-    protected void preExecute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type, State state)
     {
         if (type == ContextType.UI)
         {
