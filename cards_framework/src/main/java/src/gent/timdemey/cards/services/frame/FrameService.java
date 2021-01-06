@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.function.Consumer;
 
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -28,6 +29,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 
@@ -169,8 +171,21 @@ public class FrameService implements IFrameService
             frame.setSize(new Dimension(800, 600));
             frame.setMinimumSize(new Dimension(400, 200));
             frame.setLocationRelativeTo(null);
-            frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
             frame.setIconImages(getFrameIcons());
+            
+            // add global actions
+            IActionService actServ = Services.get(IActionService.class);
+            for (ActionDescriptor ad : getFrameActions())
+            {
+                ActionBase action = actServ.getAction(ad);
+                KeyStroke keyStroke = (KeyStroke) action.getValue(Action.ACCELERATOR_KEY);
+                if (keyStroke != null)
+                {
+                    rootPanel.getInputMap().put(keyStroke, ad.id);
+                    rootPanel.getActionMap().put(ad.id, action);
+                }
+            }
         }
         
         return frame;
@@ -446,6 +461,13 @@ public class FrameService implements IFrameService
         return images;
     }
 
+    protected List<ActionDescriptor> getFrameActions()
+    {
+        return Arrays.asList(
+            ActionDescriptors.ad_debugdraw,
+            ActionDescriptors.ad_quit);
+    }
+    
     protected BufferedImage getBackgroundImage()
     {
         IResourceService resServ = Services.get(IResourceService.class);

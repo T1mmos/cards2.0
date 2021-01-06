@@ -8,6 +8,7 @@ import com.alee.laf.button.WebButton;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.services.action.ActionBase;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
@@ -51,7 +52,8 @@ public class MenuPanelManager extends PanelManagerBase
         IActionService actServ = Services.get(IActionService.class);
         for (ActionDescriptor actDesc : actDescs)
         {
-            WebButton button = new WebButton(actServ.getAction(actDesc));
+            ActionBase action = actServ.getAction(actDesc);
+            WebButton button = new WebButton(action);
          //   button.setForeground(Color.black);
             
             button.setContentAreaFilled(false);

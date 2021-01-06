@@ -1,16 +1,12 @@
 package gent.timdemey.cards.services.contract.descriptors;
 
-import javax.swing.KeyStroke;
-
 public class ActionDescriptor
 {
     public final String id;
-    public final KeyStroke accelerator;
     
-    public ActionDescriptor(String id, String accelerator)
+    ActionDescriptor(String id)
     {
         this.id = id;
-        this.accelerator = accelerator != null ? KeyStroke.getKeyStroke(accelerator) : null;
     }
 
     @Override
@@ -45,6 +41,6 @@ public class ActionDescriptor
     @Override
     public String toString()
     {
-        return String.format("ActionDescriptor { id=%s, accelerator=%s }", id, accelerator);  
+        return String.format("ActionDescriptor { id=%s }", id);  
     }
 }

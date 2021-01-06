@@ -4,7 +4,9 @@ import java.awt.Image;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.KeyStroke;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
@@ -112,6 +114,11 @@ public class ActionService implements IActionService
         return action;
     }
     
+    protected final void addShortCut(ActionBase action, String keystroke)
+    {
+        action.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(keystroke));
+    }
+    
     protected ActionBase createAction(ActionDescriptor desc)
     {
         IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
@@ -122,7 +129,11 @@ public class ActionService implements IActionService
         }
         else if (desc == ActionDescriptors.ad_debugdraw)
         {
-            return new ActionBase(desc, Loc.get(LocKey.DebugMenu_debug));
+            ActionBase action = new ActionBase(desc, Loc.get(LocKey.DebugMenu_debug));
+            
+            addShortCut(action, "ctrl D");
+            
+            return action;
         }
         else if (desc == ActionDescriptors.ad_gc)
         {
@@ -158,7 +169,11 @@ public class ActionService implements IActionService
         {
             ImageIcon img_close = getImageIcon(resLocServ.getAppCloseIconFilePath());
             ImageIcon img_close_rollover = getImageIcon(resLocServ.getAppCloseRolloverIconFilePath());
-            return new ActionBase(desc, Loc.get(LocKey.Menu_quit), img_close, img_close_rollover);
+            ActionBase action = new ActionBase(desc, Loc.get(LocKey.Menu_quit), img_close, img_close_rollover);
+            
+            addShortCut(action, "alt F4");
+            
+            return action;
         }
         else if (desc == ActionDescriptors.ad_redo)
         {

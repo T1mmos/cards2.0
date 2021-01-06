@@ -2,5 +2,5 @@ package gent.timdemey.cards.readonlymodel;
 
 public interface IStateListener
 {
-    public void onChange(ReadOnlyChange roChange); // todo parameters etc.
+    public void onChange(ReadOnlyChange roChange);
 }

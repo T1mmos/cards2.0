@@ -1,5 +1,8 @@
 package gent.timdemey.cards.services.action;
 
+import javax.swing.Action;
+import javax.swing.KeyStroke;
+
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.commands.C_CardsVisibleSwitch;
 import gent.timdemey.cards.model.entities.commands.C_FakeSolShowGame;
@@ -15,7 +18,9 @@ public class SolShowTestActionService extends ActionService
     {
         if (desc == SolShowTestActionDescriptors.ad_fakegame)
         {
-            return new ActionBase(desc, "Fake SolShow Game"); 
+            ActionBase action = new ActionBase(desc, "Fake SolShow Game"); 
+            action.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl F"));
+            return action;
         }
         else if (desc == SolShowTestActionDescriptors.ad_switchcvis)
         {
