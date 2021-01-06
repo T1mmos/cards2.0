@@ -1,8 +1,8 @@
-package gent.timdemey.cards.services.configman;
+package gent.timdemey.cards.services.config;
 
-import gent.timdemey.cards.services.interfaces.IConfigManager;
+import gent.timdemey.cards.services.interfaces.IConfigService;
 
-public class ConfigManager implements IConfigManager
+public class ConfigService implements IConfigService
 {
     @SuppressWarnings("unchecked")
     @Override

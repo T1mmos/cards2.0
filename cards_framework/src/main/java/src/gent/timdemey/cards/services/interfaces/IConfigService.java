@@ -1,8 +1,8 @@
 package gent.timdemey.cards.services.interfaces;
 
-import gent.timdemey.cards.services.configman.ConfigKey;
+import gent.timdemey.cards.services.config.ConfigKey;
 
-public interface IConfigManager
+public interface IConfigService
 {
     public <T> T get(ConfigKey<T> key);
 }

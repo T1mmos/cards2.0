@@ -11,13 +11,13 @@ import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.serialization.SerializationService;
 import gent.timdemey.cards.services.action.ActionService;
-import gent.timdemey.cards.services.configman.ConfigManager;
+import gent.timdemey.cards.services.config.ConfigService;
 import gent.timdemey.cards.services.context.CommandNetworkService;
 import gent.timdemey.cards.services.context.ContextService;
 import gent.timdemey.cards.services.frame.FrameService;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IAnimationService;
-import gent.timdemey.cards.services.interfaces.IConfigManager;
+import gent.timdemey.cards.services.interfaces.IConfigService;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.INetworkService;
@@ -127,7 +127,7 @@ public class Start
     {
         Services services = App.getServices();
       
-        services.installIfAbsent(IConfigManager.class, () -> new ConfigManager());
+        services.installIfAbsent(IConfigService.class, () -> new ConfigService());
         services.installIfAbsent(IContextService.class, () -> new ContextService());
         services.installIfAbsent(IScalingService.class, () -> new ScalingService());
         services.installIfAbsent(IResourceService.class, () -> new ResourceService());

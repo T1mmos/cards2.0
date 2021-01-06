@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.configman;
+package gent.timdemey.cards.services.config;
 
 import java.util.EnumSet;
 

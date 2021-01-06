@@ -217,6 +217,7 @@ public final class ScalingService implements IScalingService
         return getComponentsAtStream(p).collect(Collectors.toList());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends IScalableComponent> List<T> getComponentsAt(Point p, Class<T> clazz)
     {
