@@ -29,7 +29,7 @@ public class StartUI
         }
         
         // WebLAF
-       WebLookAndFeel.install(WebDarkSkin.class);
+        WebLookAndFeel.install(WebDarkSkin.class);
         
         // let all services preload
         Services.preload();

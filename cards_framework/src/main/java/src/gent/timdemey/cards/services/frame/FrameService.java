@@ -773,11 +773,9 @@ public class FrameService implements IFrameService, IPreload
         {
             // dialog title
             String title = dpMan.createTitle();
-            JLabel titleLabel = new JLabel(title);
+            JLabel titleLabel = new JLabel(" - " + title + " - ");
             titleLabel.setFont(dialogTitleFont);
-            titleLabel.setBackground(Color.GRAY);
-         //   titleLabel.setOpaque(true);
-            marginPanel.add(titleLabel, "gapy 0 20, pushx, wrap");
+            marginPanel.add(titleLabel, "gapy 0 20, pushx, alignx center, wrap");
             
             // content panel provided by the manager
             PanelBase contentPanel = dpMan.createPanel();

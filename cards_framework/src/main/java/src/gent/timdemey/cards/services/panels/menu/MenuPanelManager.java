@@ -44,17 +44,12 @@ public class MenuPanelManager extends PanelManagerBase
         List<ActionDescriptor> actDescs = getMenuActionDescriptors();
 
         MenuButtonMouseListener listener = new MenuButtonMouseListener();
-        IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
-        IResourceService resServ = Services.get(IResourceService.class);
-        
-        Font font = resServ.getFont(resLocServ.getMenuFontFilePath()).raw.deriveFont(30f);
-
+            
         IActionService actServ = Services.get(IActionService.class);
         for (ActionDescriptor actDesc : actDescs)
         {
             ActionBase action = actServ.getAction(actDesc);
             WebButton button = new WebButton(action);
-         //   button.setForeground(Color.black);
             
             button.setContentAreaFilled(false);
             button.setFocusPainted(false);
@@ -62,7 +57,6 @@ public class MenuPanelManager extends PanelManagerBase
             button.setBorderPainted(false);
             button.setOpaque(false);
             button.addMouseListener(listener);
-      //     button.setFont(font);
             button.setIcon(null); // no icon in menu list
 
             menuPanel.add(button, "sg buts, wrap");
