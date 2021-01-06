@@ -1,5 +1,6 @@
 package gent.timdemey.cards.services.interfaces;
 
+import java.awt.GraphicsDevice;
 import java.util.function.Consumer;
 
 import javax.swing.JFrame;
@@ -25,6 +26,7 @@ public interface IFrameService
     public boolean isSnapped();
     public boolean isSnapped(SnapSide ... snapsides);
     public void snap(SnapSide ... snapsides);
+    public void snap(GraphicsDevice device, SnapSide ... snapsides);
     public void unsnap();
     
     public void setDrawDebug(boolean on);

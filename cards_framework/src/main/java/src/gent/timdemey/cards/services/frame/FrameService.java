@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
+import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -484,8 +485,12 @@ public class FrameService implements IFrameService
     }
     
     @Override
-    public void snap(SnapSide ... snapsides)
+    public void snap(GraphicsDevice device, SnapSide... snapsides)
     {
+        if (device == null)
+        {
+            throw new IllegalArgumentException("device");
+        }
         if (snapsides == null || snapsides.length == 0)
         {
             throw new IllegalArgumentException("snapsides");
@@ -507,7 +512,7 @@ public class FrameService implements IFrameService
         }
 
         saveBounds();
-        Rectangle maxBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+        Rectangle maxBounds = device.getDefaultConfiguration().getBounds();
         
         if (snapTop && !snapLeft && !snapRight)
         {           
@@ -522,28 +527,28 @@ public class FrameService implements IFrameService
             int x, y, w, h;
             if (snapTop) 
             {
-                y = 0;
+                y = maxBounds.y;
                 h = maxBounds.height / 2;
             }
             else if (snapBottom)
             {
-                y = maxBounds.height / 2;
+                y = maxBounds.y + maxBounds.height / 2;
                 h = maxBounds.height / 2;
             }
             else
             {
-                y = 0;
+                y = maxBounds.y;
                 h = maxBounds.height;
             }
             
             if (snapLeft)
             {
-                x = 0;
+                x = maxBounds.x;
                 w = maxBounds.width / 2;
             }
             else // snapRight
             {
-                x = maxBounds.width / 2;
+                x = maxBounds.x + maxBounds.width / 2;
                 w = maxBounds.width / 2;
             }
 
@@ -551,6 +556,13 @@ public class FrameService implements IFrameService
         }
         
         snaps = snapsides_list;
+    }
+    
+    @Override
+    public void snap(SnapSide ... snapsides)
+    {
+        GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        snap(device, snapsides);
     }
 
     @Override
@@ -627,26 +639,7 @@ public class FrameService implements IFrameService
     
     @Override
     public void setBounds(int x, int y, int w, int h)
-    {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        
-        if (x < 0)
-        {
-            x = 0;
-        }
-        if (y < 0)
-        {
-            y = 0;
-        }
-        if (x + w >= screenSize.width)
-        {
-            x = screenSize.width - w;
-        }
-        if (y + h >= screenSize.height)
-        {
-            y = screenSize.height - h;
-        }
-        
+    {         
         frame.setBounds(x, y, w, h);
     }
 
