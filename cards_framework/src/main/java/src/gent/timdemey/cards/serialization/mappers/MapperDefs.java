@@ -93,6 +93,7 @@ public final class MapperDefs implements IMapper
             }
         }
 
+        @SuppressWarnings("unchecked")
         MappingFunction<SRC, DST> func = (MappingFunction<SRC, DST>) _mappers.get(bestKey);
         
         if (func == null)
@@ -108,12 +109,5 @@ public final class MapperDefs implements IMapper
     {
         MappersKey key = new MappersKey(srcClazz, dstClazz);
         _mappers.put(key, mappingFunc);
-    }
-
-    private <SRC, DST> MappingFunction<SRC, DST> getMapping(Class<SRC> src, Class<DST> dst)
-    {
-        MappersKey key = new MappersKey(src, dst);
-        MappingFunction<SRC, DST> mappingFunc = (MappingFunction<SRC, DST>) _mappers.get(key);
-        return mappingFunc;
     }
 }

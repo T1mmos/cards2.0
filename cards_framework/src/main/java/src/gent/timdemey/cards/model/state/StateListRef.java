@@ -143,6 +143,7 @@ public class StateListRef<X> extends StateRef<X> implements List<X>
         boolean removed = list.remove(o);
         if(removed)
         {
+            @SuppressWarnings("unchecked")
             X x = (X) o;
             getChangeTracker().recordListRemove(this, x);
         }
@@ -168,6 +169,7 @@ public class StateListRef<X> extends StateRef<X> implements List<X>
         {
             for (Object o : c)
             {
+                @SuppressWarnings("unchecked")
                 X x = (X) o;
                 getChangeTracker().recordListRemove(this, x);
             }

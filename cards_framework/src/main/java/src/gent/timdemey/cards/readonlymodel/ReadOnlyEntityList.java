@@ -65,6 +65,7 @@ public class ReadOnlyEntityList<T extends ReadOnlyEntityBase<?>> extends ReadOnl
         return ts;
     }
 
+    @SuppressWarnings("unchecked")
     public List<T> getExcept(StateValueRef<UUID>... excluded)
     {
         UUID[] exclIds = new UUID[excluded.length];
@@ -79,6 +80,6 @@ public class ReadOnlyEntityList<T extends ReadOnlyEntityBase<?>> extends ReadOnl
 
     public boolean contains(UUID id)
     {
-        return wrappee.contains(id);
+        return wrappee.stream().anyMatch(t -> t.getId().equals(id));
     }
 }

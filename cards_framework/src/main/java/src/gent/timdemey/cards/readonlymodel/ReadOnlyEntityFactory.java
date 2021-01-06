@@ -28,13 +28,11 @@ public class ReadOnlyEntityFactory
     private static class EntityConverter
     {
         private final Class<?> srcClazz;
-        private final Class<?> dstClazz;
         private final Function<? super EntityBase, Object> mapperFunc;
 
-        private EntityConverter(Class<?> srcClazz, Class<?> dstClazz, Function<? super EntityBase, Object> mapperFunc)
+        private EntityConverter(Class<?> srcClazz, Function<? super EntityBase, Object> mapperFunc)
         {
             this.srcClazz = srcClazz;
-            this.dstClazz = dstClazz;
             this.mapperFunc = mapperFunc;
         }
     }
@@ -43,24 +41,24 @@ public class ReadOnlyEntityFactory
 
     static
     {
-        addConverter(Card.class, ReadOnlyCard.class, ReadOnlyEntityFactory::getOrCreateCard);
-        addConverter(CardStack.class, ReadOnlyCardStack.class, ReadOnlyEntityFactory::getOrCreateCardStack);
-        addConverter(CardGame.class, ReadOnlyCardGame.class, ReadOnlyEntityFactory::getOrCreateCardGame);
-        addConverter(State.class, ReadOnlyState.class, ReadOnlyEntityFactory::getOrCreateState);
-        addConverter(CommandHistory.class, ReadOnlyCommandHistory.class, ReadOnlyEntityFactory::getOrCreateCommandHistory);
-        addConverter(Player.class, ReadOnlyPlayer.class, ReadOnlyEntityFactory::getOrCreatePlayer);
-        addConverter(Server.class, ReadOnlyServer.class, ReadOnlyEntityFactory::getOrCreateServer);
-        addConverter(UDPServer.class, ReadOnlyUDPServer.class, ReadOnlyEntityFactory::getOrCreateUDPServer);
-        addConverter(CommandExecution.class, ReadOnlyCommandExecution.class, ReadOnlyEntityFactory::getOrCreateCommandExecution);
+        addConverter(Card.class, ReadOnlyEntityFactory::getOrCreateCard);
+        addConverter(CardStack.class, ReadOnlyEntityFactory::getOrCreateCardStack);
+        addConverter(CardGame.class, ReadOnlyEntityFactory::getOrCreateCardGame);
+        addConverter(State.class, ReadOnlyEntityFactory::getOrCreateState);
+        addConverter(CommandHistory.class, ReadOnlyEntityFactory::getOrCreateCommandHistory);
+        addConverter(Player.class, ReadOnlyEntityFactory::getOrCreatePlayer);
+        addConverter(Server.class, ReadOnlyEntityFactory::getOrCreateServer);
+        addConverter(UDPServer.class, ReadOnlyEntityFactory::getOrCreateUDPServer);
+        addConverter(CommandExecution.class, ReadOnlyEntityFactory::getOrCreateCommandExecution);
     }
 
     private static final Map<Class<?>, Map<UUID, ? extends ReadOnlyEntityBase<?>>> entities = new HashMap<>();
 
-    private static <S extends EntityBase, T extends ReadOnlyEntityBase<S>> void addConverter(Class<S> entityClazz, Class<T> roEntityClazz,
-            Function<? super S, ? extends T> mapperFunc)
+    private static <S extends EntityBase, T extends ReadOnlyEntityBase<S>> void addConverter(Class<S> entityClazz, Function<? super S, ? extends T> mapperFunc)
     {
+        @SuppressWarnings("unchecked")
         Function<? super EntityBase, Object> rawMapperFunc = (Function<? super EntityBase, Object>) mapperFunc;
-        EntityConverter converter = new EntityConverter((Class<?>) entityClazz, (Class<?>) roEntityClazz, rawMapperFunc);
+        EntityConverter converter = new EntityConverter((Class<?>) entityClazz, rawMapperFunc);
         CONVERTORS.add(converter);
     }
 
@@ -232,6 +230,7 @@ public class ReadOnlyEntityFactory
 
     public static <T extends ReadOnlyEntityBase<?>> T getEntity(Class<T> clazz, UUID id)
     {
+        @SuppressWarnings("unchecked")
         Map<UUID, ReadOnlyEntityBase<?>> typedEntities = (Map<UUID, ReadOnlyEntityBase<?>>) entities.get(clazz);
 
         if (typedEntities == null)
@@ -239,6 +238,7 @@ public class ReadOnlyEntityFactory
             throw new IllegalArgumentException("No registered instances of class " + clazz);
         }
 
+        @SuppressWarnings("unchecked")
         T roEntity = (T) typedEntities.get(id);
 
         if (roEntity == null)
@@ -256,6 +256,7 @@ public class ReadOnlyEntityFactory
             return null;
         }
 
+        @SuppressWarnings("unchecked")
         Map<UUID, ReadOnlyEntityBase<S>> typedEntities = (Map<UUID, ReadOnlyEntityBase<S>>) entities.get(entity.getClass());
 
         if (typedEntities == null)
@@ -264,6 +265,7 @@ public class ReadOnlyEntityFactory
             entities.put(entity.getClass(), typedEntities);
         }
 
+        @SuppressWarnings("unchecked")
         T roEntity = (T) typedEntities.get(entity.id);
 
         if (roEntity != null && roEntity.entity != entity)

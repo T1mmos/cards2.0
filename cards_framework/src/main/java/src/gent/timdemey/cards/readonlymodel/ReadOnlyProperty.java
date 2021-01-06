@@ -93,6 +93,7 @@ public class ReadOnlyProperty<T>
         return roProperty;
     }
     
+    @SuppressWarnings("unchecked")
     public TypedChange<T> cast(ReadOnlyChange change)
     {
         if (change.property != this)

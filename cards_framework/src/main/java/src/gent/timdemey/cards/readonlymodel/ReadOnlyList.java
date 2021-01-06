@@ -43,12 +43,12 @@ public class ReadOnlyList<T> implements List<T>
     {
         return wrappee.toArray();
     }
-
+    
     @Override
-    public <T> T[] toArray(T[] a)
+    public <U> U[] toArray(U[] a) 
     {
         return wrappee.toArray(a);
-    }
+    };
 
     @Override
     public boolean add(T e)
