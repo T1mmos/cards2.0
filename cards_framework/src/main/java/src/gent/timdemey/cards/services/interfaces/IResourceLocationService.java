@@ -5,8 +5,6 @@ import gent.timdemey.cards.model.entities.cards.Value;
 
 public interface IResourceLocationService
 {
-    public String getAppBackgroundImageFilePath();
-    
     public String getCardFrontFilePath(Suit suit, Value value);    
     public String getCardBackFilePath();
     
@@ -19,7 +17,11 @@ public interface IResourceLocationService
     public String getAppUnmaximizeRolloverIconFilePath();
     public String getAppCloseIconFilePath();
     public String getAppCloseRolloverIconFilePath();
-    public String getAppTitleFontFilePath();
+    public String getAppTitleFontFilePath();  
+    public String getAppBackgroundImageFilePath();
     
-    public String getMenuFontFilePath();    
+    public String getDialogBackgroundImageFilePath();
+    public String getDialogTitleFontFilePath();  
+    
+    public String getMenuFontFilePath();
 }

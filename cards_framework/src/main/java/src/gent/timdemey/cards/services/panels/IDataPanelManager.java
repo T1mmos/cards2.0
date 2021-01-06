@@ -8,4 +8,6 @@ public interface IDataPanelManager<IN, OUT> extends IPanelManager
     public void load(PanelInData<IN> inData);
     public OUT onClose(PanelButtonType dbType);
     public boolean isButtonEnabled(PanelButtonType dbType);
+    
+    public String createTitle();
 }

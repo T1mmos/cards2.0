@@ -49,6 +49,9 @@ import gent.timdemey.cards.services.contract.descriptors.DataPanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelType;
+import gent.timdemey.cards.services.contract.preload.IPreload;
+import gent.timdemey.cards.services.contract.preload.PreloadOrder;
+import gent.timdemey.cards.services.contract.preload.PreloadOrderType;
 import gent.timdemey.cards.services.contract.res.FontResource;
 import gent.timdemey.cards.services.contract.res.ImageResource;
 import gent.timdemey.cards.services.interfaces.IActionService;
@@ -65,38 +68,39 @@ import gent.timdemey.cards.services.panels.PanelInData;
 import gent.timdemey.cards.services.panels.PanelOutData;
 import net.miginfocom.swing.MigLayout;
 
-public class FrameService implements IFrameService
+public class FrameService implements IFrameService, IPreload
 {  
     private JFrame frame;
-    private RootPanel rootPanel;
-    private JLayeredPane cardPanel;
-    private JPanel titlePanel;
-    private boolean drawDebug = false;
-    private JButton title_minimize;
+    private RootPanel framePanel;
+    private JPanel frameTitlePanel;
+    private JLayeredPane frameBodyPanel;
     private JButton title_maximize; 
     private JButton title_unmaximize;
-    private JButton title_close;
+    private Font frameTitleFont;
+    private Font dialogTitleFont;
+    
+    private boolean drawDebug = false;
 
     private Rectangle prevBounds;
     private List<SnapSide> snaps = null;
     private Border frameBorder;
     private RootPanelMouseListener rpMouseListener;
     
-    private static class OpenPanel
+    private static class PanelTracker
     {
         private final PanelDescriptor panelDesc;
         private final PanelBase panel;
         
-        private OpenPanel(PanelDescriptor panelDesc, PanelBase panel)
+        private PanelTracker(PanelDescriptor panelDesc, PanelBase panel)
         {
             this.panelDesc = panelDesc;
             this.panel = panel;
         }
     }
     
-    private OpenPanel currPanel = null;
-    private Stack<OpenPanel> dialogs = new Stack<>();
-    private Stack<OpenPanel> overlays  = new Stack<>();
+    private PanelTracker currPanel = null;
+    private Stack<PanelTracker> dialogs = new Stack<>();
+    private Stack<PanelTracker> overlays  = new Stack<>();
         
     private JButton createFrameButton(ActionDescriptor desc)
     {
@@ -113,58 +117,67 @@ public class FrameService implements IFrameService
         return button;
     }
     
+    @PreloadOrder(order = PreloadOrderType.DEPENDENT)
+    public void preload()
+    {
+        IResourceService resServ = Services.get(IResourceService.class);
+        IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
+        
+        String frameTitleFontName = resLocServ.getAppTitleFontFilePath();
+        FontResource res_frameTitleFont = resServ.getFont(frameTitleFontName);
+        frameTitleFont = res_frameTitleFont.raw.deriveFont(40f);
+        
+        String dialogTitleFontName = resLocServ.getDialogTitleFontFilePath();
+        FontResource res_dialogTitleFont = resServ.getFont(dialogTitleFontName);
+        dialogTitleFont = res_dialogTitleFont.raw.deriveFont(20f);
+    }
+    
     @Override
     public JFrame getFrame()
     {
         if (frame == null)
         {
-            IResourceService resServ = Services.get(IResourceService.class);
-            IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
-            String fontName = resLocServ.getAppTitleFontFilePath();
-            FontResource resp_font = resServ.getFont(fontName);
-            Font titlefont = resp_font.raw.deriveFont(40f);
-            
             frame = new JFrame();
                                     
             BufferedImage bg = getBackgroundImage();
-            rootPanel = new RootPanel(bg);
+            framePanel = new RootPanel(bg);
             frameBorder = BorderFactory.createLineBorder(Color.gray, 1, false);
-            rootPanel.setBorder(frameBorder);
-            rootPanel.setLayout(new MigLayout("insets 5, gapy 0"));
+            framePanel.setBorder(frameBorder);
+            framePanel.setLayout(new MigLayout("insets 5, gapy 0"));
             rpMouseListener = new RootPanelMouseListener();
-            rootPanel.addMouseListener(rpMouseListener);    
-            rootPanel.addMouseMotionListener(rpMouseListener);
-            frame.setContentPane(rootPanel);
+            framePanel.addMouseListener(rpMouseListener);    
+            framePanel.addMouseMotionListener(rpMouseListener);
+            frame.setContentPane(framePanel);
             
-            titlePanel = new JPanel();
-            titlePanel.setLayout(new MigLayout("insets 0, hidemode 3"));
-            titlePanel.setOpaque(false);
+            frameTitlePanel = new JPanel();
+            frameTitlePanel.setLayout(new MigLayout("insets 0, hidemode 3"));
+            frameTitlePanel.setOpaque(false);
             JLabel title_icon = new JLabel(new ImageIcon(getFrameIcons().get(1)));
             JLabel title_text = new JLabel(getTitle());
-            title_minimize = createFrameButton(ActionDescriptors.ad_minimize);         
+            JButton title_minimize = createFrameButton(ActionDescriptors.ad_minimize);         
             title_unmaximize = createFrameButton(ActionDescriptors.ad_unmaximize);
             title_maximize = createFrameButton(ActionDescriptors.ad_maximize);
-            title_close = createFrameButton(ActionDescriptors.ad_quit);
+            JButton title_close = createFrameButton(ActionDescriptors.ad_quit);
                         
-            title_text.setFont(titlefont);
+            title_text.setFont(frameTitleFont);
             title_text.setForeground(Color.white.darker());
-            titlePanel.add(title_icon, "gapx 10, left");
-            titlePanel.add(title_text, "gapx 10, pushx, left");
-            titlePanel.add(title_minimize, "align center top, gapright 5");
-            titlePanel.add(title_maximize, "align center top, gapright 5");
-            titlePanel.add(title_unmaximize, "align center top, gapright 5");
-            titlePanel.add(title_close, "align center top");
+            frameTitlePanel.add(title_icon, "gapx 10, left");
+            frameTitlePanel.add(title_text, "gapx 10, pushx, left");
+            frameTitlePanel.add(title_minimize, "align center top, gapright 5");
+            frameTitlePanel.add(title_maximize, "align center top, gapright 5");
+            frameTitlePanel.add(title_unmaximize, "align center top, gapright 5");
+            frameTitlePanel.add(title_close, "align center top");
             TitlePanelMouseListener tpMouseListener = new TitlePanelMouseListener();
-            titlePanel.addMouseListener(tpMouseListener);
-            titlePanel.addMouseMotionListener(tpMouseListener);
-            rootPanel.add(titlePanel, "pushx, grow, wrap");
+            frameTitlePanel.addMouseListener(tpMouseListener);
+            frameTitlePanel.addMouseMotionListener(tpMouseListener);
+            framePanel.add(frameTitlePanel, "pushx, grow, wrap");
             
             title_unmaximize.setVisible(false);
             
-            cardPanel = new JLayeredPane();
-            cardPanel.setLayout(new MigLayout());
-            cardPanel.addComponentListener(new CardPanelResizeListener());
-            rootPanel.add(cardPanel, "push, grow");
+            frameBodyPanel = new JLayeredPane();
+            frameBodyPanel.setLayout(new MigLayout());
+            frameBodyPanel.addComponentListener(new CardPanelResizeListener());
+            framePanel.add(frameBodyPanel, "push, grow");
                         
             frame.setTitle(getTitle());
             frame.setUndecorated(true);
@@ -182,8 +195,8 @@ public class FrameService implements IFrameService
                 KeyStroke keyStroke = (KeyStroke) action.getValue(Action.ACCELERATOR_KEY);
                 if (keyStroke != null)
                 {
-                    rootPanel.getInputMap().put(keyStroke, ad.id);
-                    rootPanel.getActionMap().put(ad.id, action);
+                    framePanel.getInputMap().put(keyStroke, ad.id);
+                    framePanel.getActionMap().put(ad.id, action);
                 }
             }
         }
@@ -194,7 +207,7 @@ public class FrameService implements IFrameService
     
     private PanelBase get(PanelDescriptor desc)
     {
-        for (Component comp : cardPanel.getComponents())
+        for (Component comp : frameBodyPanel.getComponents())
         {
             if (comp instanceof PanelBase)
             {
@@ -215,13 +228,13 @@ public class FrameService implements IFrameService
         IPanelService panelServ = Services.get(IPanelService.class);
         IPanelManager panelMgr = panelServ.getPanelManager(desc);
         
-        JComponent comp = panelMgr.get();
-        if (comp.getParent() != cardPanel)
+        JComponent comp = panelMgr.getPanel();
+        if (comp.getParent() != frameBodyPanel)
         {
             throw new IllegalStateException("The component is not a child of the card panel");
         }
         
-        cardPanel.remove(comp);        
+        frameBodyPanel.remove(comp);        
     }
     
     @Override
@@ -240,7 +253,7 @@ public class FrameService implements IFrameService
         if (pb == null)
         {
             add = true;
-            pb = panelMgr.create();
+            pb = panelMgr.createPanel();
             if (pb.getParent() != null)
             {
                 throw new IllegalStateException("The component to add already has a parent!");
@@ -255,7 +268,8 @@ public class FrameService implements IFrameService
     @Override
     public <IN, OUT> void showPanel(DataPanelDescriptor<IN, OUT> desc, IN data, Consumer<PanelOutData<OUT>> onClose)
     {                
-        PanelBase pb = createDialog(desc, data, onClose);
+        PanelBase pb = createDialogPanel(desc, data, onClose);
+              
         showInternal(desc, pb, true);
         
         refresh();
@@ -270,7 +284,7 @@ public class FrameService implements IFrameService
         if (add)
         {
             int layer = 0;
-            if (desc.panelType == PanelType.Overlay)
+            if (desc.panelType == PanelType.Root)
             {
                 layer = 0;
             }
@@ -283,10 +297,10 @@ public class FrameService implements IFrameService
                 layer = 200 + overlays.size();
             }
             
-            cardPanel.add(pb, "pos 0 0 100% 100%");
-            cardPanel.setLayer(pb, layer);
-            cardPanel.invalidate();
-            cardPanel.validate();
+            frameBodyPanel.add(pb, "pos 0 0 100% 100%");
+            frameBodyPanel.setLayer(pb, layer);
+            frameBodyPanel.invalidate();
+            frameBodyPanel.validate();
         }
                 
         // in case of a root panel, all open dialogs, overlays, and current panel are closed
@@ -304,7 +318,7 @@ public class FrameService implements IFrameService
             {
                 closePanelInternal(PanelType.Root);
             }
-            currPanel = new OpenPanel(desc, pb);
+            currPanel = new PanelTracker(desc, pb);
         }
         else if (desc.panelType == PanelType.Dialog)
         {
@@ -315,20 +329,20 @@ public class FrameService implements IFrameService
             }
             else
             {
-                OpenPanel below = dialogs.peek();
+                PanelTracker below = dialogs.peek();
                 below.panel.setVisible(false);
                 panelServ.getPanelManager(below.panelDesc).onHidden();
             }
             
-            dialogs.push(new OpenPanel(desc, pb));
+            dialogs.push(new PanelTracker(desc, pb));
         }
         else if (desc.panelType == PanelType.Overlay)
         {
-            overlays.push(new OpenPanel(desc, pb));
+            overlays.push(new PanelTracker(desc, pb));
         }
         
         // show the panel and notify its manager
-        panelMgr.get().setVisible(true);
+        panelMgr.getPanel().setVisible(true);
         panelMgr.onShown();
     }    
     
@@ -345,16 +359,16 @@ public class FrameService implements IFrameService
     
     private void refresh()
     {
-        cardPanel.invalidate();
-        cardPanel.validate();
-        cardPanel.repaint();
+        frameBodyPanel.invalidate();
+        frameBodyPanel.validate();
+        frameBodyPanel.repaint();
     }
     
     private void closePanelInternal(PanelType panelType)
     {
         IPanelService panelServ = Services.get(IPanelService.class);
 
-        OpenPanel op;
+        PanelTracker op;
         if (panelType == PanelType.Dialog && !dialogs.isEmpty())
         {
             op = dialogs.pop();
@@ -375,7 +389,7 @@ public class FrameService implements IFrameService
                 
         // the panel should exist
         IPanelManager panelMgr = panelServ.getPanelManager(op.panelDesc);
-        if (!panelMgr.isCreated())
+        if (!panelMgr.isPanelCreated())
         {
             throw new IllegalArgumentException("Attempted to hide a panel which has not been created yet");
         }
@@ -394,12 +408,12 @@ public class FrameService implements IFrameService
         }
         else 
         {
-            cardPanel.remove(pb);
+            frameBodyPanel.remove(pb);
             
             // make topmost dialog visible again
             if (!dialogs.isEmpty())
             {
-                OpenPanel topmost = dialogs.peek();
+                PanelTracker topmost = dialogs.peek();
                 topmost.panel.setVisible(true);
                 panelServ.getPanelManager(topmost.panelDesc).onShown();
             }
@@ -425,9 +439,9 @@ public class FrameService implements IFrameService
         for (PanelDescriptor pd : pDescs)
         {
             IPanelManager pMan = panelServ.getPanelManager(pd);
-            if (pMan.isCreated())
+            if (pMan.isPanelCreated())
             {
-                JComponent comp = pMan.get();
+                JComponent comp = pMan.getPanel();
                 comp.repaint();
             }
         }
@@ -473,6 +487,15 @@ public class FrameService implements IFrameService
         IResourceService resServ = Services.get(IResourceService.class);
         IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
         String bgpath = resLocServ.getAppBackgroundImageFilePath();
+        BufferedImage background = resServ.getImage(bgpath).raw;
+        return background;
+    }
+    
+    protected BufferedImage getDialogBackgroundImage()
+    {
+        IResourceService resServ = Services.get(IResourceService.class);
+        IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
+        String bgpath = resLocServ.getDialogBackgroundImageFilePath();
         BufferedImage background = resServ.getImage(bgpath).raw;
         return background;
     }
@@ -625,15 +648,15 @@ public class FrameService implements IFrameService
     {
         if (maximized)
         {
-            rootPanel.removeMouseListener(rpMouseListener);    
-            rootPanel.removeMouseMotionListener(rpMouseListener);
-            rootPanel.setBorder(null);
+            framePanel.removeMouseListener(rpMouseListener);    
+            framePanel.removeMouseMotionListener(rpMouseListener);
+            framePanel.setBorder(null);
         }
         else
         {
-            rootPanel.addMouseListener(rpMouseListener);    
-            rootPanel.addMouseMotionListener(rpMouseListener);
-            rootPanel.setBorder(frameBorder);
+            framePanel.addMouseListener(rpMouseListener);    
+            framePanel.addMouseMotionListener(rpMouseListener);
+            framePanel.setBorder(frameBorder);
         }
                 
         title_maximize.setVisible(!maximized);
@@ -668,7 +691,7 @@ public class FrameService implements IFrameService
     public void updatePositionService()
     {
         IPositionService posServ = Services.get(IPositionService.class);
-        posServ.setMaxSize(cardPanel.getWidth(), cardPanel.getHeight());
+        posServ.setMaxSize(frameBodyPanel.getWidth(), frameBodyPanel.getHeight());
     }
     
     @Override
@@ -687,7 +710,7 @@ public class FrameService implements IFrameService
         showPanel(PanelDescriptors.MESSAGE, msg, c -> {});
     }    
     
-    private <IN, OUT> PanelBase createDialog(DataPanelDescriptor<IN, OUT> desc, IN inData, Consumer<PanelOutData<OUT>> callback)
+    private <IN, OUT> PanelBase createDialogPanel(DataPanelDescriptor<IN, OUT> desc, IN inData, Consumer<PanelOutData<OUT>> callback)
     {
         IPanelService panelServ = Services.get(IPanelService.class);
         IDataPanelManager<IN, OUT> dpMan = panelServ.getPanelManager(desc);
@@ -711,14 +734,13 @@ public class FrameService implements IFrameService
             JButton button = new JButton(loctext); 
             
             button.addActionListener(action_close);
-            button.setMinimumSize(new Dimension(75, 20));
             
             buttons.put(dbType, button);            
         }
         
         // prepare the incoming data
         PanelInData<IN> panelInData = new PanelInData<>();
-        panelInData.data_in = inData;
+        panelInData.payload = inData;
         panelInData.verifyButtonFunc = (btnType) ->
         {
             JButton button = buttons.get(btnType);
@@ -739,28 +761,48 @@ public class FrameService implements IFrameService
             callback.accept(outData);
         };
         
-        // create the entire panel, add the custom content and the buttons
-        PanelBase allContent = new PanelBase(desc);
-        allContent.setLayout(new MigLayout("insets 5"));
-        
-        PanelBase customContent = dpMan.create();
         dpMan.load(panelInData);
-        allContent.add(customContent, "grow, push, wrap");
-        String mig_first = "span, split " + dbTypes.size() + ", pushx, align center, sg buts";
-        String mig_sg = "sg buts";
-        int cnt = 0;
-        for (PanelButtonType dbType : dbTypes)
-        {           
-            JButton button = buttons.get(dbType);
-            allContent.add(button, cnt++ == 0 ? mig_first : mig_sg);
+
+        // create the entire panel, add the custom content and the buttons
+        PanelBase dialogPanel = new PanelBase(desc);
+        dialogPanel.setLayout(new MigLayout("insets 0"));
+        
+        JPanel marginPanel = new RootPanel(getDialogBackgroundImage());        
+        marginPanel.setLayout(new MigLayout("insets 20"));
+        dialogPanel.add(marginPanel, "hmax 400, align center, push, alignx center, aligny center");
+        {
+            // dialog title
+            String title = dpMan.createTitle();
+            JLabel titleLabel = new JLabel(title);
+            titleLabel.setFont(dialogTitleFont);
+            titleLabel.setBackground(Color.GRAY);
+         //   titleLabel.setOpaque(true);
+            marginPanel.add(titleLabel, "gapy 0 20, pushx, wrap");
             
-            // enabled/disable the button
-            panelInData.verifyButtonFunc.accept(dbType);
+            // content panel provided by the manager
+            PanelBase contentPanel = dpMan.createPanel();
+            marginPanel.add(contentPanel, "grow, push, wrap");
+            
+            // standard buttons at the bottom as required
+            String mig_first = "span, split " + dbTypes.size() + ", pushx, align center, sg buts";
+            String mig_sg = "sg buts";
+            int cnt = 0;
+            for (PanelButtonType dbType : dbTypes)
+            {           
+                JButton button = buttons.get(dbType);
+                marginPanel.add(button, cnt++ == 0 ? mig_first : mig_sg);
+                
+                // enabled/disable the button
+                panelInData.verifyButtonFunc.accept(dbType);
+            }
+            
+            // more dialog customization
+            marginPanel.setOpaque(true);
+            marginPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
         }
         
-        allContent.setBackground(Color.blue);
-        
-        return allContent;
+        dialogPanel.setOpaque(false);
+        return dialogPanel;
     }
 }
 

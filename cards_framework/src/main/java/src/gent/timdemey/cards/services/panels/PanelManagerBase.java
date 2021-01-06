@@ -22,9 +22,9 @@ import gent.timdemey.cards.services.scaling.text.ScalableFontResource;
 public abstract class PanelManagerBase implements IPanelManager
 {
     @Override
-    public boolean isCreated()
+    public boolean isPanelCreated()
     {
-        return get() != null;
+        return getPanel() != null;
     }
         
     @Override
@@ -40,26 +40,26 @@ public abstract class PanelManagerBase implements IPanelManager
     @Override
     public void add(IScalableComponent comp)
     {
-        get().add(comp.getComponent());
+        getPanel().add(comp.getComponent());
         position(comp);
     }
 
     @Override
     public void remove(IScalableComponent comp)
     {
-        get().remove(comp.getComponent());
-        get().revalidate();
-        get().repaint();
+        getPanel().remove(comp.getComponent());
+        getPanel().revalidate();
+        getPanel().repaint();
     }
     
     public int getLayer(IScalableComponent scalableComponent)
     {
-        return get().getLayer((Component) scalableComponent.getComponent());        
+        return getPanel().getLayer((Component) scalableComponent.getComponent());        
     }
 
     public void setLayer(IScalableComponent component, int layerIndex)
     {
-        get().setLayer(component.getComponent(), layerIndex); 
+        getPanel().setLayer(component.getComponent(), layerIndex); 
     }
     
     @Override
@@ -84,7 +84,7 @@ public abstract class PanelManagerBase implements IPanelManager
     @Override
     public void repaintScalableComponents()
     {
-        get().repaint();
+        getPanel().repaint();
     }
     
     @Override

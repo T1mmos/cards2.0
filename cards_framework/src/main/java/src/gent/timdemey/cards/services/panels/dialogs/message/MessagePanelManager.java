@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.panels.message;
+package gent.timdemey.cards.services.panels.dialogs.message;
 
 import java.util.EnumSet;
 
@@ -10,7 +10,7 @@ import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelButtonType;
 import net.miginfocom.swing.MigLayout;
 
-public class MessagePanelManager extends DataPanelManagerBase<String, Void>
+public class MessagePanelManager extends DataPanelManagerBase<MessagePanelData, Void>
 {
     private PanelBase contentPanel;
     
@@ -33,31 +33,37 @@ public class MessagePanelManager extends DataPanelManagerBase<String, Void>
     }
 
     @Override
-    public boolean isCreated()
+    public boolean isPanelCreated()
     {
         // we can't reuse a message panel
         return false;
     }
     
     @Override
-    public PanelBase create()
+    public PanelBase createPanel()
     {
         contentPanel = new PanelBase(PanelDescriptors.MESSAGE);
         contentPanel.setLayout(new MigLayout("insets 0"));
-        contentPanel.add(new JLabel(inData.data_in), "push, wrap");
+        contentPanel.add(new JLabel(inData.payload.message), "push, wrap");
 
         return contentPanel;
     }
     
     @Override
-    public PanelBase get()
+    public PanelBase getPanel()
     {
         return contentPanel;
     }
 
     @Override
-    public void destroy()
+    public void destroyPanel()
     {
         contentPanel = null;
+    }
+
+    @Override
+    public String createTitle()
+    {
+        return inData.payload.title;
     }  
 }

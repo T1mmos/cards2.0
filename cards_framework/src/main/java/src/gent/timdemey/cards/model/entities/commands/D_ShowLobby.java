@@ -1,8 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.localization.Loc;
-import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.commands.C_Disconnect.DisconnectReason;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.game.Server;
@@ -13,6 +11,7 @@ import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.services.panels.PanelOutData;
+import gent.timdemey.cards.services.panels.dialogs.mp.LobbyPanelData;
 
 public class D_ShowLobby extends DialogCommandBase
 {
@@ -37,11 +36,10 @@ public class D_ShowLobby extends DialogCommandBase
     protected void showDialog(Context context, ContextType type, State state)
     {
         Server server = state.getServer();
-
-        String title = Loc.get(LocKey.DialogTitle_lobby, server.serverName);
      
         IFrameService frameServ = Services.get(IFrameService.class);
-        frameServ.showPanel(PanelDescriptors.LOBBY, null, this::onClose);       
+        LobbyPanelData payload = new LobbyPanelData(server.serverName);
+        frameServ.showPanel(PanelDescriptors.LOBBY, payload, this::onClose);        
     }
 
     private void onClose(PanelOutData<Void> outData)

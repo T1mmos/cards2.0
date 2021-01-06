@@ -24,19 +24,19 @@ public class MenuPanelManager extends PanelManagerBase
     private PanelBase menuPanel;
 
     @Override
-    public void destroy()
+    public void destroyPanel()
     {
         menuPanel = null;
     }
 
     @Override
-    public boolean isCreated()
+    public boolean isPanelCreated()
     {
         return menuPanel != null;
     }
 
     @Override
-    public PanelBase create()
+    public PanelBase createPanel()
     {
         menuPanel = new PanelBase(PanelDescriptors.MENU);
         menuPanel.setLayout(new MigLayout("insets 0, align 50% 50%"));
@@ -72,7 +72,7 @@ public class MenuPanelManager extends PanelManagerBase
     }
     
     @Override
-    public PanelBase get()
+    public PanelBase getPanel()
     {
         return menuPanel;
     }

@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.panels.mp;
+package gent.timdemey.cards.services.panels.dialogs.mp;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -133,14 +133,14 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
     private ServersStateListener serversStateListener;
     private ActionListener refreshListener;
     private SelectionListener selectionListener;
-    private JTextField tf_name;
+    private JTextField tf_playerName;
 
     public JoinMPGamePanelManager()
     {
     }
 
     @Override
-    public PanelBase create()
+    public PanelBase createPanel()
     {        
         JScrollPane scroll_server = new JScrollPane();
 
@@ -150,20 +150,21 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
         this.serversStateListener = new ServersStateListener();
         this.refreshListener = new RefreshListener();
         this.selectionListener = new SelectionListener();
-        this.tf_name = new JTextField(20);
+        this.tf_playerName = new JTextField(20);
         
-        this.contentPanel = new PanelBase(PanelDescriptors.JOINMP, new MigLayout("insets 0"));
         JLabel lb_srvname = new JLabel(Loc.get(LocKey.Label_serversfound));
         JLabel lb_playerName = new JLabel(Loc.get(LocKey.Label_playername));
 
         scroll_server.setViewportView(table_servers);
 
-        contentPanel.add(lb_srvname, "pushx, growx");
-        contentPanel.add(button_refresh, "wrap");
-        contentPanel.add(scroll_server, "span, hmin 150, push, grow, span, wrap");
-        contentPanel.add(lb_playerName, "span, split 2");
-        contentPanel.add(tf_name, "pushx, wrap");
-
+        this.contentPanel = new PanelBase(PanelDescriptors.JOINMP, new MigLayout("insets 0"));
+        contentPanel.add(lb_playerName, "");
+        contentPanel.add(tf_playerName, "pushx, alignx left, wrap");
+        contentPanel.add(lb_srvname, "spanx 2, growx, wrap");
+        contentPanel.add(scroll_server, "spanx 2, hmin 150, hmax 300, grow, span, wrap");
+        contentPanel.add(button_refresh, "spanx 2, aligny top, alignx right, wrap");
+        
+      
         return contentPanel;
     }
 
@@ -201,7 +202,7 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
             int row = table_servers.getSelectedRow();
             ReadOnlyUDPServer server = Services.get(IContextService.class).getThreadContext().getReadOnlyState()
                     .getServers().get(row);
-            String playerName = tf_name.getText();
+            String playerName = tf_playerName.getText();
             return new JoinMPGamePanelData(server, playerName);
         }
         else
@@ -238,13 +239,13 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
     }
 
     @Override
-    public PanelBase get()
+    public PanelBase getPanel()
     {
         return contentPanel;
     }
 
     @Override
-    public void destroy()
+    public void destroyPanel()
     {
         this.contentPanel = null;
     }
@@ -254,5 +255,11 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
     {
         // TODO Auto-generated method stub
         
+    }
+
+    @Override
+    public String createTitle()
+    {
+        return Loc.get(LocKey.DialogTitle_joingame);
     }
 }

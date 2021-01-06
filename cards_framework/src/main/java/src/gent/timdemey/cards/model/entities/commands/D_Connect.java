@@ -15,7 +15,7 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.services.panels.PanelOutData;
-import gent.timdemey.cards.services.panels.mp.JoinMPGamePanelData;
+import gent.timdemey.cards.services.panels.dialogs.mp.JoinMPGamePanelData;
 
 public class D_Connect extends DialogCommandBase
 {
@@ -37,10 +37,8 @@ public class D_Connect extends DialogCommandBase
     @Override
     protected void showDialog(Context context, ContextType type, State state)
     {        
-        IFrameService frameServ = Services.get(IFrameService.class);
-        //frameServ.addPanel(PanelDescriptors.CONNECT);        
-        frameServ.showPanel(PanelDescriptors.CONNECT, null, this::onClose);
-        // PanelOutData<JoinMPGamePanelData> data = diagServ.ShowAdvanced(title, null, panelManager);        
+        IFrameService frameServ = Services.get(IFrameService.class);  
+        frameServ.showPanel(PanelDescriptors.CONNECT, null, this::onClose);     
     }
     
     private void onClose(PanelOutData<JoinMPGamePanelData> data)

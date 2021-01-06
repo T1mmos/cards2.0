@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.panels.mp;
+package gent.timdemey.cards.services.panels.dialogs.mp;
 
 import java.util.EnumSet;
 
@@ -13,7 +13,6 @@ import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.panels.DataPanelManagerBase;
 import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelButtonType;
-import gent.timdemey.cards.services.panels.PanelInData;
 import net.miginfocom.swing.MigLayout;
 
 public class StartServerPanelManager extends DataPanelManagerBase<String, StartServerPanelData> implements DocumentListener
@@ -26,20 +25,13 @@ public class StartServerPanelManager extends DataPanelManagerBase<String, StartS
     public StartServerPanelManager()
     {
     }
-    
+        
     @Override
-    public void load(PanelInData<String> inData)
-    {
-        super.load(inData);
-        tf_pname.setText(inData.data_in);        
-    }
-    
-    @Override
-    public PanelBase create()
+    public PanelBase createPanel()
     {
         this.tf_srvname = new JTextField(30);
-        this.tf_srvmsg = new JTextField(30);
-        this.tf_pname = new JTextField(30);
+        this.tf_srvmsg = new JTextField(30); 
+        this.tf_pname = new JTextField(inData.payload, 30);
         this.contentPanel = new PanelBase(PanelDescriptors.START_SERVER, new MigLayout("insets 0, align center center"));
 
         JLabel lb_srvname = new JLabel(Loc.get(LocKey.Label_servername));
@@ -123,14 +115,20 @@ public class StartServerPanelManager extends DataPanelManagerBase<String, StartS
     }
 
     @Override
-    public PanelBase get()
+    public PanelBase getPanel()
     {
         return contentPanel;
     }
 
     @Override
-    public void destroy()
+    public void destroyPanel()
     {
         contentPanel = null;
+    }
+
+    @Override
+    public String createTitle()
+    {
+        return Loc.get(LocKey.DialogTitle_creategame);
     }
 }

@@ -18,13 +18,13 @@ import gent.timdemey.cards.services.contract.preload.PreloadOrder;
 import gent.timdemey.cards.services.contract.preload.PreloadOrderType;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
+import gent.timdemey.cards.services.panels.dialogs.message.MessagePanelManager;
+import gent.timdemey.cards.services.panels.dialogs.mp.JoinMPGamePanelManager;
+import gent.timdemey.cards.services.panels.dialogs.mp.LobbyPanelManager;
+import gent.timdemey.cards.services.panels.dialogs.mp.StartServerPanelManager;
 import gent.timdemey.cards.services.panels.game.GamePanelManager;
 import gent.timdemey.cards.services.panels.load.LoadPanelManager;
 import gent.timdemey.cards.services.panels.menu.MenuPanelManager;
-import gent.timdemey.cards.services.panels.message.MessagePanelManager;
-import gent.timdemey.cards.services.panels.mp.JoinMPGamePanelManager;
-import gent.timdemey.cards.services.panels.mp.LobbyPanelManager;
-import gent.timdemey.cards.services.panels.mp.StartServerPanelManager;
 
 public class PanelService implements IPanelService
 {
@@ -67,7 +67,7 @@ public class PanelService implements IPanelService
     {
         for (IPanelManager panelMgr : panelMgrs.values())
         {
-            if (!onlyIfCreated || panelMgr.isCreated())
+            if (!onlyIfCreated || panelMgr.isPanelCreated())
             {
                 func.accept(panelMgr);
             }

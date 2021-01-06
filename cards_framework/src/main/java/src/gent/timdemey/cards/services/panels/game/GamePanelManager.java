@@ -56,7 +56,7 @@ public class GamePanelManager extends PanelManagerBase
     }
     
     @Override
-    public PanelBase create()
+    public PanelBase createPanel()
     {
         gamePanel = new GamePanel();
         dragListener = new GamePanelMouseListener(); 
@@ -70,7 +70,7 @@ public class GamePanelManager extends PanelManagerBase
     }
     
     @Override
-    public PanelBase get()
+    public PanelBase getPanel()
     {
         return gamePanel;
     }
@@ -154,7 +154,7 @@ public class GamePanelManager extends PanelManagerBase
     }
     
     @Override
-    public void destroy()
+    public void destroyPanel()
     {
         animator.stop();
 

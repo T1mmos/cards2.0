@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.panels.mp;
+package gent.timdemey.cards.services.panels.dialogs.mp;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -26,7 +26,7 @@ import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelButtonType;
 import net.miginfocom.swing.MigLayout;
 
-public class LobbyPanelManager extends DataPanelManagerBase<Void, Void>
+public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void>
 {
     private PanelBase panel;
     
@@ -92,7 +92,7 @@ public class LobbyPanelManager extends DataPanelManagerBase<Void, Void>
     }
 
     @Override
-    public PanelBase create()
+    public PanelBase createPanel()
     {
         IContextService contextService = Services.get(IContextService.class);
         Context context = contextService.getThreadContext();
@@ -135,7 +135,7 @@ public class LobbyPanelManager extends DataPanelManagerBase<Void, Void>
     }
     
     @Override
-    public PanelBase get()
+    public PanelBase getPanel()
     {
         return panel;
     }
@@ -179,9 +179,15 @@ public class LobbyPanelManager extends DataPanelManagerBase<Void, Void>
     }
 
     @Override
-    public void destroy()
+    public void destroyPanel()
     {
         panel.removeAll();        
         panel = null;
+    }
+
+    @Override
+    public String createTitle()
+    {        
+        return Loc.get(LocKey.DialogTitle_lobby, inData.payload.serverName);
     }
 }

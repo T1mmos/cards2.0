@@ -34,11 +34,5 @@ public interface IFrameService
 
     public void setLocation(int x, int y);
     public void setBounds(int x, int y, int w, int h);
-
     public void updatePositionService();
-
-
-
-
-
 }

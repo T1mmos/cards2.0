@@ -9,10 +9,10 @@ public interface IPanelManager
 {   
     public void preload();
     
-    public boolean isCreated();
-    public PanelBase create();
-    public PanelBase get();
-    public void destroy();    
+    public boolean isPanelCreated();
+    public PanelBase createPanel();
+    public PanelBase getPanel();
+    public void destroyPanel();    
 
     public void onShown();
     public void onHidden();

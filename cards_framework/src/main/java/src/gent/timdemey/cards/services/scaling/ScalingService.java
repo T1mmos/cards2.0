@@ -180,7 +180,7 @@ public final class ScalingService implements IScalingService
     @Override
     public IScalableComponent getComponentAt(IPanelManager panelMgr, Point p)
     {        
-        JComponent jcomp = (JComponent) panelMgr.get().getComponentAt(p);
+        JComponent jcomp = (JComponent) panelMgr.getPanel().getComponentAt(p);
         if (!(jcomp instanceof JScalableComponent))
         {
             return null;
@@ -208,7 +208,7 @@ public final class ScalingService implements IScalingService
     
     private boolean filterPanelManager(IScalableComponent s)
     {
-        return s.getPanelManager() != null && s.getPanelManager().isCreated() && s.getPanelManager().get().isVisible();
+        return s.getPanelManager() != null && s.getPanelManager().isPanelCreated() && s.getPanelManager().getPanel().isVisible();
     }
 
     @Override

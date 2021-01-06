@@ -3,8 +3,6 @@ package gent.timdemey.cards.model.entities.commands;
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.localization.Loc;
-import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
@@ -15,7 +13,7 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.services.panels.PanelOutData;
-import gent.timdemey.cards.services.panels.mp.StartServerPanelData;
+import gent.timdemey.cards.services.panels.dialogs.mp.StartServerPanelData;
 
 public class D_StartServer extends DialogCommandBase
 {
@@ -38,7 +36,6 @@ public class D_StartServer extends DialogCommandBase
     protected void showDialog(Context context, ContextType type, State state)
     {
         IFrameService frameServ = Services.get(IFrameService.class);
-        String title = Loc.get(LocKey.DialogTitle_creategame); // todo
         IContextService ctxtServ = Services.get(IContextService.class);        
         String name = ctxtServ.getThreadContext().getReadOnlyState().getLocalName();     
         frameServ.showPanel(PanelDescriptors.START_SERVER, name, this::onClose);

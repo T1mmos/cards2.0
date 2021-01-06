@@ -12,13 +12,13 @@ public class LoadPanelManager extends PanelManagerBase
     private PanelBase loadPanel;
     
     @Override
-    public boolean isCreated()
+    public boolean isPanelCreated()
     {
         return loadPanel != null;
     }
 
     @Override
-    public PanelBase create()
+    public PanelBase createPanel()
     {
         loadPanel = new PanelBase(PanelDescriptors.LOAD, new MigLayout("insets 100, align 50% 50%"));
         loadPanel.setOpaque(false); 
@@ -28,13 +28,13 @@ public class LoadPanelManager extends PanelManagerBase
     }
     
     @Override
-    public void destroy()
+    public void destroyPanel()
     {
         loadPanel = null;
     }
 
     @Override
-    public PanelBase get()
+    public PanelBase getPanel()
     {
         return loadPanel;
     }

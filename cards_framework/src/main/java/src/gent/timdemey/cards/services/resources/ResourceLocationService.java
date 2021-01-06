@@ -99,4 +99,16 @@ public class ResourceLocationService implements IResourceLocationService
     {
         return "background_darkgray.png";
     }
+
+    @Override
+    public String getDialogBackgroundImageFilePath()
+    {
+        return "bg_olive.png";
+    }
+
+    @Override
+    public String getDialogTitleFontFilePath()
+    {
+        return "SMB2.ttf";
+    }
 }

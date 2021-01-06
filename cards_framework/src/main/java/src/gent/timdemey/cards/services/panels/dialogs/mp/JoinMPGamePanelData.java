@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.panels.mp;
+package gent.timdemey.cards.services.panels.dialogs.mp;
 
 import gent.timdemey.cards.readonlymodel.ReadOnlyUDPServer;
 
