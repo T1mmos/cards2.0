@@ -9,7 +9,6 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -40,6 +39,7 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.logging.Logger;
+import gent.timdemey.cards.services.action.ActionBase;
 import gent.timdemey.cards.services.contract.SnapSide;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
@@ -49,6 +49,7 @@ import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelType;
 import gent.timdemey.cards.services.contract.res.FontResource;
 import gent.timdemey.cards.services.contract.res.ImageResource;
+import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
@@ -60,8 +61,6 @@ import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.services.panels.PanelInData;
 import gent.timdemey.cards.services.panels.PanelOutData;
-import gent.timdemey.cards.ui.actions.ActionBase;
-import gent.timdemey.cards.ui.actions.IActionService;
 import net.miginfocom.swing.MigLayout;
 
 public class FrameService implements IFrameService
@@ -518,7 +517,7 @@ public class FrameService implements IFrameService
         {           
             saveBounds();  
             frame.setBounds(maxBounds);
-            frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
             setMaximized(true);
             
         }

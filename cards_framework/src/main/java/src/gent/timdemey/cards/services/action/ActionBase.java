@@ -1,4 +1,4 @@
-package gent.timdemey.cards.ui.actions;
+package gent.timdemey.cards.services.action;
 
 import java.awt.event.ActionEvent;
 
@@ -11,6 +11,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.context.IContextListener;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
+import gent.timdemey.cards.services.interfaces.IActionService;
 
 public class ActionBase extends AbstractAction implements IContextListener, IStateListener
 {

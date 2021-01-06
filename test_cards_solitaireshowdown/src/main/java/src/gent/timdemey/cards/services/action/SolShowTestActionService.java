@@ -1,4 +1,4 @@
-package gent.timdemey.cards.ui.actions;
+package gent.timdemey.cards.services.action;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.commands.C_CardsVisibleSwitch;
@@ -15,8 +15,12 @@ public class SolShowTestActionService extends ActionService
     {
         if (desc == SolShowTestActionDescriptors.ad_fakegame)
         {
-            return new A_DebugFakeSolShowGame();
-        }    
+            return new ActionBase(desc, "Fake SolShow Game"); 
+        }
+        else if (desc == SolShowTestActionDescriptors.ad_switchcvis)
+        {
+            return new ActionBase(desc, "Switch Card Visibility");
+        }
         
         return super.createAction(desc);
     }

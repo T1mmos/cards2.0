@@ -1,4 +1,4 @@
-package gent.timdemey.cards.ui.actions;
+package gent.timdemey.cards.services.action;
 
 import java.awt.Image;
 import java.util.HashMap;
@@ -24,6 +24,7 @@ import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
+import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;

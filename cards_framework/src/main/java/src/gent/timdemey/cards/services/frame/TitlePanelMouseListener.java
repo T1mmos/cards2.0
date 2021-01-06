@@ -130,7 +130,9 @@ public class TitlePanelMouseListener implements MouseListener, MouseMotionListen
             }        
         }
         
-        Rectangle maxBounds = GraphicsEnvironment.getLocalGraphicsEnvironment(). getMaximumWindowBounds();
+        
+        // maximum window bounds: take 
+      //   Rectangle maxBounds = GraphicsEnvironment.getLocalGraphicsEnvironment(). getMaximumWindowBounds();
      
     }
 

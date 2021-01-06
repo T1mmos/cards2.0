@@ -10,10 +10,12 @@ import gent.timdemey.cards.logging.LogManager;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.serialization.SerializationService;
+import gent.timdemey.cards.services.action.ActionService;
 import gent.timdemey.cards.services.configman.ConfigManager;
 import gent.timdemey.cards.services.context.CommandNetworkService;
 import gent.timdemey.cards.services.context.ContextService;
 import gent.timdemey.cards.services.frame.FrameService;
+import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IAnimationService;
 import gent.timdemey.cards.services.interfaces.IConfigManager;
 import gent.timdemey.cards.services.interfaces.IContextService;
@@ -33,8 +35,6 @@ import gent.timdemey.cards.services.resources.ResourceRepository;
 import gent.timdemey.cards.services.resources.ResourceService;
 import gent.timdemey.cards.services.scaling.ScalingService;
 import gent.timdemey.cards.ui.StartUI;
-import gent.timdemey.cards.ui.actions.ActionService;
-import gent.timdemey.cards.ui.actions.IActionService;
 
 public class Start
 {

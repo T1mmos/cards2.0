@@ -1,14 +1,14 @@
 package gent.timdemey.cards;
 
 import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.services.action.SolShowTestActionService;
 import gent.timdemey.cards.services.context.ContextService;
+import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.INetworkService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.panels.SolShowTestPanelService;
 import gent.timdemey.cards.test.mock.MockNetworkService;
-import gent.timdemey.cards.ui.actions.IActionService;
-import gent.timdemey.cards.ui.actions.SolShowTestActionService;
 
 public class SolShowTestPlugin extends SolShowPlugin 
 {

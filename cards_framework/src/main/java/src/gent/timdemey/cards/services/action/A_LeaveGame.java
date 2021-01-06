@@ -1,13 +1,13 @@
-package gent.timdemey.cards.ui.actions;
+package gent.timdemey.cards.services.action;
 
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
-import gent.timdemey.cards.readonlymodel.ReadOnlyCommandHistory;
+import gent.timdemey.cards.readonlymodel.ReadOnlyProperty;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
 
-class A_Undo extends ActionBase
+class A_LeaveGame extends ActionBase
 {
-    protected A_Undo(ActionDescriptor desc, String title)
+    protected A_LeaveGame(ActionDescriptor desc, String title)
     {
         super(desc, title);
     }
@@ -15,9 +15,11 @@ class A_Undo extends ActionBase
     @Override
     public void onChange(ReadOnlyChange roChange)
     {
-        if (roChange.property == ReadOnlyCommandHistory.CurrentIndex || roChange.property == ReadOnlyState.CommandHistory)
+        ReadOnlyProperty<?> property = roChange.property;
+
+        if (property == ReadOnlyState.GameState)
         {
             checkEnabled();
-        }        
+        }
     }
 }
