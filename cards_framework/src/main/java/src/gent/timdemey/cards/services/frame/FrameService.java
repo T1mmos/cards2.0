@@ -783,7 +783,7 @@ public class FrameService implements IFrameService, IPreload
             marginPanel.add(contentPanel, "grow, push, wrap");
             
             // standard buttons at the bottom as required
-            String mig_first = "span, split " + dbTypes.size() + ", pushx, align center, sg buts";
+            String mig_first = "span, wmin 60, split " + dbTypes.size() + ", pushx, align center, sg buts";
             String mig_sg = "sg buts";
             int cnt = 0;
             for (PanelButtonType dbType : dbTypes)
