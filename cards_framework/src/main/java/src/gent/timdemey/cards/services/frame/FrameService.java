@@ -12,6 +12,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -71,10 +72,11 @@ public class FrameService implements IFrameService
     private boolean drawDebug = false;
     private JButton title_minimize;
     private JButton title_maximize; 
+    private JButton title_unmaximize;
     private JButton title_close;
 
     private Rectangle prevBounds;
-    private EnumSet<SnapSide> snaps = null;
+    private List<SnapSide> snaps = null;
     private Border frameBorder;
     private RootPanelMouseListener rpMouseListener;
     
@@ -101,6 +103,7 @@ public class FrameService implements IFrameService
         
         WebButton button = new WebButton(StyleId.buttonUndecorated, action);
         button.setRolloverIcon(action.icon_rollover);
+        button.setText("");
         
         Dimension dim = new Dimension(24, 24);           
         button.setMinimumSize(dim);
@@ -132,29 +135,29 @@ public class FrameService implements IFrameService
             frame.setContentPane(rootPanel);
             
             titlePanel = new JPanel();
-            titlePanel.setLayout(new MigLayout("insets 0"));
+            titlePanel.setLayout(new MigLayout("insets 0, hidemode 3"));
             titlePanel.setOpaque(false);
             JLabel title_icon = new JLabel(new ImageIcon(getFrameIcons().get(1)));
             JLabel title_text = new JLabel(getTitle());
-            title_minimize = createFrameButton(ActionDescriptors.ad_minimize);            
+            title_minimize = createFrameButton(ActionDescriptors.ad_minimize);         
+            title_unmaximize = createFrameButton(ActionDescriptors.ad_unmaximize);
             title_maximize = createFrameButton(ActionDescriptors.ad_maximize);
             title_close = createFrameButton(ActionDescriptors.ad_quit);
-            
-            title_minimize.setText("");
-            title_maximize.setText("");
-            title_close.setText("");
-            
+                        
             title_text.setFont(titlefont);
             title_text.setForeground(Color.white.darker());
             titlePanel.add(title_icon, "gapx 10, left");
             titlePanel.add(title_text, "gapx 10, pushx, left");
             titlePanel.add(title_minimize, "align center top, gapright 5");
             titlePanel.add(title_maximize, "align center top, gapright 5");
+            titlePanel.add(title_unmaximize, "align center top, gapright 5");
             titlePanel.add(title_close, "align center top");
             TitlePanelMouseListener tpMouseListener = new TitlePanelMouseListener();
             titlePanel.addMouseListener(tpMouseListener);
             titlePanel.addMouseMotionListener(tpMouseListener);
             rootPanel.add(titlePanel, "pushx, grow, wrap");
+            
+            title_unmaximize.setVisible(false);
             
             cardPanel = new JLayeredPane();
             cardPanel.setLayout(new MigLayout());
@@ -459,17 +462,41 @@ public class FrameService implements IFrameService
     }
     
     @Override
-    public void snap(EnumSet<SnapSide> snapsides)
+    public boolean isSnapped(SnapSide ... snapsides)
     {
-        if (snapsides == null || snapsides.size() == 0)
+        if (snapsides == null || snapsides.length == 0)
         {
             throw new IllegalArgumentException("snapsides");
         }
         
-        boolean snapTop = snapsides.contains(SnapSide.TOP);
-        boolean snapBottom = snapsides.contains(SnapSide.BOTTOM);
-        boolean snapLeft = snapsides.contains(SnapSide.LEFT);
-        boolean snapRight = snapsides.contains(SnapSide.RIGHT);
+        List<SnapSide> snapsides_list = Arrays.asList(snapsides);
+        
+        if (snaps == null)
+        {
+            return false;
+        }
+        if (snaps.size() != snapsides.length || !snaps.stream().allMatch(snapsides_list::contains))
+        {
+            return false;            
+        }
+        
+        return true;
+    }
+    
+    @Override
+    public void snap(SnapSide ... snapsides)
+    {
+        if (snapsides == null || snapsides.length == 0)
+        {
+            throw new IllegalArgumentException("snapsides");
+        }
+        
+        List<SnapSide> snapsides_list = Arrays.asList(snapsides);
+        
+        boolean snapTop = snapsides_list.contains(SnapSide.TOP);
+        boolean snapBottom = snapsides_list.contains(SnapSide.BOTTOM);
+        boolean snapLeft = snapsides_list.contains(SnapSide.LEFT);
+        boolean snapRight = snapsides_list.contains(SnapSide.RIGHT);
         if (snapTop && snapBottom)
         {
             throw new IllegalArgumentException("cannot snap to both TOP and BOTTOM");
@@ -487,7 +514,8 @@ public class FrameService implements IFrameService
             saveBounds();  
             frame.setBounds(maxBounds);
             frame.setExtendedState(Frame.MAXIMIZED_BOTH);
-            setMaximized(true);  
+            setMaximized(true);
+            
         }
         else if (snapLeft || snapRight)
         {
@@ -522,7 +550,7 @@ public class FrameService implements IFrameService
             setBounds(x, y, w, h);
         }
         
-        snaps = snapsides;
+        snaps = snapsides_list;
     }
 
     @Override
@@ -552,15 +580,12 @@ public class FrameService implements IFrameService
     @Override
     public void maximize()
     {        
-        boolean maximized = snaps != null && snaps.size() == 1 && snaps.contains(SnapSide.TOP);
-        if (maximized)
+        if (isSnapped(SnapSide.TOP))
         {
-            unsnap();
+            return;
         }
-        else
-        {
-            snap(EnumSet.of(SnapSide.TOP));
-        }      
+       
+        snap(SnapSide.TOP);           
     }
     
     private void setMaximized(boolean maximized)
@@ -577,14 +602,9 @@ public class FrameService implements IFrameService
             rootPanel.addMouseMotionListener(rpMouseListener);
             rootPanel.setBorder(frameBorder);
         }
-        
-        IResourceService resServ = Services.get(IResourceService.class);
-        IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
-        
-        String filepath = maximized ? resLocServ.getAppUnmaximizeIconFilePath() : resLocServ.getAppMaximizeIconFilePath();
-        
-        Image img = resServ.getImage(filepath).raw;
-        title_maximize.setIcon(new ImageIcon(img));
+                
+        title_maximize.setVisible(!maximized);
+        title_unmaximize.setVisible(maximized);
     }
     
     @Override

@@ -1,6 +1,5 @@
 package gent.timdemey.cards.services.interfaces;
 
-import java.util.EnumSet;
 import java.util.function.Consumer;
 
 import javax.swing.JFrame;
@@ -24,7 +23,8 @@ public interface IFrameService
     public void minimize();
 
     public boolean isSnapped();
-    public void snap(EnumSet<SnapSide> snapsides);
+    public boolean isSnapped(SnapSide ... snapsides);
+    public void snap(SnapSide ... snapsides);
     public void unsnap();
     
     public void setDrawDebug(boolean on);
@@ -34,6 +34,7 @@ public interface IFrameService
     public void setBounds(int x, int y, int w, int h);
 
     public void updatePositionService();
+
 
 
 

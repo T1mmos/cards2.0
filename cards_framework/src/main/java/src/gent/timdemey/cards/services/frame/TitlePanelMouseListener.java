@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.SnapSide;
 import gent.timdemey.cards.services.interfaces.IFrameService;
+import gent.timdemey.cards.utils.ArrayUtils;
 
 public class TitlePanelMouseListener implements MouseListener, MouseMotionListener
 {
@@ -99,11 +100,12 @@ public class TitlePanelMouseListener implements MouseListener, MouseMotionListen
         {
             snapsides.add(SnapSide.RIGHT);
         }
-
+        
         if (snapsides.size() > 0)
         {
+            SnapSide[] arr =  ArrayUtils.from(snapsides, () -> new SnapSide[0]);
             IFrameService fServ = Services.get(IFrameService.class);
-            fServ.snap(snapsides);    
+            fServ.snap(arr);    
         }        
     }
 

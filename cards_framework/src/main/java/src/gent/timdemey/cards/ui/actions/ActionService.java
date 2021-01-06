@@ -49,7 +49,8 @@ public class ActionService implements IActionService
             desc == ActionDescriptors.ad_gc ||
             desc == ActionDescriptors.ad_quit || 
             desc == ActionDescriptors.ad_minimize || 
-            desc == ActionDescriptors.ad_maximize)
+            desc == ActionDescriptors.ad_maximize ||
+            desc == ActionDescriptors.ad_unmaximize)
         {
             return true;
         }
@@ -95,14 +96,16 @@ public class ActionService implements IActionService
         {            
             action = createAction(desc);
 
-            if(action != null)
+            if(action == null)
             {
-                desc2actions.put(desc, action);
-                
-                IContextService ctxtServ = Services.get(IContextService.class);
-                ctxtServ.addContextListener(action);
-                ctxtServ.getThreadContext().addStateListener(action); 
+                throw new IllegalArgumentException("The given ActionDescriptor cannot be mapped to an action: " + desc);
             }
+
+            desc2actions.put(desc, action);
+            
+            IContextService ctxtServ = Services.get(IContextService.class);
+            ctxtServ.addContextListener(action);
+            ctxtServ.getThreadContext().addStateListener(action); 
         }
 
         return action;
@@ -118,53 +121,59 @@ public class ActionService implements IActionService
         }
         else if (desc == ActionDescriptors.ad_debugdraw)
         {
-            return new ActionBase(ActionDescriptors.ad_debugdraw, Loc.get(LocKey.DebugMenu_debug));
+            return new ActionBase(desc, Loc.get(LocKey.DebugMenu_debug));
         }
         else if (desc == ActionDescriptors.ad_gc)
         {
-            return new ActionBase(ActionDescriptors.ad_gc, Loc.get(LocKey.DebugMenu_gc));
+            return new ActionBase(desc, Loc.get(LocKey.DebugMenu_gc));
         }
         else if (desc == ActionDescriptors.ad_join)
         {
-            return new A_JoinGame(ActionDescriptors.ad_join, Loc.get(LocKey.Menu_join));
+            return new A_JoinGame(desc, Loc.get(LocKey.Menu_join));
         }
         else if (desc == ActionDescriptors.ad_leave)
         {
-            return new A_LeaveGame(ActionDescriptors.ad_leave, Loc.get(LocKey.Menu_leave));
+            return new A_LeaveGame(desc, Loc.get(LocKey.Menu_leave));
         }
         else if (desc == ActionDescriptors.ad_maximize)
         {
             ImageIcon img_maximize = getImageIcon(resLocServ.getAppMaximizeIconFilePath());
             ImageIcon img_maximize_rollover = getImageIcon(resLocServ.getAppMaximizeRolloverIconFilePath());
-            return new ActionBase(ActionDescriptors.ad_maximize, Loc.get(LocKey.Menu_maximize), img_maximize, img_maximize_rollover);
+            return new ActionBase(desc, Loc.get(LocKey.Menu_maximize), img_maximize, img_maximize_rollover);
+        }
+        else if (desc == ActionDescriptors.ad_unmaximize)
+        {
+            ImageIcon img_unmaximize = getImageIcon(resLocServ.getAppUnmaximizeIconFilePath());
+            ImageIcon img_unmaximize_rollover = getImageIcon(resLocServ.getAppUnmaximizeRolloverIconFilePath());
+            return new ActionBase(desc, Loc.get(LocKey.Menu_unmaximize), img_unmaximize, img_unmaximize_rollover);
         }
         else if (desc == ActionDescriptors.ad_minimize)
         {
             ImageIcon img_minimize = getImageIcon(resLocServ.getAppMinimizeIconFilePath());
             ImageIcon img_minimize_rollover = getImageIcon(resLocServ.getAppMinimizeRolloverIconFilePath());
-            return new ActionBase(ActionDescriptors.ad_minimize, Loc.get(LocKey.Menu_minimize), img_minimize, img_minimize_rollover);
+            return new ActionBase(desc, Loc.get(LocKey.Menu_minimize), img_minimize, img_minimize_rollover);
         }
         else if (desc == ActionDescriptors.ad_quit)
         {
             ImageIcon img_close = getImageIcon(resLocServ.getAppCloseIconFilePath());
             ImageIcon img_close_rollover = getImageIcon(resLocServ.getAppCloseRolloverIconFilePath());
-            return new ActionBase(ActionDescriptors.ad_quit, Loc.get(LocKey.Menu_quit), img_close, img_close_rollover);
+            return new ActionBase(desc, Loc.get(LocKey.Menu_quit), img_close, img_close_rollover);
         }
         else if (desc == ActionDescriptors.ad_redo)
         {
-            return new A_Redo(ActionDescriptors.ad_redo, Loc.get(LocKey.Menu_redo));
+            return new A_Redo(desc, Loc.get(LocKey.Menu_redo));
         }
         else if (desc == ActionDescriptors.ad_start)
         {
-            return new A_StartGame(ActionDescriptors.ad_start, Loc.get(LocKey.Menu_newgame));
+            return new A_StartGame(desc, Loc.get(LocKey.Menu_newgame));
         }
         else if (desc == ActionDescriptors.ad_startmp)
         {
-            return new A_StartMultiplayerGame(ActionDescriptors.ad_startmp, Loc.get(LocKey.Menu_creategame));
+            return new A_StartMultiplayerGame(desc, Loc.get(LocKey.Menu_creategame));
         }
         else if (desc == ActionDescriptors.ad_undo)
         {
-            return new A_Undo(ActionDescriptors.ad_undo, Loc.get(LocKey.Menu_undo));
+            return new A_Undo(desc, Loc.get(LocKey.Menu_undo));
         }
         
         return null;
@@ -275,6 +284,14 @@ public class ActionService implements IActionService
             {
                 IFrameService frameServ = Services.get(IFrameService.class);
                 frameServ.maximize();                
+            };
+        }
+        else if (desc == ActionDescriptors.ad_unmaximize)
+        {
+            return () -> 
+            {
+                IFrameService frameServ = Services.get(IFrameService.class);
+                frameServ.unsnap();                
             };
         }
         else if (desc == ActionDescriptors.ad_minimize)
