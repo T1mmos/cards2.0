@@ -20,6 +20,7 @@ import gent.timdemey.cards.model.entities.commands.C_StartMultiplayerGame;
 import gent.timdemey.cards.model.entities.commands.C_Undo;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.D_Connect;
+import gent.timdemey.cards.model.entities.commands.D_ShowMenuMP;
 import gent.timdemey.cards.model.entities.commands.D_StartServer;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
@@ -116,16 +117,22 @@ public class ActionService implements IActionService
     
     protected final void addShortCut(ActionBase action, String keystroke)
     {
-        action.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(keystroke));
+        KeyStroke ks = KeyStroke.getKeyStroke(keystroke);
+        if (ks == null)
+        {
+            throw new IllegalArgumentException("The keystroke to set for ActionDescriptor " + action.desc + " isn't valid: " + keystroke);
+        }
+        
+        action.putValue(Action.ACCELERATOR_KEY, ks);
     }
     
     protected ActionBase createAction(ActionDescriptor desc)
     {
         IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
         
-        if (desc == ActionDescriptors.ad_create_mp)
+        if (desc == ActionDescriptors.ad_createmp)
         {
-            return new A_CreateMultiplayerGame(ActionDescriptors.ad_create_mp, Loc.get(LocKey.Menu_creategame));
+            return new A_CreateMultiplayerGame(ActionDescriptors.ad_createmp, Loc.get(LocKey.Action_createmp));
         }
         else if (desc == ActionDescriptors.ad_debugdraw)
         {
@@ -141,35 +148,35 @@ public class ActionService implements IActionService
         }
         else if (desc == ActionDescriptors.ad_join)
         {
-            return new A_JoinGame(desc, Loc.get(LocKey.Menu_join));
+            return new A_JoinGame(desc, Loc.get(LocKey.Action_joinmp));
         }
-        else if (desc == ActionDescriptors.ad_leave)
+        else if (desc == ActionDescriptors.ad_leavemp)
         {
-            return new A_LeaveGame(desc, Loc.get(LocKey.Menu_leave));
+            return new A_LeaveGame(desc, Loc.get(LocKey.Action_leavemp));
         }
         else if (desc == ActionDescriptors.ad_maximize)
         {
             ImageIcon img_maximize = getImageIcon(resLocServ.getAppMaximizeIconFilePath());
             ImageIcon img_maximize_rollover = getImageIcon(resLocServ.getAppMaximizeRolloverIconFilePath());
-            return new ActionBase(desc, Loc.get(LocKey.Menu_maximize), img_maximize, img_maximize_rollover);
+            return new ActionBase(desc, Loc.get(LocKey.Action_maximize), img_maximize, img_maximize_rollover);
         }
         else if (desc == ActionDescriptors.ad_unmaximize)
         {
             ImageIcon img_unmaximize = getImageIcon(resLocServ.getAppUnmaximizeIconFilePath());
             ImageIcon img_unmaximize_rollover = getImageIcon(resLocServ.getAppUnmaximizeRolloverIconFilePath());
-            return new ActionBase(desc, Loc.get(LocKey.Menu_unmaximize), img_unmaximize, img_unmaximize_rollover);
+            return new ActionBase(desc, Loc.get(LocKey.Action_unmaximize), img_unmaximize, img_unmaximize_rollover);
         }
         else if (desc == ActionDescriptors.ad_minimize)
         {
             ImageIcon img_minimize = getImageIcon(resLocServ.getAppMinimizeIconFilePath());
             ImageIcon img_minimize_rollover = getImageIcon(resLocServ.getAppMinimizeRolloverIconFilePath());
-            return new ActionBase(desc, Loc.get(LocKey.Menu_minimize), img_minimize, img_minimize_rollover);
+            return new ActionBase(desc, Loc.get(LocKey.Action_minimize), img_minimize, img_minimize_rollover);
         }
         else if (desc == ActionDescriptors.ad_quit)
         {
             ImageIcon img_close = getImageIcon(resLocServ.getAppCloseIconFilePath());
             ImageIcon img_close_rollover = getImageIcon(resLocServ.getAppCloseRolloverIconFilePath());
-            ActionBase action = new ActionBase(desc, Loc.get(LocKey.Menu_quit), img_close, img_close_rollover);
+            ActionBase action = new ActionBase(desc, Loc.get(LocKey.Action_quit), img_close, img_close_rollover);
             
             addShortCut(action, "alt F4");
             
@@ -177,19 +184,27 @@ public class ActionService implements IActionService
         }
         else if (desc == ActionDescriptors.ad_redo)
         {
-            return new A_Redo(desc, Loc.get(LocKey.Menu_redo));
+            return new A_Redo(desc, Loc.get(LocKey.Action_redo));
         }
-        else if (desc == ActionDescriptors.ad_start)
+        else if (desc == ActionDescriptors.ad_showmenump)
         {
-            return new A_StartGame(desc, Loc.get(LocKey.Menu_newgame));
+            ActionBase action = new A_ShowMenuMP(desc, Loc.get(LocKey.Action_showmenump));
+            
+            addShortCut(action, "ESCAPE");
+            
+            return action;
+        }
+        else if (desc == ActionDescriptors.ad_startsp)
+        {
+            return new A_StartGame(desc, Loc.get(LocKey.Action_newgame));
         }
         else if (desc == ActionDescriptors.ad_startmp)
         {
-            return new A_StartMultiplayerGame(desc, Loc.get(LocKey.Menu_creategame));
+            return new A_StartMultiplayerGame(desc, Loc.get(LocKey.Action_createmp));
         }
         else if (desc == ActionDescriptors.ad_undo)
         {
-            return new A_Undo(desc, Loc.get(LocKey.Menu_undo));
+            return new A_Undo(desc, Loc.get(LocKey.Action_undo));
         }
         
         return null;
@@ -222,7 +237,7 @@ public class ActionService implements IActionService
 
     protected CommandBase createCommand(ActionDescriptor desc)
     {
-        if (desc == ActionDescriptors.ad_create_mp)
+        if (desc == ActionDescriptors.ad_createmp)
         {
             return new D_StartServer();
         }
@@ -230,7 +245,7 @@ public class ActionService implements IActionService
         {
             return new D_Connect();                
         }
-        else if (desc == ActionDescriptors.ad_leave)
+        else if (desc == ActionDescriptors.ad_leavemp)
         {
             return new C_Disconnect(DisconnectReason.LocalPlayerLeft);
         }
@@ -238,7 +253,11 @@ public class ActionService implements IActionService
         {
             return new C_Redo();
         }
-        else if (desc == ActionDescriptors.ad_start)
+        else if (desc == ActionDescriptors.ad_showmenump)
+        {
+            return new D_ShowMenuMP();
+        }
+        else if (desc == ActionDescriptors.ad_startsp)
         {
             return new C_StartLocalGame();
         }

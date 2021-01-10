@@ -22,6 +22,7 @@ import gent.timdemey.cards.services.panels.dialogs.message.MessagePanelManager;
 import gent.timdemey.cards.services.panels.dialogs.mp.JoinMPGamePanelManager;
 import gent.timdemey.cards.services.panels.dialogs.mp.LobbyPanelManager;
 import gent.timdemey.cards.services.panels.dialogs.mp.StartServerPanelManager;
+import gent.timdemey.cards.services.panels.game.GameMenuPanelManager;
 import gent.timdemey.cards.services.panels.game.GamePanelManager;
 import gent.timdemey.cards.services.panels.load.LoadPanelManager;
 import gent.timdemey.cards.services.panels.menu.MenuPanelManager;
@@ -47,6 +48,7 @@ public class PanelService implements IPanelService
     protected void addAbsentPanelManagers()
     {
         addPanelManagerIfAbsent(PanelDescriptors.GAME, () -> new GamePanelManager());
+        addPanelManagerIfAbsent(PanelDescriptors.GAME_MENU, () -> new GameMenuPanelManager());
         addPanelManagerIfAbsent(PanelDescriptors.LOAD, () -> new LoadPanelManager());
         addPanelManagerIfAbsent(PanelDescriptors.MENU, () -> new MenuPanelManager());
         addPanelManagerIfAbsent(PanelDescriptors.MESSAGE, () -> new MessagePanelManager());

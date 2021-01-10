@@ -246,11 +246,17 @@ public class FrameService implements IFrameService, IPreload
         {
             throw new IllegalArgumentException("This method is not intended for data panels");
         }
+        if (desc.panelType != PanelType.Root)
+        {
+            throw new IllegalArgumentException("This method is intended for Root panels only");
+        }
         
         IPanelService panelServ = Services.get(IPanelService.class);
         IPanelManager panelMgr = panelServ.getPanelManager(desc);
-                        
-        PanelBase pb = get(desc);
+                  
+        // check that the given panel descriptor is a root panel
+        PanelBase pb = get(desc);        
+        
         boolean add = false;
         if (pb == null)
         {
@@ -270,6 +276,11 @@ public class FrameService implements IFrameService, IPreload
     @Override
     public <IN, OUT> void showPanel(DataPanelDescriptor<IN, OUT> desc, IN data, Consumer<PanelOutData<OUT>> onClose)
     {                
+        if (desc.panelType != PanelType.Dialog && desc.panelType != PanelType.DialogOverlay)
+        {
+            throw new IllegalArgumentException("This method is intended for Dialog / DialogOverlay panels only");
+        }
+        
         PanelBase pb = createDialogPanel(desc, data, onClose);
         
         showInternal(desc, pb, true);
@@ -298,6 +309,14 @@ public class FrameService implements IFrameService, IPreload
             {
                 layer = 300 + overlays.size();
             }
+            else if (desc.panelType == PanelType.DialogOverlay)
+            {
+                layer = 400 + dialogs.size();
+            }
+            else
+            {
+                throw new IllegalArgumentException("Unsupported PanelType: " + desc.panelType);
+            }
             
             frameBodyPanel.add(pb, "pos 0 0 100% 100%");
             frameBodyPanel.setLayer(pb, layer);
@@ -323,19 +342,22 @@ public class FrameService implements IFrameService, IPreload
             }
             currPanel = new PanelTracker(desc, pb);
         }
-        else if (desc.panelType == PanelType.Dialog)
+        else if (desc.panelType == PanelType.Dialog || desc.panelType == PanelType.DialogOverlay)
         {
             // hide the root panel or dialog below this one
-            if (dialogs.size() == 0)
+            if (desc.panelType == PanelType.Dialog)
             {
-                currPanel.panel.setVisible(false);
-            }
-            else
-            {
-                PanelTracker below = dialogs.peek();
-                below.panel.setVisible(false);
-                panelServ.getPanelManager(below.panelDesc).onHidden();
-            }
+                if (dialogs.size() == 0)
+                {
+                    currPanel.panel.setVisible(false);
+                }
+                else
+                {
+                    PanelTracker below = dialogs.peek();
+                    below.panel.setVisible(false);
+                    panelServ.getPanelManager(below.panelDesc).onHidden();
+                }
+            }            
             
             dialogs.push(new PanelTracker(desc, pb));
         }
@@ -371,18 +393,18 @@ public class FrameService implements IFrameService, IPreload
     {
         IPanelService panelServ = Services.get(IPanelService.class);
 
-        PanelTracker op;
-        if (panelType == PanelType.Dialog && !dialogs.isEmpty())
+        PanelTracker pt_toClose;
+        if ((panelType == PanelType.Dialog || panelType == PanelType.DialogOverlay) && !dialogs.isEmpty())
         {
-            op = dialogs.pop();
+            pt_toClose = dialogs.pop();
         }
         else if (panelType == PanelType.Overlay && !overlays.isEmpty())
         {
-            op = overlays.pop();
+            pt_toClose = overlays.pop();
         }
         else if (panelType == PanelType.Root)
         {
-            op = currPanel;
+            pt_toClose = currPanel;
         }
         else
         {
@@ -391,14 +413,14 @@ public class FrameService implements IFrameService, IPreload
         }        
                 
         // the panel should exist
-        IPanelManager panelMgr = panelServ.getPanelManager(op.panelDesc);
+        IPanelManager panelMgr = panelServ.getPanelManager(pt_toClose.panelDesc);
         if (!panelMgr.isPanelCreated())
         {
             throw new IllegalArgumentException("Attempted to hide a panel which has not been created yet: " + panelType);
         }
         
-        PanelBase pb = op.panel;
-        if (!pb.isVisible())
+        PanelBase pb_toClose = pt_toClose.panel;
+        if (!pb_toClose.isVisible())
         {
             throw new IllegalStateException("Attempted to hide a panel which is not visible");
         }
@@ -406,24 +428,27 @@ public class FrameService implements IFrameService, IPreload
         // hide it, remove if panel is of temporary nature
         if (panelType == PanelType.Root)
         {
-            pb.setVisible(false);
+            pb_toClose.setVisible(false);
             currPanel = null;
         }
         else 
         {
-            frameBodyPanel.remove(pb);
+            frameBodyPanel.remove(pb_toClose);
             
-            // make topmost dialog visible again
-            if (!dialogs.isEmpty())
+            // make topmost dialog visible again if it was previously hidden
+            if (panelType != PanelType.DialogOverlay)
             {
-                PanelTracker topmost = dialogs.peek();
-                topmost.panel.setVisible(true);
-                panelServ.getPanelManager(topmost.panelDesc).onShown();
-            }
-            else
-            {
-                currPanel.panel.setVisible(true);
-                panelServ.getPanelManager(currPanel.panelDesc).onShown();
+                if (!dialogs.isEmpty())
+                {
+                    PanelTracker topmost = dialogs.peek();
+                    topmost.panel.setVisible(true);
+                    panelServ.getPanelManager(topmost.panelDesc).onShown();
+                }
+                else if (currPanel != null)
+                {
+                    currPanel.panel.setVisible(true);
+                    panelServ.getPanelManager(currPanel.panelDesc).onShown();                    
+                }
             }
         }
         
@@ -482,6 +507,7 @@ public class FrameService implements IFrameService, IPreload
     {
         return Arrays.asList(
             ActionDescriptors.ad_debugdraw,
+            ActionDescriptors.ad_showmenump,
             ActionDescriptors.ad_quit);
     }
     
@@ -731,7 +757,10 @@ public class FrameService implements IFrameService, IPreload
             outData.closeType = btnType;
             outData.data_out = out;
             closePanel(PanelType.Dialog);
-            callback.accept(outData);
+            if (callback != null)
+            {
+                callback.accept(outData);
+            }
         };
         
         // prepare the buttons

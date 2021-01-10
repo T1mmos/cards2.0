@@ -1,6 +1,5 @@
 package gent.timdemey.cards.services.panels.menu;
 
-import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,8 +12,6 @@ import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IActionService;
-import gent.timdemey.cards.services.interfaces.IResourceLocationService;
-import gent.timdemey.cards.services.interfaces.IResourceService;
 import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelManagerBase;
 import net.miginfocom.swing.MigLayout;
@@ -60,6 +57,8 @@ public class MenuPanelManager extends PanelManagerBase
             button.setIcon(null); // no icon in menu list
 
             menuPanel.add(button, "sg buts, wrap");
+            
+            menuPanel.setOpaque(false);
         }
         
         return menuPanel;
@@ -76,11 +75,11 @@ public class MenuPanelManager extends PanelManagerBase
         ICardPlugin cardPlugin = Services.get(ICardPlugin.class);
         if(cardPlugin.getPlayerCount() > 1)
         {
-            return Arrays.asList(ActionDescriptors.ad_create_mp, ActionDescriptors.ad_join, ActionDescriptors.ad_quit);
+            return Arrays.asList(ActionDescriptors.ad_createmp, ActionDescriptors.ad_join, ActionDescriptors.ad_quit);
         }
         else
         {
-            return Arrays.asList(ActionDescriptors.ad_start, ActionDescriptors.ad_quit);
+            return Arrays.asList(ActionDescriptors.ad_startsp, ActionDescriptors.ad_quit);
         }
     }
 

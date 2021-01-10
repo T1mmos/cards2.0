@@ -15,7 +15,7 @@ import gent.timdemey.cards.services.interfaces.IActionService;
 
 public class ActionBase extends AbstractAction implements IContextListener, IStateListener
 {
-    private final ActionDescriptor desc;
+    public final ActionDescriptor desc;
     
     public final Icon icon_rollover; 
 
@@ -55,6 +55,12 @@ public class ActionBase extends AbstractAction implements IContextListener, ISta
         setEnabled(Services.get(IActionService.class).canExecuteAction(desc));
     }
 
+    @Override
+    public String toString()
+    {
+        return "ActionBase { " + desc + "}";
+    }
+    
     @Override
     public void onChange(ReadOnlyChange roChange)
     {

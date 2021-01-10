@@ -8,6 +8,7 @@ import gent.timdemey.cards.services.panels.dialogs.mp.StartServerPanelData;
 public final class PanelDescriptors
 {
     public static final PanelDescriptor GAME = new PanelDescriptor("Game", PanelType.Root);
+    public static final DataPanelDescriptor<Void, Void> GAME_MENU = new DataPanelDescriptor<>("GameMenu", PanelType.DialogOverlay);
     public static final PanelDescriptor LOAD = new PanelDescriptor("Load", PanelType.Overlay);
     public static final PanelDescriptor MENU = new PanelDescriptor("Menu", PanelType.Root);
     public static final DataPanelDescriptor<MessagePanelData, Void> MESSAGE = new DataPanelDescriptor<>("Message", PanelType.Dialog);

@@ -202,7 +202,7 @@ public final class Context
             {
                 ReadOnlyChange roChange = ReadOnlyEntityFactory.getReadOnlyChangeValue(change);
                 roChanges.add(roChange);
-            }
+            }            
         }
         
         for (EntityPropertyChange epc : stateRef2ListValues.keySet())

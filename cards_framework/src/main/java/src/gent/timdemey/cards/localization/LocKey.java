@@ -3,6 +3,21 @@ package gent.timdemey.cards.localization;
 public final class LocKey
 {
     /// KEYS
+
+
+    public static final LocKey Action_createmp = Action("creategame");  
+    public static final LocKey Action_newgame = Action("newgame");  
+    public static final LocKey Action_stopgame = Action("stopgame");  
+    public static final LocKey Action_quit = Action("quit");  
+    public static final LocKey Action_edit = Action("edit");  
+    public static final LocKey Action_undo = Action("undo");  
+    public static final LocKey Action_redo = Action("redo");  
+    public static final LocKey Action_joinmp = Action("join");  
+    public static final LocKey Action_leavemp = Action("leave");  
+    public static final LocKey Action_maximize = Action("maximize");
+    public static final LocKey Action_showmenump = Action("showmenump");
+    public static final LocKey Action_unmaximize = Action("unmaximize");
+    public static final LocKey Action_minimize = Action("minimize");
     
     public static final LocKey Button_ok = Button("ok");
     public static final LocKey Button_cancel = Button("cancel");
@@ -51,20 +66,6 @@ public final class LocKey
     public static final LocKey DialogTitle_playerleft = DialogTitle("playerleft");
     public static final LocKey DialogTitle_youlose = DialogTitle("youlose");
     public static final LocKey DialogTitle_youwin = DialogTitle("youwin");
-
-    public static final LocKey Menu_game = Menu("game");
-    public static final LocKey Menu_creategame = Menu("creategame");  
-    public static final LocKey Menu_newgame = Menu("newgame");  
-    public static final LocKey Menu_stopgame = Menu("stopgame");  
-    public static final LocKey Menu_quit = Menu("quit");  
-    public static final LocKey Menu_edit = Menu("edit");  
-    public static final LocKey Menu_undo = Menu("undo");  
-    public static final LocKey Menu_redo = Menu("redo");  
-    public static final LocKey Menu_join = Menu("join");  
-    public static final LocKey Menu_leave = Menu("leave");  
-    public static final LocKey Menu_maximize = Menu("maximize");
-    public static final LocKey Menu_unmaximize = Menu("unmaximize");
-    public static final LocKey Menu_minimize = Menu("minimize");
        
     public static final LocKey TableColumnTitle_ipaddress = TableColumnTitle("ipaddress");
     public static final LocKey TableColumnTitle_lobbyPlayerCounts = TableColumnTitle("lobbyPlayerCounts");
@@ -81,7 +82,7 @@ public final class LocKey
     private static final String PREFIX_LABEL = "label";
     private static final String PREFIX_TABLE = "table";
     private static final String PREFIX_TITLE = "title";
-    private static final String PREFIX_MENU = "menu";
+    private static final String PREFIX_ACTION = "action";
     private static final String PREFIX_MESSAGE = "message";
     
     // full string key
@@ -114,7 +115,7 @@ public final class LocKey
     
     private static LocKey DebugMenu(String str)
     {
-        return from(PREFIX_DEBUG, PREFIX_MENU, str);
+        return from(PREFIX_DEBUG, PREFIX_ACTION, str);
     }
     
     private static LocKey Label(String str)
@@ -122,9 +123,9 @@ public final class LocKey
         return from(PREFIX_LABEL, str);
     }
     
-    private static LocKey Menu(String str)
+    private static LocKey Action(String str)
     {
-        return from(PREFIX_MENU, str);
+        return from(PREFIX_ACTION, str);
     }
     
     private static LocKey TableColumnTitle(String str)
