@@ -21,7 +21,7 @@ The main engine found in [cards_framework](../master/cards_framework) must be st
 
 ## Latest animated GIF
 
-![Screenshot Solitaire Showdown](screenshots/solitaireshowdown_11252020.gif)
+![Screenshot Solitaire Showdown](screenshots/solitaireshowdown_01112021.gif)
 
 ## Project History
 
@@ -35,5 +35,5 @@ The main engine found in [cards_framework](../master/cards_framework) must be st
 * July 2020: Support for animations spanning resizements was added, so you can resize the window while animations are ongoing. This is the last part in making the game truely resizable at any moment. A counter for the SPECIAL stack in Solitaire Showdown was added as well. Font are handled better in terms of resizing the game. ScalableTextComponents now cache their content in a BufferedImage which is useful during rescale operations, to show a temporarily low-quality scaled version of the text until the resource (a font) is loaded. Work has begun on the HUD which means that the cards, the card stacks and their related imagery/text are no longer the only components on the playfield; the first added HUD items are the player names, positioned as in the original MSN game. 
 * November 2020: Summer has passed - back to work after a break of several months. Several visuals have been created. Animation trajectories are pixel perfect in all resolutions. Game is really starting to look like the original now.
 * December 2020: Multiple "root" panels are now supported: "menu", "loading" and "game" panels were added. With this feature, a menu was added which will fully replace the menubar, and a loading screen can now be overlayed. Several architectural and logical fixes related to drag/animation and Z-layering of components have been implemented, making animations behave correctly. 
-
+* January 2021: The window/frame/dialog system has been refactored. Dialogs are no longer seperate frames. The main window no longer has the default OS titlebar but a custom one, which blends better with the content panel. An in-game menu dialog has been added. For example, it allows a player to disconnect from the current game. Performance fixes have been made as in some cases the game didn't feel smooth. Shortcuts (e.g. ESC key for the in-game menu) have been implemented.
 
