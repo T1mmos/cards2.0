@@ -13,7 +13,8 @@ import gent.timdemey.cards.services.panels.PanelOutData;
 public interface IFrameService
 {
     public JFrame getFrame();
-     
+
+    public boolean isShown(PanelDescriptor desc);
     public void showPanel(PanelDescriptor desc);
     public <IN, OUT> void showPanel(DataPanelDescriptor<IN, OUT> desc, IN data, Consumer<PanelOutData<OUT>> onClose);
     public void showMessage(String title, String message);
@@ -35,4 +36,5 @@ public interface IFrameService
     public void setLocation(int x, int y);
     public void setBounds(int x, int y, int w, int h);
     public void updatePositionService();
+
 }

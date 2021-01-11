@@ -9,7 +9,7 @@ import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 
-public class D_ShowMenuMP extends DialogCommandBase
+public class D_ToggleMenuMP extends DialogCommandBase
 {
 
     @Override
@@ -29,7 +29,15 @@ public class D_ShowMenuMP extends DialogCommandBase
     protected void showDialog(Context context, ContextType type, State state)
     {
         IFrameService frameServ = Services.get(IFrameService.class);
-        frameServ.showPanel(PanelDescriptors.GAME_MENU, null, null);    
+        if (frameServ.isShown(PanelDescriptors.GAME_MENU))
+        {
+            frameServ.removePanel(PanelDescriptors.GAME_MENU);
+        }
+        else
+        {
+            frameServ.showPanel(PanelDescriptors.GAME_MENU, null, null);    
+        }
+            
     }
 
 }

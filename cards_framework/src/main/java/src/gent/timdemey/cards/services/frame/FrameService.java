@@ -10,6 +10,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -100,9 +101,9 @@ public class FrameService implements IFrameService, IPreload
         }
     }
     
-    private PanelTracker currPanel = null;
-    private Stack<PanelTracker> dialogs = new Stack<>();
-    private Stack<PanelTracker> overlays  = new Stack<>();
+    private PanelTracker rootPanelTracker = null;
+    private Stack<PanelTracker> dialogPanelTrackers = new Stack<>();
+    private Stack<PanelTracker> overlayPanelTrackers  = new Stack<>();
         
     private JButton createFrameButton(ActionDescriptor desc)
     {
@@ -178,7 +179,7 @@ public class FrameService implements IFrameService, IPreload
             
             frameBodyPanel = new JLayeredPane();
             frameBodyPanel.setLayout(new MigLayout());
-            frameBodyPanel.addComponentListener(new CardPanelResizeListener());
+            frameBodyPanel.addComponentListener(new FrameBodyPanelResizeListener());
             framePanel.add(frameBodyPanel, "push, grow");
                         
             frame.setTitle(getTitle());
@@ -197,7 +198,7 @@ public class FrameService implements IFrameService, IPreload
                 KeyStroke keyStroke = (KeyStroke) action.getValue(Action.ACCELERATOR_KEY);
                 if (keyStroke != null)
                 {
-                    framePanel.getInputMap().put(keyStroke, ad.id);
+                    framePanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, ad.id);
                     framePanel.getActionMap().put(ad.id, action);
                 }
             }
@@ -230,13 +231,35 @@ public class FrameService implements IFrameService, IPreload
         IPanelService panelServ = Services.get(IPanelService.class);
         IPanelManager panelMgr = panelServ.getPanelManager(desc);
         
-        JComponent comp = panelMgr.getPanel();
-        if (comp.getParent() != frameBodyPanel)
+        // check that the component is actually part of the frame body panel
+        JComponent contentComp = panelMgr.getPanel();
+        JComponent directChild;
+        if (desc.panelType == PanelType.Root)
         {
-            throw new IllegalStateException("The component is not a child of the card panel");
+            directChild = contentComp;
         }
+        else 
+        {
+            // dialog content panels are multiwrapped in other panels
+            directChild = (JComponent) contentComp.getParent().getParent();
+        }
+        if (directChild.getParent() != frameBodyPanel)
+        {
+            throw new IllegalStateException("The component is not part of the hierarchy of the frame body panel");
+        }        
         
-        frameBodyPanel.remove(comp);        
+        directChild.setVisible(false);
+        panelMgr.onHidden();
+        
+        frameBodyPanel.remove(directChild);        
+        //frameBodyPanel.repaint();
+    }
+    
+    @Override
+    public boolean isShown(PanelDescriptor desc)
+    {
+        PanelBase pb = get(desc);
+        return pb != null;
     }
     
     @Override
@@ -303,15 +326,15 @@ public class FrameService implements IFrameService, IPreload
             }
             else if (desc.panelType == PanelType.Dialog)
             {
-                layer = 100 + dialogs.size();
+                layer = 100 + dialogPanelTrackers.size();
             }            
             else if (desc.panelType == PanelType.Overlay)
             {
-                layer = 300 + overlays.size();
+                layer = 300 + overlayPanelTrackers.size();
             }
             else if (desc.panelType == PanelType.DialogOverlay)
             {
-                layer = 400 + dialogs.size();
+                layer = 400 + dialogPanelTrackers.size();
             }
             else
             {
@@ -324,46 +347,46 @@ public class FrameService implements IFrameService, IPreload
             frameBodyPanel.validate();
         }
                 
-        // in case of a root panel, all open dialogs, overlays, and current panel are closed.
-        // do not close persistent dialogs
+        // in case of a root panel, all open dialogPanelTrackers, overlayPanelTrackers, and current panel are closed.
+        // do not close persistent dialogPanelTrackers
         if (desc.panelType == PanelType.Root)
         {
-            while (!dialogs.empty())
+            while (!dialogPanelTrackers.empty())
             {
                 closePanelInternal(PanelType.Dialog);
             }
-            while (!overlays.empty())
+            while (!overlayPanelTrackers.empty())
             {
                 closePanelInternal(PanelType.Overlay);
             }
-            if (currPanel != null)
+            if (rootPanelTracker != null)
             {
                 closePanelInternal(PanelType.Root);
             }
-            currPanel = new PanelTracker(desc, pb);
+            rootPanelTracker = new PanelTracker(desc, pb);
         }
         else if (desc.panelType == PanelType.Dialog || desc.panelType == PanelType.DialogOverlay)
         {
             // hide the root panel or dialog below this one
             if (desc.panelType == PanelType.Dialog)
             {
-                if (dialogs.size() == 0)
+                if (dialogPanelTrackers.size() == 0)
                 {
-                    currPanel.panel.setVisible(false);
+                    rootPanelTracker.panel.setVisible(false);
                 }
                 else
                 {
-                    PanelTracker below = dialogs.peek();
+                    PanelTracker below = dialogPanelTrackers.peek();
                     below.panel.setVisible(false);
                     panelServ.getPanelManager(below.panelDesc).onHidden();
                 }
             }            
             
-            dialogs.push(new PanelTracker(desc, pb));
+            dialogPanelTrackers.push(new PanelTracker(desc, pb));
         }
         else if (desc.panelType == PanelType.Overlay)
         {
-            overlays.push(new PanelTracker(desc, pb));
+            overlayPanelTrackers.push(new PanelTracker(desc, pb));
         }
         
         // show the panel and notify its manager
@@ -394,17 +417,17 @@ public class FrameService implements IFrameService, IPreload
         IPanelService panelServ = Services.get(IPanelService.class);
 
         PanelTracker pt_toClose;
-        if ((panelType == PanelType.Dialog || panelType == PanelType.DialogOverlay) && !dialogs.isEmpty())
+        if ((panelType == PanelType.Dialog || panelType == PanelType.DialogOverlay) && !dialogPanelTrackers.isEmpty())
         {
-            pt_toClose = dialogs.pop();
+            pt_toClose = dialogPanelTrackers.pop();
         }
-        else if (panelType == PanelType.Overlay && !overlays.isEmpty())
+        else if (panelType == PanelType.Overlay && !overlayPanelTrackers.isEmpty())
         {
-            pt_toClose = overlays.pop();
+            pt_toClose = overlayPanelTrackers.pop();
         }
         else if (panelType == PanelType.Root)
         {
-            pt_toClose = currPanel;
+            pt_toClose = rootPanelTracker;
         }
         else
         {
@@ -429,25 +452,26 @@ public class FrameService implements IFrameService, IPreload
         if (panelType == PanelType.Root)
         {
             pb_toClose.setVisible(false);
-            currPanel = null;
+            rootPanelTracker = null;
         }
         else 
         {
             frameBodyPanel.remove(pb_toClose);
             
-            // make topmost dialog visible again if it was previously hidden
-            if (panelType != PanelType.DialogOverlay)
+            // make topmost dialog visible again if it was previously hidden which is the
+            // case a dialog was on top
+            if (panelType == PanelType.Dialog)
             {
-                if (!dialogs.isEmpty())
+                if (!dialogPanelTrackers.isEmpty())
                 {
-                    PanelTracker topmost = dialogs.peek();
+                    PanelTracker topmost = dialogPanelTrackers.peek();
                     topmost.panel.setVisible(true);
                     panelServ.getPanelManager(topmost.panelDesc).onShown();
                 }
-                else if (currPanel != null)
+                else if (rootPanelTracker != null)
                 {
-                    currPanel.panel.setVisible(true);
-                    panelServ.getPanelManager(currPanel.panelDesc).onShown();                    
+                    rootPanelTracker.panel.setVisible(true);
+                    panelServ.getPanelManager(rootPanelTracker.panelDesc).onShown();                    
                 }
             }
         }
@@ -796,7 +820,8 @@ public class FrameService implements IFrameService, IPreload
 
         // create the entire panel, add the custom content and the buttons
         PanelBase dialogPanel = new PanelBase(desc);
-        dialogPanel.setLayout(new MigLayout("insets 0"));        
+        dialogPanel.setLayout(new MigLayout("insets 0"));  
+        dialogPanel.addMouseListener(new MouseAdapter(){}); // block mouse input to panels below
         JPanel marginPanel = new RootPanel(getDialogBackgroundImage());        
         marginPanel.setLayout(new MigLayout("insets 20"));
         dialogPanel.add(marginPanel, "hmax 400, align center, push, alignx center, aligny center");

@@ -1,8 +1,10 @@
 package gent.timdemey.cards.services.panels.game;
 
+import java.awt.event.KeyEvent;
 import java.util.EnumSet;
 
 import javax.swing.JButton;
+import javax.swing.KeyStroke;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
@@ -40,8 +42,6 @@ public class GameMenuPanelManager extends DataPanelManagerBase<Void, Void>
         }
         
         return content;
-        
-        
     }
 
     @Override

@@ -20,7 +20,7 @@ import gent.timdemey.cards.model.entities.commands.C_StartMultiplayerGame;
 import gent.timdemey.cards.model.entities.commands.C_Undo;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.D_Connect;
-import gent.timdemey.cards.model.entities.commands.D_ShowMenuMP;
+import gent.timdemey.cards.model.entities.commands.D_ToggleMenuMP;
 import gent.timdemey.cards.model.entities.commands.D_StartServer;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
@@ -132,7 +132,7 @@ public class ActionService implements IActionService
         
         if (desc == ActionDescriptors.ad_createmp)
         {
-            return new A_CreateMultiplayerGame(ActionDescriptors.ad_createmp, Loc.get(LocKey.Action_createmp));
+            return new A_CreateMP(ActionDescriptors.ad_createmp, Loc.get(LocKey.Action_createmp));
         }
         else if (desc == ActionDescriptors.ad_debugdraw)
         {
@@ -188,7 +188,7 @@ public class ActionService implements IActionService
         }
         else if (desc == ActionDescriptors.ad_showmenump)
         {
-            ActionBase action = new A_ShowMenuMP(desc, Loc.get(LocKey.Action_showmenump));
+            ActionBase action = new A_ToggleMenuMP(desc, Loc.get(LocKey.Action_showmenump));
             
             addShortCut(action, "ESCAPE");
             
@@ -200,7 +200,7 @@ public class ActionService implements IActionService
         }
         else if (desc == ActionDescriptors.ad_startmp)
         {
-            return new A_StartMultiplayerGame(desc, Loc.get(LocKey.Action_createmp));
+            return new A_StartMP(desc, Loc.get(LocKey.Action_createmp));
         }
         else if (desc == ActionDescriptors.ad_undo)
         {
@@ -255,7 +255,7 @@ public class ActionService implements IActionService
         }
         else if (desc == ActionDescriptors.ad_showmenump)
         {
-            return new D_ShowMenuMP();
+            return new D_ToggleMenuMP();
         }
         else if (desc == ActionDescriptors.ad_startsp)
         {

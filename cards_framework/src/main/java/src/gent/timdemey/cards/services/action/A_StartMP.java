@@ -1,13 +1,12 @@
 package gent.timdemey.cards.services.action;
 
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
-import gent.timdemey.cards.readonlymodel.ReadOnlyProperty;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
 
-public class A_ShowMenuMP extends ActionBase
+class A_StartMP extends ActionBase
 {
-    protected A_ShowMenuMP(ActionDescriptor desc, String title)
+    protected A_StartMP(ActionDescriptor desc, String title)
     {
         super(desc, title);
     }
@@ -15,9 +14,7 @@ public class A_ShowMenuMP extends ActionBase
     @Override
     public void onChange(ReadOnlyChange roChange)
     {
-        ReadOnlyProperty<?> property = roChange.property;
-
-        if (property == ReadOnlyState.GameState)
+        if (roChange.property == ReadOnlyState.Players)
         {
             checkEnabled();
         }

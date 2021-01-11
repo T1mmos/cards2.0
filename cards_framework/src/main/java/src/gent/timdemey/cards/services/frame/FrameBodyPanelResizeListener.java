@@ -12,7 +12,7 @@ import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 
-class CardPanelResizeListener implements ComponentListener
+class FrameBodyPanelResizeListener implements ComponentListener
 {
 
     // relayout time window for a resize event. if a new resize event enters
@@ -91,7 +91,7 @@ class CardPanelResizeListener implements ComponentListener
     
     private void relayout()
     {
-        Logger.trace("CardPanelResizeListener::relayout BEGIN");
+        Logger.trace("FrameBodyPanelResizeListener::relayout BEGIN");
         IFrameService frameServ = Services.get(IFrameService.class);
         IPanelService panelServ = Services.get(IPanelService.class);        
         
@@ -100,15 +100,15 @@ class CardPanelResizeListener implements ComponentListener
             frameServ.updatePositionService();
             panelServ.positionScalableComponents();
         });
-        Logger.trace("CardPanelResizeListener::relayout END");
+        Logger.trace("FrameBodyPanelResizeListener::relayout END");
     }
     
     private void rescale()
     {
-        Logger.trace("CardPanelResizeListener::rescale BEGIN");
+        Logger.trace("FrameBodyPanelResizeListener::rescale BEGIN");
         IPanelService panelServ = Services.get(IPanelService.class);
         SwingUtilities.invokeLater(() -> panelServ.rescaleResourcesAsync(this::onRescaled));
-        Logger.trace("CardPanelResizeListener::rescale END");
+        Logger.trace("FrameBodyPanelResizeListener::rescale END");
     }
     
     private void onRescaled()

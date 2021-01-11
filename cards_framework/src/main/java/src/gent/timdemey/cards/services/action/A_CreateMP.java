@@ -13,9 +13,9 @@ import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
  * @author Timmos
  *
  */
-class A_CreateMultiplayerGame extends ActionBase
+class A_CreateMP extends ActionBase
 {    
-    protected A_CreateMultiplayerGame(ActionDescriptor desc, String title)
+    protected A_CreateMP(ActionDescriptor desc, String title)
     {
         super(desc, title);
     }
