@@ -292,8 +292,6 @@ public class FrameService implements IFrameService, IPreload
         }      
         
         showInternal(desc, pb, add);
-        
-        refresh();
     }
     
     @Override
@@ -307,8 +305,6 @@ public class FrameService implements IFrameService, IPreload
         PanelBase pb = createDialogPanel(desc, data, onClose);
         
         showInternal(desc, pb, true);
-        
-        refresh();
     }
         
     private void showInternal(PanelDescriptor desc, PanelBase pb, boolean add)
@@ -402,14 +398,6 @@ public class FrameService implements IFrameService, IPreload
         }
         
         closePanelInternal(panelType);
-        refresh();
-    }
-    
-    private void refresh()
-    {
-        frameBodyPanel.invalidate();
-        frameBodyPanel.validate();
-        frameBodyPanel.repaint();
     }
     
     private void closePanelInternal(PanelType panelType)
