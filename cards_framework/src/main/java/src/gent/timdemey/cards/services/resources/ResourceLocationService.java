@@ -97,7 +97,7 @@ public class ResourceLocationService implements IResourceLocationService
     @Override
     public String getAppBackgroundImageFilePath()
     {
-        return "background_darkgray.png";
+        return "background_softblue.png";
     }
 
     @Override
