@@ -154,6 +154,7 @@ public final class Services
         EntryKey entryKey = new EntryKey(iface, param);
 
         Map<EntryKey, Object> map = get().serviceMap;
+        @SuppressWarnings("unchecked")
         T value = (T) map.get(entryKey);
         if (value == null)
         {
@@ -163,7 +164,9 @@ public final class Services
                 if (iface.isAssignableFrom(ek.clazz) && Objects.equals(param, ek.param))
                 {
                     // install a new mapping for the requested interface, to speed up further lookups
-                    value = (T) map.get(ek);
+                    @SuppressWarnings("unchecked")
+                    T value2 = (T) map.get(ek);
+                    value = value2;
                     map.put(entryKey, value);
                     break;
                 }
