@@ -1,5 +1,6 @@
 package gent.timdemey.cards.readonlymodel;
 
+import gent.timdemey.cards.common.Version;
 import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.model.entities.game.UDPServer;
 
@@ -25,13 +26,8 @@ public class ReadOnlyUDPServer extends ReadOnlyEntityBase<UDPServer>
         return entity.maxPlayerCount;
     }
     
-    public int getMinorVersion()
+    public Version getVersion()
     {
-        return entity.minorVersion;
-    }
-    
-    public int getMajorVersion()
-    {
-        return entity.majorVersion;
+        return entity.version;
     }
 }

@@ -1,5 +1,6 @@
 package gent.timdemey.cards;
 
+import gent.timdemey.cards.common.Version;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.serialization.SolShowSerializationService;
@@ -43,15 +44,9 @@ public class SolShowPlugin implements ICardPlugin
     }
 
     @Override
-    public int getMajorVersion()
+    public Version getVersion()
     {
-        return 2;
-    }
-
-    @Override
-    public int getMinorVersion()
-    {
-        return 0;
+        return new Version(1,0);
     }
 
     @Override

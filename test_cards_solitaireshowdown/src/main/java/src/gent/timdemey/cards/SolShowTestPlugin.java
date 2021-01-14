@@ -1,5 +1,6 @@
 package gent.timdemey.cards;
 
+import gent.timdemey.cards.common.Version;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.action.SolShowTestActionService;
 import gent.timdemey.cards.services.context.ContextService;
@@ -30,17 +31,11 @@ public class SolShowTestPlugin extends SolShowPlugin
     }
     
     @Override
-    public int getMajorVersion()
+    public Version getVersion()
     {
-        return 6;
+        return new Version(1, 0);
     }
-    
-    @Override
-    public int getMinorVersion()
-    {
-        return 66;
-    }
-    
+        
     @Override
     public State createState()
     {

@@ -3,6 +3,7 @@ package gent.timdemey.cards.test.helpers;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import gent.timdemey.cards.common.Version;
 import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.model.entities.game.UDPServer;
 import gent.timdemey.cards.model.entities.game.payload.P_Server;
@@ -27,7 +28,8 @@ public class ServerHelper
             pl.tcpport = 666;
         }
         Server server = new Server(pl);
-        UDPServer udpServer = new UDPServer(server, 10, 3, 2, 2);
+        Version version = new Version(2,3);
+        UDPServer udpServer = new UDPServer(server, version, 2, 2);
         return udpServer;
     }
 }
