@@ -264,11 +264,7 @@ public class FrameService implements IFrameService, IPreload
     
     @Override
     public void showPanel(PanelDescriptor desc)
-    {
-        if (desc instanceof DataPanelDescriptor<?, ?>)
-        {
-            throw new IllegalArgumentException("This method is not intended for data panels");
-        }
+    {        
         if (desc.panelType != PanelType.Root)
         {
             throw new IllegalArgumentException("This method is intended for Root panels only");
@@ -519,7 +515,7 @@ public class FrameService implements IFrameService, IPreload
     {
         return Arrays.asList(
             ActionDescriptors.ad_debugdraw,
-            ActionDescriptors.ad_showmenump,
+            ActionDescriptors.ad_togglemenump,
             ActionDescriptors.ad_quit);
     }
     

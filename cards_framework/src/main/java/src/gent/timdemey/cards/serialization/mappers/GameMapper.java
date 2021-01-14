@@ -61,8 +61,7 @@ class GameMapper extends EntityBaseDtoMapper
             mergeEntityBaseToDto(udpServer, dto);
             
             dto.server = toDto(udpServer.server);           
-            dto.majorVersion = udpServer.majorVersion;
-            dto.minorVersion = udpServer.minorVersion;
+            dto.version = toDto(udpServer.version);
             dto.playerCount = udpServer.playerCount;
             dto.maxPlayerCount = udpServer.maxPlayerCount;
         }
@@ -77,8 +76,7 @@ class GameMapper extends EntityBaseDtoMapper
             mergeDtoBaseToPayload(dto, pl);
 
             pl.server = toDomainObject(dto.server);
-            pl.majorVersion = dto.majorVersion;
-            pl.minorVersion = dto.minorVersion;
+            pl.version = CommonMapper.toVersion(dto.version);
             pl.playerCount = dto.playerCount;
             pl.maxPlayerCount = dto.maxPlayerCount;
         }

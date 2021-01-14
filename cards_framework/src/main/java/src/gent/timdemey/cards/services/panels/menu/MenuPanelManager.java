@@ -1,6 +1,6 @@
 package gent.timdemey.cards.services.panels.menu;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.alee.laf.button.WebButton;
@@ -73,14 +73,22 @@ public class MenuPanelManager extends PanelManagerBase
     protected List<ActionDescriptor> getMenuActionDescriptors()
     {
         ICardPlugin cardPlugin = Services.get(ICardPlugin.class);
+        List<ActionDescriptor> actdescs = new ArrayList<>();
+        
         if(cardPlugin.getPlayerCount() > 1)
         {
-            return Arrays.asList(ActionDescriptors.ad_createmp, ActionDescriptors.ad_join, ActionDescriptors.ad_quit);
+            actdescs.add(ActionDescriptors.ad_createmp);
+            actdescs.add(ActionDescriptors.ad_join);
         }
         else
         {
-            return Arrays.asList(ActionDescriptors.ad_startsp, ActionDescriptors.ad_quit);
+            actdescs.add(ActionDescriptors.ad_startsp);
         }
+        
+        actdescs.add(ActionDescriptors.ad_about);
+        actdescs.add(ActionDescriptors.ad_quit);
+        
+        return actdescs;
     }
 
     @Override

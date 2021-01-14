@@ -18,6 +18,7 @@ import gent.timdemey.cards.services.contract.preload.PreloadOrder;
 import gent.timdemey.cards.services.contract.preload.PreloadOrderType;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
+import gent.timdemey.cards.services.panels.about.AboutPanelManager;
 import gent.timdemey.cards.services.panels.dialogs.message.MessagePanelManager;
 import gent.timdemey.cards.services.panels.dialogs.mp.JoinMPGamePanelManager;
 import gent.timdemey.cards.services.panels.dialogs.mp.LobbyPanelManager;
@@ -47,6 +48,7 @@ public class PanelService implements IPanelService
     
     protected void addAbsentPanelManagers()
     {
+        addPanelManagerIfAbsent(PanelDescriptors.ABOUT, () -> new AboutPanelManager());
         addPanelManagerIfAbsent(PanelDescriptors.GAME, () -> new GamePanelManager());
         addPanelManagerIfAbsent(PanelDescriptors.GAME_MENU, () -> new GameMenuPanelManager());
         addPanelManagerIfAbsent(PanelDescriptors.LOAD, () -> new LoadPanelManager());
@@ -85,16 +87,26 @@ public class PanelService implements IPanelService
     @Override
     public IPanelManager getPanelManager(PanelDescriptor panelDesc)
     {
-        IPanelManager panelMgr = panelMgrs.get(panelDesc);
-        return panelMgr;
+        return getPanelManagerPriv(panelDesc);
     }    
 
     @Override
     public <IN, OUT> IDataPanelManager<IN, OUT> getPanelManager(DataPanelDescriptor<IN, OUT> panelDesc)
     {
+        return getPanelManagerPriv(panelDesc);
+    }
+    
+    private <T> T getPanelManagerPriv (PanelDescriptor panelDesc)
+    {
+        IPanelManager panelMgr = panelMgrs.get(panelDesc);
+        if (panelMgr == null)
+        {
+            throw new IllegalArgumentException("PanelDescriptor isn't mapped onto a PanelManager: " + panelDesc);
+        }
+        
         @SuppressWarnings("unchecked")
-        IDataPanelManager<IN, OUT> panelMgr = (IDataPanelManager<IN, OUT>) panelMgrs.get(panelDesc);
-        return panelMgr;
+        T he = (T) panelMgr;
+        return he;
     }
     
     @Override

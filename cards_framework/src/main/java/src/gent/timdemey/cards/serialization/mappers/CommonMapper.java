@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import gent.timdemey.cards.common.Version;
+import gent.timdemey.cards.serialization.dto.common.VersionDto;
+
 class CommonMapper
 {
     private static MapperDefs mapper = new MapperDefs();
@@ -15,10 +18,12 @@ class CommonMapper
         // domain objects to DTO
         mapper.addMapping(UUID.class, String.class, CommonMapper::toDto);
         mapper.addMapping(InetAddress.class, String.class, CommonMapper::toDto);
+        mapper.addMapping(Version.class, VersionDto.class, CommonMapper::toDto);
 
         // DTO to domain object
         mapper.addMapping(String.class, UUID.class, CommonMapper::toUuid);
         mapper.addMapping(String.class, InetAddress.class, CommonMapper::toInetAddress);
+        mapper.addMapping(VersionDto.class, Version.class, CommonMapper::toVersion);        
     }
 
     static String toDto(UUID obj)
@@ -50,6 +55,26 @@ class CommonMapper
         {
             throw new IllegalArgumentException("Cannot map into InetAddress: " + dto);
         }
+    }
+    
+
+    
+    static VersionDto toDto(Version obj)
+    {
+        int major = obj.getMajor();
+        int minor = obj.getMinor();
+        
+        VersionDto dto = new VersionDto();
+        dto.major = major;
+        dto.minor = minor;
+        
+        return dto;
+    }
+    
+    static Version toVersion(VersionDto dto)
+    {
+        Version version = new Version(dto.major, dto.minor);
+        return version;
     }
 
     static <SRC, DST> List<DST> mapList(MapperDefs mapDefs, List<SRC> srcList, Class<DST> dstClazz)

@@ -4,7 +4,7 @@ public final class LocKey
 {
     /// KEYS
 
-
+    public static final LocKey Action_about = Action("about");
     public static final LocKey Action_createmp = Action("creategame");  
     public static final LocKey Action_newgame = Action("newgame");  
     public static final LocKey Action_stopgame = Action("stopgame");  
@@ -15,7 +15,8 @@ public final class LocKey
     public static final LocKey Action_joinmp = Action("join");  
     public static final LocKey Action_leavemp = Action("leave");  
     public static final LocKey Action_maximize = Action("maximize");
-    public static final LocKey Action_showmenump = Action("showmenump");
+    public static final LocKey Action_showmenu = Action("showmenu");
+    public static final LocKey Action_togglemenump = Action("togglemenump");
     public static final LocKey Action_unmaximize = Action("unmaximize");
     public static final LocKey Action_minimize = Action("minimize");
     

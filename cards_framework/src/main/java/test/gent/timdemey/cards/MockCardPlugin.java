@@ -1,5 +1,6 @@
 package gent.timdemey.cards;
 
+import gent.timdemey.cards.common.Version;
 import gent.timdemey.cards.model.state.State;
 
 public class MockCardPlugin implements ICardPlugin
@@ -25,15 +26,9 @@ public class MockCardPlugin implements ICardPlugin
     }
 
     @Override
-    public int getMajorVersion()
+    public Version getVersion()
     {
-        return 6;
-    }
-
-    @Override
-    public int getMinorVersion()
-    {
-        return 66;
+        return new Version(1,0);
     }
 
     @Override

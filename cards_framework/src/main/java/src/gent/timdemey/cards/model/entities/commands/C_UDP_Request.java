@@ -39,7 +39,7 @@ public class C_UDP_Request extends CommandBase
         ICardPlugin cardPlugin = Services.get(ICardPlugin.class);
         
         Server server = state.getServer();                
-        UDPServer udpServer = new UDPServer(server, cardPlugin.getMajorVersion(), cardPlugin.getMinorVersion(), state.getPlayers().size(), cardPlugin.getPlayerCount());;
+        UDPServer udpServer = new UDPServer(server, cardPlugin.getVersion(), state.getPlayers().size(), cardPlugin.getPlayerCount());;
         C_UDP_Response udpResponseCmd = new C_UDP_Response(udpServer);
 
         UDP_Source udpSource = getSourceUdp();

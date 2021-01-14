@@ -27,6 +27,7 @@ import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
+import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
@@ -49,11 +50,13 @@ public class ActionService implements IActionService
     @Override
     public boolean canExecuteAction(ActionDescriptor desc)
     {
-        if (desc == ActionDescriptors.ad_debugdraw || 
-            desc == ActionDescriptors.ad_gc ||
-            desc == ActionDescriptors.ad_quit || 
-            desc == ActionDescriptors.ad_minimize || 
-            desc == ActionDescriptors.ad_maximize ||
+        if (desc == ActionDescriptors.ad_about      ||
+            desc == ActionDescriptors.ad_debugdraw  || 
+            desc == ActionDescriptors.ad_gc         ||
+            desc == ActionDescriptors.ad_quit       || 
+            desc == ActionDescriptors.ad_minimize   || 
+            desc == ActionDescriptors.ad_maximize   ||
+            desc == ActionDescriptors.ad_showmenu   ||
             desc == ActionDescriptors.ad_unmaximize)
         {
             return true;
@@ -130,7 +133,11 @@ public class ActionService implements IActionService
     {
         IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
         
-        if (desc == ActionDescriptors.ad_createmp)
+        if (desc == ActionDescriptors.ad_about)
+        {
+            return new ActionBase(desc, Loc.get(LocKey.Action_about));
+        } 
+        else if (desc == ActionDescriptors.ad_createmp)
         {
             return new A_CreateMP(ActionDescriptors.ad_createmp, Loc.get(LocKey.Action_createmp));
         }
@@ -186,9 +193,13 @@ public class ActionService implements IActionService
         {
             return new A_Redo(desc, Loc.get(LocKey.Action_redo));
         }
-        else if (desc == ActionDescriptors.ad_showmenump)
+        else if (desc == ActionDescriptors.ad_showmenu)
         {
-            ActionBase action = new A_ToggleMenuMP(desc, Loc.get(LocKey.Action_showmenump));
+            return new ActionBase(desc, Loc.get(LocKey.Action_showmenu));
+        }
+        else if (desc == ActionDescriptors.ad_togglemenump)
+        {
+            ActionBase action = new A_ToggleMenuMP(desc, Loc.get(LocKey.Action_togglemenump));
             
             addShortCut(action, "ESCAPE");
             
@@ -253,10 +264,6 @@ public class ActionService implements IActionService
         {
             return new C_Redo();
         }
-        else if (desc == ActionDescriptors.ad_showmenump)
-        {
-            return new D_ToggleMenuMP();
-        }
         else if (desc == ActionDescriptors.ad_startsp)
         {
             return new C_StartLocalGame();
@@ -264,6 +271,10 @@ public class ActionService implements IActionService
         else if (desc == ActionDescriptors.ad_startmp)
         {
             return new C_StartMultiplayerGame();
+        }
+        else if (desc == ActionDescriptors.ad_togglemenump)
+        {
+            return new D_ToggleMenuMP();
         }
         else if (desc == ActionDescriptors.ad_undo)
         {
@@ -291,7 +302,15 @@ public class ActionService implements IActionService
     
     protected Runnable createRunnable(ActionDescriptor desc)
     {
-        if (desc == ActionDescriptors.ad_debugdraw) 
+        if (desc == ActionDescriptors.ad_about)
+        {
+            return () -> 
+            {
+                IFrameService frameServ = Services.get(IFrameService.class);
+                frameServ.showPanel(PanelDescriptors.ABOUT);
+            };
+        }
+        else if (desc == ActionDescriptors.ad_debugdraw) 
         {
             return () -> 
             {
@@ -335,6 +354,14 @@ public class ActionService implements IActionService
             {
                 IFrameService frameServ = Services.get(IFrameService.class);
                 frameServ.minimize();                
+            };
+        }
+        else if (desc == ActionDescriptors.ad_showmenu)
+        {
+            return () -> 
+            {
+                IFrameService frameServ = Services.get(IFrameService.class);
+                frameServ.showPanel(PanelDescriptors.MENU);                
             };
         }
         
