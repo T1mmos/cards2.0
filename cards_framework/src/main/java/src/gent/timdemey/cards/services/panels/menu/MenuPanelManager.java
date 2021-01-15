@@ -77,16 +77,17 @@ public class MenuPanelManager extends PanelManagerBase
         
         if(cardPlugin.getPlayerCount() > 1)
         {
-            actdescs.add(ActionDescriptors.ad_createmp);
-            actdescs.add(ActionDescriptors.ad_join);
+            actdescs.add(ActionDescriptors.CREATEMP);
+            actdescs.add(ActionDescriptors.JOIN);
         }
         else
         {
-            actdescs.add(ActionDescriptors.ad_startsp);
+            actdescs.add(ActionDescriptors.STARTSP);
         }
         
-        actdescs.add(ActionDescriptors.ad_about);
-        actdescs.add(ActionDescriptors.ad_quit);
+        actdescs.add(ActionDescriptors.SHOWSETTINGS);
+        actdescs.add(ActionDescriptors.SHOWABOUT);
+        actdescs.add(ActionDescriptors.QUIT);
         
         return actdescs;
     }

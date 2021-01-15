@@ -12,6 +12,6 @@ public class SolShowTestMenuPanelManager extends MenuPanelManager
 
     protected List<ActionDescriptor> getMenuActionDescriptors()
     {
-        return Arrays.asList(SolShowTestActionDescriptors.ad_fakegame, ActionDescriptors.ad_quit);
+        return Arrays.asList(SolShowTestActionDescriptors.ad_fakegame, ActionDescriptors.QUIT);
     }
 }

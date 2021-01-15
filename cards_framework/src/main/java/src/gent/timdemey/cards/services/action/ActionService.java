@@ -50,14 +50,15 @@ public class ActionService implements IActionService
     @Override
     public boolean canExecuteAction(ActionDescriptor desc)
     {
-        if (desc == ActionDescriptors.ad_about      ||
-            desc == ActionDescriptors.ad_debugdraw  || 
-            desc == ActionDescriptors.ad_gc         ||
-            desc == ActionDescriptors.ad_quit       || 
-            desc == ActionDescriptors.ad_minimize   || 
-            desc == ActionDescriptors.ad_maximize   ||
-            desc == ActionDescriptors.ad_showmenu   ||
-            desc == ActionDescriptors.ad_unmaximize)
+        if (desc == ActionDescriptors.SHOWABOUT     ||
+            desc == ActionDescriptors.DEBUGDRAW     || 
+            desc == ActionDescriptors.GC            ||
+            desc == ActionDescriptors.QUIT          || 
+            desc == ActionDescriptors.MINIMIZE      || 
+            desc == ActionDescriptors.MAXIMIZE      ||
+            desc == ActionDescriptors.SHOWMENU      ||
+            desc == ActionDescriptors.SHOWSETTINGS  ||
+            desc == ActionDescriptors.UNMAXIMIZE)
         {
             return true;
         }
@@ -133,15 +134,15 @@ public class ActionService implements IActionService
     {
         IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
         
-        if (desc == ActionDescriptors.ad_about)
+        if (desc == ActionDescriptors.SHOWABOUT)
         {
             return new ActionBase(desc, Loc.get(LocKey.Action_about));
         } 
-        else if (desc == ActionDescriptors.ad_createmp)
+        else if (desc == ActionDescriptors.CREATEMP)
         {
-            return new A_CreateMP(ActionDescriptors.ad_createmp, Loc.get(LocKey.Action_createmp));
+            return new A_CreateMP(ActionDescriptors.CREATEMP, Loc.get(LocKey.Action_createmp));
         }
-        else if (desc == ActionDescriptors.ad_debugdraw)
+        else if (desc == ActionDescriptors.DEBUGDRAW)
         {
             ActionBase action = new ActionBase(desc, Loc.get(LocKey.DebugMenu_debug));
             
@@ -149,37 +150,37 @@ public class ActionService implements IActionService
             
             return action;
         }
-        else if (desc == ActionDescriptors.ad_gc)
+        else if (desc == ActionDescriptors.GC)
         {
             return new ActionBase(desc, Loc.get(LocKey.DebugMenu_gc));
         }
-        else if (desc == ActionDescriptors.ad_join)
+        else if (desc == ActionDescriptors.JOIN)
         {
             return new A_JoinGame(desc, Loc.get(LocKey.Action_joinmp));
         }
-        else if (desc == ActionDescriptors.ad_leavemp)
+        else if (desc == ActionDescriptors.LEAVEMP)
         {
             return new A_LeaveGame(desc, Loc.get(LocKey.Action_leavemp));
         }
-        else if (desc == ActionDescriptors.ad_maximize)
+        else if (desc == ActionDescriptors.MAXIMIZE)
         {
             ImageIcon img_maximize = getImageIcon(resLocServ.getAppMaximizeIconFilePath());
             ImageIcon img_maximize_rollover = getImageIcon(resLocServ.getAppMaximizeRolloverIconFilePath());
             return new ActionBase(desc, Loc.get(LocKey.Action_maximize), img_maximize, img_maximize_rollover);
         }
-        else if (desc == ActionDescriptors.ad_unmaximize)
+        else if (desc == ActionDescriptors.UNMAXIMIZE)
         {
             ImageIcon img_unmaximize = getImageIcon(resLocServ.getAppUnmaximizeIconFilePath());
             ImageIcon img_unmaximize_rollover = getImageIcon(resLocServ.getAppUnmaximizeRolloverIconFilePath());
             return new ActionBase(desc, Loc.get(LocKey.Action_unmaximize), img_unmaximize, img_unmaximize_rollover);
         }
-        else if (desc == ActionDescriptors.ad_minimize)
+        else if (desc == ActionDescriptors.MINIMIZE)
         {
             ImageIcon img_minimize = getImageIcon(resLocServ.getAppMinimizeIconFilePath());
             ImageIcon img_minimize_rollover = getImageIcon(resLocServ.getAppMinimizeRolloverIconFilePath());
             return new ActionBase(desc, Loc.get(LocKey.Action_minimize), img_minimize, img_minimize_rollover);
         }
-        else if (desc == ActionDescriptors.ad_quit)
+        else if (desc == ActionDescriptors.QUIT)
         {
             ImageIcon img_close = getImageIcon(resLocServ.getAppCloseIconFilePath());
             ImageIcon img_close_rollover = getImageIcon(resLocServ.getAppCloseRolloverIconFilePath());
@@ -189,15 +190,19 @@ public class ActionService implements IActionService
             
             return action;
         }
-        else if (desc == ActionDescriptors.ad_redo)
+        else if (desc == ActionDescriptors.REDO)
         {
             return new A_Redo(desc, Loc.get(LocKey.Action_redo));
         }
-        else if (desc == ActionDescriptors.ad_showmenu)
+        else if (desc == ActionDescriptors.SHOWMENU)
         {
             return new ActionBase(desc, Loc.get(LocKey.Action_showmenu));
         }
-        else if (desc == ActionDescriptors.ad_togglemenump)
+        else if (desc == ActionDescriptors.SHOWSETTINGS)
+        {
+            return new ActionBase(desc, Loc.get(LocKey.Action_showsettings));
+        }
+        else if (desc == ActionDescriptors.TOGGLEMENUMP)
         {
             ActionBase action = new A_ToggleMenuMP(desc, Loc.get(LocKey.Action_togglemenump));
             
@@ -205,15 +210,15 @@ public class ActionService implements IActionService
             
             return action;
         }
-        else if (desc == ActionDescriptors.ad_startsp)
+        else if (desc == ActionDescriptors.STARTSP)
         {
             return new A_StartGame(desc, Loc.get(LocKey.Action_newgame));
         }
-        else if (desc == ActionDescriptors.ad_startmp)
+        else if (desc == ActionDescriptors.STARTMP)
         {
             return new A_StartMP(desc, Loc.get(LocKey.Action_createmp));
         }
-        else if (desc == ActionDescriptors.ad_undo)
+        else if (desc == ActionDescriptors.UNDO)
         {
             return new A_Undo(desc, Loc.get(LocKey.Action_undo));
         }
@@ -248,35 +253,35 @@ public class ActionService implements IActionService
 
     protected CommandBase createCommand(ActionDescriptor desc)
     {
-        if (desc == ActionDescriptors.ad_createmp)
+        if (desc == ActionDescriptors.CREATEMP)
         {
             return new D_StartServer();
         }
-        else if (desc == ActionDescriptors.ad_join)
+        else if (desc == ActionDescriptors.JOIN)
         {
             return new D_Connect();                
         }
-        else if (desc == ActionDescriptors.ad_leavemp)
+        else if (desc == ActionDescriptors.LEAVEMP)
         {
             return new C_Disconnect(DisconnectReason.LocalPlayerLeft);
         }
-        else if (desc == ActionDescriptors.ad_redo)
+        else if (desc == ActionDescriptors.REDO)
         {
             return new C_Redo();
         }
-        else if (desc == ActionDescriptors.ad_startsp)
+        else if (desc == ActionDescriptors.STARTSP)
         {
             return new C_StartLocalGame();
         }
-        else if (desc == ActionDescriptors.ad_startmp)
+        else if (desc == ActionDescriptors.STARTMP)
         {
             return new C_StartMultiplayerGame();
         }
-        else if (desc == ActionDescriptors.ad_togglemenump)
+        else if (desc == ActionDescriptors.TOGGLEMENUMP)
         {
             return new D_ToggleMenuMP();
         }
-        else if (desc == ActionDescriptors.ad_undo)
+        else if (desc == ActionDescriptors.UNDO)
         {
             return new C_Undo();
         }
@@ -302,15 +307,15 @@ public class ActionService implements IActionService
     
     protected Runnable createRunnable(ActionDescriptor desc)
     {
-        if (desc == ActionDescriptors.ad_about)
+        if (desc == ActionDescriptors.SHOWABOUT)
         {
             return () -> 
             {
                 IFrameService frameServ = Services.get(IFrameService.class);
                 frameServ.showPanel(PanelDescriptors.ABOUT);
             };
-        }
-        else if (desc == ActionDescriptors.ad_debugdraw) 
+        }        
+        else if (desc == ActionDescriptors.DEBUGDRAW) 
         {
             return () -> 
             {
@@ -318,21 +323,21 @@ public class ActionService implements IActionService
                 frameServ.setDrawDebug(!frameServ.getDrawDebug());
             };
         } 
-        else if (desc == ActionDescriptors.ad_gc)
+        else if (desc == ActionDescriptors.GC)
         {
             return () -> 
             {
                 System.gc();
             };
         }
-        else if (desc == ActionDescriptors.ad_quit)
+        else if (desc == ActionDescriptors.QUIT)
         {
             return () -> 
             {
                 System.exit(0);
             };
         }
-        else if (desc == ActionDescriptors.ad_maximize)
+        else if (desc == ActionDescriptors.MAXIMIZE)
         {
             return () -> 
             {
@@ -340,7 +345,15 @@ public class ActionService implements IActionService
                 frameServ.maximize();                
             };
         }
-        else if (desc == ActionDescriptors.ad_unmaximize)
+        if (desc == ActionDescriptors.SHOWSETTINGS)
+        {
+            return () -> 
+            {
+                IFrameService frameServ = Services.get(IFrameService.class);
+                frameServ.showPanel(PanelDescriptors.SETTINGS);
+            };
+        }        
+        else if (desc == ActionDescriptors.UNMAXIMIZE)
         {
             return () -> 
             {
@@ -348,7 +361,7 @@ public class ActionService implements IActionService
                 frameServ.unsnap();                
             };
         }
-        else if (desc == ActionDescriptors.ad_minimize)
+        else if (desc == ActionDescriptors.MINIMIZE)
         {
             return () -> 
             {
@@ -356,7 +369,7 @@ public class ActionService implements IActionService
                 frameServ.minimize();                
             };
         }
-        else if (desc == ActionDescriptors.ad_showmenu)
+        else if (desc == ActionDescriptors.SHOWMENU)
         {
             return () -> 
             {
@@ -388,11 +401,4 @@ public class ActionService implements IActionService
             return false;
         }
     }
-
-    /*
-     * private ActionDescriptor createActionDef(String id, String shortCut) {
-     * ActionDescriptor actionDef = new ActionDescriptor(id, shortCut);
-     * 
-     */
-
 }

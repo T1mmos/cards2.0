@@ -10,6 +10,7 @@ public final class PanelDescriptors
     public static final PanelDescriptor                                     ABOUT           = panel ("About",       PanelType.Root);    
     public static final PanelDescriptor                                     GAME            = panel ("Game",        PanelType.Root);
     public static final PanelDescriptor                                     MENU            = panel ("Menu",        PanelType.Root);
+    public static final PanelDescriptor                                     SETTINGS        = panel ("Settings",    PanelType.Root);
 
     public static final DataPanelDescriptor<Void, JoinMPGamePanelData>      CONNECT         = dialog("Connect",     PanelType.Dialog);
     public static final DataPanelDescriptor<Void, Void>                     GAME_MENU       = dialog("GameMenu",    PanelType.DialogOverlay);
@@ -19,6 +20,7 @@ public final class PanelDescriptors
     public static final DataPanelDescriptor<String, StartServerPanelData>   START_SERVER    = dialog("StartServer", PanelType.Dialog);    
     
     public static final PanelDescriptor                                     LOAD            = panel ("Load",        PanelType.Overlay);
+    
     
     public static <IN, OUT> DataPanelDescriptor<IN, OUT> dialog(String id, PanelType panelType)
     {

@@ -16,6 +16,7 @@ public final class LocKey
     public static final LocKey Action_leavemp = Action("leave");  
     public static final LocKey Action_maximize = Action("maximize");
     public static final LocKey Action_showmenu = Action("showmenu");
+    public static final LocKey Action_showsettings = Action("showsettings");
     public static final LocKey Action_togglemenump = Action("togglemenump");
     public static final LocKey Action_unmaximize = Action("unmaximize");
     public static final LocKey Action_minimize = Action("minimize");

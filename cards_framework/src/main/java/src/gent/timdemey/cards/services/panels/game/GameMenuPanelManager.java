@@ -33,7 +33,7 @@ public class GameMenuPanelManager extends DataPanelManagerBase<Void, Void>
             IActionService actServ = Services.get(IActionService.class);            
 
             JButton btn_return = new JButton("Return to game (dummy)");
-            JButton btn_leavemp = new JButton(actServ.getAction(ActionDescriptors.ad_leavemp));
+            JButton btn_leavemp = new JButton(actServ.getAction(ActionDescriptors.LEAVEMP));
             
             content.add(btn_return, "");
             content.add(btn_leavemp, "wrap");            

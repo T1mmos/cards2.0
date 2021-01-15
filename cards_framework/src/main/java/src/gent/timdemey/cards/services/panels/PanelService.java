@@ -27,6 +27,7 @@ import gent.timdemey.cards.services.panels.game.GameMenuPanelManager;
 import gent.timdemey.cards.services.panels.game.GamePanelManager;
 import gent.timdemey.cards.services.panels.load.LoadPanelManager;
 import gent.timdemey.cards.services.panels.menu.MenuPanelManager;
+import gent.timdemey.cards.services.panels.settings.SettingsPanelManager;
 
 public class PanelService implements IPanelService
 {
@@ -49,14 +50,15 @@ public class PanelService implements IPanelService
     protected void addAbsentPanelManagers()
     {
         addPanelManagerIfAbsent(PanelDescriptors.ABOUT, () -> new AboutPanelManager());
+        addPanelManagerIfAbsent(PanelDescriptors.CONNECT, () -> new JoinMPGamePanelManager());
         addPanelManagerIfAbsent(PanelDescriptors.GAME, () -> new GamePanelManager());
         addPanelManagerIfAbsent(PanelDescriptors.GAME_MENU, () -> new GameMenuPanelManager());
         addPanelManagerIfAbsent(PanelDescriptors.LOAD, () -> new LoadPanelManager());
+        addPanelManagerIfAbsent(PanelDescriptors.LOBBY, () -> new LobbyPanelManager());
         addPanelManagerIfAbsent(PanelDescriptors.MENU, () -> new MenuPanelManager());
         addPanelManagerIfAbsent(PanelDescriptors.MESSAGE, () -> new MessagePanelManager());
-        addPanelManagerIfAbsent(PanelDescriptors.CONNECT, () -> new JoinMPGamePanelManager());
+        addPanelManagerIfAbsent(PanelDescriptors.SETTINGS, () -> new SettingsPanelManager());
         addPanelManagerIfAbsent(PanelDescriptors.START_SERVER, () -> new StartServerPanelManager());
-        addPanelManagerIfAbsent(PanelDescriptors.LOBBY, () -> new LobbyPanelManager());
     }
     
     protected final void addPanelManagerIfAbsent (PanelDescriptor pd, Supplier<PanelManagerBase> creator)

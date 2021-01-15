@@ -157,10 +157,10 @@ public class FrameService implements IFrameService, IPreload
             frameTitlePanel.setOpaque(false);
             JLabel title_icon = new JLabel(new ImageIcon(getFrameIcons().get(1)));
             JLabel title_text = new JLabel(getTitle());
-            JButton title_minimize = createFrameButton(ActionDescriptors.ad_minimize);         
-            title_unmaximize = createFrameButton(ActionDescriptors.ad_unmaximize);
-            title_maximize = createFrameButton(ActionDescriptors.ad_maximize);
-            JButton title_close = createFrameButton(ActionDescriptors.ad_quit);
+            JButton title_minimize = createFrameButton(ActionDescriptors.MINIMIZE);         
+            title_unmaximize = createFrameButton(ActionDescriptors.UNMAXIMIZE);
+            title_maximize = createFrameButton(ActionDescriptors.MAXIMIZE);
+            JButton title_close = createFrameButton(ActionDescriptors.QUIT);
                         
             title_text.setFont(frameTitleFont);
             title_text.setForeground(Color.white.darker());
@@ -514,9 +514,9 @@ public class FrameService implements IFrameService, IPreload
     protected List<ActionDescriptor> getFrameActions()
     {
         return Arrays.asList(
-            ActionDescriptors.ad_debugdraw,
-            ActionDescriptors.ad_togglemenump,
-            ActionDescriptors.ad_quit);
+            ActionDescriptors.DEBUGDRAW,
+            ActionDescriptors.TOGGLEMENUMP,
+            ActionDescriptors.QUIT);
     }
     
     protected BufferedImage getBackgroundImage()

@@ -1,11 +1,9 @@
-package gent.timdemey.cards.services.panels.about;
+package gent.timdemey.cards.services.panels.settings;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
-import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.common.Version;
 import gent.timdemey.cards.services.action.ActionBase;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
@@ -14,7 +12,7 @@ import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelManagerBase;
 import net.miginfocom.swing.MigLayout;
 
-public class AboutPanelManager extends PanelManagerBase
+public class SettingsPanelManager extends PanelManagerBase
 {
     private PanelBase contentPanel;
     
@@ -29,19 +27,12 @@ public class AboutPanelManager extends PanelManagerBase
     {
         if (contentPanel == null)
         {
-            contentPanel = new PanelBase(PanelDescriptors.ABOUT, new MigLayout());
+            contentPanel = new PanelBase(PanelDescriptors.SETTINGS, new MigLayout());
             
-            ICardPlugin plugin = Services.get(ICardPlugin.class);
+            contentPanel.add(new JLabel("Test"), "wrap");
+
             IActionService actServ = Services.get(IActionService.class);
-            
             ActionBase act_tomenu = actServ.getAction(ActionDescriptors.SHOWMENU);
-            
-            String gamename = plugin.getName();
-            Version version = plugin.getVersion();
-            String versionstr = "v"+version.getMajor()+"."+version.getMinor();
-            
-            contentPanel.add(new JLabel(gamename), "wrap");
-            contentPanel.add(new JLabel(versionstr), "wrap");
             contentPanel.add(new JButton(act_tomenu), "wrap");
         }
         

@@ -104,7 +104,7 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
         
         this.l_serverMsg = new JLabel(state.getServerMessage());
         this.l_localPlayer = new JLabel(state.getPlayers().get(state.getLocalId()).getName(), JLabel.RIGHT);
-        this.b_startGame = new JButton(actServ.getAction(ActionDescriptors.ad_startmp));
+        this.b_startGame = new JButton(actServ.getAction(ActionDescriptors.STARTMP));
         
         String lobbyAdminName = state.getPlayers().get(state.getLobbyAdminId()).getName();
         this.l_waitingToStart = new JLabel(Loc.get(LocKey.Label_waitingToStart, lobbyAdminName));
