@@ -2,8 +2,11 @@ package gent.timdemey.cards.services.panels.settings;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JTextField;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.localization.Loc;
+import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.services.action.ActionBase;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
@@ -29,11 +32,27 @@ public class SettingsPanelManager extends PanelManagerBase
         {
             contentPanel = new PanelBase(PanelDescriptors.SETTINGS, new MigLayout());
             
+            // player name
+            {
+                JLabel lbl_pname = new JLabel(Loc.get(LocKey.Label_playername));
+                contentPanel.add(lbl_pname, "");
+                
+                JTextField tf_pname = new JTextField(30);
+                contentPanel.add(tf_pname, "wrap");
+                
+                
+            }
+            
+            
             contentPanel.add(new JLabel("Test"), "wrap");
 
-            IActionService actServ = Services.get(IActionService.class);
-            ActionBase act_tomenu = actServ.getAction(ActionDescriptors.SHOWMENU);
-            contentPanel.add(new JButton(act_tomenu), "wrap");
+            // buttons
+            {
+                IActionService actServ = Services.get(IActionService.class);
+                ActionBase act_tomenu = actServ.getAction(ActionDescriptors.SHOWMENU);
+                contentPanel.add(new JButton(act_tomenu), "");
+            }
+            
         }
         
         return contentPanel;

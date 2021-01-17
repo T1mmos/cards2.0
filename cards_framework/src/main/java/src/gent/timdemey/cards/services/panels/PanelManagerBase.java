@@ -12,7 +12,7 @@ import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.res.FontResource;
 import gent.timdemey.cards.services.contract.res.ImageResource;
 import gent.timdemey.cards.services.interfaces.IPositionService;
-import gent.timdemey.cards.services.interfaces.IResourceService;
+import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 import gent.timdemey.cards.services.scaling.IScalableResource;
@@ -110,7 +110,7 @@ public abstract class PanelManagerBase implements IPanelManager
     
     protected final void preloadImage(UUID resId, String path)
     {
-        IResourceService resServ = Services.get(IResourceService.class);
+        IResourceCacheService resServ = Services.get(IResourceCacheService.class);
         IScalingService scaleCompServ = Services.get(IScalingService.class);
 
         ImageResource imgRes = resServ.getImage(path);
@@ -120,7 +120,7 @@ public abstract class PanelManagerBase implements IPanelManager
 
     protected final void preloadFont(UUID resId, String path)
     {
-        IResourceService resServ = Services.get(IResourceService.class);
+        IResourceCacheService resServ = Services.get(IResourceCacheService.class);
         IScalingService scaleCompServ = Services.get(IScalingService.class);
 
         FontResource resp_font = resServ.getFont(path);

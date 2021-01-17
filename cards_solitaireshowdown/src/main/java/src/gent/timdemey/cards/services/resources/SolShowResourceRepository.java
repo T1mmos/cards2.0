@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import gent.timdemey.cards.SolShowPlugin;
+import gent.timdemey.cards.services.contract.res.ResourceType;
 
 public class SolShowResourceRepository extends ResourceRepository
 {

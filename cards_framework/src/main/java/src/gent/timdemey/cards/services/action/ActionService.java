@@ -32,7 +32,7 @@ import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
-import gent.timdemey.cards.services.interfaces.IResourceService;
+import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 
 public class ActionService implements IActionService
 {
@@ -228,7 +228,7 @@ public class ActionService implements IActionService
     
     private ImageIcon getImageIcon(String filepath)
     {
-        IResourceService resServ = Services.get(IResourceService.class);
+        IResourceCacheService resServ = Services.get(IResourceCacheService.class);
         
         Image img = resServ.getImage(filepath).raw;
         ImageIcon imgIcon = new ImageIcon(img);

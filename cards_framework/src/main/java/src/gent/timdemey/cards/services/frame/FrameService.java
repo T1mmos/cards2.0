@@ -61,7 +61,7 @@ import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
-import gent.timdemey.cards.services.interfaces.IResourceService;
+import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.panels.IDataPanelManager;
 import gent.timdemey.cards.services.panels.IPanelManager;
 import gent.timdemey.cards.services.panels.PanelBase;
@@ -123,7 +123,7 @@ public class FrameService implements IFrameService, IPreload
     @PreloadOrder(order = PreloadOrderType.DEPENDENT)
     public void preload()
     {
-        IResourceService resServ = Services.get(IResourceService.class);
+        IResourceCacheService resServ = Services.get(IResourceCacheService.class);
         IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
         
         String frameTitleFontName = resLocServ.getAppTitleFontFilePath();
@@ -163,7 +163,7 @@ public class FrameService implements IFrameService, IPreload
             JButton title_close = createFrameButton(ActionDescriptors.QUIT);
                         
             title_text.setFont(frameTitleFont);
-            title_text.setForeground(Color.white.darker());
+            title_text.setForeground(Color.darkGray.darker());
             frameTitlePanel.add(title_icon, "gapx 10, left");
             frameTitlePanel.add(title_text, "gapx 10, pushx, left");
             frameTitlePanel.add(title_minimize, "align center top, gapright 5");
@@ -500,7 +500,7 @@ public class FrameService implements IFrameService, IPreload
     {
         List<Image> images = new ArrayList<>();
 
-        IResourceService resServ = Services.get(IResourceService.class);
+        IResourceCacheService resServ = Services.get(IResourceCacheService.class);
         IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
         for (int dim : new int []{16,24,48,140})
         {            
@@ -521,7 +521,7 @@ public class FrameService implements IFrameService, IPreload
     
     protected BufferedImage getBackgroundImage()
     {
-        IResourceService resServ = Services.get(IResourceService.class);
+        IResourceCacheService resServ = Services.get(IResourceCacheService.class);
         IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
         String bgpath = resLocServ.getAppBackgroundImageFilePath();
         BufferedImage background = resServ.getImage(bgpath).raw;
@@ -530,7 +530,7 @@ public class FrameService implements IFrameService, IPreload
     
     protected BufferedImage getDialogBackgroundImage()
     {
-        IResourceService resServ = Services.get(IResourceService.class);
+        IResourceCacheService resServ = Services.get(IResourceCacheService.class);
         IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
         String bgpath = resLocServ.getDialogBackgroundImageFilePath();
         BufferedImage background = resServ.getImage(bgpath).raw;

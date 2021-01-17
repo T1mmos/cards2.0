@@ -1,5 +1,6 @@
 package gent.timdemey.cards.services.resources;
 
+import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -13,27 +14,46 @@ import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.services.contract.preload.PreloadOrder;
 import gent.timdemey.cards.services.contract.preload.PreloadOrderType;
+import gent.timdemey.cards.services.contract.res.ResourceType;
 import gent.timdemey.cards.services.interfaces.IResourceRepository;
 
 public class ResourceRepository implements IResourceRepository
 {
-    private final Map<ResourceType, URLClassLoader> resourceLoaders = new HashMap<>();
+    private final Map<ResourceType, URLClassLoader> classLoaders = new HashMap<>();
 
     public ResourceRepository()
     {        
     }
     
     protected void buildUrlLists (Map<ResourceType, List<URL>> typeUrls)
-    {
+    {        
         addUrl(typeUrls, ResourceType.IMAGE, ICardPlugin.class, "/img/");
         addUrl(typeUrls, ResourceType.SOUND, ICardPlugin.class, "/snd/");
         addUrl(typeUrls, ResourceType.LOCALIZATION, ICardPlugin.class, "/loc/");
         addUrl(typeUrls, ResourceType.FONT, ICardPlugin.class, "/fonts/");
+        addUrl(typeUrls, ResourceType.USERFILE, null, System.getenv("APPDATA") + "/cards/");
     }
     
     protected static void addUrl (Map<ResourceType, List<URL>> typeUrls, ResourceType type, Class<?> clazz, String dir)
     {
-        URL url = clazz.getResource(dir);
+        URL url = null;
+        if (clazz != null)
+        {
+            url = clazz.getResource(dir);
+        }
+        else
+        {
+            try 
+            {
+                File file = new File(dir);                
+                url = file.toURI().toURL();
+            }
+            catch (Exception ex)
+            {
+                Logger.error("Failed to build an URL from directory: " + dir, ex);
+            }
+        }
+        
         if (url == null)
         {
             Logger.error("Can't build URL for directory %s (ResourceType=%s, Class=%s)", dir, type, clazz.getSimpleName());
@@ -46,9 +66,7 @@ public class ResourceRepository implements IResourceRepository
             urls = new ArrayList<>();
             typeUrls.put(type, urls);
         }
-        
-        
-        
+                
         urls.add(url);
     }
     
@@ -60,7 +78,7 @@ public class ResourceRepository implements IResourceRepository
             URL[] urlArray = new URL[urls.size()];
             urls.toArray(urlArray);
             URLClassLoader urlClassLoader = new URLClassLoader(urlArray);
-            resourceLoaders.put(type, urlClassLoader);
+            classLoaders.put(type, urlClassLoader);
         }
     }
     
@@ -87,6 +105,17 @@ public class ResourceRepository implements IResourceRepository
 
         return is;
     }
+    
+    @Override
+    public File getResourceAsFile(ResourceType type, String name)
+    {
+        URLClassLoader resLoader = getUrlClassLoader(type);
+        
+        URL url = resLoader.getResource(name);
+        
+        File file = new File(url.getFile());
+        return file;
+    }
 
     @Override
     public ClassLoader getResourceClassLoader(ResourceType type)
@@ -96,7 +125,7 @@ public class ResourceRepository implements IResourceRepository
 
     private URLClassLoader getUrlClassLoader(ResourceType type)
     {
-        URLClassLoader resLoader = resourceLoaders.get(type);
+        URLClassLoader resLoader = classLoaders.get(type);
         if (resLoader == null)
         {
             throw new IllegalArgumentException(
@@ -108,11 +137,6 @@ public class ResourceRepository implements IResourceRepository
     @PreloadOrder(order = PreloadOrderType.ISOLATED)
     @Override
     public void preload()
-    {
-        loadRepositories();
-    }
-    
-    private final void loadRepositories()
     {
         Map<ResourceType, List<URL>> typeUrls = new HashMap<>();
         buildUrlLists(typeUrls);

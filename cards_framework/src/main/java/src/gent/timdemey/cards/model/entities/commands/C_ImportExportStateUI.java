@@ -2,15 +2,20 @@ package gent.timdemey.cards.model.entities.commands;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Properties;
 import java.util.UUID;
 
+import gent.timdemey.cards.Services;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.contract.res.ResourceType;
+import gent.timdemey.cards.services.interfaces.IResourceRepository;
+import gent.timdemey.cards.utils.RandomUtils;
 
 /**
  * Reads some initial state from a configuration file.
@@ -41,25 +46,29 @@ public class C_ImportExportStateUI extends CommandBase
         
         Properties properties = new Properties();
         
+        IResourceRepository resRepo = Services.get(IResourceRepository.class);
+        File propFile = resRepo.getResourceAsFile(ResourceType.USERFILE, "cards.properties");   
+        
         try 
         {
-            String appdata = System.getenv("APPDATA");
-            File rootdir = new File(appdata + "/cards/");
-            rootdir.mkdirs();
-            File propFile = new File(rootdir, "cards.properties");
+            if (!propFile.mkdirs())
+            {
+                throw new FileNotFoundException("Failed to create the file tree needed for file " + propFile.getAbsolutePath());
+            }
+            
             if (!propFile.exists())
             {
-                propFile.createNewFile();
+                if (!propFile.createNewFile())
+                {
+                    throw new FileNotFoundException("Failed to create the file " + propFile.getAbsolutePath());
+                }
             }
             
             if (load)
             {
-                if (propFile.exists())
-                {   
-                    properties.load(new FileInputStream(propFile));
-                }   
+                properties.load(new FileInputStream(propFile));
                 
-                String name = properties.getProperty(PLAYERNAME, "New player");
+                String name = properties.getProperty(PLAYERNAME, RandomUtils.randomString("Player", 4));
                 
                 state.setLocalName(name);
                 state.setLocalId(UUID.randomUUID());
@@ -69,13 +78,11 @@ public class C_ImportExportStateUI extends CommandBase
                 properties.setProperty(PLAYERNAME, state.getLocalName());
                 
                 properties.store(new FileOutputStream(propFile), null);
-            }                     
+            }     
         }
-        catch (IOException ex)
+        catch (Exception ex)
         {
-            ex.printStackTrace();
-        }
-        
-        
+            Logger.error("Failed to " + (load ? "load" : "save") + " the configuration", ex);
+        }        
     }
 }

@@ -24,7 +24,7 @@ import gent.timdemey.cards.services.interfaces.INetworkService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.services.interfaces.IResourceRepository;
-import gent.timdemey.cards.services.interfaces.IResourceService;
+import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.interfaces.ISerializationService;
 import gent.timdemey.cards.services.panels.AnimationService;
@@ -32,7 +32,7 @@ import gent.timdemey.cards.services.panels.PanelService;
 import gent.timdemey.cards.services.panels.game.GamePanelStateListener;
 import gent.timdemey.cards.services.resources.ResourceLocationService;
 import gent.timdemey.cards.services.resources.ResourceRepository;
-import gent.timdemey.cards.services.resources.ResourceService;
+import gent.timdemey.cards.services.resources.ResourceCacheService;
 import gent.timdemey.cards.services.scaling.ScalingService;
 import gent.timdemey.cards.ui.StartUI;
 
@@ -130,7 +130,7 @@ public class Start
         services.installIfAbsent(IConfigService.class, () -> new ConfigService());
         services.installIfAbsent(IContextService.class, () -> new ContextService());
         services.installIfAbsent(IScalingService.class, () -> new ScalingService());
-        services.installIfAbsent(IResourceService.class, () -> new ResourceService());
+        services.installIfAbsent(IResourceCacheService.class, () -> new ResourceCacheService());
         services.installIfAbsent(IResourceRepository.class, () -> new ResourceRepository());
         services.installIfAbsent(IResourceLocationService.class, () -> new ResourceLocationService());
         services.installIfAbsent(ISerializationService.class, () -> new SerializationService());

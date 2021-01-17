@@ -6,8 +6,8 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.services.contract.res.ResourceType;
 import gent.timdemey.cards.services.interfaces.IResourceRepository;
-import gent.timdemey.cards.services.interfaces.IResourceRepository.ResourceType;
 
 public class Loc
 {
@@ -32,10 +32,9 @@ public class Loc
 
         LOCALE = locale;
 
-        IResourceRepository resourceManager = Services.get(IResourceRepository.class);
-        ClassLoader resClassLoader = resourceManager.getResourceClassLoader(ResourceType.LOCALIZATION);        
+        IResourceRepository resRepo = Services.get(IResourceRepository.class);
+        ClassLoader resClassLoader = resRepo.getResourceClassLoader(ResourceType.LOCALIZATION);        
         ResourceBundle rb = ResourceBundle.getBundle(FILENAME_BASE, LOCALE, resClassLoader);
-
         BUNDLE = rb;
     }
 

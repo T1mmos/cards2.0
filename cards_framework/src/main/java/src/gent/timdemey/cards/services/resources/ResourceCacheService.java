@@ -17,11 +17,11 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.services.contract.res.FontResource;
 import gent.timdemey.cards.services.contract.res.ImageResource;
+import gent.timdemey.cards.services.contract.res.ResourceType;
+import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IResourceRepository;
-import gent.timdemey.cards.services.interfaces.IResourceRepository.ResourceType;
-import gent.timdemey.cards.services.interfaces.IResourceService;
 
-public class ResourceService implements IResourceService
+public class ResourceCacheService implements IResourceCacheService
 {
     // caches
     private final Map<String, ImageResource> cache_images = new HashMap<>();
