@@ -5,6 +5,5 @@ public enum ResourceType
     IMAGE,
     SOUND,
     LOCALIZATION,
-    FONT,
-    USERFILE,
+    FONT
 }

@@ -7,7 +7,7 @@ import com.alee.skin.dark.WebDarkSkin;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
-import gent.timdemey.cards.model.entities.commands.C_ImportExportStateUI;
+import gent.timdemey.cards.model.entities.commands.C_LoadConfig;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
@@ -47,8 +47,8 @@ public class StartUI
         
         // import configuration
         Context ctxt = ctxtServ.getThreadContext();
-        C_ImportExportStateUI cmd_readConfig = new C_ImportExportStateUI(true);
-        ctxt.schedule(cmd_readConfig);     
+        C_LoadConfig cmd_loadcfg = new C_LoadConfig();
+        ctxt.schedule(cmd_loadcfg);     
         ctxt.addStateListener(new GameBootListener());
         ctxt.addStateListener(new StateExportListener());
         

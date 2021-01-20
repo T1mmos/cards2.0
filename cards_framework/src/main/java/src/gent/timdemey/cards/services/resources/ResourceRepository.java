@@ -31,28 +31,17 @@ public class ResourceRepository implements IResourceRepository
         addUrl(typeUrls, ResourceType.SOUND, ICardPlugin.class, "/snd/");
         addUrl(typeUrls, ResourceType.LOCALIZATION, ICardPlugin.class, "/loc/");
         addUrl(typeUrls, ResourceType.FONT, ICardPlugin.class, "/fonts/");
-        addUrl(typeUrls, ResourceType.USERFILE, null, System.getenv("APPDATA") + "/cards/");
     }
     
     protected static void addUrl (Map<ResourceType, List<URL>> typeUrls, ResourceType type, Class<?> clazz, String dir)
     {
         URL url = null;
-        if (clazz != null)
+        if (clazz == null)
         {
-            url = clazz.getResource(dir);
+            throw new IllegalArgumentException("Resources need to be located using a class it is relative to");            
         }
-        else
-        {
-            try 
-            {
-                File file = new File(dir);                
-                url = file.toURI().toURL();
-            }
-            catch (Exception ex)
-            {
-                Logger.error("Failed to build an URL from directory: " + dir, ex);
-            }
-        }
+        
+        url = clazz.getResource(dir);          
         
         if (url == null)
         {

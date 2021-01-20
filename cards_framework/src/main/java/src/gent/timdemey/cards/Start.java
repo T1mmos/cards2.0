@@ -14,11 +14,13 @@ import gent.timdemey.cards.services.action.ActionService;
 import gent.timdemey.cards.services.config.ConfigService;
 import gent.timdemey.cards.services.context.CommandNetworkService;
 import gent.timdemey.cards.services.context.ContextService;
+import gent.timdemey.cards.services.file.FileService;
 import gent.timdemey.cards.services.frame.FrameService;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IAnimationService;
 import gent.timdemey.cards.services.interfaces.IConfigService;
 import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.services.interfaces.IFileService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.INetworkService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
@@ -141,5 +143,6 @@ public class Start
         services.installIfAbsent(IActionService.class, () -> new ActionService());
         services.installIfAbsent(IPanelService.class, () -> new PanelService());
         services.installIfAbsent(IStateListener.class, () -> new GamePanelStateListener());
+        services.installIfAbsent(IFileService.class, () -> new FileService());
     }
 }
