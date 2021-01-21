@@ -27,8 +27,9 @@ import gent.timdemey.cards.utils.Debug;
 public class C_Composite extends CommandBase
 {
     private final List<CommandBase> commands;
+    private final boolean skipCanExecute;
 
-    private C_Composite(List<CommandBase> commands)
+    private C_Composite(boolean skipCanExecute, List<CommandBase> commands)
     {
         if (commands == null)
         {
@@ -48,59 +49,66 @@ public class C_Composite extends CommandBase
         }
         
         this.commands = commands;
+        this.skipCanExecute = skipCanExecute;
     }
 
-    C_Composite(CommandBase... commands)
+    public C_Composite(boolean skipCanExecute, CommandBase... commands)
     {
-        this(Arrays.asList(commands));
+        this(skipCanExecute, Arrays.asList(commands));
     }
 
     @Override
     public CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
-        boolean canExecute = true;
-        int i = 0;
-        while (canExecute && i < commands.size())
-        {
-            CanExecuteResponse respI = commands.get(i).canExecute(context, type, state);
-            if (respI.canExecute())
-            {
-                try
-                {
-                    commands.get(i).execute(context, type, state);
-                }
-                catch (Exception e)
-                {
-                    throw new IllegalStateException(
-                            "A composite command's commands must never throw! Cannot recover from this.");
-                }
-            }
-            else
-            {
-                canExecute = false;
-            }
-            i++;
-        }
-        
-        int j = i - 1;
-
-        // unexecute
-        while (i > 0)
-        {
-            commands.get(--i).undo(context, type, state);
-        }
-        
-        if (canExecute)
+        if (skipCanExecute)
         {
             return CanExecuteResponse.yes();
         }
         else
         {
-            String cmdName = commands.get(j).getName();
-            String reason = "Failed to execute command " + cmdName + " at index " + j;
-            return CanExecuteResponse.no(reason);
-        }
+            boolean canExecute = true;
+            int i = 0;
+            while (canExecute && i < commands.size())
+            {
+                CanExecuteResponse respI = commands.get(i).canExecute(context, type, state);
+                if (respI.canExecute())
+                {
+                    try
+                    {
+                        commands.get(i).execute(context, type, state);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new IllegalStateException(
+                                "A composite command's commands must never throw! Cannot recover from this.");
+                    }
+                }
+                else
+                {
+                    canExecute = false;
+                }
+                i++;
+            }
             
+            int j = i - 1;
+
+            // unexecute
+            while (i > 0)
+            {
+                commands.get(--i).undo(context, type, state);
+            }
+            
+            if (canExecute)
+            {
+                return CanExecuteResponse.yes();
+            }
+            else
+            {
+                String cmdName = commands.get(j).getName();
+                String reason = "Failed to execute command " + cmdName + " at index " + j;
+                return CanExecuteResponse.no(reason);
+            }
+        }  
     }
 
     @Override

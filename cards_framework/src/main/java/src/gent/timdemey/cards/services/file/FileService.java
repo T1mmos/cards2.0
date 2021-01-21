@@ -1,6 +1,7 @@
 package gent.timdemey.cards.services.file;
 
 import java.io.File;
+import java.nio.file.Paths;
 
 import gent.timdemey.cards.services.contract.descriptors.FileDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.FileDescriptors;
@@ -12,7 +13,9 @@ public class FileService implements IFileService
     {
         if (fd == FileDescriptors.USERCFG)
         {
-            return System.getenv("APPDATA") + "/cards/cards.properties";
+            String filepath = System.getenv("APPDATA") + "/../Local/cards/cards.properties"; // .. = Roaming
+            String canonical = Paths.get(filepath).normalize().toString();           
+            return canonical;
         }
         
         throw new IllegalArgumentException("Unknown FileDescriptor: " + fd);

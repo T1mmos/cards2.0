@@ -15,6 +15,15 @@ public abstract class EntityBase
 
     protected EntityBase(PayloadBase pl)
     {
+        if (pl == null)
+        {
+            throw new NullPointerException("pl");
+        }
+        if (pl.id == null)
+        {
+            throw new IllegalArgumentException("No id was specified for this Entity in the given PayloadBase");
+        }
+        
         this.id = pl.id;
     }
     

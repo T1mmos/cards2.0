@@ -25,8 +25,6 @@ public class ActionBase extends AbstractAction implements IContextListener, ISta
 
         this.desc = desc;
         this.icon_rollover = null;
-        
-        checkEnabled();
     }
     
     ActionBase(ActionDescriptor desc, String title, Icon icon)
@@ -40,17 +38,15 @@ public class ActionBase extends AbstractAction implements IContextListener, ISta
 
         this.desc = desc;
         this.icon_rollover = rollover;
-        
-        checkEnabled();
     }
 
     @Override
-    public final void actionPerformed(ActionEvent e)
+    public void actionPerformed(ActionEvent e)
     {
         Services.get(IActionService.class).executeAction(desc);
     }
 
-    protected final void checkEnabled()
+    protected void checkEnabled()
     {
         setEnabled(Services.get(IActionService.class).canExecuteAction(desc));
     }

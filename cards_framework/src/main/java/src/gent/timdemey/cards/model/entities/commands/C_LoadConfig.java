@@ -3,6 +3,7 @@ package gent.timdemey.cards.model.entities.commands;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -60,12 +61,15 @@ public class C_LoadConfig extends CommandBase
                 }
             }            
            
-            properties.load(new FileInputStream(propFile));
+            try (InputStream is = new FileInputStream(propFile))
+            {
+                properties.load(is);
+            }            
             
             String name = properties.getProperty(ConfigDefines.PLAYERNAME, RandomUtils.randomString("Player", 4));
             
             state.setLocalName(name);
-            state.setLocalId(UUID.randomUUID());                
+            state.setLocalId(UUID.randomUUID());
         }
         catch (Exception ex)
         {

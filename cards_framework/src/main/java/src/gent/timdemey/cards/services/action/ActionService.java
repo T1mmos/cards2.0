@@ -3,6 +3,7 @@ package gent.timdemey.cards.services.action;
 import java.awt.Image;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -12,27 +13,32 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.logging.Logger;
+import gent.timdemey.cards.model.entities.commands.C_Composite;
 import gent.timdemey.cards.model.entities.commands.C_Disconnect;
 import gent.timdemey.cards.model.entities.commands.C_Disconnect.DisconnectReason;
 import gent.timdemey.cards.model.entities.commands.C_Redo;
+import gent.timdemey.cards.model.entities.commands.C_SaveConfig;
+import gent.timdemey.cards.model.entities.commands.C_SaveState;
 import gent.timdemey.cards.model.entities.commands.C_StartLocalGame;
 import gent.timdemey.cards.model.entities.commands.C_StartMultiplayerGame;
 import gent.timdemey.cards.model.entities.commands.C_Undo;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.D_Connect;
-import gent.timdemey.cards.model.entities.commands.D_ToggleMenuMP;
 import gent.timdemey.cards.model.entities.commands.D_StartServer;
+import gent.timdemey.cards.model.entities.commands.D_ToggleMenuMP;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
+import gent.timdemey.cards.model.entities.commands.payload.P_SaveState;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
+import gent.timdemey.cards.services.contract.descriptors.PayloadActionDescriptor;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
-import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
+import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 
 public class ActionService implements IActionService
 {
@@ -40,16 +46,33 @@ public class ActionService implements IActionService
     private Map<ActionDescriptor, ActionBase> desc2actions = new HashMap<>();
     private Map<ActionDescriptor, Runnable> desc2code = new HashMap<>();
 
+   
     @Override
     public ActionBase getAction(ActionDescriptor desc)
     {
+        CheckRuntimeType(desc, ActionDescriptor.class);
+        
         ActionBase action = mapToAction(desc);
+        
         return action;
     }
 
     @Override
+    public <T> PayloadActionBase<T> getAction(PayloadActionDescriptor<T> desc, Supplier<T> payloadSupplier)
+    {
+        CheckRuntimeType(desc, PayloadActionDescriptor.class);
+        
+        PayloadActionBase<T> action = createPayloadAction(desc, payloadSupplier);
+        action.checkEnabled();
+        
+        return action;
+    }
+    
+    @Override
     public boolean canExecuteAction(ActionDescriptor desc)
     {
+        CheckRuntimeType(desc, ActionDescriptor.class);
+        
         if (desc == ActionDescriptors.SHOWABOUT     ||
             desc == ActionDescriptors.DEBUGDRAW     || 
             desc == ActionDescriptors.GC            ||
@@ -73,6 +96,25 @@ public class ActionService implements IActionService
         }
     }
 
+    public <T> boolean canExecuteAction(PayloadActionDescriptor<T> desc, Supplier<T> payloadSupplier)
+    {
+        CheckRuntimeType(desc, PayloadActionDescriptor.class);
+        
+       /* if (false)
+        {
+            return true;
+        }
+        else
+        {*/
+            CommandBase cmd = createCommand(desc, payloadSupplier);
+            if (cmd == null)
+            {
+                throw new IllegalArgumentException("Cannot map description " + desc + " onto a command");
+            }
+            return canExecute(cmd);
+        /*}*/
+    }
+    
     @Override
     public void executeAction(ActionDescriptor desc)
     {
@@ -96,6 +138,57 @@ public class ActionService implements IActionService
         throw new UnsupportedOperationException("No immediate action or command is mapped onto descriptor " + desc);        
     }
 
+    @Override
+    public <T> void executeAction(PayloadActionDescriptor<T> desc, Supplier<T> payloadSupplier)
+    {
+        CheckRuntimeType(desc, PayloadActionDescriptor.class);
+        
+        // try running the action immediately on the UI thread, without scheduling anything
+       /* Runnable code = mapToRunnable(desc);
+        if (code != null)
+        {
+            code.run();
+            return;
+        }
+        */
+        // if not found, try to find a command that can be scheduled
+        CommandBase cmd = createCommand(desc, payloadSupplier);
+        if (cmd != null)
+        {
+            Services.get(IContextService.class).getContext(ContextType.UI).schedule(cmd);
+            return;
+        }
+        
+        // if still not found, there is something missing
+        throw new UnsupportedOperationException("No immediate action or command is mapped onto descriptor " + desc);  
+    }
+    
+    private void CheckRuntimeType (ActionDescriptor desc, Class<? extends ActionDescriptor> clazz)
+    {
+        if (desc == null)
+        {
+            throw new NullPointerException("desc");
+        }
+        if (clazz == null)
+        {
+            throw new NullPointerException("clazz");
+        }
+        if (!ActionDescriptor.class.isAssignableFrom(clazz))
+        {
+            String clz_act = clazz.getSimpleName();
+            String msg = String.format("The given runtime class must be ActionDescriptor or a descendant, but got type %s", clz_act);
+            throw new IllegalArgumentException(msg);
+        }
+        if (desc.getClass() != clazz)
+        {
+            String clz_act = desc.getClass().getSimpleName();
+            String clz_exp = clazz.getSimpleName();
+            String msg = String.format("An ActionDescriptor of type %s was found but expected type %s", clz_act, clz_exp);
+            throw new IllegalArgumentException(msg);
+        }
+    }
+    
+    
     private ActionBase mapToAction(ActionDescriptor desc)
     {
         ActionBase action = desc2actions.get(desc);
@@ -109,8 +202,8 @@ public class ActionService implements IActionService
                 throw new IllegalArgumentException("The given ActionDescriptor cannot be mapped to an action: " + desc);
             }
 
-            desc2actions.put(desc, action);
-            
+            action.checkEnabled();
+      
             IContextService ctxtServ = Services.get(IContextService.class);
             ctxtServ.addContextListener(action);
             ctxtServ.getThreadContext().addStateListener(action); 
@@ -179,7 +272,7 @@ public class ActionService implements IActionService
             ImageIcon img_minimize = getImageIcon(resLocServ.getAppMinimizeIconFilePath());
             ImageIcon img_minimize_rollover = getImageIcon(resLocServ.getAppMinimizeRolloverIconFilePath());
             return new ActionBase(desc, Loc.get(LocKey.Action_minimize), img_minimize, img_minimize_rollover);
-        }
+        }        
         else if (desc == ActionDescriptors.QUIT)
         {
             ImageIcon img_close = getImageIcon(resLocServ.getAppCloseIconFilePath());
@@ -222,6 +315,16 @@ public class ActionService implements IActionService
         {
             return new A_Undo(desc, Loc.get(LocKey.Action_undo));
         }
+        
+        return null;
+    }
+    
+    protected <T> PayloadActionBase<T> createPayloadAction(PayloadActionDescriptor<T> desc, Supplier<T> payloadSupplier)
+    {
+        if (desc == ActionDescriptors.SAVECFG)
+        {
+            return new PayloadActionBase<T>(desc, Loc.get(LocKey.Action_savecfg), payloadSupplier);
+        } 
         
         return null;
     }
@@ -269,6 +372,10 @@ public class ActionService implements IActionService
         {
             return new C_Redo();
         }
+        else if (desc == ActionDescriptors.SAVECFG)
+        {
+            return new C_SaveConfig();
+        }
         else if (desc == ActionDescriptors.STARTSP)
         {
             return new C_StartLocalGame();
@@ -284,6 +391,20 @@ public class ActionService implements IActionService
         else if (desc == ActionDescriptors.UNDO)
         {
             return new C_Undo();
+        }
+        
+        return null;
+    }
+    
+    protected <T> CommandBase createCommand(PayloadActionDescriptor<T> desc, Supplier<T> payloadSupplier)
+    {
+        if (desc == ActionDescriptors.SAVECFG)
+        {
+            P_SaveState payload = (P_SaveState) payloadSupplier.get();
+            CommandBase cmd1 = new C_SaveState(payload);
+            CommandBase cmd2 = new C_SaveConfig();
+            CommandBase cmd = new C_Composite(true, cmd1, cmd2);
+            return cmd;
         }
         
         return null;

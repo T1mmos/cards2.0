@@ -806,9 +806,11 @@ public class FrameService implements IFrameService, IPreload
         PanelBase dialogPanel = new PanelBase(desc);
         dialogPanel.setLayout(new MigLayout("insets 0"));  
         dialogPanel.addMouseListener(new MouseAdapter(){}); // block mouse input to panels below
-        JPanel marginPanel = new RootPanel(getDialogBackgroundImage());        
+   //     JPanel marginPanel = new RootPanel(getDialogBackgroundImage());
+        JPanel marginPanel = new JPanel();
+        marginPanel.setBackground(new Color(50,50,50,150));
         marginPanel.setLayout(new MigLayout("insets 20"));
-        dialogPanel.add(marginPanel, "hmax 400, align center, push, alignx center, aligny center");
+        dialogPanel.add(marginPanel, "hmax 400, push, alignx center, aligny center");
         {
             // dialog title
             String title = dpMan.createTitle();

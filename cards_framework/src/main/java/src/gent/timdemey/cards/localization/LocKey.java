@@ -6,27 +6,28 @@ public final class LocKey
 
     public static final LocKey Action_about = Action("about");
     public static final LocKey Action_createmp = Action("creategame");  
-    public static final LocKey Action_newgame = Action("newgame");  
-    public static final LocKey Action_stopgame = Action("stopgame");  
-    public static final LocKey Action_quit = Action("quit");  
-    public static final LocKey Action_edit = Action("edit");  
-    public static final LocKey Action_undo = Action("undo");  
-    public static final LocKey Action_redo = Action("redo");  
+    public static final LocKey Action_edit = Action("edit");
     public static final LocKey Action_joinmp = Action("join");  
     public static final LocKey Action_leavemp = Action("leave");  
     public static final LocKey Action_maximize = Action("maximize");
+    public static final LocKey Action_minimize = Action("minimize");
+    public static final LocKey Action_newgame = Action("newgame");  
+    public static final LocKey Action_savecfg = Action("savecfg");
     public static final LocKey Action_showmenu = Action("showmenu");
     public static final LocKey Action_showsettings = Action("showsettings");
+    public static final LocKey Action_stopgame = Action("stopgame");  
+    public static final LocKey Action_quit = Action("quit");    
+    public static final LocKey Action_redo = Action("redo");  
     public static final LocKey Action_togglemenump = Action("togglemenump");
+    public static final LocKey Action_undo = Action("undo");  
     public static final LocKey Action_unmaximize = Action("unmaximize");
-    public static final LocKey Action_minimize = Action("minimize");
-    
-    public static final LocKey Button_ok = Button("ok");
+
     public static final LocKey Button_cancel = Button("cancel");
-    public static final LocKey Button_yes = Button("yes");
     public static final LocKey Button_no = Button("no");
+    public static final LocKey Button_ok = Button("ok");
     public static final LocKey Button_refresh = Button("refresh");
-    public static final LocKey Button_startMultiplayerGame = Button("startMultiplayerGame");
+    public static final LocKey Button_yes = Button("yes");
+    public static final LocKey Button_startmp = Button("startmp");
     
     public static final LocKey CheckBox_autoconnect = CheckBox("autoconnect");
     
