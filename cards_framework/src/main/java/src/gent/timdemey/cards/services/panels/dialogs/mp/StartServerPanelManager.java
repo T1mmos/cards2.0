@@ -61,7 +61,7 @@ public class StartServerPanelManager extends DataPanelManagerBase<String, StartS
         if (dbType == PanelButtonType.Ok)
         {
             boolean autoconnect = true; // we currently don't support starting a server without automatically being a player
-            return new StartServerPanelData(tf_srvname.getText(), tf_srvmsg.getText(), 9000, 9010, autoconnect);
+            return new StartServerPanelData(tf_srvname.getText(), tf_srvmsg.getText(), autoconnect);
         }
         else
         {

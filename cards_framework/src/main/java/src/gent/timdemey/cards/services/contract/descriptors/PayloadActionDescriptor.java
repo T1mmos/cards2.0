@@ -6,10 +6,4 @@ public class PayloadActionDescriptor<T> extends ActionDescriptor
     {
         super(id);
     }
-    
-    @Override
-    public String toString()
-    {
-        return String.format("PayloadActionDescriptor { id=%s }", id);  
-    }
 }

@@ -8,13 +8,13 @@ import gent.timdemey.cards.services.context.ContextType;
 
 public class C_SaveState extends CommandBase
 {
-    private final String playerName;
+    private final P_SaveState payload;
     
     public C_SaveState(P_SaveState payload)
     {
-        super(payload);   
+        super(payload);
         
-        this.playerName = payload.playerName;
+        this.payload = payload;
     }
     
     @Override
@@ -26,7 +26,18 @@ public class C_SaveState extends CommandBase
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
-        state.setLocalName(playerName);
+        if (payload.playerName != null && !payload.playerName.isEmpty())
+        {
+            state.setLocalName(payload.playerName);
+        }
+        if (payload.tcpport > 1024)
+        {
+            state.getConfiguration().setTcpPort(payload.tcpport);    
+        }
+        if (payload.udpport > 1024)
+        {
+            state.getConfiguration().setUdpPort(payload.udpport);    
+        }
     }
 
 }

@@ -4,7 +4,7 @@ public class SolShowComponentTypes
 {
     public static final String TYPENAME_SPECIALSCORE = "SPECIALSCORE";
     public static final String TYPENAME_SPECIALBACKGROUND = "SPECIALBACKGROUND";
-    public static final String TYPENAME_PLAYERNAME = "PLAYERNAME";
+    public static final String TYPENAME_PLAYERNAME = "PlayerName";
     public static final String TYPENAME_CARDAREABG = "CARDAREA_BACKGROUND";
     public static final String TYPENAME_PLAYERBG = "PLAYER_BACKGROUND";
     public static final String TYPENAME_VS = "VS";

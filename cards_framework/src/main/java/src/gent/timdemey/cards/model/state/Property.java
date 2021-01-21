@@ -69,4 +69,9 @@ public class Property<X>
     {
         return shortname;
     }
+    
+    public String toString(StateValueRef<X> value)
+    {
+        return shortname + " [" + value.toDebugString() + "]";
+    }
 }

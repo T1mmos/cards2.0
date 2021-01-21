@@ -57,8 +57,6 @@ class CommonMapper
         }
     }
     
-
-    
     static VersionDto toDto(Version obj)
     {
         int major = obj.getMajor();

@@ -14,6 +14,7 @@ import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.commands.CommandExecution;
 import gent.timdemey.cards.model.entities.commands.CommandHistory;
 import gent.timdemey.cards.model.entities.common.EntityBase;
+import gent.timdemey.cards.model.entities.config.Configuration;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.model.entities.game.UDPServer;
@@ -44,12 +45,13 @@ public class ReadOnlyEntityFactory
         addConverter(Card.class, ReadOnlyEntityFactory::getOrCreateCard);
         addConverter(CardStack.class, ReadOnlyEntityFactory::getOrCreateCardStack);
         addConverter(CardGame.class, ReadOnlyEntityFactory::getOrCreateCardGame);
-        addConverter(State.class, ReadOnlyEntityFactory::getOrCreateState);
+        addConverter(CommandExecution.class, ReadOnlyEntityFactory::getOrCreateCommandExecution);
         addConverter(CommandHistory.class, ReadOnlyEntityFactory::getOrCreateCommandHistory);
+        addConverter(Configuration.class, ReadOnlyEntityFactory::getOrCreateConfiguration);
         addConverter(Player.class, ReadOnlyEntityFactory::getOrCreatePlayer);
         addConverter(Server.class, ReadOnlyEntityFactory::getOrCreateServer);
+        addConverter(State.class, ReadOnlyEntityFactory::getOrCreateState);
         addConverter(UDPServer.class, ReadOnlyEntityFactory::getOrCreateUDPServer);
-        addConverter(CommandExecution.class, ReadOnlyEntityFactory::getOrCreateCommandExecution);
     }
 
     private static final Map<Class<?>, Map<UUID, ? extends ReadOnlyEntityBase<?>>> entities = new HashMap<>();
@@ -130,17 +132,18 @@ public class ReadOnlyEntityFactory
     public static ReadOnlyCommandExecution getOrCreateCommandExecution(CommandExecution commandExecution)
     {
         return GetOrCreateEntity(commandExecution, ce -> new ReadOnlyCommandExecution(ce));
+    }  
+
+    public static ReadOnlyConfiguration getOrCreateConfiguration(Configuration configuration)
+    {
+        return GetOrCreateEntity(configuration, ce -> new ReadOnlyConfiguration(ce));
     }
 
     public static ReadOnlyChange getReadOnlyChangeValue(Change<?> change)
     {
         // find ReadOnlyProperty
         ReadOnlyProperty<?> roProperty = ReadOnlyProperty.getReadOnlyProperty(change.property);
-        if (roProperty == null)
-        {
-            return null;
-        }
-
+        
         Object oldValue = toReadOnly(change.oldValue);
         Object newValue = toReadOnly(change.newValue);
         List<Object> addedValues = null;
@@ -154,10 +157,6 @@ public class ReadOnlyEntityFactory
     {
         // find ReadOnlyProperty
         ReadOnlyProperty<?> roProperty = ReadOnlyProperty.getReadOnlyProperty(property);
-        if (roProperty == null)
-        {
-            return null;
-        }
 
         Object oldValue = null;
         Object newValue = null;

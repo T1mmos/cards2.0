@@ -10,13 +10,15 @@ import java.util.UUID;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.defines.ConfigDefines;
+import gent.timdemey.cards.model.entities.config.Configuration;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.contract.descriptors.ConfigKeyDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.ConfigKeyDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.FileDescriptors;
+import gent.timdemey.cards.services.interfaces.IConfigurationService;
 import gent.timdemey.cards.services.interfaces.IFileService;
-import gent.timdemey.cards.utils.RandomUtils;
 
 public class C_LoadConfig extends CommandBase
 {
@@ -61,19 +63,36 @@ public class C_LoadConfig extends CommandBase
                 }
             }            
            
+            // load the properties
             try (InputStream is = new FileInputStream(propFile))
             {
                 properties.load(is);
             }            
+
+            // parse the properties into valid, strongly types values
+            String pname = parseProperty(properties, ConfigKeyDescriptors.PlayerName);
+            int tcpport = parseProperty(properties, ConfigKeyDescriptors.TcpPort);
+            int udpport = parseProperty(properties, ConfigKeyDescriptors.UdpPort);
             
-            String name = properties.getProperty(ConfigDefines.PLAYERNAME, RandomUtils.randomString("Player", 4));
-            
-            state.setLocalName(name);
+            state.setLocalName(pname);
             state.setLocalId(UUID.randomUUID());
+            
+            Configuration cfg = new Configuration();
+            cfg.setTcpPort(tcpport);
+            cfg.setUdpPort(udpport);
+            state.setConfiguration(cfg);
         }
         catch (Exception ex)
         {
             Logger.error("Failed to load the configuration", ex);
         }        
+    }
+    
+    private <T> T parseProperty(Properties properties, ConfigKeyDescriptor<T> cfgkey)
+    {
+        String flatprop = properties.getProperty(cfgkey.id); 
+        IConfigurationService cfgServ = Services.get(IConfigurationService.class);
+        T value = cfgServ.parse(cfgkey, flatprop);
+        return value;
     }
 }

@@ -8,6 +8,7 @@ import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.commands.CommandHistory;
 import gent.timdemey.cards.model.entities.common.EntityBase;
+import gent.timdemey.cards.model.entities.config.Configuration;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.Server;
@@ -21,6 +22,7 @@ public class State extends EntityBase
 {
     public static final Property<CardGame> CardGame = Property.of(State.class, CardGame.class, "CardGame");
     public static final Property<CommandHistory> CommandHistory = Property.of(State.class, CommandHistory.class, "CommandHistory");
+    public static final Property<Configuration> Configuration = Property.of(State.class, Configuration.class, "Configuration");
     public static final Property<GameState> GameState = Property.of(State.class, GameState.class, "GameState");
     public static final Property<UUID> LocalId = Property.of(State.class, UUID.class, "LocalId");
     public static final Property<String> LocalName = Property.of(State.class, String.class, "LocalName");
@@ -31,6 +33,7 @@ public class State extends EntityBase
     public static final Property<UDPServer> UDPServers = Property.of(State.class, UDPServer.class, "UDPServers");
 
     private StateValueRef<CommandHistory> commandHistoryRef;
+    private StateValueRef<Configuration> configurationRef;
 
     // state lists
     private final EntityStateListRef<Player> playersRef;
@@ -54,8 +57,9 @@ public class State extends EntityBase
     public State()
     {
         cardGameRef = new StateValueRef<>(CardGame, id);
-        gameStateRef = new StateValueRef<>(GameState, id, gent.timdemey.cards.model.entities.game.GameState.Disconnected);
         commandHistoryRef = new StateValueRef<>(CommandHistory, id);
+        configurationRef = new StateValueRef<>(Configuration, id);
+        gameStateRef = new StateValueRef<>(GameState, id, gent.timdemey.cards.model.entities.game.GameState.Disconnected);
         localIdRef = new StateValueRef<>(LocalId, id);
         localNameRef = new StateValueRef<>(LocalName, id);
         playersRef = new EntityStateListRef<>(Players, id, new ArrayList<>());
@@ -270,6 +274,16 @@ public class State extends EntityBase
         return this.commandHistoryRef.get();
     }
 
+    public void setConfiguration(Configuration configuration)
+    {
+        this.configurationRef.set(configuration);
+    }
+    
+    public Configuration getConfiguration()
+    {
+        return this.configurationRef.get();
+    }
+    
     @Override
     public final String toDebugString()
     {

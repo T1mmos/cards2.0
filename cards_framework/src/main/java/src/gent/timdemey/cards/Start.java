@@ -18,7 +18,7 @@ import gent.timdemey.cards.services.file.FileService;
 import gent.timdemey.cards.services.frame.FrameService;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IAnimationService;
-import gent.timdemey.cards.services.interfaces.IConfigService;
+import gent.timdemey.cards.services.interfaces.IConfigurationService;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFileService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
@@ -129,7 +129,7 @@ public class Start
     {
         Services services = App.getServices();
       
-        services.installIfAbsent(IConfigService.class, () -> new ConfigService());
+        services.installIfAbsent(IConfigurationService.class, () -> new ConfigService());
         services.installIfAbsent(IContextService.class, () -> new ContextService());
         services.installIfAbsent(IScalingService.class, () -> new ScalingService());
         services.installIfAbsent(IResourceCacheService.class, () -> new ResourceCacheService());

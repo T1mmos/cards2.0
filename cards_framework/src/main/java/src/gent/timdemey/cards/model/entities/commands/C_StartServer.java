@@ -8,6 +8,7 @@ import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.config.Configuration;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.Server;
@@ -114,44 +115,57 @@ public class C_StartServer extends CommandBase
         {
             try
             {
+                // determine the local IP
                 InetAddress addr = null;
                 try (final DatagramSocket socket = new DatagramSocket())
                 {
                     socket.connect(InetAddress.getByName("8.8.8.8"), tcpport);
                     addr = socket.getLocalAddress();
                 }
+                
+                // create a configuration
+                Configuration cfg = new Configuration();
+                {
+                    cfg.setTcpPort(tcpport);
+                    cfg.setUdpPort(udpport);    
+                }  
+                
+                // create a player
+                P_Player pl_player = new P_Player();
+                {
+                    pl_player.id = playerId;
+                    pl_player.name = playerName;    
+                }                
+                Player player = new Player(pl_player);
+                
+                // create web service to announce the presence over UDP 
+                UDP_ServiceAnnouncer udpServAnnouncer = new UDP_ServiceAnnouncer(udpport);
+
+                // create web service to accept TCP connections
+                int playerCount = Services.get(ICardPlugin.class).getPlayerCount();
+                CommandSchedulingTcpConnectionListener tcpConnListener = new CommandSchedulingTcpConnectionListener(ContextType.Server);
+                TCP_ConnectionPool tcpConnPool = new TCP_ConnectionPool(type.name(), playerCount, tcpConnListener);
+                TCP_ConnectionAccepter tcpConnAccepter = new TCP_ConnectionAccepter(tcpConnPool, tcpport);
 
                 // update the state: set server, lobby admin, add player, command history
                 Server server = new Server(srvname, addr, tcpport);
                 state.setServer(server);
+                state.setServerMessage(srvmsg);
                 state.setLocalId(server.id);
                 state.setLobbyAdminId(playerId);
                 state.setGameState(GameState.Lobby);
-                P_Player pl_player = new P_Player();
-                pl_player.id = playerId;
-                pl_player.name = playerName;
-                Player player = new Player(pl_player);
+                state.setConfiguration(cfg);
                 state.getPlayers().add(player);
-
-                // create web services to announce the presence over UDP and to accept TCP
-                // connections
-                UDP_ServiceAnnouncer udpServAnnouncer = new UDP_ServiceAnnouncer(udpport);
-
-                int playerCount = Services.get(ICardPlugin.class).getPlayerCount();
-
-                CommandSchedulingTcpConnectionListener tcpConnListener = new CommandSchedulingTcpConnectionListener(ContextType.Server);
-
-                TCP_ConnectionPool tcpConnPool = new TCP_ConnectionPool(type.name(), playerCount, tcpConnListener);
-                TCP_ConnectionAccepter tcpConnAccepter = new TCP_ConnectionAccepter(tcpConnPool, tcpport);
-
                 state.setUdpServiceAnnouncer(udpServAnnouncer);
                 state.setTcpConnectionAccepter(tcpConnAccepter);
                 state.setTcpConnectionPool(tcpConnPool);
                 state.setCommandHistory(new CommandHistory(true));
 
+                // start the services
                 udpServAnnouncer.start();
                 tcpConnAccepter.start();
 
+                // schedule a command to have the local player join the server
                 if(autoconnect)
                 {
                     C_Connect cmd_connect = new C_Connect(playerId, server.id, addr, tcpport, srvname, playerName);

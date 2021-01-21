@@ -86,8 +86,7 @@ public class ReadOnlyProperty<T>
         ReadOnlyProperty<?> roProperty = KNOWN_PROPERTIES.get(property);
         if (roProperty == null)
         {
-            Logger.error("A ReadOnlyProperty for Property " + property.fullname + " is not registered!");
-            return null;
+            throw new IllegalArgumentException("A ReadOnlyProperty for Property " + property + " is not registered on the read-only entity");
         }
         
         return roProperty;

@@ -12,6 +12,7 @@ import javax.swing.JTextField;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.payload.P_SaveState;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.action.ActionBase;
@@ -27,6 +28,8 @@ public class SettingsPanelManager extends PanelManagerBase
 {
     private PanelBase contentPanel;
     private JTextField tf_pname;
+    private JTextField tf_udpport;
+    private JTextField tf_tcpport;
         
     @Override
     public void preload()
@@ -51,10 +54,22 @@ public class SettingsPanelManager extends PanelManagerBase
             // player name
             {
                 JLabel lbl_pname = new JLabel(Loc.get(LocKey.Label_playername));
-                floatPanel.add(lbl_pname, "");
-                
+                floatPanel.add(lbl_pname, "");                
                 tf_pname = new JTextField(state.getLocalName(), 30);
                 floatPanel.add(tf_pname, "gapright 100, wrap");
+            }
+            
+            // server configuration
+            {
+                JLabel lbl_tcpport = new JLabel(Loc.get(LocKey.Label_tcpport));
+                floatPanel.add(lbl_tcpport, "");
+                tf_tcpport = new JTextField("" + state.getConfiguration().getTcpPort(), 6);
+                floatPanel.add(tf_tcpport, "wrap");
+                
+                JLabel lbl_udpport = new JLabel(Loc.get(LocKey.Label_udpport));
+                floatPanel.add(lbl_udpport, "");
+                tf_udpport = new JTextField("" + state.getConfiguration().getUdpPort(), 6);
+                floatPanel.add(tf_udpport, "wrap");
             }
             
             // buttons
@@ -79,8 +94,25 @@ public class SettingsPanelManager extends PanelManagerBase
         P_SaveState payload = new P_SaveState();
         payload.id = UUID.randomUUID();
         payload.playerName = tf_pname.getText();
+        payload.tcpport = parse(tf_tcpport.getText());
+        payload.udpport = parse(tf_udpport.getText());
+        
         return payload;
     }    
+    
+    private int parse (String text)
+    {
+        try 
+        {
+            int value = Integer.parseInt(text);
+            return value;
+        }
+        catch (Exception ex)
+        {
+            Logger.warn("Cannot parse '%s' (tcpport) as an integer");
+            return -1;
+        }
+    }
     
     @Override
     public PanelBase getPanel()

@@ -1,18 +1,43 @@
 package gent.timdemey.cards.services.config;
 
-import gent.timdemey.cards.services.interfaces.IConfigService;
+import gent.timdemey.cards.logging.Logger;
+import gent.timdemey.cards.services.contract.descriptors.ConfigKeyDescriptor;
+import gent.timdemey.cards.services.interfaces.IConfigurationService;
 
-public class ConfigService implements IConfigService
+public class ConfigService implements IConfigurationService
 {
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T get(ConfigKey<T> key)
+    public <T> T parse(ConfigKeyDescriptor<T> key, String input)
     {
-        // dummy implementation for now
-        if (key.getStringKey() == ConfigStringKey.Debug)
+        // no input -> use default value
+        if (input == null)
         {
-            return (T) Boolean.FALSE;
+            return key.defValue;
         }
-        return key.getDefaultValue();
+        
+        // output type is string -> just return the input 
+        
+        T value = null;
+        try 
+        {
+            if (key.clazz == String.class)
+            {
+                value = (T) input;
+            }
+            if (key.clazz == Integer.class)
+            {              
+                value = (T) (Integer) Integer.parseInt(input);                
+            }
+        }
+        catch (Exception ex)
+        {
+            value = key.defValue;
+            Logger.warn("Can't convert '%s' into type %s, falling back to default value '%s'", input, key.clazz, key.defValue);
+        }
+        
+        return value;
     }
+    
+    
 }
