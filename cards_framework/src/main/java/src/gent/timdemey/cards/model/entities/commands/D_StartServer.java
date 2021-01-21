@@ -6,6 +6,7 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
@@ -46,8 +47,11 @@ public class D_StartServer extends DialogCommandBase
         if (data.closeType == PanelButtonType.Ok)
         {
             IContextService ctxtServ = Services.get(IContextService.class);
-            UUID localId = ctxtServ.getThreadContext().getReadOnlyState().getLocalId();
-            C_StartServer cmd_startServer = new C_StartServer(localId, data.data_out.playerName, data.data_out.srvname, data.data_out.srvmsg,
+            ReadOnlyState state = ctxtServ.getThreadContext().getReadOnlyState();
+            UUID localId = state.getLocalId();
+            String localName = state.getLocalName();
+            
+            C_StartServer cmd_startServer = new C_StartServer(localId, localName, data.data_out.srvname, data.data_out.srvmsg,
                     data.data_out.udpport, data.data_out.tcpport, data.data_out.autoconnect);
 
             schedule(ContextType.UI, cmd_startServer);
