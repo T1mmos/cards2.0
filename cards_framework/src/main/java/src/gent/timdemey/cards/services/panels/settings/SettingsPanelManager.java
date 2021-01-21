@@ -17,6 +17,7 @@ import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.payload.P_SaveState;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.action.ActionBase;
+import gent.timdemey.cards.services.context.IExecutionListener;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IActionService;
@@ -28,6 +29,8 @@ import net.miginfocom.swing.MigLayout;
 public class SettingsPanelManager extends PanelManagerBase
 {
     private PanelBase contentPanel;
+    private IExecutionListener execListener;
+    
     private JTextField tf_pname;
     private JTextField tf_serverUdpPort;
     private JTextField tf_serverTcpPort;
@@ -118,8 +121,9 @@ public class SettingsPanelManager extends PanelManagerBase
         updateUI();
         
         // register listener
+        execListener = this::onCommandExecuted;
         IContextService ctxtServ = Services.get(IContextService.class);
-        ctxtServ.getThreadContext().addExecutionListener(this::onCommandExecuted);
+        ctxtServ.getThreadContext().addExecutionListener(execListener);
     }
     
     @Override
@@ -127,7 +131,8 @@ public class SettingsPanelManager extends PanelManagerBase
     {
         // deregister listener
         IContextService ctxtServ = Services.get(IContextService.class);
-        ctxtServ.getThreadContext().removeExecutionListener(this::onCommandExecuted);
+        ctxtServ.getThreadContext().removeExecutionListener(execListener);
+        execListener = null;
     }
         
     private P_SaveState getPayload()

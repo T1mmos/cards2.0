@@ -217,7 +217,7 @@ public final class Context
         
         if (roChanges.isEmpty())
         {
-            Logger.trace("No changes were detected in the Context. Not notifying any listeners.");
+            Logger.trace("No changes were detected in the Context. Not notifying any IStateListener instances.");
             return;
         }
         
