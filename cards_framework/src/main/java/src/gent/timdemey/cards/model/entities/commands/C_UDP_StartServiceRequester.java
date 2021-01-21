@@ -52,10 +52,9 @@ public class C_UDP_StartServiceRequester extends CommandBase
         CommandDtoMapper dtoMapper = Services.get(ISerializationService.class).getCommandDtoMapper();
         String json = dtoMapper.toJson(cmd);
         
-        int udpport = state.getConfiguration().getClientUdpPort();
+        int udpport = state.getConfiguration().getServerUdpPort();
         
-        UDP_ServiceRequester udpServRequester = new UDP_ServiceRequester(json, udpport,
-                C_UDP_StartServiceRequester::onUdpReceived);
+        UDP_ServiceRequester udpServRequester = new UDP_ServiceRequester(json, udpport, C_UDP_StartServiceRequester::onUdpReceived);
         state.setUdpServiceRequester(udpServRequester);
 
         udpServRequester.start();

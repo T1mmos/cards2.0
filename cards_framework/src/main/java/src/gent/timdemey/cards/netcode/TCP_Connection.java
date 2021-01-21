@@ -5,12 +5,12 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import gent.timdemey.cards.logging.Logger;
+import gent.timdemey.cards.utils.NetUtils;
 
 public final class TCP_Connection
 {
@@ -21,23 +21,21 @@ public final class TCP_Connection
     private final TCP_ConnectionPool pool;
     private boolean started = false;
     private boolean ended = false;
+    private final String remote;
 
     TCP_Connection(String name, Socket socket, TCP_ConnectionPool pool)
     {
+        this.remote = NetUtils.getFormattedIpPort(socket);        
         this.socket = socket;
-        this.thread_read = new Thread(() -> read(), name + " :: TCP read (" + getRemote() + ")");
-        this.thread_send = new Thread(() -> send(), name + " :: TCP send (" + getRemote() + ")");
+        this.thread_read = new Thread(() -> read(), name + " :: TCP read (" + remote + ")");
+        this.thread_send = new Thread(() -> send(), name + " :: TCP send (" + remote + ")");
         this.queue_send = new LinkedBlockingDeque<>();
         this.pool = pool;
     }
-
+    
     public String getRemote()
     {
-        InetSocketAddress isAddr = ((InetSocketAddress) socket.getRemoteSocketAddress());
-        String ip = isAddr.getAddress().getHostAddress();
-        int port = isAddr.getPort();
-        String formatted = String.format("%s:%s", ip, port);
-        return formatted;
+        return remote;
     }
 
     void start()
