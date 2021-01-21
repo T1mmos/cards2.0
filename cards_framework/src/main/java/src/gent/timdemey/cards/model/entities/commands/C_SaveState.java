@@ -38,7 +38,7 @@ public class C_SaveState extends CommandBase
         {
             state.getConfiguration().setServerUdpPort(payload.serverUdpPort);    
         }
-        if (payload.clientUdpPort > 50000)
+        if (payload.clientUdpPort >= 10000)
         {
             state.getConfiguration().setClientUdpPort(payload.clientUdpPort);
         }
