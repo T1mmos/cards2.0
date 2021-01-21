@@ -4,21 +4,27 @@ import gent.timdemey.cards.model.entities.config.Configuration;
 
 public class ReadOnlyConfiguration extends ReadOnlyEntityBase<Configuration>
 {
-    public static ReadOnlyProperty<Integer> TcpPort = ReadOnlyProperty.of(Configuration.TcpPort);
-    public static ReadOnlyProperty<Integer> UdpPort = ReadOnlyProperty.of(Configuration.UdpPort);
+    public static ReadOnlyProperty<Integer> ServerTcpPort = ReadOnlyProperty.of(Configuration.ServerTcpPort);
+    public static ReadOnlyProperty<Integer> ServerUdpPort = ReadOnlyProperty.of(Configuration.ServerUdpPort);
+    public static ReadOnlyProperty<Integer> ClientUdpPort = ReadOnlyProperty.of(Configuration.ClientUdpPort);
     
     ReadOnlyConfiguration(Configuration configuration)
     {
         super(configuration);
     }
 
-    public int getTcpPort()
+    public int getServerTcpPort()
     {
-        return entity.getTcpPort();
+        return entity.getServerTcpPort();
     }
     
-    public int getUdpPort()
+    public int getServerUdpPort()
     {
-        return entity.getUdpPort();
+        return entity.getServerUdpPort();
+    }
+    
+    public int getClientUdpPort()
+    {
+        return entity.getClientUdpPort();
     }
 }

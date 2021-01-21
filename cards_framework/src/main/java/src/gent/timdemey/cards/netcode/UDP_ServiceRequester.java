@@ -34,10 +34,12 @@ public final class UDP_ServiceRequester
     private Thread thread = null;
     private final Consumer<String> callback;
     private final String message;
+    private final int port;
 
-    public UDP_ServiceRequester(String message, Consumer<String> callback)
+    public UDP_ServiceRequester(String message, int port, Consumer<String> callback)
     {
         this.message = message;
+        this.port = port;
         this.callback = callback;
     }
 
@@ -103,7 +105,7 @@ public final class UDP_ServiceRequester
             Logger.info("Sending UDP broadcast messages...");
             for (InetAddress inetAddress : listAllBroadcastAddresses())
             {
-                DatagramPacket packet_out = new DatagramPacket(buffer_out, buffer_out.length, inetAddress, 9000);
+                DatagramPacket packet_out = new DatagramPacket(buffer_out, buffer_out.length, inetAddress, port);
                 dsocket.send(packet_out);
             }
 

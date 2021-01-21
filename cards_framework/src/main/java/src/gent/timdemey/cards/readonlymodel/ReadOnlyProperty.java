@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.state.Property;
 

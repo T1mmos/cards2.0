@@ -71,15 +71,17 @@ public class C_LoadConfig extends CommandBase
 
             // parse the properties into valid, strongly types values
             String pname = parseProperty(properties, ConfigKeyDescriptors.PlayerName);
-            int tcpport = parseProperty(properties, ConfigKeyDescriptors.TcpPort);
-            int udpport = parseProperty(properties, ConfigKeyDescriptors.UdpPort);
+            int serverTcpPort = parseProperty(properties, ConfigKeyDescriptors.ServerTcpPort);
+            int serverUdpPort = parseProperty(properties, ConfigKeyDescriptors.ServerUdpPort);
+            int clientUdpPort = parseProperty(properties, ConfigKeyDescriptors.ClientUdpPort);
             
             state.setLocalName(pname);
             state.setLocalId(UUID.randomUUID());
             
             Configuration cfg = new Configuration();
-            cfg.setTcpPort(tcpport);
-            cfg.setUdpPort(udpport);
+            cfg.setServerTcpPort(serverTcpPort);
+            cfg.setServerUdpPort(serverUdpPort);
+            cfg.setClientUdpPort(clientUdpPort);
             state.setConfiguration(cfg);
         }
         catch (Exception ex)

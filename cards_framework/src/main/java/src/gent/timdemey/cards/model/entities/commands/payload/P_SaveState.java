@@ -5,6 +5,7 @@ import gent.timdemey.cards.model.entities.common.PayloadBase;
 public class P_SaveState extends PayloadBase
 {
     public String playerName;
-    public int tcpport;
-    public int udpport;
+    public int serverTcpPort;
+    public int serverUdpPort;
+    public int clientUdpPort;
 }

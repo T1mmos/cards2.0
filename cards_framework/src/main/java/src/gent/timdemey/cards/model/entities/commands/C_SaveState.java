@@ -30,13 +30,17 @@ public class C_SaveState extends CommandBase
         {
             state.setLocalName(payload.playerName);
         }
-        if (payload.tcpport > 1024)
+        if (payload.serverTcpPort > 1024)
         {
-            state.getConfiguration().setTcpPort(payload.tcpport);    
+            state.getConfiguration().setServerTcpPort(payload.serverTcpPort);    
         }
-        if (payload.udpport > 1024)
+        if (payload.serverUdpPort > 1024)
         {
-            state.getConfiguration().setUdpPort(payload.udpport);    
+            state.getConfiguration().setServerUdpPort(payload.serverUdpPort);    
+        }
+        if (payload.clientUdpPort > 50000)
+        {
+            state.getConfiguration().setClientUdpPort(payload.clientUdpPort);
         }
     }
 

@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
@@ -90,8 +89,9 @@ public class C_SaveConfig extends CommandBase
             // write all properties            
             Configuration cfg = state.getConfiguration();
             properties.setProperty(ConfigKeyDescriptors.PlayerName.id, state.getLocalName());
-            properties.setProperty(ConfigKeyDescriptors.TcpPort.id, "" + cfg.getTcpPort());
-            properties.setProperty(ConfigKeyDescriptors.UdpPort.id, "" + cfg.getUdpPort());
+            properties.setProperty(ConfigKeyDescriptors.ServerTcpPort.id, "" + cfg.getServerTcpPort());
+            properties.setProperty(ConfigKeyDescriptors.ServerUdpPort.id, "" + cfg.getServerUdpPort());
+            properties.setProperty(ConfigKeyDescriptors.ClientUdpPort.id, "" + cfg.getClientUdpPort());
             
             // create a comment
             ICardPlugin cp = Services.get(ICardPlugin.class);            

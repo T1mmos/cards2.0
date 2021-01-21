@@ -13,6 +13,7 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.logging.Logger;
+import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.payload.P_SaveState;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.action.ActionBase;
@@ -28,15 +29,32 @@ public class SettingsPanelManager extends PanelManagerBase
 {
     private PanelBase contentPanel;
     private JTextField tf_pname;
-    private JTextField tf_udpport;
-    private JTextField tf_tcpport;
-        
+    private JTextField tf_serverUdpPort;
+    private JTextField tf_serverTcpPort;
+    private JTextField tf_clientUdpPort;    
+    
     @Override
     public void preload()
     {
         
     }
 
+    private void updateUI()
+    {
+        IContextService ctxtServ = Services.get(IContextService.class);
+        ReadOnlyState state = ctxtServ.getThreadContext().getReadOnlyState();
+        
+        tf_pname.setText(state.getLocalName());        
+        tf_serverTcpPort.setText("" + state.getConfiguration().getServerTcpPort());       
+        tf_serverUdpPort.setText("" + state.getConfiguration().getServerUdpPort());       
+        tf_clientUdpPort.setText("" + state.getConfiguration().getClientUdpPort());    
+    }
+    
+    private void onCommandExecuted(CommandBase cmd)
+    {
+        updateUI();
+    }
+    
     @Override
     public PanelBase createPanel()
     {
@@ -47,29 +65,34 @@ public class SettingsPanelManager extends PanelManagerBase
             JPanel floatPanel = new JPanel(new MigLayout("inset 10"));
             floatPanel.setBackground(new Color(50,50,50,150));
             contentPanel.add(floatPanel, "hmin 200, wmin 350, push, alignx center, aligny center");
-            
-            IContextService ctxtServ = Services.get(IContextService.class);
-            ReadOnlyState state = ctxtServ.getThreadContext().getReadOnlyState();
-            
+                                    
             // player name
             {
                 JLabel lbl_pname = new JLabel(Loc.get(LocKey.Label_playername));
                 floatPanel.add(lbl_pname, "");                
-                tf_pname = new JTextField(state.getLocalName(), 30);
+                tf_pname = new JTextField(30);
                 floatPanel.add(tf_pname, "gapright 100, wrap");
             }
             
             // server configuration
             {
-                JLabel lbl_tcpport = new JLabel(Loc.get(LocKey.Label_tcpport));
+                JLabel lbl_tcpport = new JLabel(Loc.get(LocKey.Label_serverTcpPort));
                 floatPanel.add(lbl_tcpport, "");
-                tf_tcpport = new JTextField("" + state.getConfiguration().getTcpPort(), 6);
-                floatPanel.add(tf_tcpport, "wrap");
+                tf_serverTcpPort = new JTextField(6);
+                floatPanel.add(tf_serverTcpPort, "wrap");
                 
-                JLabel lbl_udpport = new JLabel(Loc.get(LocKey.Label_udpport));
+                JLabel lbl_udpport = new JLabel(Loc.get(LocKey.Label_serverUdpPort));
                 floatPanel.add(lbl_udpport, "");
-                tf_udpport = new JTextField("" + state.getConfiguration().getUdpPort(), 6);
-                floatPanel.add(tf_udpport, "wrap");
+                tf_serverUdpPort = new JTextField(6);
+                floatPanel.add(tf_serverUdpPort, "wrap");
+            }
+            
+            // client configuration
+            {
+                JLabel lbl_udpport = new JLabel(Loc.get(LocKey.Label_clientUdpPort));
+                floatPanel.add(lbl_udpport, "");
+                tf_clientUdpPort = new JTextField(6);
+                floatPanel.add(tf_clientUdpPort, "wrap");
             }
             
             // buttons
@@ -89,13 +112,32 @@ public class SettingsPanelManager extends PanelManagerBase
         return contentPanel;
     }
     
+    @Override
+    public void onShown()
+    {
+        updateUI();
+        
+        // register listener
+        IContextService ctxtServ = Services.get(IContextService.class);
+        ctxtServ.getThreadContext().addExecutionListener(this::onCommandExecuted);
+    }
+    
+    @Override
+    public void onHidden()
+    {
+        // deregister listener
+        IContextService ctxtServ = Services.get(IContextService.class);
+        ctxtServ.getThreadContext().removeExecutionListener(this::onCommandExecuted);
+    }
+        
     private P_SaveState getPayload()
     {
         P_SaveState payload = new P_SaveState();
         payload.id = UUID.randomUUID();
         payload.playerName = tf_pname.getText();
-        payload.tcpport = parse(tf_tcpport.getText());
-        payload.udpport = parse(tf_udpport.getText());
+        payload.serverTcpPort = parse(tf_serverTcpPort.getText());
+        payload.serverUdpPort = parse(tf_serverUdpPort.getText());
+        payload.clientUdpPort = parse(tf_clientUdpPort.getText());
         
         return payload;
     }    
@@ -109,7 +151,7 @@ public class SettingsPanelManager extends PanelManagerBase
         }
         catch (Exception ex)
         {
-            Logger.warn("Cannot parse '%s' (tcpport) as an integer");
+            Logger.warn("Cannot parse '%s' (serverTcpPort) as an integer");
             return -1;
         }
     }
@@ -122,7 +164,7 @@ public class SettingsPanelManager extends PanelManagerBase
 
     @Override
     public void destroyPanel()
-    {
+    {        
         contentPanel = null;
     }
 

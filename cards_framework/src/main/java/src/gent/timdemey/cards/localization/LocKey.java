@@ -36,13 +36,14 @@ public final class LocKey
     public static final LocKey DebugMenu_drawdebuglines = DebugMenu("drawdebuglines");
     public static final LocKey DebugMenu_gc = DebugMenu("gc");
 
+    public static final LocKey Label_clientUdpPort = Label("clientUdpPort");
     public static final LocKey Label_emptyPlayer = Label("emptyplayer");
     public static final LocKey Label_playername = Label("playername");  
     public static final LocKey Label_servermsg = Label("servermsg");
     public static final LocKey Label_servername = Label("servername");
     public static final LocKey Label_serversfound = Label("serversfound");
-    public static final LocKey Label_tcpport = Label("tcpport");  
-    public static final LocKey Label_udpport = Label("udpport");
+    public static final LocKey Label_serverTcpPort = Label("serverTcpPort");  
+    public static final LocKey Label_serverUdpPort = Label("serverUdpPort");
     public static final LocKey Label_vs = Label("vs");
     public static final LocKey Label_waitingToStart = Label("waitingtostart");
     

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.state.Property;
@@ -39,8 +40,8 @@ public final class Context
         
         if (allowListeners)
         {
-            context.addExecutionListener(context::onExecuted);
-        }
+            context.addExecutionListener(context::onExecuted);    
+        }        
         
         return context;
     }
@@ -50,7 +51,7 @@ public final class Context
         return ReadOnlyEntityFactory.getOrCreateState(limitedContext.getState());
     }
 
-    void addExecutionListener(IExecutionListener executionListener)
+    public void addExecutionListener(IExecutionListener executionListener)
     {
         limitedContext.addExecutionListener(executionListener);
     }
@@ -166,16 +167,13 @@ public final class Context
             else if (!property.equals(other.property))
                 return false;
             return true;
-        }
-      
-        
-        
+        }   
     }
     
     // Callback from execution service that lets us know that a command or a chain
     // of commands was executed.
     // We can therefore now update the state listeners.
-    private void onExecuted()
+    private void onExecuted(CommandBase command)
     {
         // get a list of all changes since the last reset()
         List<Change<?>> changes = changeTracker.getChangeList();
@@ -216,6 +214,12 @@ public final class Context
         // this way listeners themselves may schedule commands and 
         // will not cause stackoverflows
         changeTracker.reset();
+        
+        if (roChanges.isEmpty())
+        {
+            Logger.trace("No changes were detected in the Context. Not notifying any listeners.");
+            return;
+        }
         
         // as some listeners may unregister themselves during updates, guard against
         // concurrency exceptions

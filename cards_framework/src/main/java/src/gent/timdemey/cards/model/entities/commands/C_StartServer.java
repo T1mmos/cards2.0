@@ -59,15 +59,15 @@ public class C_StartServer extends CommandBase
         }        
         if (udpport <= 1024)
         {
-            throw new IllegalArgumentException("udpport");
+            throw new IllegalArgumentException("serverUdpPort");
         }
         if (tcpport <= 1024)
         {
-            throw new IllegalArgumentException("tcpport");
+            throw new IllegalArgumentException("serverTcpPort");
         }
         if (udpport == tcpport)
         {
-            throw new IllegalArgumentException("tcpport equals udpport");
+            throw new IllegalArgumentException("serverTcpPort equals serverUdpPort");
         }
         
         this.playerId = playerId;
@@ -126,8 +126,8 @@ public class C_StartServer extends CommandBase
                 // create a configuration
                 Configuration cfg = new Configuration();
                 {
-                    cfg.setTcpPort(tcpport);
-                    cfg.setUdpPort(udpport);    
+                    cfg.setServerTcpPort(tcpport);
+                    cfg.setServerUdpPort(udpport);    
                 }  
                 
                 // create a player
@@ -186,7 +186,7 @@ public class C_StartServer extends CommandBase
     @Override
     public String toDebugString()
     {
-        return Debug.getKeyValue("srvname", srvname) + Debug.getKeyValue("srvmsg", srvmsg) + Debug.getKeyValue("udpport", udpport) + Debug.getKeyValue(
-            "tcpport", tcpport);
+        return Debug.getKeyValue("srvname", srvname) + Debug.getKeyValue("srvmsg", srvmsg) + Debug.getKeyValue("serverUdpPort", udpport) + Debug.getKeyValue(
+            "serverTcpPort", tcpport);
     }
 }

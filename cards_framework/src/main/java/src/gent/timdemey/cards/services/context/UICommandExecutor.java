@@ -128,7 +128,7 @@ class UICommandExecutor implements ICommandExecutor
         // update the listeners
         for (IExecutionListener execListener : executionListeners)
         {
-            execListener.onExecuted();
+            execListener.onExecuted(command);
         }
         
         command.onExecuted();

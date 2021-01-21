@@ -32,6 +32,6 @@ public class Server extends EntityBase
     public String toDebugString()
     {
         return Debug.getKeyValue("serverName", serverName) + Debug.getKeyValue("inetAddress", inetAddress.getHostAddress())
-                + Debug.getKeyValue("tcpport", tcpport);
+                + Debug.getKeyValue("serverTcpPort", tcpport);
     }
 }

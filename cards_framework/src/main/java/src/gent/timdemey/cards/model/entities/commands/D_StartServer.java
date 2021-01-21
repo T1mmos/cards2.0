@@ -50,8 +50,8 @@ public class D_StartServer extends DialogCommandBase
             ReadOnlyState state = ctxtServ.getThreadContext().getReadOnlyState();
             UUID localId = state.getLocalId();
             String localName = state.getLocalName();
-            int udpPort = state.getConfiguration().getUdpPort();
-            int tcpPort = state.getConfiguration().getTcpPort();
+            int udpPort = state.getConfiguration().getServerUdpPort();
+            int tcpPort = state.getConfiguration().getServerTcpPort();
             
             C_StartServer cmd_startServer = new C_StartServer(localId, localName, data.data_out.srvname, data.data_out.srvmsg,
                     udpPort, tcpPort, data.data_out.autoconnect);

@@ -6,42 +6,55 @@ import gent.timdemey.cards.model.state.StateValueRef;
 
 public class Configuration extends EntityBase
 {
-    public static final Property<Integer> TcpPort = Property.of(Configuration.class, Integer.class, "TcpPort");
-    public static final Property<Integer> UdpPort = Property.of(Configuration.class, Integer.class, "UdpPort");
+    public static final Property<Integer> ServerTcpPort = Property.of(Configuration.class, Integer.class, "ServerTcpPort");
+    public static final Property<Integer> ServerUdpPort = Property.of(Configuration.class, Integer.class, "ServerUdpPort");
+    public static final Property<Integer> ClientUdpPort = Property.of(Configuration.class, Integer.class, "ClientUdpPort");
 
-    private StateValueRef<Integer> tcpPortRef;
-    private StateValueRef<Integer> udpPortRef;
+    private StateValueRef<Integer> serverTcpPortRef;
+    private StateValueRef<Integer> serverUdpPortRef;
+    private StateValueRef<Integer> clientUdpPortRef;
     
     public Configuration()
     {
         super();
-        this.tcpPortRef = new StateValueRef<>(TcpPort, id, 9000);
-        this.udpPortRef = new StateValueRef<>(UdpPort, id, 9010);
+        this.serverTcpPortRef = new StateValueRef<>(ServerTcpPort, id);
+        this.serverUdpPortRef = new StateValueRef<>(ServerUdpPort, id);
+        this.clientUdpPortRef = new StateValueRef<>(ClientUdpPort, id);
     }
     
-    public void setTcpPort(int tcpPort)
+    public void setServerTcpPort(int tcpPort)
     {
-        this.tcpPortRef.set(tcpPort);
+        this.serverTcpPortRef.set(tcpPort);
     }
     
-    public int getTcpPort()
+    public int getServerTcpPort()
     {
-        return this.tcpPortRef.get();
+        return this.serverTcpPortRef.get();
     }
     
-    public void setUdpPort(int udpPort)
+    public void setServerUdpPort(int udpPort)
     {
-        this.udpPortRef.set(udpPort);
+        this.serverUdpPortRef.set(udpPort);
     }
     
-    public int getUdpPort()
+    public int getServerUdpPort()
     {
-        return this.udpPortRef.get();
+        return this.serverUdpPortRef.get();
     }
 
+    public void setClientUdpPort(int udpPort)
+    {
+        this.clientUdpPortRef.set(udpPort);
+    }
+    
+    public int getClientUdpPort()
+    {
+        return this.clientUdpPortRef.get();
+    }
+    
     @Override
     public String toDebugString()
     {
-        return TcpPort.toString(tcpPortRef) + ";" + UdpPort.toString(udpPortRef);
+        return ServerTcpPort.toString(serverTcpPortRef) + ";" + ServerUdpPort.toString(serverUdpPortRef);
     }
 }
