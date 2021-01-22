@@ -69,6 +69,7 @@ import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.services.panels.PanelInData;
 import gent.timdemey.cards.services.panels.PanelOutData;
 import gent.timdemey.cards.services.panels.dialogs.message.MessagePanelData;
+import gent.timdemey.cards.utils.DimensionUtils;
 import net.miginfocom.swing.MigLayout;
 
 public class FrameService implements IFrameService, IPreload
@@ -184,8 +185,9 @@ public class FrameService implements IFrameService, IPreload
                         
             frame.setTitle(getTitle());
             frame.setUndecorated(true);
+            frame.pack();
+            frame.setMinimumSize(DimensionUtils.getMinimum(frame.getSize(), new Dimension(450, 200)));
             frame.setSize(new Dimension(800, 600));
-            frame.setMinimumSize(new Dimension(400, 200));
             frame.setLocationRelativeTo(null);
             frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
             frame.setIconImages(getFrameIcons());
