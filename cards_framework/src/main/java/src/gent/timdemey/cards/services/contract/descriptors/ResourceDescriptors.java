@@ -15,19 +15,21 @@ public class ResourceDescriptors
     public static final Function<Integer, String>               IntFunc =               i -> "" + i;
     public static final Function<ButtonState, String>           ButtonStateFunc =       ResourceDescriptors::fromButtonState;
     
-    public static final ResourceDescriptor                      AppBackground =         get("AppBackground"); 
-    public static final ResourceDescriptorP2<Integer, Integer>  AppIcon =               get("AppIcon", IntFunc, IntFunc); 
-    public static final ResourceDescriptor                      CardBack =              get("CardBack");
-    public static final ResourceDescriptorP2<Suit, Value>       CardFront =             get("CardFront", SuitFunc, ValueFunc);
-                                                                                        
-    public static final ResourceDescriptor                      FontMenu =              get("FontMenu");
+    public static final ResourceDescriptor                      AppBackground =         get("AppBackground");     
     public static final ResourceDescriptorP1<ButtonState>       AppClose =              get("AppClose", ButtonStateFunc);
+    public static final ResourceDescriptorP2<Integer, Integer>  AppIcon =               get("AppIcon", IntFunc, IntFunc); 
     public static final ResourceDescriptorP1<ButtonState>       AppMinimize =           get("AppMinimize", ButtonStateFunc);
     public static final ResourceDescriptorP1<ButtonState>       AppMaximize=            get("AppMaximize", ButtonStateFunc);
-    public static final ResourceDescriptor                      AppTitleFont =          get("AppTitleFont");
     public static final ResourceDescriptorP1<ButtonState>       AppUnmaximize =         get("AppUnmaximize", ButtonStateFunc);
+    public static final ResourceDescriptor                      CardBack =              get("CardBack");
+    public static final ResourceDescriptorP2<Suit, Value>       CardFront =             get("CardFront", SuitFunc, ValueFunc);    
+    public static final ResourceDescriptor                      Menu =                  get("Menu");
+                                                                                        
+    public static final ResourceDescriptor                      FontMenu =              get("FontMenu");
+    public static final ResourceDescriptor                      AppTitleFont =          get("AppTitleFont");
     public static final ResourceDescriptor                      DialogBackground =      get("DialogBackground");
     public static final ResourceDescriptor                      DialogTitleFont =       get("DialogTitleFont");
+
     
     public static final ResourceDescriptor get(String id)
     {

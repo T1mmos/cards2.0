@@ -1,5 +1,8 @@
 package gent.timdemey.cards.services.resources;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptor.ResourceDescriptorP1;
 import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptor.ResourceDescriptorP2;
@@ -8,6 +11,29 @@ import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 
 public class ResourceLocationService implements IResourceLocationService
 {    
+    private static Map<ResourceDescriptor, String> RESOURCES0 = new HashMap<>();
+    private static Map<ResourceDescriptorP1<?>, String> RESOURCES1 = new HashMap<>();
+    private static Map<ResourceDescriptorP2<?,?>, String> RESOURCES2 = new HashMap<>();
+    
+    static
+    {
+        RESOURCES0.put(ResourceDescriptors.CardBack,            "cards/edge_thick/backside_yellow.png"  );
+        RESOURCES0.put(ResourceDescriptors.FontMenu,            "ARCADE.TTF"                            );
+        RESOURCES0.put(ResourceDescriptors.AppTitleFont,        "foptitles.ttf"                         );
+        RESOURCES0.put(ResourceDescriptors.AppBackground,       "background_softblue.png"               );
+        RESOURCES0.put(ResourceDescriptors.DialogBackground,    "bg_olive.png"                          );
+        RESOURCES0.put(ResourceDescriptors.DialogTitleFont,     "SMB2.ttf"                              );
+        RESOURCES0.put(ResourceDescriptors.Menu,                "cards-A-3d.png"                        );
+        
+        RESOURCES1.put(ResourceDescriptors.AppClose,            "close%s.png"                           );
+        RESOURCES1.put(ResourceDescriptors.AppMaximize,         "maximize%s.png"                        );
+        RESOURCES1.put(ResourceDescriptors.AppMinimize,         "minimize%s.png"                        );
+        RESOURCES1.put(ResourceDescriptors.AppUnmaximize,       "unmaximize%s.png"                      );        
+
+        RESOURCES2.put(ResourceDescriptors.AppIcon,             "icon_spade_%sx%s.png"                  );
+        RESOURCES2.put(ResourceDescriptors.CardFront,           "cards/edge_thick/%s_%s.png"            );
+    }
+        
     @Override
     public String getFilePath(ResourceDescriptor resDesc)
     {
@@ -16,32 +42,8 @@ public class ResourceLocationService implements IResourceLocationService
             throw new NullPointerException("imgDesc");
         }
         
-        if (resDesc == ResourceDescriptors.CardBack)
-        {
-            return "cards/edge_thick/backside_yellow.png";
-        }
-        else if (resDesc == ResourceDescriptors.FontMenu)
-        {
-            return "ARCADE.TTF";            
-        }
-        else if (resDesc == ResourceDescriptors.AppTitleFont)
-        {
-            return "foptitles.ttf";
-        }
-        else if (resDesc == ResourceDescriptors.AppBackground)
-        {
-            return "background_softblue.png";
-        }
-        else if (resDesc == ResourceDescriptors.DialogBackground)
-        {
-            return "bg_olive.png";
-        }
-        else if (resDesc == ResourceDescriptors.DialogTitleFont)
-        {
-            return "SMB2.ttf";
-        }
-        
-        throw new IllegalArgumentException("Unknown ResourceDescriptor type: " + resDesc.getClass().getSimpleName());
+        String raw = getRawFilePath(RESOURCES0, resDesc);
+        return raw;
     }
 
     @Override
@@ -56,30 +58,9 @@ public class ResourceLocationService implements IResourceLocationService
             throw new NullPointerException("param1");
         }
         
-        String path = null;
-        if (resDesc == ResourceDescriptors.AppClose)
-        {
-            path = "close%s.png";
-        }
-        else if (resDesc == ResourceDescriptors.AppMaximize)
-        {
-            path = "maximize%s.png";
-        }
-        else if (resDesc == ResourceDescriptors.AppMinimize)
-        {
-            path = "minimize%s.png";
-        }
-        else if (resDesc == ResourceDescriptors.AppUnmaximize)
-        {
-            path = "unmaximize%s.png";
-        }
-        
-        if (path != null)
-        {
-            return resDesc.get(path, param1);
-        }
-        
-        throw new IllegalArgumentException("Unknown ResourceDescriptor: " + resDesc);
+        String raw = getRawFilePath(RESOURCES1, resDesc);
+        String filepath = resDesc.get(raw, param1);
+        return filepath;
     }
 
     @Override
@@ -98,21 +79,18 @@ public class ResourceLocationService implements IResourceLocationService
             throw new NullPointerException("param2");
         }
         
-        String path = null;
-        if (resDesc == ResourceDescriptors.AppIcon)
+        String raw = getRawFilePath(RESOURCES2, resDesc);
+        String filepath = resDesc.get(raw, param1, param2);
+        return filepath;
+    }
+    
+    private <T> String getRawFilePath (Map<T, String> map, T key)
+    {
+        String filename = map.get(key);
+        if (filename == null)
         {
-            path = "icon_spade_%sx%s.png";
+            throw new IllegalArgumentException("The given ResourceDescriptor cannot be mapped onto a filename: " + key);
         }
-        else if (resDesc == ResourceDescriptors.CardFront)
-        {
-            path = "cards/edge_thick/%s_%s.png";
-        }        
-        
-        if (path != null)
-        {
-            return resDesc.get(path, param1, param2);
-        }
-        
-        throw new IllegalArgumentException("Unknown ResourceDescriptor: " + resDesc);
+        return filename;
     }
 }

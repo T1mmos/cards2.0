@@ -1,7 +1,12 @@
 package gent.timdemey.cards.services.panels.menu;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import com.alee.laf.button.WebButton;
 
@@ -11,9 +16,11 @@ import gent.timdemey.cards.services.action.ActionBase;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
+import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptors;
+import gent.timdemey.cards.services.contract.res.ImageResource;
 import gent.timdemey.cards.services.interfaces.IActionService;
-import gent.timdemey.cards.services.interfaces.IFileService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
+import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelManagerBase;
 import net.miginfocom.swing.MigLayout;
@@ -21,6 +28,8 @@ import net.miginfocom.swing.MigLayout;
 public class MenuPanelManager extends PanelManagerBase
 {
     private PanelBase menuPanel;
+    
+    private BufferedImage bgimg;
 
     @Override
     public void destroyPanel()
@@ -39,28 +48,37 @@ public class MenuPanelManager extends PanelManagerBase
     {
         menuPanel = new PanelBase(PanelDescriptors.MENU);
         menuPanel.setLayout(new MigLayout("insets 0, align 50% 50%"));
-
-        List<ActionDescriptor> actDescs = getMenuActionDescriptors();
-
-        MenuButtonMouseListener listener = new MenuButtonMouseListener();
-            
-        IActionService actServ = Services.get(IActionService.class);
-        for (ActionDescriptor actDesc : actDescs)
+        
+        // icon
         {
-            ActionBase action = actServ.getAction(actDesc);
-            WebButton button = new WebButton(action);
-            
-            button.setContentAreaFilled(false);
-            button.setFocusPainted(false);
-            button.setBorder(null);
-            button.setBorderPainted(false);
-            button.setOpaque(false);
-            button.addMouseListener(listener);
-            button.setIcon(null); // no icon in menu list
+            JLabel lbl_icon = new JLabel(new ImageIcon(bgimg));
+            menuPanel.add(lbl_icon, "");
+        }
 
-            menuPanel.add(button, "sg buts, wrap");
+        // buttons
+        {
+            JPanel pnl_buts = new JPanel(new MigLayout());
+            List<ActionDescriptor> actDescs = getMenuActionDescriptors();
+            MenuButtonMouseListener listener = new MenuButtonMouseListener();                
+            IActionService actServ = Services.get(IActionService.class);
+            for (ActionDescriptor actDesc : actDescs)
+            {
+                ActionBase action = actServ.getAction(actDesc);
+                WebButton button = new WebButton(action);
+                
+                button.setContentAreaFilled(false);
+                button.setFocusPainted(false);
+                button.setBorder(null);
+                button.setBorderPainted(false);
+                button.setOpaque(false);
+                button.addMouseListener(listener);
+                button.setIcon(null); // no icon in menu list
+
+                pnl_buts.add(button, "sg buts, wrap");                
+            }
             
-            menuPanel.setOpaque(false);
+            pnl_buts.setOpaque(false);
+            menuPanel.add(pnl_buts, "wrap");
         }
         
         return menuPanel;
@@ -97,7 +115,10 @@ public class MenuPanelManager extends PanelManagerBase
     @Override
     public void preload()
     {
-        IResourceCacheService resServ = Services.get(IResourceCacheService.class);
-     //   resServ.getImage()
+        IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
+        String iconFilename = resLocServ.getFilePath(ResourceDescriptors.Menu);
+        IResourceCacheService resCacheServ = Services.get(IResourceCacheService.class);
+        ImageResource res = resCacheServ.getImage(iconFilename);
+        bgimg = res.raw;
     }
  }
