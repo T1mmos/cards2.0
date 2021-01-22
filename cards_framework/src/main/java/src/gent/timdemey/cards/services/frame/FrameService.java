@@ -806,10 +806,10 @@ public class FrameService implements IFrameService, IPreload
         PanelBase dialogPanel = new PanelBase(desc);
         dialogPanel.setLayout(new MigLayout("insets 0"));  
         dialogPanel.addMouseListener(new MouseAdapter(){}); // block mouse input to panels below
-   //     JPanel marginPanel = new RootPanel(getDialogBackgroundImage());
-        JPanel marginPanel = new JPanel();
+        JPanel marginPanel = new RootPanel();
         marginPanel.setBackground(new Color(50,50,50,150));
         marginPanel.setLayout(new MigLayout("insets 20"));
+        marginPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
         dialogPanel.add(marginPanel, "hmax 400, push, alignx center, aligny center");
         {
             // dialog title
@@ -835,9 +835,7 @@ public class FrameService implements IFrameService, IPreload
                 panelInData.verifyButtonFunc.accept(dbType);
             }
             
-            // more dialog customization
-            marginPanel.setOpaque(true);
-            marginPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
+            
         }
         
         dialogPanel.setOpaque(false);
