@@ -9,23 +9,27 @@ import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptor.Reso
 
 public class ResourceDescriptors
 { 
-    public static final ResourceDescriptor                     AppBackground =          get("AppBackground"); 
-    public static final ResourceDescriptorP2<Integer, Integer> AppIcon =                get("AppIcon", ResourceFunctions.IntFunc, ResourceFunctions.IntFunc); 
-    public static final ResourceDescriptor                     CardBack =               get("CardBack");
-    public static final ResourceDescriptorP2<Suit, Value>      CardFront =              get("CardFront", ResourceFunctions.SuitFunc, ResourceFunctions.ValueFunc);
+    public static final Function<Suit, String>                  SuitFunc =              suit -> suit.name().substring(0, 1); 
+    public static final Function<Value, String>                 ValueFunc =             value -> value.getTextual();
+    public static final Function<Integer, String>               IntFunc =               i -> "" + i;
+    
+    public static final ResourceDescriptor                      AppBackground =         get("AppBackground"); 
+    public static final ResourceDescriptorP2<Integer, Integer>  AppIcon =               get("AppIcon", IntFunc, IntFunc); 
+    public static final ResourceDescriptor                      CardBack =              get("CardBack");
+    public static final ResourceDescriptorP2<Suit, Value>       CardFront =             get("CardFront", SuitFunc, ValueFunc);
                                                                                         
-    public static final ResourceDescriptor                     FontMenu =               get("FontMenu");
-    public static final ResourceDescriptor                     AppTitleFont =           get("AppTitleFont");
-    public static final ResourceDescriptor                     AppMinimize =            get("AppMinimize");
-    public static final ResourceDescriptor                     AppMinimizeRollover =    get("AppMinimizeRollover");
-    public static final ResourceDescriptor                     AppMaximize=             get("AppMaximize");
-    public static final ResourceDescriptor                     AppMaximizeRollover =    get("AppMaximizeRollover");
-    public static final ResourceDescriptor                     AppUnmaximize =          get("AppUnmaximize");
-    public static final ResourceDescriptor                     AppUnmaximizeRollover =  get("AppUnmaximizeRollover");
-    public static final ResourceDescriptor                     AppClose =               get("AppClose");
-    public static final ResourceDescriptor                     AppCloseRollover =       get("AppCloseRollover");
-    public static final ResourceDescriptor                     DialogBackground =       get("DialogBackground");
-    public static final ResourceDescriptor                     DialogTitleFont =        get("DialogTitleFont");
+    public static final ResourceDescriptor                      FontMenu =              get("FontMenu");
+    public static final ResourceDescriptor                      AppTitleFont =          get("AppTitleFont");
+    public static final ResourceDescriptor                      AppMinimize =           get("AppMinimize");
+    public static final ResourceDescriptor                      AppMinimizeRollover =   get("AppMinimizeRollover");
+    public static final ResourceDescriptor                      AppMaximize=            get("AppMaximize");
+    public static final ResourceDescriptor                      AppMaximizeRollover =   get("AppMaximizeRollover");
+    public static final ResourceDescriptor                      AppUnmaximize =         get("AppUnmaximize");
+    public static final ResourceDescriptor                      AppUnmaximizeRollover = get("AppUnmaximizeRollover");
+    public static final ResourceDescriptor                      AppClose =              get("AppClose");
+    public static final ResourceDescriptor                      AppCloseRollover =      get("AppCloseRollover");
+    public static final ResourceDescriptor                      DialogBackground =      get("DialogBackground");
+    public static final ResourceDescriptor                      DialogTitleFont =       get("DialogTitleFont");
     
     
     public static final ResourceDescriptor get(String id)
