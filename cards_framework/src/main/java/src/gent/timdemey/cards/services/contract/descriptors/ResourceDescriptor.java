@@ -22,7 +22,7 @@ public class ResourceDescriptor extends DescriptorBase
         public String get(String filename, P1 param1)
         {
             String param1_str = param1ToString.apply(param1);
-            return String.format(id, param1_str);
+            return String.format(filename, param1_str);
         }
     }
     

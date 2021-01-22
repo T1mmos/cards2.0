@@ -28,40 +28,6 @@ public class ResourceLocationService implements IResourceLocationService
         {
             return "foptitles.ttf";
         }
-        else if (resDesc == ResourceDescriptors.AppMinimize)
-        {
-            return "minimize.png";
-        }
-
-        else if (resDesc == ResourceDescriptors.AppMinimizeRollover)
-        {
-            return "minimize_blue.png";
-        }
-        else if (resDesc == ResourceDescriptors.AppMaximize)
-        {
-            return "maximize.png";
-        }
-        
-        else if (resDesc == ResourceDescriptors.AppMaximizeRollover)
-        {
-            return "maximize_blue.png";
-        }
-        else if (resDesc == ResourceDescriptors.AppUnmaximize)
-        {
-            return "unmaximize.png";
-        }
-        else if (resDesc == ResourceDescriptors.AppUnmaximizeRollover)
-        {
-            return "unmaximize_blue.png";
-        }
-        else if (resDesc == ResourceDescriptors.AppClose)
-        {
-            return "close.png";
-        }
-        else if (resDesc == ResourceDescriptors.AppCloseRollover)
-        {
-            return "close_red.png";
-        }
         else if (resDesc == ResourceDescriptors.AppBackground)
         {
             return "background_softblue.png";
@@ -89,7 +55,30 @@ public class ResourceLocationService implements IResourceLocationService
         {
             throw new NullPointerException("param1");
         }
-     
+        
+        String path = null;
+        if (resDesc == ResourceDescriptors.AppClose)
+        {
+            path = "close%s.png";
+        }
+        else if (resDesc == ResourceDescriptors.AppMaximize)
+        {
+            path = "maximize%s.png";
+        }
+        else if (resDesc == ResourceDescriptors.AppMinimize)
+        {
+            path = "minimize%s.png";
+        }
+        else if (resDesc == ResourceDescriptors.AppUnmaximize)
+        {
+            path = "unmaximize%s.png";
+        }
+        
+        if (path != null)
+        {
+            return resDesc.get(path, param1);
+        }
+        
         throw new IllegalArgumentException("Unknown ResourceDescriptor: " + resDesc);
     }
 

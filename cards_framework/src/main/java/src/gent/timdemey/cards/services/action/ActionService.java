@@ -30,10 +30,12 @@ import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.model.entities.commands.payload.P_SaveState;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.contract.ButtonState;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PayloadActionDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptor.ResourceDescriptorP1;
 import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptors;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IContextService;
@@ -225,9 +227,7 @@ public class ActionService implements IActionService
     }
     
     protected ActionBase createAction(ActionDescriptor desc)
-    {
-        IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
-        
+    {        
         if (desc == ActionDescriptors.SHOWABOUT)
         {
             return new ActionBase(desc, Loc.get(LocKey.Action_about));
@@ -258,26 +258,26 @@ public class ActionService implements IActionService
         }
         else if (desc == ActionDescriptors.MAXIMIZE)
         {
-            ImageIcon img_maximize = getImageIcon(resLocServ.getFilePath(ResourceDescriptors.AppMaximize));
-            ImageIcon img_maximize_rollover = getImageIcon(resLocServ.getFilePath(ResourceDescriptors.AppMaximizeRollover));
+            ImageIcon img_maximize = get(ResourceDescriptors.AppMaximize, ButtonState.Normal);
+            ImageIcon img_maximize_rollover = get(ResourceDescriptors.AppMaximize, ButtonState.Rollover);
             return new ActionBase(desc, Loc.get(LocKey.Action_maximize), img_maximize, img_maximize_rollover);
         }
         else if (desc == ActionDescriptors.UNMAXIMIZE)
         {
-            ImageIcon img_unmaximize = getImageIcon(resLocServ.getFilePath(ResourceDescriptors.AppUnmaximize));
-            ImageIcon img_unmaximize_rollover = getImageIcon(resLocServ.getFilePath(ResourceDescriptors.AppUnmaximizeRollover));
+            ImageIcon img_unmaximize = get(ResourceDescriptors.AppUnmaximize, ButtonState.Normal);
+            ImageIcon img_unmaximize_rollover = get(ResourceDescriptors.AppUnmaximize, ButtonState.Rollover);
             return new ActionBase(desc, Loc.get(LocKey.Action_unmaximize), img_unmaximize, img_unmaximize_rollover);
         }
         else if (desc == ActionDescriptors.MINIMIZE)
         {
-            ImageIcon img_minimize = getImageIcon(resLocServ.getFilePath(ResourceDescriptors.AppMinimize));
-            ImageIcon img_minimize_rollover = getImageIcon(resLocServ.getFilePath(ResourceDescriptors.AppMinimizeRollover));
+            ImageIcon img_minimize = get(ResourceDescriptors.AppMinimize, ButtonState.Normal);
+            ImageIcon img_minimize_rollover = get(ResourceDescriptors.AppMinimize, ButtonState.Rollover);
             return new ActionBase(desc, Loc.get(LocKey.Action_minimize), img_minimize, img_minimize_rollover);
         }        
         else if (desc == ActionDescriptors.QUIT)
         {
-            ImageIcon img_close = getImageIcon(resLocServ.getFilePath(ResourceDescriptors.AppClose));
-            ImageIcon img_close_rollover = getImageIcon(resLocServ.getFilePath(ResourceDescriptors.AppCloseRollover));
+            ImageIcon img_close = get(ResourceDescriptors.AppClose, ButtonState.Normal);
+            ImageIcon img_close_rollover = get(ResourceDescriptors.AppClose, ButtonState.Rollover);
             ActionBase action = new ActionBase(desc, Loc.get(LocKey.Action_quit), img_close, img_close_rollover);
             
             addShortCut(action, "alt F4");
@@ -320,6 +320,17 @@ public class ActionService implements IActionService
         return null;
     }
     
+    private ImageIcon get(ResourceDescriptorP1<ButtonState> resDesc, ButtonState buttonState)
+    {
+        IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
+        String filepath = resLocServ.getFilePath(resDesc, buttonState);
+        
+        IResourceCacheService resServ = Services.get(IResourceCacheService.class);        
+        Image img = resServ.getImage(filepath).raw;
+        ImageIcon imgIcon = new ImageIcon(img);
+        return imgIcon;
+    }
+    
     protected <T> PayloadActionBase<T> createPayloadAction(PayloadActionDescriptor<T> desc, Supplier<T> payloadSupplier)
     {
         if (desc == ActionDescriptors.SAVECFG)
@@ -330,15 +341,6 @@ public class ActionService implements IActionService
         return null;
     }
     
-    private ImageIcon getImageIcon(String filepath)
-    {
-        IResourceCacheService resServ = Services.get(IResourceCacheService.class);
-        
-        Image img = resServ.getImage(filepath).raw;
-        ImageIcon imgIcon = new ImageIcon(img);
-        return imgIcon;
-    }
-
     private CommandBase mapToCommand(ActionDescriptor desc)
     {
         CommandBase cmd = desc2commands.get(desc);
