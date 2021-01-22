@@ -8,7 +8,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -133,7 +132,6 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
     private ServersStateListener serversStateListener;
     private ActionListener refreshListener;
     private SelectionListener selectionListener;
-    private JTextField tf_playerName;
 
     public JoinMPGamePanelManager()
     {
@@ -150,16 +148,12 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
         this.serversStateListener = new ServersStateListener();
         this.refreshListener = new RefreshListener();
         this.selectionListener = new SelectionListener();
-        this.tf_playerName = new JTextField(20);
         
         JLabel lb_srvname = new JLabel(Loc.get(LocKey.Label_serversfound));
-        JLabel lb_playerName = new JLabel(Loc.get(LocKey.Label_playername));
 
         scroll_server.setViewportView(table_servers);
 
         this.contentPanel = new PanelBase(PanelDescriptors.JOINMP, new MigLayout("insets 0"));
-        contentPanel.add(lb_playerName, "");
-        contentPanel.add(tf_playerName, "pushx, alignx left, wrap");
         contentPanel.add(lb_srvname, "spanx 2, growx, wrap");
         contentPanel.add(scroll_server, "spanx 2, hmin 150, hmax 300, grow, span, wrap");
         contentPanel.add(button_refresh, "spanx 2, aligny top, alignx right, wrap");
@@ -202,7 +196,9 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
             int row = table_servers.getSelectedRow();
             ReadOnlyUDPServer server = Services.get(IContextService.class).getThreadContext().getReadOnlyState()
                     .getServers().get(row);
-            String playerName = tf_playerName.getText();
+            
+            IContextService ctxtServ = Services.get(IContextService.class);
+            String playerName = ctxtServ.getThreadContext().getReadOnlyState().getLocalName(); 
             return new JoinMPGamePanelData(server, playerName);
         }
         else
