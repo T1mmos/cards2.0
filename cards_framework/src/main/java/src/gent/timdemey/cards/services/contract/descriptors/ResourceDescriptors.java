@@ -19,15 +19,15 @@ public class ResourceDescriptors
     public static final ResourceDescriptorP2<Suit, Value>       CardFront =             get("CardFront", SuitFunc, ValueFunc);
                                                                                         
     public static final ResourceDescriptor                      FontMenu =              get("FontMenu");
-    public static final ResourceDescriptor                      AppTitleFont =          get("AppTitleFont");
+    public static final ResourceDescriptor                      AppClose =              get("AppClose");
+    public static final ResourceDescriptor                      AppCloseRollover =      get("AppCloseRollover");
     public static final ResourceDescriptor                      AppMinimize =           get("AppMinimize");
     public static final ResourceDescriptor                      AppMinimizeRollover =   get("AppMinimizeRollover");
     public static final ResourceDescriptor                      AppMaximize=            get("AppMaximize");
     public static final ResourceDescriptor                      AppMaximizeRollover =   get("AppMaximizeRollover");
+    public static final ResourceDescriptor                      AppTitleFont =          get("AppTitleFont");
     public static final ResourceDescriptor                      AppUnmaximize =         get("AppUnmaximize");
     public static final ResourceDescriptor                      AppUnmaximizeRollover = get("AppUnmaximizeRollover");
-    public static final ResourceDescriptor                      AppClose =              get("AppClose");
-    public static final ResourceDescriptor                      AppCloseRollover =      get("AppCloseRollover");
     public static final ResourceDescriptor                      DialogBackground =      get("DialogBackground");
     public static final ResourceDescriptor                      DialogTitleFont =       get("DialogTitleFont");
     
