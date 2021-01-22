@@ -34,6 +34,7 @@ import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PayloadActionDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptors;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
@@ -257,26 +258,26 @@ public class ActionService implements IActionService
         }
         else if (desc == ActionDescriptors.MAXIMIZE)
         {
-            ImageIcon img_maximize = getImageIcon(resLocServ.getAppMaximizeIconFilePath());
-            ImageIcon img_maximize_rollover = getImageIcon(resLocServ.getAppMaximizeRolloverIconFilePath());
+            ImageIcon img_maximize = getImageIcon(resLocServ.getFilePath(ResourceDescriptors.AppMaximize));
+            ImageIcon img_maximize_rollover = getImageIcon(resLocServ.getFilePath(ResourceDescriptors.AppMaximizeRollover));
             return new ActionBase(desc, Loc.get(LocKey.Action_maximize), img_maximize, img_maximize_rollover);
         }
         else if (desc == ActionDescriptors.UNMAXIMIZE)
         {
-            ImageIcon img_unmaximize = getImageIcon(resLocServ.getAppUnmaximizeIconFilePath());
-            ImageIcon img_unmaximize_rollover = getImageIcon(resLocServ.getAppUnmaximizeRolloverIconFilePath());
+            ImageIcon img_unmaximize = getImageIcon(resLocServ.getFilePath(ResourceDescriptors.AppUnmaximize));
+            ImageIcon img_unmaximize_rollover = getImageIcon(resLocServ.getFilePath(ResourceDescriptors.AppUnmaximizeRollover));
             return new ActionBase(desc, Loc.get(LocKey.Action_unmaximize), img_unmaximize, img_unmaximize_rollover);
         }
         else if (desc == ActionDescriptors.MINIMIZE)
         {
-            ImageIcon img_minimize = getImageIcon(resLocServ.getAppMinimizeIconFilePath());
-            ImageIcon img_minimize_rollover = getImageIcon(resLocServ.getAppMinimizeRolloverIconFilePath());
+            ImageIcon img_minimize = getImageIcon(resLocServ.getFilePath(ResourceDescriptors.AppMinimize));
+            ImageIcon img_minimize_rollover = getImageIcon(resLocServ.getFilePath(ResourceDescriptors.AppMinimizeRollover));
             return new ActionBase(desc, Loc.get(LocKey.Action_minimize), img_minimize, img_minimize_rollover);
         }        
         else if (desc == ActionDescriptors.QUIT)
         {
-            ImageIcon img_close = getImageIcon(resLocServ.getAppCloseIconFilePath());
-            ImageIcon img_close_rollover = getImageIcon(resLocServ.getAppCloseRolloverIconFilePath());
+            ImageIcon img_close = getImageIcon(resLocServ.getFilePath(ResourceDescriptors.AppClose));
+            ImageIcon img_close_rollover = getImageIcon(resLocServ.getFilePath(ResourceDescriptors.AppCloseRollover));
             ActionBase action = new ActionBase(desc, Loc.get(LocKey.Action_quit), img_close, img_close_rollover);
             
             addShortCut(action, "alt F4");

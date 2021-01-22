@@ -51,6 +51,7 @@ import gent.timdemey.cards.services.contract.descriptors.DataPanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelType;
+import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptors;
 import gent.timdemey.cards.services.contract.preload.IPreload;
 import gent.timdemey.cards.services.contract.preload.PreloadOrder;
 import gent.timdemey.cards.services.contract.preload.PreloadOrderType;
@@ -127,11 +128,11 @@ public class FrameService implements IFrameService, IPreload
         IResourceCacheService resServ = Services.get(IResourceCacheService.class);
         IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
         
-        String frameTitleFontName = resLocServ.getAppTitleFontFilePath();
+        String frameTitleFontName = resLocServ.getFilePath(ResourceDescriptors.AppTitleFont);
         FontResource res_frameTitleFont = resServ.getFont(frameTitleFontName);
         frameTitleFont = res_frameTitleFont.raw.deriveFont(40f);
         
-        String dialogTitleFontName = resLocServ.getDialogTitleFontFilePath();
+        String dialogTitleFontName = resLocServ.getFilePath(ResourceDescriptors.DialogTitleFont);
         FontResource res_dialogTitleFont = resServ.getFont(dialogTitleFontName);
         dialogTitleFont = res_dialogTitleFont.raw.deriveFont(20f);
     }
@@ -506,7 +507,7 @@ public class FrameService implements IFrameService, IPreload
         IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
         for (int dim : new int []{16,24,48,140})
         {            
-            ImageResource resp = resServ.getImage(resLocServ.getAppIconFilePath(dim));
+            ImageResource resp = resServ.getImage(resLocServ.getFilePath(ResourceDescriptors.AppIcon, dim, dim));
             images.add(resp.raw);
         }
 
@@ -525,7 +526,7 @@ public class FrameService implements IFrameService, IPreload
     {
         IResourceCacheService resServ = Services.get(IResourceCacheService.class);
         IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
-        String bgpath = resLocServ.getAppBackgroundImageFilePath();
+        String bgpath = resLocServ.getFilePath(ResourceDescriptors.AppBackground);
         BufferedImage background = resServ.getImage(bgpath).raw;
         return background;
     }
@@ -534,7 +535,7 @@ public class FrameService implements IFrameService, IPreload
     {
         IResourceCacheService resServ = Services.get(IResourceCacheService.class);
         IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
-        String bgpath = resLocServ.getDialogBackgroundImageFilePath();
+        String bgpath = resLocServ.getFilePath(ResourceDescriptors.DialogBackground);
         BufferedImage background = resServ.getImage(bgpath).raw;
         return background;
     }

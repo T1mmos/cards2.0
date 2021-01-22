@@ -12,6 +12,8 @@ import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IActionService;
+import gent.timdemey.cards.services.interfaces.IFileService;
+import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelManagerBase;
 import net.miginfocom.swing.MigLayout;
@@ -95,6 +97,7 @@ public class MenuPanelManager extends PanelManagerBase
     @Override
     public void preload()
     {
-        
+        IResourceCacheService resServ = Services.get(IResourceCacheService.class);
+     //   resServ.getImage()
     }
  }

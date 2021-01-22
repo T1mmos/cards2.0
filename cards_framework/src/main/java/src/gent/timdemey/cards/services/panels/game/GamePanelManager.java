@@ -14,6 +14,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
+import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
@@ -136,7 +137,7 @@ public class GamePanelManager extends PanelManagerBase
         IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
 
         // card back
-        preloadImage(idServ.createCardBackScalableResourceId(), resLocServ.getCardBackFilePath());
+        preloadImage(idServ.createCardBackScalableResourceId(), resLocServ.getFilePath(ResourceDescriptors.CardBack));
 
         // card fronts
         for (Suit suit : Suit.values())
@@ -144,7 +145,7 @@ public class GamePanelManager extends PanelManagerBase
             for (Value value : Value.values()) // have fun reading the code lol
             {
                 UUID resId = idServ.createCardFrontScalableResourceId(suit, value);
-                preloadImage(resId, resLocServ.getCardFrontFilePath(suit, value));
+                preloadImage(resId, resLocServ.getFilePath(ResourceDescriptors.CardFront, suit, value));
             }
         }
     }

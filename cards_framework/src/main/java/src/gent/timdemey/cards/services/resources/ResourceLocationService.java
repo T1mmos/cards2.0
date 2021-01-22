@@ -1,114 +1,129 @@
 package gent.timdemey.cards.services.resources;
 
-import gent.timdemey.cards.model.entities.cards.Suit;
-import gent.timdemey.cards.model.entities.cards.Value;
+import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptor.ResourceDescriptorP1;
+import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptor.ResourceDescriptorP2;
+import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptors;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 
 public class ResourceLocationService implements IResourceLocationService
-{
-    private static final String APP_ICON = "icon_spade_%sx%s.png";    
-    private static final String FILEPATH_FONT_MENU = "ARCADE.TTF";
+{    
+    @Override
+    public String getFilePath(ResourceDescriptor resDesc)
+    {
+        if (resDesc == null)
+        {
+            throw new NullPointerException("imgDesc");
+        }
+        
+        if (resDesc == ResourceDescriptors.CardBack)
+        {
+            return "cards/edge_thick/backside_yellow.png";
+        }
+        else if (resDesc == ResourceDescriptors.FontMenu)
+        {
+            return "ARCADE.TTF";            
+        }
+        else if (resDesc == ResourceDescriptors.AppTitleFont)
+        {
+            return "foptitles.ttf";
+        }
+        else if (resDesc == ResourceDescriptors.AppMinimize)
+        {
+            return "minimize.png";
+        }
 
-    private static final String FILEPATH_CARD_FRONTSIDE = "cards/edge_thick/%s_%s.png";
-    private static final String FILEPATH_CARD_BACKSIDE = "cards/edge_thick/backside_yellow.png";
-    
-    @Override
-    public String getCardFrontFilePath(Suit suit, Value value)
-    {
-        String suit_str = suit.name().substring(0, 1);
-        String value_str = value.getTextual();
-
-        return String.format(FILEPATH_CARD_FRONTSIDE, suit_str, value_str);
-    }
-
-    @Override
-    public String getCardBackFilePath()
-    {
-        return FILEPATH_CARD_BACKSIDE;
-    }
-
-    @Override
-    public String getAppIconFilePath(int dim)
-    {
-        String dimstr = Integer.toString(dim);
-        return String.format(APP_ICON, dimstr, dimstr);
-    }
-
-    @Override
-    public String getMenuFontFilePath()
-    {
-        return FILEPATH_FONT_MENU;
-    }
-
-    @Override
-    public String getAppMinimizeIconFilePath()
-    {
-        return "minimize.png";
-    }
-
-    @Override
-    public String getAppMinimizeRolloverIconFilePath()
-    {
-        return "minimize_blue.png";
-    }
-    
-    @Override
-    public String getAppMaximizeIconFilePath()
-    {
-        return "maximize.png";
-    }
-    
-    @Override
-    public String getAppMaximizeRolloverIconFilePath()
-    {
-        return "maximize_blue.png";
-    }
-    
-    @Override
-    public String getAppUnmaximizeIconFilePath()
-    {
-        return "unmaximize.png";
-    }
-    
-    @Override
-    public String getAppUnmaximizeRolloverIconFilePath()
-    {
-        return "unmaximize_blue.png";
-    }
-    
-    @Override
-    public String getAppTitleFontFilePath()
-    {
-        return "foptitles.ttf";
+        else if (resDesc == ResourceDescriptors.AppMinimizeRollover)
+        {
+            return "minimize_blue.png";
+        }
+        else if (resDesc == ResourceDescriptors.AppMaximize)
+        {
+            return "maximize.png";
+        }
+        
+        else if (resDesc == ResourceDescriptors.AppMaximizeRollover)
+        {
+            return "maximize_blue.png";
+        }
+        else if (resDesc == ResourceDescriptors.AppUnmaximize)
+        {
+            return "unmaximize.png";
+        }
+        else if (resDesc == ResourceDescriptors.AppUnmaximizeRollover)
+        {
+            return "unmaximize_blue.png";
+        }
+        else if (resDesc == ResourceDescriptors.AppClose)
+        {
+            return "close.png";
+        }
+        else if (resDesc == ResourceDescriptors.AppCloseRollover)
+        {
+            return "close_red.png";
+        }
+        else if (resDesc == ResourceDescriptors.AppBackground)
+        {
+            return "background_softblue.png";
+        }
+        else if (resDesc == ResourceDescriptors.DialogBackground)
+        {
+            return "bg_olive.png";
+        }
+        else if (resDesc == ResourceDescriptors.DialogTitleFont)
+        {
+            return "SMB2.ttf";
+        }
+        
+        throw new IllegalArgumentException("Unknown ResourceDescriptor type: " + resDesc.getClass().getSimpleName());
     }
 
     @Override
-    public String getAppCloseIconFilePath()
+    public <P1> String getFilePath(ResourceDescriptorP1<P1> resDesc, P1 param1)
     {
-        return "close.png";
-    }
-    
-    @Override
-    public String getAppCloseRolloverIconFilePath()
-    {
-        return "close_red.png";
-    }
-
-    @Override
-    public String getAppBackgroundImageFilePath()
-    {
-        return "background_softblue.png";
+        if (resDesc == null)
+        {
+            throw new NullPointerException("imgDesc");
+        }
+        if (param1 == null)
+        {
+            throw new NullPointerException("param1");
+        }
+     
+        throw new IllegalArgumentException("Unknown ResourceDescriptor: " + resDesc);
     }
 
     @Override
-    public String getDialogBackgroundImageFilePath()
+    public <P1, P2> String getFilePath(ResourceDescriptorP2<P1, P2> resDesc, P1 param1, P2 param2)
     {
-        return "bg_olive.png";
-    }
-
-    @Override
-    public String getDialogTitleFontFilePath()
-    {
-        return "SMB2.ttf";
+        if (resDesc == null)
+        {
+            throw new NullPointerException("imgDesc");
+        }
+        if (param1 == null)
+        {
+            throw new NullPointerException("param1");
+        }
+        if (param2 == null)
+        {
+            throw new NullPointerException("param2");
+        }
+        
+        String path = null;
+        if (resDesc == ResourceDescriptors.AppIcon)
+        {
+            path = "icon_spade_%sx%s.png";
+        }
+        else if (resDesc == ResourceDescriptors.CardFront)
+        {
+            path = "cards/edge_thick/%s_%s.png";
+        }        
+        
+        if (path != null)
+        {
+            return resDesc.get(path, param1, param2);
+        }
+        
+        throw new IllegalArgumentException("Unknown ResourceDescriptor: " + resDesc);
     }
 }

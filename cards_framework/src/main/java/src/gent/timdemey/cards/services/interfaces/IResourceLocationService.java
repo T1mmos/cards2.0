@@ -1,27 +1,12 @@
 package gent.timdemey.cards.services.interfaces;
 
-import gent.timdemey.cards.model.entities.cards.Suit;
-import gent.timdemey.cards.model.entities.cards.Value;
+import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptor.ResourceDescriptorP1;
+import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptor.ResourceDescriptorP2;
 
 public interface IResourceLocationService
 {
-    public String getCardFrontFilePath(Suit suit, Value value);    
-    public String getCardBackFilePath();
-    
-    public String getAppIconFilePath(int dim);
-    public String getAppMinimizeIconFilePath();
-    public String getAppMinimizeRolloverIconFilePath();
-    public String getAppMaximizeIconFilePath();
-    public String getAppMaximizeRolloverIconFilePath();
-    public String getAppUnmaximizeIconFilePath();
-    public String getAppUnmaximizeRolloverIconFilePath();
-    public String getAppCloseIconFilePath();
-    public String getAppCloseRolloverIconFilePath();
-    public String getAppTitleFontFilePath();  
-    public String getAppBackgroundImageFilePath();
-    
-    public String getDialogBackgroundImageFilePath();
-    public String getDialogTitleFontFilePath();  
-    
-    public String getMenuFontFilePath();
+    public String getFilePath(ResourceDescriptor imgDesc);
+    public <P1> String getFilePath(ResourceDescriptorP1<P1> imgDesc, P1 param1);
+    public <P1, P2> String getFilePath(ResourceDescriptorP2<P1, P2> imgDesc, P1 param1 , P2 param2);
 }
