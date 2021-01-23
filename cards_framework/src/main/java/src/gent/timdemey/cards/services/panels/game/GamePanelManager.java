@@ -20,11 +20,11 @@ import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
-import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelManagerBase;
 import gent.timdemey.cards.services.panels.animations.PanelAnimator;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
 import gent.timdemey.cards.services.scaling.img.ScalableImageComponent;
+import gent.timdemey.cards.ui.PanelBase;
 
 public class GamePanelManager extends PanelManagerBase
 {

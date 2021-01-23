@@ -49,16 +49,16 @@ public class PanelService implements IPanelService
     
     protected void addAbsentPanelManagers()
     {
-        addPanelManagerIfAbsent(PanelDescriptors.ABOUT, () -> new AboutPanelManager());
-        addPanelManagerIfAbsent(PanelDescriptors.CONNECT, () -> new JoinMPGamePanelManager());
-        addPanelManagerIfAbsent(PanelDescriptors.GAME, () -> new GamePanelManager());
-        addPanelManagerIfAbsent(PanelDescriptors.GAME_MENU, () -> new GameMenuPanelManager());
-        addPanelManagerIfAbsent(PanelDescriptors.LOAD, () -> new LoadPanelManager());
-        addPanelManagerIfAbsent(PanelDescriptors.LOBBY, () -> new LobbyPanelManager());
-        addPanelManagerIfAbsent(PanelDescriptors.MENU, () -> new MenuPanelManager());
-        addPanelManagerIfAbsent(PanelDescriptors.MESSAGE, () -> new MessagePanelManager());
-        addPanelManagerIfAbsent(PanelDescriptors.SETTINGS, () -> new SettingsPanelManager());
-        addPanelManagerIfAbsent(PanelDescriptors.START_SERVER, () -> new StartServerPanelManager());
+        addPanelManagerIfAbsent(PanelDescriptors.About, () -> new AboutPanelManager());
+        addPanelManagerIfAbsent(PanelDescriptors.Connect, () -> new JoinMPGamePanelManager());
+        addPanelManagerIfAbsent(PanelDescriptors.Game, () -> new GamePanelManager());
+        addPanelManagerIfAbsent(PanelDescriptors.GameMenu, () -> new GameMenuPanelManager());
+        addPanelManagerIfAbsent(PanelDescriptors.Load, () -> new LoadPanelManager());
+        addPanelManagerIfAbsent(PanelDescriptors.Lobby, () -> new LobbyPanelManager());
+        addPanelManagerIfAbsent(PanelDescriptors.Menu, () -> new MenuPanelManager());
+        addPanelManagerIfAbsent(PanelDescriptors.Message, () -> new MessagePanelManager());
+        addPanelManagerIfAbsent(PanelDescriptors.Settings, () -> new SettingsPanelManager());
+        addPanelManagerIfAbsent(PanelDescriptors.StartServer, () -> new StartServerPanelManager());
     }
     
     protected final void addPanelManagerIfAbsent (PanelDescriptor pd, Supplier<PanelManagerBase> creator)
@@ -83,7 +83,7 @@ public class PanelService implements IPanelService
     @Override
     public PanelDescriptor getDefaultPanelDescriptor()
     {
-        return PanelDescriptors.MENU;
+        return PanelDescriptors.Menu;
     }
     
     @Override

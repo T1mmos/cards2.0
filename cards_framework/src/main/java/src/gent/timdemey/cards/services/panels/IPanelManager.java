@@ -4,6 +4,7 @@ import java.util.List;
 
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.scaling.IScalableComponent;
+import gent.timdemey.cards.ui.PanelBase;
 
 public interface IPanelManager
 {   

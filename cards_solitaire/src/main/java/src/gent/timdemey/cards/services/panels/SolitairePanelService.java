@@ -9,7 +9,7 @@ public class SolitairePanelService extends PanelService
     protected void addAbsentPanelManagers()
     {
         // install 
-        addPanelManagerIfAbsent(PanelDescriptors.GAME, () -> new SolitaireGamePanelManager());
+        addPanelManagerIfAbsent(PanelDescriptors.Game, () -> new SolitaireGamePanelManager());
                 
         // super class installs the rest
         super.addAbsentPanelManagers();

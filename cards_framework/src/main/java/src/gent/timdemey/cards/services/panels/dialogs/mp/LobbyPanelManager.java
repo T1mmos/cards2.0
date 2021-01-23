@@ -22,8 +22,8 @@ import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.panels.DataPanelManagerBase;
-import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelButtonType;
+import gent.timdemey.cards.ui.PanelBase;
 import net.miginfocom.swing.MigLayout;
 
 public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void>
@@ -98,7 +98,7 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
         Context context = contextService.getThreadContext();
         ReadOnlyState state = context.getReadOnlyState();
         
-        panel = new PanelBase(PanelDescriptors.LOBBY, new MigLayout("insets 0"));
+        panel = new PanelBase(new MigLayout("insets 0"), PanelDescriptors.Lobby.id);
         
         IActionService actServ = Services.get(IActionService.class);
         

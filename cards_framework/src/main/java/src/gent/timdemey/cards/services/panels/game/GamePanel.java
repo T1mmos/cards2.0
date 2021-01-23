@@ -9,14 +9,14 @@ import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
-import gent.timdemey.cards.services.panels.PanelBase;
+import gent.timdemey.cards.ui.PanelBase;
 import gent.timdemey.cards.utils.DebugDrawDefines;
 
 public class GamePanel extends PanelBase
 {
     GamePanel()
     {
-        super(PanelDescriptors.GAME);
+        super(PanelDescriptors.Game.id);
 
         setLayout(null); // absolute positioning
         setOpaque(false);

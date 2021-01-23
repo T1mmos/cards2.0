@@ -38,7 +38,7 @@ public class D_Connect extends DialogCommandBase
     protected void showDialog(Context context, ContextType type, State state)
     {        
         IFrameService frameServ = Services.get(IFrameService.class);  
-        frameServ.showPanel(PanelDescriptors.CONNECT, null, this::onClose);     
+        frameServ.showPanel(PanelDescriptors.Connect, null, this::onClose);     
     }
     
     private void onClose(PanelOutData<JoinMPGamePanelData> data)

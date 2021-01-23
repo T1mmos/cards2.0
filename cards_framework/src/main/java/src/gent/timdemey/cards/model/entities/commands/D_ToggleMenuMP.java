@@ -29,13 +29,13 @@ public class D_ToggleMenuMP extends DialogCommandBase
     protected void showDialog(Context context, ContextType type, State state)
     {
         IFrameService frameServ = Services.get(IFrameService.class);
-        if (frameServ.isShown(PanelDescriptors.GAME_MENU))
+        if (frameServ.isShown(PanelDescriptors.GameMenu))
         {
-            frameServ.removePanel(PanelDescriptors.GAME_MENU);
+            frameServ.removePanel(PanelDescriptors.GameMenu);
         }
         else
         {
-            frameServ.showPanel(PanelDescriptors.GAME_MENU, null, null);    
+            frameServ.showPanel(PanelDescriptors.GameMenu, null, null);    
         }
             
     }

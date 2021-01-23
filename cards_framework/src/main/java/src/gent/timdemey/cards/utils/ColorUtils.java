@@ -48,4 +48,10 @@ public class ColorUtils
         Color color = new Color(r,g,b,a);
         return color;
     }
+
+    public static Color transparent(Color color, float alpha)
+    {
+        Color tcolor = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (255 * alpha));
+        return tcolor;
+    }
 }

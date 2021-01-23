@@ -6,8 +6,8 @@ import javax.swing.JLabel;
 
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.panels.DataPanelManagerBase;
-import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelButtonType;
+import gent.timdemey.cards.ui.PanelBase;
 import net.miginfocom.swing.MigLayout;
 
 public class MessagePanelManager extends DataPanelManagerBase<MessagePanelData, Void>
@@ -41,7 +41,7 @@ public class MessagePanelManager extends DataPanelManagerBase<MessagePanelData, 
     @Override
     public PanelBase createPanel()
     {
-        contentPanel = new PanelBase(PanelDescriptors.MESSAGE);
+        contentPanel = new PanelBase(PanelDescriptors.Message.id);
         contentPanel.setLayout(new MigLayout("insets 0"));
         contentPanel.add(new JLabel(inData.payload.message), "push, wrap");
 

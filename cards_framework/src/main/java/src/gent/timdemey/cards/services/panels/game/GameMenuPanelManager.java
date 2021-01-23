@@ -9,8 +9,8 @@ import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.panels.DataPanelManagerBase;
-import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelButtonType;
+import gent.timdemey.cards.ui.PanelBase;
 import net.miginfocom.swing.MigLayout;
 
 public class GameMenuPanelManager extends DataPanelManagerBase<Void, Void>
@@ -28,7 +28,7 @@ public class GameMenuPanelManager extends DataPanelManagerBase<Void, Void>
     {
         if (content == null)
         {
-            content = new PanelBase(PanelDescriptors.GAME_MENU, new MigLayout());
+            content = new PanelBase(new MigLayout(), PanelDescriptors.GameMenu.id);
             
             IActionService actServ = Services.get(IActionService.class);            
 

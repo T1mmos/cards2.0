@@ -8,7 +8,7 @@ public class SolShowTestPanelService extends SolShowPanelService
     @Override
     protected void addAbsentPanelManagers()
     {
-        addPanelManagerIfAbsent(PanelDescriptors.MENU, () -> new SolShowTestMenuPanelManager());
+        addPanelManagerIfAbsent(PanelDescriptors.Menu, () -> new SolShowTestMenuPanelManager());
         
         super.addAbsentPanelManagers();
     }

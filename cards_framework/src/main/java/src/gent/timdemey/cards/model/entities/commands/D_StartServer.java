@@ -39,7 +39,7 @@ public class D_StartServer extends DialogCommandBase
         IFrameService frameServ = Services.get(IFrameService.class);
         IContextService ctxtServ = Services.get(IContextService.class);        
         String name = ctxtServ.getThreadContext().getReadOnlyState().getLocalName();     
-        frameServ.showPanel(PanelDescriptors.START_SERVER, name, this::onClose);
+        frameServ.showPanel(PanelDescriptors.StartServer, name, this::onClose);
     }
     
     private void onClose(PanelOutData<StartServerPanelData> data)

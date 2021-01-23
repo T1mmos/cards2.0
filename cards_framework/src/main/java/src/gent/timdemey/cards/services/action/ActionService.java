@@ -436,7 +436,7 @@ public class ActionService implements IActionService
             return () -> 
             {
                 IFrameService frameServ = Services.get(IFrameService.class);
-                frameServ.showPanel(PanelDescriptors.ABOUT);
+                frameServ.showPanel(PanelDescriptors.About);
             };
         }        
         else if (desc == ActionDescriptors.DEBUGDRAW) 
@@ -474,7 +474,7 @@ public class ActionService implements IActionService
             return () -> 
             {
                 IFrameService frameServ = Services.get(IFrameService.class);
-                frameServ.showPanel(PanelDescriptors.SETTINGS);
+                frameServ.showPanel(PanelDescriptors.Settings);
             };
         }        
         else if (desc == ActionDescriptors.UNMAXIMIZE)
@@ -498,7 +498,7 @@ public class ActionService implements IActionService
             return () -> 
             {
                 IFrameService frameServ = Services.get(IFrameService.class);
-                frameServ.showPanel(PanelDescriptors.MENU);                
+                frameServ.showPanel(PanelDescriptors.Menu);                
             };
         }
         

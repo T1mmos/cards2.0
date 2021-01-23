@@ -10,8 +10,8 @@ import gent.timdemey.cards.services.action.ActionBase;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IActionService;
-import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelManagerBase;
+import gent.timdemey.cards.ui.PanelBase;
 import net.miginfocom.swing.MigLayout;
 
 public class AboutPanelManager extends PanelManagerBase
@@ -29,7 +29,7 @@ public class AboutPanelManager extends PanelManagerBase
     {
         if (contentPanel == null)
         {
-            contentPanel = new PanelBase(PanelDescriptors.ABOUT, new MigLayout());
+            contentPanel = new PanelBase(new MigLayout(), PanelDescriptors.About.id);
             
             ICardPlugin plugin = Services.get(ICardPlugin.class);
             IActionService actServ = Services.get(IActionService.class);

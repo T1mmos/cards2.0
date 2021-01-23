@@ -3,8 +3,8 @@ package gent.timdemey.cards.services.panels.load;
 import javax.swing.JLabel;
 
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
-import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelManagerBase;
+import gent.timdemey.cards.ui.PanelBase;
 import net.miginfocom.swing.MigLayout;
 
 public class LoadPanelManager extends PanelManagerBase
@@ -20,7 +20,7 @@ public class LoadPanelManager extends PanelManagerBase
     @Override
     public PanelBase createPanel()
     {
-        loadPanel = new PanelBase(PanelDescriptors.LOAD, new MigLayout("insets 100, align 50% 50%"));
+        loadPanel = new PanelBase(new MigLayout("insets 100, align 50% 50%"), PanelDescriptors.Load.id);
         loadPanel.setOpaque(false); 
         loadPanel.add(new JLabel("LOADING..."));
         

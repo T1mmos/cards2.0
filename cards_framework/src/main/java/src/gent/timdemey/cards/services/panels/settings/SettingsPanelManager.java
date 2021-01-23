@@ -22,8 +22,8 @@ import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelManagerBase;
+import gent.timdemey.cards.ui.PanelBase;
 import net.miginfocom.swing.MigLayout;
 
 public class SettingsPanelManager extends PanelManagerBase
@@ -63,7 +63,7 @@ public class SettingsPanelManager extends PanelManagerBase
     {
         if (contentPanel == null)
         {
-            contentPanel = new PanelBase(PanelDescriptors.SETTINGS, new MigLayout());
+            contentPanel = new PanelBase(new MigLayout(), PanelDescriptors.Settings.id);
             
             JPanel floatPanel = new JPanel(new MigLayout("inset 10"));
             floatPanel.setBackground(new Color(50,50,50,150));

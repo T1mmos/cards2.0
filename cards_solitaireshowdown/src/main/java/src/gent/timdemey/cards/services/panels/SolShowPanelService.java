@@ -8,7 +8,7 @@ public class SolShowPanelService extends PanelService
     @Override
     protected void addAbsentPanelManagers()
     {
-        addPanelManagerIfAbsent(PanelDescriptors.GAME, () -> new SolShowGamePanelManager());
+        addPanelManagerIfAbsent(PanelDescriptors.Game, () -> new SolShowGamePanelManager());
         
         super.addAbsentPanelManagers();
     } 

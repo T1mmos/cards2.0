@@ -26,7 +26,7 @@ public class GamePanelStateListener implements IStateListener
     public void onChange(ReadOnlyChange change)
     {
         IPanelService pServ = Services.get(IPanelService.class);
-        IPanelManager gpMan = pServ.getPanelManager(PanelDescriptors.GAME);
+        IPanelManager gpMan = pServ.getPanelManager(PanelDescriptors.Game);
         IContextService contextService = Services.get(IContextService.class);
         IScalingService scaleServ = Services.get(IScalingService.class);
         Context context = contextService.getThreadContext();

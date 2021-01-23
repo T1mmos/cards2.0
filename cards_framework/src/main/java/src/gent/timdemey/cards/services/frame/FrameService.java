@@ -1,7 +1,6 @@
 package gent.timdemey.cards.services.frame;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -9,6 +8,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.image.BufferedImage;
@@ -32,6 +32,7 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import javax.swing.Timer;
 import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 
@@ -61,22 +62,22 @@ import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
-import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
+import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.services.panels.IDataPanelManager;
 import gent.timdemey.cards.services.panels.IPanelManager;
-import gent.timdemey.cards.services.panels.PanelBase;
 import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.services.panels.PanelInData;
 import gent.timdemey.cards.services.panels.PanelOutData;
 import gent.timdemey.cards.services.panels.dialogs.message.MessagePanelData;
+import gent.timdemey.cards.ui.PanelBase;
 import gent.timdemey.cards.utils.DimensionUtils;
 import net.miginfocom.swing.MigLayout;
 
 public class FrameService implements IFrameService, IPreload
 {  
     private JFrame frame;
-    private RootPanel framePanel;
+    private PanelBase framePanel;
     private JPanel frameTitlePanel;
     private JLayeredPane frameBodyPanel;
     private JButton title_maximize; 
@@ -104,6 +105,7 @@ public class FrameService implements IFrameService, IPreload
     }
     
     private PanelTracker rootPanelTracker = null;
+    private List<PanelTracker> rootPanelTrackers = new ArrayList<>();
     private Stack<PanelTracker> dialogPanelTrackers = new Stack<>();
     private Stack<PanelTracker> overlayPanelTrackers  = new Stack<>();
         
@@ -145,10 +147,10 @@ public class FrameService implements IFrameService, IPreload
             frame = new JFrame();
                                     
             BufferedImage bg = getBackgroundImage();
-            framePanel = new RootPanel(bg);
+            framePanel = new PanelBase(new MigLayout("insets 5, gapy 0"), "FramePanel");
+            framePanel.setTile(bg);
             frameBorder = BorderFactory.createLineBorder(Color.gray, 1, false);
             framePanel.setBorder(frameBorder);
-            framePanel.setLayout(new MigLayout("insets 5, gapy 0"));
             rpMouseListener = new RootPanelMouseListener();
             framePanel.addMouseListener(rpMouseListener);    
             framePanel.addMouseMotionListener(rpMouseListener);
@@ -211,9 +213,9 @@ public class FrameService implements IFrameService, IPreload
     }
 
     
-    private PanelBase get(PanelDescriptor desc)
+    private PanelTracker get(PanelDescriptor desc)
     {
-        for (Component comp : frameBodyPanel.getComponents())
+       /* for (Component comp : frameBodyPanel.getComponents())
         {
             if (comp instanceof PanelBase)
             {
@@ -222,6 +224,33 @@ public class FrameService implements IFrameService, IPreload
                 {
                     return pb;
                 }
+            }
+        }
+        */
+        
+        List<PanelTracker> list;
+        if (desc.panelType == PanelType.Root)
+        {
+            list = rootPanelTrackers;
+        }
+        else if (desc.panelType == PanelType.Dialog || desc.panelType == PanelType.DialogOverlay)
+        {
+            list = dialogPanelTrackers;
+        }
+        else if (desc.panelType == PanelType.Overlay)
+        {
+            list = overlayPanelTrackers;
+        }
+        else
+        {
+            throw new IllegalArgumentException("Unknown PanelDescriptor: " + desc);
+        }
+        
+        for (PanelTracker pt : list)
+        {
+            if (pt.panelDesc == desc)
+            {
+                return pt;
             }
         }
         
@@ -261,8 +290,8 @@ public class FrameService implements IFrameService, IPreload
     @Override
     public boolean isShown(PanelDescriptor desc)
     {
-        PanelBase pb = get(desc);
-        return pb != null;
+        boolean visible = get(desc).panel.isVisible();
+        return visible;
     }
     
     @Override
@@ -277,10 +306,11 @@ public class FrameService implements IFrameService, IPreload
         IPanelManager panelMgr = panelServ.getPanelManager(desc);
                   
         // check that the given panel descriptor is a root panel
-        PanelBase pb = get(desc);        
+        PanelTracker pt = get(desc);        
         
-        boolean add = false;
-        if (pb == null)
+        boolean add;
+        PanelBase pb;
+        if (pt == null)
         {
             add = true;
             pb = panelMgr.createPanel();
@@ -288,7 +318,12 @@ public class FrameService implements IFrameService, IPreload
             {
                 throw new IllegalStateException("The component to add already has a parent!");
             }
-        }      
+        }     
+        else
+        {
+            add = false;
+            pb = pt.panel;
+        }
         
         showInternal(desc, pb, add);
     }
@@ -306,7 +341,7 @@ public class FrameService implements IFrameService, IPreload
         showInternal(desc, pb, true);
     }
         
-    private void showInternal(PanelDescriptor desc, PanelBase pb, boolean add)
+    private void showInternal(PanelDescriptor desc, PanelBase comp, boolean add)
     {        
         IPanelService panelServ = Services.get(IPanelService.class);
         IPanelManager panelMgr = panelServ.getPanelManager(desc);
@@ -336,8 +371,8 @@ public class FrameService implements IFrameService, IPreload
                 throw new IllegalArgumentException("Unsupported PanelType: " + desc.panelType);
             }
             
-            frameBodyPanel.add(pb, "pos 0 0 100% 100%");
-            frameBodyPanel.setLayer(pb, layer);
+            frameBodyPanel.add(comp, "pos 0 0 100% 100%");
+            frameBodyPanel.setLayer(comp, layer);
             frameBodyPanel.invalidate();
             frameBodyPanel.validate();
         }
@@ -358,7 +393,17 @@ public class FrameService implements IFrameService, IPreload
             {
                 closePanelInternal(PanelType.Root);
             }
-            rootPanelTracker = new PanelTracker(desc, pb);
+            
+            
+            if (add)
+            {
+                rootPanelTracker = new PanelTracker(desc, comp);
+                rootPanelTrackers.add(rootPanelTracker);
+            }
+            else
+            {
+                rootPanelTracker = get(desc);                
+            }
         }
         else if (desc.panelType == PanelType.Dialog || desc.panelType == PanelType.DialogOverlay)
         {
@@ -377,11 +422,11 @@ public class FrameService implements IFrameService, IPreload
                 }
             }            
             
-            dialogPanelTrackers.push(new PanelTracker(desc, pb));
+            dialogPanelTrackers.push(new PanelTracker(desc, comp));
         }
         else if (desc.panelType == PanelType.Overlay)
         {
-            overlayPanelTrackers.push(new PanelTracker(desc, pb));
+            overlayPanelTrackers.push(new PanelTracker(desc, comp));
         }
         
         // show the panel and notify its manager
@@ -429,7 +474,7 @@ public class FrameService implements IFrameService, IPreload
             throw new IllegalArgumentException("Attempted to hide a panel which has not been created yet: " + panelType);
         }
         
-        PanelBase pb_toClose = pt_toClose.panel;
+        JComponent pb_toClose = pt_toClose.panel;
         if (!pb_toClose.isVisible())
         {
             throw new IllegalStateException("Attempted to hide a panel which is not visible");
@@ -738,7 +783,7 @@ public class FrameService implements IFrameService, IPreload
     public void showMessage(String title, String message)
     {
         MessagePanelData payload = new MessagePanelData(title, message);
-        showPanel(PanelDescriptors.MESSAGE, payload, c -> {});
+        showPanel(PanelDescriptors.Message, payload, c -> {});
     }
     
     @Override
@@ -748,7 +793,7 @@ public class FrameService implements IFrameService, IPreload
         String msg = Loc.get(LocKey.DialogMessage_generalerror);
         MessagePanelData payload = new MessagePanelData(title, msg);
         
-        showPanel(PanelDescriptors.MESSAGE, payload, c -> {});
+        showPanel(PanelDescriptors.Message, payload, c -> {});
     }    
     
     private <IN, OUT> PanelBase createDialogPanel(DataPanelDescriptor<IN, OUT> desc, IN inData, Consumer<PanelOutData<OUT>> callback)
@@ -806,12 +851,15 @@ public class FrameService implements IFrameService, IPreload
         dpMan.load(panelInData);
 
         // create the entire panel, add the custom content and the buttons
-        PanelBase dialogPanel = new PanelBase(desc);
+        PanelBase dialogPanel = new PanelBase(desc.id);
         dialogPanel.setLayout(new MigLayout("insets 0"));  
         dialogPanel.addMouseListener(new MouseAdapter(){}); // block mouse input to panels below
-        JPanel marginPanel = new RootPanel();
-        marginPanel.setBackground(new Color(50,50,50,150));
-        marginPanel.setLayout(new MigLayout("insets 20"));
+        PanelBase marginPanel = new PanelBase(new MigLayout("insets 20"));
+        marginPanel.setBackground(new Color(50,50,50));
+        marginPanel.setAlphaBackground(0.5f);
+        marginPanel.setOpaque(false);
+        marginPanel.setAlpha(0.0f);
+        marginPanel.setDebugName(desc.id + " - MarginPanel");
         marginPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
         dialogPanel.add(marginPanel, "hmax 400, push, alignx center, aligny center");
         {
@@ -842,6 +890,22 @@ public class FrameService implements IFrameService, IPreload
         }
         
         dialogPanel.setOpaque(false);
+        
+        Timer timer = new Timer(15, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                float alpha = marginPanel.getAlpha();
+                alpha += 0.10;
+                if (alpha > 1) {
+                    alpha = 1;
+                }
+                marginPanel.setAlpha(alpha);
+            }
+        });
+        timer.setRepeats(true);
+        timer.setCoalesce(true);
+        timer.start();
+        
         return dialogPanel;
     }
 }

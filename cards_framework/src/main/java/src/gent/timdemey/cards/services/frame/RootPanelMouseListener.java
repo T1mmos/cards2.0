@@ -5,6 +5,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 import gent.timdemey.cards.Services;
@@ -79,7 +80,7 @@ public class RootPanelMouseListener implements MouseListener, MouseMotionListene
     {
         if (!resizing)
         {
-            RootPanel rootPanel = (RootPanel) e.getSource();
+            JComponent rootPanel = (JComponent) e.getSource();
             int w = rootPanel.getWidth();
             int h = rootPanel.getHeight();
             int x = e.getX();

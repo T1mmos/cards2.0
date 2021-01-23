@@ -39,7 +39,7 @@ public class D_ShowLobby extends DialogCommandBase
      
         IFrameService frameServ = Services.get(IFrameService.class);
         LobbyPanelData payload = new LobbyPanelData(server.serverName);
-        frameServ.showPanel(PanelDescriptors.LOBBY, payload, this::onClose);        
+        frameServ.showPanel(PanelDescriptors.Lobby, payload, this::onClose);        
     }
 
     private void onClose(PanelOutData<Void> outData)

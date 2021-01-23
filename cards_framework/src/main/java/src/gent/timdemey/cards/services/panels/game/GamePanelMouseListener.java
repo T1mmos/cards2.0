@@ -95,7 +95,7 @@ class GamePanelMouseListener extends MouseAdapter
         IPositionService posServ = Services.get(IPositionService.class);
         IScalingService scaleServ = Services.get(IScalingService.class);
         IPanelService panelServ = Services.get(IPanelService.class);
-        IPanelManager gamePanelMgr = panelServ.getPanelManager(PanelDescriptors.GAME);
+        IPanelManager gamePanelMgr = panelServ.getPanelManager(PanelDescriptors.Game);
         
         
         IScalableComponent scaleComp = scaleServ.getComponentAt(gamePanelMgr, e.getPoint());   
@@ -272,7 +272,7 @@ class GamePanelMouseListener extends MouseAdapter
             {
                 // there is no model change so we animate the cards back to their current stack
                 IPanelService panelServ = Services.get(IPanelService.class);
-                IPanelManager gamePanelMgr = panelServ.getPanelManager(PanelDescriptors.GAME);
+                IPanelManager gamePanelMgr = panelServ.getPanelManager(PanelDescriptors.Game);
                 for (int i = 0; i < draggedComps.size(); i++)
                 {
                     IScalableComponent comp = draggedComps.get(i);                    

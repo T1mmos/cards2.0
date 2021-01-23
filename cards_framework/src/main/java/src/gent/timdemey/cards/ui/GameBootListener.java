@@ -31,11 +31,11 @@ public class GameBootListener implements IStateListener
             ReadOnlyCardGame cardGame = state.getCardGame();
             if (cardGame == null)
             {
-                frameServ.showPanel(PanelDescriptors.MENU);
+                frameServ.showPanel(PanelDescriptors.Menu);
             }
             else
             {
-                frameServ.showPanel(PanelDescriptors.GAME);          
+                frameServ.showPanel(PanelDescriptors.Game);          
                 
                 // and now we can start rescaling the resources according to the
                 // dimensions
