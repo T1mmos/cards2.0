@@ -1,12 +1,11 @@
 package gent.timdemey.cards.services.panels.settings;
 
-import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
 import gent.timdemey.cards.Services;
@@ -19,14 +18,15 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.action.ActionBase;
 import gent.timdemey.cards.services.context.IExecutionListener;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
+import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.services.panels.PanelManagerBase;
+import gent.timdemey.cards.services.panels.DataPanelManagerBase;
 import gent.timdemey.cards.ui.PanelBase;
 import net.miginfocom.swing.MigLayout;
 
-public class SettingsPanelManager extends PanelManagerBase
+public class SettingsPanelManager extends  DataPanelManagerBase<Void, Void>
 {
     private PanelBase contentPanel;
     private IExecutionListener execListener;
@@ -66,7 +66,7 @@ public class SettingsPanelManager extends PanelManagerBase
             contentPanel = new PanelBase(new MigLayout(), PanelDescriptors.Settings.id);
             
             JPanel floatPanel = new JPanel(new MigLayout("inset 10"));
-            floatPanel.setBackground(new Color(50,50,50,150));
+            floatPanel.setOpaque(false);
             contentPanel.add(floatPanel, "hmin 200, wmin 350, push, alignx center, aligny center");
                                     
             // player name
@@ -96,20 +96,7 @@ public class SettingsPanelManager extends PanelManagerBase
                 floatPanel.add(lbl_udpport, "");
                 tf_clientUdpPort = new JTextField(6);
                 floatPanel.add(tf_clientUdpPort, "wrap");
-            }
-            
-            // buttons
-            {
-                IActionService actServ = Services.get(IActionService.class);
-                
-                floatPanel.add(new JSeparator(), "span, push, growx, aligny bottom, wrap");
-                
-                ActionBase act_tomenu = actServ.getAction(ActionDescriptors.SHOWMENU);
-                floatPanel.add(new JButton(act_tomenu), "span, split 2, pushx, center, sg buts");
-                
-                ActionBase act_savecfg = actServ.getAction(ActionDescriptors.SAVECFG, this::getPayload);               
-                floatPanel.add(new JButton(act_savecfg), "sg buts");
-            }
+            }           
         }
         
         return contentPanel;
@@ -135,16 +122,16 @@ public class SettingsPanelManager extends PanelManagerBase
         execListener = null;
     }
         
-    private P_SaveState getPayload()
+    private Settings getSettings()
     {
-        P_SaveState payload = new P_SaveState();
-        payload.id = UUID.randomUUID();
-        payload.playerName = tf_pname.getText();
-        payload.serverTcpPort = parse(tf_serverTcpPort.getText());
-        payload.serverUdpPort = parse(tf_serverUdpPort.getText());
-        payload.clientUdpPort = parse(tf_clientUdpPort.getText());
+        Settings settings = new Settings();
         
-        return payload;
+        settings.playerName = tf_pname.getText();
+        settings.serverTcpPort = parse(tf_serverTcpPort.getText());
+        settings.serverUdpPort = parse(tf_serverUdpPort.getText());
+        settings.clientUdpPort = parse(tf_clientUdpPort.getText());
+        
+        return settings;
     }    
     
     private int parse (String text)
@@ -171,6 +158,51 @@ public class SettingsPanelManager extends PanelManagerBase
     public void destroyPanel()
     {        
         contentPanel = null;
+    }
+
+    @Override
+    public List<PanelButtonDescriptor> getButtonTypes()
+    {
+        IActionService actServ = Services.get(IActionService.class);               
+        List<PanelButtonDescriptor> buttons = new ArrayList<>();
+        
+        // to menu 
+        {
+            ActionBase act_tomenu = actServ.getAction(ActionDescriptors.SHOWMENU);            
+            PanelButtonDescriptor desc = new PanelButtonDescriptor(act_tomenu);
+            buttons.add(desc);
+        }
+        
+        // save settings
+        {
+            P_SaveState payload = new P_SaveState();
+            payload.id = UUID.randomUUID();
+            payload.settingsSupplier = this::getSettings;                      
+            ActionBase act_savecfg = actServ.getAction(ActionDescriptors.SAVECFG, payload);               
+            PanelButtonDescriptor desc = new PanelButtonDescriptor(act_savecfg);
+            buttons.add(desc);
+        }
+        
+        return buttons;
+    }
+
+    @Override
+    public Void onClose(PanelButtonDescriptor dbType)
+    {
+        // all buttons have actions, no additional logic to do
+        return null;
+    }
+
+    @Override
+    public boolean isButtonEnabled(PanelButtonDescriptor dbType)
+    {
+        return true;
+    }
+
+    @Override
+    public String createTitle()
+    {
+        return Loc.get(LocKey.Action_showsettings);
     }
 
 }

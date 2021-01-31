@@ -3,7 +3,6 @@ package gent.timdemey.cards.services.action;
 import java.awt.Image;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -61,11 +60,11 @@ public class ActionService implements IActionService
     }
 
     @Override
-    public <T> PayloadActionBase<T> getAction(PayloadActionDescriptor<T> desc, Supplier<T> payloadSupplier)
+    public <T> PayloadActionBase<T> getAction(PayloadActionDescriptor<T> desc, T payload)
     {
         CheckRuntimeType(desc, PayloadActionDescriptor.class);
         
-        PayloadActionBase<T> action = createPayloadAction(desc, payloadSupplier);
+        PayloadActionBase<T> action = createPayloadAction(desc, payload);
         action.checkEnabled();
         
         return action;
@@ -99,23 +98,16 @@ public class ActionService implements IActionService
         }
     }
 
-    public <T> boolean canExecuteAction(PayloadActionDescriptor<T> desc, Supplier<T> payloadSupplier)
+    public <T> boolean canExecuteAction(PayloadActionDescriptor<T> desc, T payload)
     {
         CheckRuntimeType(desc, PayloadActionDescriptor.class);
-        
-       /* if (false)
+              
+        CommandBase cmd = createCommand(desc, payload);
+        if (cmd == null)
         {
-            return true;
+            throw new IllegalArgumentException("Cannot map description " + desc + " onto a command");
         }
-        else
-        {*/
-            CommandBase cmd = createCommand(desc, payloadSupplier);
-            if (cmd == null)
-            {
-                throw new IllegalArgumentException("Cannot map description " + desc + " onto a command");
-            }
-            return canExecute(cmd);
-        /*}*/
+        return canExecute(cmd);
     }
     
     @Override
@@ -142,7 +134,7 @@ public class ActionService implements IActionService
     }
 
     @Override
-    public <T> void executeAction(PayloadActionDescriptor<T> desc, Supplier<T> payloadSupplier)
+    public <T> void executeAction(PayloadActionDescriptor<T> desc, T payload)
     {
         CheckRuntimeType(desc, PayloadActionDescriptor.class);
         
@@ -155,7 +147,7 @@ public class ActionService implements IActionService
         }
         */
         // if not found, try to find a command that can be scheduled
-        CommandBase cmd = createCommand(desc, payloadSupplier);
+        CommandBase cmd = createCommand(desc, payload);
         if (cmd != null)
         {
             Services.get(IContextService.class).getContext(ContextType.UI).schedule(cmd);
@@ -331,11 +323,11 @@ public class ActionService implements IActionService
         return imgIcon;
     }
     
-    protected <T> PayloadActionBase<T> createPayloadAction(PayloadActionDescriptor<T> desc, Supplier<T> payloadSupplier)
+    protected <T> PayloadActionBase<T> createPayloadAction(PayloadActionDescriptor<T> desc, T payload)
     {
         if (desc == ActionDescriptors.SAVECFG)
         {
-            return new PayloadActionBase<T>(desc, Loc.get(LocKey.Action_savecfg), payloadSupplier);
+            return new PayloadActionBase<T>(desc, Loc.get(LocKey.Action_savecfg), payload);
         } 
         
         return null;
@@ -399,12 +391,11 @@ public class ActionService implements IActionService
         return null;
     }
     
-    protected <T> CommandBase createCommand(PayloadActionDescriptor<T> desc, Supplier<T> payloadSupplier)
+    protected <T> CommandBase createCommand(PayloadActionDescriptor<T> desc, T payload)
     {
         if (desc == ActionDescriptors.SAVECFG)
         {
-            P_SaveState payload = (P_SaveState) payloadSupplier.get();
-            CommandBase cmd1 = new C_SaveState(payload);
+            CommandBase cmd1 = new C_SaveState((P_SaveState) payload);
             CommandBase cmd2 = new C_SaveConfig();
             CommandBase cmd = new C_Composite(true, cmd1, cmd2);
             return cmd;
@@ -474,7 +465,7 @@ public class ActionService implements IActionService
             return () -> 
             {
                 IFrameService frameServ = Services.get(IFrameService.class);
-                frameServ.showPanel(PanelDescriptors.Settings);
+                frameServ.showPanel(PanelDescriptors.Settings, null, null);
             };
         }        
         else if (desc == ActionDescriptors.UNMAXIMIZE)

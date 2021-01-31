@@ -14,7 +14,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +30,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
@@ -49,6 +49,8 @@ import gent.timdemey.cards.services.contract.SnapSide;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.DataPanelDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelType;
@@ -66,7 +68,6 @@ import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.services.panels.IDataPanelManager;
 import gent.timdemey.cards.services.panels.IPanelManager;
-import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.services.panels.PanelInData;
 import gent.timdemey.cards.services.panels.PanelOutData;
 import gent.timdemey.cards.services.panels.dialogs.message.MessagePanelData;
@@ -802,11 +803,11 @@ public class FrameService implements IFrameService, IPreload
         IDataPanelManager<IN, OUT> dpMan = panelServ.getPanelManager(desc);
                
         // create the buttons that need to be shown according to the content creator
-        EnumSet<PanelButtonType> dbTypes = dpMan.getButtonTypes();
-        Map<PanelButtonType, JButton> buttons = new HashMap<>();   
+        List<PanelButtonDescriptor> dbTypes = dpMan.getButtonTypes();
+        Map<PanelButtonDescriptor, JButton> buttons = new HashMap<>();   
         
         // function to generate a runnable which is run after the dialog was closed somehow
-        Function<PanelButtonType, Runnable> closeFuncSupplier = (btnType) -> () ->
+        Function<PanelButtonDescriptor, Runnable> closeFuncSupplier = (btnType) -> () ->
         {
             PanelOutData<OUT> outData = new PanelOutData<>();
             OUT out = dpMan.onClose(btnType);
@@ -820,16 +821,26 @@ public class FrameService implements IFrameService, IPreload
         };
         
         // prepare the buttons
-        for (PanelButtonType dbType : dbTypes)
+        if (dbTypes != null)
         {
-            ActionListener action_close = (e) -> closeFuncSupplier.apply(dbType).run();
-            
-            String loctext = Loc.get(dbType.lockey);
-            JButton button = new JButton(loctext); 
-            
-            button.addActionListener(action_close);            
-            buttons.put(dbType, button);            
-        }
+            for (PanelButtonDescriptor dbType : dbTypes)
+            {
+                ActionListener action_close = (e) -> closeFuncSupplier.apply(dbType).run();
+                                
+                JButton button;
+                if (dbType.lockey != null)
+                {
+                    button = new JButton(Loc.get(dbType.lockey));
+                }
+                else 
+                {
+                    button = new JButton(dbType.action);
+                }
+                
+                button.addActionListener(action_close);            
+                buttons.put(dbType, button);            
+            }
+        }        
         
         // prepare the incoming data
         PanelInData<IN> panelInData = new PanelInData<>();
@@ -845,7 +856,7 @@ public class FrameService implements IFrameService, IPreload
             boolean enabled = dpMan.isButtonEnabled(btnType);
             button.setEnabled(enabled);
         }; 
-        panelInData.closeFunc = closeFuncSupplier.apply(PanelButtonType.Forced);
+        panelInData.closeFunc = closeFuncSupplier.apply(PanelButtonDescriptors.Forced);
         
         // let the dialog panel manager load given the input data
         dpMan.load(panelInData);
@@ -854,7 +865,7 @@ public class FrameService implements IFrameService, IPreload
         PanelBase dialogPanel = new PanelBase(desc.id);
         dialogPanel.setLayout(new MigLayout("insets 0"));  
         dialogPanel.addMouseListener(new MouseAdapter(){}); // block mouse input to panels below
-        PanelBase marginPanel = new PanelBase(new MigLayout("insets 20"));
+        PanelBase marginPanel = new PanelBase(new MigLayout("insets 20 10 5 10"));
         marginPanel.setBackground(new Color(50,50,50));
         marginPanel.setAlphaBackground(0.5f);
         marginPanel.setOpaque(false);
@@ -873,29 +884,32 @@ public class FrameService implements IFrameService, IPreload
             PanelBase contentPanel = dpMan.createPanel();
             marginPanel.add(contentPanel, "grow, push, wrap");
             
-            // standard buttons at the bottom as required
-            String mig_first = "span, wmin 60, split " + dbTypes.size() + ", pushx, align center, sg buts";
-            String mig_sg = "sg buts";
-            int cnt = 0;
-            for (PanelButtonType dbType : dbTypes)
-            {           
-                JButton button = buttons.get(dbType);
-                marginPanel.add(button, cnt++ == 0 ? mig_first : mig_sg);
+            // buttons at the bottom as required
+            if (dbTypes != null && !dbTypes.isEmpty())
+            {
+                // add separator
+                marginPanel.add(new JSeparator(), "span, push, growx");
                 
-                // enabled/disable the button
-                panelInData.verifyButtonFunc.accept(dbType);
-            }
-            
-            
+                String mig_first = "span, wmin 60, split " + dbTypes.size() + ", pushx, align center, sg buts";
+                String mig_sg = "sg buts";
+                int cnt = 0;
+                for (PanelButtonDescriptor dbType : dbTypes)
+                {           
+                    JButton button = buttons.get(dbType);
+                    marginPanel.add(button, cnt++ == 0 ? mig_first : mig_sg);
+                    
+                    // enabled/disable the button
+                    panelInData.verifyButtonFunc.accept(dbType);
+                }
+            }            
         }
         
-        dialogPanel.setOpaque(false);
-        
+        dialogPanel.setOpaque(false);        
         Timer timer = new Timer(15, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 float alpha = marginPanel.getAlpha();
-                alpha += 0.10;
+                alpha += 0.05;
                 if (alpha > 1) {
                     alpha = 1;
                 }

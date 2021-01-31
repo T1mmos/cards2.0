@@ -1,6 +1,6 @@
 package gent.timdemey.cards.services.panels.dialogs.mp;
 
-import java.util.EnumSet;
+import java.util.List;
 
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -9,9 +9,10 @@ import javax.swing.event.DocumentListener;
 
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
+import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.panels.DataPanelManagerBase;
-import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.ui.PanelBase;
 import net.miginfocom.swing.MigLayout;
 
@@ -56,9 +57,9 @@ public class StartServerPanelManager extends DataPanelManagerBase<String, StartS
     }
     
     @Override
-    public StartServerPanelData onClose(PanelButtonType dbType)
+    public StartServerPanelData onClose(PanelButtonDescriptor dbType)
     {
-        if (dbType == PanelButtonType.Ok)
+        if (dbType == PanelButtonDescriptors.Ok)
         {
             boolean autoconnect = true; // we currently don't support starting a server without automatically being a player
             return new StartServerPanelData(tf_srvname.getText(), tf_srvmsg.getText(), autoconnect);
@@ -72,31 +73,31 @@ public class StartServerPanelManager extends DataPanelManagerBase<String, StartS
     @Override
     public void insertUpdate(DocumentEvent e)
     {
-        verify(PanelButtonType.Ok);
+        verify(PanelButtonDescriptors.Ok);
     }
 
     @Override
     public void removeUpdate(DocumentEvent e)
     {
-        verify(PanelButtonType.Ok);
+        verify(PanelButtonDescriptors.Ok);
     }
 
     @Override
     public void changedUpdate(DocumentEvent e)
     {
-        verify(PanelButtonType.Ok);
+        verify(PanelButtonDescriptors.Ok);
     }
 
     @Override
-    public EnumSet<PanelButtonType> getButtonTypes()
+    public List<PanelButtonDescriptor> getButtonTypes()
     {
         return SET_OK_CANCEL;
     }
 
     @Override
-    public boolean isButtonEnabled(PanelButtonType dbType)
+    public boolean isButtonEnabled(PanelButtonDescriptor dbType)
     {
-        if (dbType == PanelButtonType.Ok)
+        if (dbType == PanelButtonDescriptors.Ok)
         {
             return !tf_srvname.getText().trim().isEmpty();
         }        

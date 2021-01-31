@@ -7,9 +7,9 @@ import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IFrameService;
-import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.services.panels.PanelOutData;
 import gent.timdemey.cards.services.panels.dialogs.mp.LobbyPanelData;
 
@@ -44,7 +44,7 @@ public class D_ShowLobby extends DialogCommandBase
 
     private void onClose(PanelOutData<Void> outData)
     {
-        if (outData.closeType == PanelButtonType.Cancel)
+        if (outData.closeType == PanelButtonDescriptors.Cancel)
         {
             CommandBase cmd = new C_Disconnect(DisconnectReason.LocalPlayerLeft);
             schedule(ContextType.UI, cmd);

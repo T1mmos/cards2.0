@@ -10,13 +10,13 @@ public final class PanelDescriptors
     public static final PanelDescriptor                                     About           = panel ("About",       PanelType.Root);    
     public static final PanelDescriptor                                     Game            = panel ("Game",        PanelType.Root);
     public static final PanelDescriptor                                     Menu            = panel ("Menu",        PanelType.Root);
-    public static final PanelDescriptor                                     Settings        = panel ("Settings",    PanelType.Root);
 
     public static final DataPanelDescriptor<Void, JoinMPGamePanelData>      Connect         = dialog("Connect",     PanelType.Dialog);
     public static final DataPanelDescriptor<Void, Void>                     GameMenu        = dialog("GameMenu",    PanelType.DialogOverlay);
     public static final DataPanelDescriptor<Void, Void>                     JoinMP          = dialog("JoinMP",      PanelType.Dialog);
     public static final DataPanelDescriptor<LobbyPanelData, Void>           Lobby           = dialog("Lobby",       PanelType.Dialog);
     public static final DataPanelDescriptor<MessagePanelData, Void>         Message         = dialog("Message",     PanelType.Dialog);
+    public static final DataPanelDescriptor<Void, Void>                     Settings        = dialog ("Settings",    PanelType.Dialog);
     public static final DataPanelDescriptor<String, StartServerPanelData>   StartServer     = dialog("StartServer", PanelType.Dialog);    
     
     public static final PanelDescriptor                                     Load            = panel ("Load",        PanelType.Overlay);

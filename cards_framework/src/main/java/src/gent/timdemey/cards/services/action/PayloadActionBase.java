@@ -1,7 +1,6 @@
 package gent.timdemey.cards.services.action;
 
 import java.awt.event.ActionEvent;
-import java.util.function.Supplier;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.descriptors.PayloadActionDescriptor;
@@ -9,18 +8,18 @@ import gent.timdemey.cards.services.interfaces.IActionService;
 
 public class PayloadActionBase<T> extends ActionBase
 {
-    private final Supplier<T> payloadSupplier;
+    private final T payload;
 
-    PayloadActionBase(PayloadActionDescriptor<T> desc, String title, Supplier<T> payloadSupplier)
+    PayloadActionBase(PayloadActionDescriptor<T> desc, String title, T payload)
     {
         super(desc, title);
         
-        if (payloadSupplier == null)
+        if (payload == null)
         {
-            throw new NullPointerException("payloadSupplier");
+            throw new NullPointerException("payload");
         }
         
-        this.payloadSupplier = payloadSupplier;
+        this.payload = payload;
     }
     
     @Override
@@ -28,7 +27,7 @@ public class PayloadActionBase<T> extends ActionBase
     {
         @SuppressWarnings("unchecked")
         PayloadActionDescriptor<T> tdesc = (PayloadActionDescriptor<T>) desc;
-        Services.get(IActionService.class).executeAction(tdesc, payloadSupplier);
+        Services.get(IActionService.class).executeAction(tdesc, payload);
     }
     
     @Override
@@ -42,7 +41,7 @@ public class PayloadActionBase<T> extends ActionBase
     {
         @SuppressWarnings("unchecked")
         PayloadActionDescriptor<T> tdesc = (PayloadActionDescriptor<T>) desc;
-        setEnabled(Services.get(IActionService.class).canExecuteAction(tdesc, payloadSupplier));
+        setEnabled(Services.get(IActionService.class).canExecuteAction(tdesc, payload));
     }
 }
 

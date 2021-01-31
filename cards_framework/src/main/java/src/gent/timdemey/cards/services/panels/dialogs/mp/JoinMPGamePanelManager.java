@@ -2,7 +2,7 @@ package gent.timdemey.cards.services.panels.dialogs.mp;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.EnumSet;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -22,10 +22,11 @@ import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.readonlymodel.ReadOnlyUDPServer;
+import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
+import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.panels.DataPanelManagerBase;
-import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.ui.PanelBase;
 import net.miginfocom.swing.MigLayout;
 
@@ -121,7 +122,7 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
         @Override
         public void valueChanged(ListSelectionEvent e)
         {
-            inData.verifyButtonFunc.accept(PanelButtonType.Ok);
+            inData.verifyButtonFunc.accept(PanelButtonDescriptors.Ok);
         }
     }
 
@@ -163,9 +164,9 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
     }
 
     @Override
-    public boolean isButtonEnabled(PanelButtonType dbType)
+    public boolean isButtonEnabled(PanelButtonDescriptor dbType)
     {
-        if (dbType == PanelButtonType.Ok)
+        if (dbType == PanelButtonDescriptors.Ok)
         {
             int row = table_servers.getSelectedRow();
             return row != -1;
@@ -189,9 +190,9 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
     }
 
     @Override
-    public JoinMPGamePanelData onClose(PanelButtonType dbType)
+    public JoinMPGamePanelData onClose(PanelButtonDescriptor dbType)
     {
-        if (dbType == PanelButtonType.Ok)
+        if (dbType == PanelButtonDescriptors.Ok)
         {
             int row = table_servers.getSelectedRow();
             ReadOnlyUDPServer server = Services.get(IContextService.class).getThreadContext().getReadOnlyState()
@@ -229,7 +230,7 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
     }
 
     @Override
-    public EnumSet<PanelButtonType> getButtonTypes()
+    public List<PanelButtonDescriptor> getButtonTypes()
     {
         return SET_OK_CANCEL;
     }

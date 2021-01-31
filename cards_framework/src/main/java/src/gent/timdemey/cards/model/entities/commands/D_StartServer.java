@@ -9,10 +9,10 @@ import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
-import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.services.panels.PanelOutData;
 import gent.timdemey.cards.services.panels.dialogs.mp.StartServerPanelData;
 
@@ -44,7 +44,7 @@ public class D_StartServer extends DialogCommandBase
     
     private void onClose(PanelOutData<StartServerPanelData> data)
     {
-        if (data.closeType == PanelButtonType.Ok)
+        if (data.closeType == PanelButtonDescriptors.Ok)
         {
             IContextService ctxtServ = Services.get(IContextService.class);
             ReadOnlyState state = ctxtServ.getThreadContext().getReadOnlyState();

@@ -1,13 +1,15 @@
 package gent.timdemey.cards.services.panels;
 
-import java.util.EnumSet;
+import java.util.List;
+
+import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
 
 public interface IDataPanelManager<IN, OUT> extends IPanelManager
 {
-    public EnumSet<PanelButtonType> getButtonTypes();
+    public List<PanelButtonDescriptor> getButtonTypes();
     public void load(PanelInData<IN> inData);
-    public OUT onClose(PanelButtonType dbType);
-    public boolean isButtonEnabled(PanelButtonType dbType);
+    public OUT onClose(PanelButtonDescriptor dbType);
+    public boolean isButtonEnabled(PanelButtonDescriptor dbType);
     
     public String createTitle();
 }

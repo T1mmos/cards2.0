@@ -1,12 +1,12 @@
 package gent.timdemey.cards.services.panels.dialogs.message;
 
-import java.util.EnumSet;
+import java.util.List;
 
 import javax.swing.JLabel;
 
+import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.panels.DataPanelManagerBase;
-import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.ui.PanelBase;
 import net.miginfocom.swing.MigLayout;
 
@@ -15,19 +15,19 @@ public class MessagePanelManager extends DataPanelManagerBase<MessagePanelData, 
     private PanelBase contentPanel;
     
     @Override
-    public Void onClose(PanelButtonType dbType)
+    public Void onClose(PanelButtonDescriptor dbType)
     {
         return null;
     }
 
     @Override
-    public EnumSet<PanelButtonType> getButtonTypes()
+    public List<PanelButtonDescriptor> getButtonTypes()
     {
         return SET_OK;
     }
 
     @Override
-    public boolean isButtonEnabled(PanelButtonType dbType)
+    public boolean isButtonEnabled(PanelButtonDescriptor dbType)
     {
         return true;
     }

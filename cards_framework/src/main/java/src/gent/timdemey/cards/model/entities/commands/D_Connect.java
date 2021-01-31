@@ -10,10 +10,10 @@ import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.readonlymodel.ReadOnlyUDPServer;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
-import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.services.panels.PanelOutData;
 import gent.timdemey.cards.services.panels.dialogs.mp.JoinMPGamePanelData;
 
@@ -46,7 +46,7 @@ public class D_Connect extends DialogCommandBase
         IContextService ctxtServ = Services.get(IContextService.class);
         UUID localId = ctxtServ.getThreadContext().getReadOnlyState().getLocalId();
         
-        if (data.closeType == PanelButtonType.Ok)
+        if (data.closeType == PanelButtonDescriptors.Ok)
         {
             ReadOnlyUDPServer udpServer = data.data_out.server;
             Server server = udpServer.getServer();

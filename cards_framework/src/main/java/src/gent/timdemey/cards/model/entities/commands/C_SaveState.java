@@ -5,6 +5,7 @@ import gent.timdemey.cards.model.entities.commands.payload.P_SaveState;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.panels.settings.Settings;
 
 public class C_SaveState extends CommandBase
 {
@@ -26,21 +27,22 @@ public class C_SaveState extends CommandBase
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
-        if (payload.playerName != null && !payload.playerName.isEmpty())
+        Settings settings = payload.settingsSupplier.get();
+        if (settings.playerName != null && !settings.playerName.isEmpty())
         {
-            state.setLocalName(payload.playerName);
+            state.setLocalName(settings.playerName);
         }
-        if (payload.serverTcpPort > 1024)
+        if (settings.serverTcpPort > 1024)
         {
-            state.getConfiguration().setServerTcpPort(payload.serverTcpPort);    
+            state.getConfiguration().setServerTcpPort(settings.serverTcpPort);    
         }
-        if (payload.serverUdpPort > 1024)
+        if (settings.serverUdpPort > 1024)
         {
-            state.getConfiguration().setServerUdpPort(payload.serverUdpPort);    
+            state.getConfiguration().setServerUdpPort(settings.serverUdpPort);    
         }
-        if (payload.clientUdpPort >= 10000)
+        if (settings.clientUdpPort >= 10000)
         {
-            state.getConfiguration().setClientUdpPort(payload.clientUdpPort);
+            state.getConfiguration().setClientUdpPort(settings.clientUdpPort);
         }
     }
 

@@ -1,15 +1,15 @@
 package gent.timdemey.cards.services.panels.game;
 
-import java.util.EnumSet;
+import java.util.List;
 
 import javax.swing.JButton;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
+import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.panels.DataPanelManagerBase;
-import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.ui.PanelBase;
 import net.miginfocom.swing.MigLayout;
 
@@ -55,19 +55,19 @@ public class GameMenuPanelManager extends DataPanelManagerBase<Void, Void>
     }
 
     @Override
-    public EnumSet<PanelButtonType> getButtonTypes()
-    {
-        return EnumSet.noneOf(PanelButtonType.class);
-    }
-
-    @Override
-    public Void onClose(PanelButtonType dbType)
+    public List<PanelButtonDescriptor> getButtonTypes()
     {
         return null;
     }
 
     @Override
-    public boolean isButtonEnabled(PanelButtonType dbType)
+    public Void onClose(PanelButtonDescriptor dbType)
+    {
+        return null;
+    }
+
+    @Override
+    public boolean isButtonEnabled(PanelButtonDescriptor dbType)
     {
         return false;
     }

@@ -2,6 +2,8 @@ package gent.timdemey.cards.services.panels;
 
 import java.util.function.Consumer;
 
+import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
+
 public class PanelInData<IN>
 {
     /**
@@ -13,7 +15,7 @@ public class PanelInData<IN>
      * Call this function if you want to evaluate the enabled state
      * of the button of the given type at the bottom of this dialog.
      */
-    public Consumer<PanelButtonType> verifyButtonFunc;
+    public Consumer<PanelButtonDescriptor> verifyButtonFunc;
     
     /**
      * Call this function if you want to close the dialog.

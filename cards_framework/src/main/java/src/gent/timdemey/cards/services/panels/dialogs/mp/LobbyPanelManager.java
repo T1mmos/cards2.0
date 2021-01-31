@@ -1,6 +1,5 @@
 package gent.timdemey.cards.services.panels.dialogs.mp;
 
-import java.util.EnumSet;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -18,11 +17,11 @@ import gent.timdemey.cards.readonlymodel.TypedChange;
 import gent.timdemey.cards.services.context.ChangeType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
+import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.panels.DataPanelManagerBase;
-import gent.timdemey.cards.services.panels.PanelButtonType;
 import gent.timdemey.cards.ui.PanelBase;
 import net.miginfocom.swing.MigLayout;
 
@@ -164,19 +163,19 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
     }
     
     @Override
-    public Void onClose(PanelButtonType dbType)
+    public Void onClose(PanelButtonDescriptor dbType)
     {        
         return null;
     }
 
     @Override
-    public EnumSet<PanelButtonType> getButtonTypes()
+    public List<PanelButtonDescriptor> getButtonTypes()
     {
         return SET_CANCEL;
     }
 
     @Override
-    public boolean isButtonEnabled(PanelButtonType dbType)
+    public boolean isButtonEnabled(PanelButtonDescriptor dbType)
     {
         return true;
     }
