@@ -7,6 +7,8 @@ import java.util.UUID;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
@@ -35,6 +37,9 @@ public class SettingsPanelManager extends  DataPanelManagerBase<Void, Void>
     private JTextField tf_serverUdpPort;
     private JTextField tf_serverTcpPort;
     private JTextField tf_clientUdpPort;    
+    
+    private DocumentListener docListener = null;
+    private PanelButtonDescriptor pbd_savecfg;
     
     @Override
     public void preload()
@@ -96,7 +101,29 @@ public class SettingsPanelManager extends  DataPanelManagerBase<Void, Void>
                 floatPanel.add(lbl_udpport, "");
                 tf_clientUdpPort = new JTextField(6);
                 floatPanel.add(tf_clientUdpPort, "wrap");
-            }           
+            }       
+            
+            docListener = new DocumentListener()
+            {
+                
+                @Override
+                public void removeUpdate(DocumentEvent e)
+                {
+                    inData.verifyButtonFunc.accept(pbd_savecfg);
+                }
+                
+                @Override
+                public void insertUpdate(DocumentEvent e)
+                {
+                    inData.verifyButtonFunc.accept(pbd_savecfg);
+                }
+                
+                @Override
+                public void changedUpdate(DocumentEvent e)
+                {
+                    inData.verifyButtonFunc.accept(pbd_savecfg);
+                }
+            };
         }
         
         return contentPanel;
@@ -106,6 +133,11 @@ public class SettingsPanelManager extends  DataPanelManagerBase<Void, Void>
     public void onShown()
     {
         updateUI();
+        
+        tf_pname.getDocument().addDocumentListener(docListener);
+        tf_serverTcpPort.getDocument().addDocumentListener(docListener);
+        tf_serverUdpPort.getDocument().addDocumentListener(docListener);
+        tf_clientUdpPort.getDocument().addDocumentListener(docListener);
         
         // register listener
         execListener = this::onCommandExecuted;
@@ -120,6 +152,11 @@ public class SettingsPanelManager extends  DataPanelManagerBase<Void, Void>
         IContextService ctxtServ = Services.get(IContextService.class);
         ctxtServ.getThreadContext().removeExecutionListener(execListener);
         execListener = null;
+        
+        tf_pname.getDocument().removeDocumentListener(docListener);
+        tf_serverTcpPort.getDocument().removeDocumentListener(docListener);
+        tf_serverUdpPort.getDocument().removeDocumentListener(docListener);
+        tf_clientUdpPort.getDocument().removeDocumentListener(docListener);
     }
         
     private P_SaveState getSettings()
@@ -179,8 +216,8 @@ public class SettingsPanelManager extends  DataPanelManagerBase<Void, Void>
             P_SaveState payload = new P_SaveState();
             payload.id = UUID.randomUUID();         
             ActionBase act_savecfg = actServ.getAction(ActionDescriptors.SAVECFG, this::getSettings);               
-            PanelButtonDescriptor desc = new PanelButtonDescriptor(act_savecfg);
-            buttons.add(desc);
+            pbd_savecfg = new PanelButtonDescriptor(act_savecfg);
+            buttons.add(pbd_savecfg);
         }
         
         return buttons;

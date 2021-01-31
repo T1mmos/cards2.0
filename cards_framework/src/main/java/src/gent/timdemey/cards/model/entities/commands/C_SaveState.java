@@ -37,11 +37,11 @@ public class C_SaveState extends CommandBase
             boolean canExecProp = saveProp.canExecFunc.apply(state, payload);
             if (canExecProp)
             {
-                return CanExecuteResponse.yes();
+                return CanExecuteResponse.yesPerm();
             }
         }
        
-        return CanExecuteResponse.no("No changes were detected in the settings");
+        return CanExecuteResponse.no("No (valid) changes were detected in the settings");
     }
     
     @Override

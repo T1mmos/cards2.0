@@ -30,7 +30,7 @@ public class C_SaveConfig extends CommandBase
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
         CheckContext(type, ContextType.UI);
-        return CanExecuteResponse.yes();
+        return CanExecuteResponse.yesPerm();
     }
 
     

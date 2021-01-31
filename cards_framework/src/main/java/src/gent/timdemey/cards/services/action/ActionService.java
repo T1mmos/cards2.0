@@ -394,7 +394,7 @@ public class ActionService implements IActionService
         {
             CommandBase cmd1 = new C_SaveState((P_SaveState) payload);
             CommandBase cmd2 = new C_SaveConfig();
-            CommandBase cmd = new C_Composite(true, cmd1, cmd2);
+            CommandBase cmd = new C_Composite(cmd1, cmd2);
             return cmd;
         }
         

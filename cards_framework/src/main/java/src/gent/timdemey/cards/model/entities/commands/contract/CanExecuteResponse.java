@@ -3,6 +3,7 @@ package gent.timdemey.cards.model.entities.commands.contract;
 public class CanExecuteResponse
 {
     private static final CanExecuteResponse YES = new CanExecuteResponse(ExecutionState.Yes, null); 
+    private static final CanExecuteResponse YESPERM = new CanExecuteResponse(ExecutionState.YesPerm, null); 
     
     public final ExecutionState execState;
     public final String reason;
@@ -36,8 +37,13 @@ public class CanExecuteResponse
         return YES;
     }
     
+    public static CanExecuteResponse yesPerm()
+    {
+        return YESPERM;
+    }
+    
     public boolean canExecute()
     {
-        return execState == ExecutionState.Yes;
+        return execState == ExecutionState.Yes || execState == ExecutionState.YesPerm;
     }
 }
