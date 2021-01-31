@@ -8,7 +8,7 @@ public class PanelButtonDescriptor
 {
     public final LocKey lockey;
     public final Action action;
-
+    
     public PanelButtonDescriptor(LocKey lockey)
     {
         if (lockey == null)

@@ -122,10 +122,11 @@ public class SettingsPanelManager extends  DataPanelManagerBase<Void, Void>
         execListener = null;
     }
         
-    private Settings getSettings()
+    private P_SaveState getSettings()
     {
-        Settings settings = new Settings();
+        P_SaveState settings = new P_SaveState();
         
+        settings.id = UUID.randomUUID();
         settings.playerName = tf_pname.getText();
         settings.serverTcpPort = parse(tf_serverTcpPort.getText());
         settings.serverUdpPort = parse(tf_serverUdpPort.getText());
@@ -143,7 +144,7 @@ public class SettingsPanelManager extends  DataPanelManagerBase<Void, Void>
         }
         catch (Exception ex)
         {
-            Logger.warn("Cannot parse '%s' (serverTcpPort) as an integer");
+            Logger.warn("Cannot parse '%s' (serverTcpPort) as an integer", text);
             return -1;
         }
     }
@@ -176,9 +177,8 @@ public class SettingsPanelManager extends  DataPanelManagerBase<Void, Void>
         // save settings
         {
             P_SaveState payload = new P_SaveState();
-            payload.id = UUID.randomUUID();
-            payload.settingsSupplier = this::getSettings;                      
-            ActionBase act_savecfg = actServ.getAction(ActionDescriptors.SAVECFG, payload);               
+            payload.id = UUID.randomUUID();         
+            ActionBase act_savecfg = actServ.getAction(ActionDescriptors.SAVECFG, this::getSettings);               
             PanelButtonDescriptor desc = new PanelButtonDescriptor(act_savecfg);
             buttons.add(desc);
         }

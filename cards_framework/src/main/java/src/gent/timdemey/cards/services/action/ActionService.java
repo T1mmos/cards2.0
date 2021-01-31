@@ -3,6 +3,7 @@ package gent.timdemey.cards.services.action;
 import java.awt.Image;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -60,11 +61,11 @@ public class ActionService implements IActionService
     }
 
     @Override
-    public <T> PayloadActionBase<T> getAction(PayloadActionDescriptor<T> desc, T payload)
+    public <T> PayloadActionBase<T> getAction(PayloadActionDescriptor<T> desc, Supplier<T> payloadSupplier)
     {
         CheckRuntimeType(desc, PayloadActionDescriptor.class);
         
-        PayloadActionBase<T> action = createPayloadAction(desc, payload);
+        PayloadActionBase<T> action = createPayloadAction(desc, payloadSupplier);
         action.checkEnabled();
         
         return action;
@@ -323,11 +324,11 @@ public class ActionService implements IActionService
         return imgIcon;
     }
     
-    protected <T> PayloadActionBase<T> createPayloadAction(PayloadActionDescriptor<T> desc, T payload)
+    protected <T> PayloadActionBase<T> createPayloadAction(PayloadActionDescriptor<T> desc, Supplier<T> payloadSupplier)
     {
         if (desc == ActionDescriptors.SAVECFG)
         {
-            return new PayloadActionBase<T>(desc, Loc.get(LocKey.Action_savecfg), payload);
+            return new PayloadActionBase<T>(desc, Loc.get(LocKey.Action_savecfg), payloadSupplier);
         } 
         
         return null;
@@ -366,10 +367,6 @@ public class ActionService implements IActionService
         else if (desc == ActionDescriptors.REDO)
         {
             return new C_Redo();
-        }
-        else if (desc == ActionDescriptors.SAVECFG)
-        {
-            return new C_SaveConfig();
         }
         else if (desc == ActionDescriptors.STARTSP)
         {

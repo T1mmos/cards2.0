@@ -803,9 +803,7 @@ public class FrameService implements IFrameService, IPreload
         IPanelService panelServ = Services.get(IPanelService.class);
         IDataPanelManager<IN, OUT> dpMan = panelServ.getPanelManager(desc);
                
-        // create the buttons that need to be shown according to the content creator
-        List<PanelButtonDescriptor> dbTypes = dpMan.getButtonTypes();
-        Map<PanelButtonDescriptor, JButton> buttons = new HashMap<>();   
+       
         
         // function to generate a runnable which is run after the dialog was closed somehow
         Function<PanelButtonDescriptor, Runnable> closeFuncSupplier = (btnType) -> () ->
@@ -821,105 +819,125 @@ public class FrameService implements IFrameService, IPreload
             }
         };
         
-        // prepare the buttons
-        if (dbTypes != null)
-        {
-            for (PanelButtonDescriptor dbType : dbTypes)
-            {
-                ActionListener action_close = (e) -> closeFuncSupplier.apply(dbType).run();
-                                
-                JButton button;
-                if (dbType.lockey != null)
-                {
-                    button = new JButton(Loc.get(dbType.lockey));
-                }
-                else 
-                {
-                    button = new JButton(dbType.action);
-                }
-                
-                button.addActionListener(action_close);            
-                buttons.put(dbType, button);            
-            }
-        }        
+        // store the buttons for each PanelButtonDescriptor
+        Map<PanelButtonDescriptor, JButton> buttons = new HashMap<>(); 
         
         // prepare the incoming data
         PanelInData<IN> panelInData = new PanelInData<>();
         panelInData.payload = inData;
-        panelInData.verifyButtonFunc = (btnType) ->
+        panelInData.verifyButtonFunc = (btnDesc) ->
         {
-            JButton button = buttons.get(btnType);
+            JButton button = buttons.get(btnDesc);
             if (button == null)
             {
                 return;
             }
             
-            boolean enabled = dpMan.isButtonEnabled(btnType);
-            button.setEnabled(enabled);
+            if (btnDesc.action != null)
+            {
+                ((ActionBase) btnDesc.action).checkEnabled();
+            }
+            else
+            {
+                boolean enabled = dpMan.isButtonEnabled(btnDesc);
+                button.setEnabled(enabled);
+            }            
         }; 
         panelInData.closeFunc = closeFuncSupplier.apply(PanelButtonDescriptors.Forced);
         
+      
+        
+       
+        
         // let the dialog panel manager load given the input data
         dpMan.load(panelInData);
-
+        
         // create the entire panel, add the custom content and the buttons
         PanelBase dialogPanel = new PanelBase(desc.id);
-        dialogPanel.setLayout(new MigLayout("insets 0"));  
-        dialogPanel.addMouseListener(new MouseAdapter(){}); // block mouse input to panels below
-        PanelBase marginPanel = new PanelBase(new MigLayout("insets 20 10 5 10"));
-        marginPanel.setBackground(new Color(50,50,50));
-        marginPanel.setAlphaBackground(0.5f);
-        marginPanel.setOpaque(false);
-        marginPanel.setAlpha(0.0f);
-        marginPanel.setDebugName(desc.id + " - MarginPanel");
-        marginPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
-        dialogPanel.add(marginPanel, "hmax 400, push, alignx center, aligny center");
         {
-            // dialog title
-            String title = dpMan.createTitle();
-            JLabel titleLabel = new JLabel(" - " + title + " - ");
-            titleLabel.setFont(dialogTitleFont);
-            marginPanel.add(titleLabel, "gapy 0 20, pushx, alignx center, wrap");
-            
-            // content panel provided by the manager
-            PanelBase contentPanel = dpMan.createPanel();
-            marginPanel.add(contentPanel, "grow, push, wrap");
-            
-            // buttons at the bottom as required
-            if (dbTypes != null && !dbTypes.isEmpty())
+            dialogPanel.setLayout(new MigLayout("insets 0"));  
+            dialogPanel.addMouseListener(new MouseAdapter(){}); // block mouse input to panels below
+            PanelBase marginPanel = new PanelBase(new MigLayout("insets 20 10 5 10"));
+            marginPanel.setBackground(new Color(50,50,50));
+            marginPanel.setAlphaBackground(0.5f);
+            marginPanel.setOpaque(false);
+            marginPanel.setAlpha(0.0f);
+            marginPanel.setDebugName(desc.id + " - MarginPanel");
+            marginPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
+            dialogPanel.add(marginPanel, "hmax 400, push, alignx center, aligny center");
             {
-                // add separator
-                marginPanel.add(new JSeparator(), "span, push, growx");
+                // dialog title
+                String title = dpMan.createTitle();
+                JLabel titleLabel = new JLabel(" - " + title + " - ");
+                titleLabel.setFont(dialogTitleFont);
+                marginPanel.add(titleLabel, "gapy 0 20, pushx, alignx center, wrap");
                 
-                String mig_first = "span, wmin 60, split " + dbTypes.size() + ", pushx, align center, sg buts";
-                String mig_sg = "sg buts";
-                int cnt = 0;
-                for (PanelButtonDescriptor dbType : dbTypes)
-                {           
-                    JButton button = buttons.get(dbType);
-                    marginPanel.add(button, cnt++ == 0 ? mig_first : mig_sg);
+                // content panel provided by the manager
+                PanelBase contentPanel = dpMan.createPanel();
+                marginPanel.add(contentPanel, "grow, push, wrap");
+                
+                // create the buttons
+                List<PanelButtonDescriptor> dbTypes = dpMan.getButtonTypes();
+                if (dbTypes != null)
+                {
+                    for (PanelButtonDescriptor dbType : dbTypes)
+                    {
+                        ActionListener action_close = (e) -> closeFuncSupplier.apply(dbType).run();
+                                        
+                        JButton button;
+                        if (dbType.lockey != null)
+                        {
+                            button = new JButton(Loc.get(dbType.lockey));
+                        }
+                        else 
+                        {
+                            button = new JButton(dbType.action);
+                        }
+                        
+                        button.addActionListener(action_close);            
+                        buttons.put(dbType, button);            
+                    }
+                }        
+                
+                // buttons at the bottom as required
+                if (dbTypes != null && !dbTypes.isEmpty())
+                {
+                    // add separator
+                    marginPanel.add(new JSeparator(), "span, push, growx");
                     
-                    // enabled/disable the button
-                    panelInData.verifyButtonFunc.accept(dbType);
+                    String mig_first = "span, wmin 60, split " + dbTypes.size() + ", pushx, align center, sg buts";
+                    String mig_sg = "sg buts";
+                    int cnt = 0;
+                    for (PanelButtonDescriptor dbType : dbTypes)
+                    {           
+                        JButton button = buttons.get(dbType);
+                        marginPanel.add(button, cnt++ == 0 ? mig_first : mig_sg);
+                        
+                        // enabled/disable the button
+                        panelInData.verifyButtonFunc.accept(dbType);
+                    }
+                }            
+            }
+            dialogPanel.setOpaque(false); 
+            
+            Timer timer = new Timer(15, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    float alpha = marginPanel.getAlpha();
+                    alpha += 0.05;
+                    if (alpha > 1) {
+                        alpha = 1;
+                    }
+                    marginPanel.setAlpha(alpha);
                 }
-            }            
+            });
+            timer.setRepeats(true);
+            timer.setCoalesce(true);
+            timer.start();
         }
         
-        dialogPanel.setOpaque(false);        
-        Timer timer = new Timer(15, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                float alpha = marginPanel.getAlpha();
-                alpha += 0.05;
-                if (alpha > 1) {
-                    alpha = 1;
-                }
-                marginPanel.setAlpha(alpha);
-            }
-        });
-        timer.setRepeats(true);
-        timer.setCoalesce(true);
-        timer.start();
+               
+        
         
         return dialogPanel;
     }

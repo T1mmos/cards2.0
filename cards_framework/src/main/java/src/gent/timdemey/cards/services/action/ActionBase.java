@@ -46,7 +46,7 @@ public class ActionBase extends AbstractAction implements IContextListener, ISta
         Services.get(IActionService.class).executeAction(desc);
     }
 
-    protected void checkEnabled()
+    public void checkEnabled()
     {
         setEnabled(Services.get(IActionService.class).canExecuteAction(desc));
     }

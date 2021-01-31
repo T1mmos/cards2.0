@@ -1,15 +1,26 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import java.util.Arrays;
+import java.util.List;
+
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_SaveState;
+import gent.timdemey.cards.model.entities.commands.save.SaveFunctions;
+import gent.timdemey.cards.model.entities.commands.save.SaveProperty;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.panels.settings.Settings;
 
 public class C_SaveState extends CommandBase
 {
     private final P_SaveState payload;
+    
+    private static final List<SaveProperty> PROPERTIES = Arrays.asList(
+
+        new SaveProperty(SaveFunctions::canExec_PlayerName, SaveFunctions::exec_PlayerName),
+        new SaveProperty(SaveFunctions::canExec_ServerTcpPort, SaveFunctions::exec_ServerTcpPort),
+        new SaveProperty(SaveFunctions::canExec_ServerUdpPort, SaveFunctions::exec_ServerUdpPort)
+    ); 
     
     public C_SaveState(P_SaveState payload)
     {
@@ -21,29 +32,24 @@ public class C_SaveState extends CommandBase
     @Override
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
-        return CanExecuteResponse.yes();
+        for (SaveProperty saveProp : PROPERTIES)
+        {
+            boolean canExecProp = saveProp.canExecFunc.apply(state, payload);
+            if (canExecProp)
+            {
+                return CanExecuteResponse.yes();
+            }
+        }
+       
+        return CanExecuteResponse.no("No changes were detected in the settings");
     }
-
+    
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
-        Settings settings = payload.settingsSupplier.get();
-        if (settings.playerName != null && !settings.playerName.isEmpty())
+        for (SaveProperty saveProp : PROPERTIES)
         {
-            state.setLocalName(settings.playerName);
-        }
-        if (settings.serverTcpPort > 1024)
-        {
-            state.getConfiguration().setServerTcpPort(settings.serverTcpPort);    
-        }
-        if (settings.serverUdpPort > 1024)
-        {
-            state.getConfiguration().setServerUdpPort(settings.serverUdpPort);    
-        }
-        if (settings.clientUdpPort >= 10000)
-        {
-            state.getConfiguration().setClientUdpPort(settings.clientUdpPort);
+            saveProp.execFunc.accept(state, payload);
         }
     }
-
 }
