@@ -58,7 +58,14 @@ public class TitlePanelMouseListener implements MouseListener, MouseMotionListen
         if (e.getClickCount() == 2)
         {
             IFrameService fServ = Services.get(IFrameService.class);
-            fServ.maximize();
+            if (fServ.isSnapped())
+            {
+                fServ.unsnap();
+            }
+            else
+            {
+                fServ.maximize();
+            }
         }
     }
 
