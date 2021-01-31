@@ -118,6 +118,7 @@ public class FrameService implements IFrameService, IPreload
         WebButton button = new WebButton(StyleId.buttonUndecorated, action);
         button.setRolloverIcon(action.icon_rollover);
         button.setText("");
+        button.setFocusable(false);
         
         Dimension dim = new Dimension(24, 24);           
         button.setMinimumSize(dim);
