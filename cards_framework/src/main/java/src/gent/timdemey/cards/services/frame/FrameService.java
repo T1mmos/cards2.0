@@ -381,6 +381,7 @@ public class FrameService implements IFrameService, IPreload
                 
         // in case of a root panel, all open dialogPanelTrackers, overlayPanelTrackers, and current panel are closed.
         // do not close persistent dialogPanelTrackers
+        PanelTracker pt = null;
         if (desc.panelType == PanelType.Root)
         {
             while (!dialogPanelTrackers.empty())
@@ -399,12 +400,12 @@ public class FrameService implements IFrameService, IPreload
             
             if (add)
             {
-                rootPanelTracker = new PanelTracker(desc, comp);
+                pt = rootPanelTracker = new PanelTracker(desc, comp);
                 rootPanelTrackers.add(rootPanelTracker);
             }
             else
             {
-                rootPanelTracker = get(desc);                
+                pt = rootPanelTracker = get(desc);                
             }
         }
         else if (desc.panelType == PanelType.Dialog || desc.panelType == PanelType.DialogOverlay)
@@ -414,26 +415,25 @@ public class FrameService implements IFrameService, IPreload
             {
                 if (dialogPanelTrackers.size() == 0)
                 {
-                    rootPanelTracker.panel.setVisible(false);
+                    setHidden(rootPanelTracker);
                 }
                 else
                 {
                     PanelTracker below = dialogPanelTrackers.peek();
-                    below.panel.setVisible(false);
-                    panelServ.getPanelManager(below.panelDesc).onHidden();
+                    setHidden(below);
                 }
             }            
             
-            dialogPanelTrackers.push(new PanelTracker(desc, comp));
+            pt = new PanelTracker(desc, comp);
+            dialogPanelTrackers.push(pt);
         }
         else if (desc.panelType == PanelType.Overlay)
         {
-            overlayPanelTrackers.push(new PanelTracker(desc, comp));
+            pt = new PanelTracker(desc, comp);
+            overlayPanelTrackers.push(pt);
         }
         
-        // show the panel and notify its manager
-        panelMgr.getPanel().setVisible(true);
-        panelMgr.onShown();
+        setVisible(pt);
     }    
     
     public void closePanel(PanelType panelType)
@@ -483,9 +483,9 @@ public class FrameService implements IFrameService, IPreload
         }
         
         // hide it, remove if panel is of temporary nature
+        setHidden(pt_toClose);
         if (panelType == PanelType.Root)
         {
-            pb_toClose.setVisible(false);
             rootPanelTracker = null;
         }
         else 
@@ -499,21 +499,50 @@ public class FrameService implements IFrameService, IPreload
                 if (!dialogPanelTrackers.isEmpty())
                 {
                     PanelTracker topmost = dialogPanelTrackers.peek();
-                    topmost.panel.setVisible(true);
-                    panelServ.getPanelManager(topmost.panelDesc).onShown();
+                    setVisible(topmost);   
                 }
                 else if (rootPanelTracker != null)
                 {
-                    rootPanelTracker.panel.setVisible(true);
-                    panelServ.getPanelManager(rootPanelTracker.panelDesc).onShown();                    
+                    setVisible(rootPanelTracker);              
                 }
             }
         }
         
-        // notify the panel manager
-        panelMgr.onHidden();
     }
     
+    private void setVisible(PanelTracker pt)
+    {
+        IPanelService panelServ = Services.get(IPanelService.class);        
+        pt.panel.setVisible(true);
+        // show the panel and notify its manager
+        pt.panel.setAlpha(0.25f);
+        pt.panel.setVisible(true);
+        
+        final Timer timer = new Timer(15, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                float alpha = pt.panel.getAlpha();
+                alpha += 0.05;
+                if (alpha >= 1) {
+                    alpha = 0.999f; // prevents text suddenly changing size
+                    ((Timer) e.getSource()).stop();
+                }
+                pt.panel.setAlpha(alpha);
+            }
+        });
+        timer.setRepeats(true);
+        timer.setCoalesce(true);
+        timer.start();
+        panelServ.getPanelManager(pt.panelDesc).onShown();      
+    }
+
+    private void setHidden(PanelTracker pt)
+    {
+        IPanelService panelServ = Services.get(IPanelService.class);
+        panelServ.getPanelManager(pt.panelDesc).onHidden();
+        pt.panel.setVisible(false);
+    }
+
     @Override
     public void setDrawDebug(boolean on)
     {
@@ -855,7 +884,6 @@ public class FrameService implements IFrameService, IPreload
             marginPanel.setBackground(new Color(50,50,50));
             marginPanel.setAlphaBackground(0.5f);
             marginPanel.setOpaque(false);
-            marginPanel.setAlpha(0.0f);
             marginPanel.setDebugName(desc.id + " - MarginPanel");
             marginPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
             dialogPanel.add(marginPanel, "hmax 400, push, alignx center, aligny center");
@@ -913,26 +941,7 @@ public class FrameService implements IFrameService, IPreload
                 }            
             }
             dialogPanel.setOpaque(false); 
-            
-            final Timer timer = new Timer(15, new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    float alpha = marginPanel.getAlpha();
-                    alpha += 0.05;
-                    if (alpha >= 1) {
-                        alpha = 0.999f; // prevents text suddenly changing size
-                        ((Timer) e.getSource()).stop();
-                    }
-                    marginPanel.setAlpha(alpha);
-                }
-            });
-            timer.setRepeats(true);
-            timer.setCoalesce(true);
-            timer.start();
-        }
-        
-               
-        
+        }        
         
         return dialogPanel;
     }
