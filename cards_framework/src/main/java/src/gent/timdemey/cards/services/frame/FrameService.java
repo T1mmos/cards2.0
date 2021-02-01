@@ -803,8 +803,6 @@ public class FrameService implements IFrameService, IPreload
         IPanelService panelServ = Services.get(IPanelService.class);
         IDataPanelManager<IN, OUT> dpMan = panelServ.getPanelManager(desc);
                
-       
-        
         // function to generate a runnable which is run after the dialog was closed somehow
         Function<PanelButtonDescriptor, Runnable> closeFuncSupplier = (btnType) -> () ->
         {
@@ -835,7 +833,7 @@ public class FrameService implements IFrameService, IPreload
             
             if (btnDesc.action != null)
             {
-                ((ActionBase) btnDesc.action).checkEnabled();
+                btnDesc.action.checkEnabled();
             }
             else
             {
@@ -844,11 +842,7 @@ public class FrameService implements IFrameService, IPreload
             }            
         }; 
         panelInData.closeFunc = closeFuncSupplier.apply(PanelButtonDescriptors.Forced);
-        
-      
-        
-       
-        
+                
         // let the dialog panel manager load given the input data
         dpMan.load(panelInData);
         
@@ -857,7 +851,7 @@ public class FrameService implements IFrameService, IPreload
         {
             dialogPanel.setLayout(new MigLayout("insets 0"));  
             dialogPanel.addMouseListener(new MouseAdapter(){}); // block mouse input to panels below
-            PanelBase marginPanel = new PanelBase(new MigLayout("insets 20 10 5 10"));
+            PanelBase marginPanel = new PanelBase(new MigLayout("insets 20 20 5 20"));
             marginPanel.setBackground(new Color(50,50,50));
             marginPanel.setAlphaBackground(0.5f);
             marginPanel.setOpaque(false);
@@ -868,9 +862,9 @@ public class FrameService implements IFrameService, IPreload
             {
                 // dialog title
                 String title = dpMan.createTitle();
-                JLabel titleLabel = new JLabel(" - " + title + " - ");
+                JLabel titleLabel = new JLabel(title + "   ");
                 titleLabel.setFont(dialogTitleFont);
-                marginPanel.add(titleLabel, "gapy 0 20, pushx, alignx center, wrap");
+                marginPanel.add(titleLabel, "gapy 0 20, pushx, growx, alignx left, wrap");
                 
                 // content panel provided by the manager
                 PanelBase contentPanel = dpMan.createPanel();
@@ -920,13 +914,14 @@ public class FrameService implements IFrameService, IPreload
             }
             dialogPanel.setOpaque(false); 
             
-            Timer timer = new Timer(15, new ActionListener() {
+            final Timer timer = new Timer(15, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     float alpha = marginPanel.getAlpha();
                     alpha += 0.05;
-                    if (alpha > 1) {
-                        alpha = 1;
+                    if (alpha >= 1) {
+                        alpha = 0.999f; // prevents text suddenly changing size
+                        ((Timer) e.getSource()).stop();
                     }
                     marginPanel.setAlpha(alpha);
                 }

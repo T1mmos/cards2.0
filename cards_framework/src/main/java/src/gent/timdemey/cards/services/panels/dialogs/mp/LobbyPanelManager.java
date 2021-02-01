@@ -97,7 +97,7 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
         Context context = contextService.getThreadContext();
         ReadOnlyState state = context.getReadOnlyState();
         
-        panel = new PanelBase(new MigLayout("insets 0"), PanelDescriptors.Lobby.id);
+        panel = new PanelBase(new MigLayout("insets 0, wmin 300"), PanelDescriptors.Lobby.id);
         
         IActionService actServ = Services.get(IActionService.class);
         

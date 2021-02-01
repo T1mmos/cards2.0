@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -68,39 +67,35 @@ public class SettingsPanelManager extends  DataPanelManagerBase<Void, Void>
     {
         if (contentPanel == null)
         {
-            contentPanel = new PanelBase(new MigLayout(), PanelDescriptors.Settings.id);
-            
-            JPanel floatPanel = new JPanel(new MigLayout("inset 10"));
-            floatPanel.setOpaque(false);
-            contentPanel.add(floatPanel, "hmin 200, wmin 350, push, alignx center, aligny center");
-                                    
+            contentPanel = new PanelBase(new MigLayout("insets 0"), PanelDescriptors.Settings.id);
+                                               
             // player name
             {
                 JLabel lbl_pname = new JLabel(Loc.get(LocKey.Label_playername));
-                floatPanel.add(lbl_pname, "");                
-                tf_pname = new JTextField(30);
-                floatPanel.add(tf_pname, "gapright 100, wrap");
+                contentPanel.add(lbl_pname, "");                
+                tf_pname = new JTextField(20);
+                contentPanel.add(tf_pname, "gapright 100, wrap");
             }
             
             // server configuration
             {
                 JLabel lbl_tcpport = new JLabel(Loc.get(LocKey.Label_serverTcpPort));
-                floatPanel.add(lbl_tcpport, "");
+                contentPanel.add(lbl_tcpport, "");
                 tf_serverTcpPort = new JTextField(6);
-                floatPanel.add(tf_serverTcpPort, "wrap");
+                contentPanel.add(tf_serverTcpPort, "wrap");
                 
                 JLabel lbl_udpport = new JLabel(Loc.get(LocKey.Label_serverUdpPort));
-                floatPanel.add(lbl_udpport, "");
+                contentPanel.add(lbl_udpport, "");
                 tf_serverUdpPort = new JTextField(6);
-                floatPanel.add(tf_serverUdpPort, "wrap");
+                contentPanel.add(tf_serverUdpPort, "wrap");
             }
             
             // client configuration
             {
                 JLabel lbl_udpport = new JLabel(Loc.get(LocKey.Label_clientUdpPort));
-                floatPanel.add(lbl_udpport, "");
+                contentPanel.add(lbl_udpport, "");
                 tf_clientUdpPort = new JTextField(6);
-                floatPanel.add(tf_clientUdpPort, "wrap");
+                contentPanel.add(tf_clientUdpPort, "wrap");
             }       
             
             docListener = new DocumentListener()

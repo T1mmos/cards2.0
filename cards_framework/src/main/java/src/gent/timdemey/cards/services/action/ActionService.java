@@ -184,7 +184,6 @@ public class ActionService implements IActionService
         }
     }
     
-    
     private ActionBase mapToAction(ActionDescriptor desc)
     {
         ActionBase action = desc2actions.get(desc);

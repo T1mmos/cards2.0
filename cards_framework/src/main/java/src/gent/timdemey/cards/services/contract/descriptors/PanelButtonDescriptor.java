@@ -1,13 +1,12 @@
 package gent.timdemey.cards.services.contract.descriptors;
 
-import javax.swing.Action;
-
 import gent.timdemey.cards.localization.LocKey;
+import gent.timdemey.cards.services.action.ActionBase;
 
 public class PanelButtonDescriptor
 {
     public final LocKey lockey;
-    public final Action action;
+    public final ActionBase action;
     
     public PanelButtonDescriptor(LocKey lockey)
     {
@@ -19,7 +18,7 @@ public class PanelButtonDescriptor
         this.action = null;
     }
     
-    public PanelButtonDescriptor(Action action)
+    public PanelButtonDescriptor(ActionBase action)
     {
         if (action == null)
         {

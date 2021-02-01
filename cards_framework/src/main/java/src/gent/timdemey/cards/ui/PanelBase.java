@@ -67,28 +67,37 @@ public class PanelBase extends JLayeredPane implements IHasTransparency
         repaint();
     }
 
-@Override 
-public float getAlphaBackground()
-{
-    return alphaBg;
-}
+    @Override 
+    public float getAlphaBackground()
+    {
+        return alphaBg;
+    }
+    
     @Override
     public void paint(Graphics g)
     {
-        if (alpha < 1.0f)
+        Graphics2D g2 = (Graphics2D) g.create();
+        
+        float _alpha = alpha;
+        if (_alpha == 1.0f && getParent() instanceof PanelBase)
         {
-            Graphics2D g2 = (Graphics2D) g.create();
+            _alpha = ((PanelBase) getParent()).alpha;
+        }
+        Composite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, _alpha);
+        g2.setComposite(composite);
+        super.paint(g2);
+        
+        g2.dispose();
+      /*  if (alpha < 1.0f)
+        {
             
-            Composite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
-            g2.setComposite(composite);
-            super.paint(g2);
-            
-            g2.dispose();
         }
         else
         {
             super.paint(g);
-        }
+            Composite c = ((Graphics2D) g).getComposite();
+            int a = 4;
+        }*/
     }
     
     @Override
@@ -97,13 +106,5 @@ public float getAlphaBackground()
         UICommon.paintBackground(this, g, tile);
         super.paintComponent(g);
     }
-    
-    @Override
-    protected void paintChildren(Graphics g)
-    {
-        // TODO Auto-generated method stub
-        super.paintChildren(g);
-
-        UICommon.paintDebug(this, g, debugName);
-    }
+   
 }
