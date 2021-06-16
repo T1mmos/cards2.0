@@ -1,7 +1,7 @@
 package gent.timdemey.cards.services.interfaces;
 
-import gent.timdemey.cards.services.panels.IDataPanelManager;
-import gent.timdemey.cards.services.panels.PanelOutData;
+import gent.timdemey.cards.ui.panels.IDataPanelManager;
+import gent.timdemey.cards.ui.panels.PanelOutData;
 
 public interface IDialogService
 {

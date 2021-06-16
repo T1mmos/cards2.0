@@ -13,8 +13,8 @@ import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
-import gent.timdemey.cards.services.panels.PanelOutData;
-import gent.timdemey.cards.services.panels.dialogs.mp.StartServerPanelData;
+import gent.timdemey.cards.ui.panels.PanelOutData;
+import gent.timdemey.cards.ui.panels.dialogs.mp.StartServerPanelData;
 
 public class D_StartServer extends DialogCommandBase
 {

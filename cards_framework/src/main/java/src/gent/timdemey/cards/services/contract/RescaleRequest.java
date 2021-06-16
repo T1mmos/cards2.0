@@ -2,14 +2,14 @@ package gent.timdemey.cards.services.contract;
 
 import java.awt.Dimension;
 
-import gent.timdemey.cards.services.scaling.IScalableResource;
+import gent.timdemey.cards.ui.components.ISResource;
 
 public class RescaleRequest
 {
-    public final IScalableResource<?> scalableResource;
+    public final ISResource<?> scalableResource;
     public final Dimension dimension;
 
-    public RescaleRequest(IScalableResource<?> scalableResource, Dimension dimension)
+    public RescaleRequest(ISResource<?> scalableResource, Dimension dimension)
     {
         this.scalableResource = scalableResource;
         this.dimension = dimension;

@@ -4,19 +4,20 @@ import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
 
-import gent.timdemey.cards.services.contract.anim.AnimationDescriptor;
-import gent.timdemey.cards.services.contract.anim.BorderColorAnimation;
-import gent.timdemey.cards.services.contract.anim.ForegroundColorAnimation;
-import gent.timdemey.cards.services.contract.anim.IAnimation;
-import gent.timdemey.cards.services.contract.anim.MovingAnimation;
+import gent.timdemey.cards.services.animation.AnimationDescriptor;
+import gent.timdemey.cards.services.animation.AnimationService;
+import gent.timdemey.cards.services.animation.BorderColorAnimation;
+import gent.timdemey.cards.services.animation.ForegroundColorAnimation;
+import gent.timdemey.cards.services.animation.IAnimation;
+import gent.timdemey.cards.services.animation.MovingAnimation;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.resources.SolShowResourceDefines;
-import gent.timdemey.cards.services.scaling.IScalableComponent;
+import gent.timdemey.cards.ui.components.ISComponent;
 
 public class SolShowAnimationService extends AnimationService
 {
     @Override
-    public AnimationDescriptor getAnimationDescriptor(IScalableComponent comp)
+    public AnimationDescriptor getAnimationDescriptor(ISComponent comp)
     {
         if (comp.getComponentType().hasTypeName(ComponentTypes.CARDSCORE))
         {            

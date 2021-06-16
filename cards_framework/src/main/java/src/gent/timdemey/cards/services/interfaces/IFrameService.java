@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 import gent.timdemey.cards.services.contract.SnapSide;
 import gent.timdemey.cards.services.contract.descriptors.DataPanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
-import gent.timdemey.cards.services.panels.PanelOutData;
+import gent.timdemey.cards.ui.panels.PanelOutData;
 
 public interface IFrameService
 {

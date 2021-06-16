@@ -5,7 +5,7 @@ import java.awt.Dimension;
 import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
-import gent.timdemey.cards.services.scaling.IScalableComponent;
+import gent.timdemey.cards.ui.components.ISComponent;
 
 /**
  * Calculates the entire game panel layout given a maximum width and height.
@@ -50,7 +50,7 @@ public interface IPositionService
      * @param id
      * @return
      */
-    public LayeredArea getStartLayeredArea(IScalableComponent scaleComp);
+    public LayeredArea getStartLayeredArea(ISComponent scaleComp);
     
     /**
      * Returns the bounds where the given component should be finally positioned at.
@@ -58,7 +58,7 @@ public interface IPositionService
      * @param id
      * @return
      */
-    public LayeredArea getEndLayeredArea(IScalableComponent scaleComp);
+    public LayeredArea getEndLayeredArea(ISComponent scaleComp);
        
     /**
      * Gets the dimensions given a request that contains runtime context where a resource

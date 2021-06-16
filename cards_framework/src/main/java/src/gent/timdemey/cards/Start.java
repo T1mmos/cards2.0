@@ -11,6 +11,7 @@ import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.serialization.SerializationService;
 import gent.timdemey.cards.services.action.ActionService;
+import gent.timdemey.cards.services.animation.AnimationService;
 import gent.timdemey.cards.services.config.ConfigService;
 import gent.timdemey.cards.services.context.CommandNetworkService;
 import gent.timdemey.cards.services.context.ContextService;
@@ -29,14 +30,13 @@ import gent.timdemey.cards.services.interfaces.IResourceRepository;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.interfaces.ISerializationService;
-import gent.timdemey.cards.services.panels.AnimationService;
-import gent.timdemey.cards.services.panels.PanelService;
-import gent.timdemey.cards.services.panels.game.GamePanelStateListener;
 import gent.timdemey.cards.services.resources.ResourceLocationService;
 import gent.timdemey.cards.services.resources.ResourceRepository;
 import gent.timdemey.cards.services.resources.ResourceCacheService;
-import gent.timdemey.cards.services.scaling.ScalingService;
 import gent.timdemey.cards.ui.StartUI;
+import gent.timdemey.cards.ui.components.ScalingService;
+import gent.timdemey.cards.ui.panels.PanelService;
+import gent.timdemey.cards.ui.panels.game.GamePanelStateListener;
 
 public class Start
 {

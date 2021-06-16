@@ -1,5 +1,7 @@
 package gent.timdemey.cards.services.panels;
 
+import gent.timdemey.cards.ui.panels.Positions;
+
 final class SolShowGameLayout
 {    
     private final class Base

@@ -9,13 +9,13 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
-import gent.timdemey.cards.services.panels.IPanelManager;
-import gent.timdemey.cards.services.scaling.IScalableComponent;
-import gent.timdemey.cards.services.scaling.IScalableResource;
-import gent.timdemey.cards.services.scaling.img.ScalableImageComponent;
-import gent.timdemey.cards.services.scaling.img.ScalableImageResource;
-import gent.timdemey.cards.services.scaling.text.ScalableFontResource;
-import gent.timdemey.cards.services.scaling.text.ScalableTextComponent;
+import gent.timdemey.cards.ui.components.ISComponent;
+import gent.timdemey.cards.ui.components.ISResource;
+import gent.timdemey.cards.ui.components.SFontResource;
+import gent.timdemey.cards.ui.components.SImage;
+import gent.timdemey.cards.ui.components.SImageResource;
+import gent.timdemey.cards.ui.components.SText;
+import gent.timdemey.cards.ui.panels.IPanelManager;
 
 /**
  * Creates and manages JScalableImages. You create them by supplying any object
@@ -44,28 +44,28 @@ public interface IScalingService
      * @param card
      * @return
      */
-    public IScalableComponent createScalableComponent(ReadOnlyCard card, IPanelManager panelManager);
+    public ISComponent createSComponent(ReadOnlyCard card, IPanelManager panelManager);
     
     /**
      * Gets a scalable component for the given model object.
      * @param card
      * @return
      */
-    public IScalableComponent getScalableComponent(ReadOnlyCard card);
+    public ISComponent getSComponent(ReadOnlyCard card);
     
     /**
      * Get or creates once a scalable component for the given model object.
      * @param card
      * @return
      */
-    public IScalableComponent createScalableComponent(ReadOnlyCardStack cardStack, IPanelManager panelManager);
+    public ISComponent createSComponent(ReadOnlyCardStack cardStack, IPanelManager panelManager);
     
     /**
      * Gets a scalable component for the given model object.
      * @param card
      * @return
      */
-    public IScalableComponent getScalableComponent(ReadOnlyCardStack cardStack);
+    public ISComponent getSComponent(ReadOnlyCardStack cardStack);
     
     /**
      * Creates a scalable image component.
@@ -76,17 +76,17 @@ public interface IScalingService
      * @param imgResources
      * @return
      */
-    public ScalableImageComponent createScalableImageComponent(UUID compId, ComponentType compType, IPanelManager panelMgr, Object payload, ScalableImageResource ... imgResources);
+    public SImage createSImage(UUID compId, ComponentType compType, IPanelManager panelMgr, Object payload, SImageResource ... imgResources);
     
-    public ScalableTextComponent createScalableTextComponent(UUID compId, ComponentType compType, String text, IPanelManager panelMgr, Object payload, ScalableFontResource textRes);
+    public SText createSText(UUID compId, ComponentType compType, String text, IPanelManager panelMgr, Object payload, SFontResource textRes);
     
     /**
      * Adds a scalable resource.
      * @param scaleRes
      */
-    public void addScalableResource(IScalableResource<?> scaleRes);
+    public void addSResource(ISResource<?> scaleRes);
     
-    public void addScalableComponent(IScalableComponent scaleComp);
+    public void addSComponent(ISComponent scaleComp);
             
     /**
      * Get a scalable component mapped to the given id.
@@ -94,7 +94,7 @@ public interface IScalingService
      * @param card
      * @return
      */
-    public IScalableComponent getScalableComponent(UUID compId);
+    public ISComponent getSComponent(UUID compId);
 
     /**
      * Clears the cache containing scalable components. 
@@ -113,21 +113,21 @@ public interface IScalingService
      * @param p
      * @return
      */
-    public IScalableComponent getComponentAt(IPanelManager panelMgr, Point p);
+    public ISComponent getComponentAt(IPanelManager panelMgr, Point p);
         
     /**
      * Get all components found at the given position, disregarding their Z-order.
      * @param p
      * @return
      */
-    public List<IScalableComponent> getComponentsAt(Point p);
+    public List<ISComponent> getSComponentsAt(Point p);
     
     /**
      * Get all components overlapping with the given rectangle, disregarding their Z-order.
      * @param p
      * @return
      */
-    public List<IScalableComponent> getComponentsIn(Rectangle rect);
+    public List<ISComponent> getSComponentsIn(Rectangle rect);
     
     /**
      * Get the components found at the given position that are of the given type.
@@ -135,16 +135,16 @@ public interface IScalingService
      * @param clazz
      * @return
      */
-    public <T extends IScalableComponent> List<T> getComponentsAt(Point p, Class<T> clazz);  
+    public <T extends ISComponent> List<T> getComponentsAt(Point p, Class<T> clazz);  
     
-    public List<IScalableComponent> getComponents();
+    public List<ISComponent> getSComponents();
 
     /**
      * Gets the scalable resource with the given id.
      * @param resId
      * @return
      */
-    public IScalableResource<?> getScalableResource(UUID resId);
+    public ISResource<?> getSResource(UUID resId);
 
    
 }

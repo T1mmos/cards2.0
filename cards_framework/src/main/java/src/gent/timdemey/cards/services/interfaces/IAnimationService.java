@@ -1,7 +1,7 @@
 package gent.timdemey.cards.services.interfaces;
 
-import gent.timdemey.cards.services.contract.anim.AnimationDescriptor;
-import gent.timdemey.cards.services.scaling.IScalableComponent;
+import gent.timdemey.cards.ui.components.ISComponent;
+import gent.timdemey.cards.ui.components.JSLayeredPane;
 
 public interface IAnimationService
 {
@@ -11,5 +11,7 @@ public interface IAnimationService
      * @param comp
      * @return
      */
-    public AnimationDescriptor getAnimationDescriptor (IScalableComponent comp);
+    public void animate (JSLayeredPane pb);
+    
+    public void animate (ISComponent comp);
 }

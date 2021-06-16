@@ -5,8 +5,8 @@ import java.util.List;
 import gent.timdemey.cards.services.contract.descriptors.DataPanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 import gent.timdemey.cards.services.contract.preload.IPreload;
-import gent.timdemey.cards.services.panels.IDataPanelManager;
-import gent.timdemey.cards.services.panels.IPanelManager;
+import gent.timdemey.cards.ui.panels.IDataPanelManager;
+import gent.timdemey.cards.ui.panels.IPanelManager;
 
 public interface IPanelService extends IPreload
 {

@@ -10,8 +10,8 @@ import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IFrameService;
-import gent.timdemey.cards.services.panels.PanelOutData;
-import gent.timdemey.cards.services.panels.dialogs.mp.LobbyPanelData;
+import gent.timdemey.cards.ui.panels.PanelOutData;
+import gent.timdemey.cards.ui.panels.dialogs.mp.LobbyPanelData;
 
 public class D_ShowLobby extends DialogCommandBase
 {

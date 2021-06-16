@@ -10,7 +10,8 @@ import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
-import gent.timdemey.cards.services.scaling.IScalableComponent;
+import gent.timdemey.cards.ui.components.ISComponent;
+import gent.timdemey.cards.ui.panels.game.GamePanelManager;
 
 public class SolitaireGamePanelManager extends GamePanelManager
 {
@@ -40,19 +41,19 @@ public class SolitaireGamePanelManager extends GamePanelManager
     }
     
     @Override
-    public void createScalableComponents()
+    public void createSComponents()
     {
         IScalingService scaleCompServ = Services.get(IScalingService.class);
         ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState().getCardGame();
 
-        super.createScalableComponents();
+        super.createSComponents();
         
         // cardstack components
         List<ReadOnlyCardStack> cardstacks = cardGame.getCardStacks();
         for (int i = 0; i < cardstacks.size(); i++)
         {
             ReadOnlyCardStack cardstack = cardstacks.get(i);
-            IScalableComponent scaleComp = scaleCompServ.createScalableComponent(cardstack, this);
+            ISComponent scaleComp = scaleCompServ.createSComponent(cardstack, this);
             add(scaleComp);
             updateComponent(scaleComp);
         }

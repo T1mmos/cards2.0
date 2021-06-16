@@ -66,19 +66,19 @@ import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
-import gent.timdemey.cards.services.panels.IDataPanelManager;
-import gent.timdemey.cards.services.panels.IPanelManager;
-import gent.timdemey.cards.services.panels.PanelInData;
-import gent.timdemey.cards.services.panels.PanelOutData;
-import gent.timdemey.cards.services.panels.dialogs.message.MessagePanelData;
-import gent.timdemey.cards.ui.PanelBase;
+import gent.timdemey.cards.ui.components.JSLayeredPane;
+import gent.timdemey.cards.ui.panels.IDataPanelManager;
+import gent.timdemey.cards.ui.panels.IPanelManager;
+import gent.timdemey.cards.ui.panels.PanelInData;
+import gent.timdemey.cards.ui.panels.PanelOutData;
+import gent.timdemey.cards.ui.panels.dialogs.message.MessagePanelData;
 import gent.timdemey.cards.utils.DimensionUtils;
 import net.miginfocom.swing.MigLayout;
 
 public class FrameService implements IFrameService, IPreload
 {  
     private JFrame frame;
-    private PanelBase framePanel;
+    private JSLayeredPane framePanel;
     private JPanel frameTitlePanel;
     private JLayeredPane frameBodyPanel;
     private JButton title_maximize; 
@@ -96,9 +96,9 @@ public class FrameService implements IFrameService, IPreload
     private static class PanelTracker
     {
         private final PanelDescriptor panelDesc;
-        private final PanelBase panel;
+        private final JSLayeredPane panel;
         
-        private PanelTracker(PanelDescriptor panelDesc, PanelBase panel)
+        private PanelTracker(PanelDescriptor panelDesc, JSLayeredPane panel)
         {
             this.panelDesc = panelDesc;
             this.panel = panel;
@@ -149,7 +149,7 @@ public class FrameService implements IFrameService, IPreload
             frame = new JFrame();
                                     
             BufferedImage bg = getBackgroundImage();
-            framePanel = new PanelBase(new MigLayout("insets 5, gapy 0"), "FramePanel");
+            framePanel = new JSLayeredPane(new MigLayout("insets 5, gapy 0"), "FramePanel");
             framePanel.setTile(bg);
             frameBorder = BorderFactory.createLineBorder(Color.gray, 1, false);
             framePanel.setBorder(frameBorder);
@@ -219,9 +219,9 @@ public class FrameService implements IFrameService, IPreload
     {
        /* for (Component comp : frameBodyPanel.getComponents())
         {
-            if (comp instanceof PanelBase)
+            if (comp instanceof JSLayeredPane)
             {
-                PanelBase pb = (PanelBase) comp;
+                JSLayeredPane pb = (JSLayeredPane) comp;
                 if (pb.panelDesc == desc)
                 {
                     return pb;
@@ -266,7 +266,7 @@ public class FrameService implements IFrameService, IPreload
         IPanelManager panelMgr = panelServ.getPanelManager(desc);
         
         // check that the component is actually part of the frame body panel
-        JComponent contentComp = panelMgr.getPanel();
+        JComponent contentComp = panelMgr.getSPanel();
         JComponent directChild;
         if (desc.panelType == PanelType.Root)
         {
@@ -311,11 +311,11 @@ public class FrameService implements IFrameService, IPreload
         PanelTracker pt = get(desc);        
         
         boolean add;
-        PanelBase pb;
+        JSLayeredPane pb;
         if (pt == null)
         {
             add = true;
-            pb = panelMgr.createPanel();
+            pb = panelMgr.createSPanel();
             if (pb.getParent() != null)
             {
                 throw new IllegalStateException("The component to add already has a parent!");
@@ -338,16 +338,13 @@ public class FrameService implements IFrameService, IPreload
             throw new IllegalArgumentException("This method is intended for Dialog / DialogOverlay panels only");
         }
         
-        PanelBase pb = createDialogPanel(desc, data, onClose);
+        JSLayeredPane pb = createDialogPanel(desc, data, onClose);
         
         showInternal(desc, pb, true);
     }
         
-    private void showInternal(PanelDescriptor desc, PanelBase comp, boolean add)
-    {        
-        IPanelService panelServ = Services.get(IPanelService.class);
-        IPanelManager panelMgr = panelServ.getPanelManager(desc);
-        
+    private void showInternal(PanelDescriptor desc, JSLayeredPane comp, boolean add)
+    {                
         // add it to the miglayout
         if (add)
         {
@@ -521,7 +518,7 @@ public class FrameService implements IFrameService, IPreload
         final Timer timer = new Timer(15, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                float alpha = pt.panel.getAlpha();
+                float alpha = pt.panel.getForegroundAlpha();
                 alpha += 0.05;
                 if (alpha >= 1) {
                     alpha = 0.999f; // prevents text suddenly changing size
@@ -556,7 +553,7 @@ public class FrameService implements IFrameService, IPreload
             IPanelManager pMan = panelServ.getPanelManager(pd);
             if (pMan.isPanelCreated())
             {
-                JComponent comp = pMan.getPanel();
+                JComponent comp = pMan.getSPanel();
                 comp.repaint();
             }
         }
@@ -827,7 +824,7 @@ public class FrameService implements IFrameService, IPreload
         showPanel(PanelDescriptors.Message, payload, c -> {});
     }    
     
-    private <IN, OUT> PanelBase createDialogPanel(DataPanelDescriptor<IN, OUT> desc, IN inData, Consumer<PanelOutData<OUT>> callback)
+    private <IN, OUT> JSLayeredPane createDialogPanel(DataPanelDescriptor<IN, OUT> desc, IN inData, Consumer<PanelOutData<OUT>> callback)
     {
         IPanelService panelServ = Services.get(IPanelService.class);
         IDataPanelManager<IN, OUT> dpMan = panelServ.getPanelManager(desc);
@@ -876,15 +873,15 @@ public class FrameService implements IFrameService, IPreload
         dpMan.load(panelInData);
         
         // create the entire panel, add the custom content and the buttons
-        PanelBase dialogPanel = new PanelBase(desc.id);
+        JSLayeredPane dialogPanel = new JSLayeredPane(desc.id);
         {
             dialogPanel.setLayout(new MigLayout("insets 0"));  
             dialogPanel.addMouseListener(new MouseAdapter(){}); // block mouse input to panels below
-            PanelBase marginPanel = new PanelBase(new MigLayout("insets 20 20 5 20"));
+            JSLayeredPane marginPanel = new JSLayeredPane(new MigLayout("insets 20 20 5 20"));
             marginPanel.setBackground(new Color(50,50,50));
             marginPanel.setAlphaBackground(0.5f);
             marginPanel.setOpaque(false);
-            marginPanel.setDebugName(desc.id + " - MarginPanel");
+            marginPanel.setPanelName(desc.id + " - MarginPanel");
             marginPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
             dialogPanel.add(marginPanel, "hmax 400, push, alignx center, aligny center");
             {
@@ -895,7 +892,7 @@ public class FrameService implements IFrameService, IPreload
                 marginPanel.add(titleLabel, "gapy 0 20, pushx, growx, alignx left, wrap");
                 
                 // content panel provided by the manager
-                PanelBase contentPanel = dpMan.createPanel();
+                JSLayeredPane contentPanel = dpMan.createSPanel();
                 marginPanel.add(contentPanel, "grow, push, wrap");
                 
                 // create the buttons
