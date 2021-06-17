@@ -15,12 +15,13 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.action.ActionBase;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
-import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
+import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptors;
 import gent.timdemey.cards.services.contract.res.ImageResource;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
+import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.PanelManagerBase;
 import net.miginfocom.swing.MigLayout;
@@ -46,7 +47,7 @@ public class MenuPanelManager extends PanelManagerBase
     @Override
     public JSLayeredPane createPanel()
     {
-        menuPanel = new JSLayeredPane(PanelDescriptors.Menu.id);
+        menuPanel = JSFactory.createLayeredPane(ComponentTypes.PANEL);
         menuPanel.setLayout(new MigLayout("insets 0, align 50% 50%"));
         
         // icon

@@ -4,8 +4,10 @@ import java.util.List;
 
 import javax.swing.JLabel;
 
+import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
+import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.DataPanelManagerBase;
 import net.miginfocom.swing.MigLayout;
@@ -41,8 +43,7 @@ public class MessagePanelManager extends DataPanelManagerBase<MessagePanelData, 
     @Override
     public JSLayeredPane createPanel()
     {
-        contentPanel = new JSLayeredPane(PanelDescriptors.Message.id);
-        contentPanel.setLayout(new MigLayout("insets 0"));
+        contentPanel = JSFactory.createLayeredPane(ComponentTypes.PANEL);
         contentPanel.add(new JLabel(inData.payload.message), "push, wrap");
 
         return contentPanel;

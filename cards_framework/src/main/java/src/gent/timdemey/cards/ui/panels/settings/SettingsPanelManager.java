@@ -21,12 +21,11 @@ import gent.timdemey.cards.services.context.IExecutionListener;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
-import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.DataPanelManagerBase;
-import net.miginfocom.swing.MigLayout;
 
 public class SettingsPanelManager extends  DataPanelManagerBase<Void, Void>
 {
@@ -68,7 +67,7 @@ public class SettingsPanelManager extends  DataPanelManagerBase<Void, Void>
     {
         if (contentPanel == null)
         {
-            contentPanel = new JSLayeredPane(ComponentTypes.SETTINGS, new MigLayout("insets 0"), PanelDescriptors.Settings.id);
+            contentPanel = JSFactory.createLayeredPane(ComponentTypes.PANEL);
                                                
             // player name
             {

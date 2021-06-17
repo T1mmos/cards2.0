@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.alee.painter.decoration.layout.IContentLayout;
+
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
@@ -98,7 +100,7 @@ class GamePanelMouseListener extends MouseAdapter
         IPanelManager gamePanelMgr = panelServ.getPanelManager(PanelDescriptors.Game);
         
         
-        IComponent scaleComp = scaleServ.getComponentAt(gamePanelMgr, e.getPoint());   
+        IContentLayout<?, ?, ?> scaleComp = scaleServ.getComponentAt(gamePanelMgr, e.getPoint());   
         
         if (!(scaleComp instanceof JSImage))
         {

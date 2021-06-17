@@ -2,6 +2,7 @@ package gent.timdemey.cards.ui.components.drawers;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Composite;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -17,8 +18,7 @@ import javax.swing.JComponent;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.interfaces.IFrameService;
-import gent.timdemey.cards.ui.components.ext.IHasComponent;
-import gent.timdemey.cards.ui.panels.IPanelManager;
+import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.utils.ColorUtils;
 import gent.timdemey.cards.utils.DebugDrawDefines;
 
@@ -179,11 +179,9 @@ public class DrawerBase<T extends JComponent> implements IDrawer<T>
         int y = comp.getY();
 
         String layerStr = "/";
-        if (comp instanceof IHasComponent)
+        if (comp.getParent() instanceof JSLayeredPane)
         {
-            IHasComponent hasComp = (IHasComponent) comp;
-            IPanelManager panelMan = hasComp.getComponent().getPanelManager();
-            int layer = panelMan.getLayer(comp);
+            int layer = ((JSLayeredPane) comp.getParent()).getLayer((Component) comp);
             layerStr = "" + layer;
         }
 

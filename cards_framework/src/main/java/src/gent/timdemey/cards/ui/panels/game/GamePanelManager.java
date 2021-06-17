@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.swing.JComponent;
+
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.cards.Suit;
 import gent.timdemey.cards.model.entities.cards.Value;
@@ -21,14 +23,16 @@ import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
+import gent.timdemey.cards.ui.components.drawers.GamePanelDrawer;
 import gent.timdemey.cards.ui.components.ext.IComponent;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
+import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSImage;
 import gent.timdemey.cards.ui.panels.PanelManagerBase;
 
 public class GamePanelManager extends PanelManagerBase
 {
-    private GamePanel gamePanel;
+    private JSLayeredPane gamePanel;
     private PanelAnimator animator;
     private GamePanelMouseListener dragListener;
         
@@ -59,7 +63,7 @@ public class GamePanelManager extends PanelManagerBase
     @Override
     public JSLayeredPane createPanel()
     {
-        gamePanel = new GamePanel();
+        gamePanel = JSFactory.createLayeredPane(ComponentTypes.PANEL, new GamePanelDrawer());
         dragListener = new GamePanelMouseListener(); 
         animator = new PanelAnimator();           
 
@@ -88,14 +92,14 @@ public class GamePanelManager extends PanelManagerBase
         for (int i = 0; i < cards.size(); i++)
         {
             ReadOnlyCard card = cards.get(i);
-            IComponent scaleComp = scaleCompServ.createComponent(card, this);
-            add(scaleComp);
-            updateComponent(scaleComp);
+            JSImage jsimage = scaleCompServ.createImage(card, this);
+            add(jsimage);
+            updateComponent(jsimage);
         }
     }    
 
     @Override
-    public void updateComponent(IComponent comp)
+    public void updateComponent(JComponent comp)
     {
         ComponentType compType = comp.getComponentType();
         if(compType.hasTypeName(ComponentTypes.CARD))

@@ -1,10 +1,11 @@
 package gent.timdemey.cards.ui.components.swing;
 
-import java.awt.Component;
 import java.util.UUID;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
 import gent.timdemey.cards.services.action.ActionBase;
@@ -26,7 +27,7 @@ public final class JSFactory
     private JSFactory() {}
     
 
-    public static Component createButton(ActionBase action)
+    public static JSButton createButton(ActionBase action)
     {
         JSButton jsbutton = new JSButton();
 
@@ -35,6 +36,19 @@ public final class JSFactory
 
         return jsbutton;
     }
+    
+    public static JButton createButton(String text)
+    {
+        JSButton jsbutton = new JSButton();
+        
+        setSComponent(jsbutton, ComponentTypes.BUTTON);
+        setDrawer(jsbutton, new DrawerBase<>());
+        
+        jsbutton.setText(text);
+        
+        return jsbutton;
+    }
+
     
     public static JSLabel createLabel(String text)
     {        
@@ -63,6 +77,11 @@ public final class JSFactory
     }
     
     public static JSLayeredPane createLayeredPane(ComponentType compType)
+    {        
+        return createLayeredPane(compType, new DrawerBase<>());
+    }
+
+    public static JSLayeredPane createLayeredPane(ComponentType compType, IDrawer<JLayeredPane> drawer)
     {
         JSLayeredPane jslpane = new JSLayeredPane();
         
@@ -70,11 +89,11 @@ public final class JSFactory
         jslpane.setLayout(new MigLayout("insets 0"));
         
         setSComponent(jslpane, compType);
-        setDrawer(jslpane, new DrawerBase<>());
+        setDrawer(jslpane, drawer);
         
         return jslpane;
     }
-
+    
     public static JSImage createImage(ComponentType compType)
     {
         return createImage(UUID.randomUUID(), compType);

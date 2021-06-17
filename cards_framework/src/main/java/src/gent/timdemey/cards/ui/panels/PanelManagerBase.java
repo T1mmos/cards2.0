@@ -1,9 +1,10 @@
 package gent.timdemey.cards.ui.panels;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.util.List;
 import java.util.UUID;
+
+import javax.swing.JComponent;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.LayeredArea;
@@ -49,6 +50,7 @@ public abstract class PanelManagerBase implements IPanelManager
     
     private void position(JComponent comp)
     {
+        
         IPositionService posServ = Services.get(IPositionService.class);
         LayeredArea layArea = posServ.getStartLayeredArea(comp);
         comp.setCoords(layArea.coords);
