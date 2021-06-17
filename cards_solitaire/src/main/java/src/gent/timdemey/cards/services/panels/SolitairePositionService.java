@@ -11,7 +11,7 @@ import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes;
 import gent.timdemey.cards.services.interfaces.IPositionService;
-import gent.timdemey.cards.ui.components.ISComponent;
+import gent.timdemey.cards.ui.components.ext.IComponent;
 
 public class SolitairePositionService implements IPositionService
 {
@@ -100,13 +100,13 @@ public class SolitairePositionService implements IPositionService
 
 
     @Override
-    public LayeredArea getStartLayeredArea(ISComponent scaleComp)
+    public LayeredArea getStartLayeredArea(IComponent scaleComp)
     {
         return getEndLayeredArea(scaleComp);
     }
     
     @Override
-    public LayeredArea getEndLayeredArea(ISComponent scaleComp)
+    public LayeredArea getEndLayeredArea(IComponent scaleComp)
     {
         Rectangle bounds;
         int layer;

@@ -1,6 +1,6 @@
 package gent.timdemey.cards.services.animation;
 
-import gent.timdemey.cards.ui.components.ISComponent;
+import gent.timdemey.cards.ui.components.ext.IComponent;
 
 public interface IAnimation
 {
@@ -12,5 +12,5 @@ public interface IAnimation
      * @param frac the fraction of the total animation time that already passed, useful for interpolation
      * @param animStart values taken at the moment when the animation started, useful for interpolation
      */
-    public void tick (ISComponent comp, double frac, AnimationStart animStart);
+    public void tick (IComponent comp, double frac, AnimationStart animStart);
 }

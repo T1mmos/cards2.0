@@ -13,7 +13,7 @@ import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.interfaces.IAnimationService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
-import gent.timdemey.cards.ui.components.ISComponent;
+import gent.timdemey.cards.ui.components.ext.IComponent;
 import gent.timdemey.cards.ui.panels.IPanelManager;
 
 public class PanelAnimator

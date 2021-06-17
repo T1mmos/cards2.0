@@ -1,6 +1,7 @@
-package gent.timdemey.cards.ui.components;
+package gent.timdemey.cards.ui.components.drawers;
 
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -8,40 +9,26 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
-import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.services.contract.GetResourceResponse;
-import gent.timdemey.cards.services.contract.descriptors.ComponentType;
+import gent.timdemey.cards.ui.components.ISResource;
+import gent.timdemey.cards.ui.components.SImageResource;
 
-public final class SImage extends SComponent
+public class ScaledImageDrawer extends DrawerBase<JPanel>
 {
     private final List<SImageResource> imgResources;
     private ISResource<BufferedImage> currentScaledResource;
 
-    public SImage(UUID id, ComponentType compType, SImageResource... resources)
+    public ScaledImageDrawer (SImageResource... resources)
     {
-        super(id, compType);
-
         this.imgResources = Arrays.asList(resources);
         this.currentScaledResource = null;
     }
     
-    @Override
-    protected JComponent createJComponent()
-    {
-        return new JSComponent(this);
-    }
-    
-    @Override
-    protected List<String> getDebugStrings()
-    {
-        List<String> allStrings = new ArrayList<>(super.getDebugStrings());
-        allStrings.add(String.format("file=%s", currentScaledResource.getResource().filename));
-        return allStrings;
-    }
-
     /**
      * Swap the image shown.
      * 
@@ -67,21 +54,22 @@ public final class SImage extends SComponent
 
         currentScaledResource = found;
     }
-
+    
     @Override
-    protected final void drawForeground(Graphics2D g2)
+    public final void drawForeground(Graphics2D g2, Consumer<Graphics> superPaintComponent)
     {
-        Dimension currDim = getCoords().getSize();
+        Graphics2D g = (Graphics2D) g2.create();
+        Dimension currDim = comp.getSize();
 
         GetResourceResponse<BufferedImage> resp = currentScaledResource.get(currDim);
         BufferedImage bi = resp.resource;
         if(!currentScaledResource.getResource().fallback)
         {
-            drawScaled(g2, bi, currDim);
+            drawScaled(g, bi, currDim);
         }
         else
         {
-            drawTiled(g2, bi, currDim);
+            drawTiled(g, bi, currDim);
         }
     }
 
@@ -140,5 +128,13 @@ public final class SImage extends SComponent
         }
 
         g3.dispose();
+    }
+    
+    @Override
+    public List<String> getDebugStrings()
+    {
+        List<String> allStrings = new ArrayList<>(super.getDebugStrings());
+        allStrings.add(String.format("file=%s", currentScaledResource.getResource().filename));
+        return allStrings;
     }
 }

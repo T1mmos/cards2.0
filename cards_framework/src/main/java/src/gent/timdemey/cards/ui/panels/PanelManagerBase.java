@@ -14,17 +14,17 @@ import gent.timdemey.cards.services.contract.res.ImageResource;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
-import gent.timdemey.cards.ui.components.ISComponent;
 import gent.timdemey.cards.ui.components.ISResource;
 import gent.timdemey.cards.ui.components.SFontResource;
 import gent.timdemey.cards.ui.components.SImageResource;
+import gent.timdemey.cards.ui.components.ext.IComponent;
 
 public abstract class PanelManagerBase implements IPanelManager
 {
     @Override
     public boolean isPanelCreated()
     {
-        return getSPanel() != null;
+        return getPanel() != null;
     }
         
     @Override
@@ -36,78 +36,40 @@ public abstract class PanelManagerBase implements IPanelManager
     public void onHidden()
     {
     }
-    
+        
     @Override
-    public void add(ISComponent comp)
-    {
-        getSPanel().add(comp);
-        position(comp);
-    }
-
-    @Override
-    public void remove(ISComponent comp)
-    {
-        getSPanel().remove(comp);
-        getSPanel().revalidate();
-        getSPanel().repaint();
-    }
-    
-    public int getLayer(ISComponent scalableComponent)
-    {
-        return getSPanel().getLayer(scalableComponent);        
-    }
-
-    public void setLayer(ISComponent component, int layerIndex)
-    {
-        getSPanel().setLayer(component, layerIndex); 
-    }
-    
-    @Override
-    public void positionSComponents()
+    public void positionComponents()
     {
         IScalingService scaleServ = Services.get(IScalingService.class);
-        for (ISComponent scaleComp : scaleServ.getSComponents())
+        for (IComponent scaleComp : scaleServ.getComponents())
         {
             position(scaleComp);
         }
     }
     
-    private void position(ISComponent comp)
+    private void position(JComponent comp)
     {
         IPositionService posServ = Services.get(IPositionService.class);
         LayeredArea layArea = posServ.getStartLayeredArea(comp);
         comp.setCoords(layArea.coords);
-        comp.setMirror(layArea.mirror);
+        comp.getdrawer().setMirror(layArea.mirror);
         setLayer(comp, layArea.layer);
     }
 
     @Override
-    public void repaintSComponents()
-    {
-        getSPanel().repaint();
-    }
-    
-    @Override
-    public void startAnimation(ISComponent scaleComp)
+    public void startAnimation(IComponent scaleComp)
     {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void stopAnimation(ISComponent scaleComp)
+    public void stopAnimation(IComponent scaleComp)
     {
         // TODO Auto-generated method stub
         
     }
 
-    @Override
-    public void updateComponent(ISComponent comp)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-    
     protected final void preloadImage(UUID resId, String path)
     {
         IResourceCacheService resServ = Services.get(IResourceCacheService.class);
@@ -152,7 +114,7 @@ public abstract class PanelManagerBase implements IPanelManager
     }
     
     @Override
-    public void createSComponents()
+    public void createComponents()
     {
         
     }

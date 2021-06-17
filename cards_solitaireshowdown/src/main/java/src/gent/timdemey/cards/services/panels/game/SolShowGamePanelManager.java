@@ -17,20 +17,19 @@ import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.interfaces.ISolShowIdService;
 import gent.timdemey.cards.services.resources.SolShowResourceDefines;
-import gent.timdemey.cards.ui.components.ISComponent;
 import gent.timdemey.cards.ui.components.SFontResource;
-import gent.timdemey.cards.ui.components.SImage;
 import gent.timdemey.cards.ui.components.SImageResource;
-import gent.timdemey.cards.ui.components.SText;
 import gent.timdemey.cards.ui.components.TextAlignment;
+import gent.timdemey.cards.ui.components.drawers.ScaledTextDrawer;
+import gent.timdemey.cards.ui.components.ext.IComponent;
+import gent.timdemey.cards.ui.components.swing.JSImage;
+import gent.timdemey.cards.ui.components.swing.JSLabel;
 import gent.timdemey.cards.ui.panels.game.GamePanelManager;
 
 public class SolShowGamePanelManager extends GamePanelManager
 {
-
-    
     @Override
-    public void createSComponents()
+    public void createComponents()
     {
         IScalingService scaleServ = Services.get(IScalingService.class);
         ISolShowIdService idServ = Services.get(ISolShowIdService.class);
@@ -40,14 +39,14 @@ public class SolShowGamePanelManager extends GamePanelManager
         ReadOnlyPlayer player_local = state.getLocalPlayer();
         ReadOnlyPlayer player_remote = state.getRemotePlayers().get(0);        
         
-        super.createSComponents();
+        super.createComponents();
         
         // cardstack components
         List<ReadOnlyCardStack> cardstacks = cardGame.getCardStacks();
         for (int i = 0; i < cardstacks.size(); i++)
         {
             ReadOnlyCardStack cardstack = cardstacks.get(i);
-            ISComponent scaleComp = scaleServ.createSComponent(cardstack, this);
+            JSImage scaleComp = scaleServ.createImage(cardstack, this);
             add(scaleComp);
             updateComponent(scaleComp);
         }
@@ -66,21 +65,21 @@ public class SolShowGamePanelManager extends GamePanelManager
                 
                 boolean local = state.getLocalId().equals(player.getId());
                
-                SText textComp = scaleServ.createSText(counterCompId, SolShowComponentTypes.SPECIALSCORE, "NOTSET", this, cs, textRes);
-                textComp.setInnerColor(SolShowResourceDefines.COLOR_FONT_SPECIALCOUNT_INNER);
-                textComp.setOuterColor(SolShowResourceDefines.COLOR_FONT_SPECIALCOUNT_OUTER);    
+                JSLabel textComp = scaleServ.createLabel(counterCompId, SolShowComponentTypes.SPECIALSCORE, "NOTSET", this, cs, textRes);
+                textComp.setForeground(SolShowResourceDefines.COLOR_FONT_SPECIALCOUNT_INNER);
+                ((ScaledTextDrawer) textComp.getDrawer()).setOuterColor(SolShowResourceDefines.COLOR_FONT_SPECIALCOUNT_OUTER);    
                 textComp.setAlignment(TextAlignment.Center);     
                 
                 UUID resid_spec_bg = idServ.createSpecialBackgroundResourceId(!local);
                 SImageResource res_spec_bg = (SImageResource) scaleServ.getSResource(resid_spec_bg);
                 
-                SImage imgComp = scaleServ.createSImage(bgCompId, SolShowComponentTypes.SPECIALBACKGROUND, this, cs, res_spec_bg);
+                JSImage imgComp = scaleServ.createImage(bgCompId, SolShowComponentTypes.SPECIALBACKGROUND, this, cs, res_spec_bg);
                 
                 add(textComp);                  
                 add(imgComp);
                 
-                scaleServ.addSComponent(textComp);
-                scaleServ.addSComponent(imgComp);
+                scaleServ.addComponent(textComp);
+                scaleServ.addComponent(imgComp);
                 
                 updateComponent(textComp);
             }
@@ -95,19 +94,19 @@ public class SolShowGamePanelManager extends GamePanelManager
             UUID textResId = idServ.createFontScalableResourceId(SolShowResourceDefines.FILEPATH_FONT_PLAYERNAME);
             SFontResource textRes = (SFontResource) scaleServ.getSResource(textResId);     
                         
-            SText text_plocal = scaleServ.createSText(compId_local, SolShowComponentTypes.PLAYERNAME, player_local.getName(), this, player_local, textRes);
+            ScaledTextDrawer text_plocal = scaleServ.createLabel(compId_local, SolShowComponentTypes.PLAYERNAME, player_local.getName(), this, player_local, textRes);
             text_plocal.setPayload(player_local);
             text_plocal.setInnerColor(SolShowResourceDefines.COLOR_FONT_PLAYERNAME_INNER);
             text_plocal.setOuterColor(SolShowResourceDefines.COLOR_FONT_PLAYERNAME_OUTER);
             add(text_plocal);  
-            scaleServ.addSComponent(text_plocal);
+            scaleServ.addComponent(text_plocal);
             updateComponent(text_plocal);
             
-            SText text_premote = scaleServ.createSText(compId_remote, SolShowComponentTypes.PLAYERNAME, player_remote.getName(), this, player_remote, textRes);
+            ScaledTextDrawer text_premote = scaleServ.createLabel(compId_remote, SolShowComponentTypes.PLAYERNAME, player_remote.getName(), this, player_remote, textRes);
             text_premote.setInnerColor(SolShowResourceDefines.COLOR_FONT_PLAYERNAME_INNER);
             text_premote.setOuterColor(SolShowResourceDefines.COLOR_FONT_PLAYERNAME_OUTER);
             add(text_premote);  
-            scaleServ.addSComponent(text_premote);
+            scaleServ.addComponent(text_premote);
             updateComponent(text_premote);
         }
         
@@ -131,11 +130,11 @@ public class SolShowGamePanelManager extends GamePanelManager
             SImageResource res_playerbg_local = (SImageResource) scaleServ.getSResource(resid_playerbg_local);
             SImageResource res_vs = (SImageResource) scaleServ.getSResource(resid_vs);
             
-            SImage img_cardareabg_remote = scaleServ.createSImage(compid_cardareabg_remote, SolShowComponentTypes.CARDAREABG, this, player_remote, res_cardareabg_remote);
-            SImage img_cardareabg_local = scaleServ.createSImage(compid_cardareabg_local, SolShowComponentTypes.CARDAREABG, this, player_local, res_cardareabg_local); 
-            SImage img_playerbg_remote = scaleServ.createSImage(compid_playerbg_remote, SolShowComponentTypes.PLAYERBG, this, player_remote, res_playerbg_remote);
-            SImage img_playerbg_local = scaleServ.createSImage(compid_playerbg_local, SolShowComponentTypes.PLAYERBG, this, player_local, res_playerbg_local); 
-            SImage img_vs = scaleServ.createSImage(compid_vs, SolShowComponentTypes.VS, this, null, res_vs); 
+            JSImage img_cardareabg_remote = scaleServ.createImage(compid_cardareabg_remote, SolShowComponentTypes.CARDAREABG, this, player_remote, res_cardareabg_remote);
+            JSImage img_cardareabg_local = scaleServ.createImage(compid_cardareabg_local, SolShowComponentTypes.CARDAREABG, this, player_local, res_cardareabg_local); 
+            JSImage img_playerbg_remote = scaleServ.createImage(compid_playerbg_remote, SolShowComponentTypes.PLAYERBG, this, player_remote, res_playerbg_remote);
+            JSImage img_playerbg_local = scaleServ.createImage(compid_playerbg_local, SolShowComponentTypes.PLAYERBG, this, player_local, res_playerbg_local); 
+            JSImage img_vs = scaleServ.createImage(compid_vs, SolShowComponentTypes.VS, this, null, res_vs); 
                                     
             img_cardareabg_remote.setScalableImageResource(resid_cardareabg_remote);
             img_cardareabg_local.setScalableImageResource(resid_cardareabg_local);
@@ -149,11 +148,11 @@ public class SolShowGamePanelManager extends GamePanelManager
             add(img_playerbg_local);
             add(img_vs);
             
-            scaleServ.addSComponent(img_cardareabg_remote);
-            scaleServ.addSComponent(img_cardareabg_local);
-            scaleServ.addSComponent(img_playerbg_remote);
-            scaleServ.addSComponent(img_playerbg_local);
-            scaleServ.addSComponent(img_vs);
+            scaleServ.addComponent(img_cardareabg_remote);
+            scaleServ.addComponent(img_cardareabg_local);
+            scaleServ.addComponent(img_playerbg_remote);
+            scaleServ.addComponent(img_playerbg_local);
+            scaleServ.addComponent(img_vs);
         }
     }
 
@@ -205,11 +204,11 @@ public class SolShowGamePanelManager extends GamePanelManager
     }
     
     @Override
-    public void updateComponent(ISComponent comp)
+    public void updateComponent(IComponent comp)
     {        
         if (comp.getComponentType().hasTypeName(SolShowComponentTypes.SPECIALSCORE))
         {
-            SText textComp = (SText) comp;
+            ScaledTextDrawer textComp = (ScaledTextDrawer) comp;
             ReadOnlyCardStack cs = (ReadOnlyCardStack) comp.getPayload();
             textComp.setText("" + cs.getCards().size());
             textComp.repaint();
@@ -221,7 +220,7 @@ public class SolShowGamePanelManager extends GamePanelManager
         }
         else if (comp.getComponentType().hasTypeName(SolShowComponentTypes.PLAYERNAME))
         {
-            SText textComp = (SText) comp;
+            ScaledTextDrawer textComp = (ScaledTextDrawer) comp;
             ReadOnlyPlayer player = (ReadOnlyPlayer) comp.getPayload();
             textComp.setText(player.getName());        
             return;

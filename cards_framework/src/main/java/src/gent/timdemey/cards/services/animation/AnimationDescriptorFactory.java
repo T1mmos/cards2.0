@@ -6,12 +6,12 @@ import java.util.List;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IAnimationDescriptorFactory;
-import gent.timdemey.cards.ui.components.ISComponent;
-import gent.timdemey.cards.ui.components.JSLayeredPane;
+import gent.timdemey.cards.ui.components.ext.IComponent;
+import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 
 public class AnimationDescriptorFactory implements IAnimationDescriptorFactory
 {
-    public AnimationDescriptor getAnimationDescriptor(ISComponent comp)
+    public AnimationDescriptor getAnimationDescriptor(IComponent comp)
     {
         if (comp.getComponentType().hasTypeName(ComponentTypes.CARD))
         {

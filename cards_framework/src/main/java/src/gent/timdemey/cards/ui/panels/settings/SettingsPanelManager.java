@@ -24,7 +24,7 @@ import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.ui.components.JSLayeredPane;
+import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.DataPanelManagerBase;
 import net.miginfocom.swing.MigLayout;
 
@@ -64,7 +64,7 @@ public class SettingsPanelManager extends  DataPanelManagerBase<Void, Void>
     }
     
     @Override
-    public JSLayeredPane createSPanel()
+    public JSLayeredPane createPanel()
     {
         if (contentPanel == null)
         {
@@ -183,7 +183,7 @@ public class SettingsPanelManager extends  DataPanelManagerBase<Void, Void>
     }
     
     @Override
-    public JSLayeredPane getSPanel()
+    public JSLayeredPane getPanel()
     {
         return contentPanel;
     }

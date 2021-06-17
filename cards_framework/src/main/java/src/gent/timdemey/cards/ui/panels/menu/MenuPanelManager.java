@@ -21,7 +21,7 @@ import gent.timdemey.cards.services.contract.res.ImageResource;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
-import gent.timdemey.cards.ui.components.JSLayeredPane;
+import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.PanelManagerBase;
 import net.miginfocom.swing.MigLayout;
 
@@ -44,7 +44,7 @@ public class MenuPanelManager extends PanelManagerBase
     }
 
     @Override
-    public JSLayeredPane createSPanel()
+    public JSLayeredPane createPanel()
     {
         menuPanel = new JSLayeredPane(PanelDescriptors.Menu.id);
         menuPanel.setLayout(new MigLayout("insets 0, align 50% 50%"));
@@ -92,7 +92,7 @@ public class MenuPanelManager extends PanelManagerBase
     }
     
     @Override
-    public JSLayeredPane getSPanel()
+    public JSLayeredPane getPanel()
     {
         return menuPanel;
     }

@@ -2,17 +2,19 @@ package gent.timdemey.cards.ui.panels;
 
 import java.util.List;
 
+import javax.swing.JComponent;
+
 import gent.timdemey.cards.services.contract.RescaleRequest;
-import gent.timdemey.cards.ui.components.ISComponent;
-import gent.timdemey.cards.ui.components.JSLayeredPane;
+import gent.timdemey.cards.ui.components.ext.IComponent;
+import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 
 public interface IPanelManager
 {   
     public void preload();
     
     public boolean isPanelCreated();
-    public JSLayeredPane createSPanel();
-    public JSLayeredPane getSPanel();
+    public JSLayeredPane createPanel();
+    public JSLayeredPane getPanel();
     public void destroyPanel();    
 
     public void onShown();
@@ -21,18 +23,9 @@ public interface IPanelManager
     
     public void createRescaleRequests(List<? super RescaleRequest> requests);
     
-    public void createSComponents();
-    public void positionSComponents();
-    public void repaintSComponents();
+    public void createComponents();
+    public void positionComponents();
 
-    public void startAnimation(ISComponent scaleComp);
-    public void stopAnimation(ISComponent scaleComp);
-
-    public int getLayer(ISComponent scaleComp);
-    public void setLayer(ISComponent scaleComp, int layerIndex);    
-    
-    public void add(ISComponent comp);
-    public void remove(ISComponent comp);
-
-    public void updateComponent(ISComponent comp);
+    public void startAnimation(IComponent scaleComp);
+    public void stopAnimation(IComponent scaleComp);
 }

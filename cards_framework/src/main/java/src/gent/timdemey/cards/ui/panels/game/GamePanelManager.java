@@ -21,9 +21,9 @@ import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
-import gent.timdemey.cards.ui.components.ISComponent;
-import gent.timdemey.cards.ui.components.SImage;
-import gent.timdemey.cards.ui.components.JSLayeredPane;
+import gent.timdemey.cards.ui.components.ext.IComponent;
+import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
+import gent.timdemey.cards.ui.components.swing.JSImage;
 import gent.timdemey.cards.ui.panels.PanelManagerBase;
 
 public class GamePanelManager extends PanelManagerBase
@@ -57,7 +57,7 @@ public class GamePanelManager extends PanelManagerBase
     }
     
     @Override
-    public JSLayeredPane createSPanel()
+    public JSLayeredPane createPanel()
     {
         gamePanel = new GamePanel();
         dragListener = new GamePanelMouseListener(); 
@@ -71,13 +71,13 @@ public class GamePanelManager extends PanelManagerBase
     }
     
     @Override
-    public JSLayeredPane getSPanel()
+    public JSLayeredPane getPanel()
     {
         return gamePanel;
     }
     
     @Override
-    public void createSComponents()
+    public void createComponents()
     {
         IScalingService scaleCompServ = Services.get(IScalingService.class);
 
@@ -88,19 +88,19 @@ public class GamePanelManager extends PanelManagerBase
         for (int i = 0; i < cards.size(); i++)
         {
             ReadOnlyCard card = cards.get(i);
-            ISComponent scaleComp = scaleCompServ.createSComponent(card, this);
+            IComponent scaleComp = scaleCompServ.createComponent(card, this);
             add(scaleComp);
             updateComponent(scaleComp);
         }
     }    
 
     @Override
-    public void updateComponent(ISComponent comp)
+    public void updateComponent(IComponent comp)
     {
         ComponentType compType = comp.getComponentType();
         if(compType.hasTypeName(ComponentTypes.CARD))
         {
-            SImage cardComp = (SImage) comp;
+            JSImage cardComp = (JSImage) comp;
             ReadOnlyCard card = (ReadOnlyCard) cardComp.getPayload();
 
             IIdService idServ = Services.get(IIdService.class);
@@ -114,7 +114,7 @@ public class GamePanelManager extends PanelManagerBase
 
         if(compType.hasTypeName(ComponentTypes.CARDSTACK))
         {
-            SImage cardStackComp = (SImage) comp;
+            JSImage cardStackComp = (JSImage) comp;
             ReadOnlyCardStack cardStack = (ReadOnlyCardStack) cardStackComp.getPayload();
 
             IIdService idServ = Services.get(IIdService.class);
@@ -209,14 +209,14 @@ public class GamePanelManager extends PanelManagerBase
         }
     }
 
-    public void startAnimation(ISComponent scaleComp)
+    public void startAnimation(IComponent scaleComp)
     {
         int layer = getNextAnimationLayer();
         setLayer(scaleComp, layer);
         animator.animate(scaleComp);
     }
 
-    public void stopAnimation(ISComponent scaleComp)
+    public void stopAnimation(IComponent scaleComp)
     {
         animator.stopAnimate(scaleComp);
     }

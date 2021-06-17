@@ -16,8 +16,8 @@ import gent.timdemey.cards.services.contract.preload.PreloadOrderType;
 import gent.timdemey.cards.services.interfaces.IAnimationDescriptorFactory;
 import gent.timdemey.cards.services.interfaces.IAnimationService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
-import gent.timdemey.cards.ui.components.ISComponent;
-import gent.timdemey.cards.ui.components.JSLayeredPane;
+import gent.timdemey.cards.ui.components.ext.IComponent;
+import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.IPanelManager;
 
 public class AnimationService implements IAnimationService
@@ -38,7 +38,7 @@ public class AnimationService implements IAnimationService
     }
 
     @Override
-    public void animate(ISComponent component)
+    public void animate(IComponent component)
     {
         IPositionService posServ = Services.get(IPositionService.class);
         IAnimationDescriptorFactory animDescFact = Services.get(IAnimationDescriptorFactory.class);
@@ -61,7 +61,7 @@ public class AnimationService implements IAnimationService
 
     }
 
-    public void stopAnimate(ISComponent scaleComp)
+    public void stopAnimate(IComponent scaleComp)
     {
         Iterator<AnimationTracker> it = animTrackers.iterator();
         while (it.hasNext())
@@ -152,9 +152,9 @@ public class AnimationService implements IAnimationService
      * 
      * @return
      */
-    public List<ISComponent> getScalableComponents()
+    public List<IComponent> getScalableComponents()
     {
-        List<ISComponent> comps = new ArrayList<>();
+        List<IComponent> comps = new ArrayList<>();
         for (AnimationTracker tracker : animTrackers)
         {
             comps.add(tracker.component);

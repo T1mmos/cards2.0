@@ -12,7 +12,7 @@ import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
-import gent.timdemey.cards.ui.components.JSLayeredPane;
+import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.DataPanelManagerBase;
 import net.miginfocom.swing.MigLayout;
 
@@ -27,7 +27,7 @@ public class StartServerPanelManager extends DataPanelManagerBase<String, StartS
     }
         
     @Override
-    public JSLayeredPane createSPanel()
+    public JSLayeredPane createPanel()
     {
         this.tf_srvname = new JTextField(30);
         this.tf_srvmsg = new JTextField(30); 
@@ -108,7 +108,7 @@ public class StartServerPanelManager extends DataPanelManagerBase<String, StartS
     }
 
     @Override
-    public JSLayeredPane getSPanel()
+    public JSLayeredPane getPanel()
     {
         return contentPanel;
     }

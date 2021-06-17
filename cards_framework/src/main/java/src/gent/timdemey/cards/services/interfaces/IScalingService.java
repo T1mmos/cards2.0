@@ -5,16 +5,18 @@ import java.awt.Rectangle;
 import java.util.List;
 import java.util.UUID;
 
+import javax.swing.JComponent;
+
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
-import gent.timdemey.cards.ui.components.ISComponent;
 import gent.timdemey.cards.ui.components.ISResource;
 import gent.timdemey.cards.ui.components.SFontResource;
-import gent.timdemey.cards.ui.components.SImage;
 import gent.timdemey.cards.ui.components.SImageResource;
-import gent.timdemey.cards.ui.components.SText;
+import gent.timdemey.cards.ui.components.ext.IHasComponent;
+import gent.timdemey.cards.ui.components.swing.JSImage;
+import gent.timdemey.cards.ui.components.swing.JSLabel;
 import gent.timdemey.cards.ui.panels.IPanelManager;
 
 /**
@@ -44,28 +46,28 @@ public interface IScalingService
      * @param card
      * @return
      */
-    public ISComponent createSComponent(ReadOnlyCard card, IPanelManager panelManager);
+    public JSImage createImage(ReadOnlyCard card, IPanelManager panelManager);
     
     /**
      * Gets a scalable component for the given model object.
      * @param card
      * @return
      */
-    public ISComponent getSComponent(ReadOnlyCard card);
+    public JSImage getImage(ReadOnlyCard card);
     
     /**
      * Get or creates once a scalable component for the given model object.
      * @param card
      * @return
      */
-    public ISComponent createSComponent(ReadOnlyCardStack cardStack, IPanelManager panelManager);
+    public JSImage createImage(ReadOnlyCardStack cardStack, IPanelManager panelManager);
     
     /**
      * Gets a scalable component for the given model object.
      * @param card
      * @return
      */
-    public ISComponent getSComponent(ReadOnlyCardStack cardStack);
+    public JSImage getImage(ReadOnlyCardStack cardStack);
     
     /**
      * Creates a scalable image component.
@@ -76,9 +78,9 @@ public interface IScalingService
      * @param imgResources
      * @return
      */
-    public SImage createSImage(UUID compId, ComponentType compType, IPanelManager panelMgr, Object payload, SImageResource ... imgResources);
+    public JSImage createImage(UUID compId, ComponentType compType, IPanelManager panelMgr, Object payload, SImageResource ... imgResources);
     
-    public SText createSText(UUID compId, ComponentType compType, String text, IPanelManager panelMgr, Object payload, SFontResource textRes);
+    public JSLabel createLabel(UUID compId, ComponentType compType, String text, IPanelManager panelMgr, Object payload, SFontResource textRes);
     
     /**
      * Adds a scalable resource.
@@ -86,15 +88,15 @@ public interface IScalingService
      */
     public void addSResource(ISResource<?> scaleRes);
     
-    public void addSComponent(ISComponent scaleComp);
+    public <T extends JComponent & IHasComponent> void addComponent(T comp);
             
     /**
-     * Get a scalable component mapped to the given id.
+     * Get a component mapped to the given id.
      * 
      * @param card
      * @return
      */
-    public ISComponent getSComponent(UUID compId);
+    public <T extends JComponent & IHasComponent> T getComponent(UUID compId);
 
     /**
      * Clears the cache containing scalable components. 
@@ -113,21 +115,21 @@ public interface IScalingService
      * @param p
      * @return
      */
-    public ISComponent getComponentAt(IPanelManager panelMgr, Point p);
+    public <T extends JComponent & IHasComponent> T getComponentAt(IPanelManager panelMgr, Point p);
         
     /**
      * Get all components found at the given position, disregarding their Z-order.
      * @param p
      * @return
      */
-    public List<ISComponent> getSComponentsAt(Point p);
+    public <T extends JComponent & IHasComponent> List<T> getComponentsAt(Point p);
     
     /**
      * Get all components overlapping with the given rectangle, disregarding their Z-order.
      * @param p
      * @return
      */
-    public List<ISComponent> getSComponentsIn(Rectangle rect);
+    public <T extends JComponent & IHasComponent> List<T> getComponentsIn(Rectangle rect);
     
     /**
      * Get the components found at the given position that are of the given type.
@@ -135,9 +137,9 @@ public interface IScalingService
      * @param clazz
      * @return
      */
-    public <T extends ISComponent> List<T> getComponentsAt(Point p, Class<T> clazz);  
+    public <T extends JComponent & IHasComponent> List<T> getComponentsAt(Point p, Class<T> clazz);  
     
-    public List<ISComponent> getSComponents();
+    public <T extends JComponent & IHasComponent> List<T> getComponents();
 
     /**
      * Gets the scalable resource with the given id.

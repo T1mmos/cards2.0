@@ -66,7 +66,7 @@ import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
-import gent.timdemey.cards.ui.components.JSLayeredPane;
+import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.IDataPanelManager;
 import gent.timdemey.cards.ui.panels.IPanelManager;
 import gent.timdemey.cards.ui.panels.PanelInData;
@@ -266,7 +266,7 @@ public class FrameService implements IFrameService, IPreload
         IPanelManager panelMgr = panelServ.getPanelManager(desc);
         
         // check that the component is actually part of the frame body panel
-        JComponent contentComp = panelMgr.getSPanel();
+        JComponent contentComp = panelMgr.getPanel();
         JComponent directChild;
         if (desc.panelType == PanelType.Root)
         {
@@ -315,7 +315,7 @@ public class FrameService implements IFrameService, IPreload
         if (pt == null)
         {
             add = true;
-            pb = panelMgr.createSPanel();
+            pb = panelMgr.createPanel();
             if (pb.getParent() != null)
             {
                 throw new IllegalStateException("The component to add already has a parent!");
@@ -553,7 +553,7 @@ public class FrameService implements IFrameService, IPreload
             IPanelManager pMan = panelServ.getPanelManager(pd);
             if (pMan.isPanelCreated())
             {
-                JComponent comp = pMan.getSPanel();
+                JComponent comp = pMan.getPanel();
                 comp.repaint();
             }
         }
@@ -892,7 +892,7 @@ public class FrameService implements IFrameService, IPreload
                 marginPanel.add(titleLabel, "gapy 0 20, pushx, growx, alignx left, wrap");
                 
                 // content panel provided by the manager
-                JSLayeredPane contentPanel = dpMan.createSPanel();
+                JSLayeredPane contentPanel = dpMan.createPanel();
                 marginPanel.add(contentPanel, "grow, push, wrap");
                 
                 // create the buttons

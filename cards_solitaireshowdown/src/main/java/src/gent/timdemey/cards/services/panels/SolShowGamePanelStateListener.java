@@ -20,9 +20,9 @@ import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.interfaces.ISolShowIdService;
 import gent.timdemey.cards.services.resources.SolShowResourceDefines;
-import gent.timdemey.cards.ui.components.ISComponent;
 import gent.timdemey.cards.ui.components.SFontResource;
-import gent.timdemey.cards.ui.components.SText;
+import gent.timdemey.cards.ui.components.drawers.ScaledTextDrawer;
+import gent.timdemey.cards.ui.components.ext.IComponent;
 import gent.timdemey.cards.ui.panels.IPanelManager;
 import gent.timdemey.cards.ui.panels.game.GamePanelStateListener;
 
@@ -53,7 +53,7 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
             String text = "+" + incr;
             IPanelService panelServ = Services.get(IPanelService.class);
             IPanelManager panelMgr = panelServ.getPanelManager(PanelDescriptors.Game);
-            SText comp = scaleServ.createSText(UUID.randomUUID(), ComponentTypes.CARDSCORE, text, panelMgr, null, scaleFontRes);
+            ScaledTextDrawer comp = scaleServ.createLabel(UUID.randomUUID(), ComponentTypes.CARDSCORE, text, panelMgr, null, scaleFontRes);
             comp.setPanelManager(panelMgr);
             comp.setPayload(card);
 
@@ -72,7 +72,7 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
                     {
                         for (ReadOnlyCard card : cardStack.getHighestCards(cnt))
                         {
-                            ISComponent comp = scaleServ.getSComponent(card);
+                            IComponent comp = scaleServ.getSComponent(card);
                             comp.getPanelManager().startAnimation(comp);
                         }
                     }
@@ -80,7 +80,7 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
                 else if (cardStack.getCardStackType().equals(SolShowCardStackType.SPECIAL))
                 {
                     UUID id = idServ.createSpecialCounterComponentId(cardStack);
-                    SText comp = (SText) scaleServ.getSComponent(id);
+                    ScaledTextDrawer comp = (ScaledTextDrawer) scaleServ.getComponent(id);
                     String text = "" +  cardStack.getCards().size();
                     comp.setText(text);
                     comp.repaint();
@@ -96,7 +96,7 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
                 {
                     ReadOnlyCard animCard = animCards.get(idx);
                     
-                    ISComponent animComp = scaleServ.getSComponent(animCard);
+                    IComponent animComp = scaleServ.getSComponent(animCard);
                     animComp.getPanelManager().startAnimation(animComp);                        
                 }
             }

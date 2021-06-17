@@ -3,7 +3,7 @@ package gent.timdemey.cards.services.animation;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.interfaces.IPositionService;
-import gent.timdemey.cards.ui.components.ISComponent;
+import gent.timdemey.cards.ui.components.ext.IComponent;
 
 public class MovingAnimation implements IAnimation
 {
@@ -12,7 +12,7 @@ public class MovingAnimation implements IAnimation
     }
     
     @Override
-    public void tick(ISComponent comp, double frac, AnimationStart animStart)
+    public void tick(IComponent comp, double frac, AnimationStart animStart)
     {        
         // convert the relative coordinates of the component at the start of the animation
         // into absolute coordinates in the current reference frame, and interpolate 

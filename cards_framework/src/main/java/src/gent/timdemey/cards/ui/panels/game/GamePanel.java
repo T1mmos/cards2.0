@@ -9,7 +9,7 @@ import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
-import gent.timdemey.cards.ui.components.JSLayeredPane;
+import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.utils.DebugDrawDefines;
 
 public class GamePanel extends JSLayeredPane

@@ -12,12 +12,12 @@ import gent.timdemey.cards.services.animation.IAnimation;
 import gent.timdemey.cards.services.animation.MovingAnimation;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.resources.SolShowResourceDefines;
-import gent.timdemey.cards.ui.components.ISComponent;
+import gent.timdemey.cards.ui.components.ext.IComponent;
 
 public class SolShowAnimationService extends AnimationService
 {
     @Override
-    public AnimationDescriptor getAnimationDescriptor(ISComponent comp)
+    public AnimationDescriptor getAnimationDescriptor(IComponent comp)
     {
         if (comp.getComponentType().hasTypeName(ComponentTypes.CARDSCORE))
         {            

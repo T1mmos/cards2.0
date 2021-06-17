@@ -126,13 +126,13 @@ public class PanelService implements IPanelService
     @Override
     public void createScalableComponents()
     {
-        foreach(IPanelManager::createSComponents, true);
+        foreach(IPanelManager::createComponents, true);
     }
     
     @Override
     public void positionScalableComponents()
     {
-        foreach(IPanelManager::positionSComponents, true); 
+        foreach(IPanelManager::positionComponents, true); 
     }
     
 

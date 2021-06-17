@@ -1,7 +1,7 @@
 package gent.timdemey.cards.services.interfaces;
 
-import gent.timdemey.cards.ui.components.ISComponent;
-import gent.timdemey.cards.ui.components.JSLayeredPane;
+import gent.timdemey.cards.ui.components.ext.IComponent;
+import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 
 public interface IAnimationService
 {
@@ -13,5 +13,5 @@ public interface IAnimationService
      */
     public void animate (JSLayeredPane pb);
     
-    public void animate (ISComponent comp);
+    public void animate (IComponent comp);
 }

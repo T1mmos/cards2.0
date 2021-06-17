@@ -19,8 +19,8 @@ import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.SolShowComponentTypes;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
-import gent.timdemey.cards.ui.components.ISComponent;
-import gent.timdemey.cards.ui.components.SText;
+import gent.timdemey.cards.ui.components.drawers.ScaledTextDrawer;
+import gent.timdemey.cards.ui.components.ext.IComponent;
 import gent.timdemey.cards.ui.panels.Positions;
 
 public class SolShowPositionService implements IPositionService
@@ -127,7 +127,7 @@ public class SolShowPositionService implements IPositionService
     }
 
     @Override
-    public LayeredArea getStartLayeredArea(ISComponent scaleComp)
+    public LayeredArea getStartLayeredArea(IComponent scaleComp)
     {
         ComponentType compType = scaleComp.getComponentType();
         if (compType.hasTypeName(ComponentTypes.CARDSCORE))
@@ -153,7 +153,7 @@ public class SolShowPositionService implements IPositionService
     }
 
     @Override
-    public LayeredArea getEndLayeredArea(ISComponent scaleComp)
+    public LayeredArea getEndLayeredArea(IComponent scaleComp)
     {
         ComponentType compType = scaleComp.getComponentType();
         
@@ -173,7 +173,7 @@ public class SolShowPositionService implements IPositionService
         }
         else if (compType.hasTypeName(ComponentTypes.CARDSCORE))
         {
-            SText cardScoreComp = ((SText) scaleComp);
+            ScaledTextDrawer cardScoreComp = ((ScaledTextDrawer) scaleComp);
             ReadOnlyCard card = (ReadOnlyCard) cardScoreComp.getPayload();
             LayeredArea la_card = getLayeredArea(card);
 

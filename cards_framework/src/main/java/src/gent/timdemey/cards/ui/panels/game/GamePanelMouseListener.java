@@ -24,8 +24,8 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
-import gent.timdemey.cards.ui.components.ISComponent;
-import gent.timdemey.cards.ui.components.SImage;
+import gent.timdemey.cards.ui.components.ext.IComponent;
+import gent.timdemey.cards.ui.components.swing.JSImage;
 import gent.timdemey.cards.ui.panels.IPanelManager;
 
 class GamePanelMouseListener extends MouseAdapter
@@ -47,7 +47,7 @@ class GamePanelMouseListener extends MouseAdapter
     private int mouse_ystart;
 
     private final List<CardDragState> dragStates;
-    private final List<ISComponent> draggedComps;
+    private final List<IComponent> draggedComps;
 
     GamePanelMouseListener()
     {
@@ -69,7 +69,7 @@ class GamePanelMouseListener extends MouseAdapter
             for (int i = 0; i < dragStates.size(); i++)
             {
                 CardDragState state = dragStates.get(i);
-                ISComponent comp = draggedComps.get(i);
+                IComponent comp = draggedComps.get(i);
                 int card_x = state.xstart + dx;
                 int card_y = state.ystart + dy;
 
@@ -98,9 +98,9 @@ class GamePanelMouseListener extends MouseAdapter
         IPanelManager gamePanelMgr = panelServ.getPanelManager(PanelDescriptors.Game);
         
         
-        ISComponent scaleComp = scaleServ.getComponentAt(gamePanelMgr, e.getPoint());   
+        IComponent scaleComp = scaleServ.getComponentAt(gamePanelMgr, e.getPoint());   
         
-        if (!(scaleComp instanceof SImage))
+        if (!(scaleComp instanceof JSImage))
         {
             return;
         }
@@ -112,7 +112,7 @@ class GamePanelMouseListener extends MouseAdapter
 
         if (scaleComp.getComponentType().hasTypeName(ComponentTypes.CARD))
         {
-            SImage cardImgComp = (SImage) scaleComp;
+            JSImage cardImgComp = (JSImage) scaleComp;
 
             ReadOnlyCard card = (ReadOnlyCard) cardImgComp.getPayload();
             ReadOnlyCardStack stack = card.getCardStack();
@@ -134,7 +134,7 @@ class GamePanelMouseListener extends MouseAdapter
                 {
                     ReadOnlyCard currentCard = cards.get(i);
 
-                    ISComponent currScaleImg = Services.get(IScalingService.class).getSComponent(currentCard);
+                    IComponent currScaleImg = Services.get(IScalingService.class).getSComponent(currentCard);
                     int card_xstart = currScaleImg.getCoords().getBounds().x;
                     int card_ystart = currScaleImg.getCoords().getBounds().y;
 
@@ -158,7 +158,7 @@ class GamePanelMouseListener extends MouseAdapter
                 for (int i = 0; i < cards.size(); i++)
                 {
                     ReadOnlyCard currentCard = cards.get(i);
-                    ISComponent currScaleImg = Services.get(IScalingService.class).getSComponent(currentCard);
+                    IComponent currScaleImg = Services.get(IScalingService.class).getSComponent(currentCard);
                                      
                     // ensure to stop any animations running for this card. Don't change the layer here
                     // it will either be its normal layer, or the dragged layer if the first click 
@@ -198,23 +198,23 @@ class GamePanelMouseListener extends MouseAdapter
 
         if (!draggedComps.isEmpty())
         {
-            ISComponent scaleComp = draggedComps.get(0);
+            IComponent scaleComp = draggedComps.get(0);
 
             int intersectAMax = 0;
             CommandBase cmdMove = null;
             List<UUID> visitedStackIds = new ArrayList<>();
             IScalingService scaleServ = Services.get(IScalingService.class);
 
-            List<ISComponent> overlapComps = scaleServ.getSComponentsIn(scaleComp.getCoords().getBounds());
-            for (ISComponent comp : overlapComps)
+            List<IComponent> overlapComps = scaleServ.getComponentsIn(scaleComp.getCoords().getBounds());
+            for (IComponent comp : overlapComps)
             {
-                if (!(comp instanceof SImage))
+                if (!(comp instanceof JSImage))
                 {
                     continue;
                 }
 
                 // exclude overlaps with components being dragged
-                SImage scaleImgComp = (SImage) comp;
+                JSImage scaleImgComp = (JSImage) comp;
                 if (draggedComps.contains(scaleImgComp))
                 {
                     continue;
@@ -275,7 +275,7 @@ class GamePanelMouseListener extends MouseAdapter
                 IPanelManager gamePanelMgr = panelServ.getPanelManager(PanelDescriptors.Game);
                 for (int i = 0; i < draggedComps.size(); i++)
                 {
-                    ISComponent comp = draggedComps.get(i);                    
+                    IComponent comp = draggedComps.get(i);                    
                     gamePanelMgr.startAnimation(comp);
                 }
             }

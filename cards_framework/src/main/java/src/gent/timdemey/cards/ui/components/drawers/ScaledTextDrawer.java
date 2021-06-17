@@ -1,10 +1,11 @@
-package gent.timdemey.cards.ui.components;
+package gent.timdemey.cards.ui.components.drawers;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -15,27 +16,27 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.function.Consumer;
 
-import javax.swing.JComponent;
+import javax.swing.JLabel;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.GetResourceResponse;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.interfaces.IPositionService;
+import gent.timdemey.cards.ui.components.SFontResource;
+import gent.timdemey.cards.utils.ComponentUtils;
 import gent.timdemey.cards.utils.DebugDrawDefines;
 
-public final class SText extends SComponent
+public final class ScaledTextDrawer extends DrawerBase<JLabel>
 {    
-    private String text;
-    private Color textColorInner;
-    private Color textColorOuter;
-    private Color textColorInner_mouseover;
-    private Color textColorOuter_mouseover;
-    private Color textColorInner_mousePressed;
-    private Color textColorOuter_mousePressed;
+    private Color textColorOutline;
+    private Color textColorOutline_mouseover;
+    private Color textColorOutline_mousePressed;
+    
+    private Color textColorFg_mouseover;
+    private Color textColorFg_mousePressed;
         
-    private TextAlignment alignment;
     private final SFontResource fontResource;
     
     // caches the drawn component so upon resizements, we are still able to 
@@ -45,39 +46,34 @@ public final class SText extends SComponent
     private boolean mouseOver = false; 
     private boolean mousePressed = false;
         
-    private STextMouseListener internalMouseListener = null;
-
-    private boolean changed = true;
-    
-    public SText(UUID id, String text, ComponentType compType, SFontResource fontResource)
+    public ScaledTextDrawer(SFontResource fontResource)
     {
-        super(id, compType);
-        this.text = text;
         this.fontResource = fontResource;
-        setAlignment(TextAlignment.Center);        
-    }
-
-    @Override
-    protected JComponent createJComponent()
-    {
-        return new JSComponent(this);
     }
     
     @Override
-    protected List<String> getDebugStrings()
+    public void onAttached(JLabel comp)
     {
+        super.onAttached(comp);
+        
+        comp.setHorizontalTextPosition(JLabel.CENTER);
+    }
+
+    @Override
+    public List<String> getDebugStrings()
+    {   
         List<String> allStrings = new ArrayList<>(super.getDebugStrings());
 
         allStrings.add(String.format("font=%s", fontResource.getResource().filename));
-        allStrings.add(String.format("fontsize=%s", getFont().resource.getSize()));
+        allStrings.add(String.format("fontsize=%s", getFont(comp).resource.getSize()));
 
         return allStrings;
     }
 
     @Override
-    protected void drawDebugBoundaries(Graphics2D g2)
+    public void drawDebugBoundaries(Graphics2D g2)
     {        
-        Rectangle bounds = getCoords().getBounds();
+        Rectangle bounds = comp.getBounds();
         
         // jlabel bounding box
         {
@@ -90,32 +86,35 @@ public final class SText extends SComponent
         // text soft bounding box
         {
             Graphics2D g = (Graphics2D) g2.create();
-            Rectangle tb = getTextBounds(g);
+            Rectangle tb = getTextBounds(g, comp);
             g.setColor(DebugDrawDefines.COLOR_SCALABLETEXTCOMPONENT_INNER);
             g.setStroke(DebugDrawDefines.STROKE_DASHED);
             g.drawRect(tb.x, tb.y, tb.width - 1, tb.height - 1);
         }        
     }
-        
-    private GetResourceResponse<Font> getFont()
+   
+    
+    private GetResourceResponse<Font> getFont(JLabel comp)
     {
+        ComponentType compType = ComponentUtils.getComponentType(comp);        
+
         IPositionService posServ = Services.get(IPositionService.class);
-        Dimension resDim = posServ.getResourceDimension(getComponentType());
+        Dimension resDim = posServ.getResourceDimension(compType);
         
         // only interested in height for fonts as the width is depending on the text
         GetResourceResponse<Font> resp = fontResource.get(resDim);
         return resp;
     }
 
-    private Rectangle getTextBounds(Graphics2D g2)
+    private Rectangle getTextBounds(Graphics2D g2, JLabel comp)
     {
-        Rectangle bounds = getCoords().getBounds();
+        Rectangle bounds = comp.getBounds();
 
-        Font font = getFont().resource;
+        Font font = getFont(comp).resource;
         g2.setFont(font);
         // text bounding box
         FontMetrics fm = g2.getFontMetrics();
-        Rectangle2D strRect = fm.getStringBounds(getText(), g2);
+        Rectangle2D strRect = fm.getStringBounds(comp.getText(), g2);
 
         int w = (int) strRect.getWidth();
         int h = (int) strRect.getHeight();
@@ -126,11 +125,11 @@ public final class SText extends SComponent
         }
 
         int x;
-        if(alignment == TextAlignment.Left)
+        if(comp.getHorizontalAlignment() == JLabel.LEFT)
         {
             x = 0;
         }
-        else if(alignment == TextAlignment.Center)
+        else if(comp.getHorizontalAlignment() == JLabel.CENTER)
         {
             x = (bounds.width - w) / 2;
         }
@@ -143,64 +142,31 @@ public final class SText extends SComponent
         return new Rectangle(x, y, w, h);
     }
 
-    public final String getText()
-    {
-        return text;
-    }
-
-    public final void setText(String text)
-    {
-        this.text = text;
-        changed = true;
-    }
-
-    public void setInnerColor(Color color)
-    {
-        textColorInner = color;
-        changed = true;
-    }
-    
     public void setOuterColor(Color color)
     {
-        textColorOuter = color;
-        changed = true;
+        textColorOutline = color;
     }
     
     public void setInnerColorMouseOver(Color color)
     {
-        textColorInner_mouseover = color;
-        ensureMouseListener();
-        changed = true;
+        textColorFg_mouseover = color;
     }
     
     public void setOuterColorMouseOver(Color color)
     {
-        textColorOuter_mouseover = color;
-        ensureMouseListener();
-        changed = true;
-    }
-    
-    private void ensureMouseListener()
-    {
-        if (internalMouseListener == null)
-        {
-            internalMouseListener = new STextMouseListener(this);
-            add(internalMouseListener);
-        }
-    }
-
-    public final void setAlignment(TextAlignment alignment)
-    {
-        this.alignment = alignment;
-        changed = true;
+        textColorOutline_mouseover = color;
     }
 
     @Override
-    protected void drawForeground(Graphics2D g)
-    {
-        GetResourceResponse<Font> resp = getFont();
-        Dimension dim = getCoords().getSize();
-        if ((changed || bufferedImage.getWidth() != dim.width || bufferedImage.getHeight() != dim.height) && resp.found)
+    public void drawForeground(Graphics2D g2, Consumer<Graphics> superPaintComponent)
+    {        
+        Graphics2D g = (Graphics2D) g2.create();
+        
+        applyAlpha(g, getForegroundAlpha());
+
+        GetResourceResponse<Font> resp = getFont(comp);
+        Dimension dim = ComponentUtils.getComponent(comp).getCoords().getSize();
+        if ((bufferedImage.getWidth() != dim.width || bufferedImage.getHeight() != dim.height) && resp.found)
         {
             // update the buffered image
             Font font = resp.resource;
@@ -210,7 +176,7 @@ public final class SText extends SComponent
             
             g2d.setFont(font);
 
-            Rectangle tb = getTextBounds(g);
+            Rectangle tb = getTextBounds(g, comp);
             FontMetrics fm = g.getFontMetrics();
             int descent = fm.getDescent();
             g2d.translate(tb.x, + tb.y + tb.height - descent);
@@ -218,6 +184,7 @@ public final class SText extends SComponent
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             // text
+            String text = comp.getText();
             if (text != null && !text.isEmpty())
             {
                 FontRenderContext frc = g2d.getFontRenderContext();
@@ -227,9 +194,9 @@ public final class SText extends SComponent
 
                 float strokeWidth = 1.0f * font.getSize() / 16;
                 g2d.setStroke(new BasicStroke(strokeWidth));
-                g2d.setColor(getInnerColor());
+                g2d.setColor(getInnerColor(comp));
                 g2d.fill(shape);
-                g2d.setColor(getOuterColor());
+                g2d.setColor(getOutlineColor());
                 g2d.draw(shape);                    
             }               
             
@@ -240,34 +207,34 @@ public final class SText extends SComponent
         g.drawImage(bufferedImage, 0, 0, dim.width, dim.height, null);
     }
     
-    private Color getInnerColor()
+    private Color getInnerColor(JLabel label)
     {
-        if (mousePressed && textColorInner_mousePressed != null)
+        if (mousePressed && textColorFg_mousePressed != null)
         {
-            return textColorInner_mousePressed;         
+            return textColorFg_mousePressed;         
         }        
-        if (mouseOver && textColorInner_mouseover != null)
+        if (mouseOver && textColorFg_mouseover != null)
         {    
-            return textColorInner_mouseover;            
+            return textColorFg_mouseover;            
         }
         
         // default
-        return textColorInner;
+        return label.getForeground();
     }
     
-    private Color getOuterColor()
+    private Color getOutlineColor()
     {
-        if (mousePressed && textColorOuter_mousePressed != null)
+        if (mousePressed && textColorOutline_mousePressed != null)
         {
-            return textColorOuter_mousePressed;         
+            return textColorOutline_mousePressed;         
         }  
-        if (mouseOver && textColorOuter_mouseover != null)
+        if (mouseOver && textColorOutline_mouseover != null)
         {
-            return textColorOuter_mouseover;
+            return textColorOutline_mouseover;
         }
         
         // default
-        return textColorOuter;
+        return textColorOutline;
     }
 
     void setMouseInside(boolean inside)
@@ -275,7 +242,6 @@ public final class SText extends SComponent
         if (mouseOver != inside)
         {
             mouseOver = inside;
-            changed = true;
         }
     }
     
@@ -284,7 +250,6 @@ public final class SText extends SComponent
         if (mousePressed != pressed)
         {
             mousePressed = pressed;
-            changed = true;
         }        
     }
 }
