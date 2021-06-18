@@ -9,9 +9,10 @@ import javax.swing.event.DocumentListener;
 
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
+import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptors;
-import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
+import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.DataPanelManagerBase;
 import net.miginfocom.swing.MigLayout;
@@ -31,7 +32,8 @@ public class StartServerPanelManager extends DataPanelManagerBase<String, StartS
     {
         this.tf_srvname = new JTextField(30);
         this.tf_srvmsg = new JTextField(30); 
-        this.contentPanel = new JSLayeredPane(new MigLayout("insets 0, align center center"), PanelDescriptors.StartServer.id + " content");
+        this.contentPanel = JSFactory.createLayeredPane(ComponentTypes.PANEL); 
+        this.contentPanel.setLayout(new MigLayout("insets 0, align center center"));
 
         JLabel lb_srvname = new JLabel(Loc.get(LocKey.Label_servername));
         JLabel lb_srvmsg = new JLabel(Loc.get(LocKey.Label_servermsg));

@@ -662,7 +662,8 @@ public class CommandHistory extends EntityBase
      * Set the state of a CommandExecution that is currently awaiting confirmation
      * as being accepted by the server.
      * 
-     * @param id
+     * @param commandId
+     * @param state
      */
     public void accept(UUID commandId, State state)
     {

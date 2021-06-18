@@ -2,10 +2,11 @@ package gent.timdemey.cards.services.interfaces;
 
 import java.awt.Dimension;
 
+import javax.swing.JComponent;
+
 import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
-import gent.timdemey.cards.ui.components.ext.IComponent;
 
 /**
  * Calculates the entire game panel layout given a maximum width and height.
@@ -50,20 +51,20 @@ public interface IPositionService
      * @param id
      * @return
      */
-    public LayeredArea getStartLayeredArea(IComponent scaleComp);
+    public LayeredArea getStartLayeredArea(JComponent comp);
     
     /**
      * Returns the bounds where the given component should be finally positioned at.
-     * All components should be supported by the implementation.
+     * All comp2jcomp should be supported by the implementation.
      * @param id
      * @return
      */
-    public LayeredArea getEndLayeredArea(IComponent scaleComp);
+    public LayeredArea getEndLayeredArea(JComponent comp);
        
     /**
      * Gets the dimensions given a request that contains runtime context where a resource
      * could be used. This allows to pre-scale resources without knowing the actual
-     * components where they could be used nor is known what domain objects are linked
+     * comp2jcomp where they could be used nor is known what domain objects are linked
      * to it. 
      * <p>A good example is an animation shown after a card is put down onto a stack:
      * this animation is short-lived and the component holding the shown resource does not
@@ -74,14 +75,14 @@ public interface IPositionService
     public Dimension getResourceDimension(ComponentType compType);
     
     /** 
-     * Gets the drag layer, the base / minimum layer in which components should be z-ordered when 
+     * Gets the drag layer, the base / minimum layer in which comp2jcomp should be z-ordered when 
      * a component is manually dragged.
      * @return
      */
     public int getDragLayer();
     
     /**
-     * Gets the animation layer, the base / minimum layer where all components currently being 
+     * Gets the animation layer, the base / minimum layer where all comp2jcomp currently being 
      * animated should be z-ordered.
      * @return
      */

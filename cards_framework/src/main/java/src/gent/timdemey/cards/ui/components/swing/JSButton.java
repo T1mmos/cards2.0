@@ -6,13 +6,13 @@ import javax.swing.JButton;
 
 import gent.timdemey.cards.ui.components.drawers.IDrawer;
 import gent.timdemey.cards.ui.components.drawers.IHasDrawer;
-import gent.timdemey.cards.ui.components.ext.IComponent;
+import gent.timdemey.cards.ui.components.ext.ComponentBase;
 import gent.timdemey.cards.ui.components.ext.IHasComponent;
 
-public class JSButton extends JButton implements IHasComponent, IHasDrawer<JButton> 
+public class JSButton extends JButton implements IHasComponent<ComponentBase>, IHasDrawer<JButton> 
 {
     private IDrawer<JButton>  drawer;
-    private IComponent scomp;    
+    private ComponentBase scomp;    
     
     JSButton()
     {
@@ -37,13 +37,13 @@ public class JSButton extends JButton implements IHasComponent, IHasDrawer<JButt
     }
 
     @Override
-    public final IComponent getComponent()
+    public final ComponentBase getComponent()
     {
         return scomp;
     }
 
     @Override
-    public final void setSComponent(IComponent scomp)
+    public final void setComponent(ComponentBase scomp)
     {
         this.scomp = scomp;
     }

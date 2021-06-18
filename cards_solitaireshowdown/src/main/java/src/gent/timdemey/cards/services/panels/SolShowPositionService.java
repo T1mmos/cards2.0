@@ -134,10 +134,10 @@ public class SolShowPositionService implements IPositionService
         {
             LayeredArea endLayeredArea = getEndLayeredArea(scaleComp);
 
-            int x = endLayeredArea.coords.x;
-            int y = endLayeredArea.coords.y + getCardDimension().height / 2;
-            int w = endLayeredArea.coords.w;
-            int h = endLayeredArea.coords.h;
+            int x = endLayeredArea.abscoords.x;
+            int y = endLayeredArea.abscoords.y + getCardDimension().height / 2;
+            int w = endLayeredArea.abscoords.w;
+            int h = endLayeredArea.abscoords.h;
             Coords.Absolute coords = Coords.getAbsolute(x, y, w, h);
             return new LayeredArea(coords, LAYER_ANIMATIONS, false);
         }
@@ -178,8 +178,8 @@ public class SolShowPositionService implements IPositionService
             LayeredArea la_card = getLayeredArea(card);
 
             Dimension dim = pos.getDimension(SolShowGameLayout.DIM_CARDSCORE);
-            int x = la_card.coords.x - (dim.width - la_card.coords.w) / 2;
-            int y = la_card.coords.y - getCardDimension().height / 2;
+            int x = la_card.abscoords.x - (dim.width - la_card.abscoords.w) / 2;
+            int y = la_card.abscoords.y - getCardDimension().height / 2;
             int w = dim.width;
             int h = dim.height;
 

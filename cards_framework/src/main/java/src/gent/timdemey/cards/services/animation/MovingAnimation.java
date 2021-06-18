@@ -21,10 +21,10 @@ public class MovingAnimation implements IAnimation
         IPositionService posServ = Services.get(IPositionService.class);
         
         Coords.Absolute coords_src = posServ.getAbsoluteCoords(animStart.relcoords);
-        Coords.Absolute coords_dst = posServ.getEndLayeredArea(comp).coords;          
+        Coords.Absolute coords_dst = posServ.getEndLayeredArea(comp).abscoords;          
         Coords.Absolute coords_interp = Coords.interpolate(frac, coords_src, coords_dst);   
         
-        comp.setCoords(coords_interp);
+        comp.setAbsCoords(coords_interp);
         comp.getJComponent().validate();
     }
 }

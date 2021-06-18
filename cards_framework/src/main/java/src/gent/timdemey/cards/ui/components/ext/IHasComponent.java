@@ -1,7 +1,7 @@
 package gent.timdemey.cards.ui.components.ext;
 
-public interface IHasComponent
+public interface IHasComponent<T extends IComponent>
 {
-    IComponent getComponent();
-    void setSComponent(IComponent scomp);
+    T getComponent();
+    void setComponent(T scomp);
 }

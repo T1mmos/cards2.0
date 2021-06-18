@@ -7,12 +7,12 @@ import javax.swing.JLayeredPane;
 import gent.timdemey.cards.ui.components.drawers.IDrawer;
 import gent.timdemey.cards.ui.components.drawers.IHasDrawer;
 import gent.timdemey.cards.ui.components.ext.IHasComponent;
-import gent.timdemey.cards.ui.components.ext.IComponent;
+import gent.timdemey.cards.ui.components.ext.LayeredPaneComponent;
 
-public class JSLayeredPane extends JLayeredPane implements IHasComponent, IHasDrawer<JLayeredPane> 
+public class JSLayeredPane extends JLayeredPane implements IHasComponent<LayeredPaneComponent>, IHasDrawer<JLayeredPane> 
 {
     private IDrawer<JLayeredPane>  drawer;
-    private IComponent scomp;    
+    private LayeredPaneComponent comp;    
     
     JSLayeredPane ()
     {
@@ -37,14 +37,14 @@ public class JSLayeredPane extends JLayeredPane implements IHasComponent, IHasDr
     }
 
     @Override
-    public final IComponent getComponent()
+    public final LayeredPaneComponent getComponent()
     {
-        return scomp;
+        return comp;
     }
 
     @Override
-    public final void setSComponent(IComponent scomp)
+    public final void setComponent(LayeredPaneComponent scomp)
     {
-        this.scomp = scomp;
+        this.comp = scomp;
     }
 }

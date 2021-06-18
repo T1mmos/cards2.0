@@ -114,7 +114,7 @@ class FrameBodyPanelResizeListener implements ComponentListener
     private void onRescaled()
     {
         IPanelService panelServ = Services.get(IPanelService.class);
-        panelServ.repaintScalableComponents();
+       // panelServ.repaintScalableComponents();
     }
 
     @Override

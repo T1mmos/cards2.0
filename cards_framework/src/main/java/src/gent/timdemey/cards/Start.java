@@ -36,7 +36,7 @@ import gent.timdemey.cards.services.resources.ResourceCacheService;
 import gent.timdemey.cards.ui.StartUI;
 import gent.timdemey.cards.ui.components.ScalingService;
 import gent.timdemey.cards.ui.panels.PanelService;
-import gent.timdemey.cards.ui.panels.game.GamePanelStateListener;
+import gent.timdemey.cards.ui.panels.game.CardGamePanelStateListener;
 
 public class Start
 {
@@ -142,7 +142,7 @@ public class Start
      //   services.installIfAbsent(IDialogService.class, () -> new DialogService());
         services.installIfAbsent(IActionService.class, () -> new ActionService());
         services.installIfAbsent(IPanelService.class, () -> new PanelService());
-        services.installIfAbsent(IStateListener.class, () -> new GamePanelStateListener());
+        services.installIfAbsent(IStateListener.class, () -> new CardGamePanelStateListener());
         services.installIfAbsent(IFileService.class, () -> new FileService());
     }
 }

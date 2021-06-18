@@ -7,12 +7,12 @@ import javax.swing.JLabel;
 import gent.timdemey.cards.ui.components.drawers.IDrawer;
 import gent.timdemey.cards.ui.components.drawers.IHasDrawer;
 import gent.timdemey.cards.ui.components.ext.IHasComponent;
-import gent.timdemey.cards.ui.components.ext.IComponent;
+import gent.timdemey.cards.ui.components.ext.TextComponent;
 
-public class JSLabel extends JLabel implements IHasComponent, IHasDrawer<JLabel> 
+public class JSLabel extends JLabel implements IHasComponent<TextComponent>, IHasDrawer<JLabel> 
 {
     private IDrawer<JLabel>  drawer;
-    private IComponent scomp;    
+    private TextComponent scomp;    
     
     JSLabel()
     {
@@ -37,13 +37,13 @@ public class JSLabel extends JLabel implements IHasComponent, IHasDrawer<JLabel>
     }
 
     @Override
-    public final IComponent getComponent()
+    public final TextComponent getComponent()
     {
         return scomp;
     }
 
     @Override
-    public final void setSComponent(IComponent scomp)
+    public final void setComponent(TextComponent scomp)
     {
         this.scomp = scomp;
     }

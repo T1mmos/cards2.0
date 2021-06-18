@@ -48,6 +48,7 @@ import gent.timdemey.cards.services.action.ActionBase;
 import gent.timdemey.cards.services.contract.SnapSide;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
+import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.DataPanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptors;
@@ -66,6 +67,9 @@ import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
+import gent.timdemey.cards.ui.components.drawers.IDrawer;
+import gent.timdemey.cards.ui.components.drawers.IHasDrawer;
+import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.IDataPanelManager;
 import gent.timdemey.cards.ui.panels.IPanelManager;
@@ -149,8 +153,9 @@ public class FrameService implements IFrameService, IPreload
             frame = new JFrame();
                                     
             BufferedImage bg = getBackgroundImage();
-            framePanel = new JSLayeredPane(new MigLayout("insets 5, gapy 0"), "FramePanel");
-            framePanel.setTile(bg);
+            framePanel = JSFactory.createLayeredPane(ComponentTypes.FRAME);
+            framePanel.setLayout(new MigLayout("insets 5, gapy 0"));
+            framePanel.getDrawer().setBackgroundImage(bg);
             frameBorder = BorderFactory.createLineBorder(Color.gray, 1, false);
             framePanel.setBorder(frameBorder);
             rpMouseListener = new RootPanelMouseListener();
@@ -511,20 +516,21 @@ public class FrameService implements IFrameService, IPreload
     {
         IPanelService panelServ = Services.get(IPanelService.class);        
         pt.panel.setVisible(true);
+        IDrawer<?> drawer = ((IHasDrawer<?>) pt.panel).getDrawer();
         // show the panel and notify its manager
-        pt.panel.setAlpha(0.25f);
+        drawer.setForegroundAlpha(0.25f);
         pt.panel.setVisible(true);
         
         final Timer timer = new Timer(15, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                float alpha = pt.panel.getForegroundAlpha();
+                float alpha = pt.panel.getDrawer().getForegroundAlpha();
                 alpha += 0.05;
                 if (alpha >= 1) {
                     alpha = 0.999f; // prevents text suddenly changing size
                     ((Timer) e.getSource()).stop();
                 }
-                pt.panel.setAlpha(alpha);
+                pt.panel.getDrawer().setForegroundAlpha(alpha);
             }
         });
         timer.setRepeats(true);
@@ -873,15 +879,15 @@ public class FrameService implements IFrameService, IPreload
         dpMan.load(panelInData);
         
         // create the entire panel, add the custom content and the buttons
-        JSLayeredPane dialogPanel = new JSLayeredPane(desc.id);
+        JSLayeredPane dialogPanel = JSFactory.createLayeredPane(ComponentTypes.DIALOG);
         {
             dialogPanel.setLayout(new MigLayout("insets 0"));  
             dialogPanel.addMouseListener(new MouseAdapter(){}); // block mouse input to panels below
-            JSLayeredPane marginPanel = new JSLayeredPane(new MigLayout("insets 20 20 5 20"));
+            JSLayeredPane marginPanel = JSFactory.createLayeredPane(ComponentTypes.MARGINPANEL);
+            marginPanel.setLayout(new MigLayout("insets 20 20 5 20"));
             marginPanel.setBackground(new Color(50,50,50));
-            marginPanel.setAlphaBackground(0.5f);
+            marginPanel.getDrawer().setBackgroundAlpha(0.5f);
             marginPanel.setOpaque(false);
-            marginPanel.setPanelName(desc.id + " - MarginPanel");
             marginPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
             dialogPanel.add(marginPanel, "hmax 400, push, alignx center, aligny center");
             {
@@ -892,7 +898,7 @@ public class FrameService implements IFrameService, IPreload
                 marginPanel.add(titleLabel, "gapy 0 20, pushx, growx, alignx left, wrap");
                 
                 // content panel provided by the manager
-                JSLayeredPane contentPanel = dpMan.createPanel();
+                JComponent contentPanel = dpMan.createPanel();
                 marginPanel.add(contentPanel, "grow, push, wrap");
                 
                 // create the buttons

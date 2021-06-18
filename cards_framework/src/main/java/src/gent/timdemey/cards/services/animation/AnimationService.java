@@ -44,7 +44,7 @@ public class AnimationService implements IAnimationService
         IAnimationDescriptorFactory animDescFact = Services.get(IAnimationDescriptorFactory.class);
 
         AnimationDescriptor descr = animDescFact.getAnimationDescriptor(component);
-        Coords.Relative relcoords = posServ.getRelativeCoords(component.getCoords());
+        Coords.Relative relcoords = posServ.getRelativeCoords(component.getAbsCoords());
 
         AnimationTracker tracker = new AnimationTracker(component.getJComponent(), descr, relcoords);
         animTrackers.add(tracker);
@@ -148,7 +148,7 @@ public class AnimationService implements IAnimationService
     }
 
     /**
-     * Get the components that are currently being animated.
+     * Get the comp2jcomp that are currently being animated.
      * 
      * @return
      */

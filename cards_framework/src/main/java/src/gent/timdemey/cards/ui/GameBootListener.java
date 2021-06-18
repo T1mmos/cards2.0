@@ -50,7 +50,7 @@ public class GameBootListener implements IStateListener
         IPanelService panelServ = Services.get(IPanelService.class);
                 
         // the resources have loaded and are rescaled, so create and position 
-        // the components that use them
+        // the comp2jcomp that use them
         panelServ.createScalableComponents();
         panelServ.positionScalableComponents();
     }

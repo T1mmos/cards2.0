@@ -2,7 +2,6 @@ package gent.timdemey.cards.ui.components.swing;
 
 import java.util.UUID;
 
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -18,8 +17,10 @@ import gent.timdemey.cards.ui.components.drawers.IDrawer;
 import gent.timdemey.cards.ui.components.drawers.IHasDrawer;
 import gent.timdemey.cards.ui.components.drawers.ScaledImageDrawer;
 import gent.timdemey.cards.ui.components.drawers.ScaledTextDrawer;
-import gent.timdemey.cards.ui.components.ext.IHasComponent;
-import gent.timdemey.cards.ui.components.ext.SComponent;
+import gent.timdemey.cards.ui.components.ext.ComponentBase;
+import gent.timdemey.cards.ui.components.ext.ImageComponent;
+import gent.timdemey.cards.ui.components.ext.LayeredPaneComponent;
+import gent.timdemey.cards.ui.components.ext.TextComponent;
 import net.miginfocom.swing.MigLayout;
 
 public final class JSFactory
@@ -31,17 +32,17 @@ public final class JSFactory
     {
         JSButton jsbutton = new JSButton();
 
-        setSComponent(jsbutton, ComponentTypes.BUTTON);
+        jsbutton.setComponent(new ComponentBase(UUID.randomUUID(), ComponentTypes.BUTTON));
         setDrawer(jsbutton, new DrawerBase<>());
 
         return jsbutton;
     }
     
-    public static JButton createButton(String text)
+    public static JSButton createButton(String text)
     {
         JSButton jsbutton = new JSButton();
         
-        setSComponent(jsbutton, ComponentTypes.BUTTON);
+        jsbutton.setComponent(new ComponentBase(UUID.randomUUID(), ComponentTypes.BUTTON));
         setDrawer(jsbutton, new DrawerBase<>());
         
         jsbutton.setText(text);
@@ -70,7 +71,7 @@ public final class JSFactory
         JSLabel jslabel = new JSLabel();
 
         jslabel.setText(text);
-        setSComponent(jslabel, compType);
+        jslabel.setComponent(new TextComponent(UUID.randomUUID(), compType));
         setDrawer(jslabel, drawer);
         
         return jslabel;
@@ -87,8 +88,7 @@ public final class JSFactory
         
         // default layout manager
         jslpane.setLayout(new MigLayout("insets 0"));
-        
-        setSComponent(jslpane, compType);
+        jslpane.setComponent(new LayeredPaneComponent(UUID.randomUUID(), compType));
         setDrawer(jslpane, drawer);
         
         return jslpane;
@@ -119,26 +119,12 @@ public final class JSFactory
     public static JSImage createImage(UUID compId, ComponentType compType, IDrawer<JPanel> drawer)
     {
         JSImage jsimage = new JSImage();
-        
-        setSComponent(compId, jsimage, compType);
+        ImageComponent comp = new ImageComponent(compId, compType);
+        jsimage.setComponent(comp);
         setDrawer(jsimage, drawer);
-        
-        
-        
         return jsimage;
     }
-    
-    private static void setSComponent(IHasComponent comp, ComponentType compType)
-    {
-        setSComponent(UUID.randomUUID(), comp, compType);
-    }
-    
-    private static void setSComponent(UUID id, IHasComponent comp, ComponentType compType)
-    {
-        SComponent scomp = new SComponent(id, compType);
-        comp.setSComponent(scomp);
-    }
-    
+        
     private static <T extends JComponent> void setDrawer(IHasDrawer<T> drawee, IDrawer<T> drawer)
     {
         drawee.setDrawer(drawer);

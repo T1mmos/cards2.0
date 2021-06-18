@@ -1,7 +1,5 @@
 package gent.timdemey.cards.ui.components;
 
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,26 +14,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
-import gent.timdemey.cards.Services;
-import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
-import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
-import gent.timdemey.cards.readonlymodel.ReadOnlyEntityBase;
 import gent.timdemey.cards.services.contract.RescaleRequest;
-import gent.timdemey.cards.services.contract.descriptors.ComponentType;
-import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
-import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
-import gent.timdemey.cards.ui.components.ext.IHasComponent;
-import gent.timdemey.cards.ui.components.swing.JSFactory;
-import gent.timdemey.cards.ui.components.swing.JSImage;
-import gent.timdemey.cards.ui.components.swing.JSLabel;
-import gent.timdemey.cards.ui.panels.IPanelManager;
 
 public final class ScalingService implements IScalingService
 {
@@ -43,9 +26,6 @@ public final class ScalingService implements IScalingService
     private final Executor taskExecutor;
 
     protected final Map<UUID, ISResource<?>> resources;
-    protected final Map<UUID, JComponent> components;
-
-    protected final Map<UUID, UUID> entity2comp;
 
     /**
      * Produces threads used by the barrier executor which waits for all tasks
@@ -86,8 +66,6 @@ public final class ScalingService implements IScalingService
         this.barrierExecutor = Executors.newFixedThreadPool(1, new BarrierThreadFactory());
         this.taskExecutor = new ThreadPoolExecutor(1, 52, 5L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new SImageTaskThreadFactory());
         this.resources = new HashMap<>();
-        this.components = new HashMap<>();
-        this.entity2comp = new HashMap<>();
     }
 
     @Override
@@ -103,7 +81,7 @@ public final class ScalingService implements IScalingService
         List<CompletableFuture<?>> futures = new ArrayList<CompletableFuture<?>>();
 
         // find out the necessary scales of all resources by looking at the
-        // current dimensions of all scaled components and build a list of
+        // current dimensions of all scaled comp2jcomp and build a list of
         // unique tasks to execute (we don't scale a resource into the same
         // dimensions twice, yet a resource may be requested in multiple
         // scales).
@@ -128,41 +106,19 @@ public final class ScalingService implements IScalingService
         }, barrierExecutor);
     }
 
-    @Override
-    public void clearComponentCache()
-    {
-        components.clear();
-        entity2comp.clear();
-    }
     
     @Override 
     public void clearResourceCache()
     {
-        if (components.size() > 0 || entity2comp.size() > 0)
-        {
-            throw new IllegalStateException("Resources cache can only be cleared if no components exist that may be using them");
-        }
-        
         resources.clear();
     }
 
-    @Override
-    public <T extends JComponent & IHasComponent> T getComponent(UUID compId)
-    {
-        return (T) components.get(compId);        
-    }
 
     @Override
     public void addSResource(ISResource<?> scaleRes)
     {
         resources.put(scaleRes.getId(), scaleRes);
     }
-
-    @Override
-    public <T extends JComponent & IHasComponent> void addComponent(T comp) 
-    {
-        components.put(comp.getComponent().getId(), comp);
-    };
     
     @Override
     public ISResource<?> getSResource(UUID resId)
@@ -170,189 +126,12 @@ public final class ScalingService implements IScalingService
         ISResource<?> res = resources.get(resId);
         if (res == null)
         {
-            String msg = "No resource with id=%s was found, ensure all resources are preloaded before creating components that use them";
+            String msg = "No resource with id=%s was found, ensure all resources are preloaded before creating comp2jcomp that use them";
             String format = String.format(msg, resId);
             throw new NullPointerException(format);
         }
         return res;
     }
     
-    @Override
-    public <T extends JComponent & IHasComponent> T getComponentAt(IPanelManager panelMgr, Point p)
-    {        
-        JComponent jcomp = (JComponent) panelMgr.getPanel().getComponentAt(p);
-        if (!(jcomp instanceof IHasComponent))
-        {
-            return null;
-        }
-        
-        T t = (T) jcomp;        
-        return t;
-    }
-    
-    private <T extends JComponent & IHasComponent> Stream<T> getComponentsStream()
-    {
-        return components.values().stream().map(c -> (T) c);
-    }
-    
-    private <T extends JComponent & IHasComponent> Stream<T> getComponentsAtStream(Point p)
-    {
-        Stream<T> comps = getComponentsStream();
-        return comps
-            .filter(s -> s.getBounds().contains(p))
-            .filter(s -> filterPanelManager((IHasComponent) s));
-    }
-    
-    private <T extends JComponent & IHasComponent> Stream<T> getComponentsInStream(Rectangle rect)
-    {
-        Stream<T> comps = getComponentsStream();
-        return comps
-            .filter(s -> s.getBounds().intersects(rect))
-            .filter(this::filterPanelManager);
-    }
-    
-    private boolean filterPanelManager(IHasComponent s)
-    {
-        IPanelManager panelMan = s.getComponent().getPanelManager();
-        return panelMan != null && panelMan.isPanelCreated() && panelMan.getPanel().isVisible();
-    }
-
-    @Override
-    public <T extends JComponent & IHasComponent> List<T> getComponentsAt(Point p)
-    {
-        Stream<T> comps = getComponentsAtStream(p);
-        return comps.collect(Collectors.toList());
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T extends JComponent & IHasComponent> List<T> getComponentsAt(Point p, Class<T> clazz)
-    {
-        Stream<T> comps = getComponentsAtStream(p);
-        return comps
-            .filter(s -> clazz.isAssignableFrom(s.getClass())).map(s -> (T) s)
-            .collect(Collectors.toList());
-    }
-
-    @Override
-    public <T extends JComponent & IHasComponent> List<T> getComponentsIn(Rectangle rect)
-    {
-        Stream<T> comps = getComponentsInStream(rect);
-        return comps.collect(Collectors.toList());
-    }
-    
-    @Override
-    public <T extends JComponent & IHasComponent> List<T> getComponents()
-    {
-        Stream<T> comps = getComponentsStream();
-        return comps.collect(Collectors.toList());
-    }
-
-    @Override
-    public JSImage createImage(ReadOnlyCard card, IPanelManager panelManager)
-    {
-        IIdService uuidServ = Services.get(IIdService.class);
-
-        UUID compId = createComponentId(card);
-
-        JComponent comp = components.get(compId);
-        if (comp != null)
-        {
-            throw new IllegalArgumentException("A scalable component already exist for the given model object: " + card);            
-        }
-        
-        UUID resFrontId = uuidServ.createCardFrontScalableResourceId(card.getSuit(), card.getValue());
-        UUID resBackId = uuidServ.createCardBackScalableResourceId();
-
-        // create the component using its necessary image resources
-        SImageResource res_front = (SImageResource) getSResource(resFrontId);
-        SImageResource res_back = (SImageResource) getSResource(resBackId);
-        
-        return createImage(compId, ComponentTypes.CARD, panelManager, card, res_front, res_back);
-    }
-    
-    @Override
-    public final JSImage createImage(UUID compId, ComponentType compType, IPanelManager panelMgr, Object payload, SImageResource ... imgResources)
-    {
-        JSImage comp = JSFactory.createImageScaled(compId, compType, imgResources); 
-        comp.getComponent().setPanelManager(panelMgr);
-        comp.getComponent().setPayload(payload);
-
-        components.put(compId, comp);
-        return comp;
-    }
-
-
-    @Override
-    public JSLabel createLabel(UUID compId, ComponentType compType, String text, IPanelManager panelMgr, Object payload, SFontResource fontRes)
-    {
-        JSLabel jslabel = JSFactory.createLabelScaled(text, compType, fontRes);
-        jslabel.getComponent().setPanelManager(panelMgr);
-        jslabel.getComponent().setPayload(payload);
-        return jslabel;
-    }
-    
-    @Override
-    public JSImage getImage(ReadOnlyCard card)
-    {
-        return (JSImage) getComponent((ReadOnlyEntityBase<?>) card);
-    }
-    
-    @Override
-    public JSImage createImage(ReadOnlyCardStack cardstack, IPanelManager panelManager)
-    {
-        IIdService idServ = Services.get(IIdService.class);
-
-        UUID compId = createComponentId(cardstack);
-
-        JComponent comp = components.get(compId);
-        if (comp != null)
-        {
-            throw new IllegalArgumentException("A scalable component already exist for the given model object: " + cardstack);            
-        }
-        
-        UUID csResId = idServ.createCardStackScalableResourceId(cardstack.getCardStackType());
-
-        // create the component using its necessary image resources
-        SImageResource res = (SImageResource) getSResource(csResId);
-        return createImage(compId, ComponentTypes.CARDSTACK, panelManager, cardstack, res);
-    }
-    
-    @Override
-    public JSImage getImage(ReadOnlyCardStack cardStack)
-    {
-        return (JSImage) getComponent((ReadOnlyEntityBase<?>) cardStack);
-    }
-    
-    private JComponent getComponent(ReadOnlyEntityBase<?> entity)
-    {
-        UUID compId = entity2comp.get(entity.getId());
-        if (compId == null)
-        {
-            throw new IllegalArgumentException("A scalable component ID does not exist for the given model object: " + entity);      
-        }
-        JComponent comp = components.get(compId);
-        if (comp == null)
-        {
-            throw new IllegalArgumentException("A scalable component does not exist for the given model object: " + entity);    
-        }
-        
-        return comp;
-    }
-    
-    private UUID createComponentId(ReadOnlyEntityBase<?> entity)
-    {     
-        IIdService idServ = Services.get(IIdService.class);
-        UUID compId = entity2comp.get(entity.getId());
-        if (compId != null)
-        {
-            throw new IllegalStateException("ComponentId "+entity.getId()+" shouldn't exist yet for entity: " + entity);
-        }
-
-        // get the ids
-        compId = idServ.createScalableComponentId(entity);
-        entity2comp.put(entity.getId(), compId);
-        
-        return compId;
-    }
+  
 }

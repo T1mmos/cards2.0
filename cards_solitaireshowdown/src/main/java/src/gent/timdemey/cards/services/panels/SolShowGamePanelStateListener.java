@@ -24,9 +24,9 @@ import gent.timdemey.cards.ui.components.SFontResource;
 import gent.timdemey.cards.ui.components.drawers.ScaledTextDrawer;
 import gent.timdemey.cards.ui.components.ext.IComponent;
 import gent.timdemey.cards.ui.panels.IPanelManager;
-import gent.timdemey.cards.ui.panels.game.GamePanelStateListener;
+import gent.timdemey.cards.ui.panels.game.CardGamePanelStateListener;
 
-public class SolShowGamePanelStateListener extends GamePanelStateListener
+public class SolShowGamePanelStateListener extends CardGamePanelStateListener
 {
     @Override
     public void onChange(ReadOnlyChange change)
@@ -53,7 +53,7 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
             String text = "+" + incr;
             IPanelService panelServ = Services.get(IPanelService.class);
             IPanelManager panelMgr = panelServ.getPanelManager(PanelDescriptors.Game);
-            ScaledTextDrawer comp = scaleServ.createLabel(UUID.randomUUID(), ComponentTypes.CARDSCORE, text, panelMgr, null, scaleFontRes);
+            ScaledTextDrawer comp = scaleServ.createJSLabel(UUID.randomUUID(), ComponentTypes.CARDSCORE, text, panelMgr, null, scaleFontRes);
             comp.setPanelManager(panelMgr);
             comp.setPayload(card);
 
@@ -80,7 +80,7 @@ public class SolShowGamePanelStateListener extends GamePanelStateListener
                 else if (cardStack.getCardStackType().equals(SolShowCardStackType.SPECIAL))
                 {
                     UUID id = idServ.createSpecialCounterComponentId(cardStack);
-                    ScaledTextDrawer comp = (ScaledTextDrawer) scaleServ.getComponent(id);
+                    ScaledTextDrawer comp = (ScaledTextDrawer) scaleServ.getJComponentById(id);
                     String text = "" +  cardStack.getCards().size();
                     comp.setText(text);
                     comp.repaint();

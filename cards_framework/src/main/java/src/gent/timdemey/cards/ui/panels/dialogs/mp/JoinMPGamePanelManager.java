@@ -22,13 +22,13 @@ import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.readonlymodel.ReadOnlyUDPServer;
+import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptors;
-import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.DataPanelManagerBase;
-import net.miginfocom.swing.MigLayout;
 
 public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGamePanelData>
 {
@@ -154,11 +154,10 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
 
         scroll_server.setViewportView(table_servers);
 
-        this.contentPanel = new JSLayeredPane(new MigLayout("insets 0"), PanelDescriptors.JoinMP.id);
+        this.contentPanel = JSFactory.createLayeredPane(ComponentTypes.PANEL);
         contentPanel.add(lb_srvname, "spanx 2, growx, wrap");
         contentPanel.add(scroll_server, "spanx 2, hmin 150, hmax 300, grow, span, wrap");
         contentPanel.add(button_refresh, "spanx 2, aligny top, alignx right, wrap");
-        
       
         return contentPanel;
     }

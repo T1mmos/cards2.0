@@ -18,7 +18,6 @@ public interface IPanelService extends IPreload
     
     public void createScalableComponents();
     public void positionScalableComponents();
-    public void repaintScalableComponents();
     
     public void rescaleResourcesAsync(Runnable callback);
 }

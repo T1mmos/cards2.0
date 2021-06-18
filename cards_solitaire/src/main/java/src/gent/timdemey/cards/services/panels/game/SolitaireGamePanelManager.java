@@ -11,9 +11,9 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.ui.components.ext.IComponent;
-import gent.timdemey.cards.ui.panels.game.GamePanelManager;
+import gent.timdemey.cards.ui.panels.game.CardGamePanelManager;
 
-public class SolitaireGamePanelManager extends GamePanelManager
+public class SolitaireGamePanelManager extends CardGamePanelManager
 {
     private static final String FILEPATH_CARDSTACK = "stack_solitaire_%s.png";
     
@@ -48,7 +48,7 @@ public class SolitaireGamePanelManager extends GamePanelManager
 
         super.createComponents();
         
-        // cardstack components
+        // cardstack comp2jcomp
         List<ReadOnlyCardStack> cardstacks = cardGame.getCardStacks();
         for (int i = 0; i < cardstacks.size(); i++)
         {

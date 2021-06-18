@@ -17,8 +17,8 @@ public interface IComponent extends IAttachable<JComponent>
     public IPanelManager getPanelManager();
     public void setPanelManager(IPanelManager panelManager);    
     
-    public void setCoords(Coords.Absolute coords);
-    public Coords.Absolute getCoords();
+    public void setAbsCoords(Coords.Absolute coords);
+    public Coords.Absolute getAbsCoords();
     public void setLocation(int x, int y);    
 
     Object getPayload();    

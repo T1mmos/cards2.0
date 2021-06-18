@@ -7,7 +7,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyPlayer;
 
 public interface ISolShowIdService extends IIdService
 {
-    // components
+    // comp2jcomp
     public UUID createSpecialCounterComponentId(ReadOnlyCardStack cs);
     public UUID createSpecialBackgroundComponentId(ReadOnlyCardStack cs);
     public UUID createPlayerNameComponentId(ReadOnlyPlayer player);    

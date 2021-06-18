@@ -24,7 +24,7 @@ import gent.timdemey.cards.ui.panels.dialogs.mp.JoinMPGamePanelManager;
 import gent.timdemey.cards.ui.panels.dialogs.mp.LobbyPanelManager;
 import gent.timdemey.cards.ui.panels.dialogs.mp.StartServerPanelManager;
 import gent.timdemey.cards.ui.panels.game.GameMenuPanelManager;
-import gent.timdemey.cards.ui.panels.game.GamePanelManager;
+import gent.timdemey.cards.ui.panels.game.CardGamePanelManager;
 import gent.timdemey.cards.ui.panels.load.LoadPanelManager;
 import gent.timdemey.cards.ui.panels.menu.MenuPanelManager;
 import gent.timdemey.cards.ui.panels.settings.SettingsPanelManager;
@@ -51,7 +51,7 @@ public class PanelService implements IPanelService
     {
         addPanelManagerIfAbsent(PanelDescriptors.About, () -> new AboutPanelManager());
         addPanelManagerIfAbsent(PanelDescriptors.Connect, () -> new JoinMPGamePanelManager());
-        addPanelManagerIfAbsent(PanelDescriptors.Game, () -> new GamePanelManager());
+        addPanelManagerIfAbsent(PanelDescriptors.Game, () -> new CardGamePanelManager());
         addPanelManagerIfAbsent(PanelDescriptors.GameMenu, () -> new GameMenuPanelManager());
         addPanelManagerIfAbsent(PanelDescriptors.Load, () -> new LoadPanelManager());
         addPanelManagerIfAbsent(PanelDescriptors.Lobby, () -> new LobbyPanelManager());
@@ -133,14 +133,6 @@ public class PanelService implements IPanelService
     public void positionScalableComponents()
     {
         foreach(IPanelManager::positionComponents, true); 
-    }
-    
-
-
-    @Override
-    public void repaintScalableComponents()
-    {
-        foreach(IPanelManager::repaintSComponents, true); 
     }
 
     @Override

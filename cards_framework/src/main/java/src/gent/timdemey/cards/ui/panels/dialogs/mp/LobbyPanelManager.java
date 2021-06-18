@@ -17,10 +17,11 @@ import gent.timdemey.cards.readonlymodel.TypedChange;
 import gent.timdemey.cards.services.context.ChangeType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
+import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
-import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.DataPanelManagerBase;
 import net.miginfocom.swing.MigLayout;
@@ -97,7 +98,8 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
         Context context = contextService.getThreadContext();
         ReadOnlyState state = context.getReadOnlyState();
         
-        panel = new JSLayeredPane(new MigLayout("insets 0, wmin 300"), PanelDescriptors.Lobby.id);
+        panel = JSFactory.createLayeredPane(ComponentTypes.PANEL);
+        panel.setLayout(new MigLayout("insets 0, wmin 300"));
         
         IActionService actServ = Services.get(IActionService.class);
         

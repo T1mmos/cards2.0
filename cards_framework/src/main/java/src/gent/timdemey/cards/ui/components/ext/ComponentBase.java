@@ -8,7 +8,7 @@ import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.ui.panels.IPanelManager;
 
-public class SComponent implements IComponent
+public class ComponentBase implements IComponent
 {
     private final UUID id;
     private final ComponentType compType;
@@ -18,7 +18,7 @@ public class SComponent implements IComponent
     private JComponent comp;
     private Object payload;
 
-    public SComponent(UUID id, ComponentType compType)
+    public ComponentBase(UUID id, ComponentType compType)
     {
         if(id == null)
         {
@@ -64,14 +64,14 @@ public class SComponent implements IComponent
     }
         
     @Override
-    public final void setCoords(Coords.Absolute coords)
+    public final void setAbsCoords(Coords.Absolute coords)
     {
         this.coords = coords;
         comp.setBounds(coords.getBounds());
     }
 
     @Override
-    public final Coords.Absolute getCoords()
+    public final Coords.Absolute getAbsCoords()
     {
         return coords;
     }
@@ -80,7 +80,7 @@ public class SComponent implements IComponent
     public final void setLocation(int x, int y)
     {
         Coords.Absolute coords_new = Coords.getAbsolute(x, y, coords.w, coords.h);
-        setCoords(coords_new);
+        setAbsCoords(coords_new);
     }
     
     @Override

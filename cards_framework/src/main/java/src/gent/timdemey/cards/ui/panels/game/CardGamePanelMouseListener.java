@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import com.alee.painter.decoration.layout.IContentLayout;
+import javax.swing.JComponent;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
@@ -25,12 +25,12 @@ import gent.timdemey.cards.services.interfaces.ICommandService;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
-import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.ui.components.ext.IComponent;
+import gent.timdemey.cards.ui.components.ext.IHasComponent;
 import gent.timdemey.cards.ui.components.swing.JSImage;
 import gent.timdemey.cards.ui.panels.IPanelManager;
 
-class GamePanelMouseListener extends MouseAdapter
+class CardGamePanelMouseListener extends MouseAdapter
 {
 
     private static class CardDragState
@@ -49,12 +49,12 @@ class GamePanelMouseListener extends MouseAdapter
     private int mouse_ystart;
 
     private final List<CardDragState> dragStates;
-    private final List<IComponent> draggedComps;
+    private final List<JComponent> draggedJComps;
 
-    GamePanelMouseListener()
+    CardGamePanelMouseListener()
     {
         dragStates = new ArrayList<>();
-        draggedComps = new ArrayList<>();
+        draggedJComps = new ArrayList<>();
     }
 
     @Override
@@ -71,7 +71,7 @@ class GamePanelMouseListener extends MouseAdapter
             for (int i = 0; i < dragStates.size(); i++)
             {
                 CardDragState state = dragStates.get(i);
-                IComponent comp = draggedComps.get(i);
+                JComponent comp = draggedJComps.get(i);
                 int card_x = state.xstart + dx;
                 int card_y = state.ystart + dy;
 
@@ -95,28 +95,25 @@ class GamePanelMouseListener extends MouseAdapter
         }
 
         IPositionService posServ = Services.get(IPositionService.class);
-        IScalingService scaleServ = Services.get(IScalingService.class);
         IPanelService panelServ = Services.get(IPanelService.class);
-        IPanelManager gamePanelMgr = panelServ.getPanelManager(PanelDescriptors.Game);
+        IPanelManager pm = panelServ.getPanelManager(PanelDescriptors.Game);
         
-        
-        IContentLayout<?, ?, ?> scaleComp = scaleServ.getComponentAt(gamePanelMgr, e.getPoint());   
-        
-        if (!(scaleComp instanceof JSImage))
+        JComponent comp = pm.getComponentAt(e.getPoint());
+        if (!(comp instanceof JSImage))
         {
             return;
         }
+        
+        JSImage jsimage = (JSImage) comp;
 
         Context context = Services.get(IContextService.class).getThreadContext();
         ICommandService operations = Services.get(ICommandService.class);
 
         UUID playerId = context.getReadOnlyState().getLocalId();
 
-        if (scaleComp.getComponentType().hasTypeName(ComponentTypes.CARD))
+        if (jsimage.getComponent().getComponentType().hasTypeName(ComponentTypes.CARD))
         {
-            JSImage cardImgComp = (JSImage) scaleComp;
-
-            ReadOnlyCard card = (ReadOnlyCard) cardImgComp.getPayload();
+            ReadOnlyCard card = (ReadOnlyCard) jsimage.getComponent().getPayload();
             ReadOnlyCardStack stack = card.getCardStack();
 
             CommandBase cmdPull = operations.getPullCommand(playerId, stack.getId(), card.getId());
@@ -126,7 +123,6 @@ class GamePanelMouseListener extends MouseAdapter
 
             boolean pull = pullable && (!useable || useable && e.getClickCount() % 2 == 1);
             boolean use = useable && (!pullable || pullable && e.getClickCount() % 2 == 0);
-
             
             if (pull)
             {
@@ -136,19 +132,19 @@ class GamePanelMouseListener extends MouseAdapter
                 {
                     ReadOnlyCard currentCard = cards.get(i);
 
-                    IComponent currScaleImg = Services.get(IScalingService.class).getSComponent(currentCard);
-                    int card_xstart = currScaleImg.getCoords().getBounds().x;
-                    int card_ystart = currScaleImg.getCoords().getBounds().y;
+                    JSImage jsimage_card = (JSImage) pm.getComponent(currentCard);
+                    int card_xstart = jsimage_card.getBounds().x;
+                    int card_ystart = jsimage_card.getBounds().y;
 
                     int layer = posServ.getDragLayer();
                     
                     // ensure to stop any animations running for this card
-                    gamePanelMgr.stopAnimation(currScaleImg);                    
-                    gamePanelMgr.setLayer(currScaleImg, layer + i);
+                    pm.stopAnimate(jsimage_card);       
+                    pm.getPanel().setLayer(jsimage_card, layer + 1);
                 
                     CardDragState dragState = new CardDragState(card_xstart, card_ystart);
                     dragStates.add(dragState);
-                    draggedComps.add(currScaleImg);
+                    draggedJComps.add(jsimage_card);
                 }
             }
             else if (use)
@@ -160,13 +156,13 @@ class GamePanelMouseListener extends MouseAdapter
                 for (int i = 0; i < cards.size(); i++)
                 {
                     ReadOnlyCard currentCard = cards.get(i);
-                    IComponent currScaleImg = Services.get(IScalingService.class).getSComponent(currentCard);
+                    JSImage jsimage_card = (JSImage) pm.getComponent(currentCard);
                                      
                     // ensure to stop any animations running for this card. Don't change the layer here
                     // it will either be its normal layer, or the dragged layer if the first click 
                     // made the card(s) go into drag mode. The state listener will set the card's layer
                     // to the animation layer after the model changed (induced by scheduling the use command).
-                    gamePanelMgr.stopAnimation(currScaleImg);
+                    pm.stopAnimate(jsimage_card);
                 }
                 
                 context.schedule(cmdUse);
@@ -175,13 +171,13 @@ class GamePanelMouseListener extends MouseAdapter
             mouse_xstart = e.getX();
             mouse_ystart = e.getY();
         }
-        else if (scaleComp.getComponentType().hasTypeName(ComponentTypes.CARDSTACK))
+        else if (jsimage.getComponent().getComponentType().hasTypeName(ComponentTypes.CARDSTACK))
         {
-            CommandBase cmdUse = operations.getUseCommand(playerId, ((ReadOnlyCardStack)scaleComp.getPayload()).getId(), null);
+            CommandBase cmdUse = operations.getUseCommand(playerId, ((ReadOnlyCardStack)jsimage.getComponent().getPayload()).getId(), null);
             if (canExecute(context, cmdUse, "mousePressed/cardstack"))
             {
                 context.schedule(cmdUse);
-                draggedComps.clear();
+                draggedJComps.clear();
             }
         }
     }
@@ -195,42 +191,45 @@ class GamePanelMouseListener extends MouseAdapter
         }
 
         Context context = Services.get(IContextService.class).getThreadContext();
+        IPanelService panelServ = Services.get(IPanelService.class);
+        IPanelManager pm = panelServ.getPanelManager(PanelDescriptors.Game);
 
         UUID playerId = context.getReadOnlyState().getLocalId();
 
-        if (!draggedComps.isEmpty())
+        if (!draggedJComps.isEmpty())
         {
-            IComponent scaleComp = draggedComps.get(0);
+            JComponent jcomp = draggedJComps.get(0);
+            IComponent comp = ((IHasComponent<?>) jcomp).getComponent();
 
             int intersectAMax = 0;
             CommandBase cmdMove = null;
             List<UUID> visitedStackIds = new ArrayList<>();
-            IScalingService scaleServ = Services.get(IScalingService.class);
 
-            List<IComponent> overlapComps = scaleServ.getComponentsIn(scaleComp.getCoords().getBounds());
-            for (IComponent comp : overlapComps)
+            List<JComponent> overlapComps = pm.getComponentsIn(comp.getAbsCoords().getBounds());
+            for (JComponent oljComp : overlapComps)
             {
-                if (!(comp instanceof JSImage))
+                if (!(oljComp instanceof JSImage))
                 {
                     continue;
                 }
+                JSImage olimage = (JSImage) oljComp;
+                IComponent olComp = olimage.getComponent();
 
                 // exclude overlaps with components being dragged
-                JSImage scaleImgComp = (JSImage) comp;
-                if (draggedComps.contains(scaleImgComp))
+                if (draggedJComps.contains(olimage))
                 {
                     continue;
                 }
 
                 // exclude overlaps that are not cards or cardstacks
                 ReadOnlyCardStack dstCardStack;
-                if (comp.getComponentType().hasTypeName(ComponentTypes.CARD))
+                if (olComp.getComponentType().hasTypeName(ComponentTypes.CARD))
                 {
-                    dstCardStack = ((ReadOnlyCard) comp.getPayload()).getCardStack();
+                    dstCardStack = ((ReadOnlyCard) olComp.getPayload()).getCardStack();
                 }
-                else if (comp.getComponentType().hasTypeName(ComponentTypes.CARDSTACK))
+                else if (olComp.getComponentType().hasTypeName(ComponentTypes.CARDSTACK))
                 {
-                    dstCardStack = (ReadOnlyCardStack) comp.getPayload();
+                    dstCardStack = (ReadOnlyCardStack) olComp.getPayload();
                 }
                 else
                 {
@@ -245,14 +244,17 @@ class GamePanelMouseListener extends MouseAdapter
                 }
                 visitedStackIds.add(dstCardStackId);
 
-                List<ReadOnlyCard> cards = draggedComps.stream().map(sc -> (ReadOnlyCard) sc.getPayload()).collect(Collectors.toList());
+                List<ReadOnlyCard> cards = draggedJComps.stream()
+                        .map(jc -> (IHasComponent<?>) jc)
+                        .map(c -> (ReadOnlyCard) c.getComponent().getPayload())
+                        .collect(Collectors.toList());
                 ReadOnlyEntityList<ReadOnlyCard> roCards = new ReadOnlyEntityList<>(cards);
 
                 ICommandService operationsServ = Services.get(ICommandService.class);
                 CommandBase cmdPush = operationsServ.getPushCommand(playerId, dstCardStack.getId(), roCards.getIds());
                 if (canExecute(context, cmdPush, "mouseReleased"))
                 {
-                    Rectangle intersection = scaleComp.getCoords().getBounds().intersection(scaleImgComp.getCoords().getBounds());
+                    Rectangle intersection = comp.getAbsCoords().getBounds().intersection(olComp.getAbsCoords().getBounds());
                     int intersectA = intersection.width * intersection.height;
                     if (intersectA < intersectAMax)
                     {
@@ -273,16 +275,15 @@ class GamePanelMouseListener extends MouseAdapter
             else
             {
                 // there is no model change so we animate the cards back to their current stack
-                IPanelService panelServ = Services.get(IPanelService.class);
                 IPanelManager gamePanelMgr = panelServ.getPanelManager(PanelDescriptors.Game);
-                for (int i = 0; i < draggedComps.size(); i++)
+                for (int i = 0; i < draggedJComps.size(); i++)
                 {
-                    IComponent comp = draggedComps.get(i);                    
-                    gamePanelMgr.startAnimation(comp);
+                    JComponent jcomp_anim = draggedJComps.get(i);                    
+                    gamePanelMgr.startAnimate(jcomp_anim);
                 }
             }
 
-            draggedComps.clear();
+            draggedJComps.clear();
             dragStates.clear();
         }
     }

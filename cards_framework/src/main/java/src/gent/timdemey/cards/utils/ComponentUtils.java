@@ -18,7 +18,7 @@ public class ComponentUtils
             throw new IllegalStateException("Expected the component to implement IHasComponent");
         }
         
-        IComponent sComp = ((IHasComponent) comp).getComponent();
+        IComponent sComp = ((IHasComponent<?>) comp).getComponent();
         return sComp;
     }
         
