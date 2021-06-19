@@ -1,9 +1,11 @@
-package gent.timdemey.cards.services.panels;
+package gent.timdemey.cards.ui.panels.game;
 
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.UUID;
+
+import javax.swing.JComponent;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
@@ -19,9 +21,9 @@ import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.SolShowComponentTypes;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
-import gent.timdemey.cards.ui.components.drawers.ScaledTextDrawer;
 import gent.timdemey.cards.ui.components.ext.IComponent;
 import gent.timdemey.cards.ui.panels.Positions;
+import gent.timdemey.cards.utils.ComponentUtils;
 
 public class SolShowPositionService implements IPositionService
 {
@@ -127,12 +129,12 @@ public class SolShowPositionService implements IPositionService
     }
 
     @Override
-    public LayeredArea getStartLayeredArea(IComponent scaleComp)
+    public LayeredArea getStartLayeredArea(JComponent jcomp)
     {
-        ComponentType compType = scaleComp.getComponentType();
+        ComponentType compType = ComponentUtils.getComponentType(jcomp);
         if (compType.hasTypeName(ComponentTypes.CARDSCORE))
         {
-            LayeredArea endLayeredArea = getEndLayeredArea(scaleComp);
+            LayeredArea endLayeredArea = getEndLayeredArea(jcomp);
 
             int x = endLayeredArea.abscoords.x;
             int y = endLayeredArea.abscoords.y + getCardDimension().height / 2;
@@ -148,14 +150,15 @@ public class SolShowPositionService implements IPositionService
             // all cards,
             // so in the beginning of the game the cards "splash out" towards
             // their final position.
-            return getEndLayeredArea(scaleComp);
+            return getEndLayeredArea(jcomp);
         }
     }
 
     @Override
-    public LayeredArea getEndLayeredArea(IComponent scaleComp)
+    public LayeredArea getEndLayeredArea(JComponent jcomp)
     {
-        ComponentType compType = scaleComp.getComponentType();
+        IComponent comp = ComponentUtils.getComponent(jcomp);
+        ComponentType compType = comp.getComponentType();
         
         IContextService contextService = Services.get(IContextService.class);
         Context context = contextService.getThreadContext();
@@ -163,18 +166,17 @@ public class SolShowPositionService implements IPositionService
         
         if (compType.hasTypeName(ComponentTypes.CARD))
         {
-            ReadOnlyCard card = (ReadOnlyCard) scaleComp.getPayload();
+            ReadOnlyCard card = (ReadOnlyCard) comp.getPayload();
             return getLayeredArea(card);
         }
         else if (compType.hasTypeName(ComponentTypes.CARDSTACK))
         {
-            ReadOnlyCardStack cardStack = (ReadOnlyCardStack) scaleComp.getPayload();
+            ReadOnlyCardStack cardStack = (ReadOnlyCardStack) comp.getPayload();
             return getLayeredArea(cardStack);
         }
         else if (compType.hasTypeName(ComponentTypes.CARDSCORE))
         {
-            ScaledTextDrawer cardScoreComp = ((ScaledTextDrawer) scaleComp);
-            ReadOnlyCard card = (ReadOnlyCard) cardScoreComp.getPayload();
+            ReadOnlyCard card = (ReadOnlyCard) comp.getPayload();
             LayeredArea la_card = getLayeredArea(card);
 
             Dimension dim = pos.getDimension(SolShowGameLayout.DIM_CARDSCORE);
@@ -189,7 +191,7 @@ public class SolShowPositionService implements IPositionService
         }
         else if (compType.hasTypeName(SolShowComponentTypes.SPECIALSCORE))
         {            
-            ReadOnlyCardStack cardStack = (ReadOnlyCardStack) scaleComp.getPayload();
+            ReadOnlyCardStack cardStack = (ReadOnlyCardStack) comp.getPayload();
 
             UUID playerId = context.getReadOnlyState().getCardGame().getPlayerId(cardStack);
             boolean isLocal = localId.equals(playerId);
@@ -201,7 +203,7 @@ public class SolShowPositionService implements IPositionService
         }
         else if (compType.hasTypeName(SolShowComponentTypes.SPECIALBACKGROUND))
         {
-            ReadOnlyCardStack cardStack = (ReadOnlyCardStack) scaleComp.getPayload();
+            ReadOnlyCardStack cardStack = (ReadOnlyCardStack) comp.getPayload();
 
             UUID playerId = context.getReadOnlyState().getCardGame().getPlayerId(cardStack);
             boolean isLocal = localId.equals(playerId);
@@ -214,7 +216,7 @@ public class SolShowPositionService implements IPositionService
         }
         else if (compType.hasTypeName(SolShowComponentTypes.PLAYERNAME))
         {
-            ReadOnlyPlayer player = (ReadOnlyPlayer) scaleComp.getPayload();
+            ReadOnlyPlayer player = (ReadOnlyPlayer) comp.getPayload();
             boolean isLocal = localId.equals(player.getId());
             
             String layoutId = isLocal ? SolShowGameLayout.RECT_PLAYERNAME_LOCAL : SolShowGameLayout.RECT_PLAYERNAME_REMOTE;
@@ -224,7 +226,7 @@ public class SolShowPositionService implements IPositionService
         }
         else if (compType.hasTypeName(SolShowComponentTypes.PLAYERBG))
         {
-            ReadOnlyPlayer player = (ReadOnlyPlayer) scaleComp.getPayload();
+            ReadOnlyPlayer player = (ReadOnlyPlayer) comp.getPayload();
             boolean isLocal = localId.equals(player.getId());
             String layoutId = isLocal ? SolShowGameLayout.RECT_PLAYERBG_LOCAL : SolShowGameLayout.RECT_PLAYERBG_REMOTE;
             Rectangle rect = pos.getRectangle(layoutId);
@@ -233,7 +235,7 @@ public class SolShowPositionService implements IPositionService
         }
         else if (compType.hasTypeName(SolShowComponentTypes.CARDAREABG))
         {
-            ReadOnlyPlayer player = (ReadOnlyPlayer) scaleComp.getPayload();
+            ReadOnlyPlayer player = (ReadOnlyPlayer) comp.getPayload();
             boolean isLocal = localId.equals(player.getId());
             String layoutId = isLocal ? SolShowGameLayout.RECT_CARDAREABG_LOCAL : SolShowGameLayout.RECT_CARDAREABG_REMOTE;
             Rectangle rect = pos.getRectangle(layoutId);

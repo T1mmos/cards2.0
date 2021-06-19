@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.panels;
+package gent.timdemey.cards.ui.panels.game;
 
 import gent.timdemey.cards.ui.panels.Positions;
 

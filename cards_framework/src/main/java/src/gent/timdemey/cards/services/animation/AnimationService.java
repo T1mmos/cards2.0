@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 import gent.timdemey.cards.Services;
@@ -17,7 +18,7 @@ import gent.timdemey.cards.services.interfaces.IAnimationDescriptorFactory;
 import gent.timdemey.cards.services.interfaces.IAnimationService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.ui.components.ext.IComponent;
-import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
+import gent.timdemey.cards.ui.components.ext.IHasComponent;
 import gent.timdemey.cards.ui.panels.IPanelManager;
 
 public class AnimationService implements IAnimationService
@@ -38,27 +39,32 @@ public class AnimationService implements IAnimationService
     }
 
     @Override
-    public void animate(IComponent component)
+    public void animate(JComponent jcomp)
     {
+        if (!(jcomp instanceof IHasComponent<?>))
+        {
+            throw new IllegalArgumentException("To animate a component, it needs to implement IHasComponent, to discover what animation is needed for it");
+        }
+        IHasComponent<?> hasComp = (IHasComponent<?>) jcomp;        
+        IComponent comp = hasComp.getComponent();
+        
         IPositionService posServ = Services.get(IPositionService.class);
         IAnimationDescriptorFactory animDescFact = Services.get(IAnimationDescriptorFactory.class);
 
-        AnimationDescriptor descr = animDescFact.getAnimationDescriptor(component);
-        Coords.Relative relcoords = posServ.getRelativeCoords(component.getAbsCoords());
+        AnimationDescriptor descr = animDescFact.getAnimationDescriptor(comp);
+        
+        // to support animation while resizing the window, we need to save the relative coordinates
+        // of the component at the start of the animation
+        Coords.Absolute abscoords = ((IHasComponent<?>) jcomp).getComponent().getAbsCoords();
+        Coords.Relative relcoords = posServ.getRelativeCoords(abscoords);
 
-        AnimationTracker tracker = new AnimationTracker(component.getJComponent(), descr, relcoords);
+        AnimationTracker tracker = new AnimationTracker(jcomp, descr, relcoords);
         animTrackers.add(tracker);
 
         // must tick immediately to have the component updated so it doesn't show
         // in wrong colors, wrong location, etc.
         long currTickTime = System.currentTimeMillis();
         tick(tracker, currTickTime);
-    }
-
-    @Override
-    public void animate(JSLayeredPane pb)
-    {
-
     }
 
     public void stopAnimate(IComponent scaleComp)
@@ -114,9 +120,8 @@ public class AnimationService implements IAnimationService
 
     private boolean tick(AnimationTracker animTracker, long currTickTime)
     {
-
         IPositionService posServ = Services.get(IPositionService.class);
-        IPanelManager panelMan = Services.get(IPanelManager.class);
+        IPanelManager pm = Services.get(IPanelManager.class);
         
         long dt = currTickTime - animTracker.animStart.time;
         double frac = Math.min(1.0, 1.0 * dt / animTracker.animDescriptor.animationTime);
@@ -130,35 +135,18 @@ public class AnimationService implements IAnimationService
         {
             if (animTracker.animDescriptor.dispose)
             {
-                IPanelManager x;
-
-                panelMan.remove(animTracker.component);
+                pm.getPanel().remove(animTracker.component);
             }
             else
             {
                 LayeredArea layArea = posServ.getEndLayeredArea(animTracker.component);
 
-                panelMan.setLayer(animTracker.component, layArea.layer);
+                pm.getPanel().setLayer(animTracker.component, layArea.layer);
             }
 
             return true;
         }
 
         return false;
-    }
-
-    /**
-     * Get the comp2jcomp that are currently being animated.
-     * 
-     * @return
-     */
-    public List<IComponent> getScalableComponents()
-    {
-        List<IComponent> comps = new ArrayList<>();
-        for (AnimationTracker tracker : animTrackers)
-        {
-            comps.add(tracker.component);
-        }
-        return comps;
     }
 }

@@ -1,9 +1,11 @@
 package gent.timdemey.cards.services.animation;
 
+import javax.swing.JComponent;
+
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.interfaces.IPositionService;
-import gent.timdemey.cards.ui.components.ext.IComponent;
+import gent.timdemey.cards.ui.components.ext.IHasComponent;
 
 public class MovingAnimation implements IAnimation
 {
@@ -12,7 +14,7 @@ public class MovingAnimation implements IAnimation
     }
     
     @Override
-    public void tick(IComponent comp, double frac, AnimationStart animStart)
+    public void tick(JComponent jcomp, double frac, AnimationStart animStart)
     {        
         // convert the relative coordinates of the component at the start of the animation
         // into absolute coordinates in the current reference frame, and interpolate 
@@ -21,10 +23,11 @@ public class MovingAnimation implements IAnimation
         IPositionService posServ = Services.get(IPositionService.class);
         
         Coords.Absolute coords_src = posServ.getAbsoluteCoords(animStart.relcoords);
-        Coords.Absolute coords_dst = posServ.getEndLayeredArea(comp).abscoords;          
+        Coords.Absolute coords_dst = posServ.getEndLayeredArea(jcomp).abscoords;          
         Coords.Absolute coords_interp = Coords.interpolate(frac, coords_src, coords_dst);   
         
-        comp.setAbsCoords(coords_interp);
-        comp.getJComponent().validate();
+        ((IHasComponent<?>) jcomp).getComponent().setAbsCoords(coords_interp);
+        
+        jcomp.validate();
     }
 }

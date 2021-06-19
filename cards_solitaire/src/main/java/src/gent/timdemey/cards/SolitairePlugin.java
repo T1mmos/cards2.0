@@ -11,7 +11,7 @@ import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.panels.SolitairePanelService;
-import gent.timdemey.cards.services.panels.SolitairePositionService;
+import gent.timdemey.cards.services.panels.game.SolitairePositionService;
 
 public class SolitairePlugin implements ICardPlugin
 {

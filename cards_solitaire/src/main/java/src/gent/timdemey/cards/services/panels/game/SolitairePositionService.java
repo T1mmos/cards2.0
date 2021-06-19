@@ -1,7 +1,9 @@
-package gent.timdemey.cards.services.panels;
+package gent.timdemey.cards.services.panels.game;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
+
+import javax.swing.JComponent;
 
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
@@ -12,6 +14,7 @@ import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.ui.components.ext.IComponent;
+import gent.timdemey.cards.utils.ComponentUtils;
 
 public class SolitairePositionService implements IPositionService
 {
@@ -100,31 +103,33 @@ public class SolitairePositionService implements IPositionService
 
 
     @Override
-    public LayeredArea getStartLayeredArea(IComponent scaleComp)
+    public LayeredArea getStartLayeredArea(JComponent jcomp)
     {
-        return getEndLayeredArea(scaleComp);
+        return getEndLayeredArea(jcomp);
     }
     
     @Override
-    public LayeredArea getEndLayeredArea(IComponent scaleComp)
+    public LayeredArea getEndLayeredArea(JComponent jcomp)
     {
+        IComponent comp = ComponentUtils.getComponent(jcomp);
+        ComponentType compType = comp.getComponentType();
         Rectangle bounds;
         int layer;
-        if(scaleComp.getComponentType().hasTypeName(ComponentTypes.CARD))
+        if(compType.hasTypeName(ComponentTypes.CARD))
         {
-            ReadOnlyCard card = (ReadOnlyCard) scaleComp.getPayload();
+            ReadOnlyCard card = (ReadOnlyCard) comp.getPayload();
             bounds = getBounds(card);
             layer = LAYER_CARDS + card.getCardIndex();
         }
-        else if(scaleComp.getComponentType().hasTypeName(ComponentTypes.CARDSTACK))
+        else if(compType.hasTypeName(ComponentTypes.CARDSTACK))
         {
-            ReadOnlyCardStack cardstack = (ReadOnlyCardStack) scaleComp.getPayload();
+            ReadOnlyCardStack cardstack = (ReadOnlyCardStack) comp.getPayload();
             bounds = getBounds(cardstack);
             layer = LAYER_CARDSTACKS;
         }
         else
         {
-            throw new UnsupportedOperationException("Unsupported scalable component: " + scaleComp.getClass().getSimpleName());
+            throw new UnsupportedOperationException("Unsupported scalable component: " + jcomp.getClass().getSimpleName());
         }
 
         Coords.Absolute coords = Coords.getAbsolute(bounds);

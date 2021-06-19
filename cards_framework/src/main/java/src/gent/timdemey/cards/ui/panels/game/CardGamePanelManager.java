@@ -97,11 +97,9 @@ public class CardGamePanelManager extends PanelManagerBase
         {
             ReadOnlyCard card = cards.get(i);
             JSImage jsimage = createJSImage(card);
-            getPanel().add(jsimage);
-            updateComponent(jsimage);
         }
     }
-    
+
     @Override
     public void updateComponent(JComponent comp)
     {
@@ -231,14 +229,16 @@ public class CardGamePanelManager extends PanelManagerBase
         }
     }
 
-    public void startAnimation(JComponent comp)
+    @Override
+    public void startAnimate(JComponent comp)
     {
         int layer = getNextAnimationLayer();
         getPanel().setLayer(comp, layer);
         animator.startAnimate(comp);
     }
 
-    public void stopAnimation(JComponent comp)
+    @Override
+    public void stopAnimate(JComponent comp)
     {
         animator.stopAnimate(comp);
     }
@@ -286,7 +286,6 @@ public class CardGamePanelManager extends PanelManagerBase
         UUID csResId = idServ.createCardStackScalableResourceId(cardstack.getCardStackType());
 
         // create the component using its necessary image resources
-
         IScalingService scaleServ = Services.get(IScalingService.class);
         SImageResource res = (SImageResource) scaleServ.getSResource(csResId);
         return createJSImage(compId, ComponentTypes.CARDSTACK, cardstack, res);

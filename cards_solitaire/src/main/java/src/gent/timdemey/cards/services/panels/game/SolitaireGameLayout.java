@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.panels;
+package gent.timdemey.cards.services.panels.game;
 
 final class SolitaireGameLayout {
 

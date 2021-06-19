@@ -2,8 +2,8 @@ package gent.timdemey.cards.services.animation;
 
 import java.awt.Color;
 
-import gent.timdemey.cards.ui.components.drawers.ScaledTextDrawer;
-import gent.timdemey.cards.ui.components.ext.IComponent;
+import javax.swing.JComponent;
+
 import gent.timdemey.cards.utils.ColorUtils;
 
 public class ForegroundColorAnimation implements IAnimation
@@ -18,15 +18,10 @@ public class ForegroundColorAnimation implements IAnimation
     }
 
     @Override
-    public void tick(IComponent comp, double frac, AnimationStart animStart)
+    public void tick(JComponent jcomp, double frac, AnimationStart animStart)
     {        
         Color color = ColorUtils.interpolate(color_start, color_end, frac);
-        
-        if (comp instanceof ScaledTextDrawer)
-        {
-            ScaledTextDrawer textComp = (ScaledTextDrawer) comp;
-            textComp.setInnerColor(color);
-            textComp.repaint();
-        }
+        jcomp.setForeground(color);
+        jcomp.repaint();
     }
 }

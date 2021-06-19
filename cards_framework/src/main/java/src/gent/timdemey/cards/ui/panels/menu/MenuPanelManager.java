@@ -47,7 +47,7 @@ public class MenuPanelManager extends PanelManagerBase
     @Override
     public JSLayeredPane createPanel()
     {
-        menuPanel = JSFactory.createLayeredPane(ComponentTypes.PANEL);
+        menuPanel = JSFactory.createLayeredPane(ComponentTypes.PANEL_MENU);
         menuPanel.setLayout(new MigLayout("insets 0, align 50% 50%"));
         
         // icon

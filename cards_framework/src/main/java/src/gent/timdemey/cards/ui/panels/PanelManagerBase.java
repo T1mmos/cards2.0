@@ -26,6 +26,7 @@ import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.ui.components.ISResource;
 import gent.timdemey.cards.ui.components.SFontResource;
 import gent.timdemey.cards.ui.components.SImageResource;
+import gent.timdemey.cards.ui.components.ext.IComponent;
 import gent.timdemey.cards.ui.components.ext.IHasComponent;
 import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSImage;
@@ -65,29 +66,21 @@ public abstract class PanelManagerBase implements IPanelManager
     protected final JSImage createJSImage(UUID compId, ComponentType compType, Object payload, SImageResource ... imgResources)
     {
         JSImage jsimage = JSFactory.createImageScaled(compId, compType, imgResources); 
-        initComponent(jsimage, payload);
-        
-        // add resources to scaler
-        IScalingService scaleServ = Services.get(IScalingService.class);
-        for (SImageResource res : imgResources)
-        {
-            scaleServ.addSResource(res);    
-        }
-        
+        initAndAddComponent(jsimage, payload);
         return jsimage;
     }
-
-
+    
     protected JSLabel createJSLabel(UUID compId, ComponentType compType, String text, Object payload, SFontResource fontRes)
     {
         JSLabel jslabel = JSFactory.createLabelScaled(text, compType, fontRes);
-        initComponent(jslabel, payload);
+        initAndAddComponent(jslabel, payload);
         return jslabel;
     }
     
-    private void initComponent(IHasComponent<?> jcomp, Object payload)
+    protected void initAndAddComponent(IHasComponent<?> hasComp, Object payload)
     {
-        UUID compid = jcomp.getComponent().getId();
+        IComponent comp = hasComp.getComponent();
+        UUID compid = comp.getId();
         
         // should not exist yet
         JComponent existing = comp2jcomp.get(compid);
@@ -97,11 +90,18 @@ public abstract class PanelManagerBase implements IPanelManager
         }
         
         // init
-        jcomp.getComponent().setPanelManager(this);
-        jcomp.getComponent().setPayload(payload);
+        comp.setPanelManager(this);
+        comp.setPayload(payload);
+        
+        // get JComponent, sync to domain model
+        JComponent jcomp = comp.getJComponent();
+        updateComponent(jcomp);
         
         // add to lookup
-        comp2jcomp.put(compid, (JComponent) jcomp);
+        comp2jcomp.put(compid, jcomp);
+        
+        // add component to panel
+        getPanel().add(jcomp);
     }
     
     @Override

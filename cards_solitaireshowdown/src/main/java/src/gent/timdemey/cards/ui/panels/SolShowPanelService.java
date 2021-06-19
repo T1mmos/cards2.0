@@ -1,8 +1,7 @@
-package gent.timdemey.cards.services.panels;
+package gent.timdemey.cards.ui.panels;
 
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
-import gent.timdemey.cards.services.panels.game.SolShowGamePanelManager;
-import gent.timdemey.cards.ui.panels.PanelService;
+import gent.timdemey.cards.ui.panels.game.SolShowGamePanelManager;
 
 public class SolShowPanelService extends PanelService 
 {

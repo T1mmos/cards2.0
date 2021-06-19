@@ -9,8 +9,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IIdService;
-import gent.timdemey.cards.services.interfaces.IScalingService;
-import gent.timdemey.cards.ui.components.ext.IComponent;
+import gent.timdemey.cards.ui.components.swing.JSImage;
 import gent.timdemey.cards.ui.panels.game.CardGamePanelManager;
 
 public class SolitaireGamePanelManager extends CardGamePanelManager
@@ -43,7 +42,6 @@ public class SolitaireGamePanelManager extends CardGamePanelManager
     @Override
     public void createComponents()
     {
-        IScalingService scaleCompServ = Services.get(IScalingService.class);
         ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState().getCardGame();
 
         super.createComponents();
@@ -53,9 +51,7 @@ public class SolitaireGamePanelManager extends CardGamePanelManager
         for (int i = 0; i < cardstacks.size(); i++)
         {
             ReadOnlyCardStack cardstack = cardstacks.get(i);
-            IComponent scaleComp = scaleCompServ.createSComponent(cardstack, this);
-            add(scaleComp);
-            updateComponent(scaleComp);
+            JSImage jsimage = createJSImage(cardstack);
         }
     }
 }
