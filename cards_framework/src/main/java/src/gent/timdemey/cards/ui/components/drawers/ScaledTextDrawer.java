@@ -166,7 +166,7 @@ public final class ScaledTextDrawer extends DrawerBase<JLabel>
 
         GetResourceResponse<Font> resp = getFont(comp);
         Dimension dim = ComponentUtils.getComponent(comp).getAbsCoords().getSize();
-        if ((bufferedImage.getWidth() != dim.width || bufferedImage.getHeight() != dim.height) && resp.found)
+        if ((bufferedImage == null || (bufferedImage.getWidth() != dim.width || bufferedImage.getHeight() != dim.height)) && resp.found)
         {
             // update the buffered image
             Font font = resp.resource;

@@ -16,7 +16,7 @@ public class CardGamePanelContainerListener implements ContainerListener
     @Override
     public void componentAdded(ContainerEvent e)
     {
-        JComponent jcomp = (JComponent) e.getComponent();
+        JComponent jcomp = (JComponent) e.getChild();
         
         IPanelService panelServ = Services.get(IPanelService.class);
         IPanelManager pm = panelServ.getPanelManager(PanelDescriptors.Game);

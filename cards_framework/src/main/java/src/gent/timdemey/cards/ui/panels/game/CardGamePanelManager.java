@@ -127,8 +127,6 @@ public class CardGamePanelManager extends PanelManagerBase
             ((ScaledImageDrawer) jsimage_cs.getDrawer()).setScalableImageResource(resId);
             return;
         }
-
-        throw new UnsupportedOperationException("updateComponent not supported for ComponentType " + compType);
     }
 
     protected void preloadImages()

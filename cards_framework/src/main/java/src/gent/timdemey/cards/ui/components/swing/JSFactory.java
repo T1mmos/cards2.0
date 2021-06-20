@@ -32,7 +32,7 @@ public final class JSFactory
     {
         JSButton jsbutton = new JSButton();
 
-        jsbutton.setComponent(new ComponentBase(UUID.randomUUID(), ComponentTypes.BUTTON));
+        setComponent(jsbutton, new ComponentBase(UUID.randomUUID(), ComponentTypes.BUTTON));
         setDrawer(jsbutton, new DrawerBase<>());
 
         return jsbutton;
@@ -42,7 +42,7 @@ public final class JSFactory
     {
         JSButton jsbutton = new JSButton();
         
-        jsbutton.setComponent(new ComponentBase(UUID.randomUUID(), ComponentTypes.BUTTON));
+        setComponent(jsbutton, new ComponentBase(UUID.randomUUID(), ComponentTypes.BUTTON));
         setDrawer(jsbutton, new DrawerBase<>());
         
         jsbutton.setText(text);
@@ -121,8 +121,7 @@ public final class JSFactory
     public static JSImage createImage(UUID compId, ComponentType compType, IDrawer<JPanel> drawer)
     {
         JSImage jsimage = new JSImage();
-        ComponentBase comp = new ComponentBase(compId, compType);
-        jsimage.setComponent(comp);
+        setComponent(jsimage, new ComponentBase(compId, compType));
         setDrawer(jsimage, drawer);
         return jsimage;
     }
