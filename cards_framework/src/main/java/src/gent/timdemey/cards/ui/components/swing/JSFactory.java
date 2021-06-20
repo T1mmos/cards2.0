@@ -18,9 +18,9 @@ import gent.timdemey.cards.ui.components.drawers.IHasDrawer;
 import gent.timdemey.cards.ui.components.drawers.ScaledImageDrawer;
 import gent.timdemey.cards.ui.components.drawers.ScaledTextDrawer;
 import gent.timdemey.cards.ui.components.ext.ComponentBase;
-import gent.timdemey.cards.ui.components.ext.ImageComponent;
+import gent.timdemey.cards.ui.components.ext.IComponent;
+import gent.timdemey.cards.ui.components.ext.IHasComponent;
 import gent.timdemey.cards.ui.components.ext.LayeredPaneComponent;
-import gent.timdemey.cards.ui.components.ext.TextComponent;
 import net.miginfocom.swing.MigLayout;
 
 public final class JSFactory
@@ -71,7 +71,8 @@ public final class JSFactory
         JSLabel jslabel = new JSLabel();
 
         jslabel.setText(text);
-        jslabel.setComponent(new TextComponent(UUID.randomUUID(), compType));
+        
+        setComponent(jslabel, new ComponentBase(UUID.randomUUID(), compType));
         setDrawer(jslabel, drawer);
         
         return jslabel;
@@ -88,7 +89,8 @@ public final class JSFactory
         
         // default layout manager
         jslpane.setLayout(new MigLayout("insets 0"));
-        jslpane.setComponent(new LayeredPaneComponent(UUID.randomUUID(), compType));
+        
+        setComponent(jslpane, new LayeredPaneComponent(UUID.randomUUID(), compType));
         setDrawer(jslpane, drawer);
         
         return jslpane;
@@ -119,7 +121,7 @@ public final class JSFactory
     public static JSImage createImage(UUID compId, ComponentType compType, IDrawer<JPanel> drawer)
     {
         JSImage jsimage = new JSImage();
-        ImageComponent comp = new ImageComponent(compId, compType);
+        ComponentBase comp = new ComponentBase(compId, compType);
         jsimage.setComponent(comp);
         setDrawer(jsimage, drawer);
         return jsimage;
@@ -131,4 +133,9 @@ public final class JSFactory
         drawer.onAttached((T) drawee);
     }
 
+    private static <T extends IComponent, J extends JComponent & IHasComponent<T>> void setComponent(J hasComp, T comp)
+    {
+        hasComp.setComponent(comp);
+        comp.onAttached(hasComp);
+    }
 }

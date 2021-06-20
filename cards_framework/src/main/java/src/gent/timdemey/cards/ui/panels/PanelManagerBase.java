@@ -15,6 +15,7 @@ import javax.swing.JComponent;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityBase;
+import gent.timdemey.cards.services.animation.Animator;
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.res.FontResource;
@@ -34,11 +35,13 @@ import gent.timdemey.cards.ui.components.swing.JSLabel;
 
 public abstract class PanelManagerBase implements IPanelManager
 {
+    protected final Animator animator;    
     protected final Map<UUID, JComponent> comp2jcomp;
     protected final Map<UUID, UUID> entity2comp;
     
     protected PanelManagerBase()
     {
+        this.animator = new Animator();
         this.comp2jcomp = new HashMap<>();
         this.entity2comp = new HashMap<>();
     }

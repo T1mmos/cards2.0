@@ -42,11 +42,8 @@ public class TestBase
                 return true;
             }
         };
-        ctxtService.initialize(ContextType.UI);
-        App.getServices().installIfAbsent(IContextService.class, () -> ctxtService);
-        App.getServices().installIfAbsent(INetworkService.class,  () -> new MockNetworkService());
-        App.getServices().installIfAbsent(ILogManager.class,  () -> new MockLogManager());
-        App.getServices().installIfAbsent(ICardGameService.class,  () -> new ICardGameService()
+        
+        ICardGameService cardGameServ =  new ICardGameService()
         {
             
             @Override
@@ -69,7 +66,13 @@ public class TestBase
                 // TODO Auto-generated method stub
                 return null;
             }
-        });
+        };
+        
+        ctxtService.initialize(ContextType.UI);
+        App.getServices().installIfAbsent(IContextService.class, () -> ctxtService);
+        App.getServices().installIfAbsent(INetworkService.class, () -> new MockNetworkService());
+        App.getServices().installIfAbsent(ILogManager.class, () -> new MockLogManager()); 
+        App.getServices().installIfAbsent(ICardGameService.class, () -> cardGameServ);
     }
 
     public static void installMockCardPlugin()

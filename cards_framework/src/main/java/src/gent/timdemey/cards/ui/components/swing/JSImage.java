@@ -4,13 +4,13 @@ import javax.swing.JPanel;
 
 import gent.timdemey.cards.ui.components.drawers.IDrawer;
 import gent.timdemey.cards.ui.components.drawers.IHasDrawer;
+import gent.timdemey.cards.ui.components.ext.ComponentBase;
 import gent.timdemey.cards.ui.components.ext.IHasComponent;
-import gent.timdemey.cards.ui.components.ext.ImageComponent;
 
-public final class JSImage extends JPanel implements IHasComponent<ImageComponent>, IHasDrawer<JPanel>
+public final class JSImage extends JPanel implements IHasComponent<ComponentBase>, IHasDrawer<JPanel>
 {
     private IDrawer<JPanel> drawer;
-    private ImageComponent scomp;
+    private ComponentBase comp;
 
     JSImage()
     {
@@ -30,14 +30,14 @@ public final class JSImage extends JPanel implements IHasComponent<ImageComponen
     }
 
     @Override
-    public final ImageComponent getComponent()
+    public final ComponentBase getComponent()
     {
-        return scomp;
+        return comp;
     }
 
     @Override
-    public final void setComponent(ImageComponent scomp)
+    public final void setComponent(ComponentBase scomp)
     {
-        this.scomp = scomp;
+        this.comp = scomp;
     }
 }

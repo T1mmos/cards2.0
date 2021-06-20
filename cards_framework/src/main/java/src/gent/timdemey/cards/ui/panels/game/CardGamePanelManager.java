@@ -39,7 +39,6 @@ import gent.timdemey.cards.ui.panels.PanelManagerBase;
 public class CardGamePanelManager extends PanelManagerBase
 {
     private JSLayeredPane gamePanel;
-    private Animator animator;
     private CardGamePanelMouseListener dragListener;
 
     @Override
