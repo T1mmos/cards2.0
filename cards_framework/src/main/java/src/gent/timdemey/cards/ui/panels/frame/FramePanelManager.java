@@ -46,7 +46,7 @@ public class FramePanelManager extends PanelManagerBase
 {
     protected JSLayeredPane framePanel = null;
     private JPanel frameTitlePanel;
-    private JLayeredPane frameBodyPanel;
+    private JSLayeredPane frameBodyPanel;
     private Font frameTitleFont;
     private JButton title_maximize; 
     private JButton title_unmaximize;
@@ -121,8 +121,7 @@ public class FramePanelManager extends PanelManagerBase
         
         title_unmaximize.setVisible(false);
         
-        frameBodyPanel = new JLayeredPane();
-        frameBodyPanel.setLayout(new MigLayout());
+        frameBodyPanel = JSFactory.createLayeredPane(ComponentTypes.FRAMEBODY);
         frameBodyPanel.addComponentListener(new FrameBodyPanelResizeListener());
         framePanel.add(frameBodyPanel, "push, grow");
         

@@ -51,7 +51,8 @@ public class ColorUtils
 
     public static Color transparent(Color color, float alpha)
     {
-        Color tcolor = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (255 * alpha));
+        int alphaInt = (int) (255 * alpha);
+        Color tcolor = new Color(color.getRed(), color.getGreen(), color.getBlue(), alphaInt);
         return tcolor;
     }
 }

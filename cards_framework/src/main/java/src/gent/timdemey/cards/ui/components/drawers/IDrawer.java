@@ -11,6 +11,7 @@ import gent.timdemey.cards.ui.components.IAttachable;
 public interface IDrawer<T extends JComponent> extends IAttachable<T>
 {    
     void draw(Graphics g, Consumer<Graphics> paintComponent);    
+    void drawChildren(Graphics g, Consumer<Graphics> paintChildren);    
     
     void setMirror(boolean mirror);
     boolean isMirror();

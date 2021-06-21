@@ -1,5 +1,7 @@
 package gent.timdemey.cards.ui.components.swing;
 
+import java.awt.Graphics;
+
 import javax.swing.JPanel;
 
 import gent.timdemey.cards.ui.components.drawers.IDrawer;
@@ -15,6 +17,18 @@ public final class JSImage extends JPanel implements IHasComponent<ComponentBase
     JSImage()
     {
 
+    }
+    
+    @Override
+    protected void paintComponent(Graphics g)
+    {        
+        drawer.draw(g, super::paintComponent);
+    }
+    
+    @Override
+    protected void paintChildren(Graphics g)
+    {
+        drawer.drawChildren(g, super::paintChildren);
     }
 
     @Override

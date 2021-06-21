@@ -20,10 +20,16 @@ public class JSLayeredPane extends JLayeredPane implements IHasComponent<Layered
 
     @Override
     protected void paintComponent(Graphics g)
-    {
+    {        
         drawer.draw(g, super::paintComponent);
     }
-
+    
+    @Override
+    protected void paintChildren(Graphics g)
+    {
+        drawer.drawChildren(g, super::paintChildren);
+    }
+    
     @Override
     public final IDrawer<JLayeredPane> getDrawer()
     {

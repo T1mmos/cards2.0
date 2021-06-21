@@ -1,12 +1,12 @@
 package gent.timdemey.cards.ui.panels.menu;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import com.alee.laf.button.WebButton;
 
@@ -24,6 +24,7 @@ import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.PanelManagerBase;
+import gent.timdemey.cards.utils.ComponentUtils;
 import net.miginfocom.swing.MigLayout;
 
 public class MenuPanelManager extends PanelManagerBase
@@ -52,13 +53,13 @@ public class MenuPanelManager extends PanelManagerBase
         
         // icon
         {
-            JLabel lbl_icon = new JLabel(new ImageIcon(bgimg));
+            JLabel lbl_icon = JSFactory.createLabel(new ImageIcon(bgimg));
             menuPanel.add(lbl_icon, "");
         }
 
         // buttons
         {
-            JPanel pnl_buts = new JPanel(new MigLayout());
+            JSLayeredPane pnl_buts = JSFactory.createLayeredPane(ComponentTypes.PANEL);
             List<ActionDescriptor> actDescs = getMenuActionDescriptors();
             MenuButtonMouseListener listener = new MenuButtonMouseListener();                
             IActionService actServ = Services.get(IActionService.class);

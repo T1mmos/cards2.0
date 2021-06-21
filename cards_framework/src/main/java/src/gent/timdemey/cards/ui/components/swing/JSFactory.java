@@ -2,6 +2,7 @@ package gent.timdemey.cards.ui.components.swing;
 
 import java.util.UUID;
 
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -78,6 +79,33 @@ public final class JSFactory
         return jslabel;
     }
     
+    public static JSLabel createLabel(ImageIcon icon)
+    {
+        return createLabel(icon, ComponentTypes.LABEL);
+    }
+    
+    public static JSLabel createLabel(ImageIcon icon, ComponentType compType)
+    {        
+        return createLabel(icon, compType, new DrawerBase<>());
+    }
+    
+    public static JSLabel createLabel(ImageIcon icon, ComponentType compType, IDrawer<JLabel> drawer)
+    {
+        JSLabel jslabel = new JSLabel();
+
+        jslabel.setIcon(icon);
+        
+        setComponent(jslabel, new ComponentBase(UUID.randomUUID(), compType));
+        setDrawer(jslabel, drawer);
+        
+        // custom UI implementators e.g. WebButtonUI set the background, 
+        // revert that so everything remains transparent until either the background tiling
+        // or an actual background color and/or alpha is set from our code
+        jslabel.setBackground(null);
+        
+        return jslabel;
+    }
+    
     public static JSLayeredPane createLayeredPane(ComponentType compType)
     {        
         return createLayeredPane(compType, new DrawerBase<>());
@@ -129,7 +157,7 @@ public final class JSFactory
     private static <T extends JComponent> void setDrawer(IHasDrawer<T> drawee, IDrawer<T> drawer)
     {
         drawee.setDrawer(drawer);
-        drawer.onAttached((T) drawee);
+        drawer.onAttached((T) drawee);        
     }
 
     private static <T extends IComponent, J extends JComponent & IHasComponent<T>> void setComponent(J hasComp, T comp)
@@ -137,4 +165,5 @@ public final class JSFactory
         hasComp.setComponent(comp);
         comp.onAttached(hasComp);
     }
+
 }

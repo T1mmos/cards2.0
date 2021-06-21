@@ -21,7 +21,6 @@ import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.ui.components.ext.IHasComponent;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
-import gent.timdemey.cards.utils.ColorUtils;
 import gent.timdemey.cards.utils.ComponentUtils;
 import gent.timdemey.cards.utils.DebugDrawDefines;
 
@@ -106,6 +105,18 @@ public class DrawerBase<T extends JComponent> implements IDrawer<T>
         
         drawBackground(g2);
         drawForeground(g2, superPaintComponent);
+        
+        g2.dispose();
+    }
+    
+    public void drawChildren(Graphics g, Consumer<Graphics> superPaintChildren)
+    {
+        Graphics2D g2 = (Graphics2D) g.create();
+            
+        // by default, draw with the JComponent's given draw function (paintChildren)
+        superPaintChildren.accept(g2);
+        
+        // debug drawing happens even on top of the children
         drawDebug(g2);
         
         g2.dispose();
@@ -115,8 +126,8 @@ public class DrawerBase<T extends JComponent> implements IDrawer<T>
     {
         Graphics2D g2 = createMirrorGraphics(g);
 
-        // support for background alphaFg
-        applyAlpha(g, alphaBg);
+        // support for background alpha
+        applyAlpha(g2, alphaBg);
 
         Rectangle bounds = g2.getClipBounds();
         int x = bounds.x;
@@ -140,9 +151,14 @@ public class DrawerBase<T extends JComponent> implements IDrawer<T>
         }
         else
         {
-            Color bgColor = ColorUtils.transparent(jcomp.getBackground(), alphaBg);
-            g2.setColor(bgColor);
-            g2.fillRect(x, y, w - 1, h - 1);
+            // only draw background color if it is set explicitly, otherwise be transparent
+            // by skipping the background drawing - omitting the check would 
+            // take the parent's color
+            if (jcomp.isBackgroundSet())
+            {
+                g2.setColor(jcomp.getBackground());
+                g2.fillRect(x, y, w - 1, h - 1);
+            }
         }
 
         g2.dispose();
@@ -183,6 +199,11 @@ public class DrawerBase<T extends JComponent> implements IDrawer<T>
     public List<String> getDebugStrings()
     {
         List<String> strs = new ArrayList<>();
+        
+        // class type
+        {
+            addDebugString(strs, "Class", jcomp.getClass().getSimpleName());
+        }
         
         // ComponentType
         if (jcomp instanceof IHasComponent<?>)
@@ -249,11 +270,11 @@ public class DrawerBase<T extends JComponent> implements IDrawer<T>
             return;
         }
 
-        g.setFont(Font.decode("Arial bold 8"));
+        g.setFont(Font.decode("Arial bold 7"));
         int hFat = g.getFontMetrics().getHeight();
         g.drawString(strings.get(0), 5, hFat);
 
-        g2.setFont(Font.decode("Arial 8"));
+        g2.setFont(Font.decode("Arial 7"));
         int hSmall = g.getFontMetrics().getHeight();
 
         for (int i = 1; i < strings.size(); i++)

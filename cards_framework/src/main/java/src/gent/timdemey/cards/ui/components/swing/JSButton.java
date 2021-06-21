@@ -23,6 +23,12 @@ public class JSButton extends JButton implements IHasComponent<ComponentBase>, I
     {        
         drawer.draw(g, super::paintComponent);
     }
+    
+    @Override
+    protected void paintChildren(Graphics g)
+    {
+        drawer.drawChildren(g, super::paintChildren);
+    }
 
     @Override
     public final IDrawer<JButton> getDrawer()
