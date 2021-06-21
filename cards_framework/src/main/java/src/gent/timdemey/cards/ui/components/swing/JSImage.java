@@ -14,6 +14,10 @@ public final class JSImage extends JPanel implements IHasComponent<ComponentBase
     private IDrawer drawer;
     private ComponentBase comp;
     
+    JSImage()
+    {
+    }
+    
     @Override
     protected void paintComponent(Graphics g)
     {        

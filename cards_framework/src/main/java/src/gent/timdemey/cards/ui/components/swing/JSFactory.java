@@ -1,5 +1,6 @@
 package gent.timdemey.cards.ui.components.swing;
 
+import java.awt.Color;
 import java.util.UUID;
 
 import javax.swing.ImageIcon;
@@ -61,7 +62,10 @@ public final class JSFactory
     
     public static JSLabel createLabelScaled(String text, ComponentType compType, SFontResource fontRes)
     {
-        return createLabel(text, compType, new ScaledTextDrawer(fontRes));    
+        JSLabel lbl =  createLabel(text, compType, new ScaledTextDrawer(fontRes));
+      //  lbl.setBackground(Color.orange);
+        
+        return lbl;
     }
     
     public static JSLabel createLabel(String text, ComponentType compType, IDrawer drawer)
@@ -69,9 +73,11 @@ public final class JSFactory
         JSLabel jslabel = new JSLabel();
 
         jslabel.setText(text);
+        jslabel.setHorizontalTextPosition(JSLabel.CENTER);
         
         setComponent(jslabel, new ComponentBase(UUID.randomUUID(), compType));
         setDrawer(jslabel, drawer);
+        setBackgroundTransparent(jslabel);
         
         return jslabel;
     }

@@ -127,11 +127,11 @@ public final class ScaledTextDrawer extends DrawerBase<JSLabel>
         }
 
         int x;
-        if(comp.getHorizontalAlignment() == JLabel.LEFT)
+        if(comp.getHorizontalTextPosition() == JSLabel.LEFT)
         {
             x = 0;
         }
-        else if(comp.getHorizontalAlignment() == JLabel.CENTER)
+        else if(comp.getHorizontalTextPosition() == JSLabel.CENTER)
         {
             x = (bounds.width - w) / 2;
         }

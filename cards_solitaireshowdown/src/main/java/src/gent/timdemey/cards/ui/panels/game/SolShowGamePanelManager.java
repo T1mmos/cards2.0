@@ -68,8 +68,7 @@ public class SolShowGamePanelManager extends CardGamePanelManager
                
                 JSLabel textComp = createJSLabel(counterCompId, SolShowComponentTypes.SPECIALSCORE, "NOTSET", cs, textRes);
                 textComp.setForeground(SolShowResourceDefines.COLOR_FONT_SPECIALCOUNT_INNER);
-                ((ScaledTextDrawer) textComp.getDrawer()).setOuterColor(SolShowResourceDefines.COLOR_FONT_SPECIALCOUNT_OUTER);    
-                textComp.setHorizontalTextPosition(JSLabel.LEFT);     
+                ((ScaledTextDrawer) textComp.getDrawer()).setOuterColor(SolShowResourceDefines.COLOR_FONT_SPECIALCOUNT_OUTER);
                 
                 UUID resid_spec_bg = idServ.createSpecialBackgroundResourceId(!local);
                 SImageResource res_spec_bg = (SImageResource) scaleServ.getSResource(resid_spec_bg);
