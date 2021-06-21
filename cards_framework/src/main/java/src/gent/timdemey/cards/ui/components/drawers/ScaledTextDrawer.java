@@ -65,7 +65,7 @@ public final class ScaledTextDrawer extends DrawerBase<JLabel>
         List<String> allStrings = new ArrayList<>(super.getDebugStrings());
 
         allStrings.add(String.format("font=%s", fontResource.getResource().filename));
-        allStrings.add(String.format("fontsize=%s", getFont(comp).resource.getSize()));
+        allStrings.add(String.format("fontsize=%s", getFont(jcomp).resource.getSize()));
 
         return allStrings;
     }
@@ -73,7 +73,7 @@ public final class ScaledTextDrawer extends DrawerBase<JLabel>
     @Override
     public void drawDebugBoundaries(Graphics2D g2)
     {        
-        Rectangle bounds = comp.getBounds();
+        Rectangle bounds = jcomp.getBounds();
         
         // jlabel bounding box
         {
@@ -86,7 +86,7 @@ public final class ScaledTextDrawer extends DrawerBase<JLabel>
         // text soft bounding box
         {
             Graphics2D g = (Graphics2D) g2.create();
-            Rectangle tb = getTextBounds(g, comp);
+            Rectangle tb = getTextBounds(g, jcomp);
             g.setColor(DebugDrawDefines.COLOR_SCALABLETEXTCOMPONENT_INNER);
             g.setStroke(DebugDrawDefines.STROKE_DASHED);
             g.drawRect(tb.x, tb.y, tb.width - 1, tb.height - 1);
@@ -164,8 +164,8 @@ public final class ScaledTextDrawer extends DrawerBase<JLabel>
         
         applyAlpha(g, getForegroundAlpha());
 
-        GetResourceResponse<Font> resp = getFont(comp);
-        Dimension dim = ComponentUtils.getComponent(comp).getAbsCoords().getSize();
+        GetResourceResponse<Font> resp = getFont(jcomp);
+        Dimension dim = ComponentUtils.getComponent(jcomp).getAbsCoords().getSize();
         if ((bufferedImage == null || (bufferedImage.getWidth() != dim.width || bufferedImage.getHeight() != dim.height)) && resp.found)
         {
             // update the buffered image
@@ -176,7 +176,7 @@ public final class ScaledTextDrawer extends DrawerBase<JLabel>
             
             g2d.setFont(font);
 
-            Rectangle tb = getTextBounds(g, comp);
+            Rectangle tb = getTextBounds(g, jcomp);
             FontMetrics fm = g.getFontMetrics();
             int descent = fm.getDescent();
             g2d.translate(tb.x, + tb.y + tb.height - descent);
@@ -184,7 +184,7 @@ public final class ScaledTextDrawer extends DrawerBase<JLabel>
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             // text
-            String text = comp.getText();
+            String text = jcomp.getText();
             if (text != null && !text.isEmpty())
             {
                 FontRenderContext frc = g2d.getFontRenderContext();
@@ -194,7 +194,7 @@ public final class ScaledTextDrawer extends DrawerBase<JLabel>
 
                 float strokeWidth = 1.0f * font.getSize() / 16;
                 g2d.setStroke(new BasicStroke(strokeWidth));
-                g2d.setColor(getInnerColor(comp));
+                g2d.setColor(getInnerColor(jcomp));
                 g2d.fill(shape);
                 g2d.setColor(getOutlineColor());
                 g2d.draw(shape);                    

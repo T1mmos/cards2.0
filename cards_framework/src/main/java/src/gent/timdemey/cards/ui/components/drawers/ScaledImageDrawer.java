@@ -59,7 +59,7 @@ public class ScaledImageDrawer extends DrawerBase<JPanel>
     public final void drawForeground(Graphics2D g2, Consumer<Graphics> superPaintComponent)
     {
         Graphics2D g = (Graphics2D) g2.create();
-        Dimension currDim = comp.getSize();
+        Dimension currDim = jcomp.getSize();
 
         GetResourceResponse<BufferedImage> resp = currentScaledResource.get(currDim);
         BufferedImage bi = resp.resource;

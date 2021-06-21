@@ -10,16 +10,19 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 import javax.swing.JComponent;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.interfaces.IFrameService;
+import gent.timdemey.cards.ui.components.ext.IHasComponent;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.utils.ColorUtils;
+import gent.timdemey.cards.utils.ComponentUtils;
 import gent.timdemey.cards.utils.DebugDrawDefines;
 
 public class DrawerBase<T extends JComponent> implements IDrawer<T>
@@ -28,19 +31,19 @@ public class DrawerBase<T extends JComponent> implements IDrawer<T>
     private float alphaFg = 1.0f;
     private float alphaBg = 1.0f;
 
-    protected T comp;
+    protected T jcomp;
     private BufferedImage imageBg;
     
     @Override
     public void onAttached(T comp)
     {
-        this.comp = comp;
+        this.jcomp = comp;
     }
     
     @Override
     public T getJComponent()
     {
-        return comp;
+        return jcomp;
     }
     
     @Override
@@ -137,7 +140,7 @@ public class DrawerBase<T extends JComponent> implements IDrawer<T>
         }
         else
         {
-            Color bgColor = ColorUtils.transparent(comp.getBackground(), alphaBg);
+            Color bgColor = ColorUtils.transparent(jcomp.getBackground(), alphaBg);
             g2.setColor(bgColor);
             g2.fillRect(x, y, w - 1, h - 1);
         }
@@ -171,28 +174,51 @@ public class DrawerBase<T extends JComponent> implements IDrawer<T>
         drawDebugStrings(g2, debugStrings);
     }
 
+    protected void addDebugString(List<String> list, Object key, Object value)
+    {
+        String all =  key + "=" + value;
+        list.add(all);
+    }
+    
     public List<String> getDebugStrings()
     {
-        int width = comp.getWidth();
-        int height = comp.getHeight();
-        int x = comp.getX();
-        int y = comp.getY();
-
-        String layerStr = "/";
-        if (comp.getParent() instanceof JSLayeredPane)
+        List<String> strs = new ArrayList<>();
+        
+        // ComponentType
+        if (jcomp instanceof IHasComponent<?>)
         {
-            int layer = ((JSLayeredPane) comp.getParent()).getLayer((Component) comp);
-            layerStr = "" + layer;
+            ComponentType compType = ComponentUtils.getComponentType(jcomp);
+            String compTypeStr = compType.typeName;
+            if (compType.subType != null)
+            {
+                compTypeStr = compTypeStr + "/" + compType.subType.typeName;
+            }
+            addDebugString(strs, "CompType", compTypeStr);
         }
-
-        return Arrays.asList("rect=" + x + "," + y + ", " + width + "x" + height, "layer=" + layerStr);
+        
+        // layer
+        if (jcomp.getParent() instanceof JSLayeredPane)
+        {
+            int layer = ((JSLayeredPane) jcomp.getParent()).getLayer((Component) jcomp);
+            addDebugString(strs, "layer", layer);
+        }
+        
+        // coordinates + dimensions
+        {
+            addDebugString(strs, "width", jcomp.getWidth());
+            addDebugString(strs, "height", jcomp.getHeight());
+            addDebugString(strs, "x", jcomp.getX());
+            addDebugString(strs, "y", jcomp.getY());
+        }
+        
+        return strs;
     }
 
     protected void drawDebugCoords(Graphics2D g2)
     {
         Graphics2D g = (Graphics2D) g2.create();
         
-        Rectangle rect = comp.getBounds();
+        Rectangle rect = jcomp.getBounds();
 
         g.setColor(DebugDrawDefines.COLOR_DIMMED_COMPONENT_BACKGROUND);
         g.fillRect(0, 0, rect.width, rect.height);
@@ -204,7 +230,7 @@ public class DrawerBase<T extends JComponent> implements IDrawer<T>
     {
         Graphics2D g = (Graphics2D) g2.create();
         
-        Rectangle bounds = comp.getBounds();
+        Rectangle bounds = jcomp.getBounds();
         g.setColor(DebugDrawDefines.COLOR_SCALABLECOMPONENT_BOUNDINGBOX);
         g.drawRect(0, 0, bounds.width - 1, bounds.height - 1);
         
@@ -244,7 +270,7 @@ public class DrawerBase<T extends JComponent> implements IDrawer<T>
         if (isMirror())
         {
             gMirror.scale(-1.0, -1.0);
-            gMirror.translate(-comp.getWidth(), -comp.getHeight());
+            gMirror.translate(-jcomp.getWidth(), -jcomp.getHeight());
         }
         return gMirror;
     }

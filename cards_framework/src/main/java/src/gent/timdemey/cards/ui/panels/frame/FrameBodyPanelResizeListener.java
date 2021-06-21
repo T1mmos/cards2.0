@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.frame;
+package gent.timdemey.cards.ui.panels.frame;
 
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -113,7 +113,7 @@ class FrameBodyPanelResizeListener implements ComponentListener
     
     private void onRescaled()
     {
-        IPanelService panelServ = Services.get(IPanelService.class);
+       // IPanelService panelServ = Services.get(IPanelService.class);
        // panelServ.repaintScalableComponents();
     }
 

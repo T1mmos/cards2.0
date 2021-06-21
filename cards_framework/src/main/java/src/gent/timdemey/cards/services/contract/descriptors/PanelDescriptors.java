@@ -20,6 +20,7 @@ public final class PanelDescriptors
     public static final DataPanelDescriptor<String, StartServerPanelData>   StartServer     = dialog("StartServer", PanelType.Dialog);    
     
     public static final PanelDescriptor                                     Load            = panel ("Load",        PanelType.Overlay);
+    public static final PanelDescriptor                                     Frame           = panel ("Frame",       PanelType.Root);
     
     
     public static <IN, OUT> DataPanelDescriptor<IN, OUT> dialog(String id, PanelType panelType)
