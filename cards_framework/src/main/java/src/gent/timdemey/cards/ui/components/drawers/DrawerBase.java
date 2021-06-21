@@ -24,7 +24,7 @@ import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.utils.ComponentUtils;
 import gent.timdemey.cards.utils.DebugDrawDefines;
 
-public class DrawerBase<T extends JComponent> implements IDrawer<T>
+public class DrawerBase<T extends JComponent> implements IDrawer
 {
     private boolean mirror = false;
     private float alphaFg = 1.0f;
@@ -34,9 +34,9 @@ public class DrawerBase<T extends JComponent> implements IDrawer<T>
     private BufferedImage imageBg;
     
     @Override
-    public void onAttached(T comp)
+    public void onAttached(JComponent comp)
     {
-        this.jcomp = comp;
+        this.jcomp = (T) comp;
     }
     
     @Override

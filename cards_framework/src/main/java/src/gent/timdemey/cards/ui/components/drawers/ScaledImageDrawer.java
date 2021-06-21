@@ -11,14 +11,13 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import javax.swing.JPanel;
-
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.services.contract.GetResourceResponse;
 import gent.timdemey.cards.ui.components.ISResource;
 import gent.timdemey.cards.ui.components.SImageResource;
+import gent.timdemey.cards.ui.components.swing.JSImage;
 
-public class ScaledImageDrawer extends DrawerBase<JPanel>
+public class ScaledImageDrawer extends DrawerBase<JSImage>
 {
     private final List<SImageResource> imgResources;
     private ISResource<BufferedImage> currentScaledResource;
@@ -59,6 +58,7 @@ public class ScaledImageDrawer extends DrawerBase<JPanel>
     public final void drawForeground(Graphics2D g2, Consumer<Graphics> superPaintComponent)
     {
         Graphics2D g = (Graphics2D) g2.create();
+        
         Dimension currDim = jcomp.getSize();
 
         GetResourceResponse<BufferedImage> resp = currentScaledResource.get(currDim);
@@ -71,6 +71,8 @@ public class ScaledImageDrawer extends DrawerBase<JPanel>
         {
             drawTiled(g, bi, currDim);
         }
+        
+        g.dispose();
     }
 
     /**

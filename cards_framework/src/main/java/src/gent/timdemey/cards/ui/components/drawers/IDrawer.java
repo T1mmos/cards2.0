@@ -4,11 +4,9 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.function.Consumer;
 
-import javax.swing.JComponent;
-
 import gent.timdemey.cards.ui.components.IAttachable;
 
-public interface IDrawer<T extends JComponent> extends IAttachable<T>
+public interface IDrawer extends IAttachable
 {    
     void draw(Graphics g, Consumer<Graphics> paintComponent);    
     void drawChildren(Graphics g, Consumer<Graphics> paintChildren);    

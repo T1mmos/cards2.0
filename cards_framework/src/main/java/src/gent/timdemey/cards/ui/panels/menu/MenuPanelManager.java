@@ -1,6 +1,5 @@
 package gent.timdemey.cards.ui.panels.menu;
 
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +23,6 @@ import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.PanelManagerBase;
-import gent.timdemey.cards.utils.ComponentUtils;
 import net.miginfocom.swing.MigLayout;
 
 public class MenuPanelManager extends PanelManagerBase

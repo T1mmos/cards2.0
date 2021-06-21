@@ -1,9 +1,7 @@
 package gent.timdemey.cards.ui.components.drawers;
 
-import javax.swing.JComponent;
-
-public interface IHasDrawer<T extends JComponent>
+public interface IHasDrawer
 {
-    IDrawer<T> getDrawer();
-    void setDrawer(IDrawer<T> drawer);
+    IDrawer getDrawer();
+    void setDrawer(IDrawer drawer);
 }

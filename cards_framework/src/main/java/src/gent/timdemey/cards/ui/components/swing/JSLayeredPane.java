@@ -9,9 +9,9 @@ import gent.timdemey.cards.ui.components.drawers.IHasDrawer;
 import gent.timdemey.cards.ui.components.ext.IHasComponent;
 import gent.timdemey.cards.ui.components.ext.LayeredPaneComponent;
 
-public class JSLayeredPane extends JLayeredPane implements IHasComponent<LayeredPaneComponent>, IHasDrawer<JLayeredPane> 
+public class JSLayeredPane extends JLayeredPane implements IHasComponent<LayeredPaneComponent>, IHasDrawer 
 {
-    private IDrawer<JLayeredPane>  drawer;
+    private IDrawer  drawer;
     private LayeredPaneComponent comp;    
     
     JSLayeredPane ()
@@ -31,13 +31,13 @@ public class JSLayeredPane extends JLayeredPane implements IHasComponent<Layered
     }
     
     @Override
-    public final IDrawer<JLayeredPane> getDrawer()
+    public final IDrawer getDrawer()
     {
         return drawer;
     }
 
     @Override
-    public void setDrawer(IDrawer<JLayeredPane> drawer)
+    public void setDrawer(IDrawer drawer)
     {
         this.drawer = drawer;
     }

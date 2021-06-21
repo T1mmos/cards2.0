@@ -4,9 +4,6 @@ import java.util.UUID;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
 
 import gent.timdemey.cards.services.action.ActionBase;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
@@ -34,7 +31,7 @@ public final class JSFactory
         JSButton jsbutton = new JSButton();
 
         setComponent(jsbutton, new ComponentBase(UUID.randomUUID(), ComponentTypes.BUTTON));
-        setDrawer(jsbutton, new DrawerBase<>());
+        setDrawer(jsbutton, new DrawerBase<JSButton>());
 
         return jsbutton;
     }
@@ -44,7 +41,7 @@ public final class JSFactory
         JSButton jsbutton = new JSButton();
         
         setComponent(jsbutton, new ComponentBase(UUID.randomUUID(), ComponentTypes.BUTTON));
-        setDrawer(jsbutton, new DrawerBase<>());
+        setDrawer(jsbutton, new DrawerBase<JSButton>());
         
         jsbutton.setText(text);
         
@@ -59,7 +56,7 @@ public final class JSFactory
     
     public static JSLabel createLabel(String text, ComponentType compType)
     {        
-        return createLabel(text, compType, new DrawerBase<>());
+        return createLabel(text, compType, new DrawerBase<JSLabel>());
     }
     
     public static JSLabel createLabelScaled(String text, ComponentType compType, SFontResource fontRes)
@@ -67,7 +64,7 @@ public final class JSFactory
         return createLabel(text, compType, new ScaledTextDrawer(fontRes));    
     }
     
-    public static JSLabel createLabel(String text, ComponentType compType, IDrawer<JLabel> drawer)
+    public static JSLabel createLabel(String text, ComponentType compType, IDrawer drawer)
     {
         JSLabel jslabel = new JSLabel();
 
@@ -86,10 +83,10 @@ public final class JSFactory
     
     public static JSLabel createLabel(ImageIcon icon, ComponentType compType)
     {        
-        return createLabel(icon, compType, new DrawerBase<>());
+        return createLabel(icon, compType, new DrawerBase<JSLabel>());
     }
     
-    public static JSLabel createLabel(ImageIcon icon, ComponentType compType, IDrawer<JLabel> drawer)
+    public static JSLabel createLabel(ImageIcon icon, ComponentType compType, IDrawer drawer)
     {
         JSLabel jslabel = new JSLabel();
 
@@ -108,10 +105,10 @@ public final class JSFactory
     
     public static JSLayeredPane createLayeredPane(ComponentType compType)
     {        
-        return createLayeredPane(compType, new DrawerBase<>());
+        return createLayeredPane(compType, new DrawerBase<JSLayeredPane>());
     }
 
-    public static JSLayeredPane createLayeredPane(ComponentType compType, IDrawer<JLayeredPane> drawer)
+    public static JSLayeredPane createLayeredPane(ComponentType compType, IDrawer drawer)
     {
         JSLayeredPane jslpane = new JSLayeredPane();
         
@@ -131,7 +128,7 @@ public final class JSFactory
     
     public static JSImage createImage(UUID compId, ComponentType compType)
     {
-        return createImage(compId, compType, new DrawerBase<>());
+        return createImage(compId, compType, new DrawerBase<JSImage>());
     }
     
     public static JSImage createImageScaled(UUID compId, ComponentType compType, SImageResource... resources)
@@ -146,7 +143,7 @@ public final class JSFactory
         return createImage(compId, compType, drawer);
     }
     
-    public static JSImage createImage(UUID compId, ComponentType compType, IDrawer<JPanel> drawer)
+    public static JSImage createImage(UUID compId, ComponentType compType, IDrawer drawer)
     {
         JSImage jsimage = new JSImage();
         setComponent(jsimage, new ComponentBase(compId, compType));
@@ -154,10 +151,10 @@ public final class JSFactory
         return jsimage;
     }
         
-    private static <T extends JComponent> void setDrawer(IHasDrawer<T> drawee, IDrawer<T> drawer)
+    private static <S extends JComponent & IHasDrawer> void setDrawer(S drawee, IDrawer drawer)
     {
         drawee.setDrawer(drawer);
-        drawer.onAttached((T) drawee);        
+        drawer.onAttached(drawee);        
     }
 
     private static <T extends IComponent, J extends JComponent & IHasComponent<T>> void setComponent(J hasComp, T comp)

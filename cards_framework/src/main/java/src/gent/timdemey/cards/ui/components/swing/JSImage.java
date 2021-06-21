@@ -9,15 +9,10 @@ import gent.timdemey.cards.ui.components.drawers.IHasDrawer;
 import gent.timdemey.cards.ui.components.ext.ComponentBase;
 import gent.timdemey.cards.ui.components.ext.IHasComponent;
 
-public final class JSImage extends JPanel implements IHasComponent<ComponentBase>, IHasDrawer<JPanel>
+public final class JSImage extends JPanel implements IHasComponent<ComponentBase>, IHasDrawer
 {
-    private IDrawer<JPanel> drawer;
+    private IDrawer drawer;
     private ComponentBase comp;
-
-    JSImage()
-    {
-
-    }
     
     @Override
     protected void paintComponent(Graphics g)
@@ -32,13 +27,13 @@ public final class JSImage extends JPanel implements IHasComponent<ComponentBase
     }
 
     @Override
-    public final IDrawer<JPanel> getDrawer()
+    public final IDrawer getDrawer()
     {
         return drawer;
     }
 
     @Override
-    public void setDrawer(IDrawer<JPanel> drawer)
+    public void setDrawer(IDrawer drawer)
     {
         this.drawer = drawer;
     }

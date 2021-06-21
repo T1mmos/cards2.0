@@ -54,7 +54,6 @@ import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
 import gent.timdemey.cards.ui.components.drawers.IDrawer;
-import gent.timdemey.cards.ui.components.drawers.IHasDrawer;
 import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.IDataPanelManager;
@@ -431,7 +430,7 @@ public class FrameService implements IFrameService, IPreload
     {
         IPanelService panelServ = Services.get(IPanelService.class);        
         pt.panel.setVisible(true);
-        IDrawer<?> drawer = ((IHasDrawer<?>) pt.panel).getDrawer();
+        IDrawer drawer = pt.panel.getDrawer();
         // show the panel and notify its manager
         drawer.setForegroundAlpha(0.25f);
         pt.panel.setVisible(true);

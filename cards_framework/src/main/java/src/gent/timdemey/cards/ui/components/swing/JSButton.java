@@ -9,9 +9,9 @@ import gent.timdemey.cards.ui.components.drawers.IHasDrawer;
 import gent.timdemey.cards.ui.components.ext.ComponentBase;
 import gent.timdemey.cards.ui.components.ext.IHasComponent;
 
-public class JSButton extends JButton implements IHasComponent<ComponentBase>, IHasDrawer<JButton> 
+public class JSButton extends JButton implements IHasComponent<ComponentBase>, IHasDrawer 
 {
-    private IDrawer<JButton>  drawer;
+    private IDrawer drawer;
     private ComponentBase scomp;    
     
     JSButton()
@@ -31,13 +31,13 @@ public class JSButton extends JButton implements IHasComponent<ComponentBase>, I
     }
 
     @Override
-    public final IDrawer<JButton> getDrawer()
+    public final IDrawer getDrawer()
     {
         return drawer;
     }
 
     @Override
-    public void setDrawer(IDrawer<JButton> drawer)
+    public void setDrawer(IDrawer drawer)
     {
         this.drawer = drawer;
     }

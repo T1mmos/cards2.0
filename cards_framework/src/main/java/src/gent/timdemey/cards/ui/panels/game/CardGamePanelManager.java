@@ -15,7 +15,6 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityBase;
-import gent.timdemey.cards.services.animation.Animator;
 import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
@@ -178,7 +177,7 @@ public class CardGamePanelManager extends PanelManagerBase
         IPositionService posServ = Services.get(IPositionService.class);
         LayeredArea layArea = posServ.getStartLayeredArea(comp);
         ((IHasComponent<?>) comp).getComponent().setAbsCoords(layArea.abscoords);
-        ((IHasDrawer<?>) comp).getDrawer().setMirror(layArea.mirror);        
+        ((IHasDrawer) comp).getDrawer().setMirror(layArea.mirror);        
         
         ((JSLayeredPane) comp.getParent()).setLayer(comp, layArea.layer);
     }

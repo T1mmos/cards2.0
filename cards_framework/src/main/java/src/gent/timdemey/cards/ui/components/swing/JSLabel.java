@@ -10,9 +10,9 @@ import gent.timdemey.cards.ui.components.drawers.IHasDrawer;
 import gent.timdemey.cards.ui.components.ext.ComponentBase;
 import gent.timdemey.cards.ui.components.ext.IHasComponent;
 
-public class JSLabel extends JLabel implements IHasComponent<ComponentBase>, IHasDrawer<JLabel> 
+public class JSLabel extends JLabel implements IHasComponent<ComponentBase>, IHasDrawer
 {
-    private IDrawer<JLabel>  drawer;
+    private IDrawer drawer;
     private ComponentBase comp;    
     
     JSLabel()
@@ -39,13 +39,13 @@ public class JSLabel extends JLabel implements IHasComponent<ComponentBase>, IHa
     }
 
     @Override
-    public final IDrawer<JLabel> getDrawer()
+    public final IDrawer getDrawer()
     {
         return drawer;
     }
 
     @Override
-    public void setDrawer(IDrawer<JLabel> drawer)
+    public void setDrawer(IDrawer drawer)
     {
         this.drawer = drawer;
     }

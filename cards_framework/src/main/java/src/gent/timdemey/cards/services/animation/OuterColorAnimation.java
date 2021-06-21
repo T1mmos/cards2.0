@@ -24,7 +24,7 @@ public class OuterColorAnimation implements IAnimation
     public void tick(JComponent comp, double frac, AnimationStart animStart)
     {
         Color color = ColorUtils.interpolate(color_start, color_end, frac);
-        IDrawer<?> drawer = ((IHasDrawer<?>) comp).getDrawer();        
+        IDrawer drawer = ((IHasDrawer) comp).getDrawer();        
         
         if (drawer instanceof ScaledTextDrawer)
         {

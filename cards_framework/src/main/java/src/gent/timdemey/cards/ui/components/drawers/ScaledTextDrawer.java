@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import gent.timdemey.cards.Services;
@@ -25,10 +26,11 @@ import gent.timdemey.cards.services.contract.GetResourceResponse;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.ui.components.SFontResource;
+import gent.timdemey.cards.ui.components.swing.JSLabel;
 import gent.timdemey.cards.utils.ComponentUtils;
 import gent.timdemey.cards.utils.DebugDrawDefines;
 
-public final class ScaledTextDrawer extends DrawerBase<JLabel>
+public final class ScaledTextDrawer extends DrawerBase<JSLabel>
 {    
     private Color textColorOutline;
     private Color textColorOutline_mouseover;
@@ -52,11 +54,11 @@ public final class ScaledTextDrawer extends DrawerBase<JLabel>
     }
     
     @Override
-    public void onAttached(JLabel comp)
+    public void onAttached(JComponent comp)
     {
         super.onAttached(comp);
         
-        comp.setHorizontalTextPosition(JLabel.CENTER);
+        getJComponent().setHorizontalTextPosition(JLabel.CENTER);
     }
 
     @Override

@@ -23,14 +23,14 @@ public class ComponentUtils
         return sComp;
     }
         
-    public static IDrawer<?> getDrawer(JComponent comp)
+    public static IDrawer getDrawer(JComponent comp)
     {
-        if (!(comp instanceof IHasDrawer<?>))
+        if (!(comp instanceof IHasDrawer))
         {
             throw new IllegalStateException("Expected the component to implement IHasDrawer");
         }
         
-        IDrawer<?> drawer = ((IHasDrawer<?>) comp).getDrawer();
+        IDrawer drawer = ((IHasDrawer) comp).getDrawer();
         return drawer;
     }
     
