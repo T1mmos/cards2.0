@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Stroke;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -104,6 +105,12 @@ public class DrawerBase<T extends JComponent> implements IDrawer
         Graphics2D g2 = (Graphics2D) g.create();
         
         drawBackground(g2);
+        
+        if (Services.get(IFrameService.class).getDrawDebug())
+        {
+            drawDebugCompBox(g2);
+        }
+        
         drawForeground(g2, superPaintComponent);
         
         g2.dispose();
@@ -117,7 +124,11 @@ public class DrawerBase<T extends JComponent> implements IDrawer
         superPaintChildren.accept(g2);
         
         // debug drawing happens even on top of the children
-        drawDebug(g2);
+        if (Services.get(IFrameService.class).getDrawDebug())
+        {
+            List<String> debugStrings = getDebugStrings();
+            drawDebugInfoBox(g2, debugStrings);
+        }
         
         g2.dispose();
     }
@@ -176,20 +187,6 @@ public class DrawerBase<T extends JComponent> implements IDrawer
         g.dispose();
     }
 
-    public void drawDebug(Graphics2D g2)
-    {
-        if (!Services.get(IFrameService.class).getDrawDebug())
-        {
-            return;
-        }
-        
-        drawDebugCoords(g2);
-        drawDebugBoundaries(g2);
-
-        List<String> debugStrings = getDebugStrings();
-        drawDebugStrings(g2, debugStrings);
-    }
-
     protected void addDebugString(List<String> list, Object key, Object value)
     {
         String all =  key + "=" + value;
@@ -235,51 +232,110 @@ public class DrawerBase<T extends JComponent> implements IDrawer
         return strs;
     }
 
-    protected void drawDebugCoords(Graphics2D g2)
+    protected Color getDebugColor(DebugItems key)
     {
-        Graphics2D g = (Graphics2D) g2.create();
-        
-        Rectangle rect = jcomp.getBounds();
-
-        g.setColor(DebugDrawDefines.COLOR_DIMMED_COMPONENT_BACKGROUND);
-        g.fillRect(0, 0, rect.width, rect.height);
-        
-        g.dispose();
+        switch (key)
+        {
+            case CompboxBackground: 
+                return DebugDrawDefines.COLOR_COMPBOX_BACKGROUND_DEFAULT;
+            case CompboxOutline: 
+                return DebugDrawDefines.COLOR_COMPBOX_OUTLINE_DEFAULT;
+            case PaddingBoxBackground:
+                return DebugDrawDefines.COLOR_PADBOX_BACKGROUND_DEFAULT;
+            case PaddingBoxOutline:
+                return DebugDrawDefines.COLOR_PADBOX_OUTLINE_DEFAULT;
+            case InfoBoxBackground:
+                return DebugDrawDefines.COLOR_INFOBOX_BACKGROUND_DEFAULT;
+            case InfoBoxOutline:
+                return DebugDrawDefines.COLOR_INFOBOX_OUTLINE_DEFAULT;
+            case InfoBoxText:
+                return DebugDrawDefines.COLOR_INFOBOX_TEXT_DEFAULT;
+            default:
+                return DebugDrawDefines.COLOR_DEFAULT;
+        }
     }
     
-    protected void drawDebugBoundaries(Graphics2D g2)
+    protected Stroke getDebugStroke(DebugItems key)
+    {
+        switch (key)
+        {
+            case CompboxOutline:
+                return DebugDrawDefines.STROKE_DEFAULT;
+            case PaddingBoxOutline:
+                return DebugDrawDefines.STROKE_DASHED;
+            default:
+                return DebugDrawDefines.STROKE_DEFAULT;        
+        }        
+    }
+    
+    protected void drawDebugCompBox(Graphics2D g2)
     {
         Graphics2D g = (Graphics2D) g2.create();
+
+        // background
+        {
+            Rectangle rect = jcomp.getBounds();
+            Color color = getDebugColor(DebugItems.CompboxBackground);
+            g.setColor(color);
+            g.fillRect(0, 0, rect.width, rect.height);    
+        }
         
-        Rectangle bounds = jcomp.getBounds();
-        g.setColor(DebugDrawDefines.COLOR_SCALABLECOMPONENT_BOUNDINGBOX);
-        g.drawRect(0, 0, bounds.width - 1, bounds.height - 1);
+        // outline
+        {
+            Rectangle bounds = jcomp.getBounds();
+            Color color = getDebugColor(DebugItems.CompboxOutline);
+            g.setColor(color);
+            g.drawRect(0, 0, bounds.width - 1, bounds.height - 1);
+        }        
         
         g.dispose();
     }
 
-    private final void drawDebugStrings(Graphics2D g2, List<String> strings)
+    private final void drawDebugInfoBox(Graphics2D g2, List<String> strings)
     {
         Graphics2D g = (Graphics2D) g2.create();
         
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g.setColor(Color.white);
 
-        if (strings.size() == 0)
+        int cnt = strings.size();
+        if (cnt == 0)
         {
             return;
         }
 
-        g.setFont(Font.decode("Arial bold 7"));
-        int hFat = g.getFontMetrics().getHeight();
-        g.drawString(strings.get(0), 5, hFat);
-
-        g2.setFont(Font.decode("Arial 7"));
-        int hSmall = g.getFontMetrics().getHeight();
-
-        for (int i = 1; i < strings.size(); i++)
+        Font fontFat = Font.decode("Arial bold 7");
+        Font fontSmall = Font.decode("Arial 7");
+        
+        // first derive some metrics before actual drawing
+        int hFat, hSmall, wMax, hMax, padding = 5;
         {
-            g.drawString(strings.get(i), 5, hFat + i * hSmall);
+            g.setFont(fontFat);
+            hFat = g.getFontMetrics().getHeight();
+            int wFat = g.getFontMetrics().stringWidth(strings.get(0));
+
+            g.setFont(fontSmall);
+            hSmall = g.getFontMetrics().getHeight();
+            hMax = hFat + (cnt - 1) * hSmall;
+            wMax = wFat;
+            for (int i = 1; i < cnt; i++)
+            {
+                wMax = Math.max(wMax, g.getFontMetrics().stringWidth(strings.get(i)));
+            }
+        }
+        
+        // draw nearly non-transparent, bouding box
+        g.setColor(getDebugColor(DebugItems.InfoBoxBackground));
+        g.fillRect(padding, padding, wMax+ 2*padding, hMax+ 2*padding);
+        g.setColor(getDebugColor(DebugItems.InfoBoxText));
+        g.drawRect(padding, padding, wMax + 2*padding, hMax + 2*padding);
+                
+        // draw actual strings
+        g.setFont(fontFat);
+        g.drawString(strings.get(0), 2*padding, padding + hFat);
+        g.setFont(fontSmall);
+        for (int i = 1; i < cnt; i++)
+        {
+            g.drawString(strings.get(i), 2*padding, padding + hFat + i * hSmall);
         }
         
         g.dispose();

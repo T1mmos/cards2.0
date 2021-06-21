@@ -94,11 +94,7 @@ public final class JSFactory
         
         setComponent(jslabel, new ComponentBase(UUID.randomUUID(), compType));
         setDrawer(jslabel, drawer);
-        
-        // custom UI implementators e.g. WebButtonUI set the background, 
-        // revert that so everything remains transparent until either the background tiling
-        // or an actual background color and/or alpha is set from our code
-        jslabel.setBackground(null);
+        setBackgroundTransparent(jslabel);
         
         return jslabel;
     }
@@ -148,9 +144,20 @@ public final class JSFactory
         JSImage jsimage = new JSImage();
         setComponent(jsimage, new ComponentBase(compId, compType));
         setDrawer(jsimage, drawer);
+        
+        setBackgroundTransparent(jsimage);
+        
         return jsimage;
     }
         
+    private static void setBackgroundTransparent(JComponent jcomp)
+    {
+        // custom UI implementators e.g. WebButtonUI set the background, 
+        // revert that so everything remains transparent until either the background tiling
+        // or an actual background color and/or alpha is set from our code
+        jcomp.setBackground(null);
+    }
+    
     private static <S extends JComponent & IHasDrawer> void setDrawer(S drawee, IDrawer drawer)
     {
         drawee.setDrawer(drawer);

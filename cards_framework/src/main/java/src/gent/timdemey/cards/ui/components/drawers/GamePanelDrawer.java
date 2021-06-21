@@ -1,6 +1,5 @@
 package gent.timdemey.cards.ui.components.drawers;
 
-import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 
 import javax.swing.JLayeredPane;
@@ -13,11 +12,10 @@ import gent.timdemey.cards.utils.DebugDrawDefines;
 
 public class GamePanelDrawer extends DrawerBase<JLayeredPane>
 {
-    
     @Override
-    protected void drawDebugBoundaries(Graphics2D g)
+    protected void drawDebugCompBox(Graphics2D g)
     {
-        super.drawDebugBoundaries(g);
+        super.drawDebugCompBox(g);
                 
         if (!Services.get(IFrameService.class).getDrawDebug())
         {
@@ -29,15 +27,11 @@ public class GamePanelDrawer extends DrawerBase<JLayeredPane>
         IPositionService posMan = Services.get(IPositionService.class);
         Coords.Absolute coords = posMan.getPackedCoords();
                     
-        // draw the packed box
-        g2.setStroke(new BasicStroke(2.0f));
-        g2.setColor(DebugDrawDefines.COLOR_PANEL_GAME_INNER);
+        // draw the packed box        
+        g2.setColor(getDebugColor(DebugItems.PaddingBoxOutline));
         g2.setStroke(DebugDrawDefines.STROKE_DASHED);
         g2.drawRect(coords.x, coords.y, coords.w, coords.h);
-        
-        g2.setColor(DebugDrawDefines.COLOR_TEXT_PANELNAME);
-        g2.drawString("GamePanel", 10, 20);    
-        
+                
         g.dispose();
     }
 }

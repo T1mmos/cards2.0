@@ -29,7 +29,6 @@ public class GameMenuPanelManager extends DataPanelManagerBase<Void, Void>
         if (content == null)
         {
             content = JSFactory.createLayeredPane(ComponentTypes.PANEL);
-            content.setLayout(null); // absolute positioning
             content.setOpaque(false);
             
             IActionService actServ = Services.get(IActionService.class);            

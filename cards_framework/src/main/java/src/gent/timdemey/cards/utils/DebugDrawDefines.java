@@ -4,22 +4,29 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Stroke;
 
-public class DebugDrawDefines
+public final class DebugDrawDefines
 {
-    public static final Color COLOR_SCALABLECOMPONENT_BOUNDINGBOX = Color.GREEN;
-    public static final Color COLOR_SCALABLETEXTCOMPONENT_OUTER = Color.BLUE;
-    public static final Color COLOR_SCALABLETEXTCOMPONENT_INNER = Color.CYAN;
-    public static final Color COLOR_DIMMED_COMPONENT_BACKGROUND = new Color(100, 100, 100, 100);
+    // default color
+    public static final Color COLOR_DEFAULT = Color.black;
     
-    public static final Stroke STROKE_DASHED = new BasicStroke(1.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 1.0f, new float[]{2.0f, 2.0f}, 0.0f);
-    public static final Color COLOR_BG_PANELNAME = ColorUtils.rgb("#000000");
-    public static final Color COLOR_TEXT_PANELNAME = ColorUtils.rgb("#FFFFFF");
-    public static final Color COLOR_PANEL_BASE_OUTER = ColorUtils.rgb("#0094FF");
-    public static final Color COLOR_PANEL_GAME_INNER = ColorUtils.rgb("#FFB626");
-    public static final Color COLOR_PANEL_GAME_OUTER = ColorUtils.rgb("#FF0037");
+    // backgrounds
+    public static final Color COLOR_COMPBOX_BACKGROUND_DEFAULT = new Color(200, 200, 200, 50);
+    public static final Color COLOR_INFOBOX_BACKGROUND_DEFAULT = ColorUtils.rgba("#FFA50080");
+    public static final Color COLOR_PADBOX_BACKGROUND_DEFAULT = Color.yellow;
+    
+    // bounding boxes
+    public static final Color COLOR_COMPBOX_OUTLINE_DEFAULT = Color.GREEN;
+    public static final Color COLOR_PADBOX_OUTLINE_DEFAULT = Color.yellow;
+    public static final Color COLOR_INFOBOX_OUTLINE_DEFAULT = Color.DARK_GRAY;
 
+    // text
+    public static final Color COLOR_INFOBOX_TEXT_DEFAULT = Color.BLACK;
+    
+    // strokes
+    public static final Stroke STROKE_DEFAULT = new BasicStroke(1.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 1.0f, new float[]{2.0f, 2.0f}, 0.0f);
+    public static final Stroke STROKE_DASHED = new BasicStroke(1.0f);
+    
     private DebugDrawDefines()
     {
-
     }
 }

@@ -68,6 +68,7 @@ public class CardGamePanelManager extends PanelManagerBase
     public JSLayeredPane createPanel()
     {
         gamePanel = JSFactory.createLayeredPane(ComponentTypes.PANEL, new GamePanelDrawer());
+        gamePanel.setLayout(null);
         dragListener = new CardGamePanelMouseListener();
         gamePanel.addContainerListener(new CardGamePanelContainerListener());
 

@@ -73,7 +73,7 @@ public final class ScaledTextDrawer extends DrawerBase<JSLabel>
     }
 
     @Override
-    public void drawDebugBoundaries(Graphics2D g2)
+    public void drawDebugCompBox(Graphics2D g2)
     {        
         Rectangle bounds = jcomp.getBounds();
         
@@ -81,7 +81,7 @@ public final class ScaledTextDrawer extends DrawerBase<JSLabel>
         {
             Graphics2D g = (Graphics2D) g2.create();
             g.setStroke(new BasicStroke());
-            g.setColor(DebugDrawDefines.COLOR_SCALABLETEXTCOMPONENT_OUTER);
+            g.setColor(getDebugColor(DebugItems.CompboxOutline));
             g.drawRect(0, 0, bounds.width - 1, bounds.height - 1);            
         }        
 
@@ -89,8 +89,8 @@ public final class ScaledTextDrawer extends DrawerBase<JSLabel>
         {
             Graphics2D g = (Graphics2D) g2.create();
             Rectangle tb = getTextBounds(g, jcomp);
-            g.setColor(DebugDrawDefines.COLOR_SCALABLETEXTCOMPONENT_INNER);
-            g.setStroke(DebugDrawDefines.STROKE_DASHED);
+            g.setColor(getDebugColor(DebugItems.PaddingBoxOutline));
+            g.setStroke(getDebugStroke(DebugItems.PaddingBoxOutline));
             g.drawRect(tb.x, tb.y, tb.width - 1, tb.height - 1);
         }        
     }
@@ -253,5 +253,28 @@ public final class ScaledTextDrawer extends DrawerBase<JSLabel>
         {
             mousePressed = pressed;
         }        
+    }
+    
+    @Override
+    protected Color getDebugColor(DebugItems key)
+    {
+        switch (key)
+        {
+            case CompboxBackground: 
+                return DebugDrawDefines.COLOR_COMPBOX_BACKGROUND_DEFAULT;
+            case CompboxOutline: 
+                return DebugDrawDefines.COLOR_COMPBOX_OUTLINE_DEFAULT;
+            case PaddingBoxBackground:
+                return DebugDrawDefines.COLOR_PADBOX_BACKGROUND_DEFAULT;
+            case PaddingBoxOutline:
+                return DebugDrawDefines.COLOR_PADBOX_OUTLINE_DEFAULT;
+            case InfoBoxBackground:
+                return DebugDrawDefines.COLOR_INFOBOX_BACKGROUND_DEFAULT;
+            case InfoBoxOutline:
+                return DebugDrawDefines.COLOR_INFOBOX_OUTLINE_DEFAULT;
+            case InfoBoxText:
+                return DebugDrawDefines.COLOR_INFOBOX_TEXT_DEFAULT;
+        }
+        return super.getDebugColor(key);
     }
 }

@@ -1,6 +1,5 @@
 package gent.timdemey.cards.ui.components.swing;
 
-import java.awt.Color;
 import java.awt.Graphics;
 
 import javax.swing.JLabel;
@@ -17,13 +16,6 @@ public class JSLabel extends JLabel implements IHasComponent<ComponentBase>, IHa
     
     JSLabel()
     {
-    }
-    
-    @Override
-    public void setBackground(Color bg)
-    {
-        // TODO Auto-generated method stub
-        super.setBackground(bg);
     }
     
     @Override
