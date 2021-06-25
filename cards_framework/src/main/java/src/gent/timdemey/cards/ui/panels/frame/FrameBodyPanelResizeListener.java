@@ -5,12 +5,15 @@ import java.awt.event.ComponentListener;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
+import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
+import gent.timdemey.cards.ui.panels.IPanelManager;
 
 class FrameBodyPanelResizeListener implements ComponentListener
 {
@@ -113,8 +116,19 @@ class FrameBodyPanelResizeListener implements ComponentListener
     
     private void onRescaled()
     {
-       // IPanelService panelServ = Services.get(IPanelService.class);
-       // panelServ.repaintScalableComponents();
+        IPanelService panelServ = Services.get(IPanelService.class);
+        
+        for(PanelDescriptor pd : panelServ.getPanelDescriptors())
+        {
+            IPanelManager pm = panelServ.getPanelManager(pd);
+            JComponent panel = pm.getPanel();
+            if (panel == null)
+            {
+                continue;                
+            }
+            
+            panel.repaint();
+        }
     }
 
     @Override
