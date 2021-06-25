@@ -12,6 +12,7 @@ import javax.swing.SwingUtilities;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.LayeredArea;
+import gent.timdemey.cards.services.contract.preload.IPreload;
 import gent.timdemey.cards.services.contract.preload.PreloadOrder;
 import gent.timdemey.cards.services.contract.preload.PreloadOrderType;
 import gent.timdemey.cards.services.interfaces.IAnimationDescriptorFactory;
@@ -19,11 +20,11 @@ import gent.timdemey.cards.services.interfaces.IAnimationService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.ui.components.ext.IComponent;
 import gent.timdemey.cards.ui.components.ext.IHasComponent;
+import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.IPanelManager;
 
-public class AnimationService implements IAnimationService
+public class AnimationService implements IAnimationService, IPreload
 {
-
     private final List<AnimationTracker> animTrackers;
     private Timer timer = null;
 
@@ -39,12 +40,13 @@ public class AnimationService implements IAnimationService
     }
 
     @Override
-    public void animate(JComponent jcomp)
+    public void animate(JComponent jcomp, IPanelManager pm)
     {
         if (!(jcomp instanceof IHasComponent<?>))
         {
             throw new IllegalArgumentException("To animate a component, it needs to implement IHasComponent, to discover what animation is needed for it");
         }
+        
         IHasComponent<?> hasComp = (IHasComponent<?>) jcomp;        
         IComponent comp = hasComp.getComponent();
         
@@ -58,7 +60,7 @@ public class AnimationService implements IAnimationService
         Coords.Absolute abscoords = ((IHasComponent<?>) jcomp).getComponent().getAbsCoords();
         Coords.Relative relcoords = posServ.getRelativeCoords(abscoords);
 
-        AnimationTracker tracker = new AnimationTracker(jcomp, descr, relcoords);
+        AnimationTracker tracker = new AnimationTracker(jcomp, pm, descr, relcoords);
         animTrackers.add(tracker);
 
         // must tick immediately to have the component updated so it doesn't show
@@ -67,13 +69,14 @@ public class AnimationService implements IAnimationService
         tick(tracker, currTickTime);
     }
 
-    public void stopAnimate(IComponent scaleComp)
+    @Override
+    public void stopAnimate(JComponent jcomp)
     {
         Iterator<AnimationTracker> it = animTrackers.iterator();
         while (it.hasNext())
         {
             AnimationTracker ai = it.next();
-            if (ai.component == scaleComp)
+            if (ai.component == jcomp)
             {
                 it.remove();
                 break;
@@ -121,8 +124,7 @@ public class AnimationService implements IAnimationService
     private boolean tick(AnimationTracker animTracker, long currTickTime)
     {
         IPositionService posServ = Services.get(IPositionService.class);
-        IPanelManager pm = Services.get(IPanelManager.class);
-        
+
         long dt = currTickTime - animTracker.animStart.time;
         double frac = Math.min(1.0, 1.0 * dt / animTracker.animDescriptor.animationTime);
 
@@ -133,15 +135,15 @@ public class AnimationService implements IAnimationService
 
         if (frac == 1.0)
         {
+            JSLayeredPane parent = animTracker.panelMan.getPanel();
             if (animTracker.animDescriptor.dispose)
             {
-                pm.getPanel().remove(animTracker.component);
+                parent.remove(animTracker.component);
             }
             else
             {
                 LayeredArea layArea = posServ.getEndLayeredArea(animTracker.component);
-
-                pm.getPanel().setLayer(animTracker.component, layArea.layer);
+                parent.setLayer(animTracker.component, layArea.layer);
             }
 
             return true;

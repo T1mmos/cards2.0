@@ -10,6 +10,9 @@ import gent.timdemey.cards.ui.components.ext.IComponent;
 
 public class SolShowAnimationDescriptorFactory extends AnimationDescriptorFactory
 {
+    private static final int TIME_MS_ANIMATION_CARDSCORE = 1500;
+    private static final int TIME_MS_ANIMATION_CARD      = 200;
+    
     @Override
     public AnimationDescriptor getAnimationDescriptor(IComponent comp)
     {      
@@ -26,7 +29,14 @@ public class SolShowAnimationDescriptorFactory extends AnimationDescriptorFactor
             OuterColorAnimation anim3 = new OuterColorAnimation(color_outer_start, color_outer_end);
             List<IAnimation> animations = Arrays.asList(anim1, anim2, anim3);
             
-            AnimationDescriptor descr = new AnimationDescriptor(SolShowResourceDefines.TIME_MS_ANIMATION_CARDSCORE, animations, true);
+            AnimationDescriptor descr = new AnimationDescriptor(TIME_MS_ANIMATION_CARDSCORE, animations, true);
+            return descr;
+        }
+        else if (comp.getComponentType().hasTypeName(ComponentTypes.CARD))
+        {
+            MovingAnimation anim1 = new MovingAnimation();
+            List<IAnimation> animations = Arrays.asList(anim1);
+            AnimationDescriptor descr = new AnimationDescriptor(TIME_MS_ANIMATION_CARD, animations, false);
             return descr;
         }
         else 

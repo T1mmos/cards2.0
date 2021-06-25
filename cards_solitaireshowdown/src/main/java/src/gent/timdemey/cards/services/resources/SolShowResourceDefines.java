@@ -30,8 +30,6 @@ public class SolShowResourceDefines
     public static final Color COLOR_FONT_SPECIALCOUNT_OUTER = ColorUtils.rgb("#444444");
     public static final Color COLOR_FONT_PLAYERNAME_INNER = ColorUtils.rgb("#E0BB00");
     public static final Color COLOR_FONT_PLAYERNAME_OUTER = ColorUtils.rgb("#444444");
-
-    public static final int TIME_MS_ANIMATION_CARDSCORE = 1500;
     
     private SolShowResourceDefines()
     {

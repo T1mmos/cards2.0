@@ -4,9 +4,11 @@ import gent.timdemey.cards.common.Version;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.serialization.SolShowSerializationService;
+import gent.timdemey.cards.services.animation.SolShowAnimationDescriptorFactory;
 import gent.timdemey.cards.services.cardgame.SolShowCardGameService;
 import gent.timdemey.cards.services.commands.SolShowCommandService;
 import gent.timdemey.cards.services.id.SolShowIdService;
+import gent.timdemey.cards.services.interfaces.IAnimationDescriptorFactory;
 import gent.timdemey.cards.services.interfaces.ICardGameService;
 import gent.timdemey.cards.services.interfaces.ICommandService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
@@ -32,6 +34,7 @@ public class SolShowPlugin implements ICardPlugin
         services.installIfAbsent(IResourceRepository.class, () -> new SolShowResourceRepository());
         services.installIfAbsent(IPositionService.class, () -> new SolShowPositionService());
         services.installIfAbsent(IStateListener.class, () -> new SolShowGamePanelStateListener());
+        services.installIfAbsent(IAnimationDescriptorFactory.class, () -> new SolShowAnimationDescriptorFactory());
     }
 
     @Override

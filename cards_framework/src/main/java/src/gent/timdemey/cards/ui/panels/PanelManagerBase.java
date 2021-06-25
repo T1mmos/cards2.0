@@ -1,5 +1,6 @@
 package gent.timdemey.cards.ui.panels;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -7,6 +8,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -20,6 +22,7 @@ import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.res.FontResource;
 import gent.timdemey.cards.services.contract.res.ImageResource;
+import gent.timdemey.cards.services.interfaces.IAnimationService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
@@ -52,7 +55,7 @@ public abstract class PanelManagerBase implements IPanelManager
         comp2jcomp.clear();
         entity2comp.clear();
     }
-    
+
     @Override
     public JComponent getComponentById(UUID compId)
     {
@@ -210,22 +213,40 @@ public abstract class PanelManagerBase implements IPanelManager
     {
         
     }
+
     
+    protected int getNextAnimationLayer()
+    {
+        IPositionService posServ = Services.get(IPositionService.class);
+
+        Optional<Integer> maxLayerInUse = animator.getComponents().stream()
+                .map(c -> getPanel().getLayer((Component) c))
+                .max(Integer::compare);
+        int layer = posServ.getAnimationLayer();
+        if (maxLayerInUse.isPresent())
+        {
+            layer = maxLayerInUse.get() + 1;
+        }
+        
+        return layer;
+    }
+
     @Override
     public void startAnimate(JComponent comp)
     {
-        // TODO Auto-generated method stub
+        int layer = getNextAnimationLayer();
+        getPanel().setLayer(comp, layer);
         
+        IAnimationService animServ = Services.get(IAnimationService.class);
+        animServ.animate(comp, this);        
     }
 
     @Override
-    public void stopAnimate(JComponent scaleComp)
+    public void stopAnimate(JComponent comp)
     {
-        // TODO Auto-generated method stub
-        
+        IAnimationService animServ = Services.get(IAnimationService.class);
+        animServ.stopAnimate(comp);
     }
-    
-
     
     @Override
     public void updateComponent(JComponent comp)

@@ -1,8 +1,6 @@
 package gent.timdemey.cards.ui.panels.game;
 
-import java.awt.Component;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import javax.swing.JComponent;
@@ -182,22 +180,6 @@ public class CardGamePanelManager extends PanelManagerBase
         
         ((JSLayeredPane) comp.getParent()).setLayer(comp, layArea.layer);
     }
-    
-    protected int getNextAnimationLayer()
-    {
-        IPositionService posServ = Services.get(IPositionService.class);
-
-        Optional<Integer> maxLayerInUse = animator.getComponents().stream()
-                .map(c -> getPanel().getLayer((Component) c))
-                .max(Integer::compare);
-        int layer = posServ.getAnimationLayer();
-        if (maxLayerInUse.isPresent())
-        {
-            layer = maxLayerInUse.get() + 1;
-        }
-        
-        return layer;
-    }
 
     public void createRescaleRequests(List<? super RescaleRequest> requests)
     {
@@ -224,21 +206,7 @@ public class CardGamePanelManager extends PanelManagerBase
             UUID resId = idServ.createCardStackScalableResourceId(csType);
             addRescaleRequest(requests, cd_cardstack, resId);
         }
-    }
-
-    @Override
-    public void startAnimate(JComponent comp)
-    {
-        int layer = getNextAnimationLayer();
-        getPanel().setLayer(comp, layer);
-        animator.startAnimate(comp);
-    }
-
-    @Override
-    public void stopAnimate(JComponent comp)
-    {
-        animator.stopAnimate(comp);
-    }
+    }   
     
     protected JSImage createJSImage(ReadOnlyCard card)
     {

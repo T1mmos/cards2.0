@@ -73,7 +73,7 @@ public class ComponentBase implements IComponent
     @Override
     public final Coords.Absolute getAbsCoords()
     {
-        return coords;
+        return Coords.getAbsolute(comp.getBounds());
     }
 
     @Override
