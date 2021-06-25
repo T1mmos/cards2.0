@@ -74,6 +74,7 @@ public class SolShowGamePanelManager extends CardGamePanelManager
                 SImageResource res_spec_bg = (SImageResource) scaleServ.getSResource(resid_spec_bg);
                 
                 JSImage imgComp = createJSImage(bgCompId, SolShowComponentTypes.SPECIALBACKGROUND, cs, res_spec_bg);
+                imgComp.getDrawer().setMirror(!local);
             }
         }     
        

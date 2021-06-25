@@ -57,7 +57,8 @@ public class ScaledImageDrawer extends DrawerBase<JSImage>
     @Override
     public final void drawForeground(Graphics2D g2, Consumer<Graphics> superPaintComponent)
     {
-        Graphics2D g = (Graphics2D) g2.create();
+        Graphics2D g = createMirrorGraphics(g2);
+        applyAlpha(g, getForegroundAlpha());
         
         Dimension currDim = jcomp.getSize();
 
@@ -88,12 +89,7 @@ public class ScaledImageDrawer extends DrawerBase<JSImage>
         int currWidth = currDim.width;
         int currHeight = currDim.height;
         Graphics2D g3 = (Graphics2D) g2.create();
-        if(isMirror())
-        {
-            g3.scale(-1.0, -1.0);
-            g3.translate(-currWidth, -currHeight);
-        }
-
+      
         int imgW = image.getWidth();
         int imgH = image.getHeight();
 

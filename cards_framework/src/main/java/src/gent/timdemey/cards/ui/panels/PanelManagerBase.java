@@ -70,6 +70,8 @@ public abstract class PanelManagerBase implements IPanelManager
     {
         JSImage jsimage = JSFactory.createImageScaled(compId, compType, imgResources); 
         initAndAddComponent(jsimage, payload);
+        jsimage.getDrawer().setBackgroundAlpha(0.0f);
+        
         return jsimage;
     }
     

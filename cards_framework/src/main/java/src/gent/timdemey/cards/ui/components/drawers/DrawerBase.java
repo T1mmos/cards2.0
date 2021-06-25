@@ -22,6 +22,7 @@ import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.ui.components.ext.IHasComponent;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
+import gent.timdemey.cards.utils.ColorUtils;
 import gent.timdemey.cards.utils.ComponentUtils;
 import gent.timdemey.cards.utils.DebugDrawDefines;
 
@@ -74,6 +75,13 @@ public class DrawerBase<T extends JComponent> implements IDrawer
     public final void setBackgroundAlpha(float alpha)
     {
         this.alphaBg = alpha;
+        
+        if (alpha < 1.0f)
+        {
+            Color bg = ColorUtils.transparent(getJComponent().getBackground(), alpha);
+            getJComponent().setBackground(bg);
+            getJComponent().setOpaque(false);
+        }
     }
 
     @Override
@@ -103,7 +111,7 @@ public class DrawerBase<T extends JComponent> implements IDrawer
     public void draw(Graphics g, Consumer<Graphics> superPaintComponent)
     {
         Graphics2D g2 = (Graphics2D) g.create();
-        
+                
         drawBackground(g2);
         
         if (Services.get(IFrameService.class).getDrawDebug())

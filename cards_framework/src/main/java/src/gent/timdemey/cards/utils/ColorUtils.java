@@ -30,6 +30,11 @@ public class ColorUtils
     public static Color transparent(String hex, int alpha)
     {
         Color color = Color.decode(hex);
+        return transparent(color, alpha);
+    }
+    
+    public static Color transparent(Color color, int alpha)
+    {
         Color tcolor = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
         return tcolor;
     }
