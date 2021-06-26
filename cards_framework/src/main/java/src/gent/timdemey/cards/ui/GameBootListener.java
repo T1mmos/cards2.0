@@ -20,25 +20,23 @@ public class GameBootListener implements IStateListener
     @Override
     public void onChange(ReadOnlyChange change)
     {
+        IFrameService frameServ = Services.get(IFrameService.class);
         IContextService contextService = Services.get(IContextService.class);
         Context context = contextService.getThreadContext();
         ReadOnlyState state = context.getReadOnlyState();
 
         if (change.property == ReadOnlyState.CardGame)
         {
-            IFrameService frameServ = Services.get(IFrameService.class);
-
+            
             ReadOnlyCardGame cardGame = state.getCardGame();
             if (cardGame == null)
             {
                 frameServ.showPanel(PanelDescriptors.Menu);
             }
             else
-            {
-                frameServ.showPanel(PanelDescriptors.Game);          
+            {      
                 
-                // and now we can start rescaling the resources according to the
-                // dimensions
+                // before showing the gamepanel we must create its scalable components
                 IPanelService panelServ = Services.get(IPanelService.class);
                 panelServ.rescaleResourcesAsync(GameBootListener::onRescaledResources);
             }
@@ -53,5 +51,12 @@ public class GameBootListener implements IStateListener
         // the comp2jcomp that use them
         panelServ.createScalableComponents();
         panelServ.positionScalableComponents();
+        
+
+        IFrameService frameServ = Services.get(IFrameService.class);
+
+        frameServ.removePanel(PanelDescriptors.Load);
+        frameServ.showPanel(PanelDescriptors.Game);    
+        
     }
 }

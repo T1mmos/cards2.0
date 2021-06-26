@@ -19,11 +19,6 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.border.Border;
-import javax.swing.plaf.metal.MetalButtonUI;
-
-import com.alee.laf.WebLookAndFeel;
-import com.alee.laf.button.WebButton;
-import com.alee.managers.style.StyleId;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;

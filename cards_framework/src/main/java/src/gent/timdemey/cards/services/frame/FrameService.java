@@ -53,7 +53,6 @@ import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
-import gent.timdemey.cards.ui.components.drawers.IDrawer;
 import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.IDataPanelManager;
@@ -187,7 +186,7 @@ public class FrameService implements IFrameService, IPreload
         // check that the component is actually part of the frame body panel
         JComponent contentComp = panelMgr.getPanel();
         JComponent directChild;
-        if (desc.panelType == PanelType.Root)
+        if (desc.panelType == PanelType.Root || desc.panelType == PanelType.Overlay)
         {
             directChild = contentComp;
         }
@@ -201,11 +200,9 @@ public class FrameService implements IFrameService, IPreload
             throw new IllegalStateException("The component is not part of the hierarchy of the frame body panel");
         }        
         
-        directChild.setVisible(false);
-        panelMgr.onHidden();
+        closePanelInternal(desc.panelType);
         
-        getFrameBodyPanel().remove(directChild);        
-        //frameBodyPanel.repaint();
+        panelMgr.onHidden();
     }
     
     @Override
@@ -218,15 +215,14 @@ public class FrameService implements IFrameService, IPreload
     @Override
     public void showPanel(PanelDescriptor desc)
     {        
-        if (desc.panelType != PanelType.Root)
+        if (desc.panelType != PanelType.Root && desc.panelType != PanelType.Overlay)
         {
-            throw new IllegalArgumentException("This method is intended for Root panels only");
+            throw new IllegalArgumentException("This method is intended for Root and Overlay panels only");
         }
         
         IPanelService panelServ = Services.get(IPanelService.class);
         IPanelManager panelMgr = panelServ.getPanelManager(desc);
                   
-        // check that the given panel descriptor is a root panel
         PanelTracker pt = get(desc);        
         
         boolean add;
@@ -428,11 +424,7 @@ public class FrameService implements IFrameService, IPreload
     
     private void setVisible(PanelTracker pt)
     {
-        IPanelService panelServ = Services.get(IPanelService.class);        
-        pt.panel.setVisible(true);
-        IDrawer drawer = pt.panel.getDrawer();
-        // show the panel and notify its manager
-        drawer.setForegroundAlpha(0.25f);
+        IPanelService panelServ = Services.get(IPanelService.class);
         pt.panel.setVisible(true);
         
         final Timer timer = new Timer(15, new ActionListener() {
