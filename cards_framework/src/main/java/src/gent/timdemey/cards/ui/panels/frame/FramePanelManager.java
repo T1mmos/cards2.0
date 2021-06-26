@@ -19,7 +19,9 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.border.Border;
+import javax.swing.plaf.metal.MetalButtonUI;
 
+import com.alee.laf.WebLookAndFeel;
 import com.alee.laf.button.WebButton;
 import com.alee.managers.style.StyleId;
 
@@ -37,6 +39,8 @@ import gent.timdemey.cards.services.frame.TitlePanelMouseListener;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
+import gent.timdemey.cards.ui.components.drawers.ButtonDrawer;
+import gent.timdemey.cards.ui.components.swing.JSButton;
 import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.PanelManagerBase;
@@ -72,7 +76,10 @@ public class FramePanelManager extends PanelManagerBase
         IActionService actServ = Services.get(IActionService.class);     
         ActionBase action = actServ.getAction(desc);
         
-        WebButton button = new WebButton(StyleId.buttonUndecorated, action);
+        JSButton button = JSFactory.createButton(action);
+        
+        ButtonDrawer drawer = (ButtonDrawer) button.getDrawer();
+        drawer.setDecorated(false);
         button.setRolloverIcon(action.icon_rollover);
         button.setText("");
         button.setFocusable(false);

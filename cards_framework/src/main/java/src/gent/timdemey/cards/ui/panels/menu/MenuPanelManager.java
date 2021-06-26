@@ -6,8 +6,12 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.plaf.ButtonUI;
+import javax.swing.plaf.metal.MetalButtonUI;
 
+import com.alee.laf.WebLookAndFeel;
 import com.alee.laf.button.WebButton;
+import com.alee.laf.button.WebButtonUI;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
@@ -20,6 +24,7 @@ import gent.timdemey.cards.services.contract.res.ImageResource;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
+import gent.timdemey.cards.ui.components.swing.JSButton;
 import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.PanelManagerBase;
@@ -64,13 +69,12 @@ public class MenuPanelManager extends PanelManagerBase
             for (ActionDescriptor actDesc : actDescs)
             {
                 ActionBase action = actServ.getAction(actDesc);
-                WebButton button = new WebButton(action);
+                JSButton button = JSFactory.createButton(action);
                 
                 button.setContentAreaFilled(false);
                 button.setFocusPainted(false);
                 button.setBorder(null);
                 button.setBorderPainted(false);
-                button.setOpaque(false);
                 button.addMouseListener(listener);
                 button.setIcon(null); // no icon in menu list
 

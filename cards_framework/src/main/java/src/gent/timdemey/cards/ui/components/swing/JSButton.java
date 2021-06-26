@@ -2,14 +2,14 @@ package gent.timdemey.cards.ui.components.swing;
 
 import java.awt.Graphics;
 
-import javax.swing.JButton;
+import com.alee.laf.button.WebButton;
 
 import gent.timdemey.cards.ui.components.drawers.IDrawer;
 import gent.timdemey.cards.ui.components.drawers.IHasDrawer;
 import gent.timdemey.cards.ui.components.ext.ComponentBase;
 import gent.timdemey.cards.ui.components.ext.IHasComponent;
 
-public class JSButton extends JButton implements IHasComponent<ComponentBase>, IHasDrawer 
+public class JSButton extends WebButton implements IHasComponent<ComponentBase>, IHasDrawer 
 {
     private IDrawer drawer;
     private ComponentBase scomp;    

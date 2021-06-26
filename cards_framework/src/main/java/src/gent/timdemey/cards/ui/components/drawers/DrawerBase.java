@@ -78,7 +78,15 @@ public class DrawerBase<T extends JComponent> implements IDrawer
         
         if (alpha < 1.0f)
         {
-            Color bg = ColorUtils.transparent(getJComponent().getBackground(), alpha);
+            Color bg = getJComponent().getBackground();
+            if (bg == null)
+            {
+                bg = ColorUtils.transparent(Color.black, alpha);
+            }
+            else
+            {
+                bg = ColorUtils.transparent(bg, alpha);
+            }
             getJComponent().setBackground(bg);
             getJComponent().setOpaque(false);
         }

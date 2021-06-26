@@ -72,7 +72,6 @@ public class CardGamePanelManager extends PanelManagerBase
 
         IStateListener stateListener = Services.get(IStateListener.class);
         Services.get(IContextService.class).getThreadContext().addStateListener(stateListener);
-        animator.start();
 
         return gamePanel;
     }
@@ -158,8 +157,6 @@ public class CardGamePanelManager extends PanelManagerBase
     @Override
     public void destroyPanel()
     {
-        animator.stop();
-
         IStateListener stateListener = Services.get(IStateListener.class);
         Services.get(IContextService.class).getThreadContext().removeStateListener(stateListener);
 

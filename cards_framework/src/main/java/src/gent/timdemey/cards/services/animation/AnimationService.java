@@ -1,8 +1,10 @@
 package gent.timdemey.cards.services.animation;
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -150,5 +152,15 @@ public class AnimationService implements IAnimationService, IPreload
         }
 
         return false;
+    }
+
+    @Override
+    public Optional<Integer> getMaxAnimationLayer(IPanelManager pm)
+    {
+        Optional<Integer> maxLayerInUse = animTrackers.stream()
+                .filter(at -> at.panelMan == pm)
+                .map(c -> pm.getPanel().getLayer((Component) c.component))
+                .max(Integer::compare);
+        return maxLayerInUse;
     }
 }

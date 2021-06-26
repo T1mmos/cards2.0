@@ -17,7 +17,6 @@ import javax.swing.JComponent;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityBase;
-import gent.timdemey.cards.services.animation.Animator;
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.res.FontResource;
@@ -38,13 +37,11 @@ import gent.timdemey.cards.ui.components.swing.JSLabel;
 
 public abstract class PanelManagerBase implements IPanelManager
 {
-    protected final Animator animator;    
     protected final Map<UUID, JComponent> comp2jcomp;
     protected final Map<UUID, UUID> entity2comp;
     
     protected PanelManagerBase()
     {
-        this.animator = new Animator();
         this.comp2jcomp = new HashMap<>();
         this.entity2comp = new HashMap<>();
     }
@@ -213,19 +210,22 @@ public abstract class PanelManagerBase implements IPanelManager
     {
         
     }
-
     
     protected int getNextAnimationLayer()
     {
         IPositionService posServ = Services.get(IPositionService.class);
-
-        Optional<Integer> maxLayerInUse = animator.getComponents().stream()
-                .map(c -> getPanel().getLayer((Component) c))
-                .max(Integer::compare);
-        int layer = posServ.getAnimationLayer();
+        IAnimationService animServ = Services.get(IAnimationService.class);
+        
+        Optional<Integer> maxLayerInUse = animServ.getMaxAnimationLayer(this);
+               
+        int layer;
         if (maxLayerInUse.isPresent())
         {
             layer = maxLayerInUse.get() + 1;
+        }
+        else
+        {
+            layer = posServ.getAnimationLayer();
         }
         
         return layer;

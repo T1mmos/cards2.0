@@ -10,6 +10,7 @@ import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.ui.components.SFontResource;
 import gent.timdemey.cards.ui.components.SImageResource;
+import gent.timdemey.cards.ui.components.drawers.ButtonDrawer;
 import gent.timdemey.cards.ui.components.drawers.DrawerBase;
 import gent.timdemey.cards.ui.components.drawers.IDrawer;
 import gent.timdemey.cards.ui.components.drawers.IHasDrawer;
@@ -30,8 +31,10 @@ public final class JSFactory
     {
         JSButton jsbutton = new JSButton();
 
+        jsbutton.setAction(action);
         setComponent(jsbutton, new ComponentBase(UUID.randomUUID(), ComponentTypes.BUTTON));
-        setDrawer(jsbutton, new DrawerBase<JSButton>());
+        setDrawer(jsbutton, new ButtonDrawer());
+        setBackgroundTransparent(jsbutton);
 
         return jsbutton;
     }
