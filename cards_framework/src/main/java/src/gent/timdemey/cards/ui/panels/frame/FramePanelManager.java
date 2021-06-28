@@ -63,7 +63,6 @@ public class FramePanelManager extends PanelManagerBase
         String frameTitleFontName = resLocServ.getFilePath(ResourceDescriptors.AppTitleFont);
         FontResource res_frameTitleFont = resServ.getFont(frameTitleFontName);
         frameTitleFont = res_frameTitleFont.raw.deriveFont(40f);
-        
     }
     
     private JButton createFrameButton(ActionDescriptor desc)

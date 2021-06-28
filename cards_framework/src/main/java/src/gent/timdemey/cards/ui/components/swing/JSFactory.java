@@ -64,9 +64,7 @@ public final class JSFactory
     
     public static JSLabel createLabelScaled(String text, ComponentType compType, SFontResource fontRes)
     {
-        JSLabel lbl =  createLabel(text, compType, new ScaledTextDrawer(fontRes));
-      //  lbl.setBackground(Color.orange);
-        
+        JSLabel lbl =  createLabel(text, compType, new ScaledTextDrawer(fontRes));        
         return lbl;
     }
     

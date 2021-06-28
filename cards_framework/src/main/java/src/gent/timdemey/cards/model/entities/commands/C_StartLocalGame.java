@@ -5,9 +5,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardGame;
-import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.entities.game.Player;
@@ -47,18 +45,15 @@ public class C_StartLocalGame extends CommandBase
     {
         CheckContext(type, ContextType.UI);
        
-        ICardGameService ccServ = Services.get(ICardGameService.class);
-        List<List<Card>> cards = ccServ.getCards();
+        ICardGameService cgServ = Services.get(ICardGameService.class);
         
-        //List<UUID> playerIds = Arrays.asList(UUID.randomUUID());
         P_Player pl = new P_Player();
         pl.id = state.getLocalId();
         pl.name = state.getLocalName();
         Player player = new Player(pl);
         state.getPlayers().add(player);
         List<UUID> playerIds = state.getPlayers().getIds();
-        List<PlayerConfiguration> playerConfigs = ccServ.createStacks(playerIds, cards);
-        CardGame cardGame = new CardGame(playerConfigs);
+        CardGame cardGame = cgServ.createCardGame(playerIds);
         state.setCardGame(cardGame);
         state.setGameState(GameState.Started);
         

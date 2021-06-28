@@ -1,6 +1,9 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import java.util.Arrays;
+
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.helpers.PlayerHelper;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.game.GameState;
@@ -9,10 +12,7 @@ import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
-import gent.timdemey.cards.services.interfaces.IFrameService;
-import gent.timdemey.cards.test.helpers.PlayerHelper;
-import gent.timdemey.cards.test.helpers.SolShowCardGameHelper;
+import gent.timdemey.cards.services.interfaces.ICardGameService;
 
 public class C_FakeSolShowGame extends CommandBase
 {
@@ -28,7 +28,9 @@ public class C_FakeSolShowGame extends CommandBase
     {        
         Player player0 = PlayerHelper.getFixedPlayer(0);
         Player player1 = PlayerHelper.getFixedPlayer(1);
-        CardGame cardGame = SolShowCardGameHelper.createFixedSolShowCardGame(player0, player1);
+        
+        ICardGameService cgServ = Services.get(ICardGameService.class);
+        CardGame cardGame = cgServ.createCardGame(Arrays.asList(player0.id, player1.id));
         
         state.setLocalId(player0.id);
         state.getPlayers().add(player0);

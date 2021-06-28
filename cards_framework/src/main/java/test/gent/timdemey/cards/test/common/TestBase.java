@@ -10,8 +10,7 @@ import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.MockCardPlugin;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.ILogManager;
-import gent.timdemey.cards.model.entities.cards.Card;
-import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
+import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyList;
@@ -43,27 +42,18 @@ public class TestBase
             }
         };
         
-        ICardGameService cardGameServ =  new ICardGameService()
+        ICardGameService cardGameServ = new ICardGameService()
         {
             
             @Override
             public int getScore(ReadOnlyCardStack srcCardStack, ReadOnlyCardStack dstCardStack, ReadOnlyList<ReadOnlyCard> transferedCards)
             {
-                // TODO Auto-generated method stub
                 return 0;
             }
             
             @Override
-            public List<List<Card>> getCards()
+            public CardGame createCardGame(List<UUID> playerIds)
             {
-                // TODO Auto-generated method stub
-                return null;
-            }
-            
-            @Override
-            public List<PlayerConfiguration> createStacks(List<UUID> playerIds, List<List<Card>> playerCards)
-            {
-                // TODO Auto-generated method stub
                 return null;
             }
         };

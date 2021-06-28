@@ -32,7 +32,6 @@ import gent.timdemey.cards.ui.panels.IPanelManager;
 
 class CardGamePanelMouseListener extends MouseAdapter
 {
-
     private static class CardDragState
     {
         private final int xstart;

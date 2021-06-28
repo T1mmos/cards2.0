@@ -35,7 +35,6 @@ public class GameBootListener implements IStateListener
             }
             else
             {      
-                
                 // before showing the gamepanel we must create its scalable components
                 IPanelService panelServ = Services.get(IPanelService.class);
                 panelServ.rescaleResourcesAsync(GameBootListener::onRescaledResources);
@@ -46,17 +45,14 @@ public class GameBootListener implements IStateListener
     private static void onRescaledResources ()
     {
         IPanelService panelServ = Services.get(IPanelService.class);
-                
+        IFrameService frameServ = Services.get(IFrameService.class);
+        
+        frameServ.showPanel(PanelDescriptors.Game);
+        
         // the resources have loaded and are rescaled, so create and position 
         // the comp2jcomp that use them
         panelServ.createScalableComponents();
         panelServ.positionScalableComponents();
-        
-
-        IFrameService frameServ = Services.get(IFrameService.class);
-
-        frameServ.removePanel(PanelDescriptors.Load);
-        frameServ.showPanel(PanelDescriptors.Game);    
-        
+   
     }
 }

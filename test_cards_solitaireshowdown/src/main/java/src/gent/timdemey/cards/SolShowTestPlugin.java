@@ -3,8 +3,10 @@ package gent.timdemey.cards;
 import gent.timdemey.cards.common.Version;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.action.SolShowTestActionService;
+import gent.timdemey.cards.services.cardgame.SolShowTestCardGameService;
 import gent.timdemey.cards.services.context.ContextService;
 import gent.timdemey.cards.services.interfaces.IActionService;
+import gent.timdemey.cards.services.interfaces.ICardGameService;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.INetworkService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
@@ -20,6 +22,7 @@ public class SolShowTestPlugin extends SolShowPlugin
         services.installIfAbsent(IActionService.class, () -> new SolShowTestActionService());
         services.installIfAbsent(INetworkService.class, () -> new MockNetworkService());
         services.installIfAbsent(IPanelService.class, () -> new SolShowTestPanelService());
+        services.installIfAbsent(ICardGameService.class, () -> new SolShowTestCardGameService());
         
         super.installServices(services);
     }

@@ -1,6 +1,5 @@
 package gent.timdemey.cards.ui.panels;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -63,6 +62,10 @@ public abstract class PanelManagerBase implements IPanelManager
     public JComponent getComponentByEntityId(UUID entityId)
     {
         UUID compId = entity2comp.get(entityId);
+        if (compId == null)
+        {
+            throw new IllegalArgumentException("EntityId '"+entityId+"' is not mapped to a IHasComponent, so a JComponent cannot be found for it");
+        }
         return getComponentById(compId);
     }
     
@@ -70,7 +73,6 @@ public abstract class PanelManagerBase implements IPanelManager
     {
         JSImage jsimage = JSFactory.createImageScaled(compId, compType, imgResources); 
         initAndAddComponent(jsimage, payload);
-        jsimage.getDrawer().setBackgroundAlpha(0.0f);
         
         return jsimage;
     }

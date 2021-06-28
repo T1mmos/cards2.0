@@ -4,11 +4,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.common.SolShowTestBase;
+import gent.timdemey.cards.helpers.PlayerHelper;
+import gent.timdemey.cards.helpers.SolShowTestIds;
 import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;
@@ -21,12 +26,9 @@ import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.UDPServer;
 import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.services.interfaces.ICardGameService;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.test.common.SolShowTestBase;
-import gent.timdemey.cards.test.helpers.PlayerHelper;
 import gent.timdemey.cards.test.helpers.ServerHelper;
-import gent.timdemey.cards.test.helpers.SolShowCardGameHelper;
-import gent.timdemey.cards.test.helpers.SolShowTestIds;
 
 public class CommandHistoryUnitTest extends SolShowTestBase
 {
@@ -70,7 +72,7 @@ public class CommandHistoryUnitTest extends SolShowTestBase
         state.setLocalId(player1.id);
         
         // reset card game
-        cardGame = SolShowCardGameHelper.createFixedSolShowCardGame(player1, player2);
+        cardGame = Services.get(ICardGameService.class).createCardGame(Arrays.asList(player1.id, player2.id));
         state.setCardGame(cardGame);
         state.setGameState(GameState.Started);
         cs_p1depot = cardGame.getCardStack(SolShowTestIds.P1_DEPOT);

@@ -53,6 +53,7 @@ import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IResourceLocationService;
+import gent.timdemey.cards.ui.components.drawers.IDrawer;
 import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.IDataPanelManager;
@@ -122,7 +123,7 @@ public class FrameService implements IFrameService, IPreload
             frame.setLocationRelativeTo(null);
             frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
             frame.setIconImages(icons);
-            
+
             IPanelService panelServ = Services.get(IPanelService.class);
             IPanelManager pm = panelServ.getPanelManager(PanelDescriptors.Frame);
             JSLayeredPane content = pm.createPanel();
@@ -197,7 +198,7 @@ public class FrameService implements IFrameService, IPreload
         }
         if (directChild.getParent() != getFrameBodyPanel())
         {
-            throw new IllegalStateException("The component is not part of the hierarchy of the frame body panel");
+            throw new IllegalStateException("The component '"+desc.id+"' ("+desc.panelType+") is not part of the hierarchy of the frame body panel");
         }        
         
         closePanelInternal(desc.panelType);
@@ -300,10 +301,10 @@ public class FrameService implements IFrameService, IPreload
             {
                 closePanelInternal(PanelType.Dialog);
             }
-            while (!overlayPanelTrackers.empty())
+         /*   while (!overlayPanelTrackers.empty())
             {
                 closePanelInternal(PanelType.Overlay);
-            }
+            }*/
             if (rootPanelTracker != null)
             {
                 closePanelInternal(PanelType.Root);
@@ -425,23 +426,27 @@ public class FrameService implements IFrameService, IPreload
     private void setVisible(PanelTracker pt)
     {
         IPanelService panelServ = Services.get(IPanelService.class);
+        IDrawer drawer = pt.panel.getDrawer();
+        drawer.setForegroundAlpha(0.2f);
+        
         pt.panel.setVisible(true);
         
-        final Timer timer = new Timer(15, new ActionListener() {
+       final Timer timer = new Timer(15, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                float alpha = pt.panel.getDrawer().getForegroundAlpha();
+                float alpha = drawer.getForegroundAlpha();
                 alpha += 0.05;
                 if (alpha >= 1) {
                     alpha = 0.999f; // prevents text suddenly changing size
                     ((Timer) e.getSource()).stop();
                 }
-                pt.panel.getDrawer().setForegroundAlpha(alpha);
+                drawer.setForegroundAlpha(alpha);
             }
         });
         timer.setRepeats(true);
         timer.setCoalesce(true);
         timer.start();
+        
         panelServ.getPanelManager(pt.panelDesc).onShown();      
     }
 

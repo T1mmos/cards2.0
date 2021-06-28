@@ -4,6 +4,7 @@ import java.awt.Graphics;
 
 import com.alee.laf.button.WebButton;
 
+import gent.timdemey.cards.ui.components.drawers.ButtonDrawer;
 import gent.timdemey.cards.ui.components.drawers.IDrawer;
 import gent.timdemey.cards.ui.components.drawers.IHasDrawer;
 import gent.timdemey.cards.ui.components.ext.ComponentBase;
@@ -11,7 +12,7 @@ import gent.timdemey.cards.ui.components.ext.IHasComponent;
 
 public class JSButton extends WebButton implements IHasComponent<ComponentBase>, IHasDrawer 
 {
-    private IDrawer drawer;
+    private ButtonDrawer drawer;
     private ComponentBase scomp;    
     
     JSButton()
@@ -31,7 +32,7 @@ public class JSButton extends WebButton implements IHasComponent<ComponentBase>,
     }
 
     @Override
-    public final IDrawer getDrawer()
+    public final ButtonDrawer getDrawer()
     {
         return drawer;
     }
@@ -39,7 +40,7 @@ public class JSButton extends WebButton implements IHasComponent<ComponentBase>,
     @Override
     public void setDrawer(IDrawer drawer)
     {
-        this.drawer = drawer;
+        this.drawer = (ButtonDrawer) drawer;
     }
 
     @Override

@@ -5,9 +5,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardGame;
-import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_StartMultiplayerGame;
 import gent.timdemey.cards.model.state.State;
@@ -72,11 +70,9 @@ public class C_StartMultiplayerGame extends CommandBase
         else
         {
             // ready to kick off. Generate some cards for the current game type.
-            ICardGameService creator = Services.get(ICardGameService.class);
-            List<List<Card>> allCards = creator.getCards();
+            ICardGameService cgServ = Services.get(ICardGameService.class);
             List<UUID> playerIds = state.getPlayers().getIds();
-            List<PlayerConfiguration> playerConfigurations = creator.createStacks(playerIds, allCards);
-            CardGame cardGame = new CardGame(playerConfigurations);
+            CardGame cardGame = cgServ.createCardGame(playerIds);
 
             C_OnLobbyToGame cmd = new C_OnLobbyToGame(cardGame);
             schedule(ContextType.Server, cmd);

@@ -9,7 +9,6 @@ import gent.timdemey.cards.model.entities.cards.Value;
 
 public final class CardDeckUtils
 {
-
     private CardDeckUtils()
     {
 

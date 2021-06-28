@@ -36,7 +36,8 @@ import gent.timdemey.cards.ui.panels.PanelManagerBase;
 public class CardGamePanelManager extends PanelManagerBase
 {
     private JSLayeredPane gamePanel;
-    private CardGamePanelMouseListener dragListener;
+    private CardGamePanelMouseListener mouseListener;
+    private CardGamePanelStateListener stateListener;
 
     @Override
     public void preload()
@@ -48,18 +49,17 @@ public class CardGamePanelManager extends PanelManagerBase
     @Override
     public void onShown()
     {
-        gamePanel.addMouseMotionListener(dragListener);
-        gamePanel.addMouseListener(dragListener);
-        gamePanel.setVisible(true);
-        gamePanel.repaint();
+        gamePanel.addMouseMotionListener(mouseListener);
+        gamePanel.addMouseListener(mouseListener);
+        Services.get(IContextService.class).getThreadContext().addStateListener(stateListener);
     }
 
     @Override
     public void onHidden()
     {
-        gamePanel.setVisible(false);
-        gamePanel.removeMouseListener(dragListener);
-        gamePanel.removeMouseListener(dragListener);
+        gamePanel.addMouseMotionListener(mouseListener);
+        gamePanel.removeMouseListener(mouseListener);
+        Services.get(IContextService.class).getThreadContext().removeStateListener(stateListener);
     }
 
     @Override
@@ -67,15 +67,23 @@ public class CardGamePanelManager extends PanelManagerBase
     {
         gamePanel = JSFactory.createLayeredPane(ComponentTypes.PANEL, new GamePanelDrawer());
         gamePanel.setLayout(null);
-        dragListener = new CardGamePanelMouseListener();
+        mouseListener = createMouseListener();
+        stateListener = createStateListener();
         gamePanel.addContainerListener(new CardGamePanelContainerListener());
-
-        IStateListener stateListener = Services.get(IStateListener.class);
-        Services.get(IContextService.class).getThreadContext().addStateListener(stateListener);
-
+        
         return gamePanel;
     }
+    
+    protected CardGamePanelMouseListener createMouseListener()
+    {
+        return new CardGamePanelMouseListener();
+    }
 
+    protected CardGamePanelStateListener createStateListener()
+    {
+        return new CardGamePanelStateListener();
+    }
+    
     @Override
     public JSLayeredPane getPanel()
     {
@@ -163,7 +171,7 @@ public class CardGamePanelManager extends PanelManagerBase
         gamePanel.removeAll();
         clearComponents();
 
-        dragListener = null;
+        mouseListener = null;
         gamePanel = null;
     }
 

@@ -28,7 +28,6 @@ import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.ui.components.SFontResource;
 import gent.timdemey.cards.ui.components.swing.JSLabel;
 import gent.timdemey.cards.utils.ComponentUtils;
-import gent.timdemey.cards.utils.DebugDrawDefines;
 
 public final class ScaledTextDrawer extends DrawerBase<JSLabel>
 {    
@@ -253,28 +252,5 @@ public final class ScaledTextDrawer extends DrawerBase<JSLabel>
         {
             mousePressed = pressed;
         }        
-    }
-    
-    @Override
-    protected Color getDebugColor(DebugItems key)
-    {
-        switch (key)
-        {
-            case CompboxBackground: 
-                return DebugDrawDefines.COLOR_COMPBOX_BACKGROUND_DEFAULT;
-            case CompboxOutline: 
-                return DebugDrawDefines.COLOR_COMPBOX_OUTLINE_DEFAULT;
-            case PaddingBoxBackground:
-                return DebugDrawDefines.COLOR_PADBOX_BACKGROUND_DEFAULT;
-            case PaddingBoxOutline:
-                return DebugDrawDefines.COLOR_PADBOX_OUTLINE_DEFAULT;
-            case InfoBoxBackground:
-                return DebugDrawDefines.COLOR_INFOBOX_BACKGROUND_DEFAULT;
-            case InfoBoxOutline:
-                return DebugDrawDefines.COLOR_INFOBOX_OUTLINE_DEFAULT;
-            case InfoBoxText:
-                return DebugDrawDefines.COLOR_INFOBOX_TEXT_DEFAULT;
-        }
-        return super.getDebugColor(key);
     }
 }

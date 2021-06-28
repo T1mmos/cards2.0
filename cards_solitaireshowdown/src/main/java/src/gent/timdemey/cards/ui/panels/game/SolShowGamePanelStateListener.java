@@ -18,7 +18,6 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
-import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.interfaces.ISolShowIdService;
 import gent.timdemey.cards.ui.components.swing.JSLabel;
 
@@ -28,7 +27,6 @@ public class SolShowGamePanelStateListener extends CardGamePanelStateListener
     public void onChange(ReadOnlyChange change)
     {
         IContextService contextService = Services.get(IContextService.class);
-        IScalingService scaleServ = Services.get(IScalingService.class);
         ISolShowIdService idServ = Services.get(ISolShowIdService.class);
         IPanelService panelServ = Services.get(IPanelService.class);
         SolShowGamePanelManager pm = (SolShowGamePanelManager) panelServ.getPanelManager(PanelDescriptors.Game);

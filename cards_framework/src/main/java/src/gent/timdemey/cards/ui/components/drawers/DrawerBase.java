@@ -4,6 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Composite;
+import java.awt.Container;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -22,7 +23,6 @@ import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.ui.components.ext.IHasComponent;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
-import gent.timdemey.cards.utils.ColorUtils;
 import gent.timdemey.cards.utils.ComponentUtils;
 import gent.timdemey.cards.utils.DebugDrawDefines;
 
@@ -63,6 +63,20 @@ public class DrawerBase<T extends JComponent> implements IDrawer
     public final void setForegroundAlpha(float alpha)
     {
         this.alphaFg = alpha;
+        
+        if (getJComponent() instanceof Container)
+        {
+            Container cont = (Container) getJComponent();
+            for (Component c : cont.getComponents())
+            {
+                if (c instanceof IHasDrawer)
+                {
+                    IHasDrawer hasDrawer = (IHasDrawer) c;
+                    hasDrawer.getDrawer().setForegroundAlpha(alpha);
+                }
+            }
+        }
+        getJComponent().repaint();
     }
 
     @Override
@@ -75,21 +89,7 @@ public class DrawerBase<T extends JComponent> implements IDrawer
     public final void setBackgroundAlpha(float alpha)
     {
         this.alphaBg = alpha;
-        
-        if (alpha < 1.0f)
-        {
-            Color bg = getJComponent().getBackground();
-            if (bg == null)
-            {
-                bg = ColorUtils.transparent(Color.black, alpha);
-            }
-            else
-            {
-                bg = ColorUtils.transparent(bg, alpha);
-            }
-            getJComponent().setBackground(bg);
-            getJComponent().setOpaque(false);
-        }
+        getJComponent().repaint();
     }
 
     @Override
@@ -135,7 +135,9 @@ public class DrawerBase<T extends JComponent> implements IDrawer
     public void drawChildren(Graphics g, Consumer<Graphics> superPaintChildren)
     {
         Graphics2D g2 = (Graphics2D) g.create();
-            
+     
+        applyAlpha(g2, alphaFg);
+        
         // by default, draw with the JComponent's given draw function (paintChildren)
         superPaintChildren.accept(g2);
         
@@ -261,7 +263,29 @@ public class DrawerBase<T extends JComponent> implements IDrawer
             case PaddingBoxOutline:
                 return DebugDrawDefines.COLOR_PADBOX_OUTLINE_DEFAULT;
             case InfoBoxBackground:
-                return DebugDrawDefines.COLOR_INFOBOX_BACKGROUND_DEFAULT;
+            {
+                int parents = 0;
+                Component comp = getJComponent().getParent();
+                while (comp != null)
+                {
+                    parents++;
+                    comp = comp.getParent();
+                }
+                
+                parents -= 3; // JLayeredPane, JRootPane, JFrame
+                
+                switch (parents)
+                {
+                case 0:
+                    return DebugDrawDefines.COLOR_INFOBOX_BACKGROUND_LVL1;
+                case 1:
+                    return DebugDrawDefines.COLOR_INFOBOX_BACKGROUND_LVL2;
+                case 2:
+                default:
+                    return DebugDrawDefines.COLOR_INFOBOX_BACKGROUND_LVL3;
+                }
+                
+            }   
             case InfoBoxOutline:
                 return DebugDrawDefines.COLOR_INFOBOX_OUTLINE_DEFAULT;
             case InfoBoxText:

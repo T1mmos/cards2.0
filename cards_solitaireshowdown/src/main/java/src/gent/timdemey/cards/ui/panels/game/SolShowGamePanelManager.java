@@ -32,6 +32,12 @@ import gent.timdemey.cards.ui.components.swing.JSLabel;
 public class SolShowGamePanelManager extends CardGamePanelManager
 {
     @Override
+    protected CardGamePanelStateListener createStateListener()
+    {
+        return new SolShowGamePanelStateListener();
+    }
+    
+    @Override
     public void createComponents()
     {
         IScalingService scaleServ = Services.get(IScalingService.class);

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.cards.Card;
+import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
@@ -16,8 +17,7 @@ import gent.timdemey.cards.utils.CardDeckUtils;
 
 public class SolShowCardGameService implements ICardGameService
 {
-    @Override
-    public List<List<Card>> getCards()
+    private List<List<Card>> getCards()
     {
         // solitaire showdown: each player starts with his own deck of 52 cards.
         Card[] deck1 = CardDeckUtils.createFullDeck();
@@ -34,8 +34,10 @@ public class SolShowCardGameService implements ICardGameService
     }
 
     @Override
-    public List<PlayerConfiguration> createStacks(List<UUID> playerIds, List<List<Card>> playerCards)
+    public CardGame createCardGame(List<UUID> playerIds)
     {
+        List<List<Card>> playerCards = getCards();
+        
         List<PlayerConfiguration> playersConfiguration = new ArrayList<>();
         for (int i = 0; i < playerCards.size(); i++)
         {
@@ -58,9 +60,11 @@ public class SolShowCardGameService implements ICardGameService
             PlayerConfiguration pc = new PlayerConfiguration(id, cardStacks);
             playersConfiguration.add(pc);
         }
-        return playersConfiguration;
+        
+        CardGame cg = new CardGame(playersConfiguration);
+        return cg;
     }
-    
+
     private void addCardStack(List<CardStack> listToAdd, String cardStackType, int typeNumber, List<Card> cards, boolean visible)
     {
         CardStack cs = new CardStack(cardStackType, typeNumber);

@@ -142,7 +142,6 @@ public class Start
      //   services.installIfAbsent(IDialogService.class, () -> new DialogService());
         services.installIfAbsent(IActionService.class, () -> new ActionService());
         services.installIfAbsent(IPanelService.class, () -> new PanelService());
-        services.installIfAbsent(IStateListener.class, () -> new CardGamePanelStateListener());
         services.installIfAbsent(IFileService.class, () -> new FileService());
     }
 }

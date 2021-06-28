@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.cards.Card;
+import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
@@ -18,8 +19,10 @@ import gent.timdemey.cards.utils.CardDeckUtils;
 public class SolitaireCardGameCreationService implements ICardGameService
 {
     @Override
-    public List<PlayerConfiguration> createStacks(List<UUID> playerIds, List<List<Card>> playerCards)
+    public CardGame createCardGame(List<UUID> playerIds)
     {
+        List<List<Card>> playerCards = getCards();
+        
         if (playerIds == null)
         {
             throw new IllegalArgumentException("playerIds");
@@ -85,11 +88,12 @@ public class SolitaireCardGameCreationService implements ICardGameService
         PlayerConfiguration pc = new PlayerConfiguration(playerId, stacks);
         List<PlayerConfiguration> pcs = new ArrayList<>();
         pcs.add(pc);
-        return pcs;
+        
+        CardGame cg = new CardGame(pcs);
+        return cg;
     }
 
-    @Override
-    public List<List<Card>> getCards()
+    private List<List<Card>> getCards()
     {
         Card[] cards = CardDeckUtils.createFullDeck();
         CardDeckUtils.shuffleDeck(cards);

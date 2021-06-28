@@ -1,19 +1,24 @@
-package gent.timdemey.cards.test.unittests;
+package gent.timdemey.cards.unittests;
 
 import static org.junit.Assert.assertEquals;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import gent.timdemey.cards.common.SolShowTestBase;
+import gent.timdemey.cards.helpers.PlayerHelper;
+import gent.timdemey.cards.helpers.SolShowTestIds;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
-import gent.timdemey.cards.test.common.SolShowTestBase;
+import gent.timdemey.cards.services.cardgame.SolShowTestCardGameService;
+import gent.timdemey.cards.services.interfaces.ICardGameService;
 import gent.timdemey.cards.test.helpers.CardGameHelper;
-import gent.timdemey.cards.test.helpers.PlayerHelper;
-import gent.timdemey.cards.test.helpers.SolShowCardGameHelper;
-import gent.timdemey.cards.test.helpers.SolShowTestIds;
 
 public class SolShowCardGameHelperUnitTest extends SolShowTestBase
 {
@@ -24,14 +29,11 @@ public class SolShowCardGameHelperUnitTest extends SolShowTestBase
         installMockContextService();     
     }
     
-    ///
     @Test
     public void checkFixedGame()
     {
-        Player player1 = PlayerHelper.getFixedPlayer(0);
-        Player player2 = PlayerHelper.getFixedPlayer(1);
-        CardGame cg1 = SolShowCardGameHelper.createFixedSolShowCardGame(player1, player2);
-        CardGame cg2 = SolShowCardGameHelper.createFixedSolShowCardGame(player1, player2);
+        CardGame cg1 = createFixedSolShowCardGame();
+        CardGame cg2 = createFixedSolShowCardGame();
         
         // check always the same game
         CardGameHelper.assertEquals(cg1, cg2);
@@ -58,13 +60,22 @@ public class SolShowCardGameHelperUnitTest extends SolShowTestBase
     @Test
     public void printFixedGame()
     {
-        Player player1 = PlayerHelper.getFixedPlayer(0);
-        Player player2 = PlayerHelper.getFixedPlayer(1);
-        CardGame cg = SolShowCardGameHelper.createFixedSolShowCardGame(player1, player2);
+        CardGame cg = createFixedSolShowCardGame();
         
         for (CardStack cs : cg.getCardStacks())
         {
             System.out.println(cs);
         }
+    }
+
+    private CardGame createFixedSolShowCardGame()
+    {
+        Player player1 = PlayerHelper.getFixedPlayer(0);
+        Player player2 = PlayerHelper.getFixedPlayer(1);
+        List<UUID> playerIds = Arrays.asList(player1.id, player2.id);
+        
+        ICardGameService cgServ = new SolShowTestCardGameService();
+        CardGame cg = cgServ.createCardGame(playerIds);
+        return cg;
     }
 }

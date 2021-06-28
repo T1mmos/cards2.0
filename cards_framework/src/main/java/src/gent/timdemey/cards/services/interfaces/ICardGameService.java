@@ -3,8 +3,7 @@ package gent.timdemey.cards.services.interfaces;
 import java.util.List;
 import java.util.UUID;
 
-import gent.timdemey.cards.model.entities.cards.Card;
-import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
+import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyList;
@@ -24,7 +23,7 @@ public interface ICardGameService
      * 
      * @return
      */
-    public List<List<Card>> getCards();
+  //  public List<List<Card>> getCards();
 
     /**
      * Deals a shuffled deck into the different stacks. This is a deterministic
@@ -35,7 +34,9 @@ public interface ICardGameService
      * @param shuffled
      * @return
      */
-    public List<PlayerConfiguration> createStacks(List<UUID> playerIds, List<List<Card>> playerCards);
+   // public List<PlayerConfiguration> createStacks(List<UUID> playerIds, List<List<Card>> playerCards);
+    
+    public CardGame createCardGame(List<UUID> playerIds);
     
     /**
      * Calculates the score for moving the given cards from cardstack A to cardstack B.
