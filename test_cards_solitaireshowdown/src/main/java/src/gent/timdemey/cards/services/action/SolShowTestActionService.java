@@ -52,11 +52,8 @@ public class SolShowTestActionService extends ActionService
         
         if (desc == SolShowTestActionDescriptors.ad_fakegame)
         {
-
             IFrameService frameServ = Services.get(IFrameService.class);
-            frameServ.showPanel(PanelDescriptors.Load);
-            
-            context.schedule(new C_FakeSolShowGame());
+            frameServ.showPanel(PanelDescriptors.Load, () -> context.schedule(new C_FakeSolShowGame()));            
         }
         else if (desc == SolShowTestActionDescriptors.ad_switchcvis)
         {

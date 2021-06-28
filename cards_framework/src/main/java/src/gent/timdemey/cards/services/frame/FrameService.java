@@ -216,6 +216,12 @@ public class FrameService implements IFrameService, IPreload
     @Override
     public void showPanel(PanelDescriptor desc)
     {        
+        showPanel(desc, null);
+    }
+    
+    @Override
+    public void showPanel(PanelDescriptor desc, Runnable onShown)
+    { 
         if (desc.panelType != PanelType.Root && desc.panelType != PanelType.Overlay)
         {
             throw new IllegalArgumentException("This method is intended for Root and Overlay panels only");
@@ -243,7 +249,7 @@ public class FrameService implements IFrameService, IPreload
             pb = pt.panel;
         }
         
-        showInternal(desc, pb, add);
+        showInternal(desc, pb, add, onShown);
     }
     
     @Override
@@ -256,10 +262,10 @@ public class FrameService implements IFrameService, IPreload
         
         JSLayeredPane pb = createDialogPanel(desc, data, onClose);
         
-        showInternal(desc, pb, true);
+        showInternal(desc, pb, true, null);
     }
         
-    private void showInternal(PanelDescriptor desc, JSLayeredPane comp, boolean add)
+    private void showInternal(PanelDescriptor desc, JSLayeredPane comp, boolean add, Runnable onShown)
     {                
         // add it to the miglayout
         if (add)
@@ -346,7 +352,7 @@ public class FrameService implements IFrameService, IPreload
             overlayPanelTrackers.push(pt);
         }
         
-        setVisible(pt);
+        setVisible(pt, onShown);
     }    
     
     public void closePanel(PanelType panelType)
@@ -412,18 +418,18 @@ public class FrameService implements IFrameService, IPreload
                 if (!dialogPanelTrackers.isEmpty())
                 {
                     PanelTracker topmost = dialogPanelTrackers.peek();
-                    setVisible(topmost);   
+                    setVisible(topmost, null);   
                 }
                 else if (rootPanelTracker != null)
                 {
-                    setVisible(rootPanelTracker);              
+                    setVisible(rootPanelTracker, null);              
                 }
             }
         }
         
     }
     
-    private void setVisible(PanelTracker pt)
+    private void setVisible(PanelTracker pt, Runnable onShown)
     {
         IPanelService panelServ = Services.get(IPanelService.class);
         IDrawer drawer = pt.panel.getDrawer();
@@ -431,7 +437,7 @@ public class FrameService implements IFrameService, IPreload
         
         pt.panel.setVisible(true);
         
-       final Timer timer = new Timer(15, new ActionListener() {
+        final Timer timer = new Timer(15, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 float alpha = drawer.getForegroundAlpha();
@@ -439,6 +445,12 @@ public class FrameService implements IFrameService, IPreload
                 if (alpha >= 1) {
                     alpha = 0.999f; // prevents text suddenly changing size
                     ((Timer) e.getSource()).stop();
+                    
+                    panelServ.getPanelManager(pt.panelDesc).onShown();      
+                    if (onShown != null)
+                    {
+                        onShown.run();
+                    }
                 }
                 drawer.setForegroundAlpha(alpha);
             }
@@ -447,7 +459,6 @@ public class FrameService implements IFrameService, IPreload
         timer.setCoalesce(true);
         timer.start();
         
-        panelServ.getPanelManager(pt.panelDesc).onShown();      
     }
 
     private void setHidden(PanelTracker pt)

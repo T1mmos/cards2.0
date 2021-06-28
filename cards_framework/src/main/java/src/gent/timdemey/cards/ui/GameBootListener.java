@@ -6,6 +6,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.context.Context;
+import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
@@ -48,6 +49,7 @@ public class GameBootListener implements IStateListener
         IFrameService frameServ = Services.get(IFrameService.class);
         
         frameServ.showPanel(PanelDescriptors.Game);
+        frameServ.removePanel(PanelDescriptors.Load);
         
         // the resources have loaded and are rescaled, so create and position 
         // the comp2jcomp that use them

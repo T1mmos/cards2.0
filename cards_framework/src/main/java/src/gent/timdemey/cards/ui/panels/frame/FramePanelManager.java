@@ -52,8 +52,6 @@ public class FramePanelManager extends PanelManagerBase
     private Border frameBorder;
     private RootPanelMouseListener rpMouseListener;
     
-  //  private boolean drawDebug = false;
-    
     @Override
     public void preload()
     {
