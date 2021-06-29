@@ -1,6 +1,7 @@
 package gent.timdemey.cards.services.animation;
 
 import gent.timdemey.cards.services.contract.Coords;
+import gent.timdemey.cards.services.contract.LayeredArea;
 
 public class AnimationStart
 {
@@ -14,9 +15,15 @@ public class AnimationStart
      */
     public final Coords.Relative relcoords;
     
-    public AnimationStart(long time, Coords.Relative coords)
+    /**
+     * Holds absolute positioning and layer info.
+     */
+    final LayeredArea layeredArea;
+    
+    public AnimationStart(long time, Coords.Relative coords, LayeredArea layeredArea)
     {
         this.time = time;
         this.relcoords = coords;
+        this.layeredArea = layeredArea;
     }
 }

@@ -55,7 +55,7 @@ public class SolShowGamePanelManager extends CardGamePanelManager
         for (int i = 0; i < cardstacks.size(); i++)
         {
             ReadOnlyCardStack cardstack = cardstacks.get(i);
-            JSImage jsimage = createJSImage(cardstack);
+            createJSImage(cardstack);
         }
         
         // special stack background and counter text
@@ -122,11 +122,11 @@ public class SolShowGamePanelManager extends CardGamePanelManager
             SImageResource res_playerbg_local = (SImageResource) scaleServ.getSResource(resid_playerbg_local);
             SImageResource res_vs = (SImageResource) scaleServ.getSResource(resid_vs);
             
-            JSImage img_cardareabg_remote = createJSImage(compid_cardareabg_remote, SolShowComponentTypes.CARDAREABG, player_remote, res_cardareabg_remote);
-            JSImage img_cardareabg_local = createJSImage(compid_cardareabg_local, SolShowComponentTypes.CARDAREABG, player_local, res_cardareabg_local); 
-            JSImage img_playerbg_remote = createJSImage(compid_playerbg_remote, SolShowComponentTypes.PLAYERBG, player_remote, res_playerbg_remote);
-            JSImage img_playerbg_local = createJSImage(compid_playerbg_local, SolShowComponentTypes.PLAYERBG, player_local, res_playerbg_local); 
-            JSImage img_vs = createJSImage(compid_vs, SolShowComponentTypes.VS, null, res_vs); 
+            createJSImage(compid_cardareabg_remote, SolShowComponentTypes.CARDAREABG, player_remote, res_cardareabg_remote);
+            createJSImage(compid_cardareabg_local, SolShowComponentTypes.CARDAREABG, player_local, res_cardareabg_local); 
+            createJSImage(compid_playerbg_remote, SolShowComponentTypes.PLAYERBG, player_remote, res_playerbg_remote);
+            createJSImage(compid_playerbg_local, SolShowComponentTypes.PLAYERBG, player_local, res_playerbg_local); 
+            createJSImage(compid_vs, SolShowComponentTypes.VS, null, res_vs); 
         }
     }
 

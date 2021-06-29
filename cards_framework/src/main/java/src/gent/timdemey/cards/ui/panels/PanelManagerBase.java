@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -73,11 +72,10 @@ public abstract class PanelManagerBase implements IPanelManager
     {
         JSImage jsimage = JSFactory.createImageScaled(compId, compType, imgResources); 
         initAndAddComponent(jsimage, payload);
-        
         return jsimage;
     }
     
-    protected JSLabel createJSLabel(UUID compId, ComponentType compType, String text, Object payload, SFontResource fontRes)
+    protected final JSLabel createJSLabel(UUID compId, ComponentType compType, String text, Object payload, SFontResource fontRes)
     {
         JSLabel jslabel = JSFactory.createLabelScaled(text, compType, fontRes);
         initAndAddComponent(jslabel, payload);
@@ -212,42 +210,19 @@ public abstract class PanelManagerBase implements IPanelManager
     {
         
     }
-    
-    protected int getNextAnimationLayer()
+
+    @Override
+    public void startAnimate(JComponent jcomp)
     {
-        IPositionService posServ = Services.get(IPositionService.class);
         IAnimationService animServ = Services.get(IAnimationService.class);
-        
-        Optional<Integer> maxLayerInUse = animServ.getMaxAnimationLayer(this);
-               
-        int layer;
-        if (maxLayerInUse.isPresent())
-        {
-            layer = maxLayerInUse.get() + 1;
-        }
-        else
-        {
-            layer = posServ.getAnimationLayer();
-        }
-        
-        return layer;
+        animServ.animate(jcomp, this);        
     }
 
     @Override
-    public void startAnimate(JComponent comp)
-    {
-        int layer = getNextAnimationLayer();
-        getPanel().setLayer(comp, layer);
-        
-        IAnimationService animServ = Services.get(IAnimationService.class);
-        animServ.animate(comp, this);        
-    }
-
-    @Override
-    public void stopAnimate(JComponent comp)
+    public void stopAnimate(JComponent jcomp)
     {
         IAnimationService animServ = Services.get(IAnimationService.class);
-        animServ.stopAnimate(comp);
+        animServ.stopAnimate(jcomp);
     }
     
     @Override

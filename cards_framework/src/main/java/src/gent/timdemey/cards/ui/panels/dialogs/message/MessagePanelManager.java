@@ -6,11 +6,9 @@ import javax.swing.JLabel;
 
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
-import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.DataPanelManagerBase;
-import net.miginfocom.swing.MigLayout;
 
 public class MessagePanelManager extends DataPanelManagerBase<MessagePanelData, Void>
 {

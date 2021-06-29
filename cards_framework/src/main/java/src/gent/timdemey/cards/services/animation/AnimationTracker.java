@@ -3,6 +3,7 @@ package gent.timdemey.cards.services.animation;
 import javax.swing.JComponent;
 
 import gent.timdemey.cards.services.contract.Coords;
+import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.ui.panels.IPanelManager;
 
 /**
@@ -31,11 +32,11 @@ public class AnimationTracker
      */
     final AnimationStart animStart;
     
-    AnimationTracker(JComponent component, IPanelManager panelMan, AnimationDescriptor animDescriptor, Coords.Relative relcoords)
+    AnimationTracker(JComponent component, IPanelManager panelMan, AnimationDescriptor animDescriptor, Coords.Relative relcoords, LayeredArea layeredArea)
     {
         this.component = component;
         this.panelMan = panelMan;
         this.animDescriptor = animDescriptor;
-        this.animStart = new AnimationStart(System.currentTimeMillis(), relcoords);
+        this.animStart = new AnimationStart(System.currentTimeMillis(), relcoords, layeredArea);
     }    
 }

@@ -100,7 +100,7 @@ public class CardGamePanelManager extends PanelManagerBase
         for (int i = 0; i < cards.size(); i++)
         {
             ReadOnlyCard card = cards.get(i);
-            JSImage jsimage = createJSImage(card);
+            createJSImage(card);
         }
     }
 
@@ -179,11 +179,11 @@ public class CardGamePanelManager extends PanelManagerBase
     public void positionComponent(JComponent comp)
     {
         IPositionService posServ = Services.get(IPositionService.class);
-        LayeredArea layArea = posServ.getStartLayeredArea(comp);
-        ((IHasComponent<?>) comp).getComponent().setAbsCoords(layArea.abscoords);
+        LayeredArea layArea = posServ.getLayeredArea(comp);
+        ((IHasComponent<?>) comp).getComponent().setAbsCoords(layArea.abscoords_dst);
         ((IHasDrawer) comp).getDrawer().setMirror(layArea.mirror);        
         
-        ((JSLayeredPane) comp.getParent()).setLayer(comp, layArea.layer);
+        ((JSLayeredPane) comp.getParent()).setLayer(comp, layArea.endLayer);
     }
 
     public void createRescaleRequests(List<? super RescaleRequest> requests)
@@ -213,7 +213,7 @@ public class CardGamePanelManager extends PanelManagerBase
         }
     }   
     
-    protected JSImage createJSImage(ReadOnlyCard card)
+    protected void createJSImage(ReadOnlyCard card)
     {
         IIdService uuidServ = Services.get(IIdService.class);
         IScalingService scaleServ = Services.get(IScalingService.class);
@@ -233,7 +233,7 @@ public class CardGamePanelManager extends PanelManagerBase
         SImageResource res_front = (SImageResource) scaleServ.getSResource(resFrontId);
         SImageResource res_back = (SImageResource) scaleServ.getSResource(resBackId);
         
-        return createJSImage(compId, ComponentTypes.CARD, card, res_front, res_back);
+        createJSImage(compId, ComponentTypes.CARD, card, res_front, res_back);
     }
     
     protected JSImage getJSImage(ReadOnlyCard card)
@@ -241,7 +241,7 @@ public class CardGamePanelManager extends PanelManagerBase
         return (JSImage) getComponent((ReadOnlyEntityBase<?>) card);
     }
         
-    protected JSImage createJSImage(ReadOnlyCardStack cardstack)
+    protected void createJSImage(ReadOnlyCardStack cardstack)
     {
         IIdService idServ = Services.get(IIdService.class);
 
@@ -258,7 +258,7 @@ public class CardGamePanelManager extends PanelManagerBase
         // create the component using its necessary image resources
         IScalingService scaleServ = Services.get(IScalingService.class);
         SImageResource res = (SImageResource) scaleServ.getSResource(csResId);
-        return createJSImage(compId, ComponentTypes.CARDSTACK, cardstack, res);
+        createJSImage(compId, ComponentTypes.CARDSTACK, cardstack, res);
     }
     
     protected JSImage getJSImage(ReadOnlyCardStack cardStack)

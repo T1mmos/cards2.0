@@ -18,6 +18,7 @@ import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityList;
+import gent.timdemey.cards.services.animation.LayerRange;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
@@ -126,20 +127,26 @@ class CardGamePanelMouseListener extends MouseAdapter
             if (pull)
             {
                 List<ReadOnlyCard> cards = stack.getCardsFrom(card);
-
-                for (int i = 0; i < cards.size(); i++)
+                int cardCnt = cards.size();
+                
+                LayerRange range = posServ.getDragLayerRange();
+                int dragMax = range.layerEnd - range.layerStart + 1;
+                if (cardCnt > dragMax)
+                {
+                    throw new IllegalStateException("Maximum number of dragging components exceeded: " + cardCnt + " > " + dragMax);
+                }
+                
+                for (int i = 0; i < cardCnt; i++)
                 {
                     ReadOnlyCard currentCard = cards.get(i);
 
                     JSImage jsimage_card = (JSImage) pm.getComponent(currentCard);
                     int card_xstart = jsimage_card.getBounds().x;
                     int card_ystart = jsimage_card.getBounds().y;
-
-                    int layer = posServ.getDragLayer();
                     
                     // ensure to stop any animations running for this card
                     pm.stopAnimate(jsimage_card);       
-                    pm.getPanel().setLayer(jsimage_card, layer + 1);
+                    pm.getPanel().setLayer(jsimage_card, range.layerStart + i);
                 
                     CardDragState dragState = new CardDragState(card_xstart, card_ystart);
                     dragStates.add(dragState);
@@ -248,7 +255,6 @@ class CardGamePanelMouseListener extends MouseAdapter
                         .map(c -> (ReadOnlyCard) c.getComponent().getPayload())
                         .collect(Collectors.toList());
                 ReadOnlyEntityList<ReadOnlyCard> roCards = new ReadOnlyEntityList<>(cards);
-
                 ICommandService operationsServ = Services.get(ICommandService.class);
                 CommandBase cmdPush = operationsServ.getPushCommand(playerId, dstCardStack.getId(), roCards.getIds());
                 if (canExecute(context, cmdPush, "mouseReleased"))

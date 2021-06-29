@@ -4,6 +4,7 @@ import java.awt.Dimension;
 
 import javax.swing.JComponent;
 
+import gent.timdemey.cards.services.animation.LayerRange;
 import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
@@ -51,16 +52,8 @@ public interface IPositionService
      * @param id
      * @return
      */
-    public LayeredArea getStartLayeredArea(JComponent comp);
-    
-    /**
-     * Returns the bounds where the given component should be finally positioned at.
-     * All comp2jcomp should be supported by the implementation.
-     * @param id
-     * @return
-     */
-    public LayeredArea getEndLayeredArea(JComponent comp);
-       
+    public LayeredArea getLayeredArea(JComponent comp);
+           
     /**
      * Gets the dimensions given a request that contains runtime context where a resource
      * could be used. This allows to pre-scale resources without knowing the actual
@@ -75,16 +68,8 @@ public interface IPositionService
     public Dimension getResourceDimension(ComponentType compType);
     
     /** 
-     * Gets the drag layer, the base / minimum layer in which comp2jcomp should be z-ordered when 
-     * a component is manually dragged.
+     * Gets the drag layer range where a component can be dragged.
      * @return
      */
-    public int getDragLayer();
-    
-    /**
-     * Gets the animation layer, the base / minimum layer where all comp2jcomp currently being 
-     * animated should be z-ordered.
-     * @return
-     */
-    public int getAnimationLayer();
+    public LayerRange getDragLayerRange();
 }

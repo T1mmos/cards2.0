@@ -7,6 +7,7 @@ import javax.swing.JComponent;
 
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
+import gent.timdemey.cards.services.animation.LayerRange;
 import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
@@ -20,8 +21,7 @@ public class SolitairePositionService implements IPositionService
 {
     private static final int LAYER_CARDSTACKS = 0;
     private static final int LAYER_CARDS = 200;
-    private static final int LAYER_DRAG = 10000;
-    private static final int LAYER_ANIMATIONS = 20000;
+    private static final LayerRange LAYERRANGE_DRAG                     = new LayerRange(10000, 10999);
 
     private SolitaireGameLayout gl;
 
@@ -101,15 +101,8 @@ public class SolitairePositionService implements IPositionService
         return relCoords;
     }
 
-
     @Override
-    public LayeredArea getStartLayeredArea(JComponent jcomp)
-    {
-        return getEndLayeredArea(jcomp);
-    }
-    
-    @Override
-    public LayeredArea getEndLayeredArea(JComponent jcomp)
+    public LayeredArea getLayeredArea(JComponent jcomp)
     {
         IComponent comp = ComponentUtils.getComponent(jcomp);
         ComponentType compType = comp.getComponentType();
@@ -133,7 +126,7 @@ public class SolitairePositionService implements IPositionService
         }
 
         Coords.Absolute coords = Coords.getAbsolute(bounds);
-        return new LayeredArea(coords, layer, false);
+        return new LayeredArea(coords, coords, null, layer, false);
     }
 
     @Override
@@ -239,14 +232,8 @@ public class SolitairePositionService implements IPositionService
     }
 
     @Override
-    public int getDragLayer()
+    public LayerRange getDragLayerRange()
     {
-        return LAYER_DRAG;
-    }
-
-    @Override
-    public int getAnimationLayer()
-    {
-        return LAYER_ANIMATIONS;
+        return LAYERRANGE_DRAG;
     }
 }

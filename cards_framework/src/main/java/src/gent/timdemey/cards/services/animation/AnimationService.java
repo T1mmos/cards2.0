@@ -61,14 +61,42 @@ public class AnimationService implements IAnimationService, IPreload
         // of the component at the start of the animation
         Coords.Absolute abscoords = ((IHasComponent<?>) jcomp).getComponent().getAbsCoords();
         Coords.Relative relcoords = posServ.getRelativeCoords(abscoords);
+        LayeredArea layeredArea = posServ.getLayeredArea(jcomp);
 
-        AnimationTracker tracker = new AnimationTracker(jcomp, pm, descr, relcoords);
+        AnimationTracker tracker = new AnimationTracker(jcomp, pm, descr, relcoords, layeredArea);
         animTrackers.add(tracker);
 
+        // assign the component to a dedicated layer
+        setAnimationLayer(jcomp, pm, layeredArea);
+        
         // must tick immediately to have the component updated so it doesn't show
         // in wrong colors, wrong location, etc.
         long currTickTime = System.currentTimeMillis();
         tick(tracker, currTickTime);
+    }
+        
+    private void setAnimationLayer(JComponent jcomp, IPanelManager pm, LayeredArea layeredArea)
+    {        
+        LayerRange range = layeredArea.startLayerRange;
+        
+        Optional<Integer> maxBusyLayer = animTrackers.stream()
+                .filter(at -> at.panelMan == pm)
+                .map(c -> pm.getPanel().getLayer((Component) c.component))
+                .filter(layer -> range.layerStart <= layer && layer <= range.layerEnd)
+                .max(Integer::compare);
+               
+        int layer;
+        if (maxBusyLayer.isPresent())
+        {
+            layer = maxBusyLayer.get() + 1;
+        }
+        else
+        {
+            layer = range.layerStart;
+        }
+        
+        JSLayeredPane parent = (JSLayeredPane) jcomp.getParent();
+        parent.setLayer(jcomp, layer);
     }
 
     @Override
@@ -125,8 +153,6 @@ public class AnimationService implements IAnimationService, IPreload
 
     private boolean tick(AnimationTracker animTracker, long currTickTime)
     {
-        IPositionService posServ = Services.get(IPositionService.class);
-
         long dt = currTickTime - animTracker.animStart.time;
         double frac = Math.min(1.0, 1.0 * dt / animTracker.animDescriptor.animationTime);
 
@@ -144,23 +170,12 @@ public class AnimationService implements IAnimationService, IPreload
             }
             else
             {
-                LayeredArea layArea = posServ.getEndLayeredArea(animTracker.component);
-                parent.setLayer(animTracker.component, layArea.layer);
+                parent.setLayer(animTracker.component, animTracker.animStart.layeredArea.endLayer);
             }
 
             return true;
         }
 
         return false;
-    }
-
-    @Override
-    public Optional<Integer> getMaxAnimationLayer(IPanelManager pm)
-    {
-        Optional<Integer> maxLayerInUse = animTrackers.stream()
-                .filter(at -> at.panelMan == pm)
-                .map(c -> pm.getPanel().getLayer((Component) c.component))
-                .max(Integer::compare);
-        return maxLayerInUse;
     }
 }
