@@ -35,10 +35,7 @@ public class GameBootListener implements IStateListener
                 frameServ.showPanel(PanelDescriptors.Menu);
             }
             else
-            {
-                // before showing the gamepanel we must scale the resources shown in 
-                // some components, but to scale to size their content panel must exist
-             
+            {             
                 frameServ.showPanel(PanelDescriptors.Game);
                 panelServ.createComponentsAsync(GameBootListener::onCreatedComponents);
             }
@@ -48,8 +45,6 @@ public class GameBootListener implements IStateListener
     private static void onCreatedComponents ()
     {
         IPanelService panelServ = Services.get(IPanelService.class);
-
-        /* panelServ.positionComponents();*/
         panelServ.rescaleResourcesAsync(GameBootListener::onRescaledResources);
     }
     

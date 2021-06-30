@@ -433,9 +433,7 @@ public class FrameService implements IFrameService, IPreload
 
             panelServ.getPanelManager(pt.panelDesc).onShown();
             pt.panel.setVisible(true);   
-        }
-        
-             
+        }    
     }
 
     private void setHidden(PanelTracker pt)
