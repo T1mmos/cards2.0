@@ -238,7 +238,6 @@ public final class ScaledTextDrawer extends DrawerBase<JSLabel>
         }
         
         // default
-        System.out.println("getOutlineColor; RED=" + textColorOutline.getRed());
         return textColorOutline;
     }
 

@@ -44,41 +44,46 @@ public class Start
 
     public static void main(String[] args)
     {
-        // determine plugin
+        // install the service singleton
+        installSingleton();
+        
+        // install services that cannot be overruled and that are immediately needed by code
+        installRootServices();
+        
+        // determine plugin and if found, let it install services
         ICardPlugin plugin = loadCardPlugin(args);
         if(plugin == null)
         {
-            System.err.println("Cannot load plugin class. Terminating.");
+            Logger.error("Cannot load plugin class. Terminating.");
             return;
         }
+        instalPluginServices(plugin);
+        
+        // now install remaining services that were not overruled by the plugin
+        installBaseServices();  
 
-        installAllServices(plugin);
         SwingUtilities.invokeLater(StartUI::startUI);
     }
     
-    private static void installAllServices(ICardPlugin plugin)
+    private static void installSingleton()
     {
         // create Services and set singleton
         Services services = new Services();        
         App.init(services);
-        
-        // install services that cannot be overruled and that are needed by
-        // other services
-        Start.installRootServices();
-                
-        // set the plugin services and let the plugin install its own services
-        services.install(ICardPlugin.class, plugin);
-        plugin.installServices(services);
-        
-        // now install services not set by the plugin
-        Start.installServices();        
     }
-
+    
+    private static void installRootServices()
+    {
+        Services services = App.getServices();
+        
+        services.installIfAbsent(ILogManager.class, () -> new LogManager(LogLevel.TRACE));
+    }
+    
     private static ICardPlugin loadCardPlugin(String[] args)
     {
         if(args.length != 1)
         {
-            System.err.println("A single argument is expected, but " + args.length + " were given.");
+            Logger.error("A single argument is expected, but %s were given.", args.length);
             return null;
         }
 
@@ -90,13 +95,14 @@ public class Start
         }
         catch (ClassNotFoundException e)
         {
-            Logger.error("The given class %s is not found in the classpath.", clazzName);
+           
+            Logger.error("The given class '%s' is not found in the classpath.", clazzName);
             return null;
         }
 
         if(!ICardPlugin.class.isAssignableFrom(clazz))
         {
-            System.err.println("Should provide a card plugin. The given class does not derive from " + ICardPlugin.class.getSimpleName() + ".");
+            Logger.error("Should provide a card plugin. The given class does not derive from ''.", ICardPlugin.class.getSimpleName());
             return null;
         }
 
@@ -109,21 +115,23 @@ public class Start
         }
         catch (InstantiationException | IllegalAccessException | InvocationTargetException | SecurityException | NoSuchMethodException e)
         {
-            Logger.error("The given plugin class cannot be instantiated.", e);
+            Logger.error("The given plugin class cannot be instantiated", e);
             return null;
         }
 
         return plugin;
     }
 
-    private static void installRootServices()
+    private static void instalPluginServices(ICardPlugin plugin)
     {
-        ILogManager logMan = new LogManager();
-        logMan.setLogLevel(LogLevel.TRACE);
-        App.getServices().install(ILogManager.class, logMan);
+        Services services = App.getServices();
+                
+        // set the plugin services and let the plugin install its own services
+        services.install(ICardPlugin.class, plugin);
+        plugin.installServices(services);      
     }
 
-    private static void installServices()
+    private static void installBaseServices()
     {
         Services services = App.getServices();
       

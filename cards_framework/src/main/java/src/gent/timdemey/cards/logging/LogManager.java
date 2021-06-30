@@ -9,6 +9,11 @@ public class LogManager implements ILogManager
     
     private LogLevel logLevel = LogLevel.DEBUG;
 
+    public LogManager (LogLevel logLevel)
+    {
+        this.logLevel = logLevel;
+    }
+    
     @Override
     public void log(LogLevel lvl, Object msg)
     {
@@ -65,7 +70,7 @@ public class LogManager implements ILogManager
         System.out.println(formatted);
     }
 
-    public void setLogLevel(LogLevel lvl)
+    public final void setLogLevel(LogLevel lvl)
     {
         this.logLevel = lvl;
     }

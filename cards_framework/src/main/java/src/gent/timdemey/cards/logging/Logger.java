@@ -69,7 +69,7 @@ public class Logger
     {
         logMan.log(msg, ex);
     }
-    
+        
     private static void log(LogLevel lvl, Object msg)
     {
         logMan.log(lvl, msg);
