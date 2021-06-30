@@ -39,11 +39,11 @@ public class SolitaireGamePanelManager extends CardGamePanelManager
     }
     
     @Override
-    public void createComponents()
+    public void createComponentsAsync()
     {
         ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState().getCardGame();
 
-        super.createComponents();
+        super.createComponentsAsync();
         
         // cardstack comp2jcomp
         List<ReadOnlyCardStack> cardstacks = cardGame.getCardStacks();

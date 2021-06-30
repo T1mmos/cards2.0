@@ -91,17 +91,16 @@ public class CardGamePanelManager extends PanelManagerBase
     }
 
     @Override
-    public void createComponents()
+    public void addComponentCreators(List<Runnable> compCreators)
     {
-        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState().getCardGame();
-
-        // card comp2jcomp
+        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState().getCardGame();      
+        
         List<ReadOnlyCard> cards = cardGame.getCards();
         for (int i = 0; i < cards.size(); i++)
         {
             ReadOnlyCard card = cards.get(i);
-            createJSImage(card);
-        }
+            compCreators.add(() -> createJSImage(card));
+        }       
     }
 
     @Override
@@ -180,13 +179,13 @@ public class CardGamePanelManager extends PanelManagerBase
     {
         IPositionService posServ = Services.get(IPositionService.class);
         LayeredArea layArea = posServ.getLayeredArea(comp);
-        ((IHasComponent<?>) comp).getComponent().setAbsCoords(layArea.abscoords_dst);
+        ((IHasComponent<?>) comp).getComponent().setAbsCoords(layArea.abscoords_src);
         ((IHasDrawer) comp).getDrawer().setMirror(layArea.mirror);        
         
         ((JSLayeredPane) comp.getParent()).setLayer(comp, layArea.endLayer);
     }
 
-    public void createRescaleRequests(List<? super RescaleRequest> requests)
+    public void addRescaleRequests(List<? super RescaleRequest> requests)
     {
         IIdService idServ = Services.get(IIdService.class);
         ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState()

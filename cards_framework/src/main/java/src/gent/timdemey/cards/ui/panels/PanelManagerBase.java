@@ -140,6 +140,7 @@ public abstract class PanelManagerBase implements IPanelManager
     @Override
     public void onShown()
     {
+        
     }
     
     @Override
@@ -200,15 +201,14 @@ public abstract class PanelManagerBase implements IPanelManager
     }
     
     @Override
-    public void createRescaleRequests(List<? super RescaleRequest> requests)
+    public void addRescaleRequests(List<? super RescaleRequest> requests)
     {
-        
     }
     
     @Override
-    public void createComponents()
+    public void addComponentCreators(List<Runnable> runnables)
     {
-        
+        // by default, there is no async component creation
     }
 
     @Override

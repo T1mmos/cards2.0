@@ -38,27 +38,28 @@ public class SolShowGamePanelManager extends CardGamePanelManager
     }
     
     @Override
-    public void createComponents()
+    public void addComponentCreators(List<Runnable> compCreators)
     {
+        super.addComponentCreators(compCreators);
+        
         IScalingService scaleServ = Services.get(IScalingService.class);
         ISolShowIdService idServ = Services.get(ISolShowIdService.class);
         
         ReadOnlyState state = Services.get(IContextService.class).getThreadContext().getReadOnlyState();
         ReadOnlyCardGame cardGame = state.getCardGame();
         ReadOnlyPlayer player_local = state.getLocalPlayer();
-        ReadOnlyPlayer player_remote = state.getRemotePlayers().get(0);        
+        ReadOnlyPlayer player_remote = state.getRemotePlayers().get(0);
         
-        super.createComponents();
-        
-        // cardstacks
+        // cardstacks        
         List<ReadOnlyCardStack> cardstacks = cardGame.getCardStacks();
         for (int i = 0; i < cardstacks.size(); i++)
         {
             ReadOnlyCardStack cardstack = cardstacks.get(i);
-            createJSImage(cardstack);
+            compCreators.add(() -> createJSImage(cardstack));
         }
-        
+
         // special stack background and counter text
+        compCreators.add(() -> 
         {
             UUID textResId = idServ.createFontScalableResourceId(SolShowResourceDefines.FILEPATH_FONT_SPECIALCOUNT);            
             SFontResource textRes = (SFontResource) scaleServ.getSResource(textResId);  
@@ -82,10 +83,11 @@ public class SolShowGamePanelManager extends CardGamePanelManager
                 JSImage imgComp = createJSImage(bgCompId, SolShowComponentTypes.SPECIALBACKGROUND, cs, res_spec_bg);
                 imgComp.getDrawer().setMirror(!local);
             }
-        }     
-       
+        });
+
         // player names
-        {            
+        compCreators.add(() -> 
+        {
             UUID compId_local = idServ.createPlayerNameComponentId(player_local);
             UUID compId_remote = idServ.createPlayerNameComponentId(player_remote);
             
@@ -100,9 +102,10 @@ public class SolShowGamePanelManager extends CardGamePanelManager
             JSLabel text_premote = createJSLabel(compId_remote, SolShowComponentTypes.PLAYERNAME, player_remote.getName(), player_remote, textRes);
             text_premote.setForeground(SolShowResourceDefines.COLOR_FONT_PLAYERNAME_INNER);
             ((ScaledTextDrawer) text_premote.getDrawer()).setOuterColor(SolShowResourceDefines.COLOR_FONT_PLAYERNAME_OUTER);
-        }
+        });
         
         // background images
+        compCreators.add(() -> 
         {
             UUID resid_cardareabg_remote = idServ.createCardAreaBgResourceId(true);
             UUID resid_cardareabg_local = idServ.createCardAreaBgResourceId(false);
@@ -127,14 +130,14 @@ public class SolShowGamePanelManager extends CardGamePanelManager
             createJSImage(compid_playerbg_remote, SolShowComponentTypes.PLAYERBG, player_remote, res_playerbg_remote);
             createJSImage(compid_playerbg_local, SolShowComponentTypes.PLAYERBG, player_local, res_playerbg_local); 
             createJSImage(compid_vs, SolShowComponentTypes.VS, null, res_vs); 
-        }
+        });
     }
 
     @Override
-    public void createRescaleRequests(List<? super RescaleRequest> requests)
+    public void addRescaleRequests(List<? super RescaleRequest> requests)
     {
         // cards, cardstacks
-        super.createRescaleRequests(requests);
+        super.addRescaleRequests(requests);
         
         ISolShowIdService idServ = Services.get(ISolShowIdService.class);
         

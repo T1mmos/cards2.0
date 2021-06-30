@@ -4,7 +4,6 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Composite;
-import java.awt.Container;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -64,7 +63,7 @@ public class DrawerBase<T extends JComponent> implements IDrawer
     {
         this.alphaFg = alpha;
         
-        if (getJComponent() instanceof Container)
+   /*    if (getJComponent() instanceof Container)
         {
             Container cont = (Container) getJComponent();
             for (Component c : cont.getComponents())
@@ -75,7 +74,7 @@ public class DrawerBase<T extends JComponent> implements IDrawer
                     hasDrawer.getDrawer().setForegroundAlpha(alpha);
                 }
             }
-        }
+        }*/
         getJComponent().repaint();
     }
 

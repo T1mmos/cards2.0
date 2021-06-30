@@ -24,11 +24,12 @@ public interface IPanelManager
     public void onHidden();
     // public boolean isVisible();
 
-    public void createRescaleRequests(List<? super RescaleRequest> requests);
+    public void addComponentCreators(List<Runnable> compCreators);
+    public void addRescaleRequests(List<? super RescaleRequest> requests);
 
     public void updateComponent(JComponent comp);
 
-    public void createComponents();
+    
     public void clearComponents();
 
     public void positionComponents();
@@ -52,6 +53,7 @@ public interface IPanelManager
 
     public void startAnimate(JComponent scaleComp);
     public void stopAnimate(JComponent scaleComp);
+
 
 
 

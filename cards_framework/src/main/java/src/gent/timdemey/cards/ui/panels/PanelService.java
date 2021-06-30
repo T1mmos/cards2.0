@@ -4,9 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 import gent.timdemey.cards.Services;
@@ -33,7 +38,7 @@ import gent.timdemey.cards.ui.panels.settings.SettingsPanelManager;
 public class PanelService implements IPanelService
 {
     private Map<PanelDescriptor, IPanelManager> panelMgrs;
-    
+
     public PanelService()
     {
     }
@@ -43,11 +48,11 @@ public class PanelService implements IPanelService
     public void preload()
     {
         panelMgrs = new HashMap<>();
-        addAbsentPanelManagers();        
-        
+        addAbsentPanelManagers();
+
         foreach(IPanelManager::preload, false);
     }
-    
+
     protected void addAbsentPanelManagers()
     {
         addPanelManagerIfAbsent(PanelDescriptors.Frame, () -> new FramePanelManager());
@@ -62,15 +67,15 @@ public class PanelService implements IPanelService
         addPanelManagerIfAbsent(PanelDescriptors.Settings, () -> new SettingsPanelManager());
         addPanelManagerIfAbsent(PanelDescriptors.StartServer, () -> new StartServerPanelManager());
     }
-    
-    protected final void addPanelManagerIfAbsent (PanelDescriptor pd, Supplier<PanelManagerBase> creator)
+
+    protected final void addPanelManagerIfAbsent(PanelDescriptor pd, Supplier<PanelManagerBase> creator)
     {
         if (!panelMgrs.containsKey(pd))
         {
             panelMgrs.put(pd, creator.get());
         }
     }
-    
+
     private void foreach(Consumer<IPanelManager> func, boolean onlyIfCreated)
     {
         for (IPanelManager panelMgr : panelMgrs.values())
@@ -87,54 +92,93 @@ public class PanelService implements IPanelService
     {
         return PanelDescriptors.Menu;
     }
-    
+
     @Override
     public IPanelManager getPanelManager(PanelDescriptor panelDesc)
     {
         return getPanelManagerPriv(panelDesc);
-    }    
+    }
 
     @Override
     public <IN, OUT> IDataPanelManager<IN, OUT> getPanelManager(DataPanelDescriptor<IN, OUT> panelDesc)
     {
         return getPanelManagerPriv(panelDesc);
     }
-    
-    private <T> T getPanelManagerPriv (PanelDescriptor panelDesc)
+
+    private <T> T getPanelManagerPriv(PanelDescriptor panelDesc)
     {
         IPanelManager panelMgr = panelMgrs.get(panelDesc);
         if (panelMgr == null)
         {
             throw new IllegalArgumentException("PanelDescriptor isn't mapped onto a PanelManager: " + panelDesc);
         }
-        
+
         @SuppressWarnings("unchecked")
         T he = (T) panelMgr;
         return he;
     }
-    
+
     @Override
     public final void rescaleResourcesAsync(Runnable callback)
     {
         IScalingService scaleServ = Services.get(IScalingService.class);
         List<RescaleRequest> requests = new ArrayList<>();
-        foreach(mgr -> mgr.createRescaleRequests(requests), true);
-        scaleServ.rescaleAsync(requests, () -> 
+        foreach(mgr -> mgr.addRescaleRequests(requests), true);
+
+        scaleServ.rescaleAsync(requests, () ->
         {
-            SwingUtilities.invokeLater(callback);           
+            SwingUtilities.invokeLater(() -> onRescaledResources(callback));
         });
     }
 
-    @Override
-    public void createScalableComponents()
+    private void onRescaledResources(Runnable externalCallback)
     {
-        foreach(IPanelManager::createComponents, true);
+        if (externalCallback != null)
+        {
+            externalCallback.run();
+        }
+
+        IPanelService panelServ = Services.get(IPanelService.class);
+        for (PanelDescriptor pd : panelServ.getPanelDescriptors())
+        {
+            IPanelManager pm = panelServ.getPanelManager(pd);
+            JComponent panel = pm.getPanel();
+            if (panel == null)
+            {
+                continue;
+            }
+
+            panel.repaint();
+        }
     }
-    
+
     @Override
-    public void positionScalableComponents()
+    public void createComponentsAsync(Runnable callback)
     {
-        foreach(IPanelManager::positionComponents, true); 
+        List<Runnable> runnables = new ArrayList<>();
+        foreach(mgr -> mgr.addComponentCreators(runnables), true);
+        final Stack<Runnable> stack = new Stack<>();
+        stack.addAll(runnables);
+
+        final ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+        exec.scheduleWithFixedDelay(() ->
+        {
+            if (stack.isEmpty())
+            {
+                exec.shutdown();
+                SwingUtilities.invokeLater(callback);
+                return;
+            }
+            
+            Runnable compCreator = stack.pop();
+            SwingUtilities.invokeLater(compCreator);
+        }, 0, 5, TimeUnit.MILLISECONDS);
+    }
+
+    @Override
+    public void positionComponents()
+    {
+        foreach(IPanelManager::positionComponents, true);
     }
 
     @Override

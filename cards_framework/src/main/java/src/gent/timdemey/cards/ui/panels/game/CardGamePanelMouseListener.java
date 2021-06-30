@@ -1,5 +1,6 @@
 package gent.timdemey.cards.ui.panels.game;
 
+import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -29,6 +30,7 @@ import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.ui.components.ext.IComponent;
 import gent.timdemey.cards.ui.components.ext.IHasComponent;
 import gent.timdemey.cards.ui.components.swing.JSImage;
+import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.IPanelManager;
 
 class CardGamePanelMouseListener extends MouseAdapter
@@ -77,7 +79,6 @@ class CardGamePanelMouseListener extends MouseAdapter
 
                 comp.setLocation(card_x, card_y);
             }
-
         }
     }
 
@@ -98,13 +99,22 @@ class CardGamePanelMouseListener extends MouseAdapter
         IPanelService panelServ = Services.get(IPanelService.class);
         IPanelManager pm = panelServ.getPanelManager(PanelDescriptors.Game);
         
-        JComponent comp = pm.getComponentAt(e.getPoint());
-        if (!(comp instanceof JSImage))
+        // filter components, retain only good drag candidates
+        JSLayeredPane pane = (JSLayeredPane) e.getSource();
+        List<JSImage> comps = pm.getComponentsAt(e.getPoint())
+                .stream()
+                .filter(c -> c instanceof JSImage)
+                .map(c -> (JSImage) c)
+                .sorted((c1, c2) -> pane.getLayer((Component) c2) - pane.getLayer((Component) c1)) // sort from highest layer to lowest
+                .collect(Collectors.toList());
+       
+        // nothing to drag here
+        if (comps.isEmpty())
         {
             return;
         }
-        
-        JSImage jsimage = (JSImage) comp;
+                
+        JSImage jsimage = comps.get(0);
 
         Context context = Services.get(IContextService.class).getThreadContext();
         ICommandService operations = Services.get(ICommandService.class);

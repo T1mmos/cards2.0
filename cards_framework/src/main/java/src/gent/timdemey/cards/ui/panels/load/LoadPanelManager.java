@@ -8,7 +8,6 @@ import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLabel;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.PanelManagerBase;
-import gent.timdemey.cards.utils.ColorUtils;
 import net.miginfocom.swing.MigLayout;
 
 public class LoadPanelManager extends PanelManagerBase
@@ -26,7 +25,8 @@ public class LoadPanelManager extends PanelManagerBase
     {
         loadPanel = JSFactory.createLayeredPane(ComponentTypes.PANEL);
         loadPanel.setLayout(new MigLayout("insets 20, align 100% 100%"));
-        loadPanel.setBackground(ColorUtils.transparent(Color.DARK_GRAY, 0.8f));
+        loadPanel.setBackground(Color.DARK_GRAY);
+       // loadPanel.getDrawer().setBackgroundAlpha(0.4f);
         
         JSLabel label = JSFactory.createLabel("LOADING...");
         

@@ -5,33 +5,28 @@ import java.awt.event.ComponentListener;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 import gent.timdemey.cards.Services;
-import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
-import gent.timdemey.cards.ui.panels.IPanelManager;
 
 class FrameBodyPanelResizeListener implements ComponentListener
 {
-
     // relayout time window for a resize event. if a new resize event enters
     // in the current time window, only the last request is honored after the
     // initial time window is over. This prevents that all resize events
     // enforce a relayout, but it is still responsive towards a user if the
     // time window is set low enough.
     private static final int MS_WAIT_RELAYOUT = 30;
+    
     // scale time window. additional amount of time to wait after the last
     // resize event in order to start the scale operation (which makes
     // nicely scaled images of all JScalableImages on the screen). This is
     // a rather heavy image processing operation so the delay must be high enough so
     // that the operation isn't executed all the time during resizing the window,
     // but also not too high so that a user doesn't see blocked/blurry quickly
-    // scaled images
-    // for too long.
+    // scaled images for too long.
     private static final int MS_WAIT_SCALE = 300;
 
     private Timer timer;
@@ -94,53 +89,29 @@ class FrameBodyPanelResizeListener implements ComponentListener
     
     private void relayout()
     {
-        Logger.trace("FrameBodyPanelResizeListener::relayout BEGIN");
         IFrameService frameServ = Services.get(IFrameService.class);
         IPanelService panelServ = Services.get(IPanelService.class);        
         
         SwingUtilities.invokeLater(() -> 
         {
             frameServ.updatePositionService();
-            panelServ.positionScalableComponents();
+            panelServ.positionComponents();
         });
-        Logger.trace("FrameBodyPanelResizeListener::relayout END");
     }
     
     private void rescale()
     {
-        Logger.trace("FrameBodyPanelResizeListener::rescale BEGIN");
         IPanelService panelServ = Services.get(IPanelService.class);
-        SwingUtilities.invokeLater(() -> panelServ.rescaleResourcesAsync(this::onRescaled));
-        Logger.trace("FrameBodyPanelResizeListener::rescale END");
+        SwingUtilities.invokeLater(() -> panelServ.rescaleResourcesAsync(null));
     }
     
-    private void onRescaled()
-    {
-        IPanelService panelServ = Services.get(IPanelService.class);
-        
-        for(PanelDescriptor pd : panelServ.getPanelDescriptors())
-        {
-            IPanelManager pm = panelServ.getPanelManager(pd);
-            JComponent panel = pm.getPanel();
-            if (panel == null)
-            {
-                continue;                
-            }
-            
-            panel.repaint();
-        }
-    }
-
     @Override
     public void componentMoved(ComponentEvent e)
     {
-
     }
 
     @Override
     public void componentHidden(ComponentEvent e)
     {
-
     }
-
 }
