@@ -8,6 +8,8 @@ import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
+import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.INetworkService;
 
 /**
@@ -39,6 +41,9 @@ public class C_OnLobbyToGame extends CommandBase
     @Override
     protected void execute(Context context, ContextType type, State state)
     {        
+        IFrameService frameServ = Services.get(IFrameService.class);
+        frameServ.showPanel(PanelDescriptors.Load);
+        
         state.setCardGame(cardGame);
         state.setGameState(GameState.Started);
         
