@@ -4,6 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Composite;
+import java.awt.Container;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import javax.swing.JComponent;
+
+import org.junit.runner.manipulation.Alphanumeric;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
@@ -61,27 +64,31 @@ public class DrawerBase<T extends JComponent> implements IDrawer
     @Override
     public final void setForegroundAlpha(float alpha)
     {
-        this.alphaFg = alpha;
-        
-      /*  if (getJComponent() instanceof Container)
-        {
-            Container cont = (Container) getJComponent();
-            for (Component c : cont.getComponents())
-            {
-                if (c instanceof IHasDrawer)
-                {
-                    IHasDrawer hasDrawer = (IHasDrawer) c;
-                    hasDrawer.getDrawer().setForegroundAlpha(alpha);
-                }
-            }
-        }*/
+        this.alphaFg = alpha;        
         getJComponent().repaint();
     }
 
     @Override
     public final float getForegroundAlpha()
     {
-        return alphaFg;
+        float _alpha = alphaFg;
+        Component p = getJComponent();
+        while (p != null)
+        {
+            p = p.getParent();
+            if (p instanceof IHasDrawer)
+            {
+                IHasDrawer hasDrawer = (IHasDrawer) p;
+                float pAlpha = hasDrawer.getDrawer().getForegroundAlpha();
+                _alpha *= pAlpha;
+            }
+            else
+            {
+                p = null;
+            }
+        }
+        
+        return _alpha;
     }
 
     @Override
@@ -136,7 +143,7 @@ public class DrawerBase<T extends JComponent> implements IDrawer
     {
         Graphics2D g2 = (Graphics2D) g.create();
      
-        applyAlpha(g2, alphaFg);
+        applyAlpha(g2, getForegroundAlpha());
         
         // by default, draw with the JComponent's given draw function (paintChildren)
         superPaintChildren.accept(g2);        
@@ -197,7 +204,7 @@ public class DrawerBase<T extends JComponent> implements IDrawer
     {
         Graphics2D g2 = createMirrorGraphics(g);
         
-        applyAlpha(g2, alphaFg);
+        applyAlpha(g2, getForegroundAlpha());
 
         // by default, draw with the JComponent's given draw function (paintComponent)
         superPaintComponent.accept(g2);

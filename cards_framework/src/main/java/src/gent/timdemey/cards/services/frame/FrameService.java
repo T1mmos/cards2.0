@@ -407,21 +407,21 @@ public class FrameService implements IFrameService, IPreload
         if (pt.panelDesc.panelType == PanelType.Overlay)
         {
             IDrawer drawer = pt.panel.getDrawer();
-            drawer.setBackgroundAlpha(0.4f);
+            drawer.setForegroundAlpha(0.4f);
             pt.panel.setVisible(true);   
-            final Timer timer = new Timer(15, new ActionListener() {
+            final Timer timer = new Timer(150, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     float alpha = drawer.getBackgroundAlpha();
                     alpha += 0.05f;
-                    if (alpha >= 0.8f) 
+                    if (alpha >= 1.0f) 
                     {
-                        alpha = 0.8f;
+                        alpha = 1.0f;
                         ((Timer) e.getSource()).stop();
                         
                         panelServ.getPanelManager(pt.panelDesc).onShown();
                     }
-                    drawer.setBackgroundAlpha(alpha);
+                    drawer.setForegroundAlpha(alpha);
                 }
             });
             timer.setRepeats(true);
@@ -447,7 +447,7 @@ public class FrameService implements IFrameService, IPreload
             final Timer timer = new Timer(15, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    float alpha = drawer.getBackgroundAlpha();
+                    float alpha = drawer.getForegroundAlpha();
                     alpha -= 0.05f;
                     if (alpha <= 0f) {
                         alpha = 0f;
@@ -457,7 +457,7 @@ public class FrameService implements IFrameService, IPreload
                         pt.panel.setVisible(false);
                         getFrameBodyPanel().remove(pt.panel);
                     }
-                    drawer.setBackgroundAlpha(alpha);
+                    drawer.setForegroundAlpha(alpha);
                 }
             });
             timer.setRepeats(true);

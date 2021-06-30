@@ -83,13 +83,6 @@ public class MenuPanelManager extends PanelManagerBase
     }
     
     @Override
-    public void onShown()
-    {
-        // TODO Auto-generated method stub
-        super.onShown();
-    }
-    
-    @Override
     public JSLayeredPane getPanel()
     {
         return menuPanel;

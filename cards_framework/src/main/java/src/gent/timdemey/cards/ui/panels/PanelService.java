@@ -187,7 +187,7 @@ public class PanelService implements IPanelService
             
             Runnable compCreator = stack.pop();
             SwingUtilities.invokeLater(compCreator);
-        }, 100, 2, TimeUnit.MILLISECONDS);
+        }, 100, 500, TimeUnit.MICROSECONDS);
     }
 
     @Override

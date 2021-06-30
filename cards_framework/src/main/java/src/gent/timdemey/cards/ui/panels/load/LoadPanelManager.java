@@ -3,6 +3,10 @@ package gent.timdemey.cards.ui.panels.load;
 import java.awt.Color;
 import java.awt.Font;
 
+import javax.swing.border.EmptyBorder;
+
+import com.alee.utils.ColorUtils;
+
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLabel;
@@ -24,13 +28,15 @@ public class LoadPanelManager extends PanelManagerBase
     public JSLayeredPane createPanel()
     {
         loadPanel = JSFactory.createLayeredPane(ComponentTypes.PANEL);
-        loadPanel.setLayout(new MigLayout("insets 20, align 100% 100%"));
-        loadPanel.setBackground(Color.DARK_GRAY);
+        loadPanel.setLayout(new MigLayout("insets 10, align 100% 100%"));
+        loadPanel.setBackground(ColorUtils.fromHex("1E3F5A"));
         
         JSLabel label = JSFactory.createLabel("LOADING...");
+        label.setBackground(Color.DARK_GRAY.darker().darker());
         
-        label.setFont(Font.decode("Verdana bold 40"));
-        label.setForeground(Color.YELLOW.darker().darker());
+        label.setFont(Font.decode("Verdana 24"));
+        label.setForeground(Color.gray);
+        label.setBorder(new EmptyBorder(5,5,5,5));
         loadPanel.add(label);
         
         return loadPanel;
