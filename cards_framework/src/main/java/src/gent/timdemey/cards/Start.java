@@ -137,7 +137,6 @@ public class Start
         services.installIfAbsent(INetworkService.class, () -> new CommandNetworkService());        
         services.installIfAbsent(IAnimationService.class, () -> new AnimationService()); 
         services.installIfAbsent(IFrameService.class, () -> new FrameService());
-     //   services.installIfAbsent(IDialogService.class, () -> new DialogService());
         services.installIfAbsent(IActionService.class, () -> new ActionService());
         services.installIfAbsent(IPanelService.class, () -> new PanelService());
         services.installIfAbsent(IFileService.class, () -> new FileService());
