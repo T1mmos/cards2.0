@@ -76,7 +76,6 @@ public class MenuPanelManager extends PanelManagerBase
                 pnl_buts.add(button, "sg buts, wrap");                
             }
             
-            pnl_buts.setOpaque(false);
             menuPanel.add(pnl_buts, "wrap");
         }
         

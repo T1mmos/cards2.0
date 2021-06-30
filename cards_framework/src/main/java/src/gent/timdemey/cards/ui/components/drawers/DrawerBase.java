@@ -4,6 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Composite;
+import java.awt.Container;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -63,7 +64,7 @@ public class DrawerBase<T extends JComponent> implements IDrawer
     {
         this.alphaFg = alpha;
         
-   /*    if (getJComponent() instanceof Container)
+      /*  if (getJComponent() instanceof Container)
         {
             Container cont = (Container) getJComponent();
             for (Component c : cont.getComponents())
@@ -139,7 +140,7 @@ public class DrawerBase<T extends JComponent> implements IDrawer
         applyAlpha(g2, alphaFg);
         
         // by default, draw with the JComponent's given draw function (paintChildren)
-        superPaintChildren.accept(g2);
+        superPaintChildren.accept(g2);        
         
         // debug drawing happens even on top of the children
         if (Services.get(IFrameService.class).getDrawDebug())
@@ -186,23 +187,26 @@ public class DrawerBase<T extends JComponent> implements IDrawer
             if (jcomp.isBackgroundSet())
             {
                 g2.setColor(jcomp.getBackground());
-                g2.fillRect(x, y, w - 1, h - 1);
+                g2.fillRect(x, y, w, h);
             }
         }
 
         g2.dispose();
     }
 
-    public void drawForeground(Graphics2D g2, Consumer<Graphics> superPaintComponent)
+    public void drawForeground(Graphics2D g, Consumer<Graphics> superPaintComponent)
     {
-        Graphics2D g = createMirrorGraphics(g2);
+        Graphics2D g2 = createMirrorGraphics(g);
         
-        applyAlpha(g, alphaFg);
+        applyAlpha(g2, alphaFg);
 
         // by default, draw with the JComponent's given draw function (paintComponent)
-        superPaintComponent.accept(g);
+        superPaintComponent.accept(g2);
         
-        g.dispose();
+        g2.setColor(Color.red);
+        g2.fillRect(25, 25, 100, 100);
+        
+        g2.dispose();
     }
 
     protected void addDebugString(List<String> list, Object key, Object value)

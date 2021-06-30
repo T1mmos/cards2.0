@@ -16,7 +16,6 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.border.Border;
 
@@ -44,7 +43,7 @@ import net.miginfocom.swing.MigLayout;
 public class FramePanelManager extends PanelManagerBase
 {
     protected JSLayeredPane framePanel = null;
-    private JPanel frameTitlePanel;
+    private JSLayeredPane frameTitlePanel;
     private JSLayeredPane frameBodyPanel;
     private Font frameTitleFont;
     private JButton title_maximize; 
@@ -87,6 +86,7 @@ public class FramePanelManager extends PanelManagerBase
     {
         BufferedImage bg = getBackgroundImage();
         framePanel = JSFactory.createLayeredPane(ComponentTypes.FRAME);
+        framePanel.setOpaque(true);
         framePanel.setLayout(new MigLayout("insets 5, gapy 0"));
         framePanel.getDrawer().setBackgroundImage(bg);
         frameBorder = BorderFactory.createLineBorder(Color.gray, 1, false);
@@ -95,9 +95,8 @@ public class FramePanelManager extends PanelManagerBase
         framePanel.addMouseListener(rpMouseListener);    
         framePanel.addMouseMotionListener(rpMouseListener);
         
-        frameTitlePanel = new JPanel();
+        frameTitlePanel = JSFactory.createLayeredPane(ComponentTypes.FRAMETITLE);
         frameTitlePanel.setLayout(new MigLayout("insets 0, hidemode 3"));
-        frameTitlePanel.setOpaque(false);
         JLabel title_icon = new JLabel(new ImageIcon(getFrameIcons().get(1)));
         JLabel title_text = new JLabel(getFrameTitle());
         JButton title_minimize = createFrameButton(ActionDescriptors.MINIMIZE);         

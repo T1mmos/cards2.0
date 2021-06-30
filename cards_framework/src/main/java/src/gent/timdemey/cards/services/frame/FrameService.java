@@ -755,8 +755,6 @@ public class FrameService implements IFrameService, IPreload
             JSLayeredPane marginPanel = JSFactory.createLayeredPane(ComponentTypes.MARGINPANEL);
             marginPanel.setLayout(new MigLayout("insets 20 20 5 20"));
             marginPanel.setBackground(new Color(50,50,50));
-           // marginPanel.getDrawer().setBackgroundAlpha(0.5f);
-            marginPanel.setOpaque(false);
             marginPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
             dialogPanel.add(marginPanel, "hmax 400, push, alignx center, aligny center");
             {
@@ -812,7 +810,6 @@ public class FrameService implements IFrameService, IPreload
                     }
                 }            
             }
-            dialogPanel.setOpaque(false); 
         }        
         
         return dialogPanel;

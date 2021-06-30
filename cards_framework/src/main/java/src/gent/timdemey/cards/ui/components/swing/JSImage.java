@@ -2,14 +2,14 @@ package gent.timdemey.cards.ui.components.swing;
 
 import java.awt.Graphics;
 
-import javax.swing.JPanel;
+import javax.swing.JLabel;
 
 import gent.timdemey.cards.ui.components.drawers.IDrawer;
 import gent.timdemey.cards.ui.components.drawers.IHasDrawer;
 import gent.timdemey.cards.ui.components.ext.ComponentBase;
 import gent.timdemey.cards.ui.components.ext.IHasComponent;
 
-public final class JSImage extends JPanel implements IHasComponent<ComponentBase>, IHasDrawer
+public final class JSImage extends JLabel implements IHasComponent<ComponentBase>, IHasDrawer
 {
     private IDrawer drawer;
     private ComponentBase comp;

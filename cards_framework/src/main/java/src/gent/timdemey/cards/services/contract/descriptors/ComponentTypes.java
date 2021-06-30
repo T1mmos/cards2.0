@@ -7,6 +7,7 @@ public final class ComponentTypes
     public static final ComponentType CARDSCORE         = new ComponentType("CardScore");
 
     public static final ComponentType FRAME             = new ComponentType("Frame");
+    public static final ComponentType FRAMETITLE        = new ComponentType("FrameTitle");
     public static final ComponentType FRAMEBODY         = new ComponentType("FrameBody");
     public static final ComponentType BUTTON            = new ComponentType("Button");
     public static final ComponentType PANEL             = new ComponentType("Panel");
