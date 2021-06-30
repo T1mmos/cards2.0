@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -157,10 +158,24 @@ public class PanelService implements IPanelService
     {
         List<Runnable> runnables = new ArrayList<>();
         foreach(mgr -> mgr.addComponentCreators(runnables), true);
+        
+        // put all runnables in a stack which the executor service will take work from
         final Stack<Runnable> stack = new Stack<>();
         stack.addAll(runnables);
 
-        final ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+        // we will ensure that not too much stuff is working on the UI thread, therefore
+        // work is scheduled on the UI thread with fixed delays between work units, leaving 
+        // space for e.g. animations 
+        final ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor(new ThreadFactory()
+        {            
+            @Override
+            public Thread newThread(Runnable r)
+            {
+                Thread thr = new Thread(r, "CreateComponentsAsync");
+                thr.setDaemon(true);
+                return thr;
+            }
+        });
         exec.scheduleWithFixedDelay(() ->
         {
             if (stack.isEmpty())
@@ -172,7 +187,7 @@ public class PanelService implements IPanelService
             
             Runnable compCreator = stack.pop();
             SwingUtilities.invokeLater(compCreator);
-        }, 0, 5, TimeUnit.MILLISECONDS);
+        }, 100, 2, TimeUnit.MILLISECONDS);
     }
 
     @Override
