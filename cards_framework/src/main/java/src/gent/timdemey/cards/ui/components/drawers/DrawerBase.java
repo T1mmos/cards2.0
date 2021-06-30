@@ -101,6 +101,7 @@ public class DrawerBase<T extends JComponent> implements IDrawer
     public final void setBackgroundImage(BufferedImage image)
     {
         this.imageBg = image;
+        getJComponent().repaint();
     }
 
     @Override

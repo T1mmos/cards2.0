@@ -146,16 +146,19 @@ public final class ScaledTextDrawer extends DrawerBase<JSLabel>
     public void setOuterColor(Color color)
     {
         textColorOutline = color;
+        bufferedImage = null;
     }
     
     public void setInnerColorMouseOver(Color color)
     {
         textColorFg_mouseover = color;
+        bufferedImage = null;
     }
     
     public void setOuterColorMouseOver(Color color)
     {
         textColorOutline_mouseover = color;
+        bufferedImage = null;
     }
 
     @Override
@@ -235,6 +238,7 @@ public final class ScaledTextDrawer extends DrawerBase<JSLabel>
         }
         
         // default
+        System.out.println("getOutlineColor; RED=" + textColorOutline.getRed());
         return textColorOutline;
     }
 

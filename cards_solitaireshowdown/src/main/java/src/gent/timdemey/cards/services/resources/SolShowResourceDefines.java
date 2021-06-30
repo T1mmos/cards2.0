@@ -22,10 +22,10 @@ public class SolShowResourceDefines
     public static final String FILEPATH_IMG_BACKGROUND_PLAYER_LOCAL = "playerbackground_green.png";
     public static final String FILEPATH_IMG_BACKGROUND_VS = "vs.png";
 
-    public static final Color COLOR_ANIMATION_CARDSCORE_INNER_START = ColorUtils.rgba("#FF7644FF");
-    public static final Color COLOR_ANIMATION_CARDSCORE_INNER_END = ColorUtils.rgba("#FF764488");
-    public static final Color COLOR_ANIMATION_CARDSCORE_OUTER_START =  ColorUtils.rgba("#FF0000FF");
-    public static final Color COLOR_ANIMATION_CARDSCORE_OUTER_END = ColorUtils.rgba("#FFFFFF88");
+    public static final Color COLOR_ANIMATION_CARDSCORE_INNER_START = ColorUtils.rgb("#FF7644");
+    public static final Color COLOR_ANIMATION_CARDSCORE_INNER_END = ColorUtils.rgb("#FF7644");
+    public static final Color COLOR_ANIMATION_CARDSCORE_OUTER_START =  ColorUtils.rgb("#000000");
+    public static final Color COLOR_ANIMATION_CARDSCORE_OUTER_END = ColorUtils.rgb("#BBBBBB");
     public static final Color COLOR_FONT_SPECIALCOUNT_INNER = ColorUtils.rgb("#CCE1F2");
     public static final Color COLOR_FONT_SPECIALCOUNT_OUTER = ColorUtils.rgb("#444444");
     public static final Color COLOR_FONT_PLAYERNAME_INNER = ColorUtils.rgb("#E0BB00");

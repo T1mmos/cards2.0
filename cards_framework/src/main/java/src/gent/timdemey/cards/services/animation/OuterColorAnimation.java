@@ -29,7 +29,7 @@ public class OuterColorAnimation implements IAnimation
         if (drawer instanceof ScaledTextDrawer)
         {
             ScaledTextDrawer textComp = (ScaledTextDrawer) drawer;
-            textComp.setOuterColor(color);
+            textComp.setOuterColor(color);;
         }
     }
 }
