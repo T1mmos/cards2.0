@@ -4,7 +4,6 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Composite;
-import java.awt.Container;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -202,9 +201,6 @@ public class DrawerBase<T extends JComponent> implements IDrawer
 
         // by default, draw with the JComponent's given draw function (paintComponent)
         superPaintComponent.accept(g2);
-        
-        g2.setColor(Color.red);
-        g2.fillRect(25, 25, 100, 100);
         
         g2.dispose();
     }
