@@ -191,7 +191,8 @@ public class SolShowGamePanelManager extends CardGamePanelManager
         {
             JSLabel jslabel = (JSLabel) jcomp;
             ReadOnlyCardStack cs = (ReadOnlyCardStack) comp.getPayload();
-            jslabel.setText("" + cs.getCards().size());
+            String text = "" + cs.getCards().size();
+            jslabel.setText(text);
             return;
         }
         else if (compType.hasTypeName(SolShowComponentTypes.SPECIALBACKGROUND))

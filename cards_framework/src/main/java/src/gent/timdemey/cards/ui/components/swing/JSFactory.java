@@ -54,28 +54,28 @@ public final class JSFactory
     
     public static JSLabel createLabel(String text)
     {        
-        return createLabel(text, ComponentTypes.LABEL);
+        return createLabel(UUID.randomUUID(), text, ComponentTypes.LABEL);
     }
     
-    public static JSLabel createLabel(String text, ComponentType compType)
+    public static JSLabel createLabel(UUID uuid, String text, ComponentType compType)
     {        
-        return createLabel(text, compType, new DrawerBase<JSLabel>());
+        return createLabel(uuid, text, compType, new DrawerBase<JSLabel>());
     }
     
-    public static JSLabel createLabelScaled(String text, ComponentType compType, SFontResource fontRes)
+    public static JSLabel createLabelScaled(UUID uuid, String text, ComponentType compType, SFontResource fontRes)
     {
-        JSLabel lbl =  createLabel(text, compType, new ScaledTextDrawer(fontRes));        
+        JSLabel lbl = createLabel(uuid, text, compType, new ScaledTextDrawer(fontRes));        
         return lbl;
     }
     
-    public static JSLabel createLabel(String text, ComponentType compType, IDrawer drawer)
+    public static JSLabel createLabel(UUID uuid, String text, ComponentType compType, IDrawer drawer)
     {
         JSLabel jslabel = new JSLabel();
 
         jslabel.setText(text);
         jslabel.setHorizontalTextPosition(JSLabel.CENTER);
         
-        setComponent(jslabel, new ComponentBase(UUID.randomUUID(), compType));
+        setComponent(jslabel, new ComponentBase(uuid, compType));
         setDrawer(jslabel, drawer);
         setBackgroundTransparent(jslabel);
         

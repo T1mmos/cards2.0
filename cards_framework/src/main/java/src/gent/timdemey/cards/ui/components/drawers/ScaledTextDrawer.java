@@ -14,6 +14,8 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -29,7 +31,7 @@ import gent.timdemey.cards.ui.components.SFontResource;
 import gent.timdemey.cards.ui.components.swing.JSLabel;
 import gent.timdemey.cards.utils.ComponentUtils;
 
-public final class ScaledTextDrawer extends DrawerBase<JSLabel>
+public final class ScaledTextDrawer extends DrawerBase<JSLabel> implements PropertyChangeListener
 {    
     private Color textColorOutline;
     private Color textColorOutline_mouseover;
@@ -57,7 +59,18 @@ public final class ScaledTextDrawer extends DrawerBase<JSLabel>
     {
         super.onAttached(comp);
         
+        comp.addPropertyChangeListener("text", this);
+        
         getJComponent().setHorizontalTextPosition(JLabel.CENTER);
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt)
+    {
+        if (evt.getPropertyName().equals("text"))
+        {
+            bufferedImage = null;
+        }
     }
 
     @Override

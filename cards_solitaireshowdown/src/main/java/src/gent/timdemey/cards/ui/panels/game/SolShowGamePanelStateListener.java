@@ -67,8 +67,7 @@ public class SolShowGamePanelStateListener extends CardGamePanelStateListener
                 {
                     UUID compId = idServ.createSpecialCounterComponentId(cardStack);
                     JSLabel jslabel = (JSLabel) pm.getComponentById(compId);
-                    String text = "" +  cardStack.getCards().size();
-                    jslabel.setText(text);
+                    pm.updateComponent(jslabel);
                 }
             }
             else if (change.changeType == ChangeType.Add && cardStack.getCardStackType().equals(SolShowCardStackType.TURNOVER))

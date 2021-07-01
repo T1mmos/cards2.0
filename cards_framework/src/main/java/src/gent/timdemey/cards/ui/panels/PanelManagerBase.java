@@ -54,7 +54,13 @@ public abstract class PanelManagerBase implements IPanelManager
     @Override
     public JComponent getComponentById(UUID compId)
     {
-        return comp2jcomp.get(compId);        
+        JComponent jcomp = comp2jcomp.get(compId);
+        if (jcomp == null)
+        {
+            throw new IllegalStateException("No component was found in this Panel Manager mapped onto id '"+compId+"'");
+        }
+        
+        return jcomp;        
     }
     
     @Override
@@ -77,7 +83,7 @@ public abstract class PanelManagerBase implements IPanelManager
     
     protected final JSLabel createJSLabel(UUID compId, ComponentType compType, String text, Object payload, SFontResource fontRes)
     {
-        JSLabel jslabel = JSFactory.createLabelScaled(text, compType, fontRes);
+        JSLabel jslabel = JSFactory.createLabelScaled(compId, text, compType, fontRes);
         initAndAddComponent(jslabel, payload);
         return jslabel;
     }

@@ -11,9 +11,9 @@ public final class DebugDrawDefines
     
     // backgrounds
     public static final Color COLOR_COMPBOX_BACKGROUND_DEFAULT = new Color(200, 200, 200, 50);
-    public static final Color COLOR_INFOBOX_BACKGROUND_LVL1 = ColorUtils.rgba("#FFA50040");
-    public static final Color COLOR_INFOBOX_BACKGROUND_LVL2 = ColorUtils.rgba("#A5FF0080");
-    public static final Color COLOR_INFOBOX_BACKGROUND_LVL3 = ColorUtils.rgba("#A500FFC0");
+    public static final Color COLOR_INFOBOX_BACKGROUND_LVL1 = ColorUtils.rgba("#FFFFFF40");
+    public static final Color COLOR_INFOBOX_BACKGROUND_LVL2 = ColorUtils.rgba("#DDDDDD40");
+    public static final Color COLOR_INFOBOX_BACKGROUND_LVL3 = ColorUtils.rgba("#AAAAAA40");
     public static final Color COLOR_PADBOX_BACKGROUND_DEFAULT = Color.yellow;
     
     // bounding boxes
