@@ -7,6 +7,8 @@ import gent.timdemey.cards.ui.panels.dialogs.mp.StartServerPanelData;
 
 public final class PanelDescriptors
 {
+    public static final PanelDescriptor                                     Frame           = panel ("Frame",       PanelType.Frame);
+    
     public static final PanelDescriptor                                     About           = panel ("About",       PanelType.Root);    
     public static final PanelDescriptor                                     Game            = panel ("Game",        PanelType.Root);
     public static final PanelDescriptor                                     Menu            = panel ("Menu",        PanelType.Root);
@@ -20,7 +22,6 @@ public final class PanelDescriptors
     public static final DataPanelDescriptor<String, StartServerPanelData>   StartServer     = dialog("StartServer", PanelType.Dialog);    
     
     public static final PanelDescriptor                                     Load            = panel ("Load",        PanelType.Overlay);
-    public static final PanelDescriptor                                     Frame           = panel ("Frame",       PanelType.Root);
     
     
     public static <IN, OUT> DataPanelDescriptor<IN, OUT> dialog(String id, PanelType panelType)

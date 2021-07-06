@@ -79,10 +79,6 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
                     inData.closeFunc.run();
                 }
             }
-            else if (property == ReadOnlyState.CardGame)
-            {
-                inData.closeFunc.run();
-            }
         }
     }
     

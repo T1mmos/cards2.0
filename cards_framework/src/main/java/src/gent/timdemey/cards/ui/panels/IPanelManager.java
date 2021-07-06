@@ -29,9 +29,6 @@ public interface IPanelManager
 
     public void updateComponent(JComponent comp);
 
-    
-    public void clearComponents();
-
     public void positionComponents();
     public void positionComponent(JComponent jcomp);
 

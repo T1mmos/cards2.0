@@ -4,7 +4,6 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Composite;
-import java.awt.Container;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -17,8 +16,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import javax.swing.JComponent;
-
-import org.junit.runner.manipulation.Alphanumeric;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;

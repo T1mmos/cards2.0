@@ -31,7 +31,7 @@ public class D_ToggleMenuMP extends DialogCommandBase
         IFrameService frameServ = Services.get(IFrameService.class);
         if (frameServ.isShown(PanelDescriptors.GameMenu))
         {
-            frameServ.removePanel(PanelDescriptors.GameMenu);
+            frameServ.hidePanel(PanelDescriptors.GameMenu);
         }
         else
         {

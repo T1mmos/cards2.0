@@ -8,11 +8,11 @@ import javax.swing.JComponent;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.cards.Suit;
 import gent.timdemey.cards.model.entities.cards.Value;
-import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityBase;
+import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
@@ -38,6 +38,7 @@ public class CardGamePanelManager extends PanelManagerBase
     private JSLayeredPane gamePanel;
     private CardGamePanelMouseListener mouseListener;
     private CardGamePanelStateListener stateListener;
+    private CardGamePanelContainerListener contListener;
 
     @Override
     public void preload()
@@ -49,17 +50,21 @@ public class CardGamePanelManager extends PanelManagerBase
     @Override
     public void onShown()
     {
+        Context ctxt = Services.get(IContextService.class).getThreadContext();
+        
         gamePanel.addMouseMotionListener(mouseListener);
         gamePanel.addMouseListener(mouseListener);
-        Services.get(IContextService.class).getThreadContext().addStateListener(stateListener);
+        ctxt.addStateListener(stateListener);
     }
 
     @Override
     public void onHidden()
     {
+        Context ctxt = Services.get(IContextService.class).getThreadContext();
+        
         gamePanel.addMouseMotionListener(mouseListener);
         gamePanel.removeMouseListener(mouseListener);
-        Services.get(IContextService.class).getThreadContext().removeStateListener(stateListener);
+        ctxt.removeStateListener(stateListener);
     }
 
     @Override
@@ -67,11 +72,29 @@ public class CardGamePanelManager extends PanelManagerBase
     {
         gamePanel = JSFactory.createLayeredPane(ComponentTypes.PANEL, new GamePanelDrawer());
         gamePanel.setLayout(null);
+        
         mouseListener = createMouseListener();
         stateListener = createStateListener();
-        gamePanel.addContainerListener(new CardGamePanelContainerListener());
+        contListener = createContainerListener();
+        
+        gamePanel.addContainerListener(contListener);
         
         return gamePanel;
+    }
+
+    @Override
+    public void destroyPanel()
+    {
+        super.destroyPanel();
+        
+        gamePanel.removeContainerListener(contListener);
+        gamePanel.removeAll();
+        
+        mouseListener = null;
+        stateListener = null;
+        contListener = null;
+        
+        gamePanel = null;
     }
     
     protected CardGamePanelMouseListener createMouseListener()
@@ -83,6 +106,11 @@ public class CardGamePanelManager extends PanelManagerBase
     {
         return new CardGamePanelStateListener();
     }
+    
+    protected CardGamePanelContainerListener createContainerListener()
+    {
+        return new CardGamePanelContainerListener();
+    }    
     
     @Override
     public JSLayeredPane getPanel()
@@ -159,19 +187,6 @@ public class CardGamePanelManager extends PanelManagerBase
 
     protected void preloadFonts()
     {
-    }
-
-    @Override
-    public void destroyPanel()
-    {
-        IStateListener stateListener = Services.get(IStateListener.class);
-        Services.get(IContextService.class).getThreadContext().removeStateListener(stateListener);
-
-        gamePanel.removeAll();
-        clearComponents();
-
-        mouseListener = null;
-        gamePanel = null;
     }
 
     @Override

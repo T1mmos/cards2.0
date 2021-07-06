@@ -33,6 +33,7 @@ public class GameBootListener implements IStateListener
             if (cardGame == null)
             {
                 frameServ.showPanel(PanelDescriptors.Menu);
+                frameServ.removePanel(PanelDescriptors.Game);
             }
             else
             {             
@@ -51,6 +52,6 @@ public class GameBootListener implements IStateListener
     private static void onRescaledResources ()
     {
         IFrameService frameServ = Services.get(IFrameService.class);        
-        frameServ.removePanel(PanelDescriptors.Load);
+        frameServ.hidePanel(PanelDescriptors.Load);
     }
 }

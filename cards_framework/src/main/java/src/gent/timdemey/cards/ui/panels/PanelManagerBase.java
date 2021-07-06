@@ -45,7 +45,7 @@ public abstract class PanelManagerBase implements IPanelManager
     }
 
     @Override
-    public void clearComponents()
+    public void destroyPanel()
     {
         comp2jcomp.clear();
         entity2comp.clear();

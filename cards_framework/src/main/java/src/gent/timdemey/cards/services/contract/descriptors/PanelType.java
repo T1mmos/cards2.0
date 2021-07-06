@@ -1,7 +1,13 @@
 package gent.timdemey.cards.services.contract.descriptors;
 
 public enum PanelType
-{
+{    
+    /**
+     * Frame panel, there is always exactly 1, it cannot be replaced. It is the parent of all content, 
+     * and is itself set as the content of the frame.
+     */
+    Frame,
+    
     /**
      * Root panel, there is always exactly 1 showing in the frame. Cannot
      * be closed or hidden except when showing a different root panel.
