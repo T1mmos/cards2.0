@@ -44,7 +44,7 @@ public final class JSFactory
         JSButton jsbutton = new JSButton();
         
         setComponent(jsbutton, new ComponentBase(UUID.randomUUID(), ComponentTypes.BUTTON));
-        setDrawer(jsbutton, new DrawerBase<JSButton>());
+        setDrawer(jsbutton, new ButtonDrawer());
         
         jsbutton.setText(text);
         

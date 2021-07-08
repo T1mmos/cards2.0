@@ -139,8 +139,17 @@ public class FrameService implements IFrameService, IPreload
     @Override
     public boolean isShown(PanelDescriptor desc)
     {
-        boolean visible = get(desc).getPanel().isVisible();
-        return visible;
+        IPanelManager pm = get(desc);
+        if (!pm.isPanelCreated())
+        {
+            return false;
+        }
+        if (!pm.getPanel().isVisible())
+        {
+            return false;
+        } 
+        
+        return true;
     }
 
     @Override

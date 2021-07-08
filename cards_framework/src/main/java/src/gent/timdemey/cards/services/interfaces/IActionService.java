@@ -10,6 +10,7 @@ import gent.timdemey.cards.services.contract.descriptors.PayloadActionDescriptor
 public interface IActionService
 {
     public ActionBase getAction(ActionDescriptor desc);
+    public ActionBase getAction(ActionDescriptor desc, ActionDescriptor chained);
     public boolean canExecuteAction(ActionDescriptor desc);
     public void executeAction(ActionDescriptor desc);    
     

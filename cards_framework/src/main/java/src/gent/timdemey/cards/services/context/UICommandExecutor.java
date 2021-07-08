@@ -2,6 +2,7 @@ package gent.timdemey.cards.services.context;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.swing.SwingUtilities;
 
@@ -51,9 +52,13 @@ class UICommandExecutor implements ICommandExecutor
         Logger.info("Executing '%s', id=%s...", command.getName(), command.id);
 
         CommandType cmdType = command.getCommandType();
-        boolean src_local = command.getSourceId() == state.getLocalId();
-        boolean src_server = command.getSourceId() == state.getServerId();
-        boolean hasServer = state.getServerId() != null;
+        UUID localId = state.getLocalId();
+        UUID serverId = state.getServerId();
+        UUID cmdSrcId = command.getSourceId();
+        
+        boolean src_local = cmdSrcId == null || cmdSrcId.equals(localId);
+        boolean src_server = cmdSrcId != null && cmdSrcId.equals(serverId);
+        boolean hasServer = serverId != null;
 
         if(!src_local && !src_server)
         {

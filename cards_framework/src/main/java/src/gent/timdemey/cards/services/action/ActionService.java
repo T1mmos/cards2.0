@@ -61,6 +61,16 @@ public class ActionService implements IActionService
     }
 
     @Override
+    public ActionBase getAction(ActionDescriptor desc, ActionDescriptor chained)
+    {
+        ActionBase act1 = getAction(desc);
+        ActionBase act2 = getAction(chained);
+         
+        ActionBase combined = ActionBase.chain(act1, act2);
+        return combined;
+    }
+    
+    @Override
     public <T> PayloadActionBase<T> getAction(PayloadActionDescriptor<T> desc, Supplier<T> payloadSupplier)
     {
         CheckRuntimeType(desc, PayloadActionDescriptor.class);

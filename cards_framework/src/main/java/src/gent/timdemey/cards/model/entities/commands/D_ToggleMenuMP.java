@@ -16,7 +16,16 @@ public class D_ToggleMenuMP extends DialogCommandBase
     protected CanExecuteResponse canShowDialog(Context context, ContextType type, State state)
     {
         CheckContext(type, ContextType.UI);
-
+        
+        IFrameService frameServ = Services.get(IFrameService.class);
+        
+        // you can always hide this dialog when it's shown
+        if (frameServ.isShown(PanelDescriptors.GameMenu))
+        {
+            return CanExecuteResponse.yes();
+        }
+        
+        // you can only make it visible when the game is started
         if (state.getGameState() != GameState.Started)
         {
             return CanExecuteResponse.no("State.GameState should be Started in order to show the in-game menu");

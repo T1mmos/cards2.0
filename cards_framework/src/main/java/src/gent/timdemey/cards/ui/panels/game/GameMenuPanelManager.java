@@ -5,6 +5,7 @@ import java.util.List;
 import javax.swing.JButton;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.services.action.ActionBase;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
@@ -33,7 +34,9 @@ public class GameMenuPanelManager extends DataPanelManagerBase<Void, Void>
             IActionService actServ = Services.get(IActionService.class);            
 
             JButton btn_return = JSFactory.createButton("Return to game (dummy)");
-            JButton btn_leavemp = JSFactory.createButton(actServ.getAction(ActionDescriptors.LEAVEMP));
+            
+            ActionBase act_leavemp = actServ.getAction(ActionDescriptors.LEAVEMP, ActionDescriptors.TOGGLEMENUMP);
+            JButton btn_leavemp = JSFactory.createButton(act_leavemp);
             
             content.add(btn_return, "");
             content.add(btn_leavemp, "wrap");            

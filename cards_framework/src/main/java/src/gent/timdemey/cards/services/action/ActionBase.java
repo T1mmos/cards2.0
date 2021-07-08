@@ -3,6 +3,7 @@ package gent.timdemey.cards.services.action;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.Icon;
 
 import gent.timdemey.cards.Services;
@@ -16,8 +17,8 @@ import gent.timdemey.cards.services.interfaces.IActionService;
 public class ActionBase extends AbstractAction implements IContextListener, IStateListener
 {
     public final ActionDescriptor desc;
-    
-    public final Icon icon_rollover; 
+    public final Icon icon_rollover;     
+    private final ActionDescriptor[] chainedActionDescs;
 
     ActionBase(ActionDescriptor desc, String title)
     {
@@ -25,6 +26,7 @@ public class ActionBase extends AbstractAction implements IContextListener, ISta
 
         this.desc = desc;
         this.icon_rollover = null;
+        this.chainedActionDescs = null;
     }
     
     ActionBase(ActionDescriptor desc, String title, Icon icon)
@@ -38,12 +40,41 @@ public class ActionBase extends AbstractAction implements IContextListener, ISta
 
         this.desc = desc;
         this.icon_rollover = rollover;
+        this.chainedActionDescs = null;
+    }
+    
+    private ActionBase(ActionDescriptor desc, String title, Icon icon, Icon rollover, ActionDescriptor ... chainedActionDescs)
+    {        
+        super(title, icon);
+
+        this.desc = desc;
+        this.icon_rollover = rollover;
+        this.chainedActionDescs = chainedActionDescs;
     }
 
+    public static ActionBase chain(ActionBase first, ActionBase second)
+    {
+        String title = (String) first.getValue(Action.NAME);
+        Icon icon = (Icon) first.getValue(Action.SMALL_ICON);
+        ActionDescriptor desc = first.desc;
+        Icon rollover = first.icon_rollover;
+        ActionBase combined = new ActionBase(desc, title, icon, rollover, second.desc);
+        return combined;
+    }
+    
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        Services.get(IActionService.class).executeAction(desc);
+        IActionService actServ = Services.get(IActionService.class);
+        actServ.executeAction(desc);
+        
+        if (chainedActionDescs != null)
+        {
+            for (ActionDescriptor ad : chainedActionDescs)
+            {
+                actServ.executeAction(ad);
+            }
+        }
     }
 
     public void checkEnabled()
