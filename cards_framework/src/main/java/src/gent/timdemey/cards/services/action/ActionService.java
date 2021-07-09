@@ -41,7 +41,7 @@ import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
-import gent.timdemey.cards.services.interfaces.IResourceLocationService;
+import gent.timdemey.cards.services.interfaces.IResourceNameService;
 
 public class ActionService implements IActionService
 {
@@ -324,7 +324,7 @@ public class ActionService implements IActionService
     
     private ImageIcon get(ResourceDescriptorP1<ButtonState> resDesc, ButtonState buttonState)
     {
-        IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
+        IResourceNameService resLocServ = Services.get(IResourceNameService.class);
         String filepath = resLocServ.getFilePath(resDesc, buttonState);
         
         IResourceCacheService resServ = Services.get(IResourceCacheService.class);        

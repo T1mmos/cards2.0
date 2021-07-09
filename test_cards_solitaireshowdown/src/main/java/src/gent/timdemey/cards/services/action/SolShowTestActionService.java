@@ -9,9 +9,11 @@ import gent.timdemey.cards.model.entities.commands.C_FakeSolShowGame;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
+import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.SolShowTestActionDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
+import gent.timdemey.cards.services.interfaces.ISoundService;
 
 public class SolShowTestActionService extends ActionService
 {
@@ -54,6 +56,11 @@ public class SolShowTestActionService extends ActionService
         {
             IFrameService frameServ = Services.get(IFrameService.class);
             frameServ.showPanel(PanelDescriptors.Load);
+
+            
+            ISoundService soundServ = Services.get(ISoundService.class);
+            soundServ.play(ResourceDescriptors.SoundTest);
+            
             context.schedule(new C_FakeSolShowGame());
         }
         else if (desc == SolShowTestActionDescriptors.ad_switchcvis)

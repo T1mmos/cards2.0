@@ -48,8 +48,9 @@ public class StartUI
         // import configuration
         Context ctxt = ctxtServ.getThreadContext();
         C_LoadConfig cmd_loadcfg = new C_LoadConfig();
-        ctxt.schedule(cmd_loadcfg);     
-        ctxt.addStateListener(new GameBootListener());
+        ctxt.schedule(cmd_loadcfg);
+        
+        frameServ.installStateListeners();
         
         // the frame is visible and created so the frame services can 
         // give the available dimensions to the position service

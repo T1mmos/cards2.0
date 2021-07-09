@@ -17,7 +17,7 @@ import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptors;
 import gent.timdemey.cards.services.contract.res.ImageResource;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
-import gent.timdemey.cards.services.interfaces.IResourceLocationService;
+import gent.timdemey.cards.services.interfaces.IResourceNameService;
 import gent.timdemey.cards.ui.components.swing.JSButton;
 import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
@@ -113,7 +113,7 @@ public class MenuPanelManager extends PanelManagerBase
     @Override
     public void preload()
     {
-        IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
+        IResourceNameService resLocServ = Services.get(IResourceNameService.class);
         String iconFilename = resLocServ.getFilePath(ResourceDescriptors.Menu);
         IResourceCacheService resCacheServ = Services.get(IResourceCacheService.class);
         ImageResource res = resCacheServ.getImage(iconFilename);

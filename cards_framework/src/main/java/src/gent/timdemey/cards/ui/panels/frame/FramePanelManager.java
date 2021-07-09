@@ -32,7 +32,7 @@ import gent.timdemey.cards.services.frame.RootPanelMouseListener;
 import gent.timdemey.cards.services.frame.TitlePanelMouseListener;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
-import gent.timdemey.cards.services.interfaces.IResourceLocationService;
+import gent.timdemey.cards.services.interfaces.IResourceNameService;
 import gent.timdemey.cards.ui.components.drawers.ButtonDrawer;
 import gent.timdemey.cards.ui.components.swing.JSButton;
 import gent.timdemey.cards.ui.components.swing.JSFactory;
@@ -55,7 +55,7 @@ public class FramePanelManager extends PanelManagerBase
     public void preload()
     {
         IResourceCacheService resServ = Services.get(IResourceCacheService.class);
-        IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
+        IResourceNameService resLocServ = Services.get(IResourceNameService.class);
         
         String frameTitleFontName = resLocServ.getFilePath(ResourceDescriptors.AppTitleFont);
         FontResource res_frameTitleFont = resServ.getFont(frameTitleFontName);
@@ -155,7 +155,7 @@ public class FramePanelManager extends PanelManagerBase
     protected BufferedImage getBackgroundImage()
     {
         IResourceCacheService resServ = Services.get(IResourceCacheService.class);
-        IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
+        IResourceNameService resLocServ = Services.get(IResourceNameService.class);
         String bgpath = resLocServ.getFilePath(ResourceDescriptors.AppBackground);
         BufferedImage background = resServ.getImage(bgpath).raw;
         return background;
@@ -175,7 +175,7 @@ public class FramePanelManager extends PanelManagerBase
         List<Image> images = new ArrayList<>();
 
         IResourceCacheService resServ = Services.get(IResourceCacheService.class);
-        IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
+        IResourceNameService resLocServ = Services.get(IResourceNameService.class);
         for (int dim : new int []{16,24,48,140})
         {            
             ImageResource resp = resServ.getImage(resLocServ.getFilePath(ResourceDescriptors.AppIcon, dim, dim));

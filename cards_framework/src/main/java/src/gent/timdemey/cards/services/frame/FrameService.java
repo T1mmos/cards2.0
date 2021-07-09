@@ -35,6 +35,7 @@ import javax.swing.WindowConstants;
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
+import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.SnapSide;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.DataPanelDescriptor;
@@ -48,11 +49,12 @@ import gent.timdemey.cards.services.contract.preload.IPreload;
 import gent.timdemey.cards.services.contract.preload.PreloadOrder;
 import gent.timdemey.cards.services.contract.preload.PreloadOrderType;
 import gent.timdemey.cards.services.contract.res.FontResource;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
-import gent.timdemey.cards.services.interfaces.IResourceLocationService;
+import gent.timdemey.cards.services.interfaces.IResourceNameService;
 import gent.timdemey.cards.ui.components.drawers.IDrawer;
 import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
@@ -82,7 +84,7 @@ public class FrameService implements IFrameService, IPreload
     public void preload()
     {
         IResourceCacheService resServ = Services.get(IResourceCacheService.class);
-        IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
+        IResourceNameService resLocServ = Services.get(IResourceNameService.class);
 
         String dialogTitleFontName = resLocServ.getFilePath(ResourceDescriptors.DialogTitleFont);
         FontResource res_dialogTitleFont = resServ.getFont(dialogTitleFontName);
@@ -496,7 +498,7 @@ public class FrameService implements IFrameService, IPreload
     protected BufferedImage getDialogBackgroundImage()
     {
         IResourceCacheService resServ = Services.get(IResourceCacheService.class);
-        IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
+        IResourceNameService resLocServ = Services.get(IResourceNameService.class);
         String bgpath = resLocServ.getFilePath(ResourceDescriptors.DialogBackground);
         BufferedImage background = resServ.getImage(bgpath).raw;
         return background;
@@ -698,6 +700,16 @@ public class FrameService implements IFrameService, IPreload
         });
     }
 
+    @Override
+    public void installStateListeners()
+    {
+        IContextService ctxtServ = Services.get(IContextService.class);
+        Context ctxt = ctxtServ.getThreadContext();
+        
+        ctxt.addStateListener(new FrameGameListener());
+        ctxt.addStateListener(new FrameSoundStateListener());
+    }
+    
     private <IN, OUT> JSLayeredPane createDialogPanel(DataPanelDescriptor<IN, OUT> desc, IN inData,
             Consumer<PanelOutData<OUT>> callback)
     {

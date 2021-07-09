@@ -29,7 +29,10 @@ public class ResourceDescriptors
     public static final ResourceDescriptor                      AppTitleFont =          get("AppTitleFont");
     public static final ResourceDescriptor                      DialogBackground =      get("DialogBackground");
     public static final ResourceDescriptor                      DialogTitleFont =       get("DialogTitleFont");
-
+    
+    public static final ResourceDescriptor                      SoundTest =             get("SoundTest");     
+    public static final ResourceDescriptor                      SoundPutDown =          get("SoundPutDown");     
+            
     
     public static final ResourceDescriptor get(String id)
     {

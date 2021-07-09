@@ -1,4 +1,4 @@
-    package gent.timdemey.cards.ui;
+    package gent.timdemey.cards.services.frame;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.IStateListener;
@@ -11,9 +11,9 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 
-public class GameBootListener implements IStateListener
+public class FrameGameListener implements IStateListener
 {
-    GameBootListener()
+    FrameGameListener()
     {
     }
 
@@ -38,7 +38,7 @@ public class GameBootListener implements IStateListener
             else
             {             
                 frameServ.showPanel(PanelDescriptors.Game);
-                panelServ.createComponentsAsync(GameBootListener::onCreatedComponents);
+                panelServ.createComponentsAsync(FrameGameListener::onCreatedComponents);
             }
         }
     }
@@ -46,7 +46,7 @@ public class GameBootListener implements IStateListener
     private static void onCreatedComponents ()
     {
         IPanelService panelServ = Services.get(IPanelService.class);
-        panelServ.rescaleResourcesAsync(GameBootListener::onRescaledResources);
+        panelServ.rescaleResourcesAsync(FrameGameListener::onRescaledResources);
     }
     
     private static void onRescaledResources ()

@@ -15,6 +15,7 @@ import javax.imageio.ImageIO;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
+import gent.timdemey.cards.services.contract.res.AudioResource;
 import gent.timdemey.cards.services.contract.res.FontResource;
 import gent.timdemey.cards.services.contract.res.ImageResource;
 import gent.timdemey.cards.services.contract.res.ResourceType;
@@ -26,6 +27,7 @@ public class ResourceCacheService implements IResourceCacheService
     // caches
     private final Map<String, ImageResource> cache_images = new HashMap<>();
     private final Map<String, FontResource> cache_fonts = new HashMap<>();
+    private final Map<String, AudioResource> cache_audio = new HashMap<>();
     
     // black-pink checkerboard pattern that can be tiled
     private BufferedImage ERROR_IMAGE;
@@ -70,6 +72,13 @@ public class ResourceCacheService implements IResourceCacheService
     public FontResource getFont(String filename)
     {
         FontResource resp_cached = get(cache_fonts, filename, ResourceType.FONT, this::loadFont);
+        return resp_cached;
+    }
+    
+    @Override
+    public AudioResource getAudio(String filename)
+    {
+        AudioResource resp_cached = get(cache_audio, filename, ResourceType.SOUND, this::loadSound);
         return resp_cached;
     }
 
@@ -119,6 +128,22 @@ public class ResourceCacheService implements IResourceCacheService
         }
    
         return new FontResource(filename, fallback, font);
+    }
+    
+    private AudioResource loadSound(InputStream is, String filename)
+    {           
+        try
+        {
+            byte[] arr = new byte[is.available()];
+            is.read(arr);
+            
+            return new AudioResource(filename, false, arr);
+        }
+        catch (Exception e)
+        {
+            Logger.error(e);
+            return null;
+        }
     }
     
     private <T> T get(Map<String, T> cache, String filename, ResourceType resourceType, BiFunction<InputStream, String, T> loadFunc)

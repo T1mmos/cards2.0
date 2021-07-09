@@ -21,7 +21,7 @@ import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
-import gent.timdemey.cards.services.interfaces.IResourceLocationService;
+import gent.timdemey.cards.services.interfaces.IResourceNameService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.ui.components.SImageResource;
 import gent.timdemey.cards.ui.components.drawers.GamePanelDrawer;
@@ -169,7 +169,7 @@ public class CardGamePanelManager extends PanelManagerBase
     protected void preloadCards()
     {
         IIdService idServ = Services.get(IIdService.class);
-        IResourceLocationService resLocServ = Services.get(IResourceLocationService.class);
+        IResourceNameService resLocServ = Services.get(IResourceNameService.class);
 
         // card back
         preloadImage(idServ.createCardBackScalableResourceId(), resLocServ.getFilePath(ResourceDescriptors.CardBack));

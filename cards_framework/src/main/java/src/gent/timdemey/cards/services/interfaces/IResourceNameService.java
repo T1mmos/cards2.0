@@ -4,7 +4,7 @@ import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptor.ResourceDescriptorP1;
 import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptor.ResourceDescriptorP2;
 
-public interface IResourceLocationService
+public interface IResourceNameService
 {
     public String getFilePath(ResourceDescriptor imgDesc);
     public <P1> String getFilePath(ResourceDescriptorP1<P1> imgDesc, P1 param1);

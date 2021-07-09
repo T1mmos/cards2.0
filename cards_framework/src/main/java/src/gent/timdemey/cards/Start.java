@@ -25,13 +25,15 @@ import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.INetworkService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
-import gent.timdemey.cards.services.interfaces.IResourceLocationService;
+import gent.timdemey.cards.services.interfaces.IResourceNameService;
 import gent.timdemey.cards.services.interfaces.IResourceRepository;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.interfaces.ISerializationService;
+import gent.timdemey.cards.services.interfaces.ISoundService;
 import gent.timdemey.cards.services.resources.ResourceCacheService;
-import gent.timdemey.cards.services.resources.ResourceLocationService;
+import gent.timdemey.cards.services.resources.ResourceNameService;
 import gent.timdemey.cards.services.resources.ResourceRepository;
+import gent.timdemey.cards.services.sound.SoundService;
 import gent.timdemey.cards.ui.StartUI;
 import gent.timdemey.cards.ui.components.ScalingService;
 import gent.timdemey.cards.ui.panels.PanelService;
@@ -76,7 +78,7 @@ public class Start
     {
         Services services = App.getServices();
         
-        services.installIfAbsent(ILogManager.class, () -> new LogManager(LogLevel.TRACE));
+        services.installIfAbsent(ILogManager.class, () -> new LogManager(LogLevel.DEBUG));
     }
     
     private static ICardPlugin loadCardPlugin(String[] args)
@@ -140,7 +142,7 @@ public class Start
         services.installIfAbsent(IScalingService.class, () -> new ScalingService());
         services.installIfAbsent(IResourceCacheService.class, () -> new ResourceCacheService());
         services.installIfAbsent(IResourceRepository.class, () -> new ResourceRepository());
-        services.installIfAbsent(IResourceLocationService.class, () -> new ResourceLocationService());
+        services.installIfAbsent(IResourceNameService.class, () -> new ResourceNameService());
         services.installIfAbsent(ISerializationService.class, () -> new SerializationService());
         services.installIfAbsent(INetworkService.class, () -> new CommandNetworkService());        
         services.installIfAbsent(IAnimationService.class, () -> new AnimationService()); 
@@ -148,5 +150,6 @@ public class Start
         services.installIfAbsent(IActionService.class, () -> new ActionService());
         services.installIfAbsent(IPanelService.class, () -> new PanelService());
         services.installIfAbsent(IFileService.class, () -> new FileService());
+        services.installIfAbsent(ISoundService.class, () -> new SoundService());
     }
 }

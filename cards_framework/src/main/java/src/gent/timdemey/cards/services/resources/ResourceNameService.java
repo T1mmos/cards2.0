@@ -7,9 +7,9 @@ import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptor.ResourceDescriptorP1;
 import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptor.ResourceDescriptorP2;
 import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptors;
-import gent.timdemey.cards.services.interfaces.IResourceLocationService;
+import gent.timdemey.cards.services.interfaces.IResourceNameService;
 
-public class ResourceLocationService implements IResourceLocationService
+public class ResourceNameService implements IResourceNameService
 {    
     private static Map<ResourceDescriptor, String> RESOURCES0 = new HashMap<>();
     private static Map<ResourceDescriptorP1<?>, String> RESOURCES1 = new HashMap<>();
@@ -24,6 +24,9 @@ public class ResourceLocationService implements IResourceLocationService
         RESOURCES0.put(ResourceDescriptors.DialogBackground,    "bg_olive.png"                          );
         RESOURCES0.put(ResourceDescriptors.DialogTitleFont,     "SMB2.ttf"                              );
         RESOURCES0.put(ResourceDescriptors.Menu,                "cards-A-50.png"                        );
+        
+        RESOURCES0.put(ResourceDescriptors.SoundTest,           "test.wav"                              );
+        RESOURCES0.put(ResourceDescriptors.SoundPutDown,        "putdown.wav"                           );
         
         RESOURCES1.put(ResourceDescriptors.AppClose,            "close%s.png"                           );
         RESOURCES1.put(ResourceDescriptors.AppMaximize,         "maximize%s.png"                        );
