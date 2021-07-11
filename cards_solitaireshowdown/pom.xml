@@ -11,7 +11,7 @@
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 	<artifactId>cards_solitaireshowdown</artifactId>
     <name>cards_solitaireshowdown</name>
 	<build>

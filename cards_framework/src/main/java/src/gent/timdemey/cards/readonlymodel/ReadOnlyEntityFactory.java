@@ -253,7 +253,7 @@ public class ReadOnlyEntityFactory
         return roEntity;
     }
 
-    private static <S extends EntityBase, T extends ReadOnlyEntityBase<S>> T GetOrCreateEntity(S entity, IReadOnlyEntityCreator<S, T> creator)
+    private static <S extends EntityBase, T extends ReadOnlyEntityBase<S>> T GetOrCreateEntity(S entity, Function<S, T> creator)
     {
         if (entity == null)
         {
@@ -279,7 +279,7 @@ public class ReadOnlyEntityFactory
         
         if (roEntity == null)
         {
-            roEntity = creator.CreateReadOnlyEntity(entity);
+            roEntity = creator.apply(entity);
             typedEntities.put(entity.id, roEntity);
         }
 
