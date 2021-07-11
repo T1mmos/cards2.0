@@ -35,6 +35,7 @@ public final class JSFactory
         setComponent(jsbutton, new ComponentBase(UUID.randomUUID(), ComponentTypes.BUTTON));
         setDrawer(jsbutton, new ButtonDrawer());
         setBackgroundTransparent(jsbutton);
+        jsbutton.getDrawer().setDecorated(false);
 
         return jsbutton;
     }
@@ -45,6 +46,7 @@ public final class JSFactory
         
         setComponent(jsbutton, new ComponentBase(UUID.randomUUID(), ComponentTypes.BUTTON));
         setDrawer(jsbutton, new ButtonDrawer());
+        jsbutton.getDrawer().setDecorated(false);
         
         jsbutton.setText(text);
         

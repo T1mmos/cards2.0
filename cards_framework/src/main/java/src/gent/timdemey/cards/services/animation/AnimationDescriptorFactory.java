@@ -10,6 +10,8 @@ import gent.timdemey.cards.ui.components.ext.IComponent;
 
 public class AnimationDescriptorFactory implements IAnimationDescriptorFactory
 {
+    private static final int TIME_MS_ANIMATION_CARD      = 200;
+    
     @Override
     public AnimationDescriptor getAnimationDescriptor(IComponent comp)
     {
@@ -20,6 +22,13 @@ public class AnimationDescriptorFactory implements IAnimationDescriptorFactory
             List<IAnimation> animations = Arrays.asList(anim1);
             
             AnimationDescriptor descr = new AnimationDescriptor(1000, animations, false);
+            return descr;
+        }
+        else if (comp.getComponentType().hasTypeName(ComponentTypes.CARD))
+        {
+            MovingAnimation anim1 = new MovingAnimation();
+            List<IAnimation> animations = Arrays.asList(anim1);
+            AnimationDescriptor descr = new AnimationDescriptor(TIME_MS_ANIMATION_CARD, animations, false);
             return descr;
         }
         

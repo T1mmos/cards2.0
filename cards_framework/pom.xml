@@ -3,21 +3,29 @@
   <groupId>gent.timdemey.cards</groupId>
   <artifactId>cards_framework</artifactId>
   <version>1.0</version>
-  <packaging>pom</packaging>
+  <packaging>jar</packaging>
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-  </properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>16</maven.compiler.source>
+        <maven.compiler.target>16</maven.compiler.target>
+    	<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>16</java.version>
+    </properties>
   <build>
-    <plugins>      
+  <plugins>      
       <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.3</version>
-        <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
-        </configuration>
-      </plugin>
+      	<artifactId>maven-assembly-plugin</artifactId>
+      	<configuration>
+        <archive>
+          <manifest>
+            <mainClass>fully.qualified.MainClass</mainClass>
+          </manifest>
+        </archive>
+        <descriptorRefs>
+          <descriptorRef>jar-with-dependencies</descriptorRef>
+        </descriptorRefs>
+      </configuration>
+    </plugin>
     </plugins>
   </build>
   <dependencies>
@@ -41,10 +49,5 @@
   		<artifactId>gson-extras</artifactId>
   		<version>0.2.1</version>
   	</dependency>
-  	<dependency>
-	  <groupId>com.weblookandfeel</groupId>
-	  <artifactId>weblaf-ui</artifactId>
-	  <version>1.2.13</version>
-	</dependency>
   </dependencies>
 </project>

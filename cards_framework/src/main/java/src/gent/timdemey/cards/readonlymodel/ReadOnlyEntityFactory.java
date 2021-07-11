@@ -29,9 +29,9 @@ public class ReadOnlyEntityFactory
     private static class EntityConverter
     {
         private final Class<?> srcClazz;
-        private final Function<? super EntityBase, Object> mapperFunc;
+        private final Function<Object, Object> mapperFunc;
 
-        private EntityConverter(Class<?> srcClazz, Function<? super EntityBase, Object> mapperFunc)
+        private EntityConverter(Class<?> srcClazz, Function<Object, Object> mapperFunc)
         {
             this.srcClazz = srcClazz;
             this.mapperFunc = mapperFunc;
@@ -56,11 +56,16 @@ public class ReadOnlyEntityFactory
 
     private static final Map<Class<?>, Map<UUID, ? extends ReadOnlyEntityBase<?>>> entities = new HashMap<>();
 
-    private static <S extends EntityBase, T extends ReadOnlyEntityBase<S>> void addConverter(Class<S> entityClazz, Function<? super S, ? extends T> mapperFunc)
+    private static <S extends EntityBase, T extends ReadOnlyEntityBase<S>> void addConverter(Class<S> entityClazz, Function<S, T> mapperFunc)
     {
-        @SuppressWarnings("unchecked")
-        Function<? super EntityBase, Object> rawMapperFunc = (Function<? super EntityBase, Object>) mapperFunc;
-        EntityConverter converter = new EntityConverter((Class<?>) entityClazz, rawMapperFunc);
+        Function<Object, Object> func = (o) ->
+        {
+            @SuppressWarnings("unchecked")
+            S s = (S) o;
+            T t = (T) mapperFunc.apply(s);
+            return (Object) t;
+        };
+        EntityConverter converter = new EntityConverter((Class<?>) entityClazz, func);
         CONVERTORS.add(converter);
     }
 

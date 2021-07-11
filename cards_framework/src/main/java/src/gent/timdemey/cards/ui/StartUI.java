@@ -6,12 +6,9 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
-import com.alee.laf.WebLookAndFeel;
-import com.alee.skin.dark.WebDarkSkin;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
@@ -29,7 +26,7 @@ import net.miginfocom.swing.MigLayout;
 
 public class StartUI
 {
-    private static JFrame frame;
+    private static JDialog dialog;
     
     private StartUI()
     {
@@ -69,17 +66,16 @@ public class StartUI
         
         panel.setBorder(null);
         
-        frame = new JFrame("test");
-        frame.setUndecorated(true);
-        frame.setContentPane(panel);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        dialog = new JDialog();
+        dialog.setUndecorated(true);
+        dialog.setContentPane(panel);
+        dialog.pack();
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
     }
     
     private static void preload()
     {
-        WebLookAndFeel.install(WebDarkSkin.class);
         Services.preload();
     }
     
@@ -90,7 +86,7 @@ public class StartUI
             return;
         }
         
-     //   frame.setVisible(false);
+        dialog.setVisible(false);
         
         // locale
         Loc.setLocale(Loc.AVAILABLE_LOCALES[0]);
