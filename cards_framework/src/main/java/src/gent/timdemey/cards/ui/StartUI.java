@@ -1,12 +1,22 @@
 package gent.timdemey.cards.ui;
 
-import javax.swing.SwingUtilities;
+import java.awt.Dimension;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import com.alee.laf.WebLookAndFeel;
 import com.alee.skin.dark.WebDarkSkin;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.C_LoadConfig;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -14,25 +24,75 @@ import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
+import gent.timdemey.cards.utils.Async;
+import gent.timdemey.cards.utils.ThreadUtils;
+import net.miginfocom.swing.MigLayout;
 
 public class StartUI
 {
+    private static JFrame frame;
+    
     private StartUI()
     {
     }
     
     public static void startUI()
     {    
-        if (!SwingUtilities.isEventDispatchThread())
+        ThreadUtils.checkEDT();
+
+        showSplash();
+        
+        // let all services preload load in the background
+        ThreadUtils.executeAndContinueOnUi("Service Preloader", StartUI::preload, StartUI::onServicesPreloaded);
+    }
+    
+    private static void showSplash()
+    {
+        JPanel panel = new JPanel(new MigLayout("insets 0"));
+        
+        // background image
         {
-            throw new IllegalStateException("This method must be called from the EDT");
+            InputStream is = StartUI.class.getResourceAsStream("splash.png");
+            BufferedImage bi = null;
+            try
+            {
+                bi = ImageIO.read(is);
+            }
+            catch (IOException e)
+            {
+                Logger.error(e);
+                return;  // don't fail or throw, simply no splash
+            }
+            
+            ImageIcon ii = new ImageIcon(bi);
+            JLabel icon = new JLabel(ii);
+            panel.add(icon);
         }
         
-        // WebLAF
-        WebLookAndFeel.install(WebDarkSkin.class);
+        panel.setBorder(null);
         
-        // let all services preload
+        frame = new JFrame("test");
+        frame.setUndecorated(true);
+        frame.setContentPane(panel);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+    
+    private static void preload()
+    {
+        WebLookAndFeel.install(WebDarkSkin.class);
         Services.preload();
+    }
+    
+    private static void onServicesPreloaded(Async async)
+    {
+        if (!async.success)
+        {
+            return;
+        }
+        
+     //   frame.setVisible(false);
         
         // locale
         Loc.setLocale(Loc.AVAILABLE_LOCALES[0]);
@@ -59,7 +119,6 @@ public class StartUI
         // add and show the default panel
         IPanelService panelServ = Services.get(IPanelService.class);
         PanelDescriptor panelDesc = panelServ.getDefaultPanelDescriptor();
-        //frameServ.addPanel(panelDesc);
         frameServ.showPanel(panelDesc);
     }
 }
