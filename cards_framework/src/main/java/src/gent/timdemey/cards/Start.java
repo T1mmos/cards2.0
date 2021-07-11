@@ -44,7 +44,7 @@ public class Start
 {
     private Start()
     {
-    }
+    } 
 
     public static void main(String[] args)
     {
@@ -55,18 +55,22 @@ public class Start
         installRootServices();
         
         // determine plugin and if found, let it install services
-        ICardPlugin plugin = loadCardPlugin(args);
-        if(plugin == null)
+        LoadPluginResponse lpResp = loadCardPlugin(args);
+        
+        if(lpResp.errorMessage != null) 
         {
             Logger.error("Cannot load plugin class. Terminating.");
-            return;
+            StartUI.pluginError(lpResp.errorMessage); 
         }
-        instalPluginServices(plugin);
-        
-        // now install remaining services that were not overruled by the plugin
-        installBaseServices();  
+        else
+        {
+            instalPluginServices(lpResp.plugin); 
+            
+            // now install remaining services that were not overruled by the plugin
+            installBaseServices();  
 
-        SwingUtilities.invokeLater(StartUI::startUI);
+            SwingUtilities.invokeLater(StartUI::startUI);
+        }
     }
     
     private static void installSingleton()
@@ -83,12 +87,12 @@ public class Start
         services.installIfAbsent(ILogManager.class, () -> new LogManager(LogLevel.DEBUG));
     }
     
-    private static ICardPlugin loadCardPlugin(String[] args)
+    private static LoadPluginResponse loadCardPlugin(String[] args)
     {
         if(args.length != 1)
         {
-            Logger.error("A single argument is expected, but %s were given.", args.length);
-            return null;
+            String errorMsg = String.format("A single argument (the plugin class) is expected, but %s arguments were given.", args.length);            
+            return new LoadPluginResponse (null, errorMsg);
         }
 
         String clazzName = args[0];
@@ -99,15 +103,14 @@ public class Start
         }
         catch (ClassNotFoundException e)
         {
-           
-            Logger.error("The given class '%s' is not found in the classpath.", clazzName);
-            return null;
+            String errorMsg = String.format("The given class '%s' is not found in the classpath.", clazzName);
+            return new LoadPluginResponse(null, errorMsg);
         }
 
         if(!ICardPlugin.class.isAssignableFrom(clazz))
         {
-            Logger.error("Should provide a card plugin. The given class does not derive from ''.", ICardPlugin.class.getSimpleName());
-            return null;
+            String errorMsg = String.format("Should provide a card plugin. The given class '%s' does not derive from '%s'.", clazzName, ICardPlugin.class.getSimpleName());
+            return new LoadPluginResponse(null, errorMsg);
         }
 
         @SuppressWarnings("unchecked")
@@ -119,11 +122,12 @@ public class Start
         }
         catch (InstantiationException | IllegalAccessException | InvocationTargetException | SecurityException | NoSuchMethodException e)
         {
-            Logger.error("The given plugin class cannot be instantiated", e);
-            return null;
+            String errorMsg = String.format("The given plugin class '%s' cannot be instantiated", clazzName);
+            Logger.error(e);
+            return new LoadPluginResponse(null, errorMsg);
         }
 
-        return plugin;
+        return new LoadPluginResponse(plugin, null);
     }
 
     private static void instalPluginServices(ICardPlugin plugin)

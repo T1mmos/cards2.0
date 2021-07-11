@@ -18,7 +18,7 @@
       	<configuration>
         <archive>
           <manifest>
-            <mainClass>fully.qualified.MainClass</mainClass>
+            <mainClass>gent.timdemey.cards.Start</mainClass>
           </manifest>
         </archive>
         <descriptorRefs>
