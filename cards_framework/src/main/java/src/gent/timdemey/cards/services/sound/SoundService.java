@@ -8,6 +8,8 @@ import java.util.concurrent.ThreadFactory;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
@@ -69,8 +71,19 @@ public class SoundService implements ISoundService, IPreload
                 // however to support multiplay we need a new InputStream for each request to play the 
                 // same resource, so we'll use a new ByteArrayInputStream on top of the byte array.
                 byte[] arr = audioRes.raw;                
+                @SuppressWarnings("resource")
                 Clip clip = AudioSystem.getClip();
+                clip.addLineListener(new LineListener() 
+                {
+                    public void update(LineEvent myLineEvent) {
+                        if (myLineEvent.getType() == LineEvent.Type.STOP)
+                        {
+                            clip.close();  
+                        }
+                    }
+                });
                 ByteArrayInputStream bis = new ByteArrayInputStream(arr);
+                @SuppressWarnings("resource")
                 AudioInputStream ais = AudioSystem.getAudioInputStream(bis);
                 clip.open(ais);
                 clip.start();

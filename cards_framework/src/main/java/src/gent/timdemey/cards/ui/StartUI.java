@@ -1,6 +1,5 @@
 package gent.timdemey.cards.ui;
 
-import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,15 +51,14 @@ public class StartUI
         
         // background image
         {
-            InputStream is = StartUI.class.getResourceAsStream("splash.png");
-            BufferedImage bi = null;
-            try
+            BufferedImage bi;            
+            try (InputStream is = StartUI.class.getResourceAsStream("splash.png"))
             {
                 bi = ImageIO.read(is);
             }
             catch (IOException e)
             {
-                Logger.error(e);
+                Logger.error(e);                    
                 return;  // don't fail or throw, simply no splash
             }
             
