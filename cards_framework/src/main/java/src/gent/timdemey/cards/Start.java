@@ -55,8 +55,8 @@ public class Start
         installRootServices();
         
         // determine plugin and if found, let it install services
-        LoadPluginResponse lpResp = loadCardPlugin(args);
-        
+        LoadPluginResponse lpResp = loadCardPlugin(args); 
+         
         if(lpResp.errorMessage != null) 
         {
             Logger.error("Cannot load plugin class. Terminating.");

@@ -21,9 +21,11 @@ import gent.timdemey.cards.model.entities.commands.C_LoadConfig;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
+import gent.timdemey.cards.services.contract.res.ResourceType;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
+import gent.timdemey.cards.services.interfaces.IResourceRepository;
 import gent.timdemey.cards.utils.Async;
 import gent.timdemey.cards.utils.ThreadUtils;
 import net.miginfocom.swing.MigLayout;
@@ -52,11 +54,13 @@ public class StartUI
         
         // background image
         {
-            BufferedImage bi;            
-            try (InputStream is = StartUI.class.getResourceAsStream("splash.png"))
+            BufferedImage bi;     
+            IResourceRepository repo = Services.get(IResourceRepository.class);
+                    
+            try (InputStream is = repo.getResourceAsStream(ResourceType.IMAGE, "splash.png"))
             {
                  bi = ImageIO.read(is);
-            }
+            } 
             catch (IOException e)
             {
                 Logger.error(e);                    
@@ -135,6 +139,7 @@ public class StartUI
                 frame.setVisible(false);
                 System.exit(-1);
             });
+            frame.getRootPane().setDefaultButton(but_ok);
             
             JLabel label = new JLabel("<html>No plugin could be loaded. This application"
                                     + "<p>should start with a plugin in order to play a card game."

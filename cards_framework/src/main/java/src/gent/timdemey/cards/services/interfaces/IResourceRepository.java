@@ -3,10 +3,9 @@ package gent.timdemey.cards.services.interfaces;
 import java.io.File;
 import java.io.InputStream;
 
-import gent.timdemey.cards.services.contract.preload.IPreload;
 import gent.timdemey.cards.services.contract.res.ResourceType;
 
-public interface IResourceRepository extends IPreload
+public interface IResourceRepository
 {    
     public InputStream getResourceAsStream(ResourceType type, String name);
     

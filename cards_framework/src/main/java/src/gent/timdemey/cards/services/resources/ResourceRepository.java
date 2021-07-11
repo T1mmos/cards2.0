@@ -23,6 +23,9 @@ public class ResourceRepository implements IResourceRepository
 
     public ResourceRepository()
     {        
+        Map<ResourceType, List<URL>> typeUrls = new HashMap<>();
+        buildUrlLists(typeUrls);
+        createResourceLoaders(typeUrls);
     }
     
     protected void buildUrlLists (Map<ResourceType, List<URL>> typeUrls)
@@ -121,14 +124,5 @@ public class ResourceRepository implements IResourceRepository
                     "This resource manager currently doesn't support loading resource of type " + type);
         }
         return resLoader;
-    }
-
-    @PreloadOrder(order = PreloadOrderType.ISOLATED)
-    @Override
-    public void preload()
-    {
-        Map<ResourceType, List<URL>> typeUrls = new HashMap<>();
-        buildUrlLists(typeUrls);
-        createResourceLoaders(typeUrls);
     }
 }
