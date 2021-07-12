@@ -23,10 +23,10 @@ The main engine found in [cards_framework](../master/cards_framework) must be st
 ![Screenshot Solitaire Showdown](screenshots/solitaireshowdown_01112021.gif)
 
 ## Project History
-Go to [changelogs](readme/history.md).
+Go to [History](readme/history.md).
 
 ## Change logs
-Go to [changelogs](readme/changelogs.md).
+Go to [Changelogs](readme/changelogs.md).
 
 ## Downloads
 Below are the standalone, executable JAR files that include all dependencies, except for Java itself. These are still beta (DEV) files and no official releases.
