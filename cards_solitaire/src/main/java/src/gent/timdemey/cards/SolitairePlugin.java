@@ -49,4 +49,13 @@ public class SolitairePlugin implements ICardPlugin
     {
         return new State();
     }
+    
+    /**
+     * An entry point to allow to start the plugin directly.
+     * @param args
+     */
+    public static void main(String[] args)
+    {
+        Start.main(new SolitairePlugin());
+    }
 }

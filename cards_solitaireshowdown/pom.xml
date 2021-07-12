@@ -23,7 +23,7 @@
       	<configuration>
           <archive>
             <manifest>
-              <mainClass>gent.timdemey.cards.Start</mainClass>
+              <mainClass>gent.timdemey.cards.SolShowPlugin</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>

@@ -46,31 +46,68 @@ public class Start
     {
     } 
 
+    /**
+     * Entry point when starting the framework by feeding it a command line parameter that points to a plugin class.
+     * The plugin class will be resolved and then we continue 
+     * @param args
+     */
     public static void main(String[] args)
+    {
+        prePlugin();
+        
+        // determine plugin and if found, let it install services
+        LoadPluginResponse lpResp = loadCardPlugin(args);         
+        if(lpResp.errorMessage != null) 
+        {
+            Logger.error("Cannot load plugin class. Terminating.");
+            StartUI.pluginError(lpResp.errorMessage); 
+            return;
+        }
+
+        postPlugin(lpResp.plugin);
+    }
+    
+    /**
+     * Entry point when starting the framework programmatically e.g. by another main defined in the plugin itself.
+     * This allows to easily make plugin jars runnable.
+     * @param args
+     */
+    public static void main(ICardPlugin plugin)
+    {
+        if (plugin == null)
+        {
+            Logger.error("No plugin class was specified. Terminating.");
+            return;
+        }
+        
+        prePlugin();               
+        postPlugin(plugin);
+    }
+    
+    /**
+     * Code run before the plugin implementation becomes necessary. 
+     */
+    private static void prePlugin()
     {
         // install the service singleton
         installSingleton();
         
         // install services that cannot be overruled and that are immediately needed by code
-        installRootServices();
+        installRootServices();    
+    }
+    
+    /**
+     * Code run after the plugin implementation was determined.
+     * @param plugin
+     */
+    private static void postPlugin(ICardPlugin plugin)
+    {
+        instalPluginServices(plugin); 
         
-        // determine plugin and if found, let it install services
-        LoadPluginResponse lpResp = loadCardPlugin(args); 
-         
-        if(lpResp.errorMessage != null) 
-        {
-            Logger.error("Cannot load plugin class. Terminating.");
-            StartUI.pluginError(lpResp.errorMessage); 
-        }
-        else
-        {
-            instalPluginServices(lpResp.plugin); 
-            
-            // now install remaining services that were not overruled by the plugin
-            installBaseServices();  
+        // now install remaining services that were not overruled by the plugin
+        installBaseServices();  
 
-            SwingUtilities.invokeLater(StartUI::startUI);
-        }
+        SwingUtilities.invokeLater(StartUI::startUI);
     }
     
     private static void installSingleton()
