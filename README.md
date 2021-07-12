@@ -29,6 +29,6 @@ Go to [changelogs](readme/history.md).
 Go to [changelogs](readme/changelogs.md).
 
 ## Downloads
-Below are the standalone, executable JAR files that include all dependencies, except for Java itself.
-* [cards_solitaire-1.0.jar](downloads/cards_solitaire-1.0.jar)
-* [cards_solitaireshowdown-1.0.jar](downloads/cards_solitaireshowdown-1.0.jar)
+Below are the standalone, executable JAR files that include all dependencies, except for Java itself. These are still beta (DEV) files and no official releases.
+* [cards_solitaire-1.0.jar](https://github.com/T1mmos/cards2.0/raw/dev/downloads/cards_solitaire-1.0.jar)
+* [cards_solitaireshowdown-1.0.jar](https://github.com/T1mmos/cards2.0/raw/dev/downloads/cards_solitaireshowdown-1.0.jar)
