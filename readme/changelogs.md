@@ -4,3 +4,4 @@
     - These are now executable without needing a parameter
     - Added direct download link on the README
   - Updated the README and moved some content into subpages
+  - Updated build script, it should now also work on clean systems
