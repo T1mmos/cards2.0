@@ -1,20 +1,36 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   	<!--The identifier of the parent POM -->
-  <parent>
+    <modelVersion>4.0.0</modelVersion>
     <groupId>gent.timdemey.cards</groupId>
-    <artifactId>cards_framework</artifactId>
+    <artifactId>cards_solitaire</artifactId>
     <version>1.0</version>
-    <relativePath>../cards_framework/pom.xml</relativePath>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <packaging>pom</packaging>
-  <artifactId>cards_solitaire</artifactId>
-  <name>cards_solitaire</name>
-  <build>
-    <plugins>
-     
-    </plugins>
-  </build>
-  <dependencies>	  
-  </dependencies>
+
+    <packaging>jar</packaging>
+    <name>cards_solitaire</name>
+  
+    <build>
+      <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <phase>install</phase>
+                            <goals>
+                                <goal>copy-dependencies</goal>
+                            </goals>
+                            <configuration>
+                                <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            </configuration>
+                        </execution>
+                    </executions>
+            </plugin>
+      </plugins>
+    </build>
+    <dependencies>	 
+          <dependency>
+              <groupId>gent.timdemey.cards</groupId>
+              <artifactId>cards_framework</artifactId>
+              <version>1.0</version>
+          </dependency> 
+    </dependencies>
 </project>
