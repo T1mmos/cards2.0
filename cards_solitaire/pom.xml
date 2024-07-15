@@ -50,7 +50,7 @@
                         </manifest>  
                         <manifestEntries>
                             <Built-By>Tim De Mey</Built-By>
-                            <Class-Path>lib/cards_framework-1.0.jar lib/error_prone_annotations-2.27.0.jar lib/gson-2.11.0.jar lib/miglayout-core-11.4.jar lib/miglayout-swing-11.4.jar lib/flatlaf-3.4.1.jar</Class-Path>
+                            <Class-Path>lib/*.jar</Class-Path>
                         </manifestEntries>
                     </archive>  
                 </configuration>  
