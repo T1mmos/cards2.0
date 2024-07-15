@@ -4,4 +4,5 @@
 **/.externalToolBuilders/**
 **/.classpath
 **/.vs
+**/target/**
 nbactions.xml
