@@ -95,11 +95,12 @@ public class FrameService implements IFrameService, IPreload
     public JFrame getFrame()
     {
         FramePanelManager fpm = getFramePanelManager();
-        String title = fpm.getFrameTitle();
-        List<Image> icons = fpm.getFrameIcons();
-
+       
         if (frame == null)
         {
+            String title = fpm.getFrameTitle();
+            List<Image> icons = fpm.getFrameIcons();
+        
             frame = new JFrame();
             frame.setTitle(title);
             frame.setUndecorated(true);

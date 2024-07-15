@@ -166,7 +166,6 @@ public class FramePanelManager extends PanelManagerBase
             ActionDescriptors.TOGGLEMENUMP,
             ActionDescriptors.QUIT);
     }
-    
 
     public List<Image> getFrameIcons()
     {
