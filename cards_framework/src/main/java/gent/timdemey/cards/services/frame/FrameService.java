@@ -91,11 +91,6 @@ public class FrameService implements IFrameService, IPreload
         String dialogTitleFontName = resLocServ.getFilePath(ResourceDescriptors.DialogTitleFont);
         FontResource res_dialogTitleFont = resServ.getFont(dialogTitleFontName);
         dialogTitleFont = res_dialogTitleFont.raw.deriveFont(20f);
-        
-        
-        String dialogLabelFont = resLocServ.getFilePath(ResourceDescriptors.DialogLabelFont);
-        FontResource res_dialogLabelFont = resServ.getFont(dialogLabelFont);
-        UIManager.put("Label.font", res_dialogLabelFont.raw);
     }
 
     @Override

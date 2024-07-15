@@ -9,6 +9,12 @@
 
     <packaging>jar</packaging>
     <name>cards_solitaireshowdown</name>  
+        
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>21</maven.compiler.source>    
+        <maven.compiler.target>21</maven.compiler.target>    
+    </properties>
     
     <dependencies>	 
           <dependency>
@@ -46,7 +52,7 @@
                         </manifest>  
                         <manifestEntries>
                             <Built-By>Tim De Mey</Built-By>
-                            <Class-Path>lib/cards_framework-1.0.jar lib/error_prone_annotations-2.27.0.jar lib/gson-2.11.0.jar lib/miglayout-core-11.4.jar lib/miglayout-swing-11.4.jar</Class-Path>
+                            <Class-Path>lib/cards_framework-1.0.jar lib/error_prone_annotations-2.27.0.jar lib/gson-2.11.0.jar lib/miglayout-core-11.4.jar lib/miglayout-swing-11.4.jar lib/flatlaf-3.4.1.jar</Class-Path>
                         </manifestEntries>
                     </archive>  
                 </configuration>  

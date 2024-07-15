@@ -69,6 +69,7 @@ public class FramePanelManager extends PanelManagerBase
         
         JSButton button = JSFactory.createButton(action);
       
+        button.setBorder(null);
         button.setRolloverIcon(action.icon_rollover);
         button.setText("");
         button.setFocusable(false);

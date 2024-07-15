@@ -65,7 +65,6 @@ public class MenuPanelManager extends PanelManagerBase
                 ActionBase action = actServ.getAction(actDesc);
                 JSButton button = JSFactory.createButton(action);
                 
-            //    button.getDrawer().setDecorated(false);
                 button.setContentAreaFilled(false);
                 button.setFocusPainted(false);
                 button.setBorder(null);

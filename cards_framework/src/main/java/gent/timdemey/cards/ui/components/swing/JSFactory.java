@@ -1,5 +1,6 @@
 package gent.timdemey.cards.ui.components.swing;
 
+import gent.timdemey.cards.Services;
 import java.util.UUID;
 
 import javax.swing.ImageIcon;
@@ -8,6 +9,10 @@ import javax.swing.JComponent;
 import gent.timdemey.cards.services.action.ActionBase;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
+import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptors;
+import gent.timdemey.cards.services.contract.res.FontResource;
+import gent.timdemey.cards.services.interfaces.IResourceCacheService;
+import gent.timdemey.cards.services.interfaces.IResourceNameService;
 import gent.timdemey.cards.ui.components.SFontResource;
 import gent.timdemey.cards.ui.components.SImageResource;
 import gent.timdemey.cards.ui.components.drawers.DrawerBase;
@@ -19,6 +24,7 @@ import gent.timdemey.cards.ui.components.ext.ComponentBase;
 import gent.timdemey.cards.ui.components.ext.IComponent;
 import gent.timdemey.cards.ui.components.ext.IHasComponent;
 import gent.timdemey.cards.ui.components.ext.LayeredPaneComponent;
+import java.awt.Color;
 import net.miginfocom.swing.MigLayout;
 
 public final class JSFactory
@@ -28,23 +34,30 @@ public final class JSFactory
 
     public static JSButton createButton(ActionBase action)
     {
-        JSButton jsbutton = new JSButton();
+        JSButton jsbutton = createButton();
 
         jsbutton.setAction(action);
-        setComponent(jsbutton, new ComponentBase(UUID.randomUUID(), ComponentTypes.BUTTON));
-        
-        setBackgroundTransparent(jsbutton);
-
+     
         return jsbutton;
     }
     
     public static JSButton createButton(String text)
     {
+        JSButton jsbutton = createButton();
+        
+        jsbutton.setText(text);       
+        
+        return jsbutton;
+    }
+    
+    private static JSButton createButton()
+    {
         JSButton jsbutton = new JSButton();
         
         setComponent(jsbutton, new ComponentBase(UUID.randomUUID(), ComponentTypes.BUTTON));
-               
-        jsbutton.setText(text);
+        setFont(jsbutton);    
+        setBackgroundTransparent(jsbutton);    
+        setDrawer(jsbutton, new DrawerBase<JSButton>()); 
         
         return jsbutton;
     }
@@ -74,6 +87,7 @@ public final class JSFactory
         jslabel.setHorizontalTextPosition(JSLabel.CENTER);
         
         setComponent(jslabel, new ComponentBase(uuid, compType));
+        setFont(jslabel);
         setDrawer(jslabel, drawer);
         setBackgroundTransparent(jslabel);
         
@@ -156,10 +170,7 @@ public final class JSFactory
         
     private static void setBackgroundTransparent(JComponent jcomp)
     {
-        // custom UI implementators e.g. WebButtonUI set the background, 
-        // revert that so everything remains transparent until either the background tiling
-        // or an actual background color and/or alpha is set from our code
-        jcomp.setBackground(null);
+        jcomp.setBackground(new Color(255,0,0,0));
     }
     
     private static <S extends JComponent & IHasDrawer> void setDrawer(S drawee, IDrawer drawer)
@@ -174,4 +185,13 @@ public final class JSFactory
         comp.onAttached(hasComp);
     }
 
+    private static void setFont(JComponent comp)
+    {
+        IResourceCacheService resServ = Services.get(IResourceCacheService.class);
+        IResourceNameService resLocServ = Services.get(IResourceNameService.class);
+        
+        String dialogLabelFont = resLocServ.getFilePath(ResourceDescriptors.DialogLabelFont);
+        FontResource res_dialogLabelFont = resServ.getFont(dialogLabelFont);
+        comp.setFont(res_dialogLabelFont.raw.deriveFont(40f));
+    }
 }
