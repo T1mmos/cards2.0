@@ -36,6 +36,7 @@ public class AnimationService implements IAnimationService, IPreload
     }
 
     @PreloadOrder(order = PreloadOrderType.ISOLATED)
+    @Override
     public void preload()
     {
         start();

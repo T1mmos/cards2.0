@@ -22,6 +22,7 @@ public class SolitairePositionService implements IPositionService
     private static final int LAYER_CARDSTACKS = 0;
     private static final int LAYER_CARDS = 200;
     private static final LayerRange LAYERRANGE_DRAG                     = new LayerRange(10000, 10999);
+    private static final LayerRange LAYERRANGE_ANIMATIONS               = new LayerRange(20000, 20999);
 
     private SolitaireGameLayout gl;
 
@@ -126,7 +127,7 @@ public class SolitairePositionService implements IPositionService
         }
 
         Coords.Absolute coords = Coords.getAbsolute(bounds);
-        return new LayeredArea(coords, coords, null, layer, false);
+        return new LayeredArea(coords, coords, LAYERRANGE_ANIMATIONS, layer, false);
     }
 
     @Override

@@ -1,24 +1,38 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  	<!--The identifier of the parent POM -->
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>gent.timdemey.cards</groupId>
+    <artifactId>cards_solitaireshowdown</artifactId>
+    <version>1.0</version>
 
-	<!--The identifier of the parent POM -->
-	<parent>
-		<groupId>gent.timdemey.cards</groupId>
-		<artifactId>cards_framework</artifactId>
-		<version>1.0</version>
-		<relativePath>../cards_framework/pom.xml</relativePath>
-	</parent>
-
-	<modelVersion>4.0.0</modelVersion>
-    <packaging>pom</packaging>
-	<artifactId>cards_solitaireshowdown</artifactId>
+    <packaging>jar</packaging>
     <name>cards_solitaireshowdown</name>
-	<build>
-		<plugins>
-			
-		</plugins>
-	</build>
-	<dependencies>
-	</dependencies>
+  
+    <build>
+      <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <phase>install</phase>
+                            <goals>
+                                <goal>copy-dependencies</goal>
+                            </goals>
+                            <configuration>
+                                <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            </configuration>
+                        </execution>
+                    </executions>
+            </plugin>
+      </plugins>
+    </build>
+    <dependencies>	 
+          <dependency>
+              <groupId>gent.timdemey.cards</groupId>
+              <artifactId>cards_framework</artifactId>
+              <version>1.0</version>
+          </dependency> 
+    </dependencies>
 </project>
