@@ -7,9 +7,23 @@
 
     <packaging>jar</packaging>
     <name>cards_solitaire</name>
-  
+    
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>21</maven.compiler.source>    
+        <maven.compiler.target>21</maven.compiler.target>    
+    </properties>
+    
+    <dependencies>	 
+        <dependency>
+            <groupId>gent.timdemey.cards</groupId>
+            <artifactId>cards_framework</artifactId>
+            <version>1.0</version>
+        </dependency> 
+    </dependencies>
+    
     <build>
-      <plugins>
+        <plugins>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                     <executions>
@@ -24,13 +38,24 @@
                         </execution>
                     </executions>
             </plugin>
-      </plugins>
+            <plugin>  
+                <!-- Build an executable JAR -->  
+                <groupId>org.apache.maven.plugins</groupId>  
+                <artifactId>maven-jar-plugin</artifactId>  
+                <version>3.1.0</version>  
+                <configuration>  
+                    <archive>  
+                        <manifest>  
+                            <mainClass>gent.timdemey.cards.SolitairePlugin</mainClass>  
+                        </manifest>  
+                        <manifestEntries>
+                            <Built-By>Tim De Mey</Built-By>
+                            <Class-Path>lib/cards_framework-1.0.jar lib/error_prone_annotations-2.27.0.jar lib/gson-2.11.0.jar lib/miglayout-core-11.4.jar lib/miglayout-swing-11.4.jar</Class-Path>
+                        </manifestEntries>
+                    </archive>  
+                </configuration>  
+            </plugin>  
+        </plugins>
     </build>
-    <dependencies>	 
-          <dependency>
-              <groupId>gent.timdemey.cards</groupId>
-              <artifactId>cards_framework</artifactId>
-              <version>1.0</version>
-          </dependency> 
-    </dependencies>
+   
 </project>

@@ -15,6 +15,11 @@ import gent.timdemey.cards.services.panels.game.SolitairePositionService;
 
 public class SolitairePlugin implements ICardPlugin
 {
+    public static void main(String[] args)
+    {
+        Start.main(new String [] { SolitairePlugin.class.getName() });
+    }
+    
     @Override
     public void installServices(Services services)
     {        

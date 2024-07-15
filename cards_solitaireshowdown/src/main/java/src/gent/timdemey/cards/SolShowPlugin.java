@@ -21,6 +21,11 @@ import gent.timdemey.cards.ui.panels.game.SolShowPositionService;
 
 public class SolShowPlugin implements ICardPlugin
 {
+    public static void main(String[] args)
+    {
+        Start.main(new String [] { SolShowPlugin.class.getName() });
+    }
+    
     @Override
     public void installServices(Services services)
     {

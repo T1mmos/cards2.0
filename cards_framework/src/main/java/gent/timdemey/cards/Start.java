@@ -61,6 +61,7 @@ public class Start
             Logger.error("Cannot load plugin class. Terminating.");
             return;
         }
+        
         instalPluginServices(plugin);
         
         // now install remaining services that were not overruled by the plugin
