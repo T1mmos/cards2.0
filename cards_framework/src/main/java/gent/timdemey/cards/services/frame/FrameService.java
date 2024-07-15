@@ -66,6 +66,8 @@ import gent.timdemey.cards.ui.panels.dialogs.message.MessagePanelData;
 import gent.timdemey.cards.ui.panels.frame.FramePanelManager;
 import gent.timdemey.cards.utils.DimensionUtils;
 import gent.timdemey.cards.utils.StreamUtils;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import net.miginfocom.swing.MigLayout;
 
 public class FrameService implements IFrameService, IPreload
@@ -89,6 +91,11 @@ public class FrameService implements IFrameService, IPreload
         String dialogTitleFontName = resLocServ.getFilePath(ResourceDescriptors.DialogTitleFont);
         FontResource res_dialogTitleFont = resServ.getFont(dialogTitleFontName);
         dialogTitleFont = res_dialogTitleFont.raw.deriveFont(20f);
+        
+        
+        String dialogLabelFont = resLocServ.getFilePath(ResourceDescriptors.DialogLabelFont);
+        FontResource res_dialogLabelFont = resServ.getFont(dialogLabelFont);
+        UIManager.put("Label.font", res_dialogLabelFont.raw);
     }
 
     @Override

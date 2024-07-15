@@ -70,7 +70,7 @@ public class StartUI
         
         panel.setBorder(null);
         
-        frame = new JFrame("test");
+        frame = new JFrame("splash");
         frame.setType(Window.Type.UTILITY);
         frame.setUndecorated(true);
         frame.setContentPane(panel);
@@ -83,9 +83,6 @@ public class StartUI
     {
         //WebLookAndFeel.install(WebDarkSkin.class);
         Services.preload();
-        
-        Font oldLabelFont = UIManager.getFont("Label.font");
-        UIManager.put("Label.font", oldLabelFont.deriveFont(Font.PLAIN));
     }
     
     private static void onServicesPreloaded(Async async)
