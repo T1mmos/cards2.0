@@ -1,7 +1,6 @@
 package gent.timdemey.cards.ui;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.io.InputStream;
 
 import javax.imageio.ImageIO;
@@ -22,6 +21,9 @@ import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.utils.Async;
 import gent.timdemey.cards.utils.ThreadUtils;
+import java.awt.Font;
+import java.awt.Window;
+import javax.swing.UIManager;
 import net.miginfocom.swing.MigLayout;
 
 public class StartUI
@@ -69,6 +71,7 @@ public class StartUI
         panel.setBorder(null);
         
         frame = new JFrame("test");
+        frame.setType(Window.Type.UTILITY);
         frame.setUndecorated(true);
         frame.setContentPane(panel);
         frame.pack();
@@ -78,8 +81,11 @@ public class StartUI
     
     private static void preload()
     {
-    //    WebLookAndFeel.install(WebDarkSkin.class);
+        //WebLookAndFeel.install(WebDarkSkin.class);
         Services.preload();
+        
+        Font oldLabelFont = UIManager.getFont("Label.font");
+        UIManager.put("Label.font", oldLabelFont.deriveFont(Font.PLAIN));
     }
     
     private static void onServicesPreloaded(Async async)
