@@ -19,6 +19,22 @@ The main engine found in [cards_framework](../master/cards_framework) must be st
 * Solitaire (single player - [screenshot](screenshots/solitaire_590x445.png?raw=true) - [plugin](../master/cards_solitaire/src/main/java/src/gent/timdemey/cards/SolitairePlugin.java))
 * Solitaire Showdown (1vs1 multiplayer - [animated GIF](screenshots/solitaireshowdown_11252020.gif?raw=true) - [plugin](../master/cards_solitaireshowdown/src/main/java/src/gent/timdemey/cards/SolShowPlugin.java))
 
+## Build / Run
+
+1. Go to the root of the git repository
+2. Build and Run:
+   * Framework + Solitaire plugin:
+     ```
+     mvn -f .\cards_framework\pom.xml clean install; mvn -f .\cards_solitaire\pom.xml clean install; .\cards_solitaire\target\cards_solitaire-1.0.jar
+     ```
+   * Framework + Solitaire Showdown plugin:
+     ```
+     mvn -f .\cards_framework\pom.xml clean install; mvn -f .\cards_solitaireshowdown\pom.xml clean install; .\cards_solitaireshowdown\target\cards_solitaireshowdown-1.0.jar
+     ```
+3. Run Only:
+   * The JAR files ```cards_solitaire-1.0.jar``` and ```cards_solitaireshowdown-1.0.jar``` are executable, so you should be able to execute them from the CLI or even simpler by double clicking them.
+   * If this doesn't work, you can run either ```scripts/run_solitaire.bat``` or ```scripts/run_solitaire_showdown.bat```
+  
 ## Latest animated GIF
 
 ![Screenshot Solitaire Showdown](screenshots/solitaireshowdown_01112021.gif)
