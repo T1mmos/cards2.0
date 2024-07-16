@@ -20,7 +20,7 @@ public class ResourceNameService implements IResourceNameService
         RESOURCES0.put(ResourceDescriptors.CardBack,            "cards/edge_thick/backside_yellow.png"  );
         RESOURCES0.put(ResourceDescriptors.FontMenu,            "ARCADE.TTF"                            );
         RESOURCES0.put(ResourceDescriptors.AppTitleFont,        "foptitles.ttf"                         );
-        RESOURCES0.put(ResourceDescriptors.AppBackground,       "background_softblue.png"               );
+        RESOURCES0.put(ResourceDescriptors.AppBackground,       "background_darkgray.png"               );
         RESOURCES0.put(ResourceDescriptors.DialogBackground,    "bg_olive.png"                          );
         RESOURCES0.put(ResourceDescriptors.DialogTitleFont,     "SMB2.ttf"                              );
         RESOURCES0.put(ResourceDescriptors.DialogLabelFont,     "Pentapixel.ttf"                        );

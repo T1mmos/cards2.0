@@ -22,6 +22,7 @@ import gent.timdemey.cards.ui.components.swing.JSButton;
 import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.PanelManagerBase;
+import javax.swing.SwingConstants;
 import net.miginfocom.swing.MigLayout;
 
 public class MenuPanelManager extends PanelManagerBase
@@ -67,6 +68,7 @@ public class MenuPanelManager extends PanelManagerBase
                 
                 button.setContentAreaFilled(false);
                 button.setFocusPainted(false);
+                button.setHorizontalAlignment(SwingConstants.LEFT);
                 button.setBorder(null);
                 button.setBorderPainted(false);
                 button.addMouseListener(listener);

@@ -153,7 +153,8 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
         JLabel lb_srvname = new JLabel(Loc.get(LocKey.Label_serversfound));
 
         scroll_server.setViewportView(table_servers);
-
+        this.table_servers.getColumnModel().getColumn(2).setMaxWidth(100);
+        
         this.contentPanel = JSFactory.createLayeredPane(ComponentTypes.PANEL);
         contentPanel.add(lb_srvname, "spanx 2, growx, wrap");
         contentPanel.add(scroll_server, "spanx 2, hmin 150, hmax 300, grow, span, wrap");

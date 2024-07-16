@@ -310,25 +310,24 @@ public class FrameService implements IFrameService, IPreload
             }            
         }
         
-        // add the panel to the miglayout
-    /*    if (add)
+        if (push)
         {
+            // determine how many panels of this PanelType are already visible,
+            // use this number to assign the correct layer
+            List<IPanelManager> visPms = StreamUtils.combine(
+                    getPanelDescriptorsAsStream(), 
+                    s -> filterVisible(s),
+                    s -> filterType(s, pd.panelType),
+                    s -> toPanelManager(s))
+                .collect(Collectors.toList());
+            int visCnt = visPms.size();   
+            int layer = getBaseLayer(pd.panelType) + visCnt;
+        
+            getFrameBodyPanel().add(comp, "pos 0 0 100% 100%");
+            getFrameBodyPanel().setLayer(comp, layer);
             
-        }*/
+        }
         
-        // determine how many panels of this PanelType are already visible,
-        // use this number to assign the correct layer
-        List<IPanelManager> visPms = StreamUtils.combine(
-                getPanelDescriptorsAsStream(), 
-                s -> filterVisible(s),
-                s -> filterType(s, pd.panelType),
-                s -> toPanelManager(s))
-            .collect(Collectors.toList());
-        int visCnt = visPms.size();   
-        int layer = getBaseLayer(pd.panelType) + visCnt;
-        
-        getFrameBodyPanel().add(comp, "pos 0 0 100% 100%");
-        getFrameBodyPanel().setLayer(comp, layer);
         getFrameBodyPanel().invalidate();
         getFrameBodyPanel().validate();
         setVisible(pd);
