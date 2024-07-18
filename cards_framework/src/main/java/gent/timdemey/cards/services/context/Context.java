@@ -181,21 +181,34 @@ public final class Context
         // do not leak EntityBase objects, convert to readonly counterparts
         List<ReadOnlyChange> roChanges = new ArrayList<>();
         
-        Map<EntityPropertyChange, List<Object>> stateRef2ListValues = new HashMap<>();
+        Map<EntityPropertyChange, List<Object>> stateRef2ListAddedValues = new HashMap<>();
+        Map<EntityPropertyChange, List<Object>> stateRef2ListRemovedValues = new HashMap<>();
         for (Change<?> change : changes)
         {
-            if (change.changeType == ChangeType.Add || change.changeType == ChangeType.Remove)
+            if (change.changeType == ChangeType.Add)
             {
                 EntityPropertyChange epc = new EntityPropertyChange(change.property, change.entityId, change.changeType);
-                List<Object> list = stateRef2ListValues.get(epc);
+                List<Object> list = stateRef2ListAddedValues.get(epc);
                 if (list == null)
                 {
                     list = new ArrayList<Object>();
-                    stateRef2ListValues.put(epc, list);
+                    stateRef2ListAddedValues.put(epc, list);
                 }
                 
                 list.add(change.addedValue);
-            }           
+            } 
+            else if (change.changeType == ChangeType.Remove)
+            {
+                EntityPropertyChange epc = new EntityPropertyChange(change.property, change.entityId, change.changeType);
+                List<Object> list = stateRef2ListRemovedValues.get(epc);
+                if (list == null)
+                {
+                    list = new ArrayList<Object>();
+                    stateRef2ListRemovedValues.put(epc, list);
+                }
+                
+                list.add(change.removedValue);
+            }
             else
             {
                 ReadOnlyChange roChange = ReadOnlyEntityFactory.getReadOnlyChangeValue(change);
@@ -203,10 +216,11 @@ public final class Context
             }            
         }
         
-        for (EntityPropertyChange epc : stateRef2ListValues.keySet())
+        for (EntityPropertyChange epc : stateRef2ListAddedValues.keySet())
         {
-            List<Object> addedValues = stateRef2ListValues.get(epc);
-            ReadOnlyChange roChange = ReadOnlyEntityFactory.getReadOnlyChangeListValue(epc.changeType, epc.property, epc.entityId, addedValues);
+            List<Object> addedValues = stateRef2ListAddedValues.get(epc);
+            List<Object> removedValues = stateRef2ListRemovedValues.get(epc);
+            ReadOnlyChange roChange = ReadOnlyEntityFactory.getReadOnlyChangeListValue(epc.changeType, epc.property, epc.entityId, addedValues, removedValues);
             roChanges.add(roChange);
         }
                

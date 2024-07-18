@@ -1,32 +1,37 @@
-    package gent.timdemey.cards.services.frame;
+package gent.timdemey.cards.services.frame;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
+import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
+import gent.timdemey.cards.services.interfaces.ISoundService;
 
-public class FrameGameListener implements IStateListener
-{
-    FrameGameListener()
-    {
-    }
-
+public class StateListener implements IStateListener
+{        
     @Override
     public void onChange(ReadOnlyChange change)
     {
-        IFrameService frameServ = Services.get(IFrameService.class);
         IContextService contextService = Services.get(IContextService.class);
-        IPanelService panelServ = Services.get(IPanelService.class);
-
         Context context = contextService.getThreadContext();
         ReadOnlyState state = context.getReadOnlyState();
 
+        CheckSound(state, change);
+    }
+    
+    private void CheckSound(ReadOnlyState state, ReadOnlyChange change)
+    {
+        ISoundService soundServ = Services.get(ISoundService.class);
+        IFrameService frameServ = Services.get(IFrameService.class);
+        IPanelService panelServ = Services.get(IPanelService.class);
+        
         if (change.property == ReadOnlyState.CardGame)
         {
             ReadOnlyCardGame cardGame = state.getCardGame();
@@ -38,15 +43,24 @@ public class FrameGameListener implements IStateListener
             else
             {             
                 frameServ.showPanel(PanelDescriptors.Game);
-                panelServ.createComponentsAsync(FrameGameListener::onCreatedComponents);
+                panelServ.createComponentsAsync(StateListener::onCreatedComponents);
+                
+                soundServ.play(ResourceDescriptors.SoundTest);
+            }
+        }
+        else if (change.property == ReadOnlyCardStack.Cards)
+        {
+            if (change.addedValues != null && !change.addedValues.isEmpty())
+            {
+                soundServ.play(ResourceDescriptors.SoundPutDown);
             }
         }
     }
-            
+     
     private static void onCreatedComponents ()
     {
         IPanelService panelServ = Services.get(IPanelService.class);
-        panelServ.rescaleResourcesAsync(FrameGameListener::onRescaledResources);
+        panelServ.rescaleResourcesAsync(StateListener::onRescaledResources);
     }
     
     private static void onRescaledResources ()

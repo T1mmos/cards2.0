@@ -708,8 +708,7 @@ public class FrameService implements IFrameService, IPreload
         IContextService ctxtServ = Services.get(IContextService.class);
         Context ctxt = ctxtServ.getThreadContext();
         
-        ctxt.addStateListener(new FrameGameListener());
-        ctxt.addStateListener(new FrameSoundStateListener());
+        ctxt.addStateListener(new StateListener());
     }
     
     private <IN, OUT> JSLayeredPane createDialogPanel(DataPanelDescriptor<IN, OUT> desc, IN inData,

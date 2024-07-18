@@ -53,6 +53,8 @@ public class SoundService implements ISoundService, IPreload
     @Override
     public void play(ResourceDescriptor desc)
     {
+        Logger.info("Playing %s", desc.toString());
+        
         executor.submit(() -> 
         {
             try
@@ -67,25 +69,10 @@ public class SoundService implements ISoundService, IPreload
                     return;
                 }
                 
-                // the byte array is read once from disk due to the cache service. 
-                // however to support multiplay we need a new InputStream for each request to play the 
-                // same resource, so we'll use a new ByteArrayInputStream on top of the byte array.
-                byte[] arr = audioRes.raw;                
-                @SuppressWarnings("resource")
-                Clip clip = AudioSystem.getClip();
-                clip.addLineListener(new LineListener() 
-                {
-                    public void update(LineEvent myLineEvent) {
-                        if (myLineEvent.getType() == LineEvent.Type.STOP)
-                        {
-                            clip.close();  
-                        }
-                    }
-                });
-                ByteArrayInputStream bis = new ByteArrayInputStream(arr);
-                @SuppressWarnings("resource")
-                AudioInputStream ais = AudioSystem.getAudioInputStream(bis);
-                clip.open(ais);
+                Clip clip = audioRes.raw;   
+                
+                clip.stop();
+                clip.setFramePosition(0);
                 clip.start();
             }
             catch (Exception e)

@@ -151,15 +151,15 @@ public class ReadOnlyEntityFactory
         return roChange;
     }
 
-    public static ReadOnlyChange getReadOnlyChangeListValue(ChangeType changeType, Property<?> property, UUID entityId, List<Object> values)
+    public static ReadOnlyChange getReadOnlyChangeListValue(ChangeType changeType, Property<?> property, UUID entityId, List<Object> added, List<Object> removed)
     {
         // find ReadOnlyProperty
         ReadOnlyProperty<?> roProperty = ReadOnlyProperty.getReadOnlyProperty(property);
 
         Object oldValue = null;
         Object newValue = null;
-        List<Object> addedValues = toReadOnly(values);
-        List<Object> removedValues = null;
+        List<Object> addedValues = toReadOnly(added);
+        List<Object> removedValues = toReadOnly(removed);
 
         ReadOnlyChange roChange = new ReadOnlyChange(changeType, roProperty, entityId, oldValue, newValue, addedValues, removedValues);
         return roChange;

@@ -1,8 +1,10 @@
 package gent.timdemey.cards.services.contract.res;
 
-public class AudioResource extends Resource<byte[]>
+import javax.sound.sampled.Clip;
+
+public class AudioResource extends Resource<Clip>
 {
-    public AudioResource(String filename, boolean fallback, byte[] clip)
+    public AudioResource(String filename, boolean fallback, Clip clip)
     {
         super(filename, fallback, clip);
     }
