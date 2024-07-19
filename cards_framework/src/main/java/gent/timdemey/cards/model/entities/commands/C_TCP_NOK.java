@@ -9,6 +9,7 @@ import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.IFrameService;
+import java.util.function.Consumer;
 
 public class C_TCP_NOK extends CommandBase
 {
@@ -53,12 +54,19 @@ public class C_TCP_NOK extends CommandBase
         default:
             break;
         }
-        
+                
         if (title != null && msg != null)
         {
-            Services.get(IFrameService.class).showMessage(title, msg);
+            Services.get(IFrameService.class).showMessage(title, msg, c -> ShowServerBrowser());
         }
-        
+        else 
+        {
+            ShowServerBrowser();
+        }
+    }
+    
+    private void ShowServerBrowser()
+    {
         D_Connect cmd_connect = new D_Connect();
         schedule(ContextType.UI, cmd_connect);
     }

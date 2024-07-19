@@ -691,6 +691,13 @@ public class FrameService implements IFrameService, IPreload
     }
 
     @Override
+    public void showMessage(String title, String message, Consumer<PanelOutData<Void>> onClose) 
+    {
+        MessagePanelData payload = new MessagePanelData(title, message);
+        showPanel(PanelDescriptors.Message, payload, onClose);
+    }
+    
+    @Override
     public void showInternalError()
     {
         String title = Loc.get(LocKey.DialogTitle_generalerror);

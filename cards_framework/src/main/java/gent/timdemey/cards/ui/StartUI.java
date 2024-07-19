@@ -17,16 +17,12 @@ import gent.timdemey.cards.model.entities.commands.C_LoadConfig;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
-import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptors;
-import gent.timdemey.cards.services.contract.res.FontResource;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.utils.Async;
 import gent.timdemey.cards.utils.ThreadUtils;
 import java.awt.Window;
-import java.awt.geom.FlatteningPathIterator;
-import javax.swing.UIManager;
 import net.miginfocom.swing.MigLayout;
 
 public class StartUI

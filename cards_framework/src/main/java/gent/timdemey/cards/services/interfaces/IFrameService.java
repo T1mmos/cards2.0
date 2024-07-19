@@ -18,6 +18,7 @@ public interface IFrameService
     public void showPanel(PanelDescriptor desc);
     public <IN, OUT> void showPanel(DataPanelDescriptor<IN, OUT> desc, IN data, Consumer<PanelOutData<OUT>> onClose);
     public void showMessage(String title, String message);
+    public void showMessage(String title, String message, Consumer<PanelOutData<Void>> onClose);
     public void showInternalError();
     public void hidePanel(PanelDescriptor desc);
     public void removePanel(PanelDescriptor game);
