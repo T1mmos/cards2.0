@@ -32,7 +32,7 @@ import javax.swing.JSeparator;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
 
-import gent.timdemey.cards.Services;
+
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.services.context.Context;
@@ -66,8 +66,6 @@ import gent.timdemey.cards.ui.panels.dialogs.message.MessagePanelData;
 import gent.timdemey.cards.ui.panels.frame.FramePanelManager;
 import gent.timdemey.cards.utils.DimensionUtils;
 import gent.timdemey.cards.utils.StreamUtils;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import net.miginfocom.swing.MigLayout;
 
 public class FrameService implements IFrameService, IPreload

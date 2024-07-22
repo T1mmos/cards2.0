@@ -1,11 +1,11 @@
 package gent.timdemey.cards.ui.panels.game;
 
+import gent.timdemey.cards.di.Container;
 import java.util.List;
 import java.util.UUID;
 
 import javax.swing.JComponent;
 
-import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.cards.Suit;
 import gent.timdemey.cards.model.entities.cards.Value;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
@@ -39,7 +39,29 @@ public class CardGamePanelManager extends PanelManagerBase
     private CardGamePanelMouseListener mouseListener;
     private CardGamePanelStateListener stateListener;
     private CardGamePanelContainerListener contListener;
+    private final IContextService _ContextService;
+    private final Container _Container;
+    private final IIdService _IdService;
+    private final IResourceNameService _ResourceNameService;
+    private final IPositionService _PositionService;
+    private final IScalingService _ScalingService;
 
+    public CardGamePanelManager(
+            Container container,
+            IIdService idService,
+            IResourceNameService resourceNameService,
+            IPositionService positionService,
+            IScalingService scalingService,
+            IContextService contextService)
+    {
+        this._Container = container;
+        this._IdService = idService;
+        this._ResourceNameService = resourceNameService;
+        this._PositionService = positionService;
+        this._ScalingService = scalingService;
+        this._ContextService = contextService;
+    }
+    
     @Override
     public void preload()
     {
@@ -50,7 +72,7 @@ public class CardGamePanelManager extends PanelManagerBase
     @Override
     public void onShown()
     {
-        Context ctxt = Services.get(IContextService.class).getThreadContext();
+        Context ctxt = _ContextService.getThreadContext();
         
         gamePanel.addMouseMotionListener(mouseListener);
         gamePanel.addMouseListener(mouseListener);
@@ -60,7 +82,7 @@ public class CardGamePanelManager extends PanelManagerBase
     @Override
     public void onHidden()
     {
-        Context ctxt = Services.get(IContextService.class).getThreadContext();
+        Context ctxt = _ContextService.getThreadContext();
         
         gamePanel.addMouseMotionListener(mouseListener);
         gamePanel.removeMouseListener(mouseListener);
@@ -99,17 +121,17 @@ public class CardGamePanelManager extends PanelManagerBase
     
     protected CardGamePanelMouseListener createMouseListener()
     {
-        return new CardGamePanelMouseListener();
+        return _Container.Get(CardGamePanelMouseListener.class);
     }
 
     protected CardGamePanelStateListener createStateListener()
     {
-        return new CardGamePanelStateListener();
+        return _Container.Get(CardGamePanelStateListener.class);
     }
     
     protected CardGamePanelContainerListener createContainerListener()
     {
-        return new CardGamePanelContainerListener();
+        return _Container.Get(CardGamePanelContainerListener.class);
     }    
     
     @Override
@@ -121,7 +143,7 @@ public class CardGamePanelManager extends PanelManagerBase
     @Override
     public void addComponentCreators(List<Runnable> compCreators)
     {
-        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState().getCardGame();      
+        ReadOnlyCardGame cardGame = _ContextService.getThreadContext().getReadOnlyState().getCardGame();      
         
         List<ReadOnlyCard> cards = cardGame.getCards();
         for (int i = 0; i < cards.size(); i++)
@@ -140,9 +162,8 @@ public class CardGamePanelManager extends PanelManagerBase
             JSImage jsimage_card = (JSImage) comp;
             ReadOnlyCard card = (ReadOnlyCard) jsimage_card.getComponent().getPayload();
 
-            IIdService idServ = Services.get(IIdService.class);
-            UUID resId = card.isVisible() ? idServ.createCardFrontScalableResourceId(card.getSuit(), card.getValue())
-                    : idServ.createCardBackScalableResourceId();
+            UUID resId = card.isVisible() ? _IdService.createCardFrontScalableResourceId(card.getSuit(), card.getValue())
+                    : _IdService.createCardBackScalableResourceId();
             ((ScaledImageDrawer) jsimage_card.getDrawer()).setScalableImageResource(resId);
             jsimage_card.repaint();
 
@@ -154,8 +175,7 @@ public class CardGamePanelManager extends PanelManagerBase
             JSImage jsimage_cs = (JSImage) comp;
             ReadOnlyCardStack cardStack = (ReadOnlyCardStack) jsimage_cs.getComponent().getPayload();
 
-            IIdService idServ = Services.get(IIdService.class);
-            UUID resId = idServ.createCardStackScalableResourceId(cardStack.getCardStackType());
+            UUID resId = _IdService.createCardStackScalableResourceId(cardStack.getCardStackType());
             ((ScaledImageDrawer) jsimage_cs.getDrawer()).setScalableImageResource(resId);
             return;
         }
@@ -168,19 +188,16 @@ public class CardGamePanelManager extends PanelManagerBase
 
     protected void preloadCards()
     {
-        IIdService idServ = Services.get(IIdService.class);
-        IResourceNameService resLocServ = Services.get(IResourceNameService.class);
-
         // card back
-        preloadImage(idServ.createCardBackScalableResourceId(), resLocServ.getFilePath(ResourceDescriptors.CardBack));
+        preloadImage(_IdService.createCardBackScalableResourceId(), _ResourceNameService.getFilePath(ResourceDescriptors.CardBack));
 
         // card fronts
         for (Suit suit : Suit.values())
         {
             for (Value value : Value.values()) // have fun reading the code lol
             {
-                UUID resId = idServ.createCardFrontScalableResourceId(suit, value);
-                preloadImage(resId, resLocServ.getFilePath(ResourceDescriptors.CardFront, suit, value));
+                UUID resId = _IdService.createCardFrontScalableResourceId(suit, value);
+                preloadImage(resId, _ResourceNameService.getFilePath(ResourceDescriptors.CardFront, suit, value));
             }
         }
     }
@@ -192,8 +209,7 @@ public class CardGamePanelManager extends PanelManagerBase
     @Override
     public void positionComponent(JComponent comp)
     {
-        IPositionService posServ = Services.get(IPositionService.class);
-        LayeredArea layArea = posServ.getLayeredArea(comp);
+        LayeredArea layArea = _PositionService.getLayeredArea(comp);
         ((IHasComponent<?>) comp).getComponent().setAbsCoords(layArea.abscoords_src);
         ((IHasDrawer) comp).getDrawer().setMirror(layArea.mirror);        
         
@@ -202,19 +218,18 @@ public class CardGamePanelManager extends PanelManagerBase
 
     public void addRescaleRequests(List<? super RescaleRequest> requests)
     {
-        IIdService idServ = Services.get(IIdService.class);
-        ReadOnlyCardGame cardGame = Services.get(IContextService.class).getThreadContext().getReadOnlyState()
+        ReadOnlyCardGame cardGame = _ContextService.getThreadContext().getReadOnlyState()
                 .getCardGame();
 
         // cards - fronts
         for (ReadOnlyCard card : cardGame.getCards())
         {
-            UUID resId = idServ.createCardFrontScalableResourceId(card.getSuit(), card.getValue());
+            UUID resId = _IdService.createCardFrontScalableResourceId(card.getSuit(), card.getValue());
             addRescaleRequest(requests, ComponentTypes.CARD, resId);
         }
         // cards - back
         {
-            UUID resId = idServ.createCardBackScalableResourceId();
+            UUID resId = _IdService.createCardBackScalableResourceId();
             addRescaleRequest(requests, ComponentTypes.CARD, resId);
         }
         // card stacks
@@ -222,16 +237,13 @@ public class CardGamePanelManager extends PanelManagerBase
         {
             String csType = cs.getCardStackType();
             ComponentType cd_cardstack = ComponentTypes.CARDSTACK.derive(csType);
-            UUID resId = idServ.createCardStackScalableResourceId(csType);
+            UUID resId = _IdService.createCardStackScalableResourceId(csType);
             addRescaleRequest(requests, cd_cardstack, resId);
         }
     }   
     
     protected void createJSImage(ReadOnlyCard card)
     {
-        IIdService uuidServ = Services.get(IIdService.class);
-        IScalingService scaleServ = Services.get(IScalingService.class);
-
         UUID compId = createComponentId(card);
 
         JComponent comp = comp2jcomp.get(compId);
@@ -240,12 +252,12 @@ public class CardGamePanelManager extends PanelManagerBase
             throw new IllegalArgumentException("A scalable component already exist for the given model object: " + card);            
         }
         
-        UUID resFrontId = uuidServ.createCardFrontScalableResourceId(card.getSuit(), card.getValue());
-        UUID resBackId = uuidServ.createCardBackScalableResourceId();
+        UUID resFrontId = _IdService.createCardFrontScalableResourceId(card.getSuit(), card.getValue());
+        UUID resBackId = _IdService.createCardBackScalableResourceId();
 
         // create the component using its necessary image resources
-        SImageResource res_front = (SImageResource) scaleServ.getSResource(resFrontId);
-        SImageResource res_back = (SImageResource) scaleServ.getSResource(resBackId);
+        SImageResource res_front = (SImageResource) _ScalingService.getSResource(resFrontId);
+        SImageResource res_back = (SImageResource) _ScalingService.getSResource(resBackId);
         
         createJSImage(compId, ComponentTypes.CARD, card, res_front, res_back);
     }
@@ -257,8 +269,6 @@ public class CardGamePanelManager extends PanelManagerBase
         
     protected void createJSImage(ReadOnlyCardStack cardstack)
     {
-        IIdService idServ = Services.get(IIdService.class);
-
         UUID compId = createComponentId(cardstack);
 
         JComponent comp = comp2jcomp.get(compId);
@@ -267,11 +277,10 @@ public class CardGamePanelManager extends PanelManagerBase
             throw new IllegalArgumentException("A scalable component already exist for the given model object: " + cardstack);            
         }
         
-        UUID csResId = idServ.createCardStackScalableResourceId(cardstack.getCardStackType());
+        UUID csResId = _IdService.createCardStackScalableResourceId(cardstack.getCardStackType());
 
         // create the component using its necessary image resources
-        IScalingService scaleServ = Services.get(IScalingService.class);
-        SImageResource res = (SImageResource) scaleServ.getSResource(csResId);
+        SImageResource res = (SImageResource) _ScalingService.getSResource(csResId);
         createJSImage(compId, ComponentTypes.CARDSTACK, cardstack, res);
     }
     

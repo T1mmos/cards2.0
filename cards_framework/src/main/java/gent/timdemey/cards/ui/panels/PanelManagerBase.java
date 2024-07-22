@@ -13,7 +13,6 @@ import java.util.stream.Stream;
 
 import javax.swing.JComponent;
 
-import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityBase;
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
@@ -38,8 +37,26 @@ public abstract class PanelManagerBase implements IPanelManager
     protected final Map<UUID, JComponent> comp2jcomp;
     protected final Map<UUID, UUID> entity2comp;
     
-    protected PanelManagerBase()
+    private IResourceCacheService _ResourceCacheService;
+    private IScalingService _ScalingService;
+    private IIdService _IdService;
+    private IPositionService _PositionService;
+    private IAnimationService _AnimationService;
+    
+    public PanelManagerBase(
+            IAnimationService animationService,
+            IResourceCacheService resourceCacheService,
+            IScalingService scalingService,
+            IIdService idService,
+            IPositionService positionService)
     {
+        this._AnimationService = animationService;
+        this._ResourceCacheService = resourceCacheService;
+        this._ScalingService = scalingService;
+        this._IdService = idService;
+        this._PositionService = positionService;
+        
+        
         this.comp2jcomp = new HashMap<>();
         this.entity2comp = new HashMap<>();
     }
@@ -123,7 +140,6 @@ public abstract class PanelManagerBase implements IPanelManager
     
     protected UUID createComponentId(ReadOnlyEntityBase<?> entity)
     {     
-        IIdService idServ = Services.get(IIdService.class);
         UUID compId = entity2comp.get(entity.getId());
         if (compId != null)
         {
@@ -131,7 +147,7 @@ public abstract class PanelManagerBase implements IPanelManager
         }
 
         // get the ids
-        compId = idServ.createScalableComponentId(entity);
+        compId = _IdService.createScalableComponentId(entity);
         entity2comp.put(entity.getId(), compId);
         
         return compId;
@@ -171,35 +187,26 @@ public abstract class PanelManagerBase implements IPanelManager
     
     protected final void preloadImage(UUID resId, String path)
     {
-        IResourceCacheService resServ = Services.get(IResourceCacheService.class);
-        IScalingService scaleCompServ = Services.get(IScalingService.class);
-
-        ImageResource imgRes = resServ.getImage(path);
+        ImageResource imgRes = _ResourceCacheService.getImage(path);
         ISResource<?> scaleRes_back = new SImageResource(resId, imgRes);
-        scaleCompServ.addSResource(scaleRes_back);
+        _ScalingService.addSResource(scaleRes_back);
     }
 
     protected final void preloadFont(UUID resId, String path)
     {
-        IResourceCacheService resServ = Services.get(IResourceCacheService.class);
-        IScalingService scaleCompServ = Services.get(IScalingService.class);
-
-        FontResource resp_font = resServ.getFont(path);
+        FontResource resp_font = _ResourceCacheService.getFont(path);
 
         ISResource<?> scaleRes_font = new SFontResource(resId, resp_font);
-        scaleCompServ.addSResource(scaleRes_font);
+        _ScalingService.addSResource(scaleRes_font);
     }
     
     protected final void addRescaleRequest(List<? super RescaleRequest> requests, ComponentType compType, UUID resId)
     {
-        IPositionService posServ = Services.get(IPositionService.class);
-        IScalingService scaleServ = Services.get(IScalingService.class);
-
         // get dimension
-        Dimension dim = posServ.getResourceDimension(compType);
+        Dimension dim = _PositionService.getResourceDimension(compType);
 
         // get the resource to rescale
-        ISResource<?> res = scaleServ.getSResource(resId);
+        ISResource<?> res = _ScalingService.getSResource(resId);
 
         // add rescale request for resource / dimension combination
         RescaleRequest rescReq = new RescaleRequest(res, dim);
@@ -220,15 +227,13 @@ public abstract class PanelManagerBase implements IPanelManager
     @Override
     public void startAnimate(JComponent jcomp)
     {
-        IAnimationService animServ = Services.get(IAnimationService.class);
-        animServ.animate(jcomp, this);        
+        _AnimationService.animate(jcomp, this);        
     }
 
     @Override
     public void stopAnimate(JComponent jcomp)
     {
-        IAnimationService animServ = Services.get(IAnimationService.class);
-        animServ.stopAnimate(jcomp);
+        _AnimationService.stopAnimate(jcomp);
     }
     
     @Override

@@ -1,4 +1,4 @@
-package gent.timdemey.cards.services.context;
+package gent.timdemey.cards.model.state;
 
 import java.util.List;
 

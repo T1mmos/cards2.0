@@ -11,7 +11,7 @@ import java.util.TimerTask;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
-import gent.timdemey.cards.Services;
+
 import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.contract.preload.IPreload;

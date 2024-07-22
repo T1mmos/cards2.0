@@ -2,7 +2,6 @@ package gent.timdemey.cards.model.entities.commands;
 
 import java.util.UUID;
 
-import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.entities.common.PayloadBase;

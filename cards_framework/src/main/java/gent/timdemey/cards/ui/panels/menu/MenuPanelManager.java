@@ -8,7 +8,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 import gent.timdemey.cards.ICardPlugin;
-import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.action.ActionBase;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
@@ -30,7 +29,23 @@ public class MenuPanelManager extends PanelManagerBase
     private JSLayeredPane menuPanel;
     
     private BufferedImage bgimg;
+    private final IActionService _ActionService;
+    private final IResourceNameService _ResourceNameService;
+    private final IResourceCacheService _ResourceCacheService;
+    private final ICardPlugin _CardPlugin;
 
+    public MenuPanelManager (
+            IActionService actionService,
+            IResourceNameService resourceNameService,
+            IResourceCacheService resourceCacheService,
+            ICardPlugin cardPlugin)
+    {
+        this._ActionService = actionService;
+        this._ResourceNameService = resourceNameService;
+        this._ResourceCacheService = resourceCacheService;
+        this._CardPlugin = cardPlugin;
+    }
+    
     @Override
     public void destroyPanel()
     {
@@ -59,11 +74,11 @@ public class MenuPanelManager extends PanelManagerBase
         {
             JSLayeredPane pnl_buts = JSFactory.createLayeredPane(ComponentTypes.PANEL);
             List<ActionDescriptor> actDescs = getMenuActionDescriptors();
-            MenuButtonMouseListener listener = new MenuButtonMouseListener();                
-            IActionService actServ = Services.get(IActionService.class);
+            MenuButtonMouseListener listener = new MenuButtonMouseListener();          
+            
             for (ActionDescriptor actDesc : actDescs)
             {
-                ActionBase action = actServ.getAction(actDesc);
+                ActionBase action = _ActionService.getAction(actDesc);
                 JSButton button = JSFactory.createButton(action);
                 
                 button.setContentAreaFilled(false);
@@ -91,10 +106,9 @@ public class MenuPanelManager extends PanelManagerBase
     
     protected List<ActionDescriptor> getMenuActionDescriptors()
     {
-        ICardPlugin cardPlugin = Services.get(ICardPlugin.class);
         List<ActionDescriptor> actdescs = new ArrayList<>();
         
-        if(cardPlugin.getPlayerCount() > 1)
+        if(_CardPlugin.getPlayerCount() > 1)
         {
             actdescs.add(ActionDescriptors.CREATEMP);
             actdescs.add(ActionDescriptors.JOIN);
@@ -114,10 +128,8 @@ public class MenuPanelManager extends PanelManagerBase
     @Override
     public void preload()
     {
-        IResourceNameService resLocServ = Services.get(IResourceNameService.class);
-        String iconFilename = resLocServ.getFilePath(ResourceDescriptors.Menu);
-        IResourceCacheService resCacheServ = Services.get(IResourceCacheService.class);
-        ImageResource res = resCacheServ.getImage(iconFilename);
+        String iconFilename = _ResourceNameService.getFilePath(ResourceDescriptors.Menu);
+        ImageResource res = _ResourceCacheService.getImage(iconFilename);
         bgimg = res.raw;
     }
  }

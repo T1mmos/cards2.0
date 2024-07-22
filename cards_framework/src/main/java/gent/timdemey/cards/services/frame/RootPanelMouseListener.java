@@ -8,7 +8,7 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
-import gent.timdemey.cards.Services;
+
 import gent.timdemey.cards.services.interfaces.IFrameService;
 
 public class RootPanelMouseListener implements MouseListener, MouseMotionListener

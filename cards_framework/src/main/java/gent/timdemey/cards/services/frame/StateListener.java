@@ -1,6 +1,6 @@
 package gent.timdemey.cards.services.frame;
 
-import gent.timdemey.cards.Services;
+
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;

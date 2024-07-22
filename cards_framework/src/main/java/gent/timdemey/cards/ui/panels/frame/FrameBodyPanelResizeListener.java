@@ -7,7 +7,6 @@ import java.util.TimerTask;
 
 import javax.swing.SwingUtilities;
 
-import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 
@@ -34,7 +33,18 @@ class FrameBodyPanelResizeListener implements ComponentListener
     private TimerTask rescaleTask;
 
     private long msLastRelayout = 0;
+    private final IPanelService _PanelService;
+    private final IFrameService _FrameService;
 
+    public FrameBodyPanelResizeListener (
+            IFrameService frameService,
+            IPanelService panelService)
+    {
+        this._FrameService = frameService;
+        this._PanelService = panelService;
+    }
+            
+    
     @Override
     public void componentShown(ComponentEvent e)
     {
@@ -88,21 +98,18 @@ class FrameBodyPanelResizeListener implements ComponentListener
     }
     
     private void relayout()
-    {
-        IFrameService frameServ = Services.get(IFrameService.class);
-        IPanelService panelServ = Services.get(IPanelService.class);        
+    {  
         
         SwingUtilities.invokeLater(() -> 
         {
-            frameServ.updatePositionService();
-            panelServ.positionComponents();
+            _FrameService.updatePositionService();
+            _PanelService.positionComponents();
         });
     }
     
     private void rescale()
     {
-        IPanelService panelServ = Services.get(IPanelService.class);
-        SwingUtilities.invokeLater(() -> panelServ.rescaleResourcesAsync(null));
+        SwingUtilities.invokeLater(() -> _PanelService.rescaleResourcesAsync(null));
     }
     
     @Override

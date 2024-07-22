@@ -1,6 +1,6 @@
 package gent.timdemey.cards.logging;
 
-import gent.timdemey.cards.Services;
+
 
 public class Logger
 {

@@ -21,8 +21,8 @@ import gent.timdemey.cards.model.entities.game.UDPServer;
 import gent.timdemey.cards.model.state.Property;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.model.state.StateListRef;
-import gent.timdemey.cards.services.context.Change;
-import gent.timdemey.cards.services.context.ChangeType;
+import gent.timdemey.cards.model.state.Change;
+import gent.timdemey.cards.model.state.ChangeType;
 
 public class ReadOnlyEntityFactory
 {

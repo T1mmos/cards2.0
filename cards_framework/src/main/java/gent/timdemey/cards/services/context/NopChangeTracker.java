@@ -1,5 +1,7 @@
 package gent.timdemey.cards.services.context;
 
+import gent.timdemey.cards.model.state.Change;
+import gent.timdemey.cards.model.state.IChangeTracker;
 import java.util.ArrayList;
 import java.util.List;
 

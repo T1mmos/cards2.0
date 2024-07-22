@@ -2,7 +2,7 @@ package gent.timdemey.cards.services.animation;
 
 import javax.swing.JComponent;
 
-import gent.timdemey.cards.Services;
+
 import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.ui.components.ext.IHasComponent;

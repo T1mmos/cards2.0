@@ -1,17 +1,9 @@
 package gent.timdemey.cards.services.sound;
-
-import java.io.ByteArrayInputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
-
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.LineListener;
 
-import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptors;

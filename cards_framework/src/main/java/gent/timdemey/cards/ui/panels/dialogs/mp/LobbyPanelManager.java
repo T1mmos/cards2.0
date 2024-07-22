@@ -5,7 +5,6 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
-import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.readonlymodel.IStateListener;
@@ -14,7 +13,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyPlayer;
 import gent.timdemey.cards.readonlymodel.ReadOnlyProperty;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.readonlymodel.TypedChange;
-import gent.timdemey.cards.services.context.ChangeType;
+import gent.timdemey.cards.model.state.ChangeType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
@@ -37,14 +36,25 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
     private JLabel l_waitingToStart;
 
     private IStateListener stateListener = null;
+    private IContextService _ContextService;
+    private IActionService _ActionService;
 
+    
+    public LobbyPanelManager (
+            IContextService contextService,
+            IActionService actionService)
+    {
+        this._ContextService = contextService;
+        this._ActionService = actionService;
+    }
+    
+    
     private class LobbyDialogStateListener implements IStateListener
     {
         @Override
         public void onChange(ReadOnlyChange change)
         {
-            IContextService contextService = Services.get(IContextService.class);
-            Context context = contextService.getThreadContext();
+            Context context = _ContextService.getThreadContext();
             ReadOnlyState state = context.getReadOnlyState();
            
             ReadOnlyProperty<?> property = change.property;
@@ -90,18 +100,15 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
     @Override
     public JSLayeredPane createPanel()
     {
-        IContextService contextService = Services.get(IContextService.class);
-        Context context = contextService.getThreadContext();
+        Context context = _ContextService.getThreadContext();
         ReadOnlyState state = context.getReadOnlyState();
         
         panel = JSFactory.createLayeredPane(ComponentTypes.PANEL);
         panel.setLayout(new MigLayout("insets 0, wmin 300"));
-        
-        IActionService actServ = Services.get(IActionService.class);
-        
+                
         this.l_serverMsg = new JLabel(state.getServerMessage());
         this.l_localPlayer = new JLabel(state.getPlayers().get(state.getLocalId()).getName(), JLabel.RIGHT);
-        this.b_startGame = new JButton(actServ.getAction(ActionDescriptors.STARTMP));
+        this.b_startGame = new JButton(_ActionService.getAction(ActionDescriptors.STARTMP));
         
         String lobbyAdminName = state.getPlayers().get(state.getLobbyAdminId()).getName();
         this.l_waitingToStart = new JLabel(Loc.get(LocKey.Label_waitingToStart, lobbyAdminName));
@@ -143,8 +150,7 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
     @Override
     public void onShown()
     {
-        IContextService contextService = Services.get(IContextService.class);
-        Context context = contextService.getThreadContext();
+        Context context = _ContextService.getThreadContext();
 
         this.stateListener = new LobbyDialogStateListener();
         context.addStateListener(stateListener);
@@ -153,8 +159,7 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
     @Override
     public void onHidden()
     {
-        IContextService contextService = Services.get(IContextService.class);
-        Context context = contextService.getThreadContext();
+        Context context = _ContextService.getThreadContext();
 
         context.removeStateListener(stateListener);
         stateListener = null;

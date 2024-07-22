@@ -2,7 +2,7 @@ package gent.timdemey.cards.model.entities.commands;
 
 import java.util.UUID;
 
-import gent.timdemey.cards.Services;
+
 import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.netcode.ITcpConnectionListener;

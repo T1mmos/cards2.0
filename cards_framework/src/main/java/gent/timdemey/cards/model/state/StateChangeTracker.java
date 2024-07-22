@@ -1,5 +1,8 @@
-package gent.timdemey.cards.services.context;
+package gent.timdemey.cards.model.state;
 
+import gent.timdemey.cards.model.state.Change;
+import gent.timdemey.cards.model.state.IChangeTracker;
+import gent.timdemey.cards.model.state.ChangeType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -12,7 +15,7 @@ public class StateChangeTracker implements IChangeTracker
 {
     private List<Change<?>> changes;
 
-    StateChangeTracker()
+    public StateChangeTracker()
     {
         this.changes = new ArrayList<Change<?>>();
     }

@@ -3,7 +3,7 @@ package gent.timdemey.cards.services.panels.game;
 import java.util.List;
 import java.util.UUID;
 
-import gent.timdemey.cards.Services;
+
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes;

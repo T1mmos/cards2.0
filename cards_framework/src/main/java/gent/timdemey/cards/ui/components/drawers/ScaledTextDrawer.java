@@ -23,7 +23,6 @@ import java.util.function.Consumer;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.GetResourceResponse;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.interfaces.IPositionService;

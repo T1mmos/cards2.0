@@ -1,12 +1,15 @@
 package gent.timdemey.cards.services.context;
 
+import gent.timdemey.cards.model.state.StateChangeTracker;
+import gent.timdemey.cards.model.state.Change;
+import gent.timdemey.cards.model.state.IChangeTracker;
+import gent.timdemey.cards.model.state.ChangeType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;

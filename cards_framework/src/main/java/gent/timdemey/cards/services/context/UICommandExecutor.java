@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import javax.swing.SwingUtilities;
 
-import gent.timdemey.cards.Services;
+
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.C_Accept;
 import gent.timdemey.cards.model.entities.commands.C_Reject;

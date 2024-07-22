@@ -10,7 +10,7 @@ import java.util.EnumSet;
 
 import javax.swing.JFrame;
 
-import gent.timdemey.cards.Services;
+
 import gent.timdemey.cards.services.contract.SnapSide;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.utils.ArrayUtils;

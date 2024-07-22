@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
-import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
@@ -13,7 +12,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyPlayer;
 import gent.timdemey.cards.readonlymodel.ReadOnlyProperty;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.readonlymodel.TypedChange;
-import gent.timdemey.cards.services.context.ChangeType;
+import gent.timdemey.cards.model.state.ChangeType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
@@ -23,13 +22,23 @@ import gent.timdemey.cards.ui.panels.IPanelManager;
 
 public class CardGamePanelStateListener implements IStateListener
 {
+
+    private final IPanelService _PanelService;
+    private final IContextService _ContextService;
+    
+    public CardGamePanelStateListener (
+        IPanelService panelService,
+        IContextService contextService)
+    {
+        this._PanelService = panelService;
+        this._ContextService = contextService;
+    }
+    
     @Override
     public void onChange(ReadOnlyChange change)
     {
-        IPanelService pServ = Services.get(IPanelService.class);
-        IPanelManager pm = pServ.getPanelManager(PanelDescriptors.Game);
-        IContextService contextService = Services.get(IContextService.class);
-        Context context = contextService.getThreadContext();
+        IPanelManager pm = _PanelService.getPanelManager(PanelDescriptors.Game);
+        Context context = _ContextService.getThreadContext();
         ReadOnlyState state = context.getReadOnlyState();
         
         ReadOnlyProperty<?> property = change.property;

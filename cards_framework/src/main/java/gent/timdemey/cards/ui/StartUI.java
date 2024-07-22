@@ -10,37 +10,56 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import gent.timdemey.cards.Services;
+import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.C_LoadConfig;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
+import gent.timdemey.cards.services.contract.preload.IPreload;
+import gent.timdemey.cards.services.contract.preload.PreloadOrder;
+import gent.timdemey.cards.services.contract.preload.PreloadOrderType;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.utils.Async;
 import gent.timdemey.cards.utils.ThreadUtils;
 import java.awt.Window;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.stream.Collectors;
 import net.miginfocom.swing.MigLayout;
 
 public class StartUI
 {
     private static JFrame frame;
     
-    private StartUI()
+    private final IFrameService _FrameService;
+    private final IContextService _ContextService;
+    private final Container _Container;
+    private final IPanelService _PanelService;
+    
+    private StartUI(
+            Container container, 
+            IContextService contextService, 
+            IFrameService frameService, 
+            IPanelService panelService)
     {
+        this._Container = container;
+        this._ContextService = contextService;
+        this._FrameService = frameService;
+        this._PanelService = panelService;
     }
     
-    public static void startUI()
+    public void startUI()
     {    
         ThreadUtils.checkEDT();
 
         showSplash();
         
         // let all services preload load in the background
-        ThreadUtils.executeAndContinueOnUi("Service Preloader", StartUI::preload, StartUI::onServicesPreloaded);
+        ThreadUtils.executeAndContinueOnUi("Service Preloader", this::preload, this::onServicesPreloaded);
     }
     
     private static void showSplash()
@@ -77,14 +96,68 @@ public class StartUI
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
-    
-    private static void preload()
+        
+    private void preload()
     {
         FlatDarkLaf.setup();
-        Services.preload();
+        
+        // take a copy as parent interface request add more EntryKey to the service map. 
+        // this solves ConcurrentModificationExceptions and equally important we only want to preload once.
+        
+        
+        List<IPreload> preloadables = _Container.GetAll().stream()
+                .filter(obj -> obj instanceof IPreload)
+                .map(obj -> (IPreload) obj)
+                .collect(Collectors.toList());
+        
+        List<IPreload> pl_isolated =  preloadables.stream().filter(p -> readPreloadAnnotation(p) == PreloadOrderType.ISOLATED).collect(Collectors.toList());
+        List<IPreload> pl_dependent =  preloadables.stream().filter(p -> readPreloadAnnotation(p) == PreloadOrderType.DEPENDENT).collect(Collectors.toList());
+       
+        if (preloadables.size() != pl_isolated.size() + pl_dependent.size())
+        {
+            throw new UnsupportedOperationException("The list of preloadables contains entries with unknown PreloadOrderType annotations");
+        }
+            
+        // load first all isolated preloadables
+        for (IPreload preloadable : pl_isolated)
+        {
+            preloadable.preload();
+        }
+        
+        // then load all preloadables that depend on others (currently only one dependency layer supported)
+        for (IPreload preloadable : pl_dependent)
+        {
+            preloadable.preload();
+        }
     }
     
-    private static void onServicesPreloaded(Async async)
+    private static PreloadOrderType readPreloadAnnotation(IPreload preloadable)
+    {
+        try
+        {
+            Method m = IPreload.class.getDeclaredMethods()[0];
+            Class<?> clz = preloadable.getClass();
+            while (true)
+            {
+                Method m_impl = clz.getMethod(m.getName());
+                
+                PreloadOrder[] annots = m_impl.getAnnotationsByType(PreloadOrder.class);
+                if (annots.length == 1)
+                {
+                    return annots[0].order();
+                }
+                
+
+                clz = clz.getSuperclass();
+            }
+        }
+        catch (Exception e)
+        {
+            return PreloadOrderType.DEPENDENT;
+        }        
+    }
+    
+    private void onServicesPreloaded(Async async)
     {
         if (!async.success)
         {
@@ -97,27 +170,24 @@ public class StartUI
         Loc.setLocale(Loc.AVAILABLE_LOCALES[0]);
         
         // initialize UI context
-        IContextService ctxtServ = Services.get(IContextService.class);
-        ctxtServ.initialize(ContextType.UI);
+        _ContextService.initialize(ContextType.UI);
         
         // show the frame with just the loading animation, but already with a certain size
-        IFrameService frameServ = Services.get(IFrameService.class);                
-        frameServ.getFrame().setVisible(true);
+        _FrameService.getFrame().setVisible(true);
         
         // import configuration
-        Context ctxt = ctxtServ.getThreadContext();
+        Context ctxt = _ContextService.getThreadContext();
         C_LoadConfig cmd_loadcfg = new C_LoadConfig();
         ctxt.schedule(cmd_loadcfg);
         
-        frameServ.installStateListeners();
+        _FrameService.installStateListeners();
         
         // the frame is visible and created so the frame services can 
         // give the available dimensions to the position service
-        frameServ.updatePositionService();
+        _FrameService.updatePositionService();
         
         // add and show the default panel
-        IPanelService panelServ = Services.get(IPanelService.class);
-        PanelDescriptor panelDesc = panelServ.getDefaultPanelDescriptor();
-        frameServ.showPanel(panelDesc);
+        PanelDescriptor panelDesc = _PanelService.getDefaultPanelDescriptor();
+        _FrameService.showPanel(panelDesc);
     }
 }

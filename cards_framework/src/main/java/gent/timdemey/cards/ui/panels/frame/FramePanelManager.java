@@ -20,7 +20,6 @@ import javax.swing.KeyStroke;
 import javax.swing.border.Border;
 
 import gent.timdemey.cards.ICardPlugin;
-import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.action.ActionBase;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
@@ -33,7 +32,6 @@ import gent.timdemey.cards.services.frame.TitlePanelMouseListener;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IResourceNameService;
-import gent.timdemey.cards.ui.components.drawers.IDrawer;
 import gent.timdemey.cards.ui.components.swing.JSButton;
 import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
@@ -51,21 +49,37 @@ public class FramePanelManager extends PanelManagerBase
     private Border frameBorder;
     private RootPanelMouseListener rpMouseListener;
     
+    private IResourceCacheService _ResourceCacheService;
+    private IResourceNameService _ResourceNameService;
+    private IActionService _ActionService;
+    private FrameBodyPanelResizeListener _ResizeListener;
+    private ICardPlugin _CardPlugin;
+    
+    public FramePanelManager( 
+            ICardPlugin cardPlugin,
+            IResourceCacheService resourceCacheService,
+            IResourceNameService resourceNameService,
+            IActionService actionService,
+            FrameBodyPanelResizeListener resizeListener)
+    {
+        this._CardPlugin = cardPlugin;
+        this._ResourceCacheService = resourceCacheService;
+        this._ResourceNameService = resourceNameService;
+        this._ActionService = actionService;
+        this._ResizeListener = resizeListener;
+    }
+    
     @Override
     public void preload()
-    {
-        IResourceCacheService resServ = Services.get(IResourceCacheService.class);
-        IResourceNameService resLocServ = Services.get(IResourceNameService.class);
-        
-        String frameTitleFontName = resLocServ.getFilePath(ResourceDescriptors.AppTitleFont);
-        FontResource res_frameTitleFont = resServ.getFont(frameTitleFontName);
+    {        
+        String frameTitleFontName = _ResourceNameService.getFilePath(ResourceDescriptors.AppTitleFont);
+        FontResource res_frameTitleFont = _ResourceCacheService.getFont(frameTitleFontName);
         frameTitleFont = res_frameTitleFont.raw.deriveFont(40f);
     }
     
     private JButton createFrameButton(ActionDescriptor desc)
-    {
-        IActionService actServ = Services.get(IActionService.class);     
-        ActionBase action = actServ.getAction(desc);
+    { 
+        ActionBase action = _ActionService.getAction(desc);
         
         JSButton button = JSFactory.createButton(action);
       
@@ -119,14 +133,13 @@ public class FramePanelManager extends PanelManagerBase
         title_unmaximize.setVisible(false);
         
         frameBodyPanel = JSFactory.createLayeredPane(ComponentTypes.FRAMEBODY);
-        frameBodyPanel.addComponentListener(new FrameBodyPanelResizeListener());
+        frameBodyPanel.addComponentListener(_ResizeListener);
         framePanel.add(frameBodyPanel, "push, grow");
         
         // add global actions
-        IActionService actServ = Services.get(IActionService.class);
         for (ActionDescriptor ad : getFrameActions())
         {
-            ActionBase action = actServ.getAction(ad);
+            ActionBase action = _ActionService.getAction(ad);
             KeyStroke keyStroke = (KeyStroke) action.getValue(Action.ACCELERATOR_KEY);
             if (keyStroke != null)
             {
@@ -153,10 +166,8 @@ public class FramePanelManager extends PanelManagerBase
 
     protected BufferedImage getBackgroundImage()
     {
-        IResourceCacheService resServ = Services.get(IResourceCacheService.class);
-        IResourceNameService resLocServ = Services.get(IResourceNameService.class);
-        String bgpath = resLocServ.getFilePath(ResourceDescriptors.AppBackground);
-        BufferedImage background = resServ.getImage(bgpath).raw;
+        String bgpath = _ResourceNameService.getFilePath(ResourceDescriptors.AppBackground);
+        BufferedImage background = _ResourceCacheService.getImage(bgpath).raw;
         return background;
     }
 
@@ -172,11 +183,9 @@ public class FramePanelManager extends PanelManagerBase
     {
         List<Image> images = new ArrayList<>();
 
-        IResourceCacheService resServ = Services.get(IResourceCacheService.class);
-        IResourceNameService resLocServ = Services.get(IResourceNameService.class);
         for (int dim : new int []{16,24,48,140})
         {            
-            ImageResource resp = resServ.getImage(resLocServ.getFilePath(ResourceDescriptors.AppIcon, dim, dim));
+            ImageResource resp = _ResourceCacheService.getImage(_ResourceNameService.getFilePath(ResourceDescriptors.AppIcon, dim, dim));
             images.add(resp.raw);
         }
 
@@ -185,8 +194,7 @@ public class FramePanelManager extends PanelManagerBase
 
     public String getFrameTitle()
     {
-        ICardPlugin plugin = Services.get(ICardPlugin.class);
-        String title = plugin.getName();
+        String title = _CardPlugin.getName();
         return title;
     }    
     

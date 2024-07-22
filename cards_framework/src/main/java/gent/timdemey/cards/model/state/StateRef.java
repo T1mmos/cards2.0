@@ -2,13 +2,13 @@ package gent.timdemey.cards.model.state;
 
 import java.util.UUID;
 
-import gent.timdemey.cards.Services;
-import gent.timdemey.cards.services.context.IChangeTracker;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.utils.Debug;
 
 public abstract class StateRef<X>
 {
+    private final IChangeTracker _ChangeTracker;
+            
     public final Property<X> property;
     public final UUID entityId;
 
@@ -16,13 +16,14 @@ public abstract class StateRef<X>
     {
         this.property = property;
         this.entityId = entityId;
+        
+        IContextService contextService = Services.get(IContextService.class);
+        _ChangeTracker = contextService.getThreadContext().getChangeTracker();
     }
 
     protected final IChangeTracker getChangeTracker()
     {
-        IContextService contextService = Services.get(IContextService.class);
-        IChangeTracker changeTracker = contextService.getThreadContext().getChangeTracker();
-        return changeTracker;
+        return _ChangeTracker;
     }
     
     @Override

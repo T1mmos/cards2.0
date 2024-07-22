@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.ICardPlugin;
-import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.game.GameState;

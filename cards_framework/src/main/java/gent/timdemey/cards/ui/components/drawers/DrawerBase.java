@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 
 import javax.swing.JComponent;
 
-import gent.timdemey.cards.Services;
+
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.ui.components.ext.IHasComponent;

@@ -5,7 +5,7 @@ import java.util.UUID;
 import gent.timdemey.cards.App;
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.MockCardPlugin;
-import gent.timdemey.cards.Services;
+
 import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
@@ -57,11 +57,12 @@ public class TestBase
             }
         };
         
-        ctxtService.initialize(ContextType.UI);
         App.getServices().installIfAbsent(IContextService.class, () -> ctxtService);
         App.getServices().installIfAbsent(INetworkService.class, () -> new MockNetworkService());
         App.getServices().installIfAbsent(ILogManager.class, () -> new MockLogManager()); 
         App.getServices().installIfAbsent(ICardGameService.class, () -> cardGameServ);
+        
+        ctxtService.initialize(ContextType.UI);
     }
 
     public static void installMockCardPlugin()

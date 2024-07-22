@@ -1,5 +1,6 @@
 package gent.timdemey.cards.ui.panels;
 
+import gent.timdemey.cards.di.Container;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +16,6 @@ import java.util.function.Supplier;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
-import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.DataPanelDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
@@ -39,9 +39,19 @@ import gent.timdemey.cards.ui.panels.settings.SettingsPanelManager;
 public class PanelService implements IPanelService
 {
     private Map<PanelDescriptor, IPanelManager> panelMgrs;
+    
+    private final Container _Container;
+    private final IScalingService _ScalingService;
+    private final IPanelService _PanelService;
 
-    public PanelService()
+    public PanelService(
+            Container container,
+            IScalingService scalingService,
+            IPanelService panelService)
     {
+        this._Container = container;
+        this._ScalingService = scalingService;
+        this._PanelService = panelService;
     }
 
     @Override
@@ -56,17 +66,17 @@ public class PanelService implements IPanelService
 
     protected void addAbsentPanelManagers()
     {
-        addPanelManagerIfAbsent(PanelDescriptors.Frame, () -> new FramePanelManager());
-        addPanelManagerIfAbsent(PanelDescriptors.About, () -> new AboutPanelManager());
-        addPanelManagerIfAbsent(PanelDescriptors.Connect, () -> new JoinMPGamePanelManager());
-        addPanelManagerIfAbsent(PanelDescriptors.Game, () -> new CardGamePanelManager());
-        addPanelManagerIfAbsent(PanelDescriptors.GameMenu, () -> new GameMenuPanelManager());
-        addPanelManagerIfAbsent(PanelDescriptors.Load, () -> new LoadPanelManager());
-        addPanelManagerIfAbsent(PanelDescriptors.Lobby, () -> new LobbyPanelManager());
-        addPanelManagerIfAbsent(PanelDescriptors.Menu, () -> new MenuPanelManager());
-        addPanelManagerIfAbsent(PanelDescriptors.Message, () -> new MessagePanelManager());
-        addPanelManagerIfAbsent(PanelDescriptors.Settings, () -> new SettingsPanelManager());
-        addPanelManagerIfAbsent(PanelDescriptors.StartServer, () -> new StartServerPanelManager());
+        addPanelManagerIfAbsent(PanelDescriptors.Frame, () -> _Container.Get(FramePanelManager.class));
+        addPanelManagerIfAbsent(PanelDescriptors.About, () -> _Container.Get(AboutPanelManager.class));
+        addPanelManagerIfAbsent(PanelDescriptors.Connect, () -> _Container.Get(JoinMPGamePanelManager.class));
+        addPanelManagerIfAbsent(PanelDescriptors.Game, () -> _Container.Get(CardGamePanelManager.class));
+        addPanelManagerIfAbsent(PanelDescriptors.GameMenu, () -> _Container.Get(GameMenuPanelManager.class));
+        addPanelManagerIfAbsent(PanelDescriptors.Load, () -> _Container.Get(LoadPanelManager.class));
+        addPanelManagerIfAbsent(PanelDescriptors.Lobby, () -> _Container.Get(LobbyPanelManager.class));
+        addPanelManagerIfAbsent(PanelDescriptors.Menu, () -> _Container.Get(MenuPanelManager.class));
+        addPanelManagerIfAbsent(PanelDescriptors.Message, () -> _Container.Get(MessagePanelManager.class));
+        addPanelManagerIfAbsent(PanelDescriptors.Settings, () -> _Container.Get(SettingsPanelManager.class));
+        addPanelManagerIfAbsent(PanelDescriptors.StartServer, () -> _Container.Get(StartServerPanelManager.class));
     }
 
     protected final void addPanelManagerIfAbsent(PanelDescriptor pd, Supplier<PanelManagerBase> creator)
@@ -122,11 +132,10 @@ public class PanelService implements IPanelService
     @Override
     public final void rescaleResourcesAsync(Runnable callback)
     {
-        IScalingService scaleServ = Services.get(IScalingService.class);
         List<RescaleRequest> requests = new ArrayList<>();
         foreach(mgr -> mgr.addRescaleRequests(requests), true);
 
-        scaleServ.rescaleAsync(requests, () ->
+        _ScalingService.rescaleAsync(requests, () ->
         {
             SwingUtilities.invokeLater(() -> onRescaledResources(callback));
         });
@@ -139,10 +148,9 @@ public class PanelService implements IPanelService
             externalCallback.run();
         }
 
-        IPanelService panelServ = Services.get(IPanelService.class);
-        for (PanelDescriptor pd : panelServ.getPanelDescriptors())
+        for (PanelDescriptor pd : _PanelService.getPanelDescriptors())
         {
-            IPanelManager pm = panelServ.getPanelManager(pd);
+            IPanelManager pm = _PanelService.getPanelManager(pd);
             JComponent panel = pm.getPanel();
             if (panel == null)
             {

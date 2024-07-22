@@ -1,5 +1,7 @@
 package gent.timdemey.cards;
 
+import gent.timdemey.cards.di.Container;
+import gent.timdemey.cards.di.ContainerBuilder;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.SwingUtilities;
@@ -42,46 +44,36 @@ import gent.timdemey.cards.ui.panels.PanelService;
 
 public class Start
 {
+    
     private Start()
     {
     }
 
     public static void main(String[] args)
     {
-        // install the service singleton
-        installSingleton();
+        ContainerBuilder cb = new ContainerBuilder();        
         
-        // install services that cannot be overruled and that are immediately needed by code
-        installRootServices();
+        installBaseServices(cb);  
+        installCardPlugin(args, cb);
+
+        Container container = cb.Build();
         
-        // determine plugin and if found, let it install services
+        StartUI startUI = container.Get(StartUI.class);
+        
+        
+        SwingUtilities.invokeLater(startUI::startUI);
+    }
+
+    private static void installCardPlugin(String[] args, ContainerBuilder cb) {
+        
+         // determine plugin and if found, let it install services
         ICardPlugin plugin = loadCardPlugin(args);
         if(plugin == null)
         {
-            Logger.error("Cannot load plugin class. Terminating.");
-            return;
+            throw new IllegalStateException("Cannot load plugin class. Terminating.");
         }
         
-        instalPluginServices(plugin);
-        
-        // now install remaining services that were not overruled by the plugin
-        installBaseServices();  
-
-        SwingUtilities.invokeLater(StartUI::startUI);
-    }
-    
-    private static void installSingleton()
-    {
-        // create Services and set singleton
-        Services services = new Services();        
-        App.init(services);
-    }
-    
-    private static void installRootServices()
-    {
-        Services services = App.getServices();
-        
-        services.installIfAbsent(ILogManager.class, () -> new LogManager(LogLevel.DEBUG));
+        plugin.installServices(cb);
     }
     
     private static ICardPlugin loadCardPlugin(String[] args)
@@ -127,33 +119,23 @@ public class Start
         return plugin;
     }
 
-    private static void instalPluginServices(ICardPlugin plugin)
+    private static void installBaseServices(ContainerBuilder cb)
     {
-        Services services = App.getServices();
-                
-        // set the plugin services and let the plugin install its own services
-        services.install(ICardPlugin.class, plugin);
-        plugin.installServices(services);      
-    }
-
-    private static void installBaseServices()
-    {
-        Services services = App.getServices();
-      
-        services.installIfAbsent(IConfigurationService.class, () -> new ConfigService());
-        services.installIfAbsent(IContextService.class, () -> new ContextService());
-        services.installIfAbsent(IScalingService.class, () -> new ScalingService());
-        services.installIfAbsent(IResourceCacheService.class, () -> new ResourceCacheService());
-        services.installIfAbsent(IResourceRepository.class, () -> new ResourceRepository());
-        services.installIfAbsent(IResourceNameService.class, () -> new ResourceNameService());
-        services.installIfAbsent(ISerializationService.class, () -> new SerializationService());
-        services.installIfAbsent(INetworkService.class, () -> new CommandNetworkService());        
-        services.installIfAbsent(IAnimationService.class, () -> new AnimationService()); 
-        services.installIfAbsent(IFrameService.class, () -> new FrameService());
-        services.installIfAbsent(IActionService.class, () -> new ActionService());
-        services.installIfAbsent(IPanelService.class, () -> new PanelService());
-        services.installIfAbsent(IFileService.class, () -> new FileService());
-        services.installIfAbsent(ISoundService.class, () -> new SoundService());
-        services.installIfAbsent(IAnimationDescriptorFactory.class, () -> new AnimationDescriptorFactory());
+        cb.AddTransient(ILogManager.class, LogManager.class);                
+        cb.AddSingleton(IConfigurationService.class, new ConfigService());
+        cb.AddSingleton(IContextService.class, new ContextService());
+        cb.AddSingleton(IScalingService.class, new ScalingService());
+        cb.AddSingleton(IResourceCacheService.class, new ResourceCacheService());
+        cb.AddSingleton(IResourceRepository.class, new ResourceRepository());
+        cb.AddSingleton(IResourceNameService.class, new ResourceNameService());
+        cb.AddSingleton(ISerializationService.class, new SerializationService());
+        cb.AddSingleton(INetworkService.class, new CommandNetworkService());        
+        cb.AddSingleton(IAnimationService.class, new AnimationService()); 
+        cb.AddSingleton(IFrameService.class, new FrameService());
+        cb.AddSingleton(IActionService.class, new ActionService());
+        cb.AddSingleton(IPanelService.class, new PanelService());
+        cb.AddSingleton(IFileService.class, new FileService());
+        cb.AddSingleton(ISoundService.class, new SoundService());
+        cb.AddSingleton(IAnimationDescriptorFactory.class, new AnimationDescriptorFactory());
     }
 }

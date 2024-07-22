@@ -12,7 +12,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
-import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.commands.C_UDP_StartServiceRequester;
@@ -32,6 +31,14 @@ import gent.timdemey.cards.ui.panels.DataPanelManagerBase;
 
 public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGamePanelData>
 {
+
+    private IContextService _ContextService;
+    
+    public JoinMPGamePanelManager (IContextService contextService)
+    {
+        this._ContextService = contextService;
+    }
+    
     private class ServersTableModel extends AbstractTableModel
     {
         @Override
@@ -58,8 +65,7 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
         @Override
         public Object getValueAt(int rowIndex, int columnIndex)
         {
-            IContextService contextServ = Services.get(IContextService.class);
-            ReadOnlyUDPServer udpServer = contextServ.getThreadContext().getReadOnlyState().getServers().get(rowIndex);
+            ReadOnlyUDPServer udpServer = _ContextService.getThreadContext().getReadOnlyState().getServers().get(rowIndex);
             Server server = udpServer.getServer();
             if (columnIndex == 0)
             {
@@ -82,8 +88,7 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
         @Override
         public int getRowCount()
         {
-            IContextService contextServ = Services.get(IContextService.class);
-            int size = contextServ.getThreadContext().getReadOnlyState().getServers().size();
+            int size = _ContextService.getThreadContext().getReadOnlyState().getServers().size();
             return size;
         }
 
@@ -178,15 +183,13 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
     private void stopRequester()
     {
         C_UDP_StopServiceRequester command = new C_UDP_StopServiceRequester();
-        IContextService contextServ = Services.get(IContextService.class);
-        contextServ.getThreadContext().schedule(command);
+        _ContextService.getThreadContext().schedule(command);
     }
     
     private void startRequester()
     {
         C_UDP_StartServiceRequester command = new C_UDP_StartServiceRequester();
-        IContextService contextServ = Services.get(IContextService.class);
-        contextServ.getThreadContext().schedule(command);
+        _ContextService.getThreadContext().schedule(command);
     }
 
     @Override
@@ -195,11 +198,10 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
         if (dbType == PanelButtonDescriptors.Ok)
         {
             int row = table_servers.getSelectedRow();
-            ReadOnlyUDPServer server = Services.get(IContextService.class).getThreadContext().getReadOnlyState()
+            ReadOnlyUDPServer server = _ContextService.getThreadContext().getReadOnlyState()
                     .getServers().get(row);
             
-            IContextService ctxtServ = Services.get(IContextService.class);
-            String playerName = ctxtServ.getThreadContext().getReadOnlyState().getLocalName(); 
+            String playerName = _ContextService.getThreadContext().getReadOnlyState().getLocalName(); 
             return new JoinMPGamePanelData(server, playerName);
         }
         else
@@ -211,7 +213,7 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
     @Override
     public void onShown()
     {
-        Services.get(IContextService.class).getThreadContext().addStateListener(serversStateListener);
+        _ContextService.getThreadContext().addStateListener(serversStateListener);
         
         button_refresh.addActionListener(refreshListener);
         table_servers.getSelectionModel().addListSelectionListener(selectionListener);
@@ -224,7 +226,7 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
     {
         stopRequester();        
         
-        Services.get(IContextService.class).getThreadContext().removeStateListener(serversStateListener);
+        _ContextService.getThreadContext().removeStateListener(serversStateListener);
         button_refresh.removeActionListener(refreshListener);
         table_servers.getSelectionModel().removeListSelectionListener(selectionListener);
     }

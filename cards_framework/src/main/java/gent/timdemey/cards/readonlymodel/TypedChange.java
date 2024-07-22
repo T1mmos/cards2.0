@@ -3,7 +3,7 @@ package gent.timdemey.cards.readonlymodel;
 import java.util.List;
 import java.util.UUID;
 
-import gent.timdemey.cards.services.context.ChangeType;
+import gent.timdemey.cards.model.state.ChangeType;
 
 public class TypedChange<T>
 {

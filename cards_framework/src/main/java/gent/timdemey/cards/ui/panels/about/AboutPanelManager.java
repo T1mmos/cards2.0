@@ -1,7 +1,6 @@
 package gent.timdemey.cards.ui.panels.about;
 
 import gent.timdemey.cards.ICardPlugin;
-import gent.timdemey.cards.Services;
 import gent.timdemey.cards.common.Version;
 import gent.timdemey.cards.services.action.ActionBase;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
@@ -14,6 +13,17 @@ import gent.timdemey.cards.ui.panels.PanelManagerBase;
 public class AboutPanelManager extends PanelManagerBase
 {
     private JSLayeredPane contentPanel;
+    private final ICardPlugin _CardPlugin;
+    private final IActionService _ActionService;
+    
+    public AboutPanelManager(
+            ICardPlugin cardPlugin,
+            IActionService actionService
+    )
+    {
+        this._CardPlugin = cardPlugin;
+        this._ActionService = actionService;
+    }
     
     @Override
     public void preload()
@@ -27,14 +37,11 @@ public class AboutPanelManager extends PanelManagerBase
         if (contentPanel == null)
         {
             contentPanel = JSFactory.createLayeredPane(ComponentTypes.PANEL);
-        
-            ICardPlugin plugin = Services.get(ICardPlugin.class);
-            IActionService actServ = Services.get(IActionService.class);
+                    
+            ActionBase act_tomenu = _ActionService.getAction(ActionDescriptors.SHOWMENU);
             
-            ActionBase act_tomenu = actServ.getAction(ActionDescriptors.SHOWMENU);
-            
-            String gamename = plugin.getName();
-            Version version = plugin.getVersion();
+            String gamename = _CardPlugin.getName();
+            Version version = _CardPlugin.getVersion();
             String versionstr = "v"+version.getMajor()+"."+version.getMinor();
             
             contentPanel.add(JSFactory.createLabel(gamename), "wrap");

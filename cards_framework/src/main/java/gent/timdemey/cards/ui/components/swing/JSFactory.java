@@ -1,6 +1,6 @@
 package gent.timdemey.cards.ui.components.swing;
 
-import gent.timdemey.cards.Services;
+
 import java.util.UUID;
 
 import javax.swing.ImageIcon;

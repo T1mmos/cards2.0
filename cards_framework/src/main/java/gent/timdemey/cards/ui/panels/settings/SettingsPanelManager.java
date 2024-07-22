@@ -9,7 +9,6 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import gent.timdemey.cards.Services;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.logging.Logger;
@@ -39,6 +38,16 @@ public class SettingsPanelManager extends  DataPanelManagerBase<Void, Void>
     
     private DocumentListener docListener = null;
     private PanelButtonDescriptor pbd_savecfg;
+    private final IContextService _ContextService;
+    private final IActionService _ActionService;
+    
+    public SettingsPanelManager (
+        IContextService contextService,
+        IActionService actionService)
+    {
+        this._ContextService = contextService;
+        this._ActionService = actionService;
+    }
     
     @Override
     public void preload()
@@ -48,8 +57,7 @@ public class SettingsPanelManager extends  DataPanelManagerBase<Void, Void>
 
     private void updateUI()
     {
-        IContextService ctxtServ = Services.get(IContextService.class);
-        ReadOnlyState state = ctxtServ.getThreadContext().getReadOnlyState();
+        ReadOnlyState state = _ContextService.getThreadContext().getReadOnlyState();
         
         tf_pname.setText(state.getLocalName());        
         tf_serverTcpPort.setText("" + state.getConfiguration().getServerTcpPort());       
@@ -136,16 +144,14 @@ public class SettingsPanelManager extends  DataPanelManagerBase<Void, Void>
         
         // register listener
         execListener = this::onCommandExecuted;
-        IContextService ctxtServ = Services.get(IContextService.class);
-        ctxtServ.getThreadContext().addExecutionListener(execListener);
+        _ContextService.getThreadContext().addExecutionListener(execListener);
     }
     
     @Override
     public void onHidden()
     {
         // deregister listener
-        IContextService ctxtServ = Services.get(IContextService.class);
-        ctxtServ.getThreadContext().removeExecutionListener(execListener);
+        _ContextService.getThreadContext().removeExecutionListener(execListener);
         execListener = null;
         
         tf_pname.getDocument().removeDocumentListener(docListener);
@@ -195,13 +201,12 @@ public class SettingsPanelManager extends  DataPanelManagerBase<Void, Void>
 
     @Override
     public List<PanelButtonDescriptor> getButtonTypes()
-    {
-        IActionService actServ = Services.get(IActionService.class);               
+    {          
         List<PanelButtonDescriptor> buttons = new ArrayList<>();
         
         // to menu 
         {
-            ActionBase act_tomenu = actServ.getAction(ActionDescriptors.SHOWMENU);            
+            ActionBase act_tomenu = _ActionService.getAction(ActionDescriptors.SHOWMENU);            
             PanelButtonDescriptor desc = new PanelButtonDescriptor(act_tomenu);
             buttons.add(desc);
         }
@@ -210,7 +215,7 @@ public class SettingsPanelManager extends  DataPanelManagerBase<Void, Void>
         {
             P_SaveState payload = new P_SaveState();
             payload.id = UUID.randomUUID();         
-            ActionBase act_savecfg = actServ.getAction(ActionDescriptors.SAVECFG, this::getSettings);               
+            ActionBase act_savecfg = _ActionService.getAction(ActionDescriptors.SAVECFG, this::getSettings);               
             pbd_savecfg = new PanelButtonDescriptor(act_savecfg);
             buttons.add(pbd_savecfg);
         }

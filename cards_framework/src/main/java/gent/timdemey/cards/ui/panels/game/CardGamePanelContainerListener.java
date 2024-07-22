@@ -5,7 +5,6 @@ import java.awt.event.ContainerListener;
 
 import javax.swing.JComponent;
 
-import gent.timdemey.cards.Services;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.ui.panels.IPanelManager;
@@ -13,13 +12,18 @@ import gent.timdemey.cards.ui.panels.IPanelManager;
 public class CardGamePanelContainerListener implements ContainerListener
 {
 
+    private final IPanelService _PanelService;
+    public CardGamePanelContainerListener (IPanelService panelService)
+    {
+        this._PanelService = panelService;
+    }
+
     @Override
     public void componentAdded(ContainerEvent e)
     {
         JComponent jcomp = (JComponent) e.getChild();
         
-        IPanelService panelServ = Services.get(IPanelService.class);
-        IPanelManager pm = panelServ.getPanelManager(PanelDescriptors.Game);
+        IPanelManager pm = _PanelService.getPanelManager(PanelDescriptors.Game);
         pm.positionComponent(jcomp);
     }
 

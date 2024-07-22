@@ -1,6 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
-import gent.timdemey.cards.Services;
+
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
