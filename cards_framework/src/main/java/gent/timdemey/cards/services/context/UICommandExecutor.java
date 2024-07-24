@@ -22,9 +22,12 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 class UICommandExecutor implements ICommandExecutor
 {
     private final List<IExecutionListener> executionListeners;
+    private final IContextService _ContextService;
 
-    public UICommandExecutor()
+    public UICommandExecutor(IContextService contextService)
     {
+        this._ContextService = contextService;
+        
         this.executionListeners = new ArrayList<>();
     }
 
@@ -37,8 +40,7 @@ class UICommandExecutor implements ICommandExecutor
     @Override
     public void run(CommandBase command, State state)
     {
-        IContextService ctxtServ = Services.get(IContextService.class);
-        ContextType type = ctxtServ.getThreadContext().getContextType();
+        ContextType type = _ContextService.getThreadContext().getContextType();
         if(type != ContextType.UI)
         {
             throw new IllegalStateException("Can only run a command from the UI thread. Use schedule instead when posting command from another thread!");
@@ -144,8 +146,7 @@ class UICommandExecutor implements ICommandExecutor
         if(fails.size() > 0)
         {
             D_OnReexecutionFail cmd = new D_OnReexecutionFail(fails);
-            IContextService ctxtServ = Services.get(IContextService.class);
-            ctxtServ.getThreadContext().schedule(cmd);
+            _ContextService.getThreadContext().schedule(cmd);
         }
     }
 
@@ -164,7 +165,7 @@ class UICommandExecutor implements ICommandExecutor
     public void removeExecutionListener(IExecutionListener executionListener)
     {
         // check that the execution listener is installed on the UI thread
-        if(!Services.get(IContextService.class).isCurrentContext(ContextType.UI))
+        if(!_ContextService.isCurrentContext(ContextType.UI))
         {
             throw new IllegalStateException("Execution listener should be set on the UI thread");
         }

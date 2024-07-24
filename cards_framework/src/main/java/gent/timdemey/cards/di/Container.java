@@ -5,12 +5,10 @@
 package gent.timdemey.cards.di;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -18,58 +16,91 @@ import java.util.logging.Logger;
  */
 public class Container
 {
-    private final Map<Class, Class> _TransientMap;
-    private final Map<Class, Object> _SingletonMap;    
+    private final Map<Class, Class> _TransientClassesMap;
+    private final Map<Class, Object> _TransientInstancesMap = new HashMap<>();    
+    private final Map<Class, Class> _SingletonClassesMap;
+    private final Map<Class, Object> _SingletonInstancesMap = new HashMap<>();    
         
-    Container (Map<Class, Class> transientMap, Map<Class, Object> singletonMap)
+    Container (Map<Class, Class> transientClassesMap, Map<Class, Class> singletonClassesMap)
     {
-        _TransientMap = transientMap;
-        _SingletonMap = singletonMap;
+        _TransientClassesMap = transientClassesMap;
+        _SingletonClassesMap = singletonClassesMap;
     }
         
-    public <T> T Get(Class<T> clazz)
+    public <I> I Get(Class<I> clazz)
     {
         // try singletons
         {
-            Object obj = _SingletonMap.get(clazz);
-            if (obj != null)
+            I instance = TryGet(clazz, _SingletonClassesMap, _SingletonInstancesMap);
+            if (instance != null)
             {
-                T casted = clazz.cast(obj);
-                return casted;
+                return instance;
             }
         }
         
         // try transients
         {
-            Class<?> objClazz = _TransientMap.get(clazz);
-            if (objClazz != null)
+            I instance = TryGet(clazz, _TransientClassesMap, _TransientInstancesMap);
+            if (instance != null)
             {
-               
-                Constructor<?>[] constructors = objClazz.getConstructors();
-                 
-                T instance = null;
-                for (Constructor<?> c : constructors)
-                {
-                    Object obj = TryInstantiate(c);
-                    if (obj != null)
-                    {
-                        instance = clazz.cast(obj);
-                    }
-                    if (instance != null)
-                    {
-                        break;
-                    }
-                }
-                
-                if (instance != null)
-                {
-                    return instance;    
-                }
+                return instance;
             }
         }
         
         // fail
         throw new UnsupportedOperationException("Class " + clazz.getName() + " is not mapped");
+    }
+    
+    private <I> I TryGet(Class<I> iclazz, Map<Class, Class> definitions, Map<Class, Object> instances)
+    {        
+        I obj = (I) instances.get(iclazz);
+
+        // try instantiating if no instance exists            
+        if (obj == null)
+        {
+            Class<? extends I> concreteCls = definitions.get(iclazz);
+            if (concreteCls != null)
+            {
+                I instance = TryInstantiate(concreteCls);
+                if (instance != null)
+                {
+                    obj = instance;
+                    instances.put(iclazz, instance);
+                }
+            }
+        }
+
+        if (obj != null)
+        {
+            I casted = iclazz.cast(obj);
+            return casted;
+        }   
+        
+        return null;
+    }
+    
+    private <I, C extends I> I TryInstantiate(Class<C> clazz)
+    {
+        if (clazz != null)
+        {
+            Constructor<?>[] constructors = clazz.getConstructors();
+
+            I instance = null;
+            for (Constructor<?> c : constructors)
+            {
+                Object obj = TryInstantiate(c);
+                if (obj != null)
+                {
+                    instance = clazz.cast(obj);
+                }
+                if (instance != null)
+                {
+                    return instance; 
+                }
+            }
+        }
+        
+        return null;
     }
 
     private Object TryInstantiate(Constructor<?> c) 
@@ -96,13 +127,13 @@ public class Container
     {
         // add transient instances 
         List<Object> values = new ArrayList<>();
-        for(Class<?> clz : _TransientMap.keySet())
+        for(Class<?> clz : _TransientClassesMap.keySet())
         {
             values.add(Get(clz));
         }
         
         // add singletons
-        values.addAll(_SingletonMap.values());
+        values.addAll(_SingletonInstancesMap.values());
         
         return values;
     }

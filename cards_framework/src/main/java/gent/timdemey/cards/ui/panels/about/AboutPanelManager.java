@@ -2,6 +2,7 @@ package gent.timdemey.cards.ui.panels.about;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.common.Version;
+import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.services.action.ActionBase;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
@@ -16,13 +17,11 @@ public class AboutPanelManager extends PanelManagerBase
     private final ICardPlugin _CardPlugin;
     private final IActionService _ActionService;
     
-    public AboutPanelManager(
-            ICardPlugin cardPlugin,
-            IActionService actionService
-    )
+    public AboutPanelManager(Container container)
     {
-        this._CardPlugin = cardPlugin;
-        this._ActionService = actionService;
+        super(container);
+        this._CardPlugin = container.Get(ICardPlugin.class);
+        this._ActionService = container.Get(IActionService.class);
     }
     
     @Override
@@ -36,7 +35,7 @@ public class AboutPanelManager extends PanelManagerBase
     {
         if (contentPanel == null)
         {
-            contentPanel = JSFactory.createLayeredPane(ComponentTypes.PANEL);
+            contentPanel = _JSFactory.createLayeredPane(ComponentTypes.PANEL);
                     
             ActionBase act_tomenu = _ActionService.getAction(ActionDescriptors.SHOWMENU);
             
@@ -44,9 +43,9 @@ public class AboutPanelManager extends PanelManagerBase
             Version version = _CardPlugin.getVersion();
             String versionstr = "v"+version.getMajor()+"."+version.getMinor();
             
-            contentPanel.add(JSFactory.createLabel(gamename), "wrap");
-            contentPanel.add(JSFactory.createLabel(versionstr), "wrap");
-            contentPanel.add(JSFactory.createButton(act_tomenu), "wrap");
+            contentPanel.add(_JSFactory.createLabel(gamename), "wrap");
+            contentPanel.add(_JSFactory.createLabel(versionstr), "wrap");
+            contentPanel.add(_JSFactory.createButton(act_tomenu), "wrap");
         }
         
         return contentPanel;

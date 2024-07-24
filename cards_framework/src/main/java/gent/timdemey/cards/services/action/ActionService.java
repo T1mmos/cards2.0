@@ -27,7 +27,6 @@ import gent.timdemey.cards.model.entities.commands.D_Connect;
 import gent.timdemey.cards.model.entities.commands.D_StartServer;
 import gent.timdemey.cards.model.entities.commands.D_ToggleMenuMP;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.model.entities.commands.payload.P_SaveState;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.ButtonState;
@@ -48,7 +47,23 @@ public class ActionService implements IActionService
     private Map<ActionDescriptor, CommandBase> desc2commands = new HashMap<>();
     private Map<ActionDescriptor, ActionBase> desc2actions = new HashMap<>();
     private Map<ActionDescriptor, Runnable> desc2code = new HashMap<>();
-
+    
+    private final IContextService _ContextService;
+    private final IResourceNameService _ResourceNameService;
+    private final IResourceCacheService _ResourceCacheService;
+    private final IFrameService _FrameService;
+    
+    public ActionService (
+            IContextService contextService,
+            IFrameService frameService,
+            IResourceNameService resourceNameService,
+            IResourceCacheService resourceCacheService)
+    {
+        this._ContextService = contextService;
+        this._FrameService = frameService;
+        this._ResourceNameService = resourceNameService;
+        this._ResourceCacheService = resourceCacheService;
+    }
    
     @Override
     public ActionBase getAction(ActionDescriptor desc)
@@ -66,7 +81,7 @@ public class ActionService implements IActionService
         ActionBase act1 = getAction(desc);
         ActionBase act2 = getAction(chained);
          
-        ActionBase combined = ActionBase.chain(act1, act2);
+        ActionBase combined = ActionBase.chain(this, act1, act2);
         return combined;
     }
     
@@ -136,7 +151,7 @@ public class ActionService implements IActionService
         CommandBase cmd = mapToCommand(desc);
         if (cmd != null)
         {
-            Services.get(IContextService.class).getContext(ContextType.UI).schedule(cmd);
+            _ContextService.getContext(ContextType.UI).schedule(cmd);
             return;
         }
         
@@ -161,7 +176,7 @@ public class ActionService implements IActionService
         CommandBase cmd = createCommand(desc, payload);
         if (cmd != null)
         {
-            Services.get(IContextService.class).getContext(ContextType.UI).schedule(cmd);
+            _ContextService.getContext(ContextType.UI).schedule(cmd);
             return;
         }
         
@@ -209,9 +224,8 @@ public class ActionService implements IActionService
 
             action.checkEnabled();
       
-            IContextService ctxtServ = Services.get(IContextService.class);
-            ctxtServ.addContextListener(action);
-            ctxtServ.getThreadContext().addStateListener(action); 
+            _ContextService.addContextListener(action);
+            _ContextService.getThreadContext().addStateListener(action); 
         }
 
         return action;
@@ -232,15 +246,15 @@ public class ActionService implements IActionService
     {        
         if (desc == ActionDescriptors.SHOWABOUT)
         {
-            return new ActionBase(desc, Loc.get(LocKey.Action_about));
+            return new ActionBase(this, desc, Loc.get(LocKey.Action_about));
         } 
         else if (desc == ActionDescriptors.CREATEMP)
         {
-            return new A_CreateMP(ActionDescriptors.CREATEMP, Loc.get(LocKey.Action_createmp));
+            return new A_CreateMP(this, ActionDescriptors.CREATEMP, Loc.get(LocKey.Action_createmp));
         }
         else if (desc == ActionDescriptors.DEBUGDRAW)
         {
-            ActionBase action = new ActionBase(desc, Loc.get(LocKey.DebugMenu_debug));
+            ActionBase action = new ActionBase(this, desc, Loc.get(LocKey.DebugMenu_debug));
             
             addShortCut(action, "ctrl D");
             
@@ -248,39 +262,39 @@ public class ActionService implements IActionService
         }
         else if (desc == ActionDescriptors.GC)
         {
-            return new ActionBase(desc, Loc.get(LocKey.DebugMenu_gc));
+            return new ActionBase(this, desc, Loc.get(LocKey.DebugMenu_gc));
         }
         else if (desc == ActionDescriptors.JOIN)
         {
-            return new A_JoinGame(desc, Loc.get(LocKey.Action_joinmp));
+            return new A_JoinGame(this, desc, Loc.get(LocKey.Action_joinmp));
         }
         else if (desc == ActionDescriptors.LEAVEMP)
         {
-            return new A_LeaveGame(desc, Loc.get(LocKey.Action_leavemp));
+            return new A_LeaveGame(this, desc, Loc.get(LocKey.Action_leavemp));
         }
         else if (desc == ActionDescriptors.MAXIMIZE)
         {
             ImageIcon img_maximize = get(ResourceDescriptors.AppMaximize, ButtonState.Normal);
             ImageIcon img_maximize_rollover = get(ResourceDescriptors.AppMaximize, ButtonState.Rollover);
-            return new ActionBase(desc, Loc.get(LocKey.Action_maximize), img_maximize, img_maximize_rollover);
+            return new ActionBase(this, desc, Loc.get(LocKey.Action_maximize), img_maximize, img_maximize_rollover);
         }
         else if (desc == ActionDescriptors.UNMAXIMIZE)
         {
             ImageIcon img_unmaximize = get(ResourceDescriptors.AppUnmaximize, ButtonState.Normal);
             ImageIcon img_unmaximize_rollover = get(ResourceDescriptors.AppUnmaximize, ButtonState.Rollover);
-            return new ActionBase(desc, Loc.get(LocKey.Action_unmaximize), img_unmaximize, img_unmaximize_rollover);
+            return new ActionBase(this, desc, Loc.get(LocKey.Action_unmaximize), img_unmaximize, img_unmaximize_rollover);
         }
         else if (desc == ActionDescriptors.MINIMIZE)
         {
             ImageIcon img_minimize = get(ResourceDescriptors.AppMinimize, ButtonState.Normal);
             ImageIcon img_minimize_rollover = get(ResourceDescriptors.AppMinimize, ButtonState.Rollover);
-            return new ActionBase(desc, Loc.get(LocKey.Action_minimize), img_minimize, img_minimize_rollover);
+            return new ActionBase(this, desc, Loc.get(LocKey.Action_minimize), img_minimize, img_minimize_rollover);
         }        
         else if (desc == ActionDescriptors.QUIT)
         {
             ImageIcon img_close = get(ResourceDescriptors.AppClose, ButtonState.Normal);
             ImageIcon img_close_rollover = get(ResourceDescriptors.AppClose, ButtonState.Rollover);
-            ActionBase action = new ActionBase(desc, Loc.get(LocKey.Action_quit), img_close, img_close_rollover);
+            ActionBase action = new ActionBase(this, desc, Loc.get(LocKey.Action_quit), img_close, img_close_rollover);
             
             addShortCut(action, "alt F4");
             
@@ -288,19 +302,19 @@ public class ActionService implements IActionService
         }
         else if (desc == ActionDescriptors.REDO)
         {
-            return new A_Redo(desc, Loc.get(LocKey.Action_redo));
+            return new A_Redo(this, desc, Loc.get(LocKey.Action_redo));
         }
         else if (desc == ActionDescriptors.SHOWMENU)
         {
-            return new ActionBase(desc, Loc.get(LocKey.Action_showmenu));
+            return new ActionBase(this, desc, Loc.get(LocKey.Action_showmenu));
         }
         else if (desc == ActionDescriptors.SHOWSETTINGS)
         {
-            return new ActionBase(desc, Loc.get(LocKey.Action_showsettings));
+            return new ActionBase(this, desc, Loc.get(LocKey.Action_showsettings));
         }
         else if (desc == ActionDescriptors.TOGGLEMENUMP)
         {
-            ActionBase action = new A_ToggleMenuMP(desc, Loc.get(LocKey.Action_togglemenump));
+            ActionBase action = new A_ToggleMenuMP(this, desc, Loc.get(LocKey.Action_togglemenump));
             
             addShortCut(action, "ESCAPE");
             
@@ -308,15 +322,15 @@ public class ActionService implements IActionService
         }
         else if (desc == ActionDescriptors.STARTSP)
         {
-            return new A_StartGame(desc, Loc.get(LocKey.Action_newgame));
+            return new A_StartGame(this, _FrameService, desc, Loc.get(LocKey.Action_newgame));
         }
         else if (desc == ActionDescriptors.STARTMP)
         {
-            return new A_StartMP(desc, Loc.get(LocKey.Action_createmp));
+            return new A_StartMP(this, desc, Loc.get(LocKey.Action_createmp));
         }
         else if (desc == ActionDescriptors.UNDO)
         {
-            return new A_Undo(desc, Loc.get(LocKey.Action_undo));
+            return new A_Undo(this, desc, Loc.get(LocKey.Action_undo));
         }
         
         return null;
@@ -324,11 +338,8 @@ public class ActionService implements IActionService
     
     private ImageIcon get(ResourceDescriptorP1<ButtonState> resDesc, ButtonState buttonState)
     {
-        IResourceNameService resLocServ = Services.get(IResourceNameService.class);
-        String filepath = resLocServ.getFilePath(resDesc, buttonState);
-        
-        IResourceCacheService resServ = Services.get(IResourceCacheService.class);        
-        Image img = resServ.getImage(filepath).raw;
+        String filepath = _ResourceNameService.getFilePath(resDesc, buttonState);               
+        Image img = _ResourceCacheService.getImage(filepath).raw;
         ImageIcon imgIcon = new ImageIcon(img);
         return imgIcon;
     }
@@ -337,7 +348,7 @@ public class ActionService implements IActionService
     {
         if (desc == ActionDescriptors.SAVECFG)
         {
-            return new PayloadActionBase<T>(desc, Loc.get(LocKey.Action_savecfg), payloadSupplier);
+            return new PayloadActionBase<T>(this, desc, Loc.get(LocKey.Action_savecfg), payloadSupplier);
         } 
         
         return null;
@@ -430,19 +441,11 @@ public class ActionService implements IActionService
     {
         if (desc == ActionDescriptors.SHOWABOUT)
         {
-            return () -> 
-            {
-                IFrameService frameServ = Services.get(IFrameService.class);
-                frameServ.showPanel(PanelDescriptors.About);
-            };
+            return () -> _FrameService.showPanel(PanelDescriptors.About);
         }        
         else if (desc == ActionDescriptors.DEBUGDRAW) 
         {
-            return () -> 
-            {
-                IFrameService frameServ = Services.get(IFrameService.class);
-                frameServ.setDrawDebug(!frameServ.getDrawDebug());
-            };
+            return () -> _FrameService.setDrawDebug(!_FrameService.getDrawDebug());
         } 
         else if (desc == ActionDescriptors.GC)
         {
@@ -453,50 +456,27 @@ public class ActionService implements IActionService
         }
         else if (desc == ActionDescriptors.QUIT)
         {
-            return () -> 
-            {
-                System.exit(0);
-            };
+            return () -> System.exit(0);            
         }
         else if (desc == ActionDescriptors.MAXIMIZE)
         {
-            return () -> 
-            {
-                IFrameService frameServ = Services.get(IFrameService.class);
-                frameServ.maximize();                
-            };
+            return () -> _FrameService.maximize();     
         }
         if (desc == ActionDescriptors.SHOWSETTINGS)
         {
-            return () -> 
-            {
-                IFrameService frameServ = Services.get(IFrameService.class);
-                frameServ.showPanel(PanelDescriptors.Settings, null, null);
-            };
+            return () ->  _FrameService.showPanel(PanelDescriptors.Settings, null, null);
         }        
         else if (desc == ActionDescriptors.UNMAXIMIZE)
         {
-            return () -> 
-            {
-                IFrameService frameServ = Services.get(IFrameService.class);
-                frameServ.unsnap();                
-            };
+            return () -> _FrameService.unsnap();               
         }
         else if (desc == ActionDescriptors.MINIMIZE)
         {
-            return () -> 
-            {
-                IFrameService frameServ = Services.get(IFrameService.class);
-                frameServ.minimize();                
-            };
+            return () -> _FrameService.minimize(); 
         }
         else if (desc == ActionDescriptors.SHOWMENU)
         {
-            return () -> 
-            {
-                IFrameService frameServ = Services.get(IFrameService.class);
-                frameServ.showPanel(PanelDescriptors.Menu);                
-            };
+            return () -> _FrameService.showPanel(PanelDescriptors.Menu);   
         }
         
         return null;
@@ -504,22 +484,20 @@ public class ActionService implements IActionService
     
     private boolean canExecute(CommandBase command)
     {
-        CanExecuteResponse response = Services.get(IContextService.class).getThreadContext().canExecute(command);
-        if(response.execState == ExecutionState.Yes)
+        CanExecuteResponse response = _ContextService.getThreadContext().canExecute(command);
+        switch (response.execState)
         {
-            return true;
-        }
-        else if(response.execState == ExecutionState.No)
-        {
-            Logger.trace("Cannot execute command %s (%s) because: %s", command.getName(), "ActionService", response.reason);
-
-            return false;
-        }
-        else
-        {
-            Logger.error("Cannot execute command %s (%s) because of a state error: %s", command.getName(), "ActionService", response.reason);
-
-            return false;
+            case Yes:
+            case YesPerm:
+                return true;
+            case No:
+                Logger.trace("Cannot execute command %s (%s) because: %s", command.getName(), "ActionService", response.reason);
+                return false;
+            case Error:
+                Logger.error("Cannot execute command %s (%s) because of a state error: %s", command.getName(), "ActionService", response.reason);
+                return false;
+            default:
+                throw new UnsupportedOperationException("Unsupported ExecutionState: " + response.execState);                
         }
     }
 }

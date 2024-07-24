@@ -25,8 +25,6 @@ import java.io.ByteArrayInputStream;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.LineListener;
 
 public class ResourceCacheService implements IResourceCacheService
 {
@@ -37,7 +35,14 @@ public class ResourceCacheService implements IResourceCacheService
     
     // black-pink checkerboard pattern that can be tiled
     private BufferedImage ERROR_IMAGE;
+    
+    private final IResourceRepository _ResourceRepository;
 
+    public ResourceCacheService (IResourceRepository resourceRepository)
+    {
+        this._ResourceRepository = resourceRepository;
+    }
+    
     private BufferedImage getErrorImage()
     {
         synchronized(this)
@@ -165,8 +170,7 @@ public class ResourceCacheService implements IResourceCacheService
         T value = cache.get(filename);
         if (value == null)
         {
-            IResourceRepository repo = Services.get(IResourceRepository.class);
-            InputStream is = repo.getResourceAsStream(resourceType, filename);
+            InputStream is = _ResourceRepository.getResourceAsStream(resourceType, filename);
             value = loadFunc.apply(is, filename);
             try
             {

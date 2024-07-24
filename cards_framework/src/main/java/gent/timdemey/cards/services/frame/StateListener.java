@@ -16,56 +16,66 @@ import gent.timdemey.cards.services.interfaces.ISoundService;
 
 public class StateListener implements IStateListener
 {        
+
+    private final IContextService _ContextService;
+    private final ISoundService _SoundService;
+    private final IFrameService _FrameService;
+    private final IPanelService _PanelService;
+    
+    public StateListener(
+        IContextService contextService,
+        ISoundService soundService,
+        IFrameService frameService,
+        IPanelService panelService)
+    {
+        this._ContextService = contextService;
+        this._SoundService = soundService;
+        this._FrameService = frameService;
+        this._PanelService  = panelService;
+    }
+    
     @Override
     public void onChange(ReadOnlyChange change)
     {
-        IContextService contextService = Services.get(IContextService.class);
-        Context context = contextService.getThreadContext();
+        Context context = _ContextService.getThreadContext();
         ReadOnlyState state = context.getReadOnlyState();
 
         CheckSound(state, change);
     }
     
     private void CheckSound(ReadOnlyState state, ReadOnlyChange change)
-    {
-        ISoundService soundServ = Services.get(ISoundService.class);
-        IFrameService frameServ = Services.get(IFrameService.class);
-        IPanelService panelServ = Services.get(IPanelService.class);
-        
+    {        
         if (change.property == ReadOnlyState.CardGame)
         {
             ReadOnlyCardGame cardGame = state.getCardGame();
             if (cardGame == null)
             {
-                frameServ.showPanel(PanelDescriptors.Menu);
-                frameServ.removePanel(PanelDescriptors.Game);
+                _FrameService.showPanel(PanelDescriptors.Menu);
+                _FrameService.removePanel(PanelDescriptors.Game);
             }
             else
             {             
-                frameServ.showPanel(PanelDescriptors.Game);
-                panelServ.createComponentsAsync(StateListener::onCreatedComponents);
-                
-                soundServ.play(ResourceDescriptors.SoundTest);
+                _FrameService.showPanel(PanelDescriptors.Game);
+                _PanelService.createComponentsAsync(this::onCreatedComponents);                
+                _SoundService.play(ResourceDescriptors.SoundTest);
             }
         }
         else if (change.property == ReadOnlyCardStack.Cards)
         {
             if (change.addedValues != null && !change.addedValues.isEmpty())
             {
-                soundServ.play(ResourceDescriptors.SoundPutDown);
+                _SoundService.play(ResourceDescriptors.SoundPutDown);
             }
         }
     }
      
-    private static void onCreatedComponents ()
+    private void onCreatedComponents ()
     {
-        IPanelService panelServ = Services.get(IPanelService.class);
-        panelServ.rescaleResourcesAsync(StateListener::onRescaledResources);
+        _PanelService.rescaleResourcesAsync(this::onRescaledResources);
     }
     
-    private static void onRescaledResources ()
-    {
-        IFrameService frameServ = Services.get(IFrameService.class);        
-        frameServ.hidePanel(PanelDescriptors.Load);
+    private void onRescaledResources ()
+    {       
+        _FrameService.hidePanel(PanelDescriptors.Load);
     }
 }

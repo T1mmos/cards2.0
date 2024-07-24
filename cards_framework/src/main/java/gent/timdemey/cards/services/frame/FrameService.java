@@ -1,5 +1,6 @@
 package gent.timdemey.cards.services.frame;
 
+import gent.timdemey.cards.di.Container;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -79,15 +80,40 @@ public class FrameService implements IFrameService, IPreload
     private List<SnapSide> snaps = null;
 
     private Stack<PanelDescriptor> panelStack = new Stack<>();
+    
+    private final Container _Container;
+    private final IResourceCacheService _ResourceCacheService;
+    private final IResourceNameService _ResourceNameService;
+    private final IPanelService _PanelService;
+    private final IContextService _ContextService;
+    private final IPositionService _PositionService;
+    private final JSFactory _JSFactory;
 
+    public FrameService (
+        Container container,        
+        IResourceCacheService resourceCacheService,
+        IResourceNameService resourceNameService,
+        IPanelService panelService,
+        IContextService contextService,
+        IPositionService positionService,
+        JSFactory jsFactory
+        )
+    {
+        this._Container = container;
+        this._ResourceCacheService = resourceCacheService;
+        this._ResourceNameService = resourceNameService;
+        this._PanelService = panelService;
+        this._ContextService = contextService;
+        this._PositionService = positionService;
+        this._JSFactory = jsFactory;
+    }
+
+    
     @PreloadOrder(order = PreloadOrderType.DEPENDENT)
     public void preload()
     {
-        IResourceCacheService resServ = Services.get(IResourceCacheService.class);
-        IResourceNameService resLocServ = Services.get(IResourceNameService.class);
-
-        String dialogTitleFontName = resLocServ.getFilePath(ResourceDescriptors.DialogTitleFont);
-        FontResource res_dialogTitleFont = resServ.getFont(dialogTitleFontName);
+        String dialogTitleFontName = _ResourceNameService.getFilePath(ResourceDescriptors.DialogTitleFont);
+        FontResource res_dialogTitleFont = _ResourceCacheService.getFont(dialogTitleFontName);
         dialogTitleFont = res_dialogTitleFont.raw.deriveFont(20f);
     }
 
@@ -111,19 +137,12 @@ public class FrameService implements IFrameService, IPreload
             frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
             frame.setIconImages(icons);
 
-            IPanelService panelServ = Services.get(IPanelService.class);
-            IPanelManager pm = panelServ.getPanelManager(PanelDescriptors.Frame);
+            IPanelManager pm = _PanelService.getPanelManager(PanelDescriptors.Frame);
             JSLayeredPane content = pm.createPanel();
             frame.setContentPane(content);
         }
 
         return frame;
-    }
-
-    private static IPanelManager get(PanelDescriptor desc)
-    {
-        IPanelService panelServ = Services.get(IPanelService.class);
-        return panelServ.getPanelManager(desc);
     }
 
     @Override
@@ -142,7 +161,7 @@ public class FrameService implements IFrameService, IPreload
     @Override
     public boolean isShown(PanelDescriptor desc)
     {
-        IPanelManager pm = get(desc);
+        IPanelManager pm = _PanelService.getPanelManager(desc);
         if (!pm.isPanelCreated())
         {
             return false;
@@ -163,7 +182,7 @@ public class FrameService implements IFrameService, IPreload
             throw new IllegalArgumentException("This method is intended for Root and Overlay panels only");
         }
 
-        IPanelManager pm = get(desc);
+        IPanelManager pm = _PanelService.getPanelManager(desc);
 
         boolean add;
         JSLayeredPane pb;
@@ -188,9 +207,7 @@ public class FrameService implements IFrameService, IPreload
     @Override
     public void removePanel(PanelDescriptor desc)
     {
-        IPanelService panelServ = Services.get(IPanelService.class);
-
-        IPanelManager panelMgr = panelServ.getPanelManager(desc);
+        IPanelManager panelMgr = _PanelService.getPanelManager(desc);
         if (!panelMgr.isPanelCreated())
         {
             throw new IllegalArgumentException("Attempted to remove a panel which has not been created yet: " + desc);
@@ -216,29 +233,28 @@ public class FrameService implements IFrameService, IPreload
     }
     
     
-    private static Stream<PanelDescriptor> filterVisible(Stream<PanelDescriptor> stream)
+    private Stream<PanelDescriptor> filterVisible(Stream<PanelDescriptor> stream)
     {
         return stream.filter(pd -> 
         {
-            IPanelManager pm = get(pd);
+            IPanelManager pm = _PanelService.getPanelManager(pd);
             return pm.isPanelCreated() && pm.getPanel().isShowing();  
         });
     }
     
-    private static Stream<PanelDescriptor> filterType(Stream<PanelDescriptor> stream, PanelType pt)
+    private Stream<PanelDescriptor> filterType(Stream<PanelDescriptor> stream, PanelType pt)
     {
         return stream.filter(pd -> pd.panelType == pt);
     }
     
-    private static Stream<IPanelManager> toPanelManager(Stream<PanelDescriptor> stream)
+    private Stream<IPanelManager> toPanelManager(Stream<PanelDescriptor> stream)
     {
-        return stream.map(pd -> get(pd));
+        return stream.map(pd -> _PanelService.getPanelManager(pd));
     }
     
-    private static Stream<PanelDescriptor> getPanelDescriptorsAsStream()
+    private Stream<PanelDescriptor> getPanelDescriptorsAsStream()
     {
-        IPanelService pServ = Services.get(IPanelService.class);
-        return pServ.getPanelDescriptors().stream();
+        return _PanelService.getPanelDescriptors().stream();
     }
         
     private int getBaseLayer(PanelType pt)
@@ -339,7 +355,7 @@ public class FrameService implements IFrameService, IPreload
     private void hidePanelInternal(PanelDescriptor pd)
     {
         // the panel should have been created
-        IPanelManager pm = get(pd);
+        IPanelManager pm = _PanelService.getPanelManager(pd);
         if (!pm.isPanelCreated())
         {
             throw new IllegalArgumentException("Attempted to hide a panel which has not been created yet: " + pd);
@@ -376,7 +392,7 @@ public class FrameService implements IFrameService, IPreload
     private void setVisible(PanelDescriptor pd)
     {
         // IPanelService panelServ = Services.get(IPanelService.class);
-        IPanelManager pm = get(pd);
+        IPanelManager pm = _PanelService.getPanelManager(pd);
         
         if (pd.panelType == PanelType.Overlay)
         {
@@ -413,7 +429,7 @@ public class FrameService implements IFrameService, IPreload
 
     private void setHidden(PanelDescriptor pd)
     {
-        IPanelManager pm = get(pd);    
+        IPanelManager pm = _PanelService.getPanelManager(pd);    
         
         // check that the component is actually part of the frame body panel
         JComponent contentComp = pm.getPanel();
@@ -475,12 +491,11 @@ public class FrameService implements IFrameService, IPreload
     {
         drawDebug = on;
 
-        IPanelService panelServ = Services.get(IPanelService.class);
-        List<PanelDescriptor> pDescs = panelServ.getPanelDescriptors();
+        List<PanelDescriptor> pDescs = _PanelService.getPanelDescriptors();
 
         for (PanelDescriptor pd : pDescs)
         {
-            IPanelManager pMan = panelServ.getPanelManager(pd);
+            IPanelManager pMan = _PanelService.getPanelManager(pd);
             if (pMan.isPanelCreated())
             {
                 JComponent comp = pMan.getPanel();
@@ -497,10 +512,8 @@ public class FrameService implements IFrameService, IPreload
 
     protected BufferedImage getDialogBackgroundImage()
     {
-        IResourceCacheService resServ = Services.get(IResourceCacheService.class);
-        IResourceNameService resLocServ = Services.get(IResourceNameService.class);
-        String bgpath = resLocServ.getFilePath(ResourceDescriptors.DialogBackground);
-        BufferedImage background = resServ.getImage(bgpath).raw;
+        String bgpath = _ResourceNameService.getFilePath(ResourceDescriptors.DialogBackground);
+        BufferedImage background = _ResourceCacheService.getImage(bgpath).raw;
         return background;
     }
 
@@ -675,8 +688,7 @@ public class FrameService implements IFrameService, IPreload
     @Override
     public void updatePositionService()
     {
-        IPositionService posServ = Services.get(IPositionService.class);
-        posServ.setMaxSize(getFrameBodyPanel().getWidth(), getFrameBodyPanel().getHeight());
+        _PositionService.setMaxSize(getFrameBodyPanel().getWidth(), getFrameBodyPanel().getHeight());
     }
 
     @Override
@@ -710,17 +722,15 @@ public class FrameService implements IFrameService, IPreload
     @Override
     public void installStateListeners()
     {
-        IContextService ctxtServ = Services.get(IContextService.class);
-        Context ctxt = ctxtServ.getThreadContext();
+        Context ctxt = _ContextService.getThreadContext();
         
-        ctxt.addStateListener(new StateListener());
+        ctxt.addStateListener(_Container.Get(StateListener.class));
     }
     
     private <IN, OUT> JSLayeredPane createDialogPanel(DataPanelDescriptor<IN, OUT> desc, IN inData,
             Consumer<PanelOutData<OUT>> callback)
     {
-        IPanelService panelServ = Services.get(IPanelService.class);
-        IDataPanelManager<IN, OUT> dpMan = panelServ.getPanelManager(desc);
+        IDataPanelManager<IN, OUT> dpMan = _PanelService.getPanelManager(desc);
 
         // function to generate a runnable which is run after the dialog was closed
         // somehow
@@ -767,13 +777,13 @@ public class FrameService implements IFrameService, IPreload
         dpMan.load(panelInData);
 
         // create the entire panel, add the custom content and the buttons
-        JSLayeredPane dialogPanel = JSFactory.createLayeredPane(ComponentTypes.DIALOG);
+        JSLayeredPane dialogPanel = _JSFactory.createLayeredPane(ComponentTypes.DIALOG);
         {
             dialogPanel.setLayout(new MigLayout("insets 0"));
             dialogPanel.addMouseListener(new MouseAdapter()
             {
             }); // block mouse input to panels below
-            JSLayeredPane marginPanel = JSFactory.createLayeredPane(ComponentTypes.MARGINPANEL);
+            JSLayeredPane marginPanel = _JSFactory.createLayeredPane(ComponentTypes.MARGINPANEL);
             marginPanel.setLayout(new MigLayout("insets 20 20 5 20"));
             marginPanel.setBackground(new Color(50, 50, 50));
             marginPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
@@ -838,8 +848,7 @@ public class FrameService implements IFrameService, IPreload
 
     protected FramePanelManager getFramePanelManager()
     {
-        IPanelService panelServ = Services.get(IPanelService.class);
-        IPanelManager pm = panelServ.getPanelManager(PanelDescriptors.Frame);
+        IPanelManager pm = _PanelService.getPanelManager(PanelDescriptors.Frame);
         FramePanelManager fpm = (FramePanelManager) pm;
         return fpm;
     }

@@ -1,5 +1,6 @@
 package gent.timdemey.cards.ui.panels.dialogs.mp;
 
+import gent.timdemey.cards.di.Container;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -20,7 +21,6 @@ import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.DataPanelManagerBase;
 import net.miginfocom.swing.MigLayout;
@@ -40,12 +40,9 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
     private IActionService _ActionService;
 
     
-    public LobbyPanelManager (
-            IContextService contextService,
-            IActionService actionService)
+    public LobbyPanelManager (Container container)
     {
-        this._ContextService = contextService;
-        this._ActionService = actionService;
+        super(container);
     }
     
     
@@ -92,18 +89,13 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
         }
     }
     
-    public LobbyPanelManager()
-    {
-        
-    }
-
     @Override
     public JSLayeredPane createPanel()
     {
         Context context = _ContextService.getThreadContext();
         ReadOnlyState state = context.getReadOnlyState();
         
-        panel = JSFactory.createLayeredPane(ComponentTypes.PANEL);
+        panel = _JSFactory.createLayeredPane(ComponentTypes.PANEL);
         panel.setLayout(new MigLayout("insets 0, wmin 300"));
                 
         this.l_serverMsg = new JLabel(state.getServerMessage());

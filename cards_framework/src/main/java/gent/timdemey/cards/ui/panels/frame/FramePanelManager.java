@@ -20,6 +20,7 @@ import javax.swing.KeyStroke;
 import javax.swing.border.Border;
 
 import gent.timdemey.cards.ICardPlugin;
+import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.services.action.ActionBase;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
@@ -56,14 +57,15 @@ public class FramePanelManager extends PanelManagerBase
     private ICardPlugin _CardPlugin;
     
     public FramePanelManager( 
+            Container container,
             ICardPlugin cardPlugin,
-            IResourceCacheService resourceCacheService,
             IResourceNameService resourceNameService,
             IActionService actionService,
             FrameBodyPanelResizeListener resizeListener)
     {
+        super(container);
+        
         this._CardPlugin = cardPlugin;
-        this._ResourceCacheService = resourceCacheService;
         this._ResourceNameService = resourceNameService;
         this._ActionService = actionService;
         this._ResizeListener = resizeListener;
@@ -81,7 +83,7 @@ public class FramePanelManager extends PanelManagerBase
     { 
         ActionBase action = _ActionService.getAction(desc);
         
-        JSButton button = JSFactory.createButton(action);
+        JSButton button = _JSFactory.createButton(action);
       
         button.setBorder(null);
         button.setRolloverIcon(action.icon_rollover);
@@ -98,17 +100,17 @@ public class FramePanelManager extends PanelManagerBase
     public JSLayeredPane createPanel()
     {
         BufferedImage bg = getBackgroundImage();
-        framePanel = JSFactory.createLayeredPane(ComponentTypes.FRAME);
+        framePanel = _JSFactory.createLayeredPane(ComponentTypes.FRAME);
         framePanel.setOpaque(true);
         framePanel.setLayout(new MigLayout("insets 5, gapy 0"));
         framePanel.getDrawer().setBackgroundImage(bg);
         frameBorder = BorderFactory.createLineBorder(Color.gray, 1, false);
         framePanel.setBorder(frameBorder);
-        rpMouseListener = new RootPanelMouseListener();
+        rpMouseListener = _Container.Get(RootPanelMouseListener.class);
         framePanel.addMouseListener(rpMouseListener);    
         framePanel.addMouseMotionListener(rpMouseListener);
         
-        frameTitlePanel = JSFactory.createLayeredPane(ComponentTypes.FRAMETITLE);
+        frameTitlePanel = _JSFactory.createLayeredPane(ComponentTypes.FRAMETITLE);
         frameTitlePanel.setLayout(new MigLayout("insets 0, hidemode 3"));
         JLabel title_icon = new JLabel(new ImageIcon(getFrameIcons().get(1)));
         JLabel title_text = new JLabel(getFrameTitle());
@@ -125,14 +127,14 @@ public class FramePanelManager extends PanelManagerBase
         frameTitlePanel.add(title_maximize, "align center top, gapright 5");
         frameTitlePanel.add(title_unmaximize, "align center top, gapright 5");
         frameTitlePanel.add(title_close, "align center top");
-        TitlePanelMouseListener tpMouseListener = new TitlePanelMouseListener();
+        TitlePanelMouseListener tpMouseListener = _Container.Get(TitlePanelMouseListener.class);
         frameTitlePanel.addMouseListener(tpMouseListener);
         frameTitlePanel.addMouseMotionListener(tpMouseListener);
         framePanel.add(frameTitlePanel, "pushx, grow, wrap");
         
         title_unmaximize.setVisible(false);
         
-        frameBodyPanel = JSFactory.createLayeredPane(ComponentTypes.FRAMEBODY);
+        frameBodyPanel = _JSFactory.createLayeredPane(ComponentTypes.FRAMEBODY);
         frameBodyPanel.addComponentListener(_ResizeListener);
         framePanel.add(frameBodyPanel, "push, grow");
         

@@ -25,12 +25,13 @@ import javax.swing.JLabel;
 
 import gent.timdemey.cards.services.contract.GetResourceResponse;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
+import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.ui.components.SFontResource;
 import gent.timdemey.cards.ui.components.swing.JSLabel;
 import gent.timdemey.cards.utils.ComponentUtils;
 
-public final class ScaledTextDrawer extends DrawerBase<JSLabel> implements PropertyChangeListener
+public final class ScaledTextDrawer extends DrawerBase implements PropertyChangeListener
 {    
     private Color textColorOutline;
     private Color textColorOutline_mouseover;
@@ -47,9 +48,16 @@ public final class ScaledTextDrawer extends DrawerBase<JSLabel> implements Prope
     
     private boolean mouseOver = false; 
     private boolean mousePressed = false;
+    private final IPositionService _PositionService;
         
-    public ScaledTextDrawer(SFontResource fontResource)
+    public ScaledTextDrawer(
+            IFrameService frameService, 
+            IPositionService positionService,
+            SFontResource fontResource)
     {
+        super(frameService);
+        
+        this._PositionService = positionService;
         this.fontResource = fontResource;
     }
     
@@ -60,7 +68,7 @@ public final class ScaledTextDrawer extends DrawerBase<JSLabel> implements Prope
         
         comp.addPropertyChangeListener("text", this);
         
-        getJComponent().setHorizontalTextPosition(JLabel.CENTER);
+        ((JLabel) getJComponent()).setHorizontalTextPosition(JLabel.CENTER);
     }
 
     @Override
@@ -99,7 +107,7 @@ public final class ScaledTextDrawer extends DrawerBase<JSLabel> implements Prope
         // text soft bounding box
         {
             Graphics2D g = (Graphics2D) g2.create();
-            Rectangle tb = getTextBounds(g, jcomp);
+            Rectangle tb = getTextBounds(g, (JLabel) jcomp);
             g.setColor(getDebugColor(DebugItems.PaddingBoxOutline));
             g.setStroke(getDebugStroke(DebugItems.PaddingBoxOutline));
             g.drawRect(tb.x, tb.y, tb.width - 1, tb.height - 1);
@@ -107,12 +115,11 @@ public final class ScaledTextDrawer extends DrawerBase<JSLabel> implements Prope
     }
    
     
-    private GetResourceResponse<Font> getFont(JLabel comp)
+    private GetResourceResponse<Font> getFont(JComponent comp)
     {
         ComponentType compType = ComponentUtils.getComponentType(comp);        
 
-        IPositionService posServ = Services.get(IPositionService.class);
-        Dimension resDim = posServ.getResourceDimension(compType);
+        Dimension resDim = _PositionService.getResourceDimension(compType);
         
         // only interested in height for fonts as the width is depending on the text
         GetResourceResponse<Font> resp = fontResource.get(resDim);
@@ -192,7 +199,7 @@ public final class ScaledTextDrawer extends DrawerBase<JSLabel> implements Prope
             
             g2d.setFont(font);
 
-            Rectangle tb = getTextBounds(g, jcomp);
+            Rectangle tb = getTextBounds(g, (JLabel) jcomp);
             FontMetrics fm = g.getFontMetrics();
             int descent = fm.getDescent();
             g2d.translate(tb.x, + tb.y + tb.height - descent);
@@ -200,7 +207,7 @@ public final class ScaledTextDrawer extends DrawerBase<JSLabel> implements Prope
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             // text
-            String text = jcomp.getText();
+            String text = ((JLabel)jcomp).getText();
             if (text != null && !text.isEmpty())
             {
                 FontRenderContext frc = g2d.getFontRenderContext();
@@ -223,7 +230,7 @@ public final class ScaledTextDrawer extends DrawerBase<JSLabel> implements Prope
         g.drawImage(bufferedImage, 0, 0, dim.width, dim.height, null);
     }
     
-    private Color getInnerColor(JLabel label)
+    private Color getInnerColor(JComponent label)
     {
         if (mousePressed && textColorFg_mousePressed != null)
         {

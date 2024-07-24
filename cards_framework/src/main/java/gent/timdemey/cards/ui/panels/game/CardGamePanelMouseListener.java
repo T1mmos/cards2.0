@@ -39,6 +39,7 @@ class CardGamePanelMouseListener extends MouseAdapter
     private final IContextService _ContextService;
     private final IPositionService _PositionService;
     private final ICommandService _CommandService;
+    private final Logger _Logger;
     
     
     private static class CardDragState
@@ -60,12 +61,14 @@ class CardGamePanelMouseListener extends MouseAdapter
     private final List<JComponent> draggedJComps;
 
     CardGamePanelMouseListener(
+            Logger logger,
             IPanelService panelService,
             IContextService contextService,
             IPositionService positionService,
             ICommandService commandService
     )
     {
+        this._Logger = logger;
         this._PanelService = panelService;
         this._ContextService = contextService;
         this._PositionService = positionService;
@@ -333,12 +336,12 @@ class CardGamePanelMouseListener extends MouseAdapter
         }
         else if (response.execState == ExecutionState.No)
         {
-            Logger.trace("Cannot execute command %s (%s) because: %s", command.getName(), dragContext, response.reason);
+            _Logger.trace("Cannot execute command %s (%s) because: %s", command.getName(), dragContext, response.reason);
             return false;
         }
         else
         {
-            Logger.error("Cannot execute command %s (%s) because of a state error: %s", command.getName(), dragContext, response.reason);
+            _Logger.error("Cannot execute command %s (%s) because of a state error: %s", command.getName(), dragContext, response.reason);
             return false;
         }
     }

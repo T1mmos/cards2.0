@@ -1,5 +1,6 @@
 package gent.timdemey.cards.ui.panels;
 
+import gent.timdemey.cards.di.Container;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -20,8 +21,9 @@ public abstract class DataPanelManagerBase<IN, OUT> extends PanelManagerBase imp
     
     protected PanelInData<IN> inData;
 
-    public DataPanelManagerBase()
+    public DataPanelManagerBase(Container container)
     {
+        super(container);
     }
     
     @Override

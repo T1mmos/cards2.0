@@ -7,7 +7,6 @@ import java.lang.reflect.InvocationTargetException;
 import javax.swing.SwingUtilities;
 
 import gent.timdemey.cards.logging.ILogManager;
-import gent.timdemey.cards.logging.LogLevel;
 import gent.timdemey.cards.logging.LogManager;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.serialization.SerializationService;
@@ -51,10 +50,13 @@ public class Start
 
     public static void main(String[] args)
     {
+        Container bootContainer = CreateBootContainer();
+        Logger bootLogger = bootContainer.Get(Logger.class);
+        
         ContainerBuilder cb = new ContainerBuilder();        
         
-        installBaseServices(cb);  
-        installCardPlugin(args, cb);
+        installBaseServices(cb);                  
+        installCardPlugin(args, cb, bootLogger);
 
         Container container = cb.Build();
         
@@ -64,10 +66,10 @@ public class Start
         SwingUtilities.invokeLater(startUI::startUI);
     }
 
-    private static void installCardPlugin(String[] args, ContainerBuilder cb) {
+    private static void installCardPlugin(String[] args, ContainerBuilder cb, Logger logger) {
         
          // determine plugin and if found, let it install services
-        ICardPlugin plugin = loadCardPlugin(args);
+        ICardPlugin plugin = loadCardPlugin(args, logger);
         if(plugin == null)
         {
             throw new IllegalStateException("Cannot load plugin class. Terminating.");
@@ -76,11 +78,11 @@ public class Start
         plugin.installServices(cb);
     }
     
-    private static ICardPlugin loadCardPlugin(String[] args)
+    private static ICardPlugin loadCardPlugin(String[] args, Logger logger)
     {
         if(args.length != 1)
         {
-            Logger.error("A single argument is expected, but %s were given.", args.length);
+            logger.error("A single argument is expected, but %s were given.", args.length);
             return null;
         }
 
@@ -92,14 +94,13 @@ public class Start
         }
         catch (ClassNotFoundException e)
         {
-           
-            Logger.error("The given class '%s' is not found in the classpath.", clazzName);
+            logger.error("The given class '%s' is not found in the classpath.", clazzName);
             return null;
         }
 
         if(!ICardPlugin.class.isAssignableFrom(clazz))
         {
-            Logger.error("Should provide a card plugin. The given class does not derive from ''.", ICardPlugin.class.getSimpleName());
+            logger.error("Should provide a card plugin. The given class does not derive from ''.", ICardPlugin.class.getSimpleName());
             return null;
         }
 
@@ -112,30 +113,39 @@ public class Start
         }
         catch (InstantiationException | IllegalAccessException | InvocationTargetException | SecurityException | NoSuchMethodException e)
         {
-            Logger.error("The given plugin class cannot be instantiated", e);
+            logger.error("The given plugin class cannot be instantiated", e);
             return null;
         }
 
         return plugin;
     }
 
+    private static Container CreateBootContainer()
+    {
+        ContainerBuilder cb = new ContainerBuilder();
+        
+        cb.AddSingleton(ILogManager.class, LogManager.class);                
+        
+        return cb.Build();
+    }
+    
     private static void installBaseServices(ContainerBuilder cb)
     {
-        cb.AddTransient(ILogManager.class, LogManager.class);                
-        cb.AddSingleton(IConfigurationService.class, new ConfigService());
-        cb.AddSingleton(IContextService.class, new ContextService());
-        cb.AddSingleton(IScalingService.class, new ScalingService());
-        cb.AddSingleton(IResourceCacheService.class, new ResourceCacheService());
-        cb.AddSingleton(IResourceRepository.class, new ResourceRepository());
-        cb.AddSingleton(IResourceNameService.class, new ResourceNameService());
-        cb.AddSingleton(ISerializationService.class, new SerializationService());
-        cb.AddSingleton(INetworkService.class, new CommandNetworkService());        
-        cb.AddSingleton(IAnimationService.class, new AnimationService()); 
-        cb.AddSingleton(IFrameService.class, new FrameService());
-        cb.AddSingleton(IActionService.class, new ActionService());
-        cb.AddSingleton(IPanelService.class, new PanelService());
-        cb.AddSingleton(IFileService.class, new FileService());
-        cb.AddSingleton(ISoundService.class, new SoundService());
-        cb.AddSingleton(IAnimationDescriptorFactory.class, new AnimationDescriptorFactory());
+        cb.AddSingleton(ILogManager.class, LogManager.class);                
+        cb.AddSingleton(IConfigurationService.class, ConfigService.class);
+        cb.AddSingleton(IContextService.class, ContextService.class);
+        cb.AddSingleton(IScalingService.class, ScalingService.class);
+        cb.AddSingleton(IResourceCacheService.class, ResourceCacheService.class);
+        cb.AddSingleton(IResourceRepository.class, ResourceRepository.class);
+        cb.AddSingleton(IResourceNameService.class, ResourceNameService.class);
+        cb.AddSingleton(ISerializationService.class, SerializationService.class);
+        cb.AddSingleton(INetworkService.class, CommandNetworkService.class);        
+        cb.AddSingleton(IAnimationService.class, AnimationService.class); 
+        cb.AddSingleton(IFrameService.class, FrameService.class);
+        cb.AddSingleton(IActionService.class, ActionService.class);
+        cb.AddSingleton(IPanelService.class, PanelService.class);
+        cb.AddSingleton(IFileService.class, FileService.class);
+        cb.AddSingleton(ISoundService.class, SoundService.class);
+        cb.AddSingleton(IAnimationDescriptorFactory.class, AnimationDescriptorFactory.class);
     }
 }

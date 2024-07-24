@@ -25,23 +25,29 @@ import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.utils.ComponentUtils;
 import gent.timdemey.cards.utils.DebugDrawDefines;
 
-public class DrawerBase<T extends JComponent> implements IDrawer
+public class DrawerBase implements IDrawer
 {
     private boolean mirror = false;
     private float alphaFg = 1.0f;
     private float alphaBg = 1.0f;
 
-    protected T jcomp;
+    protected JComponent jcomp;
     private BufferedImage imageBg;
+    protected final IFrameService _FrameService;
+    
+    public DrawerBase(IFrameService frameService)
+    {
+        this._FrameService = frameService;
+    }
     
     @Override
     public void onAttached(JComponent comp)
     {
-        this.jcomp = (T) comp;
+        this.jcomp = comp;
     }
     
     @Override
-    public T getJComponent()
+    public JComponent getJComponent()
     {
         return jcomp;
     }
@@ -126,7 +132,7 @@ public class DrawerBase<T extends JComponent> implements IDrawer
                 
         drawBackground(g2);
         
-        if (Services.get(IFrameService.class).getDrawDebug())
+        if (_FrameService.getDrawDebug())
         {
             drawDebugCompBox(g2);
         }
@@ -146,7 +152,7 @@ public class DrawerBase<T extends JComponent> implements IDrawer
         superPaintChildren.accept(g2);        
         
         // debug drawing happens even on top of the children
-        if (Services.get(IFrameService.class).getDrawDebug())
+        if (_FrameService.getDrawDebug())
         {
             List<String> debugStrings = getDebugStrings();
             drawDebugInfoBox(g2, debugStrings);

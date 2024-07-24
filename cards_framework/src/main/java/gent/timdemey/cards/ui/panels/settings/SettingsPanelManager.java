@@ -1,5 +1,6 @@
 package gent.timdemey.cards.ui.panels.settings;
 
+import gent.timdemey.cards.di.Container;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -11,7 +12,6 @@ import javax.swing.event.DocumentListener;
 
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
-import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.payload.P_SaveState;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
@@ -20,13 +20,10 @@ import gent.timdemey.cards.services.context.IExecutionListener;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
-import gent.timdemey.cards.services.interfaces.IActionService;
-import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.DataPanelManagerBase;
 
-public class SettingsPanelManager extends  DataPanelManagerBase<Void, Void>
+public class SettingsPanelManager extends DataPanelManagerBase<Void, Void>
 {
     private JSLayeredPane contentPanel;
     private IExecutionListener execListener;
@@ -38,15 +35,10 @@ public class SettingsPanelManager extends  DataPanelManagerBase<Void, Void>
     
     private DocumentListener docListener = null;
     private PanelButtonDescriptor pbd_savecfg;
-    private final IContextService _ContextService;
-    private final IActionService _ActionService;
     
-    public SettingsPanelManager (
-        IContextService contextService,
-        IActionService actionService)
+    public SettingsPanelManager (Container container)
     {
-        this._ContextService = contextService;
-        this._ActionService = actionService;
+        super(container);
     }
     
     @Override
@@ -75,7 +67,7 @@ public class SettingsPanelManager extends  DataPanelManagerBase<Void, Void>
     {
         if (contentPanel == null)
         {
-            contentPanel = JSFactory.createLayeredPane(ComponentTypes.PANEL);
+            contentPanel = _JSFactory.createLayeredPane(ComponentTypes.PANEL);
                                                
             // player name
             {
@@ -182,7 +174,7 @@ public class SettingsPanelManager extends  DataPanelManagerBase<Void, Void>
         }
         catch (Exception ex)
         {
-            Logger.warn("Cannot parse '%s' (serverTcpPort) as an integer", text);
+            _Logger.warn("Cannot parse '%s' (serverTcpPort) as an integer", text);
             return -1;
         }
     }

@@ -13,17 +13,24 @@ import java.util.function.Consumer;
 
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.services.contract.GetResourceResponse;
+import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.ui.components.ISResource;
 import gent.timdemey.cards.ui.components.SImageResource;
-import gent.timdemey.cards.ui.components.swing.JSImage;
 
-public class ScaledImageDrawer extends DrawerBase<JSImage>
+public class ScaledImageDrawer extends DrawerBase
 {
     private final List<SImageResource> imgResources;
     private ISResource<BufferedImage> currentScaledResource;
+    private final Logger _Logger;
 
-    public ScaledImageDrawer (SImageResource... resources)
+    public ScaledImageDrawer (
+            IFrameService frameService, 
+            Logger logger,
+            SImageResource... resources)
     {
+        super(frameService);
+        
+        this._Logger = logger;
         this.imgResources = Arrays.asList(resources);
         this.currentScaledResource = null;
     }
@@ -47,7 +54,7 @@ public class ScaledImageDrawer extends DrawerBase<JSImage>
 
         if(found == null)
         {
-            Logger.error("Resource with id=%s not found", resourceId);
+            _Logger.error("Resource with id=%s not found", resourceId);
             return;
         }
 

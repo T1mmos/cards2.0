@@ -28,7 +28,13 @@ public class RootPanelMouseListener implements MouseListener, MouseMotionListene
                 new int[] { Cursor.W_RESIZE_CURSOR,  Cursor.DEFAULT_CURSOR,  Cursor.E_RESIZE_CURSOR  },
                 new int[] { Cursor.SW_RESIZE_CURSOR, Cursor.S_RESIZE_CURSOR, Cursor.SE_RESIZE_CURSOR }
         };
+    private final IFrameService _FrameService;
            
+    public RootPanelMouseListener(IFrameService frameService)
+    {
+        this._FrameService = frameService;
+    }
+    
     @Override
     public void mouseDragged(MouseEvent e)
     {
@@ -70,8 +76,7 @@ public class RootPanelMouseListener implements MouseListener, MouseMotionListene
                 h = fh;
             }            
 
-            IFrameService fServ = Services.get(IFrameService.class);
-            fServ.setBounds(x, y, w, h);
+            _FrameService.setBounds(x, y, w, h);
         }
     }
 
@@ -96,8 +101,7 @@ public class RootPanelMouseListener implements MouseListener, MouseMotionListene
             
             int cursor = CURSORS[idx_y][idx_x];    
                 
-            IFrameService fServ = Services.get(IFrameService.class);
-            fServ.getFrame().setCursor(new Cursor(cursor));
+            _FrameService.getFrame().setCursor(new Cursor(cursor));
         }
     }
       
@@ -111,8 +115,7 @@ public class RootPanelMouseListener implements MouseListener, MouseMotionListene
     {
         if (isResizeN || isResizeS || isResizeE || isResizeW)
         {
-            IFrameService fServ = Services.get(IFrameService.class);
-            JFrame frame = fServ.getFrame();
+            JFrame frame = _FrameService.getFrame();
             
             sx = e.getXOnScreen();
             sy = e.getYOnScreen();
@@ -142,7 +145,6 @@ public class RootPanelMouseListener implements MouseListener, MouseMotionListene
     {
         int cursor = CURSORS[1][1];    
         
-        IFrameService fServ = Services.get(IFrameService.class);
-        fServ.getFrame().setCursor(new Cursor(cursor));
+        _FrameService.getFrame().setCursor(new Cursor(cursor));
     }
 }

@@ -15,9 +15,18 @@ import gent.timdemey.cards.services.interfaces.ISerializationService;
 
 class ServerCommandExecutor extends CommandExecutorBase
 {
-    public ServerCommandExecutor()
+
+    private final INetworkService _NetworkService;
+    private final ISerializationService _SerializationService;
+    public ServerCommandExecutor(
+            INetworkService networkService,
+            ISerializationService serializationService
+    )
     {
         super(ContextType.Server);
+        
+        this._NetworkService = networkService;
+        this._SerializationService = serializationService;
     }
 
     @Override
@@ -51,8 +60,7 @@ class ServerCommandExecutor extends CommandExecutorBase
                 if (cmdType == CommandType.SYNCED)
                 {
                     C_Accept acceptCmd = new C_Accept(command.id);
-                    INetworkService ns = Services.get(INetworkService.class);
-                    ns.send(state.getLocalId(), command.getSourceId(), acceptCmd, state.getTcpConnectionPool());
+                    _NetworkService.send(state.getLocalId(), command.getSourceId(), acceptCmd, state.getTcpConnectionPool());
                 }
             }
             else if (cmdType == CommandType.DEFAULT)
@@ -67,8 +75,7 @@ class ServerCommandExecutor extends CommandExecutorBase
                 Logger.info("Can't execute syncable command: '%s'. Responding with a C_Reject. Reason: %s", command.getName(), resp.reason);
 
                 C_Reject rejectCmd = new C_Reject(command.id);
-                ISerializationService serServ = Services.get(ISerializationService.class);
-                String answer = serServ.getCommandDtoMapper().toJson(rejectCmd);
+                String answer = _SerializationService.getCommandDtoMapper().toJson(rejectCmd);
                 state.getTcpConnectionPool().getConnection(command.getSourceId()).send(answer);
             }
             else

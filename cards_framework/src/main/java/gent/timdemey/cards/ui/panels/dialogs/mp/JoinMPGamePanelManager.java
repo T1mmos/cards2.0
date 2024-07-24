@@ -1,5 +1,6 @@
 package gent.timdemey.cards.ui.panels.dialogs.mp;
 
+import gent.timdemey.cards.di.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -24,19 +25,14 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyUDPServer;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptors;
-import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.DataPanelManagerBase;
 
 public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGamePanelData>
-{
-
-    private IContextService _ContextService;
-    
-    public JoinMPGamePanelManager (IContextService contextService)
+{    
+    public JoinMPGamePanelManager (Container container)
     {
-        this._ContextService = contextService;
+        super(container);
     }
     
     private class ServersTableModel extends AbstractTableModel
@@ -139,10 +135,6 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
     private ActionListener refreshListener;
     private SelectionListener selectionListener;
 
-    public JoinMPGamePanelManager()
-    {
-    }
-
     @Override
     public JSLayeredPane createPanel()
     {        
@@ -160,7 +152,7 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
         scroll_server.setViewportView(table_servers);
         this.table_servers.getColumnModel().getColumn(2).setMaxWidth(100);
         
-        this.contentPanel = JSFactory.createLayeredPane(ComponentTypes.PANEL);
+        this.contentPanel = _JSFactory.createLayeredPane(ComponentTypes.PANEL);
         contentPanel.add(lb_srvname, "spanx 2, growx, wrap");
         contentPanel.add(scroll_server, "spanx 2, hmin 150, hmax 300, grow, span, wrap");
         contentPanel.add(button_refresh, "spanx 2, aligny top, alignx right, wrap");

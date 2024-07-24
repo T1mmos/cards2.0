@@ -5,12 +5,13 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCommandHistory;
 import gent.timdemey.cards.readonlymodel.ReadOnlyProperty;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
+import gent.timdemey.cards.services.interfaces.IActionService;
 
 class A_Redo extends ActionBase
 {
-    protected A_Redo(ActionDescriptor desc, String title)
+    protected A_Redo(IActionService actionService, ActionDescriptor desc, String title)
     {
-        super(desc, title);
+        super(actionService, desc, title);
     }
 
     @Override

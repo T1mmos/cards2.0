@@ -8,6 +8,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 import gent.timdemey.cards.ICardPlugin;
+import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.services.action.ActionBase;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
@@ -18,7 +19,6 @@ import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IResourceNameService;
 import gent.timdemey.cards.ui.components.swing.JSButton;
-import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.PanelManagerBase;
 import javax.swing.SwingConstants;
@@ -34,16 +34,13 @@ public class MenuPanelManager extends PanelManagerBase
     private final IResourceCacheService _ResourceCacheService;
     private final ICardPlugin _CardPlugin;
 
-    public MenuPanelManager (
-            IActionService actionService,
-            IResourceNameService resourceNameService,
-            IResourceCacheService resourceCacheService,
-            ICardPlugin cardPlugin)
+    public MenuPanelManager (Container container)
     {
-        this._ActionService = actionService;
-        this._ResourceNameService = resourceNameService;
-        this._ResourceCacheService = resourceCacheService;
-        this._CardPlugin = cardPlugin;
+        super(container);
+        this._ActionService = container.Get(IActionService.class);
+        this._ResourceNameService = container.Get(IResourceNameService.class);
+        this._ResourceCacheService = container.Get(IResourceCacheService.class);
+        this._CardPlugin = container.Get(ICardPlugin.class);
     }
     
     @Override
@@ -61,25 +58,25 @@ public class MenuPanelManager extends PanelManagerBase
     @Override
     public JSLayeredPane createPanel()
     {
-        menuPanel = JSFactory.createLayeredPane(ComponentTypes.PANEL_MENU);
+        menuPanel = _JSFactory.createLayeredPane(ComponentTypes.PANEL_MENU);
         menuPanel.setLayout(new MigLayout("insets 0, align 50% 50%"));
         
         // icon
         {
-            JLabel lbl_icon = JSFactory.createLabel(new ImageIcon(bgimg));
+            JLabel lbl_icon = _JSFactory.createLabel(new ImageIcon(bgimg));
             menuPanel.add(lbl_icon, "");
         }
 
         // buttons
         {
-            JSLayeredPane pnl_buts = JSFactory.createLayeredPane(ComponentTypes.PANEL);
+            JSLayeredPane pnl_buts = _JSFactory.createLayeredPane(ComponentTypes.PANEL);
             List<ActionDescriptor> actDescs = getMenuActionDescriptors();
             MenuButtonMouseListener listener = new MenuButtonMouseListener();          
             
             for (ActionDescriptor actDesc : actDescs)
             {
                 ActionBase action = _ActionService.getAction(actDesc);
-                JSButton button = JSFactory.createButton(action);
+                JSButton button = _JSFactory.createButton(action);
                 
                 button.setContentAreaFilled(false);
                 button.setFocusPainted(false);

@@ -19,67 +19,71 @@ public class ActionBase extends AbstractAction implements IContextListener, ISta
     public final ActionDescriptor desc;
     public final Icon icon_rollover;     
     private final ActionDescriptor[] chainedActionDescs;
+    
+    protected final IActionService _ActionService;
 
-    ActionBase(ActionDescriptor desc, String title)
+    ActionBase(IActionService actionService, ActionDescriptor desc, String title)
     {
         super(title);
 
+        this._ActionService = actionService;
         this.desc = desc;
         this.icon_rollover = null;
         this.chainedActionDescs = null;
     }
     
-    ActionBase(ActionDescriptor desc, String title, Icon icon)
+    ActionBase(IActionService actionService, ActionDescriptor desc, String title, Icon icon)
     {
-        this(desc, title, icon, null);
+        this(actionService, desc, title, icon, null);
     }
     
-    ActionBase(ActionDescriptor desc, String title, Icon icon, Icon rollover)
+    ActionBase(IActionService actionService, ActionDescriptor desc, String title, Icon icon, Icon rollover)
     {
         super(title, icon);
-
+        
+        this._ActionService = actionService;
         this.desc = desc;
         this.icon_rollover = rollover;
         this.chainedActionDescs = null;
     }
     
-    private ActionBase(ActionDescriptor desc, String title, Icon icon, Icon rollover, ActionDescriptor ... chainedActionDescs)
+    private ActionBase(IActionService actionService, ActionDescriptor desc, String title, Icon icon, Icon rollover, ActionDescriptor ... chainedActionDescs)
     {        
         super(title, icon);
 
+        this._ActionService = actionService;
         this.desc = desc;
         this.icon_rollover = rollover;
         this.chainedActionDescs = chainedActionDescs;
     }
 
-    public static ActionBase chain(ActionBase first, ActionBase second)
+    public static ActionBase chain(IActionService actionService, ActionBase first, ActionBase second)
     {
         String title = (String) first.getValue(Action.NAME);
         Icon icon = (Icon) first.getValue(Action.SMALL_ICON);
         ActionDescriptor desc = first.desc;
         Icon rollover = first.icon_rollover;
-        ActionBase combined = new ActionBase(desc, title, icon, rollover, second.desc);
+        ActionBase combined = new ActionBase(actionService, desc, title, icon, rollover, second.desc);
         return combined;
     }
     
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        IActionService actServ = Services.get(IActionService.class);
-        actServ.executeAction(desc);
+        _ActionService.executeAction(desc);
         
         if (chainedActionDescs != null)
         {
             for (ActionDescriptor ad : chainedActionDescs)
             {
-                actServ.executeAction(ad);
+                _ActionService.executeAction(ad);
             }
         }
     }
 
     public void checkEnabled()
     {
-        setEnabled(Services.get(IActionService.class).canExecuteAction(desc));
+        setEnabled(_ActionService.canExecuteAction(desc));
     }
 
     @Override

@@ -28,7 +28,6 @@ import gent.timdemey.cards.ui.components.drawers.GamePanelDrawer;
 import gent.timdemey.cards.ui.components.drawers.IHasDrawer;
 import gent.timdemey.cards.ui.components.drawers.ScaledImageDrawer;
 import gent.timdemey.cards.ui.components.ext.IHasComponent;
-import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSImage;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.PanelManagerBase;
@@ -40,25 +39,16 @@ public class CardGamePanelManager extends PanelManagerBase
     private CardGamePanelStateListener stateListener;
     private CardGamePanelContainerListener contListener;
     private final IContextService _ContextService;
-    private final Container _Container;
-    private final IIdService _IdService;
     private final IResourceNameService _ResourceNameService;
-    private final IPositionService _PositionService;
-    private final IScalingService _ScalingService;
 
     public CardGamePanelManager(
             Container container,
-            IIdService idService,
             IResourceNameService resourceNameService,
-            IPositionService positionService,
-            IScalingService scalingService,
             IContextService contextService)
     {
-        this._Container = container;
-        this._IdService = idService;
+        super(container);
+        
         this._ResourceNameService = resourceNameService;
-        this._PositionService = positionService;
-        this._ScalingService = scalingService;
         this._ContextService = contextService;
     }
     
@@ -92,7 +82,7 @@ public class CardGamePanelManager extends PanelManagerBase
     @Override
     public JSLayeredPane createPanel()
     {
-        gamePanel = JSFactory.createLayeredPane(ComponentTypes.PANEL, new GamePanelDrawer());
+        gamePanel = _JSFactory.createLayeredPane(ComponentTypes.PANEL, _Container.Get(GamePanelDrawer.class));
         gamePanel.setLayout(null);
         
         mouseListener = createMouseListener();

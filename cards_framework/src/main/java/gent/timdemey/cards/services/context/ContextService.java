@@ -1,5 +1,7 @@
 package gent.timdemey.cards.services.context;
 
+import gent.timdemey.cards.ICardPlugin;
+import gent.timdemey.cards.di.Container;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.HashSet;
@@ -21,9 +23,15 @@ public class ContextService implements IContextService
 {
     protected final ConcurrentMap<ContextType, Context> fullContexts;
     private final Set<IContextListener> contextListeners;
+    private final ICardPlugin _CardPlugin;
+    private final IContextService _ContextService;
+    private final Container _Container;
 
-    public ContextService()
+    public ContextService(Container container, ICardPlugin cardPlugin, IContextService contextService)
     {
+        this._Container = container;
+        this._CardPlugin = cardPlugin;
+        this._ContextService = contextService;
         fullContexts = new ConcurrentHashMap<>();
         contextListeners = Collections.synchronizedSet(new HashSet<>());
     }
@@ -90,11 +98,11 @@ public class ContextService implements IContextService
         ICommandExecutor cmdExecutor = null;
         if (type == ContextType.UI)
         {
-            cmdExecutor = new UICommandExecutor();
+            cmdExecutor = _Container.Get(UICommandExecutor.class);
         }
         else if (type == ContextType.Server)
         {
-            cmdExecutor = new ServerCommandExecutor();
+            cmdExecutor = _Container.Get(ServerCommandExecutor.class);
         }
         else
         {
@@ -102,7 +110,7 @@ public class ContextService implements IContextService
         }
 
         boolean allowListeners = type == ContextType.UI;
-        Context context = Context.createContext(type, cmdExecutor, allowListeners);
+        Context context = Context.createContext(_CardPlugin, cmdExecutor, _ContextService, type, allowListeners);
 
         Context prev = fullContexts.putIfAbsent(type, context);
         if (prev != null)

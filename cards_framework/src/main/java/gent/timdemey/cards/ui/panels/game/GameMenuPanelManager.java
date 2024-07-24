@@ -1,5 +1,6 @@
 package gent.timdemey.cards.ui.panels.game;
 
+import gent.timdemey.cards.di.Container;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -8,19 +9,16 @@ import gent.timdemey.cards.services.action.ActionBase;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
-import gent.timdemey.cards.services.interfaces.IActionService;
-import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.DataPanelManagerBase;
 
 public class GameMenuPanelManager extends DataPanelManagerBase<Void, Void>
 {
     private JSLayeredPane content;
-    private final IActionService _ActionService;
 
-    public GameMenuPanelManager (IActionService actionService)
+    public GameMenuPanelManager (Container container)
     {
-        this._ActionService = actionService;
+        super(container);
     }
     
     @Override
@@ -34,12 +32,12 @@ public class GameMenuPanelManager extends DataPanelManagerBase<Void, Void>
     {
         if (content == null)
         {
-            content = JSFactory.createLayeredPane(ComponentTypes.PANEL);
+            content = _JSFactory.createLayeredPane(ComponentTypes.PANEL);
             
-            JButton btn_return = JSFactory.createButton("Return to game (dummy)");
+            JButton btn_return = _JSFactory.createButton("Return to game (dummy)");
             
             ActionBase act_leavemp = _ActionService.getAction(ActionDescriptors.LEAVEMP, ActionDescriptors.TOGGLEMENUMP);
-            JButton btn_leavemp = JSFactory.createButton(act_leavemp);
+            JButton btn_leavemp = _JSFactory.createButton(act_leavemp);
             
             content.add(btn_return, "");
             content.add(btn_leavemp, "wrap");            

@@ -6,6 +6,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
+import gent.timdemey.cards.services.interfaces.IActionService;
 
 /**
  * Action to start hosting / creating a server.
@@ -15,9 +16,9 @@ import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
  */
 class A_CreateMP extends ActionBase
 {    
-    protected A_CreateMP(ActionDescriptor desc, String title)
+    protected A_CreateMP(IActionService actionService, ActionDescriptor desc, String title)
     {
-        super(desc, title);
+        super(actionService, desc, title);
     }
     
     @Override

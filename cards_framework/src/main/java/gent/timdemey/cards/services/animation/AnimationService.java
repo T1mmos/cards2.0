@@ -29,9 +29,15 @@ public class AnimationService implements IAnimationService, IPreload
 {
     private final List<AnimationTracker> animTrackers;
     private Timer timer = null;
+    private final IPositionService _PositionService;
+    private final IAnimationDescriptorFactory _AnimationDescriptorFactory;
 
-    public AnimationService()
+    public AnimationService(
+        IPositionService positionService,
+        IAnimationDescriptorFactory animationDescriptorFactory) 
     {
+        this._PositionService = positionService;
+        this._AnimationDescriptorFactory = animationDescriptorFactory;
         this.animTrackers = new ArrayList<>();
     }
 
@@ -53,16 +59,13 @@ public class AnimationService implements IAnimationService, IPreload
         IHasComponent<?> hasComp = (IHasComponent<?>) jcomp;        
         IComponent comp = hasComp.getComponent();
         
-        IPositionService posServ = Services.get(IPositionService.class);
-        IAnimationDescriptorFactory animDescFact = Services.get(IAnimationDescriptorFactory.class);
-
-        AnimationDescriptor descr = animDescFact.getAnimationDescriptor(comp);
+        AnimationDescriptor descr = _AnimationDescriptorFactory.getAnimationDescriptor(comp);
         
         // to support animation while resizing the window, we need to save the relative coordinates
         // of the component at the start of the animation
         Coords.Absolute abscoords = ((IHasComponent<?>) jcomp).getComponent().getAbsCoords();
-        Coords.Relative relcoords = posServ.getRelativeCoords(abscoords);
-        LayeredArea layeredArea = posServ.getLayeredArea(jcomp);
+        Coords.Relative relcoords = _PositionService.getRelativeCoords(abscoords);
+        LayeredArea layeredArea = _PositionService.getLayeredArea(jcomp);
 
         AnimationTracker tracker = new AnimationTracker(jcomp, pm, descr, relcoords, layeredArea);
         animTrackers.add(tracker);

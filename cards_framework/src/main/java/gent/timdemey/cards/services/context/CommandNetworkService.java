@@ -16,11 +16,17 @@ import gent.timdemey.cards.services.interfaces.ISerializationService;
 public class CommandNetworkService implements INetworkService
 {
 
+    private final ISerializationService _SerializationService;
+    public CommandNetworkService (ISerializationService serializationService)
+    {
+        this._SerializationService = serializationService;
+    }
+    
     @Override
     public void send(UUID localId, UUID dstId, CommandBase command, TCP_ConnectionPool tcpConnPool)
     {
         List<UUID> dstIds = Arrays.asList(dstId);
-        CheckArgs(localId, dstIds, command, tcpConnPool);
+        CheckArgs(localId, dstIds, command);
         sendPriv(localId, dstIds, command, tcpConnPool);
     }
     
@@ -34,7 +40,7 @@ public class CommandNetworkService implements INetworkService
     @Override
     public void broadcast(UUID localId, List<UUID> dstIds, CommandBase command, TCP_ConnectionPool tcpConnPool)
     {
-        CheckArgs(localId, dstIds, command, tcpConnPool);
+        CheckArgs(localId, dstIds, command);
         sendPriv(localId, dstIds, command, tcpConnPool);
     }
 
@@ -57,12 +63,12 @@ public class CommandNetworkService implements INetworkService
     
     private String serialize(CommandBase command)
     {
-        CommandDtoMapper dtoMapper = Services.get(ISerializationService.class).getCommandDtoMapper();
+        CommandDtoMapper dtoMapper = _SerializationService.getCommandDtoMapper();
         String serialized = dtoMapper.toJson(command);
         return serialized;
     }
 
-    private void CheckArgs(UUID localId, List<UUID> dstIds, CommandBase command, TCP_ConnectionPool tcpConnPool)
+    private void CheckArgs(UUID localId, List<UUID> dstIds, CommandBase command)
     {
         if (localId == null)
         {

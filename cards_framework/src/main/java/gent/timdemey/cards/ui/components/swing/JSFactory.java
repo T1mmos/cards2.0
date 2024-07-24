@@ -1,6 +1,8 @@
 package gent.timdemey.cards.ui.components.swing;
 
 
+import gent.timdemey.cards.di.Container;
+import gent.timdemey.cards.logging.Logger;
 import java.util.UUID;
 
 import javax.swing.ImageIcon;
@@ -11,6 +13,7 @@ import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptors;
 import gent.timdemey.cards.services.contract.res.FontResource;
+import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IResourceNameService;
 import gent.timdemey.cards.ui.components.SFontResource;
@@ -29,10 +32,22 @@ import net.miginfocom.swing.MigLayout;
 
 public final class JSFactory
 {
-    private JSFactory() {}
+    private final Container _Container;
+    private final IResourceNameService _ResourceNameService;
+    private final IResourceCacheService _ResourceCacheService;
+    
+    public JSFactory(
+       Container container,
+       IResourceNameService resourceNameService,
+       IResourceCacheService resourceCacheService) 
+    {
+        this._Container = container;
+        this._ResourceNameService = resourceNameService;
+        this._ResourceCacheService = resourceCacheService;
+    }
     
 
-    public static JSButton createButton(ActionBase action)
+    public JSButton createButton(ActionBase action)
     {
         JSButton jsbutton = createButton();
 
@@ -41,7 +56,7 @@ public final class JSFactory
         return jsbutton;
     }
     
-    public static JSButton createButton(String text)
+    public JSButton createButton(String text)
     {
         JSButton jsbutton = createButton();
         
@@ -50,36 +65,36 @@ public final class JSFactory
         return jsbutton;
     }
     
-    private static JSButton createButton()
+    private JSButton createButton()
     {
         JSButton jsbutton = new JSButton();
         
         setComponent(jsbutton, new ComponentBase(UUID.randomUUID(), ComponentTypes.BUTTON));
         setFont(jsbutton);    
         setBackgroundTransparent(jsbutton);    
-        setDrawer(jsbutton, new DrawerBase<JSButton>()); 
+        setDrawer(jsbutton, _Container.Get(DrawerBase.class)); // was generic: <JSButton>>
         
         return jsbutton;
     }
 
     
-    public static JSLabel createLabel(String text)
+    public JSLabel createLabel(String text)
     {        
         return createLabel(UUID.randomUUID(), text, ComponentTypes.LABEL);
     }
     
-    public static JSLabel createLabel(UUID uuid, String text, ComponentType compType)
+    public JSLabel createLabel(UUID uuid, String text, ComponentType compType)
     {        
-        return createLabel(uuid, text, compType, new DrawerBase<JSLabel>());
+        return createLabel(uuid, text, compType, _Container.Get(DrawerBase.class)); // was generic: <JSButton>>
     }
     
-    public static JSLabel createLabelScaled(UUID uuid, String text, ComponentType compType, SFontResource fontRes)
+    public JSLabel createLabelScaled(UUID uuid, String text, ComponentType compType, SFontResource fontRes)
     {
-        JSLabel lbl = createLabel(uuid, text, compType, new ScaledTextDrawer(fontRes));        
+        JSLabel lbl = createLabel(uuid, text, compType, _Container.Get(ScaledTextDrawer.class));        
         return lbl;
     }
     
-    public static JSLabel createLabel(UUID uuid, String text, ComponentType compType, IDrawer drawer)
+    public JSLabel createLabel(UUID uuid, String text, ComponentType compType, IDrawer drawer)
     {
         JSLabel jslabel = new JSLabel();
 
@@ -94,17 +109,17 @@ public final class JSFactory
         return jslabel;
     }
     
-    public static JSLabel createLabel(ImageIcon icon)
+    public JSLabel createLabel(ImageIcon icon)
     {
         return createLabel(icon, ComponentTypes.LABEL);
     }
     
-    public static JSLabel createLabel(ImageIcon icon, ComponentType compType)
+    public JSLabel createLabel(ImageIcon icon, ComponentType compType)
     {        
-        return createLabel(icon, compType, new DrawerBase<JSLabel>());
+        return createLabel(icon, compType, _Container.Get(DrawerBase.class)); // was generic: <JSLabel>
     }
     
-    public static JSLabel createLabel(ImageIcon icon, ComponentType compType, IDrawer drawer)
+    public JSLabel createLabel(ImageIcon icon, ComponentType compType, IDrawer drawer)
     {
         JSLabel jslabel = new JSLabel();
 
@@ -117,12 +132,12 @@ public final class JSFactory
         return jslabel;
     }
     
-    public static JSLayeredPane createLayeredPane(ComponentType compType)
+    public JSLayeredPane createLayeredPane(ComponentType compType)
     {        
-        return createLayeredPane(compType, new DrawerBase<JSLayeredPane>());
+        return createLayeredPane(compType, _Container.Get(DrawerBase.class)); // was generic: <JSLayeredPane>
     }
 
-    public static JSLayeredPane createLayeredPane(ComponentType compType, IDrawer drawer)
+    public JSLayeredPane createLayeredPane(ComponentType compType, IDrawer drawer)
     {
         JSLayeredPane jslpane = new JSLayeredPane();
         
@@ -135,19 +150,22 @@ public final class JSFactory
         return jslpane;
     }
     
-    public static JSImage createImage(ComponentType compType)
+    public JSImage createImage(ComponentType compType)
     {
         return createImage(UUID.randomUUID(), compType);
     }
     
-    public static JSImage createImage(UUID compId, ComponentType compType)
+    public JSImage createImage(UUID compId, ComponentType compType)
     {
-        return createImage(compId, compType, new DrawerBase<JSImage>());
+        return createImage(compId, compType, _Container.Get(DrawerBase.class)); // was generic: <JSImage>
     }
     
-    public static JSImage createImageScaled(UUID compId, ComponentType compType, SImageResource... resources)
+    public JSImage createImageScaled(UUID compId, ComponentType compType, SImageResource... resources)
     {   
-        ScaledImageDrawer drawer = new ScaledImageDrawer(resources);
+        ScaledImageDrawer drawer = new ScaledImageDrawer(
+                _Container.Get(IFrameService.class), 
+                _Container.Get(Logger.class), 
+                resources);
         
         if (resources.length > 0)
         {
@@ -157,7 +175,7 @@ public final class JSFactory
         return createImage(compId, compType, drawer);
     }
     
-    public static JSImage createImage(UUID compId, ComponentType compType, IDrawer drawer)
+    public JSImage createImage(UUID compId, ComponentType compType, IDrawer drawer)
     {
         JSImage jsimage = new JSImage();
         setComponent(jsimage, new ComponentBase(compId, compType));
@@ -168,30 +186,27 @@ public final class JSFactory
         return jsimage;
     }
         
-    private static void setBackgroundTransparent(JComponent jcomp)
+    private void setBackgroundTransparent(JComponent jcomp)
     {
         jcomp.setBackground(new Color(255,0,0,0));
     }
     
-    private static <S extends JComponent & IHasDrawer> void setDrawer(S drawee, IDrawer drawer)
+    private <S extends JComponent & IHasDrawer> void setDrawer(S drawee, IDrawer drawer)
     {
         drawee.setDrawer(drawer);
         drawer.onAttached(drawee);        
     }
 
-    private static <T extends IComponent, J extends JComponent & IHasComponent<T>> void setComponent(J hasComp, T comp)
+    private <T extends IComponent, J extends JComponent & IHasComponent<T>> void setComponent(J hasComp, T comp)
     {
         hasComp.setComponent(comp);
         comp.onAttached(hasComp);
     }
 
-    private static void setFont(JComponent comp)
-    {
-        IResourceCacheService resServ = Services.get(IResourceCacheService.class);
-        IResourceNameService resLocServ = Services.get(IResourceNameService.class);
-        
-        String dialogLabelFont = resLocServ.getFilePath(ResourceDescriptors.DialogLabelFont);
-        FontResource res_dialogLabelFont = resServ.getFont(dialogLabelFont);
+    private void setFont(JComponent comp)
+    {        
+        String dialogLabelFont = _ResourceNameService.getFilePath(ResourceDescriptors.DialogLabelFont);
+        FontResource res_dialogLabelFont = _ResourceCacheService.getFont(dialogLabelFont);
         comp.setFont(res_dialogLabelFont.raw.deriveFont(40f));
     }
 }

@@ -12,8 +12,12 @@ public class LimitedContext
     private final ContextType contextType;
     private final ICommandExecutor cmdExecServ;
     private final State state;
+    private final ICardPlugin _CardPlugin;
 
-    public LimitedContext(ContextType contextType, ICommandExecutor cmdExecServ)
+    public LimitedContext(
+            ICardPlugin cardPlugin, 
+            ICommandExecutor cmdExecServ, 
+            ContextType contextType)
     {
         if (contextType == null)
         {
@@ -23,12 +27,12 @@ public class LimitedContext
         {
             throw new IllegalArgumentException("cmdExecServ");
         }
-
-        this.contextType = contextType;
-        this.cmdExecServ = cmdExecServ;
         
-        ICardPlugin plugin = Services.get(ICardPlugin.class);
-        this.state = plugin.createState();
+        this._CardPlugin = cardPlugin;
+        this.cmdExecServ = cmdExecServ;
+        this.contextType = contextType;
+        
+        this.state = _CardPlugin.createState();
     }
 
     public ContextType getContextType()

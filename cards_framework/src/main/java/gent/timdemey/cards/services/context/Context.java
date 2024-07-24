@@ -1,5 +1,6 @@
 package gent.timdemey.cards.services.context;
 
+import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.model.state.StateChangeTracker;
 import gent.timdemey.cards.model.state.Change;
 import gent.timdemey.cards.model.state.IChangeTracker;
@@ -27,19 +28,26 @@ public final class Context
     final LimitedContext limitedContext;
     private final List<IStateListener> stateListeners;
     private final boolean allowListeners;
+    private final IContextService _ContextService;
 
-    private Context(ContextType contextType, ICommandExecutor cmdExecService, boolean allowListeners)
+    private Context(
+            ICardPlugin cardPlugin, 
+            ICommandExecutor cmdExecService, 
+            IContextService contextService,
+            ContextType contextType, 
+            boolean allowListeners)
     {
-        limitedContext = new LimitedContext(contextType, cmdExecService);
+        limitedContext = new LimitedContext(cardPlugin, cmdExecService, contextType);
         
+        this._ContextService = contextService;
         this.allowListeners = allowListeners;
         this.stateListeners = allowListeners ? new ArrayList<>() : null;
         this.changeTracker = allowListeners ? new StateChangeTracker() : new NopChangeTracker();
     }
     
-    static Context createContext(ContextType contextType, ICommandExecutor cmdExecService, boolean allowListeners)
+    static Context createContext(ICardPlugin cardPlugin, ICommandExecutor cmdExecService, IContextService contextService, ContextType contextType, boolean allowListeners)
     {
-        Context context = new Context(contextType, cmdExecService, allowListeners);
+        Context context = new Context(cardPlugin, cmdExecService, contextService, contextType, allowListeners);
         
         if (allowListeners)
         {
@@ -81,8 +89,7 @@ public final class Context
 
     public void schedule(CommandBase command)
     {
-        IContextService contextServ = Services.get(IContextService.class);
-        boolean isCurrentContext = contextServ.isCurrentContext(getContextType());
+        boolean isCurrentContext = _ContextService.isCurrentContext(getContextType());
         if(!isCurrentContext)
         {
             throw new IllegalStateException("You can only schedule on the Context on the correct thread, expected context type = " + getContextType());

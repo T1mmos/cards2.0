@@ -11,9 +11,9 @@ public class PayloadActionBase<T> extends ActionBase
 {
     private final Supplier<T> payloadSupplier;
 
-    PayloadActionBase(PayloadActionDescriptor<T> desc, String title, Supplier<T> payloadSupplier)
+    PayloadActionBase(IActionService actionService, PayloadActionDescriptor<T> desc, String title, Supplier<T> payloadSupplier)
     {
-        super(desc, title);
+        super(actionService, desc, title);
         
         if (payloadSupplier == null)
         {
@@ -29,7 +29,7 @@ public class PayloadActionBase<T> extends ActionBase
         @SuppressWarnings("unchecked")
         PayloadActionDescriptor<T> tdesc = (PayloadActionDescriptor<T>) desc;
         T payload = payloadSupplier.get();
-        Services.get(IActionService.class).executeAction(tdesc, payload);
+        _ActionService.executeAction(tdesc, payload);
     }
     
     @Override
@@ -41,11 +41,10 @@ public class PayloadActionBase<T> extends ActionBase
     @Override
     public void checkEnabled()
     {
-        IActionService actServ = Services.get(IActionService.class);
         @SuppressWarnings("unchecked")
         PayloadActionDescriptor<T> tdesc = (PayloadActionDescriptor<T>) desc;
         T payload = payloadSupplier.get();
-        boolean canExecute = actServ.canExecuteAction(tdesc, payload);
+        boolean canExecute = _ActionService.canExecuteAction(tdesc, payload);
         setEnabled(canExecute);
     }
 }

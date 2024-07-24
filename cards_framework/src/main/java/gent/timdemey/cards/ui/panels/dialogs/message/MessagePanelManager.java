@@ -1,18 +1,23 @@
 package gent.timdemey.cards.ui.panels.dialogs.message;
 
+import gent.timdemey.cards.di.Container;
 import java.util.List;
 
 import javax.swing.JLabel;
 
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
-import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.DataPanelManagerBase;
 
 public class MessagePanelManager extends DataPanelManagerBase<MessagePanelData, Void>
 {
     private JSLayeredPane contentPanel;
+    
+    public MessagePanelManager(Container container)
+    {
+        super(container);
+    }
     
     @Override
     public Void onClose(PanelButtonDescriptor dbType)
@@ -41,7 +46,7 @@ public class MessagePanelManager extends DataPanelManagerBase<MessagePanelData, 
     @Override
     public JSLayeredPane createPanel()
     {
-        contentPanel = JSFactory.createLayeredPane(ComponentTypes.PANEL);
+        contentPanel = _JSFactory.createLayeredPane(ComponentTypes.PANEL);
         contentPanel.add(new JLabel(inData.payload.message), "push, wrap");
 
         return contentPanel;

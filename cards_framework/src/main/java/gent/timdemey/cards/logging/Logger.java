@@ -4,80 +4,81 @@ package gent.timdemey.cards.logging;
 
 public class Logger
 {
-    private static final ILogManager logMan = Services.get(ILogManager.class);
+    private final ILogManager _LogManager;
     
-    private Logger()
+    private Logger(ILogManager logManager)
     {
+        this._LogManager = logManager;
     }
     
-    public static void debug(Object msg)
+    public void debug(Object msg)
     {
         log(LogLevel.DEBUG, msg);
     }
 
-    public static void debug(String msg, Object... params)
+    public void debug(String msg, Object... params)
     {
         log(LogLevel.DEBUG, msg, params);
     }
     
-    public static void trace(Object msg)
+    public void trace(Object msg)
     {
         log(LogLevel.TRACE, msg);
     }
 
-    public static void trace(String msg, Object... params)
+    public void trace(String msg, Object... params)
     {
         log(LogLevel.TRACE, msg, params);
     }
     
-    public static void info(Object msg)
+    public void info(Object msg)
     {
         log(LogLevel.INFO, msg);
     }
 
-    public static void info(String msg, Object... params)
+    public void info(String msg, Object... params)
     {
         log(LogLevel.INFO, msg, params);
     }
     
-    public static void warn(Object msg)
+    public void warn(Object msg)
     {
         log(LogLevel.WARN, msg);
     }
 
-    public static void warn(String msg, Object... params)
+    public void warn(String msg, Object... params)
     {
         log(LogLevel.WARN, msg, params);
     }
     
-    public static void error(Object msg)
+    public void error(Object msg)
     {
         log(LogLevel.ERROR, msg);
     }
 
-    public static void error(String msg, Object... params)
+    public void error(String msg, Object... params)
     {
         log(LogLevel.ERROR, msg, params);
     }
     
-    public static void error(Throwable ex)
+    public void error(Throwable ex)
     {
-        logMan.log(ex);
+        _LogManager.log(ex);
     }
     
-    public static void error(String msg, Throwable ex)
+    public void error(String msg, Throwable ex)
     {
-        logMan.log(msg, ex);
+        _LogManager.log(msg, ex);
     }
         
-    private static void log(LogLevel lvl, Object msg)
+    private void log(LogLevel lvl, Object msg)
     {
-        logMan.log(lvl, msg);
+        _LogManager.log(lvl, msg);
     }
 
-    private static void log(LogLevel lvl, String msg, Object... params)
+    private void log(LogLevel lvl, String msg, Object... params)
     {
-        logMan.log(lvl, msg, params);
+        _LogManager.log(lvl, msg, params);
     }
 
 }

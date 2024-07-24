@@ -1,5 +1,7 @@
 package gent.timdemey.cards.ui.panels;
 
+import gent.timdemey.cards.di.Container;
+import gent.timdemey.cards.logging.Logger;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -18,7 +20,9 @@ import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.res.FontResource;
 import gent.timdemey.cards.services.contract.res.ImageResource;
+import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IAnimationService;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
@@ -37,25 +41,29 @@ public abstract class PanelManagerBase implements IPanelManager
     protected final Map<UUID, JComponent> comp2jcomp;
     protected final Map<UUID, UUID> entity2comp;
     
-    private IResourceCacheService _ResourceCacheService;
-    private IScalingService _ScalingService;
-    private IIdService _IdService;
-    private IPositionService _PositionService;
-    private IAnimationService _AnimationService;
+    protected final Container _Container;
+    protected final IResourceCacheService _ResourceCacheService;
+    protected final IScalingService _ScalingService;
+    protected final IIdService _IdService;
+    protected final IPositionService _PositionService;
+    protected final IAnimationService _AnimationService;
+    protected final IContextService _ContextService;
+    protected final IActionService _ActionService;
+    protected final JSFactory _JSFactory;
+    protected final Logger _Logger;    
     
-    public PanelManagerBase(
-            IAnimationService animationService,
-            IResourceCacheService resourceCacheService,
-            IScalingService scalingService,
-            IIdService idService,
-            IPositionService positionService)
+    public PanelManagerBase(Container container)
     {
-        this._AnimationService = animationService;
-        this._ResourceCacheService = resourceCacheService;
-        this._ScalingService = scalingService;
-        this._IdService = idService;
-        this._PositionService = positionService;
-        
+        this._Container = container;
+        this._AnimationService = container.Get(IAnimationService.class);
+        this._ResourceCacheService = container.Get(IResourceCacheService.class);
+        this._ScalingService = container.Get(IScalingService.class);
+        this._IdService = container.Get(IIdService.class);
+        this._PositionService = container.Get(IPositionService.class);
+        this._ContextService = container.Get(IContextService.class);
+        this._ActionService = container.Get(IActionService.class);
+        this._JSFactory = container.Get(JSFactory.class);
+        this._Logger = container.Get(Logger.class);
         
         this.comp2jcomp = new HashMap<>();
         this.entity2comp = new HashMap<>();
@@ -93,14 +101,14 @@ public abstract class PanelManagerBase implements IPanelManager
     
     protected final JSImage createJSImage(UUID compId, ComponentType compType, Object payload, SImageResource ... imgResources)
     {
-        JSImage jsimage = JSFactory.createImageScaled(compId, compType, imgResources); 
+        JSImage jsimage = _JSFactory.createImageScaled(compId, compType, imgResources); 
         initAndAddComponent(jsimage, payload);
         return jsimage;
     }
     
     protected final JSLabel createJSLabel(UUID compId, ComponentType compType, String text, Object payload, SFontResource fontRes)
     {
-        JSLabel jslabel = JSFactory.createLabelScaled(compId, text, compType, fontRes);
+        JSLabel jslabel = _JSFactory.createLabelScaled(compId, text, compType, fontRes);
         initAndAddComponent(jslabel, payload);
         return jslabel;
     }

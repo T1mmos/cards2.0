@@ -20,19 +20,24 @@ public class TitlePanelMouseListener implements MouseListener, MouseMotionListen
     private int sx, sy;
     private int fx, fy;
     
+    private final IFrameService _FrameService;
+    
+    public TitlePanelMouseListener(IFrameService frameService)
+    {
+        this._FrameService = frameService;
+    }
+    
     @Override
     public void mouseDragged(MouseEvent e)
     {
-        IFrameService fServ = Services.get(IFrameService.class);
-        
         // first ensure that the frame isn't maximized, and if a change is necessary, position the frame
         // so the mouse grabs the title bar exactly in the middle
         
-        if (fServ.isSnapped())
+        if (_FrameService.isSnapped())
         {
-            fServ.unsnap();
+            _FrameService.unsnap();
             
-            JFrame frame = fServ.getFrame();
+            JFrame frame = _FrameService.getFrame();
             int fw = frame.getWidth();                
             fx = e.getXOnScreen() - fw / 2;   
         }
@@ -44,7 +49,7 @@ public class TitlePanelMouseListener implements MouseListener, MouseMotionListen
         int x = fx + dx;
         int y = fy + dy;
         
-        fServ.setLocation(x, y);
+        _FrameService.setLocation(x, y);
     }
 
     @Override
@@ -57,14 +62,13 @@ public class TitlePanelMouseListener implements MouseListener, MouseMotionListen
     {
         if (e.getClickCount() == 2)
         {
-            IFrameService fServ = Services.get(IFrameService.class);
-            if (fServ.isSnapped())
+            if (_FrameService.isSnapped())
             {
-                fServ.unsnap();
+                _FrameService.unsnap();
             }
             else
             {
-                fServ.maximize();
+                _FrameService.maximize();
             }
         }
     }
@@ -72,8 +76,7 @@ public class TitlePanelMouseListener implements MouseListener, MouseMotionListen
     @Override
     public void mousePressed(MouseEvent e)
     {
-        IFrameService fServ = Services.get(IFrameService.class);
-        JFrame frame = fServ.getFrame();
+        JFrame frame = _FrameService.getFrame();
         
         sx = e.getXOnScreen();
         sy = e.getYOnScreen();
@@ -131,8 +134,7 @@ public class TitlePanelMouseListener implements MouseListener, MouseMotionListen
             if (snapsides.size() > 0)
             {
                 SnapSide[] arr =  ArrayUtils.from(snapsides, () -> new SnapSide[0]);
-                IFrameService fServ = Services.get(IFrameService.class);
-                fServ.snap(monitor, arr);    
+                _FrameService.snap(monitor, arr);    
                 break; // we snapped the frame to the bounds of the current monitor
             }        
         }

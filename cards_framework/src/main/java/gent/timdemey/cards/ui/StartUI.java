@@ -39,17 +39,20 @@ public class StartUI
     private final IContextService _ContextService;
     private final Container _Container;
     private final IPanelService _PanelService;
+    private final Logger _Logger;
     
     private StartUI(
             Container container, 
             IContextService contextService, 
             IFrameService frameService, 
-            IPanelService panelService)
+            IPanelService panelService,
+            Logger logger)
     {
         this._Container = container;
         this._ContextService = contextService;
         this._FrameService = frameService;
         this._PanelService = panelService;
+        this._Logger = logger;
     }
     
     public void startUI()
@@ -62,7 +65,7 @@ public class StartUI
         ThreadUtils.executeAndContinueOnUi("Service Preloader", this::preload, this::onServicesPreloaded);
     }
     
-    private static void showSplash()
+    private void showSplash()
     {
         JPanel panel = new JPanel(new MigLayout("insets 0"));
         
@@ -70,14 +73,14 @@ public class StartUI
         {
             BufferedImage bi; 
             
-            Logger.info("loading " + "/img/splash.png");
+            _Logger.info("loading " + "/img/splash.png");
             try (InputStream is = StartUI.class.getResourceAsStream("/img/splash.png"))
             {
                 bi = ImageIO.read(is);
             }
             catch (Exception e)
             {
-                Logger.error(e);
+                _Logger.error(e);
                 return;  // don't fail or throw, simply no splash                    
             }
             

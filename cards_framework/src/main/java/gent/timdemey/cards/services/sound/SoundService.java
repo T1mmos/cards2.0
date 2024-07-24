@@ -16,6 +16,16 @@ import gent.timdemey.cards.services.interfaces.ISoundService;
 public class SoundService implements ISoundService, IPreload
 {
     private ExecutorService executor = null;
+    private final IResourceNameService _ResourceNameService;
+    private final IResourceCacheService _ResourceCacheService;
+    
+    public SoundService(
+        IResourceNameService resourceNameService,
+        IResourceCacheService resourceCacheService)
+    {
+        this._ResourceNameService = resourceNameService;
+        this._ResourceCacheService = resourceCacheService;
+    }
     
     @Override
     public void preload()
@@ -35,11 +45,8 @@ public class SoundService implements ISoundService, IPreload
     
     private void preload(ResourceDescriptor desc)
     {
-        IResourceCacheService resCacheServ = Services.get(IResourceCacheService.class);
-        IResourceNameService resNameServ = Services.get(IResourceNameService.class);
-
-        String path = resNameServ.getFilePath(desc);
-        resCacheServ.getAudio(path); // ignore the resource
+        String path = _ResourceNameService.getFilePath(desc);
+        _ResourceCacheService.getAudio(path); // ignore the resource
     }
 
     @Override
@@ -51,10 +58,8 @@ public class SoundService implements ISoundService, IPreload
         {
             try
             {
-                IResourceCacheService resCacheServ = Services.get(IResourceCacheService.class);
-                IResourceNameService resNameServ = Services.get(IResourceNameService.class);
-                String path = resNameServ.getFilePath(desc);
-                AudioResource audioRes = resCacheServ.getAudio(path);
+                String path = _ResourceNameService.getFilePath(desc);
+                AudioResource audioRes = _ResourceCacheService.getAudio(path);
                 if (audioRes == null)
                 {
                     Logger.error("Cannot play audio: no resource for descriptor " + desc);

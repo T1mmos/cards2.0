@@ -9,17 +9,16 @@ import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.utils.DebugDrawDefines;
 
-public class GamePanelDrawer extends DrawerBase<JLayeredPane>
+public class GamePanelDrawer extends DrawerBase
 {
-
-    private final IFrameService _FrameService;
     private final IPositionService _PositionService;
     
     public GamePanelDrawer (
         IFrameService frameService,
         IPositionService positionService)
     {
-        this._FrameService = frameService;
+        super(frameService);
+        
         this._PositionService = positionService;
     }
     
