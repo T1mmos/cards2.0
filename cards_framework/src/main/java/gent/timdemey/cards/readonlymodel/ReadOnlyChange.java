@@ -3,7 +3,7 @@ package gent.timdemey.cards.readonlymodel;
 import java.util.List;
 import java.util.UUID;
 
-import gent.timdemey.cards.model.state.ChangeType;
+import gent.timdemey.cards.model.delta.ChangeType;
 
 public class ReadOnlyChange
 {

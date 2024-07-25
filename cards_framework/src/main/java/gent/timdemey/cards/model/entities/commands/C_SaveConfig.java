@@ -16,7 +16,7 @@ import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.config.Configuration;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.ConfigKeyDescriptors;

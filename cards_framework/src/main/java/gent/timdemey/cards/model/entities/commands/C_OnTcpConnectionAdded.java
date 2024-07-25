@@ -4,7 +4,7 @@ import gent.timdemey.cards.ICardPlugin;
 
 import gent.timdemey.cards.model.entities.commands.C_TCP_NOK.TcpNokReason;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.netcode.TCP_Connection;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;

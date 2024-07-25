@@ -4,9 +4,9 @@ import gent.timdemey.cards.ICardPlugin;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_UDP_Request;
-import gent.timdemey.cards.model.entities.game.Server;
-import gent.timdemey.cards.model.entities.game.UDPServer;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.state.ServerTCP;
+import gent.timdemey.cards.model.entities.state.ServerUDP;
+import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.netcode.UDP_Source;
 import gent.timdemey.cards.netcode.UDP_UnicastMessage;
 import gent.timdemey.cards.services.context.Context;
@@ -38,8 +38,8 @@ public class C_UDP_Request extends CommandBase
 
         ICardPlugin cardPlugin = Services.get(ICardPlugin.class);
         
-        Server server = state.getServer();                
-        UDPServer udpServer = new UDPServer(server, cardPlugin.getVersion(), state.getPlayers().size(), cardPlugin.getPlayerCount());;
+        ServerTCP server = state.getServer();                
+        ServerUDP udpServer = new ServerUDP(server, cardPlugin.getVersion(), state.getPlayers().size(), cardPlugin.getPlayerCount());;
         C_UDP_Response udpResponseCmd = new C_UDP_Response(udpServer);
 
         UDP_Source udpSource = getSourceUdp();

@@ -5,7 +5,7 @@ import java.util.UUID;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.entities.common.PayloadBase;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.netcode.TCP_Connection;
 import gent.timdemey.cards.netcode.UDP_Source;
 import gent.timdemey.cards.services.context.Context;

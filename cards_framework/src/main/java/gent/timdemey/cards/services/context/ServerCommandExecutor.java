@@ -9,7 +9,7 @@ import gent.timdemey.cards.model.entities.commands.CommandHistory;
 import gent.timdemey.cards.model.entities.commands.CommandType;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.interfaces.INetworkService;
 import gent.timdemey.cards.services.interfaces.ISerializationService;
 
@@ -18,28 +18,32 @@ class ServerCommandExecutor extends CommandExecutorBase
 
     private final INetworkService _NetworkService;
     private final ISerializationService _SerializationService;
+    private final Logger _Logger;
+    
     public ServerCommandExecutor(
-            INetworkService networkService,
-            ISerializationService serializationService
+        INetworkService networkService,
+        ISerializationService serializationService,
+        Logger logger
     )
     {
         super(ContextType.Server);
         
         this._NetworkService = networkService;
         this._SerializationService = serializationService;
+        this._Logger = logger;
     }
 
     @Override
     protected void execute(CommandBase command, State state)
     {
-        Logger.info("Processing command '%s', id=%s", command.getName(), command.id);
+        _Logger.info("Processing command '%s', id=%s", command.getName(), command.id);
 
         CommandHistory cmdHist = state.getCommandHistory();
 
         // a command cannot be executed twice
         if (cmdHist != null && cmdHist.containsAccepted(command))
         {
-            Logger.warn("This command was already executed: '%s'; ignoring", command.getName());
+            _Logger.warn("This command was already executed: '%s'; ignoring", command.getName());
             return;
         }
 
@@ -72,7 +76,7 @@ class ServerCommandExecutor extends CommandExecutorBase
         {
             if (cmdType == CommandType.SYNCED)
             {
-                Logger.info("Can't execute syncable command: '%s'. Responding with a C_Reject. Reason: %s", command.getName(), resp.reason);
+                _Logger.info("Can't execute syncable command: '%s'. Responding with a C_Reject. Reason: %s", command.getName(), resp.reason);
 
                 C_Reject rejectCmd = new C_Reject(command.id);
                 String answer = _SerializationService.getCommandDtoMapper().toJson(rejectCmd);
@@ -80,12 +84,12 @@ class ServerCommandExecutor extends CommandExecutorBase
             }
             else
             {
-                Logger.error("Can't execute non-syncable command: '%s'. Reason: %s", command.getName(), resp.reason);
+                _Logger.error("Can't execute non-syncable command: '%s'. Reason: %s", command.getName(), resp.reason);
             }
         }
         else
         {
-            Logger.error("Can't execute command '%s' because of state error. Reason: %s", command.getName(), resp.reason);
+            _Logger.error("Can't execute command '%s' because of state error. Reason: %s", command.getName(), resp.reason);
         }
     }
 }

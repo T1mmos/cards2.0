@@ -18,13 +18,16 @@ public class SoundService implements ISoundService, IPreload
     private ExecutorService executor = null;
     private final IResourceNameService _ResourceNameService;
     private final IResourceCacheService _ResourceCacheService;
+    private final Logger _Logger;
     
     public SoundService(
         IResourceNameService resourceNameService,
-        IResourceCacheService resourceCacheService)
+        IResourceCacheService resourceCacheService,
+        Logger logger)
     {
         this._ResourceNameService = resourceNameService;
         this._ResourceCacheService = resourceCacheService;
+        this._Logger = logger;
     }
     
     @Override
@@ -52,7 +55,7 @@ public class SoundService implements ISoundService, IPreload
     @Override
     public void play(ResourceDescriptor desc)
     {
-        Logger.info("Playing %s", desc.toString());
+        _Logger.info("Playing %s", desc.toString());
         
         executor.submit(() -> 
         {
@@ -62,7 +65,7 @@ public class SoundService implements ISoundService, IPreload
                 AudioResource audioRes = _ResourceCacheService.getAudio(path);
                 if (audioRes == null)
                 {
-                    Logger.error("Cannot play audio: no resource for descriptor " + desc);
+                    _Logger.error("Cannot play audio: no resource for descriptor " + desc);
                     return;
                 }
                 
@@ -74,7 +77,7 @@ public class SoundService implements ISoundService, IPreload
             }
             catch (Exception e)
             {
-                Logger.error(e);
+                _Logger.error(e);
             }
         });
     }

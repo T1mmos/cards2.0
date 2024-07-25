@@ -2,7 +2,7 @@ package gent.timdemey.cards.readonlymodel;
 
 import java.util.List;
 
-import gent.timdemey.cards.model.entities.cards.CardStack;
+import gent.timdemey.cards.model.entities.state.CardStack;
 
 public final class ReadOnlyCardStack extends ReadOnlyEntityBase<CardStack>
 {

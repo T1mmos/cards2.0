@@ -3,7 +3,7 @@ package gent.timdemey.cards.services.interfaces;
 import java.util.List;
 import java.util.UUID;
 
-import gent.timdemey.cards.model.entities.cards.CardGame;
+import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyList;

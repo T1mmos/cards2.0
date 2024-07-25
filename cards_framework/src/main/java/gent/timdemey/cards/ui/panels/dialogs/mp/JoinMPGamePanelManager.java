@@ -17,7 +17,7 @@ import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.commands.C_UDP_StartServiceRequester;
 import gent.timdemey.cards.model.entities.commands.C_UDP_StopServiceRequester;
-import gent.timdemey.cards.model.entities.game.Server;
+import gent.timdemey.cards.model.entities.state.ServerTCP;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
@@ -42,15 +42,15 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
         {
             if (column == 0)
             {
-                return Loc.get(LocKey.TableColumnTitle_servername);
+                return _Loc.get(LocKey.TableColumnTitle_servername);
             }
             else if (column == 1)
             {
-                return Loc.get(LocKey.TableColumnTitle_ipaddress);
+                return _Loc.get(LocKey.TableColumnTitle_ipaddress);
             }
             else if (column == 2)
             {
-                return Loc.get(LocKey.TableColumnTitle_lobbyPlayerCounts);
+                return _Loc.get(LocKey.TableColumnTitle_lobbyPlayerCounts);
             }
             else
             {
@@ -62,7 +62,7 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
         public Object getValueAt(int rowIndex, int columnIndex)
         {
             ReadOnlyUDPServer udpServer = _ContextService.getThreadContext().getReadOnlyState().getServers().get(rowIndex);
-            Server server = udpServer.getServer();
+            ServerTCP server = udpServer.getServer();
             if (columnIndex == 0)
             {
                 return server.serverName;
@@ -142,12 +142,12 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
 
         this.tableModel = new ServersTableModel();
         this.table_servers = new JTable(tableModel);
-        this.button_refresh = new JButton(Loc.get(LocKey.Button_refresh));
+        this.button_refresh = new JButton(_Loc.get(LocKey.Button_refresh));
         this.serversStateListener = new ServersStateListener();
         this.refreshListener = new RefreshListener();
         this.selectionListener = new SelectionListener();
         
-        JLabel lb_srvname = new JLabel(Loc.get(LocKey.Label_serversfound));
+        JLabel lb_srvname = new JLabel(_Loc.get(LocKey.Label_serversfound));
 
         scroll_server.setViewportView(table_servers);
         this.table_servers.getColumnModel().getColumn(2).setMaxWidth(100);
@@ -251,6 +251,6 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
     @Override
     public String createTitle()
     {
-        return Loc.get(LocKey.DialogTitle_joingame);
+        return _Loc.get(LocKey.DialogTitle_joingame);
     }
 }

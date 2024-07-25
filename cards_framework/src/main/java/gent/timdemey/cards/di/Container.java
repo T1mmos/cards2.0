@@ -17,7 +17,6 @@ import java.util.Map;
 public class Container
 {
     private final Map<Class, Class> _TransientClassesMap;
-    private final Map<Class, Object> _TransientInstancesMap = new HashMap<>();    
     private final Map<Class, Class> _SingletonClassesMap;
     private final Map<Class, Object> _SingletonInstancesMap = new HashMap<>();    
         
@@ -40,7 +39,7 @@ public class Container
         
         // try transients
         {
-            I instance = TryGet(clazz, _TransientClassesMap, _TransientInstancesMap);
+            I instance = TryGet(clazz, _TransientClassesMap, null);
             if (instance != null)
             {
                 return instance;
@@ -53,7 +52,11 @@ public class Container
     
     private <I> I TryGet(Class<I> iclazz, Map<Class, Class> definitions, Map<Class, Object> instances)
     {        
-        I obj = (I) instances.get(iclazz);
+        I obj = null;
+        if (instances != null)
+        {
+            obj = (I) instances.get(iclazz);
+        }        
 
         // try instantiating if no instance exists            
         if (obj == null)
@@ -65,7 +68,11 @@ public class Container
                 if (instance != null)
                 {
                     obj = instance;
-                    instances.put(iclazz, instance);
+                    
+                    if (instances != null)
+                    {
+                        instances.put(iclazz, instance);    
+                    }                    
                 }
             }
         }

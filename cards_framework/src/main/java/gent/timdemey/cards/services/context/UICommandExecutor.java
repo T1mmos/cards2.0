@@ -16,19 +16,23 @@ import gent.timdemey.cards.model.entities.commands.CommandType;
 import gent.timdemey.cards.model.entities.commands.D_OnReexecutionFail;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.interfaces.IContextService;
 
 class UICommandExecutor implements ICommandExecutor
 {
     private final List<IExecutionListener> executionListeners;
     private final IContextService _ContextService;
+    private final Logger _Logger;
 
-    public UICommandExecutor(IContextService contextService)
+    public UICommandExecutor(
+        IContextService contextService,
+        Logger logger)
     {
         this._ContextService = contextService;
+        this._Logger = logger;
         
-        this.executionListeners = new ArrayList<>();
+        this.executionListeners = new ArrayList<>();        
     }
 
     @Override
@@ -51,7 +55,7 @@ class UICommandExecutor implements ICommandExecutor
 
     private void execute(CommandBase command, State state)
     {
-        Logger.info("Executing '%s', id=%s...", command.getName(), command.id);
+        _Logger.info("Executing '%s', id=%s...", command.getName(), command.id);
 
         CommandType cmdType = command.getCommandType();
         UUID localId = state.getLocalId();

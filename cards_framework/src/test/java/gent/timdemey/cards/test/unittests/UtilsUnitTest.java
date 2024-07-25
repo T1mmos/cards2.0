@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import gent.timdemey.cards.model.entities.cards.CardStack;
+import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.test.common.TestBase;
 import gent.timdemey.cards.test.helpers.CardStackHelper;
 import gent.timdemey.cards.test.mock.ITestDI;

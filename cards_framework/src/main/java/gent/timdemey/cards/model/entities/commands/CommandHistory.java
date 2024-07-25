@@ -10,10 +10,10 @@ import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.model.entities.common.EntityBase;
-import gent.timdemey.cards.model.state.EntityStateListRef;
-import gent.timdemey.cards.model.state.Property;
-import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.model.state.StateValueRef;
+import gent.timdemey.cards.model.delta.EntityStateListRef;
+import gent.timdemey.cards.model.delta.Property;
+import gent.timdemey.cards.model.entities.state.State;
+import gent.timdemey.cards.model.delta.StateValueRef;
 import gent.timdemey.cards.utils.Debug;
 
 public class CommandHistory extends EntityBase

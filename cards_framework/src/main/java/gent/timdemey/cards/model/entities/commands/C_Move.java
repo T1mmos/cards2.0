@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import gent.timdemey.cards.model.entities.cards.Card;
-import gent.timdemey.cards.model.entities.cards.CardGame;
-import gent.timdemey.cards.model.entities.cards.CardStack;
+import gent.timdemey.cards.model.entities.state.Card;
+import gent.timdemey.cards.model.entities.state.CardGame;
+import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_Move;
-import gent.timdemey.cards.model.entities.game.GameState;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.state.GameState;
+import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.utils.Debug;

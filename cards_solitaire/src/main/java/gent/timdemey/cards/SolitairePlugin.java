@@ -2,7 +2,7 @@ package gent.timdemey.cards;
 
 import gent.timdemey.cards.common.Version;
 import gent.timdemey.cards.di.ContainerBuilder;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.cardgame.SolitaireCardGameCreationService;
 import gent.timdemey.cards.services.commands.SolitaireCommandService;
 import gent.timdemey.cards.services.id.SolitaireIdService;
@@ -48,11 +48,5 @@ public class SolitairePlugin implements ICardPlugin
     public int getPlayerCount()
     {
         return 1;
-    }
-
-    @Override
-    public State createState()
-    {
-        return new State();
     }
 }

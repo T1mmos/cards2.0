@@ -1,10 +1,10 @@
 package gent.timdemey.cards.services.context;
 
 import gent.timdemey.cards.ICardPlugin;
-import gent.timdemey.cards.model.state.StateChangeTracker;
-import gent.timdemey.cards.model.state.Change;
-import gent.timdemey.cards.model.state.IChangeTracker;
-import gent.timdemey.cards.model.state.ChangeType;
+import gent.timdemey.cards.model.delta.StateChangeTracker;
+import gent.timdemey.cards.model.delta.Change;
+import gent.timdemey.cards.model.delta.IChangeTracker;
+import gent.timdemey.cards.model.delta.ChangeType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +14,8 @@ import java.util.UUID;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.state.Property;
+import gent.timdemey.cards.model.delta.Property;
+import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityFactory;
@@ -25,38 +26,34 @@ public final class Context
 {
     // calculated
     private final IChangeTracker changeTracker;
-    final LimitedContext limitedContext;
     private final List<IStateListener> stateListeners;
-    private final boolean allowListeners;
+            
+    LimitedContext limitedContext;
+    private boolean allowListeners;
+    
     private final IContextService _ContextService;
-
-    private Context(
+    private final Logger _Logger;
+    private final ICardPlugin _CardPlugin;
+    private final ICommandExecutor _CommandExecutor;
+    private final State _State;
+    
+    public Context(
             ICardPlugin cardPlugin, 
-            ICommandExecutor cmdExecService, 
+            ICommandExecutor commandExecutor, 
             IContextService contextService,
-            ContextType contextType, 
-            boolean allowListeners)
+            State state,
+            Logger logger)
     {
-        limitedContext = new LimitedContext(cardPlugin, cmdExecService, contextType);
-        
+        this._CardPlugin = cardPlugin;
+        this._CommandExecutor = commandExecutor;
         this._ContextService = contextService;
-        this.allowListeners = allowListeners;
+        this._State = state;
+        this._Logger = logger;
+        
         this.stateListeners = allowListeners ? new ArrayList<>() : null;
         this.changeTracker = allowListeners ? new StateChangeTracker() : new NopChangeTracker();
     }
     
-    static Context createContext(ICardPlugin cardPlugin, ICommandExecutor cmdExecService, IContextService contextService, ContextType contextType, boolean allowListeners)
-    {
-        Context context = new Context(cardPlugin, cmdExecService, contextService, contextType, allowListeners);
-        
-        if (allowListeners)
-        {
-            context.addExecutionListener(context::onExecuted);    
-        }        
-        
-        return context;
-    }
-
     public ReadOnlyState getReadOnlyState()
     {
         return ReadOnlyEntityFactory.getOrCreateState(limitedContext.getState());
@@ -124,6 +121,17 @@ public final class Context
         }
         
         stateListeners.remove(stateListener);
+    }
+
+    void initialize(boolean allowListeners, ContextType contextType) 
+    {   
+        this.allowListeners = allowListeners;
+        this.limitedContext = new LimitedContext(_CardPlugin, _CommandExecutor, _State, contextType);
+        
+        if (allowListeners)
+        {
+            addExecutionListener(this::onExecuted);    
+        }     
     }
 
     private static class EntityPropertyChange
@@ -241,7 +249,7 @@ public final class Context
         
         if (roChanges.isEmpty())
         {
-            Logger.trace("No changes were detected in the Context. Not notifying any IStateListener instances.");
+            _Logger.trace("No changes were detected in the Context. Not notifying any IStateListener instances.");
             return;
         }
         

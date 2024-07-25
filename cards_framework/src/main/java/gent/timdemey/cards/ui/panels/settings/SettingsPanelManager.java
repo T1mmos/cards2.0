@@ -71,7 +71,7 @@ public class SettingsPanelManager extends DataPanelManagerBase<Void, Void>
                                                
             // player name
             {
-                JLabel lbl_pname = new JLabel(Loc.get(LocKey.Label_playername));
+                JLabel lbl_pname = new JLabel(_Loc.get(LocKey.Label_playername));
                 contentPanel.add(lbl_pname, "");                
                 tf_pname = new JTextField(20);
                 contentPanel.add(tf_pname, "gapright 100, wrap");
@@ -79,12 +79,12 @@ public class SettingsPanelManager extends DataPanelManagerBase<Void, Void>
             
             // server configuration
             {
-                JLabel lbl_tcpport = new JLabel(Loc.get(LocKey.Label_serverTcpPort));
+                JLabel lbl_tcpport = new JLabel(_Loc.get(LocKey.Label_serverTcpPort));
                 contentPanel.add(lbl_tcpport, "");
                 tf_serverTcpPort = new JTextField(6);
                 contentPanel.add(tf_serverTcpPort, "wrap");
                 
-                JLabel lbl_udpport = new JLabel(Loc.get(LocKey.Label_serverUdpPort));
+                JLabel lbl_udpport = new JLabel(_Loc.get(LocKey.Label_serverUdpPort));
                 contentPanel.add(lbl_udpport, "");
                 tf_serverUdpPort = new JTextField(6);
                 contentPanel.add(tf_serverUdpPort, "wrap");
@@ -92,7 +92,7 @@ public class SettingsPanelManager extends DataPanelManagerBase<Void, Void>
             
             // client configuration
             {
-                JLabel lbl_udpport = new JLabel(Loc.get(LocKey.Label_clientUdpPort));
+                JLabel lbl_udpport = new JLabel(_Loc.get(LocKey.Label_clientUdpPort));
                 contentPanel.add(lbl_udpport, "");
                 tf_clientUdpPort = new JTextField(6);
                 contentPanel.add(tf_clientUdpPort, "wrap");
@@ -231,7 +231,7 @@ public class SettingsPanelManager extends DataPanelManagerBase<Void, Void>
     @Override
     public String createTitle()
     {
-        return Loc.get(LocKey.Action_showsettings);
+        return _Loc.get(LocKey.Action_showsettings);
     }
 
 }

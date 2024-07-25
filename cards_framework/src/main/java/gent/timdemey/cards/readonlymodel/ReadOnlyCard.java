@@ -1,8 +1,8 @@
 package gent.timdemey.cards.readonlymodel;
 
-import gent.timdemey.cards.model.entities.cards.Card;
-import gent.timdemey.cards.model.entities.cards.Suit;
-import gent.timdemey.cards.model.entities.cards.Value;
+import gent.timdemey.cards.model.entities.state.Card;
+import gent.timdemey.cards.model.entities.state.CardSuit;
+import gent.timdemey.cards.model.entities.state.CardValue;
 
 public final class ReadOnlyCard extends ReadOnlyEntityBase<Card>
 {
@@ -14,12 +14,12 @@ public final class ReadOnlyCard extends ReadOnlyEntityBase<Card>
         super(card);
     }
 
-    public Suit getSuit()
+    public CardSuit getSuit()
     {
         return entity.suit;
     }
 
-    public Value getValue()
+    public CardValue getValue()
     {
         return entity.value;
     }

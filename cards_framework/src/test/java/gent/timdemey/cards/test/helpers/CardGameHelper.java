@@ -1,9 +1,9 @@
 package gent.timdemey.cards.test.helpers;
 
-import gent.timdemey.cards.model.entities.cards.Card;
-import gent.timdemey.cards.model.entities.cards.CardGame;
-import gent.timdemey.cards.model.entities.cards.CardStack;
-import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
+import gent.timdemey.cards.model.entities.state.Card;
+import gent.timdemey.cards.model.entities.state.CardGame;
+import gent.timdemey.cards.model.entities.state.CardStack;
+import gent.timdemey.cards.model.entities.state.PlayerConfiguration;
 import gent.timdemey.cards.test.equality.CardEquality;
 import gent.timdemey.cards.test.equality.CardGameEquality;
 import gent.timdemey.cards.test.equality.CardStackEquality;

@@ -3,8 +3,8 @@ package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.model.entities.commands.C_Disconnect.DisconnectReason;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.game.Server;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.state.ServerTCP;
+import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptors;
@@ -35,7 +35,7 @@ public class D_ShowLobby extends DialogCommandBase
     @Override
     protected void showDialog(Context context, ContextType type, State state)
     {
-        Server server = state.getServer();
+        ServerTCP server = state.getServer();
      
         IFrameService frameServ = Services.get(IFrameService.class);
         LobbyPanelData payload = new LobbyPanelData(server.serverName);

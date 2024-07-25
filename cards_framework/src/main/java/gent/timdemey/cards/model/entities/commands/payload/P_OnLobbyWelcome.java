@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.common.PayloadBase;
-import gent.timdemey.cards.model.entities.game.Player;
+import gent.timdemey.cards.model.entities.state.Player;
 
 public class P_OnLobbyWelcome extends PayloadBase
 { 

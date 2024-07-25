@@ -13,7 +13,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyProperty;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.readonlymodel.TypedChange;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
-import gent.timdemey.cards.model.state.ChangeType;
+import gent.timdemey.cards.model.delta.ChangeType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;

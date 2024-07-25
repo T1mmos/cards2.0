@@ -22,8 +22,9 @@ public final class TCP_Connection
     private boolean started = false;
     private boolean ended = false;
     private final String remote;
+    private final Logger _Logger;
 
-    TCP_Connection(String name, Socket socket, TCP_ConnectionPool pool)
+    TCP_Connection(String name, Socket socket, TCP_ConnectionPool pool, Logger logger)
     {
         this.remote = NetUtils.getFormattedIpPort(socket);        
         this.socket = socket;
@@ -31,6 +32,7 @@ public final class TCP_Connection
         this.thread_send = new Thread(() -> send(), name + " :: TCP send (" + remote + ")");
         this.queue_send = new LinkedBlockingDeque<>();
         this.pool = pool;
+        this._Logger = logger;
     }
     
     public String getRemote()
@@ -58,11 +60,11 @@ public final class TCP_Connection
     {
         if (ex instanceof SocketException)
         {
-            Logger.info("SocketException occured. Closing socket...");
+            _Logger.info("SocketException occured. Closing socket...");
         }
         else
         {
-            Logger.error("Unexpected exception on socket", ex);
+            _Logger.error("Unexpected exception on socket", ex);
         }
         stop();
     }
@@ -86,7 +88,7 @@ public final class TCP_Connection
             }
             catch (IOException ex)
             {
-                Logger.error(ex);
+                _Logger.error(ex);
             }
         }
 
@@ -117,7 +119,7 @@ public final class TCP_Connection
                 String str_in = reader.readLine();
                 if (str_in == null)
                 {
-                    Logger.info("Read a poison pill value (null)");
+                    _Logger.info("Read a poison pill value (null)");
                     stop();
                     break;
                 }

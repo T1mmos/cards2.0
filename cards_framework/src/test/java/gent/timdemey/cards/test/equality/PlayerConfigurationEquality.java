@@ -1,6 +1,6 @@
 package gent.timdemey.cards.test.equality;
 
-import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
+import gent.timdemey.cards.model.entities.state.PlayerConfiguration;
 import gent.timdemey.cards.test.common.IEquality;
 import gent.timdemey.cards.test.common.TestUtils;
 import static org.junit.jupiter.api.Assertions.assertEquals;

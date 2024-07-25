@@ -6,9 +6,9 @@ import java.util.UUID;
 import gent.timdemey.cards.ICardPlugin;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.game.Server;
-import gent.timdemey.cards.model.entities.game.payload.P_Server;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.state.ServerTCP;
+import gent.timdemey.cards.model.entities.state.payload.P_ServerTCP;
+import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.netcode.ITcpConnectionListener;
 import gent.timdemey.cards.netcode.TCP_ConnectionPool;
 import gent.timdemey.cards.services.context.Context;
@@ -58,14 +58,14 @@ public class C_Connect extends CommandBase
                 throw new UnsupportedOperationException();
             }  
             
-            P_Server pl = new P_Server();
+            P_ServerTCP pl = new P_ServerTCP();
             {
                 pl.id = serverId;
                 pl.inetAddress = serverInetAddress;
                 pl.tcpport = serverTcpPort;
                 pl.serverName = serverName;
             };
-            Server server = new Server(pl);
+            ServerTCP server = new ServerTCP(pl);
             state.setServer(server);
             
             state.setLocalName(playerName);

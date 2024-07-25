@@ -5,18 +5,19 @@ import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CommandHistory;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.state.State;
 
 public class LimitedContext
 {
-    private final ContextType contextType;
-    private final ICommandExecutor cmdExecServ;
-    private final State state;
+    private final ContextType _ContextType;
+    private final ICommandExecutor _CommandExecutor;
+    private final State _State;
     private final ICardPlugin _CardPlugin;
 
     public LimitedContext(
             ICardPlugin cardPlugin, 
             ICommandExecutor cmdExecServ, 
+            State state,
             ContextType contextType)
     {
         if (contextType == null)
@@ -29,24 +30,23 @@ public class LimitedContext
         }
         
         this._CardPlugin = cardPlugin;
-        this.cmdExecServ = cmdExecServ;
-        this.contextType = contextType;
-        
-        this.state = _CardPlugin.createState();
+        this._CommandExecutor = cmdExecServ;
+        this._ContextType = contextType;        
+        this._State = state;
     }
 
     public ContextType getContextType()
     {
-        return contextType;
+        return _ContextType;
     }
     
     public CanExecuteResponse canExecute (CommandBase command)
     {
         if (command.getSourceId() == null)
         {
-            command.setSourceId(state.getLocalId());
+            command.setSourceId(_State.getLocalId());
         }
-        CanExecuteResponse resp = command.canExecute(state);
+        CanExecuteResponse resp = command.canExecute(_State);
         
         return resp;
     }
@@ -55,42 +55,42 @@ public class LimitedContext
     {
         if (command.getSourceId() == null)
         {
-            command.setSourceId(state.getLocalId());
+            command.setSourceId(_State.getLocalId());
         }
-        cmdExecServ.schedule(command, state);
+        _CommandExecutor.schedule(command, _State);
     }
 
     public void run(CommandBase command)
     {
         if (command.getSourceId() == null)
         {
-            command.setSourceId(state.getLocalId());
+            command.setSourceId(_State.getLocalId());
         }
-        cmdExecServ.run(command, state);
+        _CommandExecutor.run(command, _State);
     }
     
     void addExecutionListener(IExecutionListener executionListener)
     {
-        cmdExecServ.addExecutionListener(executionListener);
+        _CommandExecutor.addExecutionListener(executionListener);
     }
     
     void removeExecutionListener(IExecutionListener executionListener)
     {
-        cmdExecServ.removeExecutionListener(executionListener);
+        _CommandExecutor.removeExecutionListener(executionListener);
     }
 
     State getState()
     {
-        return state;
+        return _State;
     }
     
     void shutdownAndWait()
     {
-        this.cmdExecServ.shutdown();
+        this._CommandExecutor.shutdown();
     }
 
     public CommandHistory getCommandHistory()
     {
-        return state.getCommandHistory();
+        return _State.getCommandHistory();
     }
 }

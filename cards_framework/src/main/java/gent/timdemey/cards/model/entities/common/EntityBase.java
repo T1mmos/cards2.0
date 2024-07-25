@@ -8,9 +8,9 @@ public abstract class EntityBase
 {
     public final UUID id;
 
-    protected EntityBase()
+    protected EntityBase(UUID id)
     {
-        this.id = UUID.randomUUID();
+        this.id = id;
     }
 
     protected EntityBase(PayloadBase pl)

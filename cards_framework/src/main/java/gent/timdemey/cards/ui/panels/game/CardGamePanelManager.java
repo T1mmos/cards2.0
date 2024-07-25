@@ -6,8 +6,8 @@ import java.util.UUID;
 
 import javax.swing.JComponent;
 
-import gent.timdemey.cards.model.entities.cards.Suit;
-import gent.timdemey.cards.model.entities.cards.Value;
+import gent.timdemey.cards.model.entities.state.CardSuit;
+import gent.timdemey.cards.model.entities.state.CardValue;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
@@ -182,9 +182,9 @@ public class CardGamePanelManager extends PanelManagerBase
         preloadImage(_IdService.createCardBackScalableResourceId(), _ResourceNameService.getFilePath(ResourceDescriptors.CardBack));
 
         // card fronts
-        for (Suit suit : Suit.values())
+        for (CardSuit suit : CardSuit.values())
         {
-            for (Value value : Value.values()) // have fun reading the code lol
+            for (CardValue value : CardValue.values()) // have fun reading the code lol
             {
                 UUID resId = _IdService.createCardFrontScalableResourceId(suit, value);
                 preloadImage(resId, _ResourceNameService.getFilePath(ResourceDescriptors.CardFront, suit, value));

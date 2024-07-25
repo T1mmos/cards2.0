@@ -1,6 +1,6 @@
 package gent.timdemey.cards.test.equality;
 
-import gent.timdemey.cards.model.entities.cards.CardGame;
+import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.test.common.IEquality;
 import gent.timdemey.cards.test.common.TestUtils;
 

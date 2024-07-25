@@ -1,11 +1,11 @@
 package gent.timdemey.cards.model.entities.commands;
 
 
-import gent.timdemey.cards.model.entities.cards.CardGame;
+import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_OnMultiplayerGameStarted;
-import gent.timdemey.cards.model.entities.game.GameState;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.state.GameState;
+import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;

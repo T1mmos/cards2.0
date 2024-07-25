@@ -1,5 +1,6 @@
 package gent.timdemey.cards.localization;
 
+import gent.timdemey.cards.services.contract.preload.IPreload;
 import java.util.IllegalFormatException;
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -9,17 +10,25 @@ import java.util.ResourceBundle;
 import gent.timdemey.cards.services.contract.res.ResourceType;
 import gent.timdemey.cards.services.interfaces.IResourceRepository;
 
-public class Loc
+public class Loc implements IPreload
 {
-
-    private static final String FILENAME_BASE = "solshowd";
+   
+            
+            private static final String FILENAME_BASE = "solshowd";
 
     private static Locale LOCALE = null;
     private static ResourceBundle BUNDLE = null;
 
     public static Locale[] AVAILABLE_LOCALES = new Locale[] { Locale.ENGLISH };
+    private final IResourceRepository _ResourceRepository;
 
-    public static void setLocale(Locale locale)
+    
+     public Loc(IResourceRepository resourceRepository)
+    {
+        this._ResourceRepository = resourceRepository;
+    }
+     
+    public void setLocale(Locale locale)
     {
         if (LOCALE != null)
         {
@@ -32,8 +41,7 @@ public class Loc
 
         LOCALE = locale;
 
-        IResourceRepository resRepo = Services.get(IResourceRepository.class);
-        ClassLoader resClassLoader = resRepo.getResourceClassLoader(ResourceType.LOCALIZATION);        
+        ClassLoader resClassLoader = _ResourceRepository.getResourceClassLoader(ResourceType.LOCALIZATION);        
         ResourceBundle rb = ResourceBundle.getBundle(FILENAME_BASE, LOCALE, resClassLoader);
         BUNDLE = rb;
     }
@@ -43,7 +51,7 @@ public class Loc
         return LOCALE;
     }
 
-    private static String getPriv(LocKey key, Object... params)
+    private String getPriv(LocKey key, Object... params)
     {
         if (key == null)
         {
@@ -96,13 +104,19 @@ public class Loc
     }
     
 
-    public static String get(LocKey key)
+    public String get(LocKey key)
     {
         return getPriv(key, (Object[]) null);
     }
     
-    public static String get(LocKey key, Object... params)
+    public String get(LocKey key, Object... params)
     {
         return getPriv(key, params);
+    }
+
+    @Override
+    public void preload() 
+    {
+        setLocale(AVAILABLE_LOCALES[0]);
     }
 }

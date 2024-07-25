@@ -1,5 +1,6 @@
 package gent.timdemey.cards.services.resources;
 
+import gent.timdemey.cards.localization.Loc;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -37,10 +38,15 @@ public class ResourceCacheService implements IResourceCacheService
     private BufferedImage ERROR_IMAGE;
     
     private final IResourceRepository _ResourceRepository;
+    private final Logger _Logger;
 
-    public ResourceCacheService (IResourceRepository resourceRepository)
+    public ResourceCacheService (
+        IResourceRepository resourceRepository,
+        Logger logger
+    )
     {
         this._ResourceRepository = resourceRepository;
+        this._Logger = logger;
     }
     
     private BufferedImage getErrorImage()
@@ -109,7 +115,7 @@ public class ResourceCacheService implements IResourceCacheService
         }
         catch (IOException e)
         {
-            Logger.error("Failed to load image %s", filename);
+            _Logger.error("Failed to load image %s", filename);
             BufferedImage bi = getErrorImage();
             return new ImageResource(filename, true, bi);
         }
@@ -124,11 +130,11 @@ public class ResourceCacheService implements IResourceCacheService
         }
         catch (FontFormatException e)
         {
-            Logger.error("Failed to load font %s (FontFormatException)", filename);
+            _Logger.error("Failed to load font %s (FontFormatException)", filename);
         }
         catch (IOException e)
         {
-            Logger.error("Failed to load font %s (IOException)", filename);
+            _Logger.error("Failed to load font %s (IOException)", filename);
         } 
         
         boolean fallback = false;
@@ -160,7 +166,7 @@ public class ResourceCacheService implements IResourceCacheService
         }
         catch (Exception e)
         {
-            Logger.error(e);
+            _Logger.error(e);
             return null;
         }
     }
@@ -178,7 +184,7 @@ public class ResourceCacheService implements IResourceCacheService
             }
             catch (IOException e)
             {
-                Logger.error("Failed to close inputstream for resource %s", filename);
+                _Logger.error("Failed to close inputstream for resource %s", filename);
             }
             cache.put(filename, value);
         }

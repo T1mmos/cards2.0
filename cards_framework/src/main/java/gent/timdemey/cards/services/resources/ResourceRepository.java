@@ -20,9 +20,11 @@ import gent.timdemey.cards.services.interfaces.IResourceRepository;
 public class ResourceRepository implements IResourceRepository
 {
     private final Map<ResourceType, URLClassLoader> classLoaders = new HashMap<>();
+    private final Logger _Logger;
 
-    public ResourceRepository()
+    public ResourceRepository(Logger logger)
     {        
+        this._Logger = logger;
     }
     
     protected void buildUrlLists (Map<ResourceType, List<URL>> typeUrls)
@@ -33,7 +35,7 @@ public class ResourceRepository implements IResourceRepository
         addUrl(typeUrls, ResourceType.FONT, ICardPlugin.class, "/fonts/");
     }
     
-    protected static void addUrl (Map<ResourceType, List<URL>> typeUrls, ResourceType type, Class<?> clazz, String dir)
+    protected void addUrl (Map<ResourceType, List<URL>> typeUrls, ResourceType type, Class<?> clazz, String dir)
     {
         URL url = null;
         if (clazz == null)
@@ -45,7 +47,7 @@ public class ResourceRepository implements IResourceRepository
         
         if (url == null)
         {
-            Logger.error("Can't build URL for directory %s (ResourceType=%s, Class=%s)", dir, type, clazz.getSimpleName());
+            _Logger.error("Can't build URL for directory %s (ResourceType=%s, Class=%s)", dir, type, clazz.getSimpleName());
             return;
         }
         
@@ -83,7 +85,7 @@ public class ResourceRepository implements IResourceRepository
         }
         catch (Exception ex)
         {
-            Logger.error(ex);
+            _Logger.error(ex);
             is = null;
         }
         if (is == null)

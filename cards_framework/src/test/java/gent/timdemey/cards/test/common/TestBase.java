@@ -7,7 +7,7 @@ import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.MockCardPlugin;
 
 import gent.timdemey.cards.logging.ILogManager;
-import gent.timdemey.cards.model.entities.cards.CardGame;
+import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyList;

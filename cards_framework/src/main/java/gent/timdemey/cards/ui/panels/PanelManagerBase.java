@@ -1,6 +1,7 @@
 package gent.timdemey.cards.ui.panels;
 
 import gent.timdemey.cards.di.Container;
+import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.logging.Logger;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -51,6 +52,7 @@ public abstract class PanelManagerBase implements IPanelManager
     protected final IActionService _ActionService;
     protected final JSFactory _JSFactory;
     protected final Logger _Logger;    
+    protected final Loc _Loc;
     
     public PanelManagerBase(Container container)
     {
@@ -64,6 +66,7 @@ public abstract class PanelManagerBase implements IPanelManager
         this._ActionService = container.Get(IActionService.class);
         this._JSFactory = container.Get(JSFactory.class);
         this._Logger = container.Get(Logger.class);
+        this._Loc = container.Get(Loc.class);
         
         this.comp2jcomp = new HashMap<>();
         this.entity2comp = new HashMap<>();

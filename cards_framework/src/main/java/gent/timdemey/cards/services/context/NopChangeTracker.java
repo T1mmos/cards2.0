@@ -1,12 +1,12 @@
 package gent.timdemey.cards.services.context;
 
-import gent.timdemey.cards.model.state.Change;
-import gent.timdemey.cards.model.state.IChangeTracker;
+import gent.timdemey.cards.model.delta.Change;
+import gent.timdemey.cards.model.delta.IChangeTracker;
 import java.util.ArrayList;
 import java.util.List;
 
-import gent.timdemey.cards.model.state.StateListRef;
-import gent.timdemey.cards.model.state.StateValueRef;
+import gent.timdemey.cards.model.delta.StateListRef;
+import gent.timdemey.cards.model.delta.StateValueRef;
 
 public class NopChangeTracker implements IChangeTracker
 {

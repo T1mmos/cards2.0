@@ -7,7 +7,7 @@ import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_SaveState;
 import gent.timdemey.cards.model.entities.commands.save.SaveFunctions;
 import gent.timdemey.cards.model.entities.commands.save.SaveProperty;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 

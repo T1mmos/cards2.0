@@ -4,8 +4,8 @@ import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.commands.C_Disconnect.DisconnectReason;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.game.GameState;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.state.GameState;
+import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 

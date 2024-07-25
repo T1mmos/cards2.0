@@ -4,7 +4,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 import gent.timdemey.cards.model.entities.commands.payload.P_SaveState;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.state.State;
 
 public class SaveProperty
 {

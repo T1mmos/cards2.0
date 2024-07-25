@@ -2,16 +2,16 @@ package gent.timdemey.cards.services.contract.descriptors;
 
 import java.util.function.Function;
 
-import gent.timdemey.cards.model.entities.cards.Suit;
-import gent.timdemey.cards.model.entities.cards.Value;
+import gent.timdemey.cards.model.entities.state.CardSuit;
+import gent.timdemey.cards.model.entities.state.CardValue;
 import gent.timdemey.cards.services.contract.ButtonState;
 import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptor.ResourceDescriptorP1;
 import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptor.ResourceDescriptorP2;
 
 public class ResourceDescriptors
 { 
-    public static final Function<Suit, String>                  SuitFunc =              suit -> suit.name().substring(0, 1); 
-    public static final Function<Value, String>                 ValueFunc =             value -> value.getTextual();
+    public static final Function<CardSuit, String>                  SuitFunc =              suit -> suit.name().substring(0, 1); 
+    public static final Function<CardValue, String>                 ValueFunc =             value -> value.getTextual();
     public static final Function<Integer, String>               IntFunc =               i -> "" + i;
     public static final Function<ButtonState, String>           ButtonStateFunc =       ResourceDescriptors::fromButtonState;
     
@@ -22,7 +22,7 @@ public class ResourceDescriptors
     public static final ResourceDescriptorP1<ButtonState>       AppMaximize=            get("AppMaximize", ButtonStateFunc);
     public static final ResourceDescriptorP1<ButtonState>       AppUnmaximize =         get("AppUnmaximize", ButtonStateFunc);
     public static final ResourceDescriptor                      CardBack =              get("CardBack");
-    public static final ResourceDescriptorP2<Suit, Value>       CardFront =             get("CardFront", SuitFunc, ValueFunc);    
+    public static final ResourceDescriptorP2<CardSuit, CardValue>       CardFront =             get("CardFront", SuitFunc, ValueFunc);    
     public static final ResourceDescriptor                      Menu =                  get("Menu");
                                                                                         
     public static final ResourceDescriptor                      FontMenu =              get("FontMenu");

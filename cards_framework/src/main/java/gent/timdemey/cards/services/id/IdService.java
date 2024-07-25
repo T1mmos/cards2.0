@@ -2,8 +2,8 @@ package gent.timdemey.cards.services.id;
 
 import java.util.UUID;
 
-import gent.timdemey.cards.model.entities.cards.Suit;
-import gent.timdemey.cards.model.entities.cards.Value;
+import gent.timdemey.cards.model.entities.state.CardSuit;
+import gent.timdemey.cards.model.entities.state.CardValue;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityBase;
@@ -21,7 +21,7 @@ public abstract class IdService implements IIdService
     
     
     @Override
-    public UUID createCardFrontScalableResourceId(Suit suit, Value value)
+    public UUID createCardFrontScalableResourceId(CardSuit suit, CardValue value)
     {
         String suit_str = suit.getTextual();
         String value_str = value.getTextual();

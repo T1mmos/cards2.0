@@ -3,9 +3,9 @@ package gent.timdemey.cards.model.entities.commands;
 import java.util.ArrayList;
 import java.util.List;
 
-import gent.timdemey.cards.model.entities.cards.Card;
+import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.utils.Debug;

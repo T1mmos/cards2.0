@@ -4,9 +4,9 @@ import java.util.UUID;
 
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.game.GameState;
-import gent.timdemey.cards.model.entities.game.Server;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.state.GameState;
+import gent.timdemey.cards.model.entities.state.ServerTCP;
+import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.readonlymodel.ReadOnlyUDPServer;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -49,7 +49,7 @@ public class D_Connect extends DialogCommandBase
         if (data.closeType == PanelButtonDescriptors.Ok)
         {
             ReadOnlyUDPServer udpServer = data.data_out.server;
-            Server server = udpServer.getServer();
+            ServerTCP server = udpServer.getServer();
             C_Connect cmd = new C_Connect(localId, server.id, server.inetAddress,
                     server.tcpport, server.serverName, data.data_out.playerName);
             schedule(ContextType.UI, cmd);

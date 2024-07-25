@@ -6,6 +6,13 @@ import gent.timdemey.cards.services.interfaces.IConfigurationService;
 
 public class ConfigService implements IConfigurationService
 {
+
+    private final Logger _Logger;
+    public ConfigService (Logger logger)
+    {
+        this._Logger = logger;
+    }
+    
     @SuppressWarnings("unchecked")
     @Override
     public <T> T parse(ConfigKeyDescriptor<T> key, String input)
@@ -33,7 +40,7 @@ public class ConfigService implements IConfigurationService
         catch (Exception ex)
         {
             value = key.defValue;
-            Logger.warn("Can't convert '%s' into type %s, falling back to default value '%s'", input, key.clazz, key.defValue);
+            _Logger.warn("Can't convert '%s' into type %s, falling back to default value '%s'", input, key.clazz, key.defValue);
         }
         
         return value;

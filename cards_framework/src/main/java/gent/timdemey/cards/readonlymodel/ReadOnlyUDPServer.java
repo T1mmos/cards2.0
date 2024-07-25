@@ -1,17 +1,17 @@
 package gent.timdemey.cards.readonlymodel;
 
 import gent.timdemey.cards.common.Version;
-import gent.timdemey.cards.model.entities.game.Server;
-import gent.timdemey.cards.model.entities.game.UDPServer;
+import gent.timdemey.cards.model.entities.state.ServerTCP;
+import gent.timdemey.cards.model.entities.state.ServerUDP;
 
-public class ReadOnlyUDPServer extends ReadOnlyEntityBase<UDPServer>
+public class ReadOnlyUDPServer extends ReadOnlyEntityBase<ServerUDP>
 {
-    protected ReadOnlyUDPServer(UDPServer entity)
+    protected ReadOnlyUDPServer(ServerUDP entity)
     {
         super(entity);
     }
 
-    public Server getServer()
+    public ServerTCP getServer()
     {
         return entity.server;
     }

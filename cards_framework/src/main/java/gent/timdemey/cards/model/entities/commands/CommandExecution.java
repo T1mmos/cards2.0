@@ -1,8 +1,8 @@
 package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.model.entities.common.EntityBase;
-import gent.timdemey.cards.model.state.Property;
-import gent.timdemey.cards.model.state.StateValueRef;
+import gent.timdemey.cards.model.delta.Property;
+import gent.timdemey.cards.model.delta.StateValueRef;
 import gent.timdemey.cards.utils.Debug;
 
 public final class CommandExecution extends EntityBase

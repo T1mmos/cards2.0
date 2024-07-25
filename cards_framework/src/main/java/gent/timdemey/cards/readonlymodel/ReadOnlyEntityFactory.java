@@ -8,21 +8,21 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import gent.timdemey.cards.model.entities.cards.Card;
-import gent.timdemey.cards.model.entities.cards.CardGame;
-import gent.timdemey.cards.model.entities.cards.CardStack;
+import gent.timdemey.cards.model.entities.state.Card;
+import gent.timdemey.cards.model.entities.state.CardGame;
+import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.commands.CommandExecution;
 import gent.timdemey.cards.model.entities.commands.CommandHistory;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.entities.config.Configuration;
-import gent.timdemey.cards.model.entities.game.Player;
-import gent.timdemey.cards.model.entities.game.Server;
-import gent.timdemey.cards.model.entities.game.UDPServer;
-import gent.timdemey.cards.model.state.Property;
-import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.model.state.StateListRef;
-import gent.timdemey.cards.model.state.Change;
-import gent.timdemey.cards.model.state.ChangeType;
+import gent.timdemey.cards.model.entities.state.Player;
+import gent.timdemey.cards.model.entities.state.ServerTCP;
+import gent.timdemey.cards.model.entities.state.ServerUDP;
+import gent.timdemey.cards.model.delta.Property;
+import gent.timdemey.cards.model.entities.state.State;
+import gent.timdemey.cards.model.delta.StateListRef;
+import gent.timdemey.cards.model.delta.Change;
+import gent.timdemey.cards.model.delta.ChangeType;
 
 public class ReadOnlyEntityFactory
 {
@@ -49,9 +49,9 @@ public class ReadOnlyEntityFactory
         addConverter(CommandHistory.class, ReadOnlyEntityFactory::getOrCreateCommandHistory);
         addConverter(Configuration.class, ReadOnlyEntityFactory::getOrCreateConfiguration);
         addConverter(Player.class, ReadOnlyEntityFactory::getOrCreatePlayer);
-        addConverter(Server.class, ReadOnlyEntityFactory::getOrCreateServer);
+        addConverter(ServerTCP.class, ReadOnlyEntityFactory::getOrCreateServer);
         addConverter(State.class, ReadOnlyEntityFactory::getOrCreateState);
-        addConverter(UDPServer.class, ReadOnlyEntityFactory::getOrCreateUDPServer);
+        addConverter(ServerUDP.class, ReadOnlyEntityFactory::getOrCreateUDPServer);
     }
 
     private static final Map<Class<?>, Map<UUID, ? extends ReadOnlyEntityBase<?>>> entities = new HashMap<>();
@@ -102,22 +102,22 @@ public class ReadOnlyEntityFactory
         return getOrCreateList(players, ReadOnlyEntityFactory::getOrCreatePlayer);
     }
 
-    public static ReadOnlyServer getOrCreateServer(Server server)
+    public static ReadOnlyServer getOrCreateServer(ServerTCP server)
     {
-        return GetOrCreateEntity(server, (Server s) -> new ReadOnlyServer(s));
+        return GetOrCreateEntity(server, (ServerTCP s) -> new ReadOnlyServer(s));
     }
 
-    public static ReadOnlyEntityList<ReadOnlyServer> getOrCreateServerList(StateListRef<Server> servers)
+    public static ReadOnlyEntityList<ReadOnlyServer> getOrCreateServerList(StateListRef<ServerTCP> servers)
     {
         return getOrCreateList(servers, ReadOnlyEntityFactory::getOrCreateServer);
     }
     
-    public static ReadOnlyUDPServer getOrCreateUDPServer(UDPServer server)
+    public static ReadOnlyUDPServer getOrCreateUDPServer(ServerUDP server)
     {
-        return GetOrCreateEntity(server, (UDPServer s) -> new ReadOnlyUDPServer(s));
+        return GetOrCreateEntity(server, (ServerUDP s) -> new ReadOnlyUDPServer(s));
     }
 
-    public static ReadOnlyEntityList<ReadOnlyUDPServer> getOrCreateUDPServerList(StateListRef<UDPServer> servers)
+    public static ReadOnlyEntityList<ReadOnlyUDPServer> getOrCreateUDPServerList(StateListRef<ServerUDP> servers)
     {
         return getOrCreateList(servers, ReadOnlyEntityFactory::getOrCreateUDPServer);
     }

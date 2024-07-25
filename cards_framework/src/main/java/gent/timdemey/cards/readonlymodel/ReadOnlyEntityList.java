@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import gent.timdemey.cards.model.state.StateValueRef;
+import gent.timdemey.cards.model.delta.StateValueRef;
 
 public class ReadOnlyEntityList<T extends ReadOnlyEntityBase<?>> extends ReadOnlyList<T>
 {

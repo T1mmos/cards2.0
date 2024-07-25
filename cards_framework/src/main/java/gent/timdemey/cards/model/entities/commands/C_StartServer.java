@@ -9,11 +9,11 @@ import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.config.Configuration;
-import gent.timdemey.cards.model.entities.game.GameState;
-import gent.timdemey.cards.model.entities.game.Player;
-import gent.timdemey.cards.model.entities.game.Server;
-import gent.timdemey.cards.model.entities.game.payload.P_Player;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.state.GameState;
+import gent.timdemey.cards.model.entities.state.Player;
+import gent.timdemey.cards.model.entities.state.ServerTCP;
+import gent.timdemey.cards.model.entities.state.payload.P_Player;
+import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.netcode.TCP_ConnectionAccepter;
 import gent.timdemey.cards.netcode.TCP_ConnectionPool;
 import gent.timdemey.cards.netcode.UDP_ServiceAnnouncer;
@@ -148,7 +148,7 @@ public class C_StartServer extends CommandBase
                 TCP_ConnectionAccepter tcpConnAccepter = new TCP_ConnectionAccepter(tcpConnPool, tcpport);
 
                 // update the state: set server, lobby admin, add player, command history
-                Server server = new Server(srvname, addr, tcpport);
+                ServerTCP server = new ServerTCP(srvname, addr, tcpport);
                 state.setServer(server);
                 state.setServerMessage(srvmsg);
                 state.setLocalId(server.id);

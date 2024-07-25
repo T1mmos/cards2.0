@@ -15,11 +15,15 @@ import gent.timdemey.cards.services.interfaces.ISerializationService;
 
 public class CommandNetworkService implements INetworkService
 {
-
     private final ISerializationService _SerializationService;
-    public CommandNetworkService (ISerializationService serializationService)
+    private Logger _Logger;
+    
+    public CommandNetworkService (
+        ISerializationService serializationService,
+        Logger logger)
     {
         this._SerializationService = serializationService;
+        this._Logger = logger;
     }
     
     @Override
@@ -57,7 +61,7 @@ public class CommandNetworkService implements INetworkService
         }
         else
         {
-            Logger.debug("The command %s is not a local command, not so sending it", command.getName());
+            _Logger.debug("The command %s is not a local command, not so sending it", command.getName());
         }
     }
     

@@ -88,6 +88,7 @@ public class FrameService implements IFrameService, IPreload
     private final IContextService _ContextService;
     private final IPositionService _PositionService;
     private final JSFactory _JSFactory;
+    private final Loc _Loc;
 
     public FrameService (
         Container container,        
@@ -96,7 +97,8 @@ public class FrameService implements IFrameService, IPreload
         IPanelService panelService,
         IContextService contextService,
         IPositionService positionService,
-        JSFactory jsFactory
+        JSFactory jsFactory,
+        Loc loc
         )
     {
         this._Container = container;
@@ -106,6 +108,7 @@ public class FrameService implements IFrameService, IPreload
         this._ContextService = contextService;
         this._PositionService = positionService;
         this._JSFactory = jsFactory;
+        this._Loc = loc;
     }
 
     
@@ -710,8 +713,8 @@ public class FrameService implements IFrameService, IPreload
     @Override
     public void showInternalError()
     {
-        String title = Loc.get(LocKey.DialogTitle_generalerror);
-        String msg = Loc.get(LocKey.DialogMessage_generalerror);
+        String title = _Loc.get(LocKey.DialogTitle_generalerror);
+        String msg = _Loc.get(LocKey.DialogMessage_generalerror);
         MessagePanelData payload = new MessagePanelData(title, msg);
 
         showPanel(PanelDescriptors.Message, payload, c ->
@@ -724,7 +727,7 @@ public class FrameService implements IFrameService, IPreload
     {
         Context ctxt = _ContextService.getThreadContext();
         
-        ctxt.addStateListener(_Container.Get(StateListener.class));
+        ctxt.addStateListener(_Container.Get(FrameStateListener.class));
     }
     
     private <IN, OUT> JSLayeredPane createDialogPanel(DataPanelDescriptor<IN, OUT> desc, IN inData,
@@ -810,7 +813,7 @@ public class FrameService implements IFrameService, IPreload
                         JButton button;
                         if (dbType.lockey != null)
                         {
-                            button = new JButton(Loc.get(dbType.lockey));
+                            button = new JButton(_Loc.get(dbType.lockey));
                         }
                         else
                         {

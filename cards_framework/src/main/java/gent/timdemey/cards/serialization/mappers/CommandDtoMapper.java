@@ -38,7 +38,7 @@ import gent.timdemey.cards.model.entities.commands.payload.P_TCP_NOK;
 import gent.timdemey.cards.model.entities.commands.payload.P_TCP_OK;
 import gent.timdemey.cards.model.entities.commands.payload.P_UDP_Request;
 import gent.timdemey.cards.model.entities.commands.payload.P_UDP_Response;
-import gent.timdemey.cards.model.entities.game.Player;
+import gent.timdemey.cards.model.entities.state.Player;
 import gent.timdemey.cards.serialization.dto.cards.PlayerDto;
 import gent.timdemey.cards.serialization.dto.commands.C_AcceptDto;
 import gent.timdemey.cards.serialization.dto.commands.C_DenyClientDto;

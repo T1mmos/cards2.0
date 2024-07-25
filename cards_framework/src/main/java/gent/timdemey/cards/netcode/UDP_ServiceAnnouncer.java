@@ -25,10 +25,20 @@ public final class UDP_ServiceAnnouncer
     private DatagramSocket dsocket = null;
     private Thread execServReceive = null;
     private ExecutorService execServSend = null;
+    private final Logger _Logger;
+    private final ISerializationService _SerializationService;
+    private final IContextService _ContextService;
 
-    public UDP_ServiceAnnouncer(int udpport)
+    public UDP_ServiceAnnouncer(
+        int udpport, 
+        IContextService contextService,
+        ISerializationService serializationService, 
+        Logger logger)
     {
         this.udpport = udpport;
+        this._ContextService = contextService;
+        this._SerializationService = serializationService;
+        this._Logger = logger;
     }
 
     public void start()
@@ -43,7 +53,7 @@ public final class UDP_ServiceAnnouncer
         try
         {
             dsocket = new DatagramSocket(udpport);
-            Logger.info("Created UDP socket at port " + udpport);
+            _Logger.info("Created UDP socket at port " + udpport);
         }
         catch (SocketException e)
         {
@@ -101,7 +111,7 @@ public final class UDP_ServiceAnnouncer
 
     private void receiveLoop()
     {
-        Logger.info("This thread has started.");
+        _Logger.error("This thread has started.");
         try
         {
             while (true)
@@ -110,20 +120,19 @@ public final class UDP_ServiceAnnouncer
                 byte[] buffer_in = new byte[2000];
                 DatagramPacket packet_in = new DatagramPacket(buffer_in, buffer_in.length);
 
-                Logger.info("Waiting for UDP data...");
+                _Logger.error("Waiting for UDP data...");
                 dsocket.receive(packet_in);
-                Logger.info("Received some data.");
+                _Logger.error("Received some data.");
 
                 // raw to json
                 byte[] received = packet_in.getData();
                 String rcvd = new String(received, 0, packet_in.getLength(), IoConstants.UDP_CHARSET);
 
-                Logger.info("Received some data, trying to parse it as a C_UDP_Request...");
+                _Logger.error("Received some data, trying to parse it as a C_UDP_Request...");
                 CommandBase command = null;
                 try
                 {
-                    ISerializationService serServ = Services.get(ISerializationService.class);
-                    command = serServ.getCommandDtoMapper().toCommand(rcvd);
+                    command = _SerializationService.getCommandDtoMapper().toCommand(rcvd);
                 }
                 catch (Exception ex)
                 {
@@ -131,12 +140,12 @@ public final class UDP_ServiceAnnouncer
 
                 if (command == null)
                 {
-                    Logger.warn("Ignoring the received data as it could not be parsed as a command.");
+                    _Logger.error("Ignoring the received data as it could not be parsed as a command.");
                     continue;
                 }
                 if (!(command instanceof C_UDP_Request))
                 {
-                    Logger.warn("Ignoring the received data as the command is not a C_UDP_Request.");
+                    _Logger.error("Ignoring the received data as the command is not a C_UDP_Request.");
                     continue;
                 }
 
@@ -144,18 +153,17 @@ public final class UDP_ServiceAnnouncer
                 C_UDP_Request udpRequestCmd = (C_UDP_Request) command;
                 UDP_Source udpSource = new UDP_Source(packet_in.getAddress(), packet_in.getPort());
                 udpRequestCmd.setSourceUdp(udpSource);
-                IContextService ctxtServ = Services.get(IContextService.class);
-                ctxtServ.getContext(ContextType.Server).schedule(udpRequestCmd);
+                _ContextService.getContext(ContextType.Server).schedule(udpRequestCmd);
             }
         }
         catch (SocketException e)
         {
-            Logger.info(
+            _Logger.error(
                     "Socket has closed (SocketException), ending this thread. The exception is expected so not logging it.");
         }
         catch (IOException e)
         {
-            Logger.error("An exception has occured, ending this thread", e);
+            _Logger.error("An exception has occured, ending this thread", e);
         }
     }
 
@@ -169,19 +177,18 @@ public final class UDP_ServiceAnnouncer
         try
         {
             C_UDP_Response responseCmd = msg.responseCmd;
-            ISerializationService serServ = Services.get(ISerializationService.class);
-            String json = serServ.getCommandDtoMapper().toJson(responseCmd);
+            String json = _SerializationService.getCommandDtoMapper().toJson(responseCmd);
             byte[] buffer_out = json.getBytes(IoConstants.UDP_CHARSET);
             DatagramPacket packet_out = new DatagramPacket(buffer_out, buffer_out.length, msg.destination, msg.port);
             dsocket.send(packet_out);
         }
         catch (SocketException e)
         {
-            Logger.info("Socket has closed, ending this thread. The exception is expected so not logging it.");
+           _Logger.error("Socket has closed, ending this thread. The exception is expected so not logging it.");
         }
         catch (IOException e)
         {
-            Logger.error("An exception has occured, ending this thread.", e);
+            _Logger.error("An exception has occured, ending this thread.", e);
         }
     }
 }

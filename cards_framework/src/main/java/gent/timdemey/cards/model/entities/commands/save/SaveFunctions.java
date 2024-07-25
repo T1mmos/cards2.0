@@ -1,7 +1,7 @@
 package gent.timdemey.cards.model.entities.commands.save;
 
 import gent.timdemey.cards.model.entities.commands.payload.P_SaveState;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.state.State;
 
 public class SaveFunctions
 {

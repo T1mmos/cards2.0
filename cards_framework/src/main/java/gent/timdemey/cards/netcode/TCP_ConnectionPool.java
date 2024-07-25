@@ -12,9 +12,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
-
-
-import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.logging.Logger;
 
 public final class TCP_ConnectionPool
@@ -28,8 +25,9 @@ public final class TCP_ConnectionPool
     private final ITcpConnectionListener externalConnListener;
     private final int maxConnections;
     private final ExecutorService execServ;
+    private Logger _Logger;
 
-    public TCP_ConnectionPool(String name, int maxConnections, ITcpConnectionListener connListener)
+    public TCP_ConnectionPool(String name, int maxConnections, ITcpConnectionListener connListener, Logger logger)
     {
         if (connListener == null)
         {
@@ -53,6 +51,7 @@ public final class TCP_ConnectionPool
                 return thr;
             }
         });
+        this._Logger = logger;
     }
 
     void onTcpConnectionStarted(TCP_Connection connection)
@@ -136,23 +135,23 @@ public final class TCP_ConnectionPool
             try
             {
                 String hostAddr = address.getHostAddress();
-                Logger.info("Connecting to %s:%s...", hostAddr, port);
+                _Logger.info("Connecting to %s:%s...", hostAddr, port);
                 socket = new Socket(address, port);
                 String localAddr = socket.getLocalAddress().getHostAddress();
                 int localPort = socket.getLocalPort();
-                Logger.info("Connected to %s:%s, local address is %s:%s", hostAddr, port, localAddr, localPort);
+                _Logger.info("Connected to %s:%s, local address is %s:%s", hostAddr, port, localAddr, localPort);
                 addConnectionAndStart(socket);
             }
             catch (IOException e)
             {
-                Services.get(ILogManager.class).log(e);
+                _Logger.error(e);
             }
         });
     }
 
     private void addConnectionAndStart(Socket socket)
     {
-        TCP_Connection connection = new TCP_Connection(name, socket, this);
+        TCP_Connection connection = new TCP_Connection(name, socket, this, _Logger);
         halfConns.add(connection);
         connection.start();
     }

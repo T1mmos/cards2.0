@@ -2,8 +2,8 @@ package gent.timdemey.cards.services.interfaces;
 
 import java.util.UUID;
 
-import gent.timdemey.cards.model.entities.cards.Suit;
-import gent.timdemey.cards.model.entities.cards.Value;
+import gent.timdemey.cards.model.entities.state.CardSuit;
+import gent.timdemey.cards.model.entities.state.CardValue;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityBase;
 
 /**
@@ -14,7 +14,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyEntityBase;
  */
 public interface IIdService
 {
-    UUID createCardFrontScalableResourceId(Suit suit, Value value);
+    UUID createCardFrontScalableResourceId(CardSuit suit, CardValue value);
     UUID createCardBackScalableResourceId();
     UUID createCardStackScalableResourceId(String cardStackType);
     UUID createFontScalableResourceId(String fontname);

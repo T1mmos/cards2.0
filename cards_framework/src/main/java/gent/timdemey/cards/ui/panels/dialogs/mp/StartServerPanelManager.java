@@ -36,8 +36,8 @@ public class StartServerPanelManager extends DataPanelManagerBase<String, StartS
         this.contentPanel = _JSFactory.createLayeredPane(ComponentTypes.PANEL); 
         this.contentPanel.setLayout(new MigLayout("insets 0, align center center"));
 
-        JLabel lb_srvname = new JLabel(Loc.get(LocKey.Label_servername));
-        JLabel lb_srvmsg = new JLabel(Loc.get(LocKey.Label_servermsg));
+        JLabel lb_srvname = new JLabel(_Loc.get(LocKey.Label_servername));
+        JLabel lb_srvmsg = new JLabel(_Loc.get(LocKey.Label_servermsg));
 
         contentPanel.add(lb_srvname, "");
         contentPanel.add(tf_srvname, "wrap");
@@ -125,6 +125,6 @@ public class StartServerPanelManager extends DataPanelManagerBase<String, StartS
     @Override
     public String createTitle()
     {
-        return Loc.get(LocKey.DialogTitle_creategame);
+        return _Loc.get(LocKey.DialogTitle_creategame);
     }
 }

@@ -8,7 +8,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import gent.timdemey.cards.model.entities.commands.CommandBase;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.state.State;
 
 abstract class CommandExecutorBase implements ICommandExecutor
 {

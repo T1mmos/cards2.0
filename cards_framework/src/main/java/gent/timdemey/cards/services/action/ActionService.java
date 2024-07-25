@@ -52,17 +52,23 @@ public class ActionService implements IActionService
     private final IResourceNameService _ResourceNameService;
     private final IResourceCacheService _ResourceCacheService;
     private final IFrameService _FrameService;
+    private final Loc _Loc;
+    private final Logger _Logger;
     
     public ActionService (
             IContextService contextService,
             IFrameService frameService,
             IResourceNameService resourceNameService,
-            IResourceCacheService resourceCacheService)
+            IResourceCacheService resourceCacheService,
+            Loc loc,
+            Logger logger)
     {
         this._ContextService = contextService;
         this._FrameService = frameService;
         this._ResourceNameService = resourceNameService;
         this._ResourceCacheService = resourceCacheService;
+        this._Loc = loc;
+        this._Logger = logger;
     }
    
     @Override
@@ -246,15 +252,15 @@ public class ActionService implements IActionService
     {        
         if (desc == ActionDescriptors.SHOWABOUT)
         {
-            return new ActionBase(this, desc, Loc.get(LocKey.Action_about));
+            return new ActionBase(this, desc, _Loc.get(LocKey.Action_about));
         } 
         else if (desc == ActionDescriptors.CREATEMP)
         {
-            return new A_CreateMP(this, ActionDescriptors.CREATEMP, Loc.get(LocKey.Action_createmp));
+            return new A_CreateMP(this, ActionDescriptors.CREATEMP, _Loc.get(LocKey.Action_createmp));
         }
         else if (desc == ActionDescriptors.DEBUGDRAW)
         {
-            ActionBase action = new ActionBase(this, desc, Loc.get(LocKey.DebugMenu_debug));
+            ActionBase action = new ActionBase(this, desc, _Loc.get(LocKey.DebugMenu_debug));
             
             addShortCut(action, "ctrl D");
             
@@ -262,39 +268,39 @@ public class ActionService implements IActionService
         }
         else if (desc == ActionDescriptors.GC)
         {
-            return new ActionBase(this, desc, Loc.get(LocKey.DebugMenu_gc));
+            return new ActionBase(this, desc, _Loc.get(LocKey.DebugMenu_gc));
         }
         else if (desc == ActionDescriptors.JOIN)
         {
-            return new A_JoinGame(this, desc, Loc.get(LocKey.Action_joinmp));
+            return new A_JoinGame(this, desc, _Loc.get(LocKey.Action_joinmp));
         }
         else if (desc == ActionDescriptors.LEAVEMP)
         {
-            return new A_LeaveGame(this, desc, Loc.get(LocKey.Action_leavemp));
+            return new A_LeaveGame(this, desc, _Loc.get(LocKey.Action_leavemp));
         }
         else if (desc == ActionDescriptors.MAXIMIZE)
         {
             ImageIcon img_maximize = get(ResourceDescriptors.AppMaximize, ButtonState.Normal);
             ImageIcon img_maximize_rollover = get(ResourceDescriptors.AppMaximize, ButtonState.Rollover);
-            return new ActionBase(this, desc, Loc.get(LocKey.Action_maximize), img_maximize, img_maximize_rollover);
+            return new ActionBase(this, desc, _Loc.get(LocKey.Action_maximize), img_maximize, img_maximize_rollover);
         }
         else if (desc == ActionDescriptors.UNMAXIMIZE)
         {
             ImageIcon img_unmaximize = get(ResourceDescriptors.AppUnmaximize, ButtonState.Normal);
             ImageIcon img_unmaximize_rollover = get(ResourceDescriptors.AppUnmaximize, ButtonState.Rollover);
-            return new ActionBase(this, desc, Loc.get(LocKey.Action_unmaximize), img_unmaximize, img_unmaximize_rollover);
+            return new ActionBase(this, desc, _Loc.get(LocKey.Action_unmaximize), img_unmaximize, img_unmaximize_rollover);
         }
         else if (desc == ActionDescriptors.MINIMIZE)
         {
             ImageIcon img_minimize = get(ResourceDescriptors.AppMinimize, ButtonState.Normal);
             ImageIcon img_minimize_rollover = get(ResourceDescriptors.AppMinimize, ButtonState.Rollover);
-            return new ActionBase(this, desc, Loc.get(LocKey.Action_minimize), img_minimize, img_minimize_rollover);
+            return new ActionBase(this, desc, _Loc.get(LocKey.Action_minimize), img_minimize, img_minimize_rollover);
         }        
         else if (desc == ActionDescriptors.QUIT)
         {
             ImageIcon img_close = get(ResourceDescriptors.AppClose, ButtonState.Normal);
             ImageIcon img_close_rollover = get(ResourceDescriptors.AppClose, ButtonState.Rollover);
-            ActionBase action = new ActionBase(this, desc, Loc.get(LocKey.Action_quit), img_close, img_close_rollover);
+            ActionBase action = new ActionBase(this, desc, _Loc.get(LocKey.Action_quit), img_close, img_close_rollover);
             
             addShortCut(action, "alt F4");
             
@@ -302,19 +308,19 @@ public class ActionService implements IActionService
         }
         else if (desc == ActionDescriptors.REDO)
         {
-            return new A_Redo(this, desc, Loc.get(LocKey.Action_redo));
+            return new A_Redo(this, desc, _Loc.get(LocKey.Action_redo));
         }
         else if (desc == ActionDescriptors.SHOWMENU)
         {
-            return new ActionBase(this, desc, Loc.get(LocKey.Action_showmenu));
+            return new ActionBase(this, desc, _Loc.get(LocKey.Action_showmenu));
         }
         else if (desc == ActionDescriptors.SHOWSETTINGS)
         {
-            return new ActionBase(this, desc, Loc.get(LocKey.Action_showsettings));
+            return new ActionBase(this, desc, _Loc.get(LocKey.Action_showsettings));
         }
         else if (desc == ActionDescriptors.TOGGLEMENUMP)
         {
-            ActionBase action = new A_ToggleMenuMP(this, desc, Loc.get(LocKey.Action_togglemenump));
+            ActionBase action = new A_ToggleMenuMP(this, desc, _Loc.get(LocKey.Action_togglemenump));
             
             addShortCut(action, "ESCAPE");
             
@@ -322,15 +328,15 @@ public class ActionService implements IActionService
         }
         else if (desc == ActionDescriptors.STARTSP)
         {
-            return new A_StartGame(this, _FrameService, desc, Loc.get(LocKey.Action_newgame));
+            return new A_StartGame(this, _FrameService, desc, _Loc.get(LocKey.Action_newgame));
         }
         else if (desc == ActionDescriptors.STARTMP)
         {
-            return new A_StartMP(this, desc, Loc.get(LocKey.Action_createmp));
+            return new A_StartMP(this, desc, _Loc.get(LocKey.Action_createmp));
         }
         else if (desc == ActionDescriptors.UNDO)
         {
-            return new A_Undo(this, desc, Loc.get(LocKey.Action_undo));
+            return new A_Undo(this, desc, _Loc.get(LocKey.Action_undo));
         }
         
         return null;
@@ -348,7 +354,7 @@ public class ActionService implements IActionService
     {
         if (desc == ActionDescriptors.SAVECFG)
         {
-            return new PayloadActionBase<T>(this, desc, Loc.get(LocKey.Action_savecfg), payloadSupplier);
+            return new PayloadActionBase<T>(this, desc, _Loc.get(LocKey.Action_savecfg), payloadSupplier);
         } 
         
         return null;
@@ -491,10 +497,10 @@ public class ActionService implements IActionService
             case YesPerm:
                 return true;
             case No:
-                Logger.trace("Cannot execute command %s (%s) because: %s", command.getName(), "ActionService", response.reason);
+                _Logger.trace("Cannot execute command %s (%s) because: %s", command.getName(), "ActionService", response.reason);
                 return false;
             case Error:
-                Logger.error("Cannot execute command %s (%s) because of a state error: %s", command.getName(), "ActionService", response.reason);
+                _Logger.error("Cannot execute command %s (%s) because of a state error: %s", command.getName(), "ActionService", response.reason);
                 return false;
             default:
                 throw new UnsupportedOperationException("Unsupported ExecutionState: " + response.execState);                

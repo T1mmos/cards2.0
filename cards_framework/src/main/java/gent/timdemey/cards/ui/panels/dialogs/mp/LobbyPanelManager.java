@@ -6,7 +6,6 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
-import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
@@ -14,7 +13,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyPlayer;
 import gent.timdemey.cards.readonlymodel.ReadOnlyProperty;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.readonlymodel.TypedChange;
-import gent.timdemey.cards.model.state.ChangeType;
+import gent.timdemey.cards.model.delta.ChangeType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
@@ -71,7 +70,7 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
                 }
                 else if (typed.changeType == ChangeType.Remove)
                 {                    
-                    l_remotePlayer.setText(Loc.get(LocKey.Label_emptyPlayer));
+                    l_remotePlayer.setText(_Loc.get(LocKey.Label_emptyPlayer));
                 }
             }
             else if (property == ReadOnlyState.ServerMsg && change.changeType == ChangeType.Set)
@@ -103,7 +102,7 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
         this.b_startGame = new JButton(_ActionService.getAction(ActionDescriptors.STARTMP));
         
         String lobbyAdminName = state.getPlayers().get(state.getLobbyAdminId()).getName();
-        this.l_waitingToStart = new JLabel(Loc.get(LocKey.Label_waitingToStart, lobbyAdminName));
+        this.l_waitingToStart = new JLabel(_Loc.get(LocKey.Label_waitingToStart, lobbyAdminName));
 
         List<ReadOnlyPlayer> otherPlayers = state.getRemotePlayers();
         if (otherPlayers.size() > 0)
@@ -112,10 +111,10 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
         }
         else
         {
-            this.l_remotePlayer = new JLabel(Loc.get(LocKey.Label_emptyPlayer));
+            this.l_remotePlayer = new JLabel(_Loc.get(LocKey.Label_emptyPlayer));
         }
         
-        JLabel labelVS = new JLabel(Loc.get(LocKey.Label_vs));
+        JLabel labelVS = new JLabel(_Loc.get(LocKey.Label_vs));
 
         panel.add(l_serverMsg, "span 3, grow, wrap");
         panel.add(l_localPlayer, "align right, sg names");
@@ -185,6 +184,6 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
     @Override
     public String createTitle()
     {        
-        return Loc.get(LocKey.DialogTitle_lobby, inData.payload.serverName);
+        return _Loc.get(LocKey.DialogTitle_lobby, inData.payload.serverName);
     }
 }

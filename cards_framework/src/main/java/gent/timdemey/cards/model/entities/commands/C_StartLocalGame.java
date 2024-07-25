@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.ICardPlugin;
-import gent.timdemey.cards.model.entities.cards.CardGame;
+import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.game.GameState;
-import gent.timdemey.cards.model.entities.game.Player;
-import gent.timdemey.cards.model.entities.game.payload.P_Player;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.state.GameState;
+import gent.timdemey.cards.model.entities.state.Player;
+import gent.timdemey.cards.model.entities.state.payload.P_Player;
+import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.ICardGameService;

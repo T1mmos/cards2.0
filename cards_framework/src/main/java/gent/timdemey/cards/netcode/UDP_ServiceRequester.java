@@ -35,12 +35,14 @@ public final class UDP_ServiceRequester
     private final Consumer<String> callback;
     private final String message;
     private final int port;
+    private final Logger _Logger;
 
-    public UDP_ServiceRequester(String message, int port, Consumer<String> callback)
+    public UDP_ServiceRequester(String message, int port, Consumer<String> callback, Logger logger)
     {
         this.message = message;
         this.port = port;
         this.callback = callback;
+        this._Logger = logger;
     }
 
     private List<InetAddress> listAllBroadcastAddresses() throws SocketException
@@ -91,18 +93,18 @@ public final class UDP_ServiceRequester
         }
         catch (SocketException e)
         {
-            Logger.error("Error while setting up a broadcast UDP socket", e);
+            _Logger.error("Error while setting up a broadcast UDP socket", e);
             return;
         }
 
-        Logger.info("This thread has started.");
+        _Logger.info("This thread has started.");
         try
         {
             // json to raw
             byte[] buffer_out = message.getBytes(IoConstants.UDP_CHARSET);
 
             // send on each broadcast address
-            Logger.info("Sending UDP broadcast messages...");
+            _Logger.info("Sending UDP broadcast messages...");
             for (InetAddress inetAddress : listAllBroadcastAddresses())
             {
                 DatagramPacket packet_out = new DatagramPacket(buffer_out, buffer_out.length, inetAddress, port);
@@ -116,9 +118,9 @@ public final class UDP_ServiceRequester
                 byte[] buffer_in = new byte[2000];
                 DatagramPacket packet_in = new DatagramPacket(buffer_in, buffer_in.length);
 
-                Logger.info("Waiting for answers...");
+                _Logger.info("Waiting for answers...");
                 dsocket.receive(packet_in);
-                Logger.info("Received some UDP data");
+                _Logger.info("Received some UDP data");
 
                 // raw to json
                 byte[] received = packet_in.getData();
@@ -130,18 +132,18 @@ public final class UDP_ServiceRequester
         catch (SocketException e)
         {
             // this is normal when the socket is closed.
-            Logger.info("Socket closed: ending this thread.");
+            _Logger.info("Socket closed: ending this thread.");
         }
         catch (SocketTimeoutException e)
         {
             // this is normal when no more servers response in the limited time window
             long seconds = TimeUnit.SECONDS.convert(UDP_SERVICE_REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
-            Logger.info("No more servers have responded after %s seconds, ending this thread.", seconds);
+            _Logger.info("No more servers have responded after %s seconds, ending this thread.", seconds);
 
         }
         catch (IOException e)
         {
-            Services.get(ILogManager.class).log(e);
+            _Logger.error(e);
         }
         finally
         {

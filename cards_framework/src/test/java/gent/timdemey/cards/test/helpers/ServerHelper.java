@@ -4,15 +4,15 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import gent.timdemey.cards.common.Version;
-import gent.timdemey.cards.model.entities.game.Server;
-import gent.timdemey.cards.model.entities.game.UDPServer;
-import gent.timdemey.cards.model.entities.game.payload.P_Server;
+import gent.timdemey.cards.model.entities.state.ServerTCP;
+import gent.timdemey.cards.model.entities.state.ServerUDP;
+import gent.timdemey.cards.model.entities.state.payload.P_ServerTCP;
 
 public class ServerHelper
 {
-    public static UDPServer createFixedUDPServer() 
+    public static ServerUDP createFixedUDPServer() 
     {
-        P_Server pl = new P_Server();
+        P_ServerTCP pl = new P_ServerTCP();
         {
             pl.id = IdHelper.createFixedServerId();
             pl.serverName = "UnitTest-ServerName";
@@ -27,9 +27,9 @@ public class ServerHelper
             }
             pl.tcpport = 666;
         }
-        Server server = new Server(pl);
+        ServerTCP server = new ServerTCP(pl);
         Version version = new Version(2,3);
-        UDPServer udpServer = new UDPServer(server, version, 2, 2);
+        ServerUDP udpServer = new ServerUDP(server, version, 2, 2);
         return udpServer;
     }
 }

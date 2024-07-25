@@ -40,19 +40,22 @@ public class StartUI
     private final Container _Container;
     private final IPanelService _PanelService;
     private final Logger _Logger;
+    private final Loc _Loc;
     
     private StartUI(
             Container container, 
             IContextService contextService, 
             IFrameService frameService, 
             IPanelService panelService,
-            Logger logger)
+            Logger logger,
+            Loc loc)
     {
         this._Container = container;
         this._ContextService = contextService;
         this._FrameService = frameService;
         this._PanelService = panelService;
         this._Logger = logger;
+        this._Loc = loc;
     }
     
     public void startUI()
@@ -170,7 +173,7 @@ public class StartUI
         frame.setVisible(false);
         
         // locale
-        Loc.setLocale(Loc.AVAILABLE_LOCALES[0]);
+        _Loc.setLocale(Loc.AVAILABLE_LOCALES[0]);
         
         // initialize UI context
         _ContextService.initialize(ContextType.UI);

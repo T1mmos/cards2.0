@@ -1,9 +1,9 @@
 package gent.timdemey.cards.test.helpers;
 
-import gent.timdemey.cards.model.entities.cards.Card;
-import gent.timdemey.cards.model.entities.cards.CardStack;
-import gent.timdemey.cards.model.entities.cards.Suit;
-import gent.timdemey.cards.model.entities.cards.Value;
+import gent.timdemey.cards.model.entities.state.Card;
+import gent.timdemey.cards.model.entities.state.CardStack;
+import gent.timdemey.cards.model.entities.state.CardSuit;
+import gent.timdemey.cards.model.entities.state.CardValue;
 
 public class CardStackHelper
 {
@@ -12,8 +12,8 @@ public class CardStackHelper
         CardStack cs = new CardStack("UnitTest-cardStackType", 7);
         for (int i = 0; i < 10; i++)
         {
-            Suit suit = Suit.values()[i % 4];
-            Value value = Value.values()[i % 13];
+            CardSuit suit = CardSuit.values()[i % 4];
+            CardValue value = CardValue.values()[i % 13];
             Card card = new Card(suit, value, true);
             cs.cards.add(card);
         }

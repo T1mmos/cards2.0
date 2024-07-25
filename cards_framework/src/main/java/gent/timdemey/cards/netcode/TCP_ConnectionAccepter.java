@@ -13,6 +13,7 @@ public final class TCP_ConnectionAccepter
     private final int tcpport;
     private Thread thread = null;
     private ServerSocket ssocket = null;
+    private final Logger _Logger;
 
     /**
      * Accepts incoming connections and once established, adds them to the given
@@ -21,10 +22,11 @@ public final class TCP_ConnectionAccepter
      * @param connPool
      * @param info
      */
-    public TCP_ConnectionAccepter(TCP_ConnectionPool connPool, int tcpport)
+    public TCP_ConnectionAccepter(TCP_ConnectionPool connPool, int tcpport, Logger logger)
     {
         this.connectionPool = connPool;
         this.tcpport = tcpport;
+        this._Logger = logger;
     }
 
     public void start()
@@ -32,11 +34,11 @@ public final class TCP_ConnectionAccepter
         try
         {
             this.ssocket = new ServerSocket(tcpport);
-            Logger.info("Created TCP server socket on port " + tcpport);
+            _Logger.info("Created TCP server socket on port " + tcpport);
         }
         catch (IOException e)
         {
-            Logger.error(e);
+            _Logger.error(e);
             return;
         }
         this.thread = new Thread(this::acceptLoop, "Server :: TCP ServerSocket Accepter");
@@ -53,7 +55,7 @@ public final class TCP_ConnectionAccepter
             }
             catch (IOException e)
             {
-                Logger.error(e);
+                _Logger.error(e);
             }
         }
         if (this.thread != null)
@@ -76,11 +78,11 @@ public final class TCP_ConnectionAccepter
         catch (SocketException ex)
         {
             // done listening, not an error
-            Logger.info("Server socket closed");
+            _Logger.info("Server socket closed");
         }
         catch (IOException e)
         {
-            Logger.error(e);
+            _Logger.error(e);
         }
     }
 }

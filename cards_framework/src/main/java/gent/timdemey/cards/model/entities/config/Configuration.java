@@ -1,8 +1,10 @@
 package gent.timdemey.cards.model.entities.config;
 
+import gent.timdemey.cards.model.delta.IChangeTracker;
 import gent.timdemey.cards.model.entities.common.EntityBase;
-import gent.timdemey.cards.model.state.Property;
-import gent.timdemey.cards.model.state.StateValueRef;
+import gent.timdemey.cards.model.delta.Property;
+import gent.timdemey.cards.model.delta.StateValueRef;
+import java.util.UUID;
 
 public class Configuration extends EntityBase
 {
@@ -14,12 +16,13 @@ public class Configuration extends EntityBase
     private StateValueRef<Integer> serverUdpPortRef;
     private StateValueRef<Integer> clientUdpPortRef;
     
-    public Configuration()
+    public Configuration(IChangeTracker changeTracker, UUID id)
     {
-        super();
-        this.serverTcpPortRef = new StateValueRef<>(ServerTcpPort, id);
-        this.serverUdpPortRef = new StateValueRef<>(ServerUdpPort, id);
-        this.clientUdpPortRef = new StateValueRef<>(ClientUdpPort, id);
+        super(id);
+        
+        this.serverTcpPortRef = new StateValueRef<>(changeTracker, ServerTcpPort, id);
+        this.serverUdpPortRef = new StateValueRef<>(changeTracker, ServerUdpPort, id);
+        this.clientUdpPortRef = new StateValueRef<>(changeTracker, ClientUdpPort, id);
     }
     
     public void setServerTcpPort(int tcpPort)

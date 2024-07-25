@@ -2,8 +2,8 @@ package gent.timdemey.cards.readonlymodel;
 
 import java.util.UUID;
 
-import gent.timdemey.cards.model.entities.game.GameState;
-import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.model.entities.state.GameState;
+import gent.timdemey.cards.model.entities.state.State;
 
 public class ReadOnlyState extends ReadOnlyEntityBase<State>
 {

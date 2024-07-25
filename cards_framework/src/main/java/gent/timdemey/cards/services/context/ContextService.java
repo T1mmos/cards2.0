@@ -110,7 +110,8 @@ public class ContextService implements IContextService
         }
 
         boolean allowListeners = type == ContextType.UI;
-        Context context = Context.createContext(_CardPlugin, cmdExecutor, _ContextService, type, allowListeners);
+        Context context = _Container.Get(Context.class);
+        context.initialize(allowListeners, type);
 
         Context prev = fullContexts.putIfAbsent(type, context);
         if (prev != null)
