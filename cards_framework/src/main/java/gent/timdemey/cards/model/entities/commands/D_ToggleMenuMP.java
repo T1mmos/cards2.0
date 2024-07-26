@@ -7,20 +7,28 @@ import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
+import java.util.UUID;
 
 public class D_ToggleMenuMP extends DialogCommandBase
 {
 
+    private final IFrameService _FrameService;
+    public D_ToggleMenuMP(IContextService contextService, IFrameService frameService, UUID id)
+    {
+        super(contextService, id);
+        
+        this._FrameService = frameService;
+    }
+    
     @Override
     protected CanExecuteResponse canShowDialog(Context context, ContextType type, State state)
     {
         CheckContext(type, ContextType.UI);
-        
-        IFrameService frameServ = Services.get(IFrameService.class);
-        
+                
         // you can always hide this dialog when it's shown
-        if (frameServ.isShown(PanelDescriptors.GameMenu))
+        if (_FrameService.isShown(PanelDescriptors.GameMenu))
         {
             return CanExecuteResponse.yes();
         }
@@ -37,16 +45,14 @@ public class D_ToggleMenuMP extends DialogCommandBase
     @Override
     protected void showDialog(Context context, ContextType type, State state)
     {
-        IFrameService frameServ = Services.get(IFrameService.class);
-        if (frameServ.isShown(PanelDescriptors.GameMenu))
+        if (_FrameService.isShown(PanelDescriptors.GameMenu))
         {
-            frameServ.hidePanel(PanelDescriptors.GameMenu);
+            _FrameService.hidePanel(PanelDescriptors.GameMenu);
         }
         else
         {
-            frameServ.showPanel(PanelDescriptors.GameMenu, null, null);    
+            _FrameService.showPanel(PanelDescriptors.GameMenu, null, null);    
         }
-            
     }
 
 }

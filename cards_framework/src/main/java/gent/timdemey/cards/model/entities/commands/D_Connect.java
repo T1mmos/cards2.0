@@ -19,6 +19,19 @@ import gent.timdemey.cards.ui.panels.dialogs.mp.JoinMPGamePanelData;
 
 public class D_Connect extends DialogCommandBase
 {
+
+    private final IFrameService _FrameService;
+    private final CommandFactory _CommandFactory;
+    public D_Connect(
+        IContextService contextService, IFrameService frameService, CommandFactory commandFactory,
+        UUID id)
+    {
+        super(contextService, id);
+        
+        this._FrameService = frameService;
+        this._CommandFactory = commandFactory;
+    }
+    
     @Override
     protected CanExecuteResponse canShowDialog(Context context, ContextType type, State state)
     {
@@ -37,20 +50,18 @@ public class D_Connect extends DialogCommandBase
     @Override
     protected void showDialog(Context context, ContextType type, State state)
     {        
-        IFrameService frameServ = Services.get(IFrameService.class);  
-        frameServ.showPanel(PanelDescriptors.Connect, null, this::onClose);     
+        _FrameService.showPanel(PanelDescriptors.Connect, null, this::onClose);     
     }
     
     private void onClose(PanelOutData<JoinMPGamePanelData> data)
     {
-        IContextService ctxtServ = Services.get(IContextService.class);
-        UUID localId = ctxtServ.getThreadContext().getReadOnlyState().getLocalId();
+        UUID localId = _ContextService.getThreadContext().getReadOnlyState().getLocalId();
         
         if (data.closeType == PanelButtonDescriptors.Ok)
         {
             ReadOnlyUDPServer udpServer = data.data_out.server;
             ServerTCP server = udpServer.getServer();
-            C_Connect cmd = new C_Connect(localId, server.id, server.inetAddress,
+            C_Connect cmd = _CommandFactory.CreateConnect(localId, server.id, server.inetAddress,
                     server.tcpport, server.serverName, data.data_out.playerName);
             schedule(ContextType.UI, cmd);
         }

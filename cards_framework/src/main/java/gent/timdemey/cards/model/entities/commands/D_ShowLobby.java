@@ -9,12 +9,25 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.ui.panels.PanelOutData;
 import gent.timdemey.cards.ui.panels.dialogs.mp.LobbyPanelData;
+import java.util.UUID;
 
 public class D_ShowLobby extends DialogCommandBase
 {
+
+    private final IFrameService _FrameService;
+    private final CommandFactory _CommandFactory;
+    public D_ShowLobby (IContextService contextService, IFrameService frameService, CommandFactory commandFactory, UUID id)
+    {
+        super(contextService, id);
+        
+        this._FrameService = frameService;
+        this._CommandFactory = commandFactory;
+    }
+            
     @Override
     protected CanExecuteResponse canShowDialog(Context context, ContextType type, State state)
     {
@@ -37,16 +50,15 @@ public class D_ShowLobby extends DialogCommandBase
     {
         ServerTCP server = state.getServer();
      
-        IFrameService frameServ = Services.get(IFrameService.class);
         LobbyPanelData payload = new LobbyPanelData(server.serverName);
-        frameServ.showPanel(PanelDescriptors.Lobby, payload, this::onClose);        
+        _FrameService.showPanel(PanelDescriptors.Lobby, payload, this::onClose);        
     }
 
     private void onClose(PanelOutData<Void> outData)
     {
         if (outData.closeType == PanelButtonDescriptors.Cancel)
         {
-            CommandBase cmd = new C_Disconnect(DisconnectReason.LocalPlayerLeft);
+            CommandBase cmd = _CommandFactory.CreateDisconnect(DisconnectReason.LocalPlayerLeft);
             schedule(ContextType.UI, cmd);
         }
     }

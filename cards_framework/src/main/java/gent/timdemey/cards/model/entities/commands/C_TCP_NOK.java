@@ -15,6 +15,7 @@ public class C_TCP_NOK extends CommandBase
 {
     private Loc _Loc;
     private IFrameService _FrameService;
+    private final CommandFactory _CommandFactory;
     public enum TcpNokReason
     {
         LobbyFull
@@ -23,12 +24,13 @@ public class C_TCP_NOK extends CommandBase
     public final TcpNokReason reason;
     
     C_TCP_NOK (
-        IContextService contextService, IFrameService frameService, Loc loc, 
+        IContextService contextService, IFrameService frameService, CommandFactory commandFactory, Loc loc, 
         UUID id, TcpNokReason reason)
     {
         super(contextService, id);
         
         this._FrameService = frameService;
+        this._CommandFactory = commandFactory;
         this._Loc = loc;
         this.reason = reason;
     }
@@ -69,7 +71,7 @@ public class C_TCP_NOK extends CommandBase
     
     private void ShowServerBrowser()
     {
-        D_Connect cmd_connect = new D_Connect();
+        D_Connect cmd_connect = _CommandFactory.ShowDialog_Connect();
         schedule(ContextType.UI, cmd_connect);
     }
 }

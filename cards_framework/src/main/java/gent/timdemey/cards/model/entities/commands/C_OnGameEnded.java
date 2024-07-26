@@ -1,5 +1,7 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.localization.Loc;
+import gent.timdemey.cards.localization.LocKey;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
@@ -8,14 +10,22 @@ import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.services.interfaces.IFrameService;
 
 public class C_OnGameEnded extends CommandBase
 {
     public final UUID winnerId;
+    private final CommandFactory _CommandFactory;
+    private final Loc _Loc;
+    private final IFrameService _FrameService;
 
-    C_OnGameEnded(IContextService contextService, UUID id, UUID winnerId)
+    C_OnGameEnded(IContextService contextService, CommandFactory commandFactory, IFrameService frameService, Loc loc, UUID id, UUID winnerId)
     {
         super(contextService, id);
+        
+        this._CommandFactory = commandFactory;
+        this._FrameService = frameService;
+        this._Loc = loc;
         
         this.winnerId = winnerId;
     }
@@ -33,7 +43,19 @@ public class C_OnGameEnded extends CommandBase
         CheckContext(type, ContextType.UI);
 
         state.setGameState(GameState.Ended);
-        D_OnEndGame d_onendgame = new D_OnEndGame(winnerId);
-        schedule(ContextType.UI, d_onendgame);
+       
+        String title, msg;
+        if (state.getLocalId().equals(winnerId))
+        {
+            title = _Loc.get(LocKey.DialogTitle_youwin);
+            msg = _Loc.get(LocKey.DialogMessage_youwin);    
+        }
+        else
+        {
+            title = _Loc.get(LocKey.DialogTitle_youlose);
+            msg = _Loc.get(LocKey.DialogMessage_youlose);
+        }
+        
+        _FrameService.showMessage(title, msg);
     }
 }

@@ -11,6 +11,7 @@ import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.C_Accept;
 import gent.timdemey.cards.model.entities.commands.C_Reject;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.CommandFactory;
 import gent.timdemey.cards.model.entities.state.CommandExecution;
 import gent.timdemey.cards.model.entities.commands.CommandType;
 import gent.timdemey.cards.model.entities.commands.D_OnReexecutionFail;
@@ -24,12 +25,15 @@ class UICommandExecutor implements ICommandExecutor
     private final List<IExecutionListener> executionListeners;
     private final IContextService _ContextService;
     private final Logger _Logger;
+    private final CommandFactory _CommandFactory;
 
     public UICommandExecutor(
         IContextService contextService,
+        CommandFactory commandFactory,
         Logger logger)
     {
         this._ContextService = contextService;
+        this._CommandFactory = commandFactory;
         this._Logger = logger;
         
         this.executionListeners = new ArrayList<>();        
@@ -149,7 +153,7 @@ class UICommandExecutor implements ICommandExecutor
     {
         if(fails.size() > 0)
         {
-            D_OnReexecutionFail cmd = new D_OnReexecutionFail(fails);
+            D_OnReexecutionFail cmd = _CommandFactory.ShowDialog_ReexecutionFail(fails);
             _ContextService.getThreadContext().schedule(cmd);
         }
     }

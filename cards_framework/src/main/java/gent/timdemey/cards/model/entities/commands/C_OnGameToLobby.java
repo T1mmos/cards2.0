@@ -2,7 +2,6 @@ package gent.timdemey.cards.model.entities.commands;
 
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.payload.P_OnGameToLobby;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
@@ -22,7 +21,9 @@ import java.util.UUID;
 public class C_OnGameToLobby extends CommandBase
 {
 
-    private INetworkService _NetworkService;
+    private final INetworkService _NetworkService;
+    private final CommandFactory _CommandFactory;
+    
     public enum GameToLobbyReason
     {
         /** A player (not the lobby admin) has left the game. */
@@ -37,11 +38,13 @@ public class C_OnGameToLobby extends CommandBase
     
     public final GameToLobbyReason reason;
 
-    C_OnGameToLobby(IContextService contextService, INetworkService networkService, UUID id, GameToLobbyReason reason)
+    C_OnGameToLobby(IContextService contextService, INetworkService networkService, CommandFactory commandFactory, UUID id, GameToLobbyReason reason)
     {
         super(contextService, id);
         
         this._NetworkService = networkService;
+        this._CommandFactory = commandFactory;
+        
         this.reason = reason;
     }
 
@@ -72,13 +75,13 @@ public class C_OnGameToLobby extends CommandBase
                 {
                     // if the game is ongoing then the entire game ends, so the user needs to be
                     // notified
-                    CommandBase cmd_dialog = new D_OnPlayerLeft();
+                    D_OnPlayerLeft cmd_dialog = _CommandFactory.ShowDialog_OnPlayerLeft();
                     run(cmd_dialog);
                 }
             }
             
-            D_ShowLobby cmd_showlobby = new D_ShowLobby();
-            schedule(type, cmd_showlobby);
+            D_ShowLobby cmd_showlobby = _CommandFactory.ShowDialog_Lobby();
+            run(cmd_showlobby);
         }
         else
         {

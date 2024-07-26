@@ -7,12 +7,21 @@ import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
+import java.util.UUID;
 
 public class D_OnPlayerLeft extends DialogCommandBase
 {
-    public D_OnPlayerLeft()
+
+    private final Loc _Loc;
+    private final IFrameService _FrameService;
+    public D_OnPlayerLeft(IContextService contextService, IFrameService frameService, Loc loc, UUID id)
     {
+        super(contextService, id);
+        
+        this._FrameService = frameService;
+        this._Loc = loc;
     }
 
     @Override
@@ -24,8 +33,8 @@ public class D_OnPlayerLeft extends DialogCommandBase
     @Override
     protected void showDialog(Context context, ContextType type, State state)
     {
-        String title = Loc.get(LocKey.DialogTitle_playerleft);
-        String msg = Loc.get(LocKey.DialogMessage_playerleft);
-        Services.get(IFrameService.class).showMessage(title, msg);
+        String title = _Loc.get(LocKey.DialogTitle_playerleft);
+        String msg = _Loc.get(LocKey.DialogMessage_playerleft);
+        _FrameService.showMessage(title, msg);
     }
 }

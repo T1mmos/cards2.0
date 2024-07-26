@@ -18,10 +18,25 @@ import gent.timdemey.cards.ui.panels.dialogs.mp.StartServerPanelData;
 
 public class D_StartServer extends DialogCommandBase
 {
+    private final IFrameService _FrameService;
+    private final CommandFactory _CommandFactory;
+    
+    public D_StartServer (
+        IContextService contextService, 
+        IFrameService frameService, 
+        CommandFactory commandFactory,
+        UUID id)
+    {
+        super(contextService, id);
+        
+        this._FrameService = frameService;
+        this._CommandFactory = commandFactory;
+    }
+    
     @Override
     protected CanExecuteResponse canShowDialog(Context context, ContextType type, State state)
     {
-        if (Services.get(IContextService.class).isInitialized(ContextType.Server))
+        if (_ContextService.isInitialized(ContextType.Server))
         {
             return CanExecuteResponse.no("Server context already initialized");
         }
@@ -35,25 +50,22 @@ public class D_StartServer extends DialogCommandBase
 
     @Override
     protected void showDialog(Context context, ContextType type, State state)
-    {
-        IFrameService frameServ = Services.get(IFrameService.class);
-        IContextService ctxtServ = Services.get(IContextService.class);        
-        String name = ctxtServ.getThreadContext().getReadOnlyState().getLocalName();     
-        frameServ.showPanel(PanelDescriptors.StartServer, name, this::onClose);
+    {  
+        String name = _ContextService.getThreadContext().getReadOnlyState().getLocalName();     
+        _FrameService.showPanel(PanelDescriptors.StartServer, name, this::onClose);
     }
     
     private void onClose(PanelOutData<StartServerPanelData> data)
     {
         if (data.closeType == PanelButtonDescriptors.Ok)
         {
-            IContextService ctxtServ = Services.get(IContextService.class);
-            ReadOnlyState state = ctxtServ.getThreadContext().getReadOnlyState();
+            ReadOnlyState state = _ContextService.getThreadContext().getReadOnlyState();
             UUID localId = state.getLocalId();
             String localName = state.getLocalName();
             int udpPort = state.getConfiguration().getServerUdpPort();
             int tcpPort = state.getConfiguration().getServerTcpPort();
             
-            C_StartServer cmd_startServer = new C_StartServer(localId, localName, data.data_out.srvname, data.data_out.srvmsg,
+            C_StartServer cmd_startServer =_CommandFactory.CreateStartServer(localId, localName, data.data_out.srvname, data.data_out.srvmsg,
                     udpPort, tcpPort, data.data_out.autoconnect);
 
             schedule(ContextType.UI, cmd_startServer);

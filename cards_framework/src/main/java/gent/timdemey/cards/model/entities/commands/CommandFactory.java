@@ -9,6 +9,7 @@ import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.config.ConfigurationFactory;
 import gent.timdemey.cards.model.entities.state.CardGame;
+import gent.timdemey.cards.model.entities.state.CommandExecution;
 import gent.timdemey.cards.model.entities.state.Player;
 import gent.timdemey.cards.model.entities.state.ServerUDP;
 import gent.timdemey.cards.model.entities.state.StateFactory;
@@ -146,12 +147,12 @@ public class CommandFactory
 
     public C_TCP_NOK CreateTCPNOK(C_TCP_NOK.TcpNokReason tcpNokReason)
     {
-        return new C_TCP_NOK(_ContextService, _FrameService, _Loc, UUID.randomUUID(), tcpNokReason);
+        return new C_TCP_NOK(_ContextService, _FrameService, this, _Loc, UUID.randomUUID(), tcpNokReason);
     }
 
     public C_TCP_NOK CreateTCPNOK(UUID id, C_TCP_NOK.TcpNokReason tcpNokReason)
     {
-        return new C_TCP_NOK(_ContextService, _FrameService, _Loc, id, tcpNokReason);
+        return new C_TCP_NOK(_ContextService, _FrameService, this, _Loc, id, tcpNokReason);
     }
     
     public C_TCP_OK CreateTCPOK()
@@ -186,12 +187,12 @@ public class CommandFactory
 
     public C_OnGameToLobby CreateOnGameToLobby(C_OnGameToLobby.GameToLobbyReason gameToLobbyReason)
     {
-        return new C_OnGameToLobby(_ContextService, _NetworkService, UUID.randomUUID(), gameToLobbyReason);
+        return new C_OnGameToLobby(_ContextService, _NetworkService, this, UUID.randomUUID(), gameToLobbyReason);
     }
         
     public C_OnGameToLobby CreateOnGameToLobby(UUID id, C_OnGameToLobby.GameToLobbyReason gameToLobbyReason)
     {
-        return new C_OnGameToLobby(_ContextService, _NetworkService, id, gameToLobbyReason);
+        return new C_OnGameToLobby(_ContextService, _NetworkService, this, id, gameToLobbyReason);
     }
 
     public C_OnTcpConnectionClosed CreateOnTcpConnectionClosed(UUID id, boolean local)
@@ -211,12 +212,12 @@ public class CommandFactory
 
     public C_OnLobbyWelcome CreateOnLobbyWelcome(UUID clientId, UUID serverId, String serverMessage, List<Player> remotePlayers, UUID lobbyAdminId)
     {
-        return new C_OnLobbyWelcome(_ContextService, UUID.randomUUID(), clientId, serverId, serverMessage, remotePlayers, lobbyAdminId);
+        return new C_OnLobbyWelcome(_ContextService, this, UUID.randomUUID(), clientId, serverId, serverMessage, remotePlayers, lobbyAdminId);
     }
     
     public C_OnLobbyWelcome CreateOnLobbyWelcome(UUID id, UUID clientId, UUID serverId, String serverMessage, List<Player> remotePlayers, UUID lobbyAdminId)
     {
-        return new C_OnLobbyWelcome(_ContextService, id, clientId, serverId, serverMessage, remotePlayers, lobbyAdminId);
+        return new C_OnLobbyWelcome(_ContextService, this, id, clientId, serverId, serverMessage, remotePlayers, lobbyAdminId);
     }
 
     public C_OnLobbyPlayerJoined CreateOnLobbyPlayerJoined(Player player)
@@ -261,12 +262,12 @@ public class CommandFactory
 
     public C_OnGameEnded CreateOnGameEnded(UUID winnerId)
     {
-        return new C_OnGameEnded(_ContextService, UUID.randomUUID(), winnerId);
+        return new C_OnGameEnded(_ContextService, this, _FrameService, _Loc, UUID.randomUUID(), winnerId);
     }
     
     public C_OnGameEnded CreateOnGameEnded(UUID id, UUID winnerId)
     {
-        return new C_OnGameEnded(_ContextService, id, winnerId);
+        return new C_OnGameEnded(_ContextService, this, _FrameService, _Loc, id, winnerId);
     }
 
     public C_StartLocalGame CreateStartLocalGame()
@@ -356,5 +357,75 @@ public class CommandFactory
     public C_LoadConfig CreateLoadConfig(UUID id)
     {
         return new C_LoadConfig(_ContextService, _FileService, _ConfigurationService, _ConfigurationFactory, _Logger, id);
+    }
+
+    public C_StartServer CreateStartServer(UUID localId, String localName, String srvname, String srvmsg, int udpPort, int tcpPort, boolean autoconnect)
+    {
+        return new C_StartServer(_ContextService, _CardPlugin, _NetworkFactory, _StateFactory, this, _ConfigurationFactory, _Logger, UUID.randomUUID(), localId, localName, srvname, srvmsg, udpPort, tcpPort, autoconnect);
+    }
+    
+    public C_StartServer CreateStartServer(UUID id, UUID localId, String localName, String srvname, String srvmsg, int udpPort, int tcpPort, boolean autoconnect)
+    {
+        return new C_StartServer(_ContextService, _CardPlugin, _NetworkFactory, _StateFactory, this, _ConfigurationFactory, _Logger, id, localId, localName, srvname, srvmsg, udpPort, tcpPort, autoconnect);
+    }
+
+    public D_Connect ShowDialog_Connect()
+    {
+        return new D_Connect(_ContextService, _FrameService, this, UUID.randomUUID());
+    }
+    
+    public D_Connect ShowDialog_Connect(UUID id)
+    {
+        return new D_Connect(_ContextService, _FrameService, this, id);
+    }
+
+    public D_OnPlayerLeft ShowDialog_OnPlayerLeft()
+    {
+        return new D_OnPlayerLeft(_ContextService, _FrameService, _Loc, UUID.randomUUID());
+    }
+    
+    public D_OnPlayerLeft ShowDialog_OnPlayerLeft(UUID id)
+    {
+        return new D_OnPlayerLeft(_ContextService, _FrameService, _Loc, id);
+    }
+
+    public D_ShowLobby ShowDialog_Lobby()
+    {
+        return new D_ShowLobby(_ContextService, _FrameService, this, UUID.randomUUID());
+    }
+    
+    public D_ShowLobby ShowDialog_Lobby(UUID id)
+    {
+        return new D_ShowLobby(_ContextService, _FrameService, this, id);
+    }
+
+    public CommandBase ShowDialog_ToggleMenuMP()
+    {
+        return new D_ToggleMenuMP(_ContextService, _FrameService, UUID.randomUUID());
+    }
+    
+    public CommandBase ShowDialog_ToggleMenuMP(UUID id)
+    {
+        return new D_ToggleMenuMP(_ContextService, _FrameService, id);
+    }
+
+    public CommandBase ShowDialog_StartServer()
+    {
+        return new D_StartServer(_ContextService, _FrameService, this, UUID.randomUUID());
+    }
+    
+    public CommandBase ShowDialog_StartServer(UUID id)
+    {
+        return new D_StartServer(_ContextService, _FrameService, this, id);
+    }
+
+    public D_OnReexecutionFail ShowDialog_ReexecutionFail(List<CommandExecution> fails)
+    {
+        return new D_OnReexecutionFail(_ContextService, _FrameService, _Loc, UUID.randomUUID(), fails);
+    }
+    
+    public D_OnReexecutionFail ShowDialog_ReexecutionFail(UUID id, List<CommandExecution> fails)
+    {
+        return new D_OnReexecutionFail(_ContextService, _FrameService, _Loc, id, fails);
     }
 }

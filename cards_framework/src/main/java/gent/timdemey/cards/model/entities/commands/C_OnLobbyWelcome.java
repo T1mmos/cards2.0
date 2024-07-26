@@ -25,12 +25,15 @@ public class C_OnLobbyWelcome extends CommandBase
     public final String serverMessage;
     public final List<Player> connected;
     public final UUID lobbyAdminId;
+    private final CommandFactory _CommandFactory;
 
     public C_OnLobbyWelcome(
-            IContextService contextService,
+            IContextService contextService, CommandFactory commandFactory,
             UUID id, UUID clientId, UUID serverId, String serverMessage, List<Player> connected, UUID lobbyAdminId)
     {
         super(contextService, id);
+        
+        this._CommandFactory = commandFactory;
         
         this.clientId = clientId;
         this.serverId = serverId;
@@ -69,7 +72,7 @@ public class C_OnLobbyWelcome extends CommandBase
         state.getPlayers().addAll(connected);      
         state.setGameState(GameState.Lobby);
         
-        schedule(ContextType.UI, new D_ShowLobby());
+        run(_CommandFactory.ShowDialog_Lobby());
     }
 
     @Override

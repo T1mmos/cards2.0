@@ -13,15 +13,7 @@ import javax.swing.KeyStroke;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.model.entities.commands.C_Composite;
-import gent.timdemey.cards.model.entities.commands.C_Disconnect;
 import gent.timdemey.cards.model.entities.commands.C_Disconnect.DisconnectReason;
-import gent.timdemey.cards.model.entities.commands.C_Redo;
-import gent.timdemey.cards.model.entities.commands.C_SaveConfig;
-import gent.timdemey.cards.model.entities.commands.C_SaveState;
-import gent.timdemey.cards.model.entities.commands.C_StartLocalGame;
-import gent.timdemey.cards.model.entities.commands.C_StartMultiplayerGame;
-import gent.timdemey.cards.model.entities.commands.C_Undo;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CommandFactory;
 import gent.timdemey.cards.model.entities.commands.D_Connect;
@@ -384,11 +376,11 @@ public class ActionService implements IActionService
     {
         if (desc == ActionDescriptors.CREATEMP)
         {
-            return new D_StartServer();
+            return  _CommandFactory.ShowDialog_StartServer(); 
         }
         else if (desc == ActionDescriptors.JOIN)
         {
-            return new D_Connect();                
+            return _CommandFactory.ShowDialog_Connect();
         }
         else if (desc == ActionDescriptors.LEAVEMP)
         {
@@ -408,7 +400,7 @@ public class ActionService implements IActionService
         }
         else if (desc == ActionDescriptors.TOGGLEMENUMP)
         {
-            return new D_ToggleMenuMP();
+            return _CommandFactory.ShowDialog_ToggleMenuMP();
         }
         else if (desc == ActionDescriptors.UNDO)
         {
