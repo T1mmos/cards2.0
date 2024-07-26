@@ -4,6 +4,8 @@ import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
+import java.util.UUID;
 
 /**
  * Special meta command to redo the last undone command. This command should not
@@ -13,8 +15,11 @@ import gent.timdemey.cards.services.context.ContextType;
  */
 public final class C_Redo extends CommandBase
 {
-    public C_Redo()
+    C_Redo(
+        IContextService contextService, 
+        UUID id)
     {
+        super(contextService, id);
     }
 
     @Override

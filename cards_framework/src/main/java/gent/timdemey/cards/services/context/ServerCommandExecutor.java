@@ -5,31 +5,35 @@ import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.C_Accept;
 import gent.timdemey.cards.model.entities.commands.C_Reject;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
-import gent.timdemey.cards.model.entities.commands.CommandHistory;
+import gent.timdemey.cards.model.entities.commands.CommandFactory;
+import gent.timdemey.cards.model.entities.state.CommandHistory;
 import gent.timdemey.cards.model.entities.commands.CommandType;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.model.entities.state.State;
+import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.interfaces.INetworkService;
-import gent.timdemey.cards.services.interfaces.ISerializationService;
 
 class ServerCommandExecutor extends CommandExecutorBase
 {
 
     private final INetworkService _NetworkService;
-    private final ISerializationService _SerializationService;
+    private final CommandDtoMapper _CommandDtoMapper;
     private final Logger _Logger;
+    private final CommandFactory _CommandFactory;
     
     public ServerCommandExecutor(
         INetworkService networkService,
-        ISerializationService serializationService,
+        CommandFactory commandFactory,
+        CommandDtoMapper commandDtoMapper,
         Logger logger
     )
     {
         super(ContextType.Server);
         
         this._NetworkService = networkService;
-        this._SerializationService = serializationService;
+        this._CommandFactory = commandFactory;
+        this._CommandDtoMapper = commandDtoMapper;
         this._Logger = logger;
     }
 
@@ -63,7 +67,7 @@ class ServerCommandExecutor extends CommandExecutorBase
                 // the client can mark the command as accepted in its history
                 if (cmdType == CommandType.SYNCED)
                 {
-                    C_Accept acceptCmd = new C_Accept(command.id);
+                    C_Accept acceptCmd = _CommandFactory.CreateAccept(command.id);
                     _NetworkService.send(state.getLocalId(), command.getSourceId(), acceptCmd, state.getTcpConnectionPool());
                 }
             }
@@ -78,8 +82,8 @@ class ServerCommandExecutor extends CommandExecutorBase
             {
                 _Logger.info("Can't execute syncable command: '%s'. Responding with a C_Reject. Reason: %s", command.getName(), resp.reason);
 
-                C_Reject rejectCmd = new C_Reject(command.id);
-                String answer = _SerializationService.getCommandDtoMapper().toJson(rejectCmd);
+                C_Reject rejectCmd = _CommandFactory.CreateReject(command.id);
+                String answer = _CommandDtoMapper.toJson(rejectCmd);
                 state.getTcpConnectionPool().getConnection(command.getSourceId()).send(answer);
             }
             else

@@ -7,22 +7,21 @@ import java.util.UUID;
 
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
-import gent.timdemey.cards.netcode.TCP_Connection;
-import gent.timdemey.cards.netcode.TCP_ConnectionPool;
+import gent.timdemey.cards.model.net.TCP_Connection;
+import gent.timdemey.cards.model.net.TCP_ConnectionPool;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.interfaces.INetworkService;
-import gent.timdemey.cards.services.interfaces.ISerializationService;
 
 public class CommandNetworkService implements INetworkService
 {
-    private final ISerializationService _SerializationService;
+    private final CommandDtoMapper _CommandDtoMapper;
     private Logger _Logger;
     
     public CommandNetworkService (
-        ISerializationService serializationService,
+        CommandDtoMapper commandDtoMapper,
         Logger logger)
     {
-        this._SerializationService = serializationService;
+        this._CommandDtoMapper = commandDtoMapper;
         this._Logger = logger;
     }
     
@@ -37,7 +36,7 @@ public class CommandNetworkService implements INetworkService
     @Override 
     public void send(TCP_Connection conn, CommandBase command)
     {
-        String serialized = serialize(command);
+        String serialized = _CommandDtoMapper.toJson(command);
         conn.send(serialized);
     }
 
@@ -56,7 +55,7 @@ public class CommandNetworkService implements INetworkService
         // didn't originate from somewhere else.
         if (srcId.equals(localId))
         {
-            String serialized = serialize(command);
+            String serialized = _CommandDtoMapper.toJson(command);
             tcpConnPool.broadcast(dstIds, serialized);
         }
         else
@@ -65,13 +64,6 @@ public class CommandNetworkService implements INetworkService
         }
     }
     
-    private String serialize(CommandBase command)
-    {
-        CommandDtoMapper dtoMapper = _SerializationService.getCommandDtoMapper();
-        String serialized = dtoMapper.toJson(command);
-        return serialized;
-    }
-
     private void CheckArgs(UUID localId, List<UUID> dstIds, CommandBase command)
     {
         if (localId == null)

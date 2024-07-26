@@ -8,15 +8,21 @@ import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.utils.Debug;
+import java.util.UUID;
 
 public class C_SetVisible extends CommandBase
 {
     private final List<Card> cards;
     private final boolean visible;
 
-    public C_SetVisible(List<Card> cards, boolean visible)
+    C_SetVisible(
+        IContextService contextService, 
+        UUID id, List<Card> cards, boolean visible)
     {
+        super(contextService, id);
+        
         if (cards == null)
         {
             throw new IllegalArgumentException("cards");

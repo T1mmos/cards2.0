@@ -1,4 +1,4 @@
-package gent.timdemey.cards.netcode;
+package gent.timdemey.cards.model.net;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -14,8 +14,6 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-
-import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.logging.Logger;
 
 /**
@@ -37,12 +35,13 @@ public final class UDP_ServiceRequester
     private final int port;
     private final Logger _Logger;
 
-    public UDP_ServiceRequester(String message, int port, Consumer<String> callback, Logger logger)
+    UDP_ServiceRequester(Logger logger, String message, int port, Consumer<String> callback)
     {
+        this._Logger = logger;
+        
         this.message = message;
         this.port = port;
         this.callback = callback;
-        this._Logger = logger;
     }
 
     private List<InetAddress> listAllBroadcastAddresses() throws SocketException

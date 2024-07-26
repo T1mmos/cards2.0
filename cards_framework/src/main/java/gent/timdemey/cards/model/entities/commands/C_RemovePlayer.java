@@ -7,28 +7,33 @@ import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.C_Disconnect.DisconnectReason;
 import gent.timdemey.cards.model.entities.commands.C_OnGameToLobby.GameToLobbyReason;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.payload.P_RemovePlayer;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.Player;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.INetworkService;
 import gent.timdemey.cards.utils.Debug;
 
 public class C_RemovePlayer extends CommandBase
 {
     public final UUID playerId;
+    private final INetworkService _NetworkService;
+    private final Logger _Logger;
+    private final CommandFactory _CommandFactory;
 
-    public C_RemovePlayer(UUID playerId)
+    C_RemovePlayer(
+        IContextService contextService, INetworkService networkService, CommandFactory commandFactory, Logger logger, 
+        UUID id, UUID playerId)
     {
+        super(contextService, id);
+        
+        this._NetworkService = networkService;
+        this._CommandFactory = commandFactory;
+        this._Logger = logger;
+        
         this.playerId = playerId;
-    }
-
-    public C_RemovePlayer(P_RemovePlayer pl)
-    {
-        super(pl);
-        this.playerId = pl.playerId;
     }
 
     @Override
@@ -36,7 +41,7 @@ public class C_RemovePlayer extends CommandBase
     {
         if(state.getGameState() == GameState.Disconnected)
         {
-            return CanExecuteResponse.no("A player cannot leave if the Disconnected state");
+            return CanExecuteResponse.no("A player cannot leave in the Disconnected state");
         }
         if(!state.getPlayers().contains(playerId))
         {
@@ -52,27 +57,25 @@ public class C_RemovePlayer extends CommandBase
 
         if(contextType == ContextType.Server)
         {
-            INetworkService ns = Services.get(INetworkService.class);
-
             if(state.getLobbyAdminId().equals(player_removed.id))
             {
                 // when the lobby admin leaves, server should stop, so make
                 // everyone disconnect gracefully, then stop the server
-                C_Disconnect cmd_leavelobby = new C_Disconnect(DisconnectReason.LobbyAdminLeft);
-                ns.broadcast(state.getLocalId(), state.getRemotePlayerIds(), cmd_leavelobby, state.getTcpConnectionPool());                
+                C_Disconnect cmd_leavelobby = _CommandFactory.CreateDisconnect(DisconnectReason.LobbyAdminLeft);
+                _NetworkService.broadcast(state.getLocalId(), state.getRemotePlayerIds(), cmd_leavelobby, state.getTcpConnectionPool());                
 
-                C_StopServer cmd_stopserver = new C_StopServer();
+                C_StopServer cmd_stopserver = _CommandFactory.CreateStopServer();
                 run(cmd_stopserver);
             }
             else 
             {
                 // inform all clients
-                ns.broadcast(state.getLocalId(), state.getRemotePlayerIds(), this, state.getTcpConnectionPool());
+                _NetworkService.broadcast(state.getLocalId(), state.getRemotePlayerIds(), this, state.getTcpConnectionPool());
                 
                 if(state.getGameState() != GameState.Lobby)
                 {
                     // while ingame, we force every remaining player back to the lobby
-                    C_OnGameToLobby cmd_ongametolobby = new C_OnGameToLobby(GameToLobbyReason.PlayerLeft);
+                    C_OnGameToLobby cmd_ongametolobby = _CommandFactory.CreateOnGameToLobby(GameToLobbyReason.PlayerLeft);
                     run(cmd_ongametolobby);
                 }
             }
@@ -82,7 +85,7 @@ public class C_RemovePlayer extends CommandBase
     private Player removePlayer(State state, UUID playerId)
     {
         Player player = state.getPlayers().remove(playerId);
-        Logger.info("Removed player %s, id=%s", player.getName(), player.id);
+        _Logger.info("Removed player %s, id=%s", player.getName(), player.id);
         return player;
     }
 

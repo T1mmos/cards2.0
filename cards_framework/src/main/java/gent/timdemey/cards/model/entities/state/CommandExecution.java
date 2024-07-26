@@ -1,9 +1,13 @@
-package gent.timdemey.cards.model.entities.commands;
+package gent.timdemey.cards.model.entities.state;
 
+import gent.timdemey.cards.model.delta.IChangeTracker;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.delta.Property;
 import gent.timdemey.cards.model.delta.StateValueRef;
+import gent.timdemey.cards.model.entities.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.CommandExecutionState;
 import gent.timdemey.cards.utils.Debug;
+import java.util.UUID;
 
 public final class CommandExecution extends EntityBase
 {
@@ -13,10 +17,14 @@ public final class CommandExecution extends EntityBase
     
     private final CommandBase command;
     
-    public CommandExecution(CommandBase command, CommandExecutionState cmdExecutionState)
+    public CommandExecution(
+        IChangeTracker changeTracker,        
+        UUID id, CommandBase command, CommandExecutionState cmdExecutionState)
     {
+        super(id);
+        
         this.command = command;
-        this.cmdExecutionState = new StateValueRef<>(CommandExecutionState, id, cmdExecutionState);
+        this.cmdExecutionState = new StateValueRef<>(changeTracker, CommandExecutionState, id, cmdExecutionState);
     }
 
     public CommandBase getCommand()

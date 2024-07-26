@@ -4,10 +4,9 @@ import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.common.EntityBase;
-import gent.timdemey.cards.model.entities.common.PayloadBase;
 import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.netcode.TCP_Connection;
-import gent.timdemey.cards.netcode.UDP_Source;
+import gent.timdemey.cards.model.net.TCP_Connection;
+import gent.timdemey.cards.model.net.UDP_Source;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.context.LimitedContext;
@@ -19,21 +18,19 @@ public abstract class CommandBase extends EntityBase
     private volatile UDP_Source sourceUdp;
     private volatile UUID sourceId;
     private volatile String serialized;
+    
+    protected final IContextService _ContextService;
 
-    protected CommandBase()
+    protected CommandBase(IContextService contextService, UUID id)
     {
-        super();
-    }
-
-    protected CommandBase(PayloadBase pl)
-    {
-        super(pl);
+        super(id);
+        
+        this._ContextService = contextService;
     }
 
     private final Context getContext()
     {
-        IContextService contextServ = Services.get(IContextService.class);
-        Context context = contextServ.getThreadContext();
+        Context context = _ContextService.getThreadContext();
         return context;
     }
 
@@ -114,8 +111,7 @@ public abstract class CommandBase extends EntityBase
 
     protected final void schedule(ContextType type, CommandBase cmd)
     {
-        IContextService contextServ = Services.get(IContextService.class);
-        LimitedContext context = contextServ.getContext(type);
+        LimitedContext context = _ContextService.getContext(type);
         context.schedule(cmd);
     }
 
@@ -127,9 +123,8 @@ public abstract class CommandBase extends EntityBase
      */
     protected final void run(CommandBase cmd)
     {
-        IContextService contextServ = Services.get(IContextService.class);
-        ContextType ctxtType = contextServ.getThreadContext().getContextType();
-        LimitedContext context = contextServ.getContext(ctxtType);
+        ContextType ctxtType = _ContextService.getThreadContext().getContextType();
+        LimitedContext context = _ContextService.getContext(ctxtType);
         context.run(cmd);
     }
 

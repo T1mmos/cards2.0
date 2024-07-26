@@ -1,6 +1,6 @@
 package gent.timdemey.cards.readonlymodel;
 
-import gent.timdemey.cards.model.entities.commands.CommandExecution;
+import gent.timdemey.cards.model.entities.state.CommandExecution;
 import gent.timdemey.cards.model.entities.commands.CommandExecutionState;
 
 public class ReadOnlyCommandExecution extends ReadOnlyEntityBase<CommandExecution>

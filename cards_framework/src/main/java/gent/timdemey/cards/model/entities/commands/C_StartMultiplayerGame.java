@@ -7,11 +7,11 @@ import gent.timdemey.cards.ICardPlugin;
 
 import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.payload.P_StartMultiplayerGame;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.ICardGameService;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.INetworkService;
 
 /**
@@ -23,20 +23,27 @@ import gent.timdemey.cards.services.interfaces.INetworkService;
  */
 public class C_StartMultiplayerGame extends CommandBase
 {
-    public C_StartMultiplayerGame()
+    private final ICardPlugin _CardPlugin;
+    private final INetworkService _NetworkService;
+    private final ICardGameService _CardGameService;
+    private CommandFactory _CommandFactory;
+    
+    C_StartMultiplayerGame(
+        IContextService contextService, ICardPlugin cardPlugin, INetworkService networkService, ICardGameService cardGameService, CommandFactory commandFactory,
+        UUID id)
     {
-    }
-
-    public C_StartMultiplayerGame(P_StartMultiplayerGame pl)
-    {
-        super(pl);
+        super(contextService, id);
+        
+        this._CardPlugin = cardPlugin;
+        this._NetworkService = networkService;
+        this._CardGameService = cardGameService;
+        this._CommandFactory = commandFactory;
     }
 
     @Override
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {        
-        ICardPlugin plugin = Services.get(ICardPlugin.class);
-        int reqPlayerCnt = plugin.getPlayerCount();
+        int reqPlayerCnt = _CardPlugin.getPlayerCount();
         int curPlayerCnt = state.getPlayers().size();
 
         if (state.getCardGame() != null)
@@ -64,17 +71,15 @@ public class C_StartMultiplayerGame extends CommandBase
     {
         if (type == ContextType.UI)
         {
-            INetworkService netServ = Services.get(INetworkService.class);
-            netServ.send(state.getLocalId(), state.getServerId(), this, state.getTcpConnectionPool());
+            _NetworkService.send(state.getLocalId(), state.getServerId(), this, state.getTcpConnectionPool());
         }
         else
         {
             // ready to kick off. Generate some cards for the current game type.
-            ICardGameService cgServ = Services.get(ICardGameService.class);
             List<UUID> playerIds = state.getPlayers().getIds();
-            CardGame cardGame = cgServ.createCardGame(playerIds);
+            CardGame cardGame = _CardGameService.createCardGame(playerIds);
 
-            C_OnLobbyToGame cmd = new C_OnLobbyToGame(cardGame);
+            C_OnLobbyToGame cmd = _CommandFactory.CreateOnLobbyToGame(cardGame);
             schedule(ContextType.Server, cmd);
         }
     }

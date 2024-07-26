@@ -7,7 +7,9 @@ import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.INetworkService;
+import java.util.UUID;
 
 /**
  * Transition from the multiplayer game to the lobby. Reasons may vary: a player
@@ -19,6 +21,8 @@ import gent.timdemey.cards.services.interfaces.INetworkService;
  */
 public class C_OnGameToLobby extends CommandBase
 {
+
+    private INetworkService _NetworkService;
     public enum GameToLobbyReason
     {
         /** A player (not the lobby admin) has left the game. */
@@ -33,15 +37,12 @@ public class C_OnGameToLobby extends CommandBase
     
     public final GameToLobbyReason reason;
 
-    public C_OnGameToLobby(GameToLobbyReason reason)
+    C_OnGameToLobby(IContextService contextService, INetworkService networkService, UUID id, GameToLobbyReason reason)
     {
+        super(contextService, id);
+        
+        this._NetworkService = networkService;
         this.reason = reason;
-    }
-
-    public C_OnGameToLobby(P_OnGameToLobby pl)
-    {
-        super(pl);
-        this.reason = pl.reason;
     }
 
     @Override
@@ -81,8 +82,7 @@ public class C_OnGameToLobby extends CommandBase
         }
         else
         {
-            INetworkService netServ = Services.get(INetworkService.class);
-            netServ.broadcast(state.getLocalId(), state.getRemotePlayerIds(), this, state.getTcpConnectionPool());
+            _NetworkService.broadcast(state.getLocalId(), state.getRemotePlayerIds(), this, state.getTcpConnectionPool());
         }
     }
 

@@ -7,12 +7,14 @@ import gent.timdemey.cards.ICardPlugin;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.state.ServerTCP;
-import gent.timdemey.cards.model.entities.state.payload.P_ServerTCP;
 import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.netcode.ITcpConnectionListener;
-import gent.timdemey.cards.netcode.TCP_ConnectionPool;
+import gent.timdemey.cards.model.entities.state.StateFactory;
+import gent.timdemey.cards.model.net.ITcpConnectionListener;
+import gent.timdemey.cards.model.net.NetworkFactory;
+import gent.timdemey.cards.model.net.TCP_ConnectionPool;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.utils.Debug;
 
 /**
@@ -29,9 +31,26 @@ public class C_Connect extends CommandBase
     final int serverTcpPort;
     final String serverName;
     final String playerName;
+    private final ICardPlugin _CardPlugin;
+    private final StateFactory _StateFactory;
+    private final NetworkFactory _NetworkFactory;
+    private final CommandFactory _CommandFactory;
     
-    public C_Connect(UUID playerId, UUID serverId, InetAddress serverInetAddress, int serverTcpPort, String serverName, String playerName)
+    C_Connect(
+        IContextService contextService,
+        ICardPlugin cardPlugin, 
+        NetworkFactory networkFactory,
+        StateFactory stateFactory,
+        CommandFactory commandFactory,
+        UUID id, UUID playerId, UUID serverId, InetAddress serverInetAddress, int serverTcpPort, String serverName, String playerName)
     {
+        super(contextService, id);
+        
+        this._CardPlugin = cardPlugin;
+        this._NetworkFactory = networkFactory;
+        this._StateFactory = stateFactory;
+        this._CommandFactory = commandFactory;
+        
         this.playerId = playerId;
         this.serverId = serverId;
         this.serverInetAddress = serverInetAddress;
@@ -43,6 +62,11 @@ public class C_Connect extends CommandBase
     @Override
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
+        if (_CardPlugin.getPlayerCount() == 1)
+        {
+            return CanExecuteResponse.no("The plugin indicates this is a single player game");
+        } 
+        
         return CanExecuteResponse.yes();
     }
     
@@ -52,26 +76,12 @@ public class C_Connect extends CommandBase
         CheckNotContext(type, ContextType.Server);
         if (type == ContextType.UI)
         {
-            ICardPlugin plugin = Services.get(ICardPlugin.class);
-            if (plugin.getPlayerCount() == 1)
-            {
-                throw new UnsupportedOperationException();
-            }  
-            
-            P_ServerTCP pl = new P_ServerTCP();
-            {
-                pl.id = serverId;
-                pl.inetAddress = serverInetAddress;
-                pl.tcpport = serverTcpPort;
-                pl.serverName = serverName;
-            };
-            ServerTCP server = new ServerTCP(pl);
+            ServerTCP server = _StateFactory.CreateServerTCP(serverId, serverName, serverInetAddress, serverTcpPort);
             state.setServer(server);
-            
             state.setLocalName(playerName);
             
-            ITcpConnectionListener tcpConnListener = new CommandSchedulingTcpConnectionListener(ContextType.UI);
-            TCP_ConnectionPool tcpConnPool = new TCP_ConnectionPool(type.name(), 1, tcpConnListener);
+            ITcpConnectionListener tcpConnListener = _CommandFactory.CreateCommandSchedulingTcpConnectionListener(ContextType.UI);
+            TCP_ConnectionPool tcpConnPool = _NetworkFactory.CreateTCPConnectionPool(type.name(), 1, tcpConnListener);
 
             state.setTcpConnectionPool(tcpConnPool);
 

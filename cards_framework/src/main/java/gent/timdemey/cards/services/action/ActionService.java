@@ -23,6 +23,7 @@ import gent.timdemey.cards.model.entities.commands.C_StartLocalGame;
 import gent.timdemey.cards.model.entities.commands.C_StartMultiplayerGame;
 import gent.timdemey.cards.model.entities.commands.C_Undo;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.CommandFactory;
 import gent.timdemey.cards.model.entities.commands.D_Connect;
 import gent.timdemey.cards.model.entities.commands.D_StartServer;
 import gent.timdemey.cards.model.entities.commands.D_ToggleMenuMP;
@@ -54,12 +55,14 @@ public class ActionService implements IActionService
     private final IFrameService _FrameService;
     private final Loc _Loc;
     private final Logger _Logger;
+    private final CommandFactory _CommandFactory;
     
     public ActionService (
             IContextService contextService,
             IFrameService frameService,
             IResourceNameService resourceNameService,
             IResourceCacheService resourceCacheService,
+            CommandFactory commandFactory,
             Loc loc,
             Logger logger)
     {
@@ -67,6 +70,7 @@ public class ActionService implements IActionService
         this._FrameService = frameService;
         this._ResourceNameService = resourceNameService;
         this._ResourceCacheService = resourceCacheService;
+        this._CommandFactory = commandFactory;
         this._Loc = loc;
         this._Logger = logger;
     }
@@ -388,19 +392,19 @@ public class ActionService implements IActionService
         }
         else if (desc == ActionDescriptors.LEAVEMP)
         {
-            return new C_Disconnect(DisconnectReason.LocalPlayerLeft);
+            return _CommandFactory.CreateDisconnect(DisconnectReason.LocalPlayerLeft);
         }
         else if (desc == ActionDescriptors.REDO)
         {
-            return new C_Redo();
+            return _CommandFactory.CreateRedo();
         }
         else if (desc == ActionDescriptors.STARTSP)
         {
-            return new C_StartLocalGame();
+            return _CommandFactory.CreateStartLocalGame();
         }
         else if (desc == ActionDescriptors.STARTMP)
         {
-            return new C_StartMultiplayerGame();
+            return _CommandFactory.CreateStartMultiplayerGame();
         }
         else if (desc == ActionDescriptors.TOGGLEMENUMP)
         {
@@ -408,7 +412,7 @@ public class ActionService implements IActionService
         }
         else if (desc == ActionDescriptors.UNDO)
         {
-            return new C_Undo();
+            return _CommandFactory.CreateUndo();
         }
         
         return null;
@@ -418,9 +422,10 @@ public class ActionService implements IActionService
     {
         if (desc == ActionDescriptors.SAVECFG)
         {
-            CommandBase cmd1 = new C_SaveState((P_SaveState) payload);
-            CommandBase cmd2 = new C_SaveConfig();
-            CommandBase cmd = new C_Composite(cmd1, cmd2);
+            P_SaveState pl = (P_SaveState) payload;
+            CommandBase cmd1 = _CommandFactory.CreateSaveState(pl.id, pl.playerName, pl.serverTcpPort, pl.serverUdpPort, pl.clientUdpPort);
+            CommandBase cmd2 = _CommandFactory.CreateSaveConfig();
+            CommandBase cmd = _CommandFactory.CreateComposite(cmd1, cmd2);
             return cmd;
         }
         

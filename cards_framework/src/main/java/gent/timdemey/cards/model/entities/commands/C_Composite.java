@@ -9,7 +9,9 @@ import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.utils.Debug;
+import java.util.UUID;
 
 /**
  * A composite command bundles multiple commands in one atomic command.
@@ -29,8 +31,9 @@ public class C_Composite extends CommandBase
 {
     private final List<CommandBase> commands;
     
-    private C_Composite(List<CommandBase> commands)
+    private C_Composite(IContextService contextService, UUID id, List<CommandBase> commands)
     {
+        super(contextService, id);
         if (commands == null)
         {
             throw new IllegalArgumentException("commands");
@@ -51,9 +54,9 @@ public class C_Composite extends CommandBase
         this.commands = commands;
     }
 
-    public C_Composite( CommandBase... commands)
+    public C_Composite(IContextService contextService, UUID id, CommandBase... commands)
     {
-        this(Arrays.asList(commands));
+        this(contextService, id, Arrays.asList(commands));
     }
 
     @Override

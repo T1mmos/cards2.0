@@ -11,6 +11,7 @@ import java.util.UUID;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.config.Configuration;
+import gent.timdemey.cards.model.entities.config.ConfigurationFactory;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -18,10 +19,32 @@ import gent.timdemey.cards.services.contract.descriptors.ConfigKeyDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ConfigKeyDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.FileDescriptors;
 import gent.timdemey.cards.services.interfaces.IConfigurationService;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFileService;
 
 public class C_LoadConfig extends CommandBase
 {
+
+    private final IFileService _FileService;
+    private final IConfigurationService _ConfigurationService;
+    private final ConfigurationFactory _ConfigurationFactory;
+    private final Logger _Logger;
+    
+    C_LoadConfig(
+        IContextService contextService, 
+        IFileService fileService,
+        IConfigurationService configurationService, 
+        ConfigurationFactory configurationFactory,
+        Logger logger,
+        UUID id)
+    { 
+        super(contextService, id);
+        
+        this._FileService = fileService;
+        this._ConfigurationService = configurationService;
+        this._ConfigurationFactory = configurationFactory;
+        this._Logger = logger;
+    }
     
     @Override
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
@@ -38,9 +61,7 @@ public class C_LoadConfig extends CommandBase
         
         Properties properties = new Properties();
         
-        IFileService fServ = Services.get(IFileService.class);
-
-        File propFile = fServ.getFile(FileDescriptors.USERCFG);   
+        File propFile = _FileService.getFile(FileDescriptors.USERCFG);   
         
         try 
         {
@@ -78,7 +99,7 @@ public class C_LoadConfig extends CommandBase
             state.setLocalName(pname);
             state.setLocalId(UUID.randomUUID());
             
-            Configuration cfg = new Configuration();
+            Configuration cfg = _ConfigurationFactory.CreateConfiguration();
             cfg.setServerTcpPort(serverTcpPort);
             cfg.setServerUdpPort(serverUdpPort);
             cfg.setClientUdpPort(clientUdpPort);
@@ -86,15 +107,14 @@ public class C_LoadConfig extends CommandBase
         }
         catch (Exception ex)
         {
-            Logger.error("Failed to load the configuration", ex);
+            _Logger.error("Failed to load the configuration", ex);
         }        
     }
     
     private <T> T parseProperty(Properties properties, ConfigKeyDescriptor<T> cfgkey)
     {
         String flatprop = properties.getProperty(cfgkey.id); 
-        IConfigurationService cfgServ = Services.get(IConfigurationService.class);
-        T value = cfgServ.parse(cfgkey, flatprop);
+        T value = _ConfigurationService.parse(cfgkey, flatprop);
         return value;
     }
 }

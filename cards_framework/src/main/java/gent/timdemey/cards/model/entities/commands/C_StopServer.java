@@ -1,17 +1,17 @@
 package gent.timdemey.cards.model.entities.commands;
 
-
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.IContextService;
+import java.util.UUID;
 
 public class C_StopServer extends CommandBase
-{
-    public C_StopServer()
+{    
+    C_StopServer(IContextService contextService, UUID id)
     {
-        
+        super(contextService, id);
     }
     
     @Override
@@ -40,8 +40,7 @@ public class C_StopServer extends CommandBase
         state.setTcpConnectionPool(null);
        
         // Drop the server context entirely
-        IContextService ctxtServ = Services.get(IContextService.class);
-        ctxtServ.drop(ContextType.Server);
+        _ContextService.drop(ContextType.Server);
     }
 
     @Override

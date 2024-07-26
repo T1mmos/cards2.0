@@ -9,6 +9,7 @@ import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.utils.Debug;
 
 public abstract class C_Pull extends CommandBase
@@ -16,8 +17,12 @@ public abstract class C_Pull extends CommandBase
     private final UUID srcCardStackId;
     private final UUID srcCardId;
     
-    protected C_Pull(UUID srcCardStackId, UUID srcCardId)
+    protected C_Pull(
+        IContextService contextService,
+        UUID id, UUID srcCardStackId, UUID srcCardId)
     {
+        super(contextService, id);
+        
         this.srcCardStackId = srcCardStackId;
         this.srcCardId = srcCardId;
     }

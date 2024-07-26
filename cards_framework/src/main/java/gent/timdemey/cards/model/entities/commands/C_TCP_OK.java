@@ -1,21 +1,22 @@
 package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.payload.P_TCP_OK;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
+import java.util.UUID;
 
 public class C_TCP_OK extends CommandBase
-{    
-    public C_TCP_OK ()
-    {
-    }
+{   
+    private final CommandFactory _CommandFactory;
     
-    public C_TCP_OK(P_TCP_OK pl)
+    C_TCP_OK (IContextService contextService, CommandFactory commandFactory, UUID id)
     {
-        super(pl);
+        super(contextService, id);
+        
+        this._CommandFactory = commandFactory;
     }
     
     @Override
@@ -38,7 +39,7 @@ public class C_TCP_OK extends CommandBase
             state.setGameState(GameState.Connected);
             
             // enter the lobby to go from Connected -> Lobby
-            C_EnterLobby cmd = new C_EnterLobby(state.getLocalName(), state.getLocalId());
+            C_EnterLobby cmd = _CommandFactory.CreateEnterLobby(state.getLocalName(), state.getLocalId());
             run(cmd);
         }
     }

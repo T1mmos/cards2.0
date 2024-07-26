@@ -1,4 +1,4 @@
-package gent.timdemey.cards.model.entities.commands;
+package gent.timdemey.cards.model.entities.state;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,9 +11,11 @@ import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.delta.EntityStateListRef;
+import gent.timdemey.cards.model.delta.IChangeTracker;
 import gent.timdemey.cards.model.delta.Property;
-import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.model.delta.StateValueRef;
+import gent.timdemey.cards.model.entities.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.CommandExecutionState;
 import gent.timdemey.cards.utils.Debug;
 
 public class CommandHistory extends EntityBase
@@ -34,6 +36,8 @@ public class CommandHistory extends EntityBase
     public final StateValueRef<Integer> currentIdxRef;
     public final StateValueRef<Integer> acceptedIdxRef;
     private final EntityStateListRef<CommandExecution> execLine;
+    private final Logger _Logger;
+    private final StateFactory _StateFactory;
 
     /**
      * Creates a new command history.
@@ -44,13 +48,20 @@ public class CommandHistory extends EntityBase
      *                  command and removing it from the chain, while the command is
      *                  not necessarily the last command in the chain
      */
-    public CommandHistory(boolean multiplayer)
+    public CommandHistory(
+        IChangeTracker changeTracker, StateFactory stateFactory, Logger logger,
+        UUID id, boolean canUndo, boolean canRemove)
     {
-        this.undoable = !multiplayer;
-        this.removable = multiplayer;
-        this.currentIdxRef = new StateValueRef<>(CurrentIndex, id, -1);
-        this.acceptedIdxRef = new StateValueRef<>(AcceptedIndex, id, -1);
-        this.execLine = new EntityStateListRef<>(ExecLine, id, new ArrayList<>());
+        super(id);
+        
+        this._StateFactory = stateFactory;
+        this._Logger = logger;
+        
+        this.undoable = canUndo;
+        this.removable = canRemove;
+        this.currentIdxRef = new StateValueRef<>(changeTracker, CurrentIndex, id, -1);
+        this.acceptedIdxRef = new StateValueRef<>(changeTracker, AcceptedIndex, id, -1);
+        this.execLine = new EntityStateListRef<>(changeTracker, ExecLine, id, new ArrayList<>());
     }
 
     /**
@@ -372,7 +383,7 @@ public class CommandHistory extends EntityBase
             }
             if (resp.execState == ExecutionState.No)
             {
-                Logger.trace("Cannot execute command because: %s", resp.reason);
+                _Logger.trace("Cannot execute command because: %s", resp.reason);
             }
 
             if (execState == CommandExecutionState.Unexecuted)
@@ -439,28 +450,28 @@ public class CommandHistory extends EntityBase
 
     public void addExecuted(CommandBase cmd, State state)
     {
-        Logger.trace("CommandHistory::addExecuted '%s', id=%s", cmd.getName(), cmd.id);
+        _Logger.trace("CommandHistory::addExecuted '%s', id=%s", cmd.getName(), cmd.id);
 
         add(cmd, CommandExecutionState.Executed, state);
     }
 
     public void addAwaiting(CommandBase cmd, State state)
     {
-        Logger.trace("CommandHistory::addAwaiting '%s', id=%s", cmd.getName(), cmd.id);
+        _Logger.trace("CommandHistory::addAwaiting '%s', id=%s", cmd.getName(), cmd.id);
 
         add(cmd, CommandExecutionState.AwaitingConfirmation, state);
     }
 
     public List<CommandExecution> addAccepted(CommandBase cmd, State state)
     {
-        Logger.trace("CommandHistory::addAccepted '%s', id=%s", cmd.getName(), cmd.id);
+        _Logger.trace("CommandHistory::addAccepted '%s', id=%s", cmd.getName(), cmd.id);
 
         if (acceptedCommandIds.contains(cmd.id))
         {
             throw new IllegalStateException("This command is already accepted: " + cmd.getName());
         }
 
-        CommandExecution commandExec = new CommandExecution(cmd, CommandExecutionState.Accepted);
+        CommandExecution commandExec = _StateFactory.CreateCommandExecution(cmd, CommandExecutionState.Accepted);
         acceptedCommandIds.add(cmd.id);
         return inject(commandExec, state);
     }
@@ -504,7 +515,7 @@ public class CommandHistory extends EntityBase
         }
 
         // now add the command execution
-        CommandExecution cmdExecution = new CommandExecution(cmd, execState);
+        CommandExecution cmdExecution = _StateFactory.CreateCommandExecution(cmd, execState);
         cmdExecution.getCommand().execute(state);
 
         // we cannot just add at the end of the execution line, because there can be
@@ -550,7 +561,7 @@ public class CommandHistory extends EntityBase
      */
     public List<CommandExecution> reject(UUID commandId, State state)
     {
-        Logger.trace("CommandHistory::reject id=%s", commandId);
+        _Logger.trace("CommandHistory::reject id=%s", commandId);
 
         if (!canReject())
         {
@@ -667,7 +678,7 @@ public class CommandHistory extends EntityBase
      */
     public void accept(UUID commandId, State state)
     {
-        Logger.trace("CommandHistory::accept id=%s", commandId);
+        _Logger.trace("CommandHistory::accept id=%s", commandId);
 
         // accepts must arrive in order.
         int currAcptIdx = getAcceptedIndex();

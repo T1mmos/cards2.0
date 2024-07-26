@@ -11,6 +11,7 @@ import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.utils.Debug;
 
 public abstract class C_Push extends CommandBase
@@ -18,8 +19,11 @@ public abstract class C_Push extends CommandBase
     private final UUID dstCardStackId;
     private final List<UUID> srcCardIds;
     
-    protected C_Push(UUID dstCardStackId, List<UUID> srcCardIds)
+    protected C_Push(
+        IContextService contextService, 
+        UUID id, UUID dstCardStackId, List<UUID> srcCardIds)
     {
+        super(contextService, id);
         this.dstCardStackId = dstCardStackId;
         this.srcCardIds = Collections.unmodifiableList(srcCardIds);        
     }

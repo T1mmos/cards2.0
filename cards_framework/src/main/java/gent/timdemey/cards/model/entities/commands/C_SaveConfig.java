@@ -21,10 +21,24 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.ConfigKeyDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.FileDescriptors;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFileService;
+import java.util.UUID;
 
 public class C_SaveConfig extends CommandBase
 {
+    private final ICardPlugin _CardPlugin;
+    private final IFileService _FileService;
+    private final Logger _Logger;
+    
+    C_SaveConfig (IContextService contextService, ICardPlugin cardPlugin, IFileService fileService, Logger logger, UUID id)
+    {
+        super(contextService, id);
+        
+        this._CardPlugin = cardPlugin;
+        this._FileService = fileService;
+        this._Logger = logger;
+    }
     
     @Override
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
@@ -61,9 +75,7 @@ public class C_SaveConfig extends CommandBase
             }            
         };
         
-        IFileService fServ = Services.get(IFileService.class);
-
-        File propFile = fServ.getFile(FileDescriptors.USERCFG);
+        File propFile = _FileService.getFile(FileDescriptors.USERCFG);
                 
         try 
         {
@@ -93,10 +105,9 @@ public class C_SaveConfig extends CommandBase
             properties.setProperty(ConfigKeyDescriptors.ServerUdpPort.id, "" + cfg.getServerUdpPort());
             properties.setProperty(ConfigKeyDescriptors.ClientUdpPort.id, "" + cfg.getClientUdpPort());
             
-            // create a comment
-            ICardPlugin cp = Services.get(ICardPlugin.class);            
-            String name = cp.getName();
-            String version_str = cp.getVersion().toString();       
+            // create a comment    
+            String name = _CardPlugin.getName();
+            String version_str = _CardPlugin.getVersion().toString();       
             String comment_format = "Last written by %s, %s";
             String comment = String.format(comment_format, name, version_str);
             
@@ -108,7 +119,7 @@ public class C_SaveConfig extends CommandBase
         }
         catch (Exception ex)
         {
-            Logger.error("Failed to save the configuration", ex);
+            _Logger.error("Failed to save the configuration", ex);
         }        
     }
 }

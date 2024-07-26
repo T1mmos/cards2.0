@@ -1,4 +1,4 @@
-package gent.timdemey.cards.netcode;
+package gent.timdemey.cards.model.net;
 
 import java.util.UUID;
 

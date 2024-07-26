@@ -60,7 +60,7 @@ public class CardsDtoMapper extends EntityBaseDtoMapper
         mapperDefs.addMapping(UDPServerDto.class, ServerUDP.class, this::toDomainObject);
     }
 
-    private CardStackDto toDto(CardStack cardStack)
+    public CardStackDto toDto(CardStack cardStack)
     {
         CardStackDto dto = new CardStackDto();
         {
@@ -74,7 +74,7 @@ public class CardsDtoMapper extends EntityBaseDtoMapper
         return dto;
     }
     
-    private CardStack toDomainObject(CardStackDto dto)
+    public CardStack toDomainObject(CardStackDto dto)
     {
         P_CardStack pl = new P_CardStack();
         {
@@ -94,7 +94,7 @@ public class CardsDtoMapper extends EntityBaseDtoMapper
         return cardStack;
     }
 
-    private CardGameDto toDto(CardGame cardGame)
+    public CardGameDto toDto(CardGame cardGame)
     {
         CardGameDto  dto = new CardGameDto ();
         {
@@ -105,7 +105,7 @@ public class CardsDtoMapper extends EntityBaseDtoMapper
         return dto;
     }
     
-    private CardGame toDomainObject(CardGameDto dto)
+    public CardGame toDomainObject(CardGameDto dto)
     {
         P_CardGame pl = new P_CardGame();
         {
@@ -116,7 +116,7 @@ public class CardsDtoMapper extends EntityBaseDtoMapper
         return _StateFactory.CreateCardGame(pl);        
     }
     
-    private CardDto toDto(Card card)
+    public CardDto toDto(Card card)
     {
         CardDto cardDto = new CardDto();
         {
@@ -128,7 +128,7 @@ public class CardsDtoMapper extends EntityBaseDtoMapper
         return cardDto;
     }
 
-    private Card toDomainObject(CardDto dto)
+    public Card toDomainObject(CardDto dto)
     {
         P_Card pl = new P_Card();
         {
@@ -141,7 +141,7 @@ public class CardsDtoMapper extends EntityBaseDtoMapper
         return _StateFactory.CreateCard(pl);
     }
 
-    private PlayerDto toDto(Player player)
+    public PlayerDto toDto(Player player)
     {
         PlayerDto dto = new PlayerDto();
         {
@@ -152,7 +152,7 @@ public class CardsDtoMapper extends EntityBaseDtoMapper
         return dto;
     }
 
-    private Player toDomainObject(PlayerDto dto)
+    public Player toDomainObject(PlayerDto dto)
     {
         P_Player pl = new P_Player();
         {
@@ -162,7 +162,7 @@ public class CardsDtoMapper extends EntityBaseDtoMapper
         return _StateFactory.CreatePlayer(pl);
     }
     
-    private PlayerConfigurationDto toDto(PlayerConfiguration player)
+    public PlayerConfigurationDto toDto(PlayerConfiguration player)
     {
         PlayerConfigurationDto dto = new PlayerConfigurationDto();
         {
@@ -174,7 +174,7 @@ public class CardsDtoMapper extends EntityBaseDtoMapper
         return dto;
     }
 
-    private PlayerConfiguration toDomainObject(PlayerConfigurationDto dto)
+    public PlayerConfiguration toDomainObject(PlayerConfigurationDto dto)
     {
         P_PlayerConfiguration pl = new P_PlayerConfiguration();
         {
@@ -187,7 +187,7 @@ public class CardsDtoMapper extends EntityBaseDtoMapper
     }
     
     
-    private ServerDto toDto(ServerTCP server)
+    public ServerDto toDto(ServerTCP server)
     {
         ServerDto dto = new ServerDto();
         {
@@ -201,7 +201,7 @@ public class CardsDtoMapper extends EntityBaseDtoMapper
         return dto;
     }
     
-    private ServerTCP toDomainObject(ServerDto dto)
+    public ServerTCP toDomainObject(ServerDto dto)
     {
         P_ServerTCP pl = new P_ServerTCP();
         {
@@ -216,7 +216,7 @@ public class CardsDtoMapper extends EntityBaseDtoMapper
         return server;
     }
     
-    private UDPServerDto toDto(ServerUDP udpServer)
+    public UDPServerDto toDto(ServerUDP udpServer)
     {
         UDPServerDto dto = new UDPServerDto();
         {
@@ -231,7 +231,7 @@ public class CardsDtoMapper extends EntityBaseDtoMapper
         return dto;
     }
     
-    private ServerUDP toDomainObject(UDPServerDto dto)
+    public ServerUDP toDomainObject(UDPServerDto dto)
     {
         P_ServerUDP pl = new P_ServerUDP();
         {

@@ -13,7 +13,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
-import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.commands.C_UDP_StartServiceRequester;
 import gent.timdemey.cards.model.entities.commands.C_UDP_StopServiceRequester;
@@ -174,13 +173,13 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
     
     private void stopRequester()
     {
-        C_UDP_StopServiceRequester command = new C_UDP_StopServiceRequester();
+        C_UDP_StopServiceRequester command = _CommandFactory.CreateStopServiceRequester();
         _ContextService.getThreadContext().schedule(command);
     }
     
     private void startRequester()
     {
-        C_UDP_StartServiceRequester command = new C_UDP_StartServiceRequester();
+        C_UDP_StartServiceRequester command = _CommandFactory.CreateStartServiceRequester();
         _ContextService.getThreadContext().schedule(command);
     }
 

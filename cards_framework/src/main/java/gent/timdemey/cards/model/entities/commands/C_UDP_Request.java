@@ -3,27 +3,32 @@ package gent.timdemey.cards.model.entities.commands;
 import gent.timdemey.cards.ICardPlugin;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.payload.P_UDP_Request;
 import gent.timdemey.cards.model.entities.state.ServerTCP;
 import gent.timdemey.cards.model.entities.state.ServerUDP;
 import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.netcode.UDP_Source;
-import gent.timdemey.cards.netcode.UDP_UnicastMessage;
+import gent.timdemey.cards.model.entities.state.StateFactory;
+import gent.timdemey.cards.model.net.UDP_Source;
+import gent.timdemey.cards.model.net.UDP_UnicastMessage;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
+import java.util.UUID;
 
 public class C_UDP_Request extends CommandBase
 {
-    public C_UDP_Request()
+    private final StateFactory _StateFactory;
+    private final ICardPlugin _CardPlugin;
+    private final CommandFactory _CommandFactory;
+    
+    C_UDP_Request(IContextService contextService, ICardPlugin cardPlugin, StateFactory stateFactory, CommandFactory commandFactory, UUID id)
     {
-        super();
+        super(contextService, id);
+        
+        this._CardPlugin = cardPlugin;
+        this._StateFactory = stateFactory;
+        this._CommandFactory = commandFactory;
     }
-
-    public C_UDP_Request(P_UDP_Request pl)
-    {
-        super(pl);
-    }
-
+    
     @Override
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
@@ -36,11 +41,10 @@ public class C_UDP_Request extends CommandBase
     {
         CheckContext(type, ContextType.Server);
 
-        ICardPlugin cardPlugin = Services.get(ICardPlugin.class);
         
         ServerTCP server = state.getServer();                
-        ServerUDP udpServer = new ServerUDP(server, cardPlugin.getVersion(), state.getPlayers().size(), cardPlugin.getPlayerCount());;
-        C_UDP_Response udpResponseCmd = new C_UDP_Response(udpServer);
+        ServerUDP udpServer = _StateFactory.CreateServerUDP(server, _CardPlugin.getVersion(), state.getPlayers().size(), _CardPlugin.getPlayerCount());;
+        C_UDP_Response udpResponseCmd = _CommandFactory.CreateUDPResponse(udpServer);
 
         UDP_Source udpSource = getSourceUdp();
         UDP_UnicastMessage msg = new UDP_UnicastMessage(udpSource.inetAddress, udpSource.tcpPort, udpResponseCmd);

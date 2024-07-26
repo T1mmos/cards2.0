@@ -3,7 +3,6 @@ package gent.timdemey.cards.model.entities.state;
 import java.net.InetAddress;
 
 import gent.timdemey.cards.model.entities.common.EntityBase;
-import gent.timdemey.cards.model.entities.state.payload.P_ServerTCP;
 import gent.timdemey.cards.utils.Debug;
 import java.util.UUID;
 

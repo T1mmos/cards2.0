@@ -14,6 +14,7 @@ import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.C_LoadConfig;
+import gent.timdemey.cards.model.entities.commands.CommandFactory;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
@@ -37,16 +38,19 @@ public class StartUI
     
     private final IFrameService _FrameService;
     private final IContextService _ContextService;
+    
     private final Container _Container;
     private final IPanelService _PanelService;
     private final Logger _Logger;
     private final Loc _Loc;
+    private final CommandFactory _CommandFactory;
     
     private StartUI(
             Container container, 
             IContextService contextService, 
             IFrameService frameService, 
             IPanelService panelService,
+            CommandFactory commandFactory,
             Logger logger,
             Loc loc)
     {
@@ -54,6 +58,7 @@ public class StartUI
         this._ContextService = contextService;
         this._FrameService = frameService;
         this._PanelService = panelService;
+        this._CommandFactory = commandFactory;
         this._Logger = logger;
         this._Loc = loc;
     }
@@ -183,7 +188,7 @@ public class StartUI
         
         // import configuration
         Context ctxt = _ContextService.getThreadContext();
-        C_LoadConfig cmd_loadcfg = new C_LoadConfig();
+        C_LoadConfig cmd_loadcfg = _CommandFactory.CreateLoadConfig();
         ctxt.schedule(cmd_loadcfg);
         
         _FrameService.installStateListeners();

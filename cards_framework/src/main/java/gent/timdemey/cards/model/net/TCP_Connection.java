@@ -1,4 +1,4 @@
-package gent.timdemey.cards.netcode;
+package gent.timdemey.cards.model.net;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -24,7 +24,7 @@ public final class TCP_Connection
     private final String remote;
     private final Logger _Logger;
 
-    TCP_Connection(String name, Socket socket, TCP_ConnectionPool pool, Logger logger)
+    TCP_Connection(Logger logger, String name, Socket socket, TCP_ConnectionPool pool)
     {
         this.remote = NetUtils.getFormattedIpPort(socket);        
         this.socket = socket;

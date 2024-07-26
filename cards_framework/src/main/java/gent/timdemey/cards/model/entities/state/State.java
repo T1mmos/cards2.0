@@ -6,18 +6,16 @@ import java.util.UUID;
 
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.state.CardGame;
-import gent.timdemey.cards.model.entities.commands.CommandHistory;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.entities.config.Configuration;
 import gent.timdemey.cards.model.delta.EntityStateListRef;
 import gent.timdemey.cards.model.delta.IChangeTracker;
 import gent.timdemey.cards.model.delta.Property;
 import gent.timdemey.cards.model.delta.StateValueRef;
-import gent.timdemey.cards.netcode.TCP_ConnectionAccepter;
-import gent.timdemey.cards.netcode.TCP_ConnectionPool;
-import gent.timdemey.cards.netcode.UDP_ServiceAnnouncer;
-import gent.timdemey.cards.netcode.UDP_ServiceRequester;
-import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.model.net.TCP_ConnectionAccepter;
+import gent.timdemey.cards.model.net.TCP_ConnectionPool;
+import gent.timdemey.cards.model.net.UDP_ServiceAnnouncer;
+import gent.timdemey.cards.model.net.UDP_ServiceRequester;
 
 public class State extends EntityBase
 {

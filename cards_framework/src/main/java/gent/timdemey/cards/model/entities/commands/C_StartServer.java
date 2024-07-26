@@ -9,14 +9,17 @@ import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.config.Configuration;
+import gent.timdemey.cards.model.entities.config.ConfigurationFactory;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.Player;
 import gent.timdemey.cards.model.entities.state.ServerTCP;
-import gent.timdemey.cards.model.entities.state.payload.P_Player;
 import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.netcode.TCP_ConnectionAccepter;
-import gent.timdemey.cards.netcode.TCP_ConnectionPool;
-import gent.timdemey.cards.netcode.UDP_ServiceAnnouncer;
+import gent.timdemey.cards.model.entities.state.StateFactory;
+import gent.timdemey.cards.model.net.ITcpConnectionListener;
+import gent.timdemey.cards.model.net.NetworkFactory;
+import gent.timdemey.cards.model.net.TCP_ConnectionAccepter;
+import gent.timdemey.cards.model.net.TCP_ConnectionPool;
+import gent.timdemey.cards.model.net.UDP_ServiceAnnouncer;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.IContextService;
@@ -43,8 +46,25 @@ public class C_StartServer extends CommandBase
     public final int tcpport; // tcp port to accepts clients on that want to join a game
     public final boolean autoconnect; // whether to automatically connect as client to the server about to be created
 
-    public C_StartServer(UUID playerId, String playerName, String srvname, String srvmsg, int udpport, int tcpport, boolean autoconnect)
+    private ConfigurationFactory _ConfigurationFactory;
+    private StateFactory _StateFactory;
+    private NetworkFactory _NetworkFactory;
+    private Logger _Logger;
+    private CommandFactory _CommandFactory;
+    private ICardPlugin _CardPlugin;
+
+    C_StartServer(
+        IContextService contextService, 
+        ICardPlugin cardPlugin,
+        NetworkFactory networkFactory,
+        StateFactory stateFactory,
+        CommandFactory commandFactory,
+        ConfigurationFactory configurationFactory,
+        Logger logger,
+        UUID id, UUID playerId, String playerName, String srvname, String srvmsg, int udpport, int tcpport, boolean autoconnect)
     {
+        super(contextService, id);
+        
         if (playerId == null)
         {
             throw new IllegalArgumentException("playerId");
@@ -70,6 +90,13 @@ public class C_StartServer extends CommandBase
             throw new IllegalArgumentException("serverTcpPort equals serverUdpPort");
         }
         
+        this._CardPlugin = cardPlugin;
+        this._NetworkFactory = networkFactory;
+        this._CommandFactory = commandFactory;
+        this._StateFactory = stateFactory;        
+        this._ConfigurationFactory = configurationFactory;
+        this._Logger = logger;
+        
         this.playerId = playerId;
         this.playerName = playerName;
         this.srvname = srvname;
@@ -82,7 +109,7 @@ public class C_StartServer extends CommandBase
     @Override
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
-        boolean srvCtxtInit = Services.get(IContextService.class).isInitialized(ContextType.Server);
+        boolean srvCtxtInit = _ContextService.isInitialized(ContextType.Server);
         if(type == ContextType.UI)
         {
             if(srvCtxtInit)
@@ -106,8 +133,7 @@ public class C_StartServer extends CommandBase
     {
         if(type == ContextType.UI)
         {
-            IContextService ctxtServ = Services.get(IContextService.class);
-            ctxtServ.initialize(ContextType.Server);
+            _ContextService.initialize(ContextType.Server);
 
             schedule(ContextType.Server, this);
         }
@@ -124,31 +150,26 @@ public class C_StartServer extends CommandBase
                 }
                 
                 // create a configuration
-                Configuration cfg = new Configuration();
+                Configuration cfg = _ConfigurationFactory.CreateConfiguration();
                 {
                     cfg.setServerTcpPort(tcpport);
                     cfg.setServerUdpPort(udpport);    
                 }  
                 
-                // create a player
-                P_Player pl_player = new P_Player();
-                {
-                    pl_player.id = playerId;
-                    pl_player.name = playerName;    
-                }                
-                Player player = new Player(pl_player);
+                // create a player             
+                Player player = _StateFactory.CreatePlayer(playerId, playerName);
                 
                 // create web service to announce the presence over UDP 
-                UDP_ServiceAnnouncer udpServAnnouncer = new UDP_ServiceAnnouncer(udpport);
+                UDP_ServiceAnnouncer udpServAnnouncer = _NetworkFactory.CreateUDPServiceAnnouncer(udpport);
 
                 // create web service to accept TCP connections
-                int playerCount = Services.get(ICardPlugin.class).getPlayerCount();
-                CommandSchedulingTcpConnectionListener tcpConnListener = new CommandSchedulingTcpConnectionListener(ContextType.Server);
-                TCP_ConnectionPool tcpConnPool = new TCP_ConnectionPool(type.name(), playerCount, tcpConnListener);
-                TCP_ConnectionAccepter tcpConnAccepter = new TCP_ConnectionAccepter(tcpConnPool, tcpport);
+                int playerCount = _CardPlugin.getPlayerCount();
+                ITcpConnectionListener tcpConnListener = _CommandFactory.CreateCommandSchedulingTcpConnectionListener(ContextType.Server);
+                TCP_ConnectionPool tcpConnPool = _NetworkFactory.CreateTCPConnectionPool(type.name(), playerCount, tcpConnListener);
+                TCP_ConnectionAccepter tcpConnAccepter = _NetworkFactory.CreateTCPConnectionAccepter(tcpConnPool, tcpport);
 
                 // update the state: set server, lobby admin, add player, command history
-                ServerTCP server = new ServerTCP(srvname, addr, tcpport);
+                ServerTCP server = _StateFactory.CreateServerTCP(srvname, addr, tcpport);
                 state.setServer(server);
                 state.setServerMessage(srvmsg);
                 state.setLocalId(server.id);
@@ -159,7 +180,10 @@ public class C_StartServer extends CommandBase
                 state.setUdpServiceAnnouncer(udpServAnnouncer);
                 state.setTcpConnectionAccepter(tcpConnAccepter);
                 state.setTcpConnectionPool(tcpConnPool);
-                state.setCommandHistory(new CommandHistory(true));
+                
+                boolean canUndo = false;       // multiplayer
+                boolean canRemove = true;      // must be able to correct history due to network lag based on server decision
+                state.setCommandHistory(_StateFactory.CreateCommandHistory(canUndo, canRemove));
 
                 // start the services
                 udpServAnnouncer.start();
@@ -168,15 +192,16 @@ public class C_StartServer extends CommandBase
                 // schedule a command to have the local player join the server
                 if(autoconnect)
                 {
-                    C_Connect cmd_connect = new C_Connect(playerId, server.id, addr, tcpport, srvname, playerName);
+                    C_Connect cmd_connect;
+                    cmd_connect = _CommandFactory.CreateConnect(playerId, server.id, addr, tcpport, srvname, playerName);
                     schedule(ContextType.UI, cmd_connect);
                 }
             }
             catch (Exception ex)
             {
-                Logger.error("An error occured while starting the server", ex);
+                _Logger.error("An error occured while starting the server", ex);
 
-                C_StopServer cmd_stopserver = new C_StopServer();
+                C_StopServer cmd_stopserver = _CommandFactory.CreateStopServer();
                 run(cmd_stopserver);
             }
         }

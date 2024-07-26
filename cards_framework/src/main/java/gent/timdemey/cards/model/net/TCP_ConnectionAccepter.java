@@ -1,4 +1,4 @@
-package gent.timdemey.cards.netcode;
+package gent.timdemey.cards.model.net;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -22,11 +22,12 @@ public final class TCP_ConnectionAccepter
      * @param connPool
      * @param info
      */
-    public TCP_ConnectionAccepter(TCP_ConnectionPool connPool, int tcpport, Logger logger)
+    TCP_ConnectionAccepter(Logger logger, TCP_ConnectionPool connPool, int tcpport)
     {
+        this._Logger = logger;
+        
         this.connectionPool = connPool;
         this.tcpport = tcpport;
-        this._Logger = logger;
     }
 
     public void start()

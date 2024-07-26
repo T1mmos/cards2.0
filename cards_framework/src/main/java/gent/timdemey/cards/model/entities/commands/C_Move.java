@@ -8,11 +8,11 @@ import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.payload.P_Move;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.utils.Debug;
 
 public class C_Move extends CommandBase
@@ -22,20 +22,13 @@ public class C_Move extends CommandBase
     public final UUID cardId;
     protected List<Card> transferCards;
 
-    public C_Move(UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
+    C_Move(IContextService contextService, UUID id, UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
     {
+        super(contextService, id);
+        
         this.srcCardStackId = srcCardStackId;
         this.dstCardStackId = dstCardStackId;
         this.cardId = cardId;
-    }
-
-    public C_Move(P_Move pl)
-    {
-        super(pl);
-
-        this.srcCardStackId = pl.srcCardStackId;
-        this.dstCardStackId = pl.dstCardStackId;
-        this.cardId = pl.cardId;
     }
 
     /**

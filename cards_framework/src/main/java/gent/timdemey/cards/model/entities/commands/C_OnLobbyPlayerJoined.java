@@ -1,12 +1,13 @@
 package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.payload.P_OnLobbyPlayerJoined;
 import gent.timdemey.cards.model.entities.state.Player;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.utils.Debug;
+import java.util.UUID;
 
 /**
  * Multicast sent to players in a lobby when a new player joined the lobby.
@@ -18,15 +19,11 @@ public class C_OnLobbyPlayerJoined extends CommandBase
 {
     public final Player player;
 
-    public C_OnLobbyPlayerJoined(Player player)
+    C_OnLobbyPlayerJoined(IContextService contextService, UUID id, Player player)
     {
+        super(contextService, id);
+        
         this.player = player;
-    }
-
-    public C_OnLobbyPlayerJoined(P_OnLobbyPlayerJoined pl)
-    {
-        super(pl);
-        this.player = pl.player;
     }
 
     @Override

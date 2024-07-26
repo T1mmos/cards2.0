@@ -7,6 +7,7 @@ import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.utils.Debug;
 
 public abstract class C_Use extends CommandBase
@@ -14,8 +15,10 @@ public abstract class C_Use extends CommandBase
     protected final UUID initiatorStackId;
     protected final UUID initiatorCardId;
 
-    public C_Use(UUID initiatorStackId, UUID initiatorCardId)
+    C_Use(IContextService contextService, UUID id, UUID initiatorStackId, UUID initiatorCardId)
     {
+        super(contextService, id);
+        
         if ((initiatorStackId == null && initiatorCardId == null)
                 || (initiatorStackId != null && initiatorCardId != null))
         {

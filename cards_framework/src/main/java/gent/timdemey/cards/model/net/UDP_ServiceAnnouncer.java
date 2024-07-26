@@ -1,4 +1,4 @@
-package gent.timdemey.cards.netcode;
+package gent.timdemey.cards.model.net;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -13,9 +13,9 @@ import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.C_UDP_Request;
 import gent.timdemey.cards.model.entities.commands.C_UDP_Response;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
+import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.services.interfaces.ISerializationService;
 
 public final class UDP_ServiceAnnouncer
 {
@@ -26,19 +26,20 @@ public final class UDP_ServiceAnnouncer
     private Thread execServReceive = null;
     private ExecutorService execServSend = null;
     private final Logger _Logger;
-    private final ISerializationService _SerializationService;
+    private final CommandDtoMapper _CommandDtoMapper;
     private final IContextService _ContextService;
 
     public UDP_ServiceAnnouncer(
-        int udpport, 
         IContextService contextService,
-        ISerializationService serializationService, 
-        Logger logger)
+        CommandDtoMapper commandDtoMapper, 
+        Logger logger,
+        int udpport)
     {
-        this.udpport = udpport;
         this._ContextService = contextService;
-        this._SerializationService = serializationService;
+        this._CommandDtoMapper = commandDtoMapper;
         this._Logger = logger;
+        
+        this.udpport = udpport;
     }
 
     public void start()
@@ -132,7 +133,7 @@ public final class UDP_ServiceAnnouncer
                 CommandBase command = null;
                 try
                 {
-                    command = _SerializationService.getCommandDtoMapper().toCommand(rcvd);
+                    command = _CommandDtoMapper.toCommand(rcvd);
                 }
                 catch (Exception ex)
                 {
@@ -177,7 +178,7 @@ public final class UDP_ServiceAnnouncer
         try
         {
             C_UDP_Response responseCmd = msg.responseCmd;
-            String json = _SerializationService.getCommandDtoMapper().toJson(responseCmd);
+            String json = _CommandDtoMapper.toJson(responseCmd);
             byte[] buffer_out = json.getBytes(IoConstants.UDP_CHARSET);
             DatagramPacket packet_out = new DatagramPacket(buffer_out, buffer_out.length, msg.destination, msg.port);
             dsocket.send(packet_out);

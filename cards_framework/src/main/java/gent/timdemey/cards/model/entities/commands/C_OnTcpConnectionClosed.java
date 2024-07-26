@@ -8,14 +8,23 @@ import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
 
 public class C_OnTcpConnectionClosed extends CommandBase
 {
     private final UUID connectionId;
     private final boolean local;
+    private final CommandFactory _CommandFactory;
 
-    public C_OnTcpConnectionClosed(UUID connectionId, boolean local)
+    C_OnTcpConnectionClosed(
+        IContextService contextService, 
+        CommandFactory commandFactory,
+        UUID id, UUID connectionId, boolean local)
     {
+        super(contextService, id);
+        
+        this._CommandFactory = commandFactory;
+        
         this.connectionId = connectionId;
         this.local = local;
     }
@@ -42,14 +51,14 @@ public class C_OnTcpConnectionClosed extends CommandBase
             
             if (!expected)
             {
-                C_Disconnect cmd_disconnect = new C_Disconnect(DisconnectReason.ConnectionLost);
+                C_Disconnect cmd_disconnect =_CommandFactory.CreateDisconnect(DisconnectReason.ConnectionLost);
                 run(cmd_disconnect);
             }
             // else: expected because C_Disconnect has already run.
         }
         else
         {
-            C_RemovePlayer cmd = new C_RemovePlayer(connectionId);
+            C_RemovePlayer cmd = _CommandFactory.CreateRemovePlayer(connectionId);
             context.schedule(cmd);
         }
     }

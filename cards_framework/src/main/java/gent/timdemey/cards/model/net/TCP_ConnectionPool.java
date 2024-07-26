@@ -1,4 +1,4 @@
-package gent.timdemey.cards.netcode;
+package gent.timdemey.cards.model.net;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -26,14 +26,18 @@ public final class TCP_ConnectionPool
     private final int maxConnections;
     private final ExecutorService execServ;
     private Logger _Logger;
+    private NetworkFactory _NetworkFactory;
 
-    public TCP_ConnectionPool(String name, int maxConnections, ITcpConnectionListener connListener, Logger logger)
+    public TCP_ConnectionPool(NetworkFactory networkFactory, Logger logger, String name, int maxConnections, ITcpConnectionListener connListener)
     {
         if (connListener == null)
         {
             throw new IllegalArgumentException("You cannot use a TCP_ConnectionPool if you do not specify a callback to be invoked upon new incoming connections");
         }
               
+        this._NetworkFactory = networkFactory;
+        this._Logger = logger;
+        
         this.name = name;
         this.halfConns = Collections.synchronizedList(new ArrayList<>());
         this.uuid2conn = new ConcurrentHashMap<>();
@@ -51,7 +55,6 @@ public final class TCP_ConnectionPool
                 return thr;
             }
         });
-        this._Logger = logger;
     }
 
     void onTcpConnectionStarted(TCP_Connection connection)
@@ -151,7 +154,7 @@ public final class TCP_ConnectionPool
 
     private void addConnectionAndStart(Socket socket)
     {
-        TCP_Connection connection = new TCP_Connection(name, socket, this, _Logger);
+        TCP_Connection connection = _NetworkFactory.CreateTCPConnection(name, socket, this);
         halfConns.add(connection);
         connection.start();
     }

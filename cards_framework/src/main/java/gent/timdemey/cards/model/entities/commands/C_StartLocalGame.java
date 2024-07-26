@@ -1,5 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.model.entities.state.CommandHistory;
 import java.util.List;
 import java.util.UUID;
 
@@ -8,16 +9,28 @@ import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.Player;
-import gent.timdemey.cards.model.entities.state.payload.P_Player;
 import gent.timdemey.cards.model.entities.state.State;
+import gent.timdemey.cards.model.entities.state.StateFactory;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.ICardGameService;
+import gent.timdemey.cards.services.interfaces.IContextService;
 
 public class C_StartLocalGame extends CommandBase
 {
-    public C_StartLocalGame()
+    private final ICardPlugin _CardPlugin;
+    private final ICardGameService _CardGameService;
+    private final StateFactory _StateFactory;
+    
+    C_StartLocalGame(
+        IContextService contextService, ICardPlugin cardPlugin, ICardGameService cardGameService, StateFactory stateFactory,
+        UUID id)
     {
+        super(contextService, id);
+        
+        this._CardPlugin = cardPlugin;
+        this._CardGameService = cardGameService;
+        this._StateFactory = stateFactory;
     }
     
     @Override
@@ -25,8 +38,7 @@ public class C_StartLocalGame extends CommandBase
     {
         CheckContext(type, ContextType.UI);
         
-        ICardPlugin plugin = Services.get(ICardPlugin.class);
-        boolean multiplayer = plugin.getPlayerCount() > 1;
+        boolean multiplayer = _CardPlugin.getPlayerCount() > 1;
         if (multiplayer)
         {
             return CanExecuteResponse.no("This is a command for single player only!");
@@ -43,20 +55,17 @@ public class C_StartLocalGame extends CommandBase
     protected void execute(Context context, ContextType type, State state)
     {
         CheckContext(type, ContextType.UI);
-       
-        ICardGameService cgServ = Services.get(ICardGameService.class);
-        
-        P_Player pl = new P_Player();
-        pl.id = state.getLocalId();
-        pl.name = state.getLocalName();
-        Player player = new Player(pl);
+               
+        Player player = _StateFactory.CreatePlayer(state.getLocalId(), state.getLocalName());
         state.getPlayers().add(player);
         List<UUID> playerIds = state.getPlayers().getIds();
-        CardGame cardGame = cgServ.createCardGame(playerIds);
+        CardGame cardGame = _CardGameService.createCardGame(playerIds);
         state.setCardGame(cardGame);
         state.setGameState(GameState.Started);
         
-        CommandHistory commandHistory = new CommandHistory(false);
+        boolean canUndo = true;       // single player
+        boolean canRemove = false;    // single player
+        CommandHistory commandHistory = _StateFactory.CreateCommandHistory(canUndo, canRemove);
         state.setCommandHistory(commandHistory);
     }
 }

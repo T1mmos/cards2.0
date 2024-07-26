@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.payload.P_OnLobbyWelcome;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.Player;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.utils.Debug;
 
 /**
@@ -26,24 +26,17 @@ public class C_OnLobbyWelcome extends CommandBase
     public final List<Player> connected;
     public final UUID lobbyAdminId;
 
-    public C_OnLobbyWelcome(UUID clientId, UUID serverId, String serverMessage, List<Player> connected,
-            UUID lobbyAdminId)
+    public C_OnLobbyWelcome(
+            IContextService contextService,
+            UUID id, UUID clientId, UUID serverId, String serverMessage, List<Player> connected, UUID lobbyAdminId)
     {
+        super(contextService, id);
+        
         this.clientId = clientId;
         this.serverId = serverId;
         this.serverMessage = serverMessage;
         this.connected = connected;
         this.lobbyAdminId = lobbyAdminId;
-    }
-
-    public C_OnLobbyWelcome(P_OnLobbyWelcome pl)
-    {
-        super(pl);
-        this.clientId = pl.clientId;
-        this.serverId = pl.serverId;
-        this.serverMessage = pl.serverMessage;
-        this.connected = pl.connected;
-        this.lobbyAdminId = pl.lobbyAdminId;
     }
 
     @Override

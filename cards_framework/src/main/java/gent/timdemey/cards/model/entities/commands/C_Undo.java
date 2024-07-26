@@ -4,6 +4,8 @@ import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
+import java.util.UUID;
 
 /**
  * Special meta command to undo the last command. This command should not be
@@ -13,8 +15,9 @@ import gent.timdemey.cards.services.context.ContextType;
  */
 public final class C_Undo extends CommandBase
 {
-    public C_Undo()
+    C_Undo(IContextService contextService, UUID id)
     {
+        super(contextService, id);
     }
 
     @Override

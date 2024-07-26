@@ -6,14 +6,14 @@ import java.util.UUID;
 
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.payload.P_EnterLobby;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.Player;
-import gent.timdemey.cards.model.entities.state.payload.P_Player;
 import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.netcode.TCP_Connection;
+import gent.timdemey.cards.model.entities.state.StateFactory;
+import gent.timdemey.cards.model.net.TCP_Connection;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.INetworkService;
 import gent.timdemey.cards.utils.Debug;
 
@@ -26,17 +26,27 @@ public class C_EnterLobby extends CommandBase
 {
     public final String clientName;
     public final UUID clientId;
+    private final Logger _Logger;
+    private final INetworkService _NetworkService;
+    private final StateFactory _StateFactory;
+    private final CommandFactory _CommandFactory;
 
-    public C_EnterLobby(String clientName, UUID clientId)
+    public C_EnterLobby(
+        IContextService contextService, 
+        Logger logger, 
+        CommandFactory commandFactory,
+        StateFactory stateFactory,
+        INetworkService networkService,
+        UUID id, String clientName, UUID clientId)
     {
+        super(contextService, id);
+        
+        this._Logger = logger;
+        this._CommandFactory = commandFactory;
+        this._StateFactory = stateFactory;
+        this._NetworkService = networkService;
         this.clientName = clientName;
         this.clientId = clientId;
-    }
-
-    public C_EnterLobby(P_EnterLobby pl)
-    {
-        this.clientName = pl.clientName;
-        this.clientId = pl.clientId;
     }
 
     @Override
@@ -62,17 +72,15 @@ public class C_EnterLobby extends CommandBase
 
     @Override
     protected void execute(Context context, ContextType type, State state)
-    {
-        INetworkService netServ = Services.get(INetworkService.class);
-        
+    {        
         if(type == ContextType.UI)
         {
-            netServ.send(state.getLocalId(), state.getServerId(), this, state.getTcpConnectionPool());
+            _NetworkService.send(state.getLocalId(), state.getServerId(), this, state.getTcpConnectionPool());
         }
         else if(type == ContextType.Server)
         {
             TCP_Connection tcpConnection = getSourceTcpConnection();
-            Logger.info("Player %s (id %s) joining from %s", clientName, clientId, tcpConnection.getRemote());
+            _Logger.info("Player %s (id %s) joining from %s", clientName, clientId, tcpConnection.getRemote());
 
             state.getTcpConnectionPool().bindUUID(clientId, tcpConnection);
 
@@ -84,12 +92,7 @@ public class C_EnterLobby extends CommandBase
             Player player;
             if(!state.getLobbyAdminId().equals(clientId))
             {   
-                P_Player pl = new P_Player();
-                {
-                    pl.id = clientId;
-                    pl.name = clientName;
-                }
-                player = new Player(pl);
+                player = _StateFactory.CreatePlayer(clientId, clientName);
                 state.getPlayers().add(player);
             }
             else
@@ -99,16 +102,16 @@ public class C_EnterLobby extends CommandBase
             
             // send unicast to new client
             {
-                CommandBase cmd_answer = new C_OnLobbyWelcome(clientId, state.getServerId(), state.getServerMessage(), state.getRemotePlayers(), state.getLobbyAdminId());
-                netServ.send(state.getLocalId(), clientId, cmd_answer, state.getTcpConnectionPool());
+                CommandBase cmd_answer = _CommandFactory.CreateOnLobbyWelcome(clientId, state.getServerId(), state.getServerMessage(), state.getRemotePlayers(), state.getLobbyAdminId());
+                _NetworkService.send(state.getLocalId(), clientId, cmd_answer, state.getTcpConnectionPool());
             }
 
             // send update to already connected clients
             List<UUID> updateIds = state.getPlayers().getExceptUUID(clientId);
             if(updateIds.size() > 0)
             {
-                CommandBase cmd_update = new C_OnLobbyPlayerJoined(player);
-                netServ.broadcast(state.getLocalId(), updateIds, cmd_update, state.getTcpConnectionPool());
+                CommandBase cmd_update = _CommandFactory.CreateOnLobbyPlayerJoined(player);
+                _NetworkService.broadcast(state.getLocalId(), updateIds, cmd_update, state.getTcpConnectionPool());
             }            
         }
     }

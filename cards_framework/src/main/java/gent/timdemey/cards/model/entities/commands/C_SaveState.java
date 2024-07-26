@@ -1,55 +1,64 @@
 package gent.timdemey.cards.model.entities.commands;
 
-import java.util.Arrays;
-import java.util.List;
-
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.payload.P_SaveState;
-import gent.timdemey.cards.model.entities.commands.save.SaveFunctions;
-import gent.timdemey.cards.model.entities.commands.save.SaveProperty;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
+import java.util.UUID;
 
 public class C_SaveState extends CommandBase
 {
-    private final P_SaveState payload;
-    
-    private static final List<SaveProperty> PROPERTIES = Arrays.asList(
-
-        new SaveProperty(SaveFunctions::canExec_PlayerName, SaveFunctions::exec_PlayerName),
-        new SaveProperty(SaveFunctions::canExec_ServerTcpPort, SaveFunctions::exec_ServerTcpPort),
-        new SaveProperty(SaveFunctions::canExec_ServerUdpPort, SaveFunctions::exec_ServerUdpPort)
-    ); 
-    
-    public C_SaveState(P_SaveState payload)
+    private final String playerName;
+    private final int serverTcpPort;
+    private final int serverUdpPort;
+    private final int clientUdpPort;
+       
+    C_SaveState (
+        IContextService contextService, 
+        UUID id, String playerName, int serverTcpPort, int serverUdpPort, int clientUdpPort)
     {
-        super(payload);
+        super(contextService, id);
         
-        this.payload = payload;
+        this.playerName = playerName;
+        this.serverTcpPort = serverTcpPort;
+        this.serverUdpPort = serverUdpPort;
+        this.clientUdpPort = clientUdpPort;
     }
-    
+        
     @Override
     protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
     {
-        for (SaveProperty saveProp : PROPERTIES)
+        // player name
+        if (playerName != null && !playerName.isEmpty() && !playerName.equals(state.getLocalName()))
         {
-            boolean canExecProp = saveProp.canExecFunc.apply(state, payload);
-            if (canExecProp)
-            {
-                return CanExecuteResponse.yesPerm();
-            }
+            return CanExecuteResponse.yesPerm();
         }
-       
+        // server TCP port
+        if (serverTcpPort > 1024 && serverTcpPort != state.getConfiguration().getServerTcpPort())
+        {
+            return CanExecuteResponse.yesPerm();
+        }       
+        // server UDP port
+        if (serverUdpPort > 1024 && serverUdpPort != state.getConfiguration().getServerUdpPort())
+        {
+            return CanExecuteResponse.yesPerm();
+        }
+        // client UDP port
+        if (clientUdpPort > 1024 && clientUdpPort != state.getConfiguration().getClientUdpPort())
+        {
+            return CanExecuteResponse.yesPerm();
+        }
+        
         return CanExecuteResponse.no("No (valid) changes were detected in the settings");
     }
     
     @Override
     protected void execute(Context context, ContextType type, State state)
     {
-        for (SaveProperty saveProp : PROPERTIES)
-        {
-            saveProp.execFunc.accept(state, payload);
-        }
+        state.setLocalName(playerName);
+        state.getConfiguration().setServerTcpPort(serverTcpPort);    
+        state.getConfiguration().setServerUdpPort(serverUdpPort);   
+        state.getConfiguration().setClientUdpPort(clientUdpPort); 
     }
 }

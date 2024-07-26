@@ -2,7 +2,6 @@ package gent.timdemey.cards;
 
 import gent.timdemey.cards.common.Version;
 import gent.timdemey.cards.di.ContainerBuilder;
-import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.cardgame.SolitaireCardGameCreationService;
 import gent.timdemey.cards.services.commands.SolitaireCommandService;
 import gent.timdemey.cards.services.id.SolitaireIdService;
@@ -24,12 +23,12 @@ public class SolitairePlugin implements ICardPlugin
     @Override
     public void installServices(ContainerBuilder cb)
     {        
-        cb.AddSingleton(ICommandService.class, new SolitaireCommandService());
-        cb.AddSingleton(ICardGameService.class, new SolitaireCardGameCreationService());
-        cb.AddSingleton(IIdService.class, new SolitaireIdService());
+        cb.AddSingleton(ICommandService.class, SolitaireCommandService.class);
+        cb.AddSingleton(ICardGameService.class, SolitaireCardGameCreationService.class);
+        cb.AddSingleton(IIdService.class, SolitaireIdService.class);
         
-        cb.AddSingleton(IPositionService.class, new SolitairePositionService());
-        cb.AddSingleton(IPanelService.class, new SolitairePanelService());
+        cb.AddSingleton(IPositionService.class, SolitairePositionService.class);
+        cb.AddSingleton(IPanelService.class, SolitairePanelService.class);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.model.entities.state.CommandExecution;
 import java.util.ArrayList;
 import java.util.List;
 

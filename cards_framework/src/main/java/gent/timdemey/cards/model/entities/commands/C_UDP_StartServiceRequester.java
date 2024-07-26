@@ -4,13 +4,14 @@ package gent.timdemey.cards.model.entities.commands;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.netcode.UDP_ServiceRequester;
+import gent.timdemey.cards.model.net.NetworkFactory;
+import gent.timdemey.cards.model.net.UDP_ServiceRequester;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.context.LimitedContext;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.services.interfaces.ISerializationService;
+import java.util.UUID;
 
 /**
  * Command sent over UDP broadcast to the network in order to detect servers.
@@ -20,8 +21,21 @@ import gent.timdemey.cards.services.interfaces.ISerializationService;
  */
 public class C_UDP_StartServiceRequester extends CommandBase
 {
-    public C_UDP_StartServiceRequester()
+    private final CommandFactory _CommandFactory;
+    private final CommandDtoMapper _CommandDtoMapper;
+    private final Logger _Logger;
+    private final NetworkFactory _NetworkFactory;
+    
+    C_UDP_StartServiceRequester(
+        IContextService contextService, CommandFactory commandFactory, NetworkFactory networkFactory, CommandDtoMapper commandDtoMapper, Logger logger,
+        UUID id)
     {
+        super(contextService, id);
+        
+        this._CommandFactory = commandFactory;
+        this._NetworkFactory = networkFactory;
+        this._CommandDtoMapper = commandDtoMapper;
+        this._Logger = logger;
     }
 
     @Override
@@ -42,43 +56,39 @@ public class C_UDP_StartServiceRequester extends CommandBase
         }
 
         // clear the server list shown in the UI
-        CommandBase clrServList = new C_ClearServerList();
-        IContextService contextServ = Services.get(IContextService.class);
-        contextServ.getContext(ContextType.UI).schedule(clrServList);
+        C_ClearServerList clrServList = _CommandFactory.CreateClearServerList();
+        _ContextService.getContext(ContextType.UI).schedule(clrServList);
 
         // prepare UDP broadcast
-        C_UDP_Request cmd = new C_UDP_Request();
+        C_UDP_Request cmd = _CommandFactory.CreateUDPRequest();
         
-        CommandDtoMapper dtoMapper = Services.get(ISerializationService.class).getCommandDtoMapper();
-        String json = dtoMapper.toJson(cmd);
+        String json = _CommandDtoMapper.toJson(cmd);
         
         int udpport = state.getConfiguration().getServerUdpPort();
         
-        UDP_ServiceRequester udpServRequester = new UDP_ServiceRequester(json, udpport, C_UDP_StartServiceRequester::onUdpReceived);
+        UDP_ServiceRequester udpServRequester = _NetworkFactory.createUDPServiceRequester(json, udpport, this::onUdpReceived);
         state.setUdpServiceRequester(udpServRequester);
 
         udpServRequester.start();
     }
 
-    public static void onUdpReceived(String json)
+    public void onUdpReceived(String json)
     {
         try
         {
-            CommandDtoMapper dtoMapper = Services.get(ISerializationService.class).getCommandDtoMapper();
-            CommandBase command = dtoMapper.toCommand(json);
+            CommandBase command = _CommandDtoMapper.toCommand(json);
             if (!(command instanceof C_UDP_Response))
             {
-                Logger.warn("Unexpected command on UDP datagram, class: " + command.getClass().getSimpleName());
+                _Logger.warn("Unexpected command on UDP datagram, class: " + command.getClass().getSimpleName());
                 return;
             }
 
-            IContextService contextServ = Services.get(IContextService.class);
-            LimitedContext context = contextServ.getContext(ContextType.UI);
+            LimitedContext context = _ContextService.getContext(ContextType.UI);
             context.schedule(command);
         }
         catch (Exception ex)
         {
-            Logger.error("Failed to deserialize UDP datagram, ignoring", ex);
+            _Logger.error("Failed to deserialize UDP datagram, ignoring", ex);
             return;
         }
     }

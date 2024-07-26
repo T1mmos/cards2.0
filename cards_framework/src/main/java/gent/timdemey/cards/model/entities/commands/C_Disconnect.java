@@ -4,12 +4,13 @@ package gent.timdemey.cards.model.entities.commands;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.payload.P_Disconnect;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
+import java.util.UUID;
 
 /**
  * Leave the lobby and as such, fully disconnect from the server. All client
@@ -20,6 +21,9 @@ import gent.timdemey.cards.services.interfaces.IFrameService;
  */
 public class C_Disconnect extends CommandBase
 {
+
+    private final Loc _Loc;
+    private final IFrameService _FrameService;
     public enum DisconnectReason
     {
         /** Lost connection to the server. */
@@ -37,16 +41,18 @@ public class C_Disconnect extends CommandBase
 
     public final DisconnectReason reason;
 
-    public C_Disconnect(DisconnectReason reason)
+    C_Disconnect(
+            IContextService contextService, 
+            IFrameService frameService,
+            Loc loc,
+            UUID id,
+            DisconnectReason reason)
     {
+        super(contextService, id);
+        
+        this._FrameService = frameService;
+        this._Loc = loc;
         this.reason = reason;
-    }
-
-    public C_Disconnect(P_Disconnect pl)
-    {
-        super(pl);
-
-        this.reason = pl.reason;
     }
 
     @Override
@@ -84,16 +90,16 @@ public class C_Disconnect extends CommandBase
         switch(reason)
         {
         case ConnectionLost:
-            title = Loc.get(LocKey.DialogTitle_connectionlost);
-            msg = Loc.get(LocKey.DialogMessage_connectionlost);
+            title = _Loc.get(LocKey.DialogTitle_connectionlost);
+            msg = _Loc.get(LocKey.DialogMessage_connectionlost);
             break;
         case Kicked:
-            title = Loc.get(LocKey.DialogTitle_kicked);
-            msg = Loc.get(LocKey.DialogMessage_kicked);
+            title = _Loc.get(LocKey.DialogTitle_kicked);
+            msg = _Loc.get(LocKey.DialogMessage_kicked);
             break;
         case LobbyAdminLeft:
-            title = Loc.get(LocKey.DialogTitle_lobbyAdminLeft);
-            msg = Loc.get(LocKey.DialogMessage_lobbyAdminLeft);
+            title = _Loc.get(LocKey.DialogTitle_lobbyAdminLeft);
+            msg = _Loc.get(LocKey.DialogMessage_lobbyAdminLeft);
             break;
         case LocalPlayerLeft: // no dialog
         default:
@@ -102,7 +108,7 @@ public class C_Disconnect extends CommandBase
         
         if (title != null && msg != null)
         {
-            Services.get(IFrameService.class).showMessage(title, msg);
+            _FrameService.showMessage(title, msg);
         }
     }
     

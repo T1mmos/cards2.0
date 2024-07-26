@@ -2,21 +2,23 @@ package gent.timdemey.cards.model.entities.commands;
 
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.payload.P_DenyClient;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
+import java.util.UUID;
 
 public class C_DenyClient extends CommandBase
 {
-    public C_DenyClient()
-    {
-    }
 
-    public C_DenyClient(P_DenyClient pl)
+    private final IFrameService _FrameService;
+    
+    C_DenyClient(IContextService contextService, IFrameService frameService, UUID id)
     {
-        super(pl);
+        super(contextService, id);
+        
+        this._FrameService = frameService;
     }
 
     @Override
@@ -31,7 +33,7 @@ public class C_DenyClient extends CommandBase
     {
         if (type == ContextType.UI)
         {
-            Services.get(IFrameService.class).showMessage("test",
+            _FrameService.showMessage("test",
                     "TEST: You were denied to join the game. Maybe the server is full.");
         }
         else

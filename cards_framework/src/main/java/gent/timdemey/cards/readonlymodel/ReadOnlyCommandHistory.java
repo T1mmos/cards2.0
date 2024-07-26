@@ -1,6 +1,6 @@
 package gent.timdemey.cards.readonlymodel;
 
-import gent.timdemey.cards.model.entities.commands.CommandHistory;
+import gent.timdemey.cards.model.entities.state.CommandHistory;
 
 public class ReadOnlyCommandHistory extends ReadOnlyEntityBase<CommandHistory>
 {

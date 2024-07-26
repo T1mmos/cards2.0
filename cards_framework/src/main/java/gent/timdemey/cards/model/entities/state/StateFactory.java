@@ -7,6 +7,9 @@ package gent.timdemey.cards.model.entities.state;
 import gent.timdemey.cards.common.Version;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.delta.IChangeTracker;
+import gent.timdemey.cards.model.entities.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.CommandExecutionState;
+import gent.timdemey.cards.model.entities.commands.CommandSchedulingTcpConnectionListener;
 import gent.timdemey.cards.model.entities.state.payload.P_Card;
 import gent.timdemey.cards.model.entities.state.payload.P_CardGame;
 import gent.timdemey.cards.model.entities.state.payload.P_CardStack;
@@ -14,6 +17,7 @@ import gent.timdemey.cards.model.entities.state.payload.P_Player;
 import gent.timdemey.cards.model.entities.state.payload.P_PlayerConfiguration;
 import gent.timdemey.cards.model.entities.state.payload.P_ServerTCP;
 import gent.timdemey.cards.model.entities.state.payload.P_ServerUDP;
+import gent.timdemey.cards.services.context.ContextType;
 import java.net.InetAddress;
 import java.util.List;
 import java.util.UUID;
@@ -27,7 +31,8 @@ public class StateFactory
     private final IChangeTracker _ChangeTracker;
     private final Logger _Logger;
     
-    public StateFactory (IChangeTracker changeTracker, Logger logger)
+    public StateFactory (
+        IChangeTracker changeTracker, Logger logger)
     {
         this._ChangeTracker = changeTracker;
         this._Logger = logger;
@@ -147,6 +152,19 @@ public class StateFactory
     {
         return new State(_ChangeTracker, _Logger, id);
     }    
+
+    public CommandExecution CreateCommandExecution(CommandBase cmd, CommandExecutionState commandExecutionState)
+    {
+        return new CommandExecution(_ChangeTracker, UUID.randomUUID(), cmd, commandExecutionState);
+    }
     
-    
+    public CommandExecution CreateCommandExecution(UUID id, CommandBase cmd, CommandExecutionState commandExecutionState)
+    {
+        return new CommandExecution(_ChangeTracker, id, cmd, commandExecutionState);
+    }
+
+    public CommandHistory CreateCommandHistory(boolean canUndo, boolean canRemove)
+    {
+        return new CommandHistory(_ChangeTracker, this, _Logger, UUID.randomUUID(), canUndo, canRemove);
+    }
 }

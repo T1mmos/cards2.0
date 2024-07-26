@@ -4,15 +4,17 @@ package gent.timdemey.cards.model.entities.commands;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.payload.P_TCP_NOK;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
-import java.util.function.Consumer;
+import java.util.UUID;
 
 public class C_TCP_NOK extends CommandBase
 {
+    private Loc _Loc;
+    private IFrameService _FrameService;
     public enum TcpNokReason
     {
         LobbyFull
@@ -20,15 +22,15 @@ public class C_TCP_NOK extends CommandBase
     
     public final TcpNokReason reason;
     
-    public C_TCP_NOK (TcpNokReason reason)
+    C_TCP_NOK (
+        IContextService contextService, IFrameService frameService, Loc loc, 
+        UUID id, TcpNokReason reason)
     {
+        super(contextService, id);
+        
+        this._FrameService = frameService;
+        this._Loc = loc;
         this.reason = reason;
-    }
-    
-    public C_TCP_NOK (P_TCP_NOK pl)
-    {
-        super(pl);
-        this.reason = pl.reason;
     }
 
     @Override
@@ -48,8 +50,8 @@ public class C_TCP_NOK extends CommandBase
         switch(reason)
         {
         case LobbyFull:
-            title = Loc.get(LocKey.DialogTitle_lobbyFull);
-            msg = Loc.get(LocKey.DialogMessage_lobbyFull);
+            title = _Loc.get(LocKey.DialogTitle_lobbyFull);
+            msg = _Loc.get(LocKey.DialogMessage_lobbyFull);
             break;        
         default:
             break;
@@ -57,7 +59,7 @@ public class C_TCP_NOK extends CommandBase
                 
         if (title != null && msg != null)
         {
-            Services.get(IFrameService.class).showMessage(title, msg, c -> ShowServerBrowser());
+            _FrameService.showMessage(title, msg, c -> ShowServerBrowser());
         }
         else 
         {
