@@ -1,13 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.config.ConfigurationFactory;
+import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.model.entities.state.CommandExecution;
 import gent.timdemey.cards.model.entities.state.Player;
@@ -31,14 +28,14 @@ import java.util.UUID;
  *
  * @author Timmos
  */
-public class CommandFactory
+public abstract class CommandFactory
 {
     private final ICardPlugin _CardPlugin;
     private final StateFactory _StateFactory;
     private final NetworkFactory _NetworkFactory;
     private final ConfigurationFactory _ConfigurationFactory;
     
-    private final IContextService _ContextService;
+    protected final IContextService _ContextService;
     private final IFrameService _FrameService;
     private final INetworkService _NetworkService;
     
@@ -428,4 +425,33 @@ public class CommandFactory
     {
         return new D_OnReexecutionFail(_ContextService, _FrameService, _Loc, id, fails);
     }
+        
+    public C_Move CreateMove(UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
+    {
+        return new C_Move(_ContextService, UUID.randomUUID(), srcCardStackId, dstCardStackId, cardId);
+    }
+    
+    public C_Move CreateMove(UUID id, UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
+    {
+        return new C_Move(_ContextService, id, srcCardStackId, dstCardStackId, cardId);
+    }
+
+    public C_SetVisible CreateSetVisible(List<Card> cards, boolean b)
+    {
+        return new C_SetVisible(_ContextService, UUID.randomUUID(), cards, b);
+    }
+    
+    public C_SetVisible CreateSetVisible(UUID id, List<Card> cards, boolean b)
+    {
+        return new C_SetVisible(_ContextService, id, cards, b);
+    }
+
+    public abstract C_Push CreatePush(UUID dstCardStackId, List<UUID> srcCardIds);
+    public abstract C_Push CreatePush(UUID id, UUID dstCardStackId, List<UUID> srcCardIds);
+
+    public abstract C_Use CreateUse(UUID initiatorCardStackId, UUID initiatorCardId);
+    public abstract C_Use CreateUse(UUID id, UUID initiatorCardStackId, UUID initiatorCardId);
+
+    public abstract C_Pull CreatePull(UUID cardStackId, UUID cardId);
+    public abstract C_Pull CreatePull(UUID id, UUID cardStackId, UUID cardId);
 }

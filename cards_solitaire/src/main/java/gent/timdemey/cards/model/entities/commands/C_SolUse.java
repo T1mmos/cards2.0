@@ -11,12 +11,18 @@ import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes;
+import gent.timdemey.cards.services.interfaces.IContextService;
 
 public class C_SolUse extends C_Use
 {
-    public C_SolUse(UUID initiatorStackId, UUID initiatorCardId)
+
+    private final CommandFactory _CommandFactory;
+    
+    public C_SolUse(IContextService contextService, CommandFactory commandFactory, UUID id, UUID initiatorStackId, UUID initiatorCardId)
     {
-        super(initiatorStackId, initiatorCardId);
+        super(contextService, id, initiatorStackId, initiatorCardId);
+        
+        this._CommandFactory = commandFactory;
     }
 
     @Override
@@ -40,7 +46,7 @@ public class C_SolUse extends C_Use
                     CardStack dstCardStack = cardGame.getCardStack(localId, SolitaireComponentTypes.DEPOT, 0);
                     if(!srcCardStack.getCards().isEmpty())
                     {
-                        eligible.add(new C_SolMove(srcCardStack.id, dstCardStack.id, srcCardStack.getLowestCard().id));
+                        eligible.add(_CommandFactory.CreateMove(srcCardStack.id, dstCardStack.id, srcCardStack.getLowestCard().id));
                     }
                 }
                 else // direction depot -> turnover, 1 card
@@ -48,7 +54,7 @@ public class C_SolUse extends C_Use
                     CardStack srcCardStack = cardGame.getCardStack(localId, SolitaireComponentTypes.DEPOT, 0);
                     CardStack dstCardStack = cardGame.getCardStack(localId, SolitaireComponentTypes.TURNOVER, 0);
                     Card card = srcCardStack.getHighestCard();
-                    eligible.add(new C_SolMove(srcCardStack.id, dstCardStack.id, card.id));
+                    eligible.add(_CommandFactory.CreateMove(srcCardStack.id, dstCardStack.id, card.id));
                 }
             }
 
@@ -68,13 +74,13 @@ public class C_SolUse extends C_Use
                     {
                         for (CardStack dstCardStack : cardGame.getCardStacks(localId, SolitaireComponentTypes.LAYDOWN))
                         {
-                            eligible.add(new C_SolMove(initiatorStack.id, dstCardStack.id, card.id));
+                            eligible.add(_CommandFactory.CreateMove(initiatorStack.id, dstCardStack.id, card.id));
                         }
                     }
                     else
                     {
                         List<Card> cards = initiatorStack.getCardsFrom(card);
-                        eligible.add(new C_SetVisible(cards, true));
+                        eligible.add(_CommandFactory.CreateSetVisible(cards, true));
                     }
                 }
             }
@@ -82,7 +88,7 @@ public class C_SolUse extends C_Use
             {
                 Card card = initiatorStack.getHighestCard();
                 CardStack dstCardStack = cardGame.getCardStack(localId, SolitaireComponentTypes.TURNOVER, 0);
-                eligible.add(new C_SolMove(initiatorStack.id, dstCardStack.id, card.id));
+                eligible.add(_CommandFactory.CreateMove(initiatorStack.id, dstCardStack.id, card.id));
             }
         }
         for (CommandBase cmd : eligible)

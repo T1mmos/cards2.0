@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import javax.swing.SwingUtilities;
 
 import gent.timdemey.cards.logging.ILogManager;
+import gent.timdemey.cards.logging.LogLevel;
 import gent.timdemey.cards.logging.LogManager;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.state.State;
@@ -74,6 +75,7 @@ public class Start
             throw new IllegalStateException("Cannot load plugin class. Terminating.");
         }
         
+        cb.AddSingleton(ICardPlugin.class, () -> plugin);        
         plugin.installServices(cb);
     }
     
@@ -123,14 +125,14 @@ public class Start
     {
         ContainerBuilder cb = new ContainerBuilder();
         
-        cb.AddSingleton(ILogManager.class, LogManager.class);                
+        cb.AddSingleton(ILogManager.class, () -> new LogManager(LogLevel.DEBUG));                
         
         return cb.Build();
     }
     
     private static void installBaseServices(ContainerBuilder cb)
     {
-        cb.AddSingleton(ILogManager.class, LogManager.class);                
+        cb.AddSingleton(ILogManager.class, () -> new LogManager(LogLevel.DEBUG));       
         cb.AddSingleton(IConfigurationService.class, ConfigService.class);
         cb.AddSingleton(IContextService.class, ContextService.class);
         cb.AddSingleton(IScalingService.class, ScalingService.class);

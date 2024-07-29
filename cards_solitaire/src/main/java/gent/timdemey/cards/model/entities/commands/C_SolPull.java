@@ -8,12 +8,13 @@ import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes;
+import gent.timdemey.cards.services.interfaces.IContextService;
 
 public class C_SolPull extends C_Pull
 {
-    public C_SolPull(UUID srcCardStackId, UUID cardId)
+    public C_SolPull(IContextService contextService, UUID id, UUID srcCardStackId, UUID cardId)
     {
-        super(srcCardStackId, cardId);
+        super(contextService, id, srcCardStackId, cardId);
     }
     
     @Override

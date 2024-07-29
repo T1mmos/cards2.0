@@ -40,7 +40,7 @@ public class PanelService implements IPanelService
 {
     private Map<PanelDescriptor, IPanelManager> panelMgrs;
     
-    private final Container _Container;
+    protected final Container _Container;
     private final IScalingService _ScalingService;
     private final IPanelService _PanelService;
 

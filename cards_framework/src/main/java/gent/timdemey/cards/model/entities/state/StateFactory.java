@@ -58,12 +58,12 @@ public class StateFactory
         return new CardStack(_ChangeTracker, UUID.randomUUID(), cardStackType, typeNumber);
     }
         
-    public CardGame CreateCardGame(String cardStackType, List<PlayerConfiguration> playerConfigurations)
+    public CardGame CreateCardGame( List<PlayerConfiguration> playerConfigurations)
     {
         return new CardGame(_ChangeTracker, UUID.randomUUID(), playerConfigurations);
     }
     
-    public CardGame CreateCardGame(String cardStackType, UUID id, List<PlayerConfiguration> playerConfigurations)
+    public CardGame CreateCardGame(UUID id, List<PlayerConfiguration> playerConfigurations)
     {
         return new CardGame(_ChangeTracker, id, playerConfigurations);
     }

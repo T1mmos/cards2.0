@@ -8,6 +8,7 @@ import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.delta.EntityStateListRef;
 import gent.timdemey.cards.model.delta.IChangeTracker;
 import gent.timdemey.cards.model.delta.Property;
+import gent.timdemey.cards.model.entities.common.EntityList;
 import gent.timdemey.cards.utils.Debug;
 import java.util.UUID;
 
@@ -55,7 +56,7 @@ public class CardStack extends EntityBase
         return cards.get(cards.size() - 1);
     }
 
-    public List<Card> getCardsFrom(Card card)
+    public EntityList<Card> getCardsFrom(Card card)
     {
         if (!cards.contains(card))
         {
@@ -63,7 +64,9 @@ public class CardStack extends EntityBase
         }
 
         int idx = cards.indexOf(card);
-        return cards.subList(idx, cards.size());
+        EntityList<Card> wrapper = new EntityList<>();
+        wrapper.addAll(cards.subList(idx, cards.size()));
+        return wrapper;
     }
 
     public List<Card> getHighestCards(int count)

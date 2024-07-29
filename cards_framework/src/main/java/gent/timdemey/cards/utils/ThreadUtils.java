@@ -8,7 +8,7 @@ import gent.timdemey.cards.logging.Logger;
 
 public class ThreadUtils
 {
-    public static void executeAndContinueOnUi(String threadName, Runnable threadCode, final Consumer<Async> uiCode)
+    public static void executeAndContinueOnUi(Logger logger, String threadName, Runnable threadCode, final Consumer<Async> uiCode)
     {        
         Runnable thrRun = () ->
         {
@@ -30,7 +30,7 @@ public class ThreadUtils
                     }
                     catch (Exception e)
                     {
-                        Logger.error(e);
+                        logger.error(e);
                     }
                 });
             }

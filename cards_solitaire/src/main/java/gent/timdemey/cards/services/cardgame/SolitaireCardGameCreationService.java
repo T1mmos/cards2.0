@@ -9,6 +9,7 @@ import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.state.PlayerConfiguration;
+import gent.timdemey.cards.model.entities.state.StateFactory;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyList;
@@ -18,6 +19,15 @@ import gent.timdemey.cards.utils.CardDeckUtils;
 
 public class SolitaireCardGameCreationService implements ICardGameService
 {
+
+    private final StateFactory _StateFactory;
+    private final CardDeckUtils _CardDeckUtils;
+    public SolitaireCardGameCreationService(StateFactory stateFactory, CardDeckUtils cardDeckUtils)
+    {
+        this._StateFactory = stateFactory;
+        this._CardDeckUtils = cardDeckUtils;
+    }
+    
     @Override
     public CardGame createCardGame(List<UUID> playerIds)
     {
@@ -48,7 +58,7 @@ public class SolitaireCardGameCreationService implements ICardGameService
         { // depot stack - all remaining cards = 52 - 28 = 24 cards
             List<Card> cards = allCards.subList(0, 24);
             cards.forEach(c -> c.visibleRef.set(false));
-            CardStack stack = new CardStack(SolitaireComponentTypes.DEPOT, 0);
+            CardStack stack = _StateFactory.CreateCardStack(SolitaireComponentTypes.DEPOT, 0);
             stack.cards.addAll(cards);
             for(Card card : cards)
             {
@@ -64,7 +74,7 @@ public class SolitaireCardGameCreationService implements ICardGameService
                 int end = 24 + skipCards + i + 1;
                 List<Card> cards = allCards.subList(start, end);
                 allCards.subList(start, end - 1).forEach(c -> c.visibleRef.set(false));
-                CardStack stack = new CardStack(SolitaireComponentTypes.MIDDLE, i);
+                CardStack stack = _StateFactory.CreateCardStack(SolitaireComponentTypes.MIDDLE, i);
                 stack.cards.addAll(cards);
                 for(Card card : cards)
                 {
@@ -74,28 +84,28 @@ public class SolitaireCardGameCreationService implements ICardGameService
             }
         }
         { // turnover stack - initially empty
-            CardStack stack = new CardStack(SolitaireComponentTypes.TURNOVER, 0);            
+            CardStack stack = _StateFactory.CreateCardStack(SolitaireComponentTypes.TURNOVER, 0);            
             stacks.add(stack);
         }
         { // laydown stacks - initially empty
             for (int i = 0; i < 4; i++)
             {
-                CardStack stack = new CardStack(SolitaireComponentTypes.LAYDOWN, i);
+                CardStack stack = _StateFactory.CreateCardStack(SolitaireComponentTypes.LAYDOWN, i);
                 stacks.add(stack);
             }
         }
 
-        PlayerConfiguration pc = new PlayerConfiguration(playerId, stacks);
+        PlayerConfiguration pc = _StateFactory.CreatePlayerConfiguration(playerId, stacks);
         List<PlayerConfiguration> pcs = new ArrayList<>();
         pcs.add(pc);
         
-        CardGame cg = new CardGame(pcs);
+        CardGame cg = _StateFactory.CreateCardGame(pcs);
         return cg;
     }
 
     private List<List<Card>> getCards()
     {
-        Card[] cards = CardDeckUtils.createFullDeck();
+        Card[] cards = _CardDeckUtils.createFullDeck();
         CardDeckUtils.shuffleDeck(cards);
         List<List<Card>> playerCards = new ArrayList<>();
         playerCards.add(Arrays.asList(cards));

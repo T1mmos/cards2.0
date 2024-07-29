@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package gent.timdemey.cards.test.unittests;
 
 import gent.timdemey.cards.ICardPlugin;
@@ -10,7 +6,6 @@ import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.di.ContainerBuilder;
 import gent.timdemey.cards.test.mock.ITestDI;
 import gent.timdemey.cards.test.mock.TestDI;
-import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import org.junit.jupiter.api.Test;
@@ -25,7 +20,7 @@ public class DITest {
     public void testContainer()
     {
         ContainerBuilder cb = new ContainerBuilder();
-        cb.AddSingleton(ICardPlugin.class, new MockCardPlugin());
+        cb.AddSingleton(ICardPlugin.class, MockCardPlugin.class);
         cb.AddTransient(ITestDI.class, TestDI.class);
         Container c = cb.Build();
         

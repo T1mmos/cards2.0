@@ -15,19 +15,19 @@ public class MockNetworkService implements INetworkService
     @Override
     public void send(UUID localId, UUID destination, CommandBase command, TCP_ConnectionPool tcpConnPool)
     {        
-        Logger.debug("MockNetworkService: send()");
+        
     }
 
     @Override
     public void send(TCP_Connection conn, CommandBase command)
     {
-        Logger.debug("MockNetworkService: send()");        
+       
     }
     
     @Override
     public void broadcast(UUID localId, List<UUID> destinations, CommandBase command, TCP_ConnectionPool tcpConnPool)
     {       
-        Logger.debug("MockNetworkService: broadcast()");
+        
     }
 
 }

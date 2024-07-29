@@ -13,6 +13,7 @@ import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes;
+import gent.timdemey.cards.services.interfaces.IContextService;
 
 /**
  * Solitaire specific move command.
@@ -25,10 +26,13 @@ public class C_SolMove extends C_Move
     private List<Card> flippedTransferCards;
     private boolean depotInvolved;
     private boolean visible;
+    private final CommandFactory _CommandFactory;
 
-    public C_SolMove(UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
+    public C_SolMove(IContextService contextService, CommandFactory commandFactory, UUID id, UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
     {
-        super(srcCardStackId, dstCardStackId, cardId);
+        super(contextService, id, srcCardStackId, dstCardStackId, cardId);
+        
+        this._CommandFactory = commandFactory;
     }
 
     @Override
@@ -39,8 +43,8 @@ public class C_SolMove extends C_Move
         Card card = state.getCardGame().getCard(cardId);
 
         List<UUID> toTransferIds = srcCardStack.getCardsFrom(card).getIds();
-        C_SolPull cmdPull = new C_SolPull(srcCardStackId, cardId);
-        C_SolPush cmdPush = new C_SolPush(dstCardStackId, toTransferIds);
+        C_Pull cmdPull = _CommandFactory.CreatePull(srcCardStackId, cardId);
+        C_Push cmdPush = _CommandFactory.CreatePush(dstCardStackId, toTransferIds);
         boolean canPull = cmdPull.canExecute(context, type, state).canExecute();
         boolean canPush = cmdPush.canExecute(context, type, state).canExecute();
         if (canPull && canPush) // user action

@@ -6,12 +6,15 @@ import java.util.concurrent.ThreadLocalRandom;
 import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardSuit;
 import gent.timdemey.cards.model.entities.state.CardValue;
+import gent.timdemey.cards.model.entities.state.StateFactory;
 
-public final class CardDeckUtils
+public class CardDeckUtils
 {
-    private CardDeckUtils()
-    {
 
+    private final StateFactory _StateFactory;
+    public CardDeckUtils(StateFactory stateFactory)
+    {
+        this._StateFactory = stateFactory;
     }
 
     /**
@@ -19,7 +22,7 @@ public final class CardDeckUtils
      * 
      * @return
      */
-    public static Card[] createFullDeck()
+    public Card[] createFullDeck()
     {
         return createDeck(CardSuit.values(), CardValue.values());
     }
@@ -30,7 +33,7 @@ public final class CardDeckUtils
      * 
      * @return
      */
-    public static Card[] create7toADeck()
+    public Card[] create7toADeck()
     {
         CardValue[] values = new CardValue[8];
         values[0] = CardValue.V_7;
@@ -44,7 +47,7 @@ public final class CardDeckUtils
         return createDeck(CardSuit.values(), values);
     }
 
-    public static Card[] createDeck(CardSuit[] suits, CardValue[] values)
+    public Card[] createDeck(CardSuit[] suits, CardValue[] values)
     {
         Card[] cards = new Card[values.length * suits.length];
         int i = 0;
@@ -52,7 +55,7 @@ public final class CardDeckUtils
         {
             for (CardValue value : values)
             {
-                Card card = new Card(suit, value, true);
+                Card card = _StateFactory.CreateCard(suit, value, true);
                 cards[i++] = card;
             }
         }

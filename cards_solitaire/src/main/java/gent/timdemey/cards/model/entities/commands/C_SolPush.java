@@ -9,12 +9,13 @@ import gent.timdemey.cards.model.entities.state.CardValue;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes;
+import gent.timdemey.cards.services.interfaces.IContextService;
 
 public class C_SolPush extends C_Push
 {
-    public C_SolPush(UUID dstCardStackId, List<UUID> srcCardIds)
+    public C_SolPush(IContextService contextService, UUID id, UUID dstCardStackId, List<UUID> srcCardIds)
     {
-        super(dstCardStackId, srcCardIds);
+        super(contextService, id, dstCardStackId, srcCardIds);
     }
 
     @Override

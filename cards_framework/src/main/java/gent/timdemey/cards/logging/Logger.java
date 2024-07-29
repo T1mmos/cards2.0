@@ -6,7 +6,7 @@ public class Logger
 {
     private final ILogManager _LogManager;
     
-    private Logger(ILogManager logManager)
+    public Logger(ILogManager logManager)
     {
         this._LogManager = logManager;
     }

@@ -45,7 +45,7 @@ public class StartUI
     private final Loc _Loc;
     private final CommandFactory _CommandFactory;
     
-    private StartUI(
+    public StartUI(
             Container container, 
             IContextService contextService, 
             IFrameService frameService, 
@@ -70,7 +70,7 @@ public class StartUI
         showSplash();
         
         // let all services preload load in the background
-        ThreadUtils.executeAndContinueOnUi("Service Preloader", this::preload, this::onServicesPreloaded);
+        ThreadUtils.executeAndContinueOnUi(_Logger, "Service Preloader", this::preload, this::onServicesPreloaded);
     }
     
     private void showSplash()

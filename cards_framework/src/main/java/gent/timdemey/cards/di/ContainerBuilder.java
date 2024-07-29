@@ -6,6 +6,7 @@ package gent.timdemey.cards.di;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  *
@@ -16,6 +17,7 @@ public class ContainerBuilder
     private final Map<Class, Class> _TransientClassesMap = new HashMap<>();
    // private final Map<Class, Object> _SingletonInstanceMap = new HashMap<>();  
     private final Map<Class, Class> _SingletonClassesMap = new HashMap<>();
+    private final Map<Class, Supplier> _SingletonSupplierMap = new HashMap<>();
     
     public ContainerBuilder ()
     {
@@ -27,12 +29,11 @@ public class ContainerBuilder
         _TransientClassesMap.put(clazz, impl);
     }
     
-    // for the time being, no preconstructed instance support
-    /*
-    public <T> void AddSingleton(Class<T> clazz, T instance)
+    
+    public <T> void AddSingleton(Class<T> clazz, Supplier<T> supplier)
     {
-        _SingletonInstanceMap.put(clazz, instance);
-    }*/
+        _SingletonSupplierMap.put(clazz, supplier);
+    }
     
     public <T> void AddSingleton(Class<T> clazz, Class<? extends T> instanceClass)
     {
@@ -41,7 +42,7 @@ public class ContainerBuilder
     
     public Container Build ()
     {
-        Container container = new Container(_TransientClassesMap, _SingletonClassesMap);
+        Container container = new Container(_TransientClassesMap, _SingletonClassesMap, _SingletonSupplierMap);
         return container;        
     }
 }

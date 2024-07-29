@@ -19,10 +19,7 @@ import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.services.interfaces.IIdService;
-import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceNameService;
-import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.ui.components.SImageResource;
 import gent.timdemey.cards.ui.components.drawers.GamePanelDrawer;
 import gent.timdemey.cards.ui.components.drawers.IHasDrawer;
@@ -38,8 +35,8 @@ public class CardGamePanelManager extends PanelManagerBase
     private CardGamePanelMouseListener mouseListener;
     private CardGamePanelStateListener stateListener;
     private CardGamePanelContainerListener contListener;
-    private final IContextService _ContextService;
-    private final IResourceNameService _ResourceNameService;
+    protected final IContextService _ContextService;
+    protected final IResourceNameService _ResourceNameService;
 
     public CardGamePanelManager(
             Container container,

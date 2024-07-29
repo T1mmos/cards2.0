@@ -4,7 +4,6 @@
  */
 package gent.timdemey.cards.model.entities.common;
 
-import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import java.util.ArrayList;
 import java.util.List;
