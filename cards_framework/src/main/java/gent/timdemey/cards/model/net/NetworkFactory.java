@@ -6,9 +6,6 @@ package gent.timdemey.cards.model.net;
 
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.C_OnTcpConnectionAdded;
-import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
-import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import java.net.Socket;
 import java.util.function.Consumer;
 
@@ -19,13 +16,9 @@ import java.util.function.Consumer;
 public class NetworkFactory 
 {
     private final Logger _Logger;
-    private final IContextService _ContextService;
-    private final CommandDtoMapper _CommandDtoMapper;
     
-    public NetworkFactory (IContextService contextService, CommandDtoMapper commandDtoMapper, Logger logger)
+    public NetworkFactory (Logger logger)
     {
-        this._ContextService = contextService;
-        this._CommandDtoMapper = commandDtoMapper;
         this._Logger = logger;        
     }
 
@@ -36,7 +29,7 @@ public class NetworkFactory
 
     public UDP_ServiceAnnouncer CreateUDPServiceAnnouncer(int udpport) 
     {
-        return new UDP_ServiceAnnouncer(_ContextService, _CommandDtoMapper, _Logger, udpport);
+        return new UDP_ServiceAnnouncer(_Logger, udpport);
     }
 
     public TCP_ConnectionPool CreateTCPConnectionPool(String name, int playerCount, ITcpConnectionListener tcpConnListener) 

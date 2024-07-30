@@ -7,15 +7,8 @@ import java.net.SocketException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
-
-
 import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.model.entities.commands.C_UDP_Request;
-import gent.timdemey.cards.model.entities.commands.C_UDP_Response;
-import gent.timdemey.cards.model.entities.commands.CommandBase;
-import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
-import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.IContextService;
+import java.net.InetAddress;
 
 public final class UDP_ServiceAnnouncer
 {
@@ -26,23 +19,17 @@ public final class UDP_ServiceAnnouncer
     private Thread execServReceive = null;
     private ExecutorService execServSend = null;
     private final Logger _Logger;
-    private final CommandDtoMapper _CommandDtoMapper;
-    private final IContextService _ContextService;
+    private IUdpMessageListener _MessageListener = null;
 
     public UDP_ServiceAnnouncer(
-        IContextService contextService,
-        CommandDtoMapper commandDtoMapper, 
         Logger logger,
         int udpport)
     {
-        this._ContextService = contextService;
-        this._CommandDtoMapper = commandDtoMapper;
-        this._Logger = logger;
-        
+        this._Logger = logger;        
         this.udpport = udpport;
     }
 
-    public void start()
+    public void start(IUdpMessageListener messageListener)
     {
         if (used)
         {
@@ -51,6 +38,8 @@ public final class UDP_ServiceAnnouncer
         }
         used = true;
 
+        this._MessageListener = messageListener;
+        
         try
         {
             dsocket = new DatagramSocket(udpport);
@@ -129,32 +118,9 @@ public final class UDP_ServiceAnnouncer
                 byte[] received = packet_in.getData();
                 String rcvd = new String(received, 0, packet_in.getLength(), IoConstants.UDP_CHARSET);
 
-                _Logger.error("Received some data, trying to parse it as a C_UDP_Request...");
-                CommandBase command = null;
-                try
-                {
-                    command = _CommandDtoMapper.toCommand(rcvd);
-                }
-                catch (Exception ex)
-                {
-                }
-
-                if (command == null)
-                {
-                    _Logger.error("Ignoring the received data as it could not be parsed as a command.");
-                    continue;
-                }
-                if (!(command instanceof C_UDP_Request))
-                {
-                    _Logger.error("Ignoring the received data as the command is not a C_UDP_Request.");
-                    continue;
-                }
-
-                // schedule the UDP request command
-                C_UDP_Request udpRequestCmd = (C_UDP_Request) command;
-                UDP_Source udpSource = new UDP_Source(packet_in.getAddress(), packet_in.getPort());
-                udpRequestCmd.setSourceUdp(udpSource);
-                _ContextService.getContext(ContextType.Server).schedule(udpRequestCmd);
+                this._MessageListener.OnMessageReceived(packet_in.getAddress(), packet_in.getPort(), rcvd);
+                
+             
             }
         }
         catch (SocketException e)
@@ -168,19 +134,17 @@ public final class UDP_ServiceAnnouncer
         }
     }
 
-    public void sendUnicast(UDP_UnicastMessage msg)
+    public void sendUnicast(InetAddress destination, int port, String message)
     {
-        execServSend.execute(() -> send(msg));
+        execServSend.execute(() -> send(destination, port, message));
     }
 
-    private void send(UDP_UnicastMessage msg)
+    private void send(InetAddress destination, int port, String message)
     {
         try
-        {
-            C_UDP_Response responseCmd = msg.responseCmd;
-            String json = _CommandDtoMapper.toJson(responseCmd);
-            byte[] buffer_out = json.getBytes(IoConstants.UDP_CHARSET);
-            DatagramPacket packet_out = new DatagramPacket(buffer_out, buffer_out.length, msg.destination, msg.port);
+        {         
+            byte[] buffer_out = message.getBytes(IoConstants.UDP_CHARSET);
+            DatagramPacket packet_out = new DatagramPacket(buffer_out, buffer_out.length, destination, port);
             dsocket.send(packet_out);
         }
         catch (SocketException e)

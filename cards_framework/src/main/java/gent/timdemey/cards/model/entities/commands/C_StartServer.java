@@ -20,10 +20,13 @@ import gent.timdemey.cards.model.net.NetworkFactory;
 import gent.timdemey.cards.model.net.TCP_ConnectionAccepter;
 import gent.timdemey.cards.model.net.TCP_ConnectionPool;
 import gent.timdemey.cards.model.net.UDP_ServiceAnnouncer;
+import gent.timdemey.cards.model.net.UDP_Source;
+import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.utils.Debug;
+import gent.timdemey.cards.model.net.IUdpMessageListener;
 
 /**
  * Command that starts a server and automatically joins the current player in
@@ -52,14 +55,17 @@ public class C_StartServer extends CommandBase
     private Logger _Logger;
     private CommandFactory _CommandFactory;
     private ICardPlugin _CardPlugin;
+    private CommandDtoMapper _CommandDtoMapper;
 
     C_StartServer(
         IContextService contextService, 
         ICardPlugin cardPlugin,
+        
         NetworkFactory networkFactory,
         StateFactory stateFactory,
         CommandFactory commandFactory,
         ConfigurationFactory configurationFactory,
+        CommandDtoMapper commandDtoMapper,
         Logger logger,
         UUID id, UUID playerId, String playerName, String srvname, String srvmsg, int udpport, int tcpport, boolean autoconnect)
     {
@@ -95,6 +101,7 @@ public class C_StartServer extends CommandBase
         this._CommandFactory = commandFactory;
         this._StateFactory = stateFactory;        
         this._ConfigurationFactory = configurationFactory;
+        this._CommandDtoMapper = commandDtoMapper;
         this._Logger = logger;
         
         this.playerId = playerId;
@@ -186,7 +193,7 @@ public class C_StartServer extends CommandBase
                 state.setCommandHistory(_StateFactory.CreateCommandHistory(canUndo, canRemove));
 
                 // start the services
-                udpServAnnouncer.start();
+                udpServAnnouncer.start(new UDPListener());
                 tcpConnAccepter.start();
 
                 // schedule a command to have the local player join the server
@@ -213,5 +220,41 @@ public class C_StartServer extends CommandBase
     {
         return Debug.getKeyValue("srvname", srvname) + Debug.getKeyValue("srvmsg", srvmsg) + Debug.getKeyValue("serverUdpPort", udpport) + Debug.getKeyValue(
             "serverTcpPort", tcpport);
+    }
+    
+    private class UDPListener implements IUdpMessageListener
+    {
+
+        @Override
+        public void OnMessageReceived(InetAddress sourceAddress, int sourcePort, String msg) 
+        {
+            _Logger.error("Received some data, trying to parse it as a C_UDP_Request...");
+            CommandBase command = null;
+            try
+            {
+                command = _CommandDtoMapper.toCommand(msg);
+            }
+            catch (Exception ex)
+            {
+            }
+
+            if (command == null)
+            {
+                _Logger.error("Ignoring the received data as it could not be parsed as a command.");
+                return;
+            }
+            if (!(command instanceof C_UDP_Request))
+            {
+                _Logger.error("Ignoring the received data as the command is not a C_UDP_Request.");
+                return;
+            }
+
+            // schedule the UDP request command
+            C_UDP_Request udpRequestCmd = (C_UDP_Request) command;
+            UDP_Source udpSource = new UDP_Source(sourceAddress, sourcePort);
+            udpRequestCmd.setSourceUdp(udpSource);
+
+            _ContextService.getContext(ContextType.Server).schedule(udpRequestCmd);
+        }        
     }
 }

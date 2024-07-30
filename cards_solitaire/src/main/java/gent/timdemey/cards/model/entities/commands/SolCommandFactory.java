@@ -27,7 +27,20 @@ import java.util.UUID;
 public class SolCommandFactory extends CommandFactory
 {
     
-    public SolCommandFactory(ICardPlugin cardPlugin, ICardGameService cardGameService, StateFactory stateFactory, NetworkFactory networkFactory, ConfigurationFactory configurationFactory, IConfigurationService configurationService, IContextService contextService, IFrameService frameService, INetworkService networkService, IFileService fileService, CommandDtoMapper commandDtoMapper, Loc loc, Logger logger)
+    public SolCommandFactory(
+        ICardPlugin cardPlugin, 
+        ICardGameService cardGameService, 
+        StateFactory stateFactory, 
+        NetworkFactory networkFactory, 
+        ConfigurationFactory configurationFactory, 
+        IConfigurationService configurationService, 
+        IContextService contextService, 
+        IFrameService frameService, 
+        INetworkService networkService, 
+        IFileService fileService, 
+        CommandDtoMapper commandDtoMapper, 
+        Loc loc, 
+        Logger logger)
     {
         super(cardPlugin, cardGameService, stateFactory, networkFactory, configurationFactory, configurationService, contextService, frameService, networkService, fileService, commandDtoMapper, loc, logger);
     }

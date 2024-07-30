@@ -60,7 +60,7 @@ public class CommandNetworkService implements INetworkService
         }
         else
         {
-            _Logger.debug("The command %s is not a local command, not so sending it", command.getName());
+            _Logger.debug("The command %s is not a local command, so not sending it", command.getName());
         }
     }
     

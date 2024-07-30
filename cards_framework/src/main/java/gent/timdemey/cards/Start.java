@@ -10,6 +10,8 @@ import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.logging.LogLevel;
 import gent.timdemey.cards.logging.LogManager;
 import gent.timdemey.cards.logging.Logger;
+import gent.timdemey.cards.model.delta.IChangeTracker;
+import gent.timdemey.cards.model.delta.StateChangeTracker;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.action.ActionService;
 import gent.timdemey.cards.services.animation.AnimationDescriptorFactory;
@@ -147,6 +149,7 @@ public class Start
         cb.AddSingleton(IFileService.class, FileService.class);
         cb.AddSingleton(ISoundService.class, SoundService.class);
         cb.AddSingleton(IAnimationDescriptorFactory.class, AnimationDescriptorFactory.class);
-        cb.AddTransient(State.class, State.class);
+        // cb.AddTransient(State.class, State.class);
+        cb.AddSingleton(IChangeTracker.class, StateChangeTracker.class);
     }
 }

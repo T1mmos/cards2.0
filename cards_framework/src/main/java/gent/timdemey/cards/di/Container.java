@@ -143,7 +143,16 @@ public class Container
         {
             if (constructing.contains(clazz))
             {
-                throw new IllegalArgumentException("Class " + clazz.getName() + " cannot be constructed as a circular dependency was detected: " + constructing);
+                List<Class> classCycle = new ArrayList<>(constructing);
+                classCycle.add(clazz); // completes the cycle
+                StringBuilder b = new StringBuilder();
+                for (int i = 0; i < classCycle.size() - 1; i++)
+                {
+                    String line = String.format("%1$-80s -> %2$-80s", classCycle.get(i).getName(), classCycle.get(i + 1).getName());
+                    b.append(System.lineSeparator() + "\t" + line);
+                }
+               
+                throw new IllegalArgumentException("Class " + clazz.getName() + " cannot be constructed as a circular dependency was detected: " + b);
             }
             
             // track that we are constructing this class

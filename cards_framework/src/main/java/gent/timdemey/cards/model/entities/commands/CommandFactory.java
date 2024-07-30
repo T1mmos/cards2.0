@@ -134,12 +134,12 @@ public abstract class CommandFactory
 
     public C_UDP_Request CreateUDPRequest()
     {
-        return new C_UDP_Request(_ContextService, _CardPlugin, _StateFactory, this, UUID.randomUUID());
+        return new C_UDP_Request(_ContextService, _CardPlugin, _StateFactory, this, _CommandDtoMapper, UUID.randomUUID());
     }
     
     public C_UDP_Request CreateUDPRequest(UUID id)
     {
-        return new C_UDP_Request(_ContextService, _CardPlugin, _StateFactory, this, id);
+        return new C_UDP_Request(_ContextService, _CardPlugin, _StateFactory, this, _CommandDtoMapper, id);
     }
 
     public C_TCP_NOK CreateTCPNOK(C_TCP_NOK.TcpNokReason tcpNokReason)
@@ -358,12 +358,12 @@ public abstract class CommandFactory
 
     public C_StartServer CreateStartServer(UUID localId, String localName, String srvname, String srvmsg, int udpPort, int tcpPort, boolean autoconnect)
     {
-        return new C_StartServer(_ContextService, _CardPlugin, _NetworkFactory, _StateFactory, this, _ConfigurationFactory, _Logger, UUID.randomUUID(), localId, localName, srvname, srvmsg, udpPort, tcpPort, autoconnect);
+        return new C_StartServer(_ContextService, _CardPlugin, _NetworkFactory, _StateFactory, this, _ConfigurationFactory, _CommandDtoMapper, _Logger, UUID.randomUUID(), localId, localName, srvname, srvmsg, udpPort, tcpPort, autoconnect);
     }
     
     public C_StartServer CreateStartServer(UUID id, UUID localId, String localName, String srvname, String srvmsg, int udpPort, int tcpPort, boolean autoconnect)
     {
-        return new C_StartServer(_ContextService, _CardPlugin, _NetworkFactory, _StateFactory, this, _ConfigurationFactory, _Logger, id, localId, localName, srvname, srvmsg, udpPort, tcpPort, autoconnect);
+        return new C_StartServer(_ContextService, _CardPlugin, _NetworkFactory, _StateFactory, this, _ConfigurationFactory, _CommandDtoMapper, _Logger, id, localId, localName, srvname, srvmsg, udpPort, tcpPort, autoconnect);
     }
 
     public D_Connect ShowDialog_Connect()

@@ -75,6 +75,7 @@ public class C_EnterLobby extends CommandBase
     {        
         if(type == ContextType.UI)
         {
+          
             _NetworkService.send(state.getLocalId(), state.getServerId(), this, state.getTcpConnectionPool());
         }
         else if(type == ContextType.Server)
