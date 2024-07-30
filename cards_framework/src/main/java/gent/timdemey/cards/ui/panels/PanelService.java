@@ -42,16 +42,13 @@ public class PanelService implements IPanelService
     
     protected final Container _Container;
     private final IScalingService _ScalingService;
-    private final IPanelService _PanelService;
 
     public PanelService(
             Container container,
-            IScalingService scalingService,
-            IPanelService panelService)
+            IScalingService scalingService)
     {
         this._Container = container;
         this._ScalingService = scalingService;
-        this._PanelService = panelService;
     }
 
     @Override
@@ -148,9 +145,9 @@ public class PanelService implements IPanelService
             externalCallback.run();
         }
 
-        for (PanelDescriptor pd : _PanelService.getPanelDescriptors())
+        for (PanelDescriptor pd : getPanelDescriptors())
         {
-            IPanelManager pm = _PanelService.getPanelManager(pd);
+            IPanelManager pm = getPanelManager(pd);
             JComponent panel = pm.getPanel();
             if (panel == null)
             {

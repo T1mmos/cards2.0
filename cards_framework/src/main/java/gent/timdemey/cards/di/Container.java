@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.function.Supplier;
 
 /**
@@ -32,6 +33,14 @@ public class Container
     }
         
     public <I> I Get(Class<I> clazz)
+    {    
+        // keep track of what we're constructing, to detect circular dependencies
+        Stack<Class> constructing = new Stack<>();
+        
+        return TryGet(clazz, constructing);
+    }
+    
+    private <I> I TryGet(Class<I> clazz, Stack<Class> constructing)
     {
         // the container can also be injected
         if (clazz == Container.class)
@@ -41,7 +50,7 @@ public class Container
         
         // try singletons
         {
-            I instance = TryGet(clazz, _SingletonClassesMap, _SingletonSuppliersMap, _SingletonInstancesMap);
+            I instance = TryGet(clazz, constructing, _SingletonClassesMap, _SingletonSuppliersMap, _SingletonInstancesMap);
             if (instance != null)
             {
                 return instance;
@@ -50,7 +59,7 @@ public class Container
         
         // try transients
         {
-            I instance = TryGet(clazz, _TransientClassesMap, null, null);
+            I instance = TryGet(clazz, constructing, _TransientClassesMap, null, null);
             if (instance != null)
             {
                 return instance;
@@ -61,7 +70,7 @@ public class Container
         {
             if (!clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers()))
             {
-                I instance = TryInstantiate(clazz);
+                I instance = TryInstantiate(clazz, constructing);
                 if (instance != null)
                 {
                     return instance;
@@ -73,8 +82,8 @@ public class Container
         throw new UnsupportedOperationException("Class " + clazz.getName() + " is not mapped or if it's a concrete type, no suitable constructor was found");
     }
     
-    private <I> I TryGet(Class<I> iclazz, Map<Class, Class> definitions, Map<Class, Supplier> suppliers, Map<Class, Object> instances)
-    {        
+    private <I> I TryGet(Class<I> iclazz, Stack<Class> constructing, Map<Class, Class> definitions, Map<Class, Supplier> suppliers, Map<Class, Object> instances)
+    {    
         I obj = null;
         if (instances != null)
         {
@@ -87,7 +96,7 @@ public class Container
             Class<? extends I> concreteCls = definitions.get(iclazz);
             if (concreteCls != null)
             {
-                I instance = TryInstantiate(concreteCls);
+                I instance = TryInstantiate(concreteCls, constructing);
                 if (instance != null)
                 {
                     obj = instance;
@@ -128,37 +137,50 @@ public class Container
         return null;
     }
     
-    private <I, C extends I> I TryInstantiate(Class<C> clazz)
+    private <I, C extends I> I TryInstantiate(Class<C> clazz, Stack<Class> constructing)
     {
         if (clazz != null)
         {
+            if (constructing.contains(clazz))
+            {
+                throw new IllegalArgumentException("Class " + clazz.getName() + " cannot be constructed as a circular dependency was detected: " + constructing);
+            }
+            
+            // track that we are constructing this class
+            constructing.push(clazz);
+            
             Constructor<?>[] constructors = clazz.getConstructors();
 
             I instance = null;
             for (Constructor<?> c : constructors)
             {
-                Object obj = TryInstantiate(c);
+                Object obj = TryInstantiate(c, constructing);
                 if (obj != null)
                 {
                     instance = clazz.cast(obj);
                 }
                 if (instance != null)
                 {
-                    return instance; 
+                    break;
                 }
             }
+            
+            // successfully constructed or no suitable constructor found
+            constructing.pop();
+            
+            return instance; 
         }
         
         return null;
     }
 
-    private Object TryInstantiate(Constructor<?> c) 
+    private Object TryInstantiate(Constructor<?> c, Stack<Class> constructing) 
     {
         Object[] params = new Object[c.getParameterCount()];
         for (int x = 0; x < c.getParameterCount(); x++)
         {
             Class<?> paramXCls = c.getParameterTypes()[x];
-            Object xObj = Get(paramXCls);
+            Object xObj = TryGet(paramXCls, constructing);
             params[x] = xObj;
         }
         
@@ -186,4 +208,5 @@ public class Container
         
         return values;
     }
+
 }

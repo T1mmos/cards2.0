@@ -24,14 +24,12 @@ public class ContextService implements IContextService
     protected final ConcurrentMap<ContextType, Context> fullContexts;
     private final Set<IContextListener> contextListeners;
     private final ICardPlugin _CardPlugin;
-    private final IContextService _ContextService;
     private final Container _Container;
 
-    public ContextService(Container container, ICardPlugin cardPlugin, IContextService contextService)
+    public ContextService(Container container, ICardPlugin cardPlugin)
     {
         this._Container = container;
         this._CardPlugin = cardPlugin;
-        this._ContextService = contextService;
         fullContexts = new ConcurrentHashMap<>();
         contextListeners = Collections.synchronizedSet(new HashSet<>());
     }
