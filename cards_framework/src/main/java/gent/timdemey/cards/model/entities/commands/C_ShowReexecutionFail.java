@@ -8,28 +8,30 @@ import java.util.List;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_ShowReexecutionFail;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.utils.Debug;
-import java.util.UUID;
 
-public class D_OnReexecutionFail extends DialogCommandBase
+public class C_ShowReexecutionFail extends DialogCommandBase
 {
     public final List<CommandExecution> failedReexecutions;
     private final IFrameService _FrameService;
     private final Loc _Loc;
 
-    public D_OnReexecutionFail(IContextService contextService, IFrameService frameService, Loc loc, UUID id, List<CommandExecution> failedReexecutions)
+    public C_ShowReexecutionFail(
+        IContextService contextService, IFrameService frameService, Loc loc, 
+        P_ShowReexecutionFail parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
         this._FrameService = frameService;
         this._Loc = loc;
         
-        this.failedReexecutions = new ArrayList<>(failedReexecutions);
+        this.failedReexecutions = new ArrayList<>(parameters.fails);
     }
 
     @Override

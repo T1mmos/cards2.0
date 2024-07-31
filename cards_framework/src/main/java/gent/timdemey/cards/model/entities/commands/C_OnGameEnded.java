@@ -5,6 +5,7 @@ import gent.timdemey.cards.localization.LocKey;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_OnGameEnded;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
@@ -15,19 +16,17 @@ import gent.timdemey.cards.services.interfaces.IFrameService;
 public class C_OnGameEnded extends CommandBase
 {
     public final UUID winnerId;
-    private final CommandFactory _CommandFactory;
     private final Loc _Loc;
     private final IFrameService _FrameService;
 
-    C_OnGameEnded(IContextService contextService, CommandFactory commandFactory, IFrameService frameService, Loc loc, UUID id, UUID winnerId)
+    public C_OnGameEnded(IContextService contextService, CommandFactory commandFactory, IFrameService frameService, Loc loc, P_OnGameEnded parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
-        this._CommandFactory = commandFactory;
         this._FrameService = frameService;
         this._Loc = loc;
         
-        this.winnerId = winnerId;
+        this.winnerId = parameters.winnerId;
     }
 
     @Override

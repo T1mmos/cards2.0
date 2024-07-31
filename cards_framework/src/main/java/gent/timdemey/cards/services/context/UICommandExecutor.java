@@ -14,7 +14,7 @@ import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CommandFactory;
 import gent.timdemey.cards.model.entities.state.CommandExecution;
 import gent.timdemey.cards.model.entities.commands.CommandType;
-import gent.timdemey.cards.model.entities.commands.D_OnReexecutionFail;
+import gent.timdemey.cards.model.entities.commands.C_ShowReexecutionFail;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.model.entities.state.State;
@@ -153,7 +153,7 @@ class UICommandExecutor implements ICommandExecutor
     {
         if(fails.size() > 0)
         {
-            D_OnReexecutionFail cmd = _CommandFactory.ShowDialog_ReexecutionFail(fails);
+            C_ShowReexecutionFail cmd = _CommandFactory.ShowDialog_ReexecutionFail(fails);
             _ContextService.getThreadContext().schedule(cmd);
         }
     }

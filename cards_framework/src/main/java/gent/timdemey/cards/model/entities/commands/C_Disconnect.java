@@ -4,13 +4,13 @@ package gent.timdemey.cards.model.entities.commands;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_Disconnect;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
-import java.util.UUID;
 
 /**
  * Leave the lobby and as such, fully disconnect from the server. All client
@@ -41,18 +41,17 @@ public class C_Disconnect extends CommandBase
 
     public final DisconnectReason reason;
 
-    C_Disconnect(
+    public C_Disconnect(
             IContextService contextService, 
             IFrameService frameService,
             Loc loc,
-            UUID id,
-            DisconnectReason reason)
+            P_Disconnect parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
         this._FrameService = frameService;
         this._Loc = loc;
-        this.reason = reason;
+        this.reason = parameters.reason;
     }
 
     @Override

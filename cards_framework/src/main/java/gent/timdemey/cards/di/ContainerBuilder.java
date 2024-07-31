@@ -14,14 +14,25 @@ import java.util.function.Supplier;
  */
 public class ContainerBuilder 
 {    
-    private final Map<Class, Class> _TransientClassesMap = new HashMap<>();
-   // private final Map<Class, Object> _SingletonInstanceMap = new HashMap<>();  
-    private final Map<Class, Class> _SingletonClassesMap = new HashMap<>();
-    private final Map<Class, Supplier> _SingletonSupplierMap = new HashMap<>();
+    private final Map<Class, Class> _TransientClassesMap;
+    private final Map<Class, Object> _SingletonInstancesMap;
+    private final Map<Class, Class> _SingletonClassesMap;
+    private final Map<Class, Supplier> _SingletonSuppliersMap;
     
     public ContainerBuilder ()
     {
-        
+        _TransientClassesMap = new HashMap<>();
+        _SingletonInstancesMap = new HashMap<>();  
+        _SingletonClassesMap = new HashMap<>();
+        _SingletonSuppliersMap = new HashMap<>();
+    }
+    
+    ContainerBuilder(Map<Class, Class> transientClassesMap, Map<Class, Class> singletonClassesMap, Map<Class, Object> singletonInstancesMap, Map<Class, Supplier> singletonSuppliersMap)
+    {
+        _TransientClassesMap = new HashMap<>(transientClassesMap);
+        _SingletonClassesMap = new HashMap<>(singletonClassesMap);
+        _SingletonSuppliersMap = new HashMap<>(singletonSuppliersMap);
+        _SingletonInstancesMap = new HashMap<>(singletonInstancesMap);
     }
     
     public <T> void AddTransient(Class<T> clazz, Class<? extends T> impl)
@@ -29,10 +40,9 @@ public class ContainerBuilder
         _TransientClassesMap.put(clazz, impl);
     }
     
-    
     public <T> void AddSingleton(Class<T> clazz, Supplier<T> supplier)
     {
-        _SingletonSupplierMap.put(clazz, supplier);
+        _SingletonSuppliersMap.put(clazz, supplier);
     }
     
     public <T> void AddSingleton(Class<T> clazz, Class<? extends T> instanceClass)
@@ -40,9 +50,14 @@ public class ContainerBuilder
         _SingletonClassesMap.put(clazz, instanceClass);
     }
     
+    public <T> void AddSingletonInstance(Class<T> clazz, T impl)
+    {
+        _SingletonInstancesMap.put(clazz, impl);
+    }
+    
     public Container Build ()
     {
-        Container container = new Container(_TransientClassesMap, _SingletonClassesMap, _SingletonSupplierMap);
+        Container container = new Container(_TransientClassesMap, _SingletonClassesMap, _SingletonInstancesMap, _SingletonSuppliersMap);
         return container;        
     }
 }

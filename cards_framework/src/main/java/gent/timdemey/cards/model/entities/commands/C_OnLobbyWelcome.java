@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_OnLobbyWelcome;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.Player;
 import gent.timdemey.cards.model.entities.state.State;
@@ -29,17 +30,17 @@ public class C_OnLobbyWelcome extends CommandBase
 
     public C_OnLobbyWelcome(
             IContextService contextService, CommandFactory commandFactory,
-            UUID id, UUID clientId, UUID serverId, String serverMessage, List<Player> connected, UUID lobbyAdminId)
+            P_OnLobbyWelcome parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
         this._CommandFactory = commandFactory;
         
-        this.clientId = clientId;
-        this.serverId = serverId;
-        this.serverMessage = serverMessage;
-        this.connected = connected;
-        this.lobbyAdminId = lobbyAdminId;
+        this.clientId = parameters.clientId;
+        this.serverId = parameters.serverId;
+        this.serverMessage = parameters.serverMessage;
+        this.connected = parameters.connected;
+        this.lobbyAdminId = parameters.lobbyAdminId;
     }
 
     @Override

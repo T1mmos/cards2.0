@@ -4,19 +4,11 @@
  */
 package gent.timdemey.cards.model.entities.commands;
 
-import gent.timdemey.cards.ICardPlugin;
-import gent.timdemey.cards.localization.Loc;
-import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.model.entities.config.ConfigurationFactory;
-import gent.timdemey.cards.model.entities.state.StateFactory;
-import gent.timdemey.cards.model.net.NetworkFactory;
-import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
-import gent.timdemey.cards.services.interfaces.ICardGameService;
-import gent.timdemey.cards.services.interfaces.IConfigurationService;
-import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.services.interfaces.IFileService;
-import gent.timdemey.cards.services.interfaces.IFrameService;
-import gent.timdemey.cards.services.interfaces.INetworkService;
+import gent.timdemey.cards.di.Container;
+import gent.timdemey.cards.model.entities.commands.payload.P_Move;
+import gent.timdemey.cards.model.entities.commands.payload.P_Pull;
+import gent.timdemey.cards.model.entities.commands.payload.P_Push;
+import gent.timdemey.cards.model.entities.commands.payload.P_Use;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,72 +17,82 @@ import java.util.UUID;
  * @author Timmos
  */
 public class SolCommandFactory extends CommandFactory
-{
-    
-    public SolCommandFactory(
-        ICardPlugin cardPlugin, 
-        ICardGameService cardGameService, 
-        StateFactory stateFactory, 
-        NetworkFactory networkFactory, 
-        ConfigurationFactory configurationFactory, 
-        IConfigurationService configurationService, 
-        IContextService contextService, 
-        IFrameService frameService, 
-        INetworkService networkService, 
-        IFileService fileService, 
-        CommandDtoMapper commandDtoMapper, 
-        Loc loc, 
-        Logger logger)
+{    
+    public SolCommandFactory(Container container)
     {
-        super(cardPlugin, cardGameService, stateFactory, networkFactory, configurationFactory, configurationService, contextService, frameService, networkService, fileService, commandDtoMapper, loc, logger);
+        super(container);
     }
 
     @Override
-    public C_Move CreateMove(UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
+    public C_SolMove CreateMove(UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
     {
-        return new C_SolMove(_ContextService, this, UUID.randomUUID(), srcCardStackId, dstCardStackId, cardId);
+        P_Move p = new P_Move();
+        
+        p.id = UUID.randomUUID();
+        p.srcCardStackId = srcCardStackId;
+        p.dstCardStackId = dstCardStackId;
+        p.cardId = cardId;
+        
+        return CreateMove(p);
     }
 
     @Override
-    public C_Move CreateMove(UUID id, UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
+    public C_SolMove CreateMove(P_Move parameters)
     {
-        return new C_SolMove(_ContextService, this, id, srcCardStackId, dstCardStackId, cardId);
+        return DICreate(C_SolMove.class, P_Move.class, parameters);
     }
 
     @Override
     public C_Push CreatePush(UUID dstCardStackId, List<UUID> srcCardIds)
     {
-         return new C_SolPush(_ContextService, UUID.randomUUID(), dstCardStackId, srcCardIds);
+        P_Push p = new P_Push();
+        
+        p.id = UUID.randomUUID();
+        p.dstCardStackId = dstCardStackId;
+        p.srcCardIds = srcCardIds;
+        
+        return CreatePush(p);
     }
 
     @Override
-    public C_Push CreatePush(UUID id, UUID dstCardStackId, List<UUID> srcCardIds)
+    public C_Push CreatePush(P_Push parameters)
     {
-        return new C_SolPush(_ContextService, id, dstCardStackId, srcCardIds);
+        return DICreate(C_SolPush.class, P_Push.class, parameters);
     }
 
     @Override
-    public C_Use CreateUse(UUID initiatorCardStackId, UUID initiatorCardId)
+    public C_SolUse CreateUse(UUID initiatorCardStackId, UUID initiatorCardId)
     {
-        return new C_SolUse(_ContextService, this, UUID.randomUUID(), initiatorCardStackId, initiatorCardId);
+        P_Use p = new P_Use();
+        
+        p.id = UUID.randomUUID();
+        p.initiatorStackId = initiatorCardStackId;
+        p.initiatorCardId = initiatorCardId;
+        
+        return CreateUse(p);
     }
     
     @Override
-    public C_Use CreateUse(UUID id, UUID initiatorStackId, UUID initiatorCardId)
+    public C_SolUse CreateUse(P_Use parameters)
     {
-        return new C_SolUse(_ContextService, this, id, initiatorStackId, initiatorCardId);
+        return DICreate(C_SolUse.class, P_Use.class, parameters);
     }
     
     @Override
-    public C_Pull CreatePull(UUID cardStackId, UUID cardId)
+    public C_SolPull CreatePull(UUID cardStackId, UUID cardId)
     {
-        return new C_SolPull(_ContextService, UUID.randomUUID(), cardStackId, cardId);
+        P_Pull p = new P_Pull();
+        
+        p.srcCardStackId = cardStackId;
+        p.srcCardId = cardId;
+        
+        return CreatePull(p);
     }
 
     @Override
-    public C_Pull CreatePull(UUID id, UUID cardStackId, UUID cardId)
+    public C_SolPull CreatePull(P_Pull parameters)
     {
-        return new C_SolPull(_ContextService, id, cardStackId, cardId);
+        return DICreate(C_SolPull.class, P_Pull.class, parameters);
     }
 
 

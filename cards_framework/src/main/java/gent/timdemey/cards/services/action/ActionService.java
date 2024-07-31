@@ -16,9 +16,6 @@ import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.C_Disconnect.DisconnectReason;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CommandFactory;
-import gent.timdemey.cards.model.entities.commands.D_Connect;
-import gent.timdemey.cards.model.entities.commands.D_StartServer;
-import gent.timdemey.cards.model.entities.commands.D_ToggleMenuMP;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_SaveState;
 import gent.timdemey.cards.services.context.ContextType;
@@ -415,7 +412,7 @@ public class ActionService implements IActionService
         if (desc == ActionDescriptors.SAVECFG)
         {
             P_SaveState pl = (P_SaveState) payload;
-            CommandBase cmd1 = _CommandFactory.CreateSaveState(pl.id, pl.playerName, pl.serverTcpPort, pl.serverUdpPort, pl.clientUdpPort);
+            CommandBase cmd1 = _CommandFactory.CreateSaveState(pl);
             CommandBase cmd2 = _CommandFactory.CreateSaveConfig();
             CommandBase cmd = _CommandFactory.CreateComposite(cmd1, cmd2);
             return cmd;

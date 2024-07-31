@@ -1,26 +1,56 @@
 package gent.timdemey.cards.model.entities.commands;
 
-import gent.timdemey.cards.ICardPlugin;
-import gent.timdemey.cards.localization.Loc;
-import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.model.entities.config.ConfigurationFactory;
+import gent.timdemey.cards.di.Container;
+import gent.timdemey.cards.di.ContainerBuilder;
+import gent.timdemey.cards.model.entities.commands.payload.P_Accept;
+import gent.timdemey.cards.model.entities.commands.payload.P_ClearServerList;
+import gent.timdemey.cards.model.entities.commands.payload.P_DenyClient;
+import gent.timdemey.cards.model.entities.commands.payload.P_Disconnect;
+import gent.timdemey.cards.model.entities.commands.payload.P_EnterLobby;
+import gent.timdemey.cards.model.entities.commands.payload.P_OnGameToLobby;
+import gent.timdemey.cards.model.entities.commands.payload.P_OnLobbyPlayerJoined;
+import gent.timdemey.cards.model.entities.commands.payload.P_OnLobbyToGame;
+import gent.timdemey.cards.model.entities.commands.payload.P_OnLobbyWelcome;
+import gent.timdemey.cards.model.entities.commands.payload.P_OnTcpConnectionClosed;
+import gent.timdemey.cards.model.entities.commands.payload.P_Reject;
+import gent.timdemey.cards.model.entities.commands.payload.P_RemovePlayer;
+import gent.timdemey.cards.model.entities.commands.payload.P_StartMultiplayerGame;
+import gent.timdemey.cards.model.entities.commands.payload.P_StopServer;
+import gent.timdemey.cards.model.entities.commands.payload.P_TCP_NOK;
+import gent.timdemey.cards.model.entities.commands.payload.P_TCP_OK;
+import gent.timdemey.cards.model.entities.commands.payload.P_UDP_Request;
+import gent.timdemey.cards.model.entities.commands.payload.P_UDP_Response;
 import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.model.entities.state.CommandExecution;
 import gent.timdemey.cards.model.entities.state.Player;
 import gent.timdemey.cards.model.entities.state.ServerUDP;
-import gent.timdemey.cards.model.entities.state.StateFactory;
+import gent.timdemey.cards.model.entities.commands.payload.P_Connect;
 import gent.timdemey.cards.model.net.ITcpConnectionListener;
-import gent.timdemey.cards.model.net.NetworkFactory;
-import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
+import gent.timdemey.cards.model.entities.commands.payload.P_Composite;
+import gent.timdemey.cards.model.entities.commands.payload.P_LoadConfig;
+import gent.timdemey.cards.model.entities.commands.payload.P_Move;
+import gent.timdemey.cards.model.entities.commands.payload.P_OnGameEnded;
+import gent.timdemey.cards.model.entities.commands.payload.P_Pull;
+import gent.timdemey.cards.model.entities.commands.payload.P_Push;
+import gent.timdemey.cards.model.entities.commands.payload.P_ShowPlayerLeft;
+import gent.timdemey.cards.model.entities.commands.payload.P_Redo;
+import gent.timdemey.cards.model.entities.commands.payload.P_SaveConfig;
+import gent.timdemey.cards.model.entities.commands.payload.P_SaveState;
+import gent.timdemey.cards.model.entities.commands.payload.P_SetVisible;
+import gent.timdemey.cards.model.entities.commands.payload.P_ShowLobby;
+import gent.timdemey.cards.model.entities.commands.payload.P_ShowReexecutionFail;
+import gent.timdemey.cards.model.entities.commands.payload.P_ShowStartServer;
+import gent.timdemey.cards.model.entities.commands.payload.P_StartLocalGame;
+import gent.timdemey.cards.model.entities.commands.payload.P_StartServer;
+import gent.timdemey.cards.model.entities.commands.payload.P_ShowToggleMenuMP;
+import gent.timdemey.cards.model.entities.commands.payload.P_UDP_StartServiceRequester;
+import gent.timdemey.cards.model.entities.commands.payload.P_UDP_StopServiceRequester;
+import gent.timdemey.cards.model.entities.commands.payload.P_Undo;
+import gent.timdemey.cards.model.entities.commands.payload.P_Use;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.ICardGameService;
-import gent.timdemey.cards.services.interfaces.IConfigurationService;
-import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.services.interfaces.IFileService;
-import gent.timdemey.cards.services.interfaces.IFrameService;
-import gent.timdemey.cards.services.interfaces.INetworkService;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,428 +60,620 @@ import java.util.UUID;
  */
 public abstract class CommandFactory
 {
-    private final ICardPlugin _CardPlugin;
-    private final StateFactory _StateFactory;
-    private final NetworkFactory _NetworkFactory;
-    private final ConfigurationFactory _ConfigurationFactory;
-    
-    protected final IContextService _ContextService;
-    private final IFrameService _FrameService;
-    private final INetworkService _NetworkService;
-    
-    private final Logger _Logger;
-    private final Loc _Loc;
-    private final ICardGameService _CardGameService;
-    private final CommandDtoMapper _CommandDtoMapper;
-    private final IFileService _FileService;
-    private final IConfigurationService _ConfigurationService;
+    private final Container _Container;
 
-    public CommandFactory(
-            ICardPlugin cardPlugin,
-            ICardGameService cardGameService,
-            StateFactory stateFactory,
-            NetworkFactory networkFactory,
-            ConfigurationFactory configurationFactory,
-            IConfigurationService configurationService,
-            IContextService contextService,
-            IFrameService frameService,
-            INetworkService networkService, 
-            IFileService fileService,
-            CommandDtoMapper commandDtoMapper,
-            Loc loc,
-            Logger logger
-    )
+    public CommandFactory(Container container)
     {
-        this._CardPlugin = cardPlugin;
-        this._CardGameService = cardGameService;
-        this._StateFactory = stateFactory;
-        this._NetworkFactory = networkFactory;
-        this._ConfigurationFactory = configurationFactory;
-        this._ConfigurationService = configurationService;
-        this._ContextService = contextService;
-        this._FrameService = frameService;
-        this._NetworkService = networkService;
-        this._CommandDtoMapper = commandDtoMapper;
-        this._FileService = fileService;
-        this._Loc = loc;
-        this._Logger = logger;
+        this._Container = container;
     }
 
     public C_Connect CreateConnect(UUID playerId, UUID serverId, InetAddress inetAddress, int tcpPort, String serverName, String playerName)
-    {
-        return new C_Connect(_ContextService, _CardPlugin, _NetworkFactory, _StateFactory, this, UUID.randomUUID(), playerId, serverId, inetAddress, tcpPort, serverName, playerName);
+    {        
+        P_Connect p = new P_Connect(); 
+       
+        p.id = UUID.randomUUID();
+        p.playerId = playerId;
+        p.serverId = serverId;
+        p.serverInetAddress = inetAddress;
+        p.serverTcpPort = tcpPort;
+        p.serverName = serverName;
+        p.playerName = playerName;
+                
+        return CreateConnect(p);
     }
-
-    public C_Connect CreateConnect(UUID id, UUID playerId, UUID serverId, InetAddress inetAddress, int tcpPort, String serverName, String playerName)
-    {
-        return new C_Connect(_ContextService, _CardPlugin, _NetworkFactory, _StateFactory, this, id, playerId, serverId, inetAddress, tcpPort, serverName, playerName);
+    
+    public C_Connect CreateConnect(P_Connect parameters)
+    {        
+        return DICreate(C_Connect.class, P_Connect.class, parameters);
     }
 
     public C_StopServer CreateStopServer()
     {
-        return new C_StopServer(_ContextService, UUID.randomUUID());
+        P_StopServer p = new P_StopServer();
+        
+        p.id = UUID.randomUUID();
+        
+        return CreateStopServer(p);
     }
 
-    public C_StopServer CreateStopServer(UUID id)
+    public C_StopServer CreateStopServer(P_StopServer parameters)
     {
-        return new C_StopServer(_ContextService, id);
+        return DICreate(C_StopServer.class, P_StopServer.class, parameters);
     }
 
     public C_OnLobbyToGame CreateOnLobbyToGame(CardGame cardGame)
     {
-        return new C_OnLobbyToGame(_ContextService, _FrameService, _NetworkService, _StateFactory, UUID.randomUUID(), cardGame);
+        P_OnLobbyToGame p = new P_OnLobbyToGame();
+        
+        p.id = UUID.randomUUID();
+        p.cardGame = cardGame;
+        
+        return CreateOnLobbyToGame(p);
     }
 
-    public C_OnLobbyToGame CreateOnLobbyToGame(UUID id, CardGame cardGame)
+    public C_OnLobbyToGame CreateOnLobbyToGame(P_OnLobbyToGame parameters)
     {
-        return new C_OnLobbyToGame(_ContextService, _FrameService, _NetworkService, _StateFactory, id, cardGame);
+        return DICreate(C_OnLobbyToGame.class, P_OnLobbyToGame.class, parameters);
     }
 
     public C_EnterLobby CreateEnterLobby(String clientName, UUID clientId)
     {
-        return new C_EnterLobby(_ContextService, _Logger, this, _StateFactory, _NetworkService, UUID.randomUUID(), clientName, clientId);
+        P_EnterLobby p = new P_EnterLobby();
+        
+        p.id = UUID.randomUUID();
+        p.clientId = clientId;
+        p.clientName = clientName;
+        
+        return CreateEnterLobby(p);
     }
 
-    public C_EnterLobby CreateEnterLobby(UUID id, String clientName, UUID clientId)
+    public C_EnterLobby CreateEnterLobby(P_EnterLobby parameters)
     {
-        return new C_EnterLobby(_ContextService, _Logger, this, _StateFactory, _NetworkService, id, clientName, clientId);
+        return DICreate(C_EnterLobby.class, P_EnterLobby.class, parameters);
     }
 
     public C_UDP_Response CreateUDPResponse(ServerUDP udpServer)
     {
-        return new C_UDP_Response(_ContextService, UUID.randomUUID(), udpServer);
+        P_UDP_Response p = new P_UDP_Response();
+        
+        p.id = UUID.randomUUID();
+        p.server = udpServer;
+        
+        return CreateUDPResponse(p);
     }
 
-    public C_UDP_Response CreateUDPResponse(UUID id, ServerUDP udpServer)
+    public C_UDP_Response CreateUDPResponse(P_UDP_Response parameters)
     {
-        return new C_UDP_Response(_ContextService, id, udpServer);
+        return DICreate(C_UDP_Response.class, P_UDP_Response.class, parameters);
     }
 
     public C_ClearServerList CreateClearServerList()
     {
-        return new C_ClearServerList(_ContextService, UUID.randomUUID());
+        P_ClearServerList p = new P_ClearServerList();
+        
+        p.id = UUID.randomUUID();
+        
+        return CreateClearServerList(p);
+    }
+    
+    public C_ClearServerList CreateClearServerList(P_ClearServerList parameters)
+    {
+        return DICreate(C_ClearServerList.class, P_ClearServerList.class, parameters);
     }
 
     public C_UDP_Request CreateUDPRequest()
     {
-        return new C_UDP_Request(_ContextService, _CardPlugin, _StateFactory, this, _CommandDtoMapper, UUID.randomUUID());
+        P_UDP_Request p = new P_UDP_Request();
+        
+        p.id = UUID.randomUUID();
+        
+        return CreateUDPRequest(p);
     }
     
-    public C_UDP_Request CreateUDPRequest(UUID id)
+    public C_UDP_Request CreateUDPRequest(P_UDP_Request parameters)
     {
-        return new C_UDP_Request(_ContextService, _CardPlugin, _StateFactory, this, _CommandDtoMapper, id);
+        return DICreate(C_UDP_Request.class, P_UDP_Request.class, parameters);
     }
 
     public C_TCP_NOK CreateTCPNOK(C_TCP_NOK.TcpNokReason tcpNokReason)
     {
-        return new C_TCP_NOK(_ContextService, _FrameService, this, _Loc, UUID.randomUUID(), tcpNokReason);
+        P_TCP_NOK p = new P_TCP_NOK();
+        
+        p.id = UUID.randomUUID();
+        p.reason = tcpNokReason;
+        
+        return CreateTCPNOK(p);
     }
 
-    public C_TCP_NOK CreateTCPNOK(UUID id, C_TCP_NOK.TcpNokReason tcpNokReason)
+    public C_TCP_NOK CreateTCPNOK(P_TCP_NOK parameters)
     {
-        return new C_TCP_NOK(_ContextService, _FrameService, this, _Loc, id, tcpNokReason);
+        return DICreate(C_TCP_NOK.class, P_TCP_NOK.class, parameters);
     }
     
     public C_TCP_OK CreateTCPOK()
     {
-        return new C_TCP_OK(_ContextService, this, UUID.randomUUID());
+        P_TCP_OK p = new P_TCP_OK();
+        
+        p.id = UUID.randomUUID();
+        
+        return CreateTCPOK(p);
     }
     
-    public C_TCP_OK CreateTCPOK(UUID id)
+    public C_TCP_OK CreateTCPOK(P_TCP_OK parameters)
     {
-        return new C_TCP_OK(_ContextService, this, id);
+        return DICreate(C_TCP_OK.class, P_TCP_OK.class, parameters);
     }
 
     public C_Disconnect CreateDisconnect(C_Disconnect.DisconnectReason disconnectReason)
     {
-        return new C_Disconnect(_ContextService, _FrameService, _Loc, UUID.randomUUID(), disconnectReason);
+        P_Disconnect p = new P_Disconnect();
+        
+        p.id = UUID.randomUUID();
+        p.reason = disconnectReason;
+        
+        return CreateDisconnect(p);
     }
     
-    public C_Disconnect CreateDisconnect(UUID id, C_Disconnect.DisconnectReason disconnectReason)
+    public C_Disconnect CreateDisconnect(P_Disconnect parameters)
     {
-        return new C_Disconnect(_ContextService, _FrameService, _Loc, id, disconnectReason);
+        return DICreate(C_Disconnect.class, P_Disconnect.class, parameters);
     }
 
     public C_RemovePlayer CreateRemovePlayer(UUID playerId)
     {
-       return new C_RemovePlayer(_ContextService, _NetworkService, this, _Logger, UUID.randomUUID(), playerId);
+        P_RemovePlayer p = new P_RemovePlayer();
+        
+        p.id = UUID.randomUUID();
+        p.playerId = playerId;
+        
+       return CreateRemovePlayer(p);
     }
     
-    public C_RemovePlayer CreateRemovePlayer(UUID id, UUID playerId)
+    public C_RemovePlayer CreateRemovePlayer(P_RemovePlayer parameters)
     {
-       return new C_RemovePlayer(_ContextService, _NetworkService, this, _Logger, id, playerId);
+        return DICreate(C_RemovePlayer.class, P_RemovePlayer.class, parameters);
     }
 
     public C_OnGameToLobby CreateOnGameToLobby(C_OnGameToLobby.GameToLobbyReason gameToLobbyReason)
     {
-        return new C_OnGameToLobby(_ContextService, _NetworkService, this, UUID.randomUUID(), gameToLobbyReason);
+        P_OnGameToLobby p = new P_OnGameToLobby();
+        
+        p.id = UUID.randomUUID();
+        p.reason = gameToLobbyReason;
+        
+        return CreateOnGameToLobby(p);
     }
         
-    public C_OnGameToLobby CreateOnGameToLobby(UUID id, C_OnGameToLobby.GameToLobbyReason gameToLobbyReason)
+    public C_OnGameToLobby CreateOnGameToLobby(P_OnGameToLobby parameters)
     {
-        return new C_OnGameToLobby(_ContextService, _NetworkService, this, id, gameToLobbyReason);
+        return DICreate(C_OnGameToLobby.class, P_OnGameToLobby.class, parameters);
     }
 
-    public C_OnTcpConnectionClosed CreateOnTcpConnectionClosed(UUID id, boolean local)
+    public C_OnTcpConnectionClosed CreateOnTcpConnectionClosed(UUID connectionId, boolean local)
     {
-        return new C_OnTcpConnectionClosed(_ContextService, this, id, id, local);
+        P_OnTcpConnectionClosed p = new P_OnTcpConnectionClosed();
+        
+        p.id = UUID.randomUUID();
+        p.connectionId = connectionId;
+        p.local = local;
+        
+        return CreateOnTcpConnectionClosed(p);
     }
-
-    public ITcpConnectionListener CreateCommandSchedulingTcpConnectionListener(ContextType contextType)
+    
+    public C_OnTcpConnectionClosed CreateOnTcpConnectionClosed(P_OnTcpConnectionClosed parameters)
     {
-        return new CommandSchedulingTcpConnectionListener(_ContextService, _CommandDtoMapper, this, _NetworkFactory, _Logger, contextType);
+        return DICreate(C_OnTcpConnectionClosed.class, P_OnTcpConnectionClosed.class, parameters);
     }
 
     public C_DenyClient CreateDenyClient(UUID id)
     {
-        return new C_DenyClient(_ContextService, _FrameService, id);
+        P_DenyClient p = new P_DenyClient();
+        
+        p.id = UUID.randomUUID();
+        
+        return CreateDenyClient(p);
+    }
+    
+    public C_DenyClient CreateDenyClient(P_DenyClient parameters)
+    {
+        return DICreate(C_DenyClient.class, P_DenyClient.class, parameters);
     }
 
     public C_OnLobbyWelcome CreateOnLobbyWelcome(UUID clientId, UUID serverId, String serverMessage, List<Player> remotePlayers, UUID lobbyAdminId)
     {
-        return new C_OnLobbyWelcome(_ContextService, this, UUID.randomUUID(), clientId, serverId, serverMessage, remotePlayers, lobbyAdminId);
+        P_OnLobbyWelcome p = new P_OnLobbyWelcome();
+        
+        p.id = UUID.randomUUID();
+        p.clientId = clientId;
+        p.serverId = serverId;
+        p.serverMessage = serverMessage;
+        p.connected = remotePlayers;
+        p.lobbyAdminId = lobbyAdminId;
+        
+        return CreateOnLobbyWelcome(p);
     }
     
-    public C_OnLobbyWelcome CreateOnLobbyWelcome(UUID id, UUID clientId, UUID serverId, String serverMessage, List<Player> remotePlayers, UUID lobbyAdminId)
+    public C_OnLobbyWelcome CreateOnLobbyWelcome(P_OnLobbyWelcome parameters)
     {
-        return new C_OnLobbyWelcome(_ContextService, this, id, clientId, serverId, serverMessage, remotePlayers, lobbyAdminId);
+        return DICreate(C_OnLobbyWelcome.class, P_OnLobbyWelcome.class, parameters);
     }
 
     public C_OnLobbyPlayerJoined CreateOnLobbyPlayerJoined(Player player)
     {
-        return new C_OnLobbyPlayerJoined(_ContextService, UUID.randomUUID(), player);
+        P_OnLobbyPlayerJoined p = new P_OnLobbyPlayerJoined();
+        
+        p.id = UUID.randomUUID();
+        p.player = player;
+        
+        return CreateOnLobbyPlayerJoined(p);
     }
     
-    public C_OnLobbyPlayerJoined CreateOnLobbyPlayerJoined(UUID id, Player player)
+    public C_OnLobbyPlayerJoined CreateOnLobbyPlayerJoined(P_OnLobbyPlayerJoined parameters)
     {
-        return new C_OnLobbyPlayerJoined(_ContextService, id, player);
+        return DICreate(C_OnLobbyPlayerJoined.class, P_OnLobbyPlayerJoined.class, parameters);
     }
 
     public C_StartMultiplayerGame CreateStartMultiplayerGame()
     {
-        return new C_StartMultiplayerGame(_ContextService, _CardPlugin, _NetworkService, _CardGameService, this, UUID.randomUUID());
+        P_StartMultiplayerGame p = new P_StartMultiplayerGame();
+        
+        p.id = UUID.randomUUID();
+       
+        return CreateStartMultiplayerGame(p);
     }
     
-    public C_StartMultiplayerGame CreateStartMultiplayerGame(UUID id)
+    public C_StartMultiplayerGame CreateStartMultiplayerGame(P_StartMultiplayerGame parameters)
     {
-        return new C_StartMultiplayerGame(_ContextService, _CardPlugin, _NetworkService, _CardGameService, this, id);
+        return DICreate(C_StartMultiplayerGame.class, P_StartMultiplayerGame.class, parameters);
     }
 
     public C_Reject CreateReject(UUID rejectedCommandId)
     {
-        return new C_Reject(_ContextService, UUID.randomUUID(), rejectedCommandId);
+        P_Reject p = new P_Reject();
+        
+        p.id = UUID.randomUUID();
+        p.rejectedCommandId = rejectedCommandId;
+        
+        return CreateReject(p);
     }
     
-    public C_Reject CreateReject(UUID id, UUID rejectedCommandId)
+    public C_Reject CreateReject(P_Reject parameters)
     {
-        return new C_Reject(_ContextService, id, rejectedCommandId);
+        return DICreate(C_Reject.class, P_Reject.class, parameters);
     }
 
     public C_Accept CreateAccept(UUID acceptedCommandId)
     {
-        return new C_Accept(_ContextService, UUID.randomUUID(), acceptedCommandId);
+        P_Accept p = new P_Accept();
+        
+        p.id = UUID.randomUUID();
+        p.acceptedCommandId = acceptedCommandId;
+        
+        return CreateAccept(p);
     }
     
-    public C_Accept CreateAccept(UUID id, UUID acceptedCommandId)
+    public C_Accept CreateAccept(P_Accept parameters)
     {
-        return new C_Accept(_ContextService, id, acceptedCommandId);
+        return DICreate(C_Accept.class, P_Accept.class, parameters);
     }
 
     public C_OnGameEnded CreateOnGameEnded(UUID winnerId)
     {
-        return new C_OnGameEnded(_ContextService, this, _FrameService, _Loc, UUID.randomUUID(), winnerId);
+        P_OnGameEnded p = new P_OnGameEnded();
+        
+        p.id = UUID.randomUUID();
+        p.winnerId = winnerId;
+        
+        return CreateOnGameEnded(p);
     }
     
-    public C_OnGameEnded CreateOnGameEnded(UUID id, UUID winnerId)
+    public C_OnGameEnded CreateOnGameEnded(P_OnGameEnded parameters)
     {
-        return new C_OnGameEnded(_ContextService, this, _FrameService, _Loc, id, winnerId);
+        return DICreate(C_OnGameEnded.class, P_OnGameEnded.class, parameters);
     }
 
     public C_StartLocalGame CreateStartLocalGame()
     {
-        return new C_StartLocalGame(_ContextService, _CardPlugin, _CardGameService, _StateFactory, UUID.randomUUID());
+        P_StartLocalGame p = new P_StartLocalGame();
+        
+        p.id = UUID.randomUUID();
+        
+        return CreateStartLocalGame(p);
     }
     
-    public C_StartLocalGame CreateStartLocalGame(UUID id)
+    public C_StartLocalGame CreateStartLocalGame(P_StartLocalGame parameters)
     {
-        return new C_StartLocalGame(_ContextService, _CardPlugin, _CardGameService, _StateFactory, id);
+        return DICreate(C_StartLocalGame.class, P_StartLocalGame.class, parameters);
     }
 
     public C_Redo CreateRedo()
     {
-        return new C_Redo(_ContextService, UUID.randomUUID());
+        P_Redo p = new P_Redo();
+        
+        p.id = UUID.randomUUID();
+        
+        return CreateRedo(p);
     }
     
-    public C_Redo CreateRedo(UUID id)
+    public C_Redo CreateRedo(P_Redo parameters)
     {
-        return new C_Redo(_ContextService, id);
+        return DICreate(C_Redo.class, P_Redo.class, parameters);
     }
 
     public C_Undo CreateUndo()
     {
-        return new C_Undo(_ContextService, UUID.randomUUID());
+        P_Undo p = new P_Undo();
+        
+        p.id = UUID.randomUUID();
+        
+        return CreateUndo(p);
     }
-    public C_Undo CreateUndo(UUID id)
+    
+    public C_Undo CreateUndo(P_Undo parameters)
     {
-        return new C_Undo(_ContextService, id);
+        return DICreate(C_Undo.class, P_Undo.class, parameters);
     }
 
     public C_SaveState CreateSaveState(String playerName, int serverTcpPort, int serverUdpPort, int clientUdpPort)
     {
-        return new C_SaveState(_ContextService, UUID.randomUUID(), playerName, serverTcpPort, serverUdpPort, clientUdpPort);
+        P_SaveState p = new P_SaveState();
+        
+        p.id = UUID.randomUUID();
+        p.playerName = playerName;
+        p.serverTcpPort = serverTcpPort;
+        p.serverUdpPort = serverUdpPort;
+        p.clientUdpPort = clientUdpPort;
+        
+        return CreateSaveState(p);
     }
     
-    public C_SaveState CreateSaveState(UUID id, String playerName, int serverTcpPort, int serverUdpPort, int clientUdpPort)
+    public C_SaveState CreateSaveState(P_SaveState parameters)
     {
-        return new C_SaveState(_ContextService, id, playerName, serverTcpPort, serverUdpPort, clientUdpPort);
+        return DICreate(C_SaveState.class, P_SaveState.class, parameters);
     }
 
     public C_SaveConfig CreateSaveConfig()
     {
-        return new C_SaveConfig(_ContextService, _CardPlugin, _FileService, _Logger, UUID.randomUUID());
+        P_SaveConfig p = new P_SaveConfig();
+        
+        p.id = UUID.randomUUID();
+        
+        return CreateSaveConfig(p);
     }
 
-    public C_SaveConfig CreateSaveConfig(UUID id)
+    public C_SaveConfig CreateSaveConfig(P_SaveConfig parameters)
     {
-        return new C_SaveConfig(_ContextService, _CardPlugin, _FileService, _Logger, id);
+        return DICreate(C_SaveConfig.class, P_SaveConfig.class, parameters);
     }
 
     public C_Composite CreateComposite(CommandBase cmd1, CommandBase cmd2)
     {
-        return new C_Composite(_ContextService, UUID.randomUUID(), cmd1, cmd2);
+        P_Composite p = new P_Composite();
+        
+        p.id = UUID.randomUUID();
+        p.commands = new ArrayList<>();
+        p.commands.add(cmd1);
+        p.commands.add(cmd2);
+        
+        return CreateComposite(p);
     }
     
-    public C_Composite CreateComposite(UUID id, CommandBase cmd1, CommandBase cmd2)
+    public C_Composite CreateComposite(P_Composite parameters)
     {
-        return new C_Composite(_ContextService, id, cmd1, cmd2);
+        return DICreate(C_Composite.class, P_Composite.class, parameters);
     }
 
     public C_UDP_StopServiceRequester CreateStopServiceRequester()
     {
-        return new C_UDP_StopServiceRequester(_ContextService, UUID.randomUUID());
+        P_UDP_StopServiceRequester p = new P_UDP_StopServiceRequester();
+        
+        p.id = UUID.randomUUID();
+                
+        return CreateStopServiceRequester(p);
     }
     
-    public C_UDP_StopServiceRequester CreateStopServiceRequester(UUID id)
+    public C_UDP_StopServiceRequester CreateStopServiceRequester(P_UDP_StopServiceRequester parameters)
     {
-        return new C_UDP_StopServiceRequester(_ContextService, id);
+        return DICreate(C_UDP_StopServiceRequester.class, P_UDP_StopServiceRequester.class, parameters);
     }
 
     public C_UDP_StartServiceRequester CreateStartServiceRequester()
     {
-        return new C_UDP_StartServiceRequester(_ContextService, this, _NetworkFactory, _CommandDtoMapper, _Logger, UUID.randomUUID());
+        P_UDP_StartServiceRequester p = new P_UDP_StartServiceRequester();
+        
+        p.id = UUID.randomUUID();
+                
+        return CreateStartServiceRequester(p);
     }
     
-    public C_UDP_StartServiceRequester CreateStartServiceRequester(UUID id)
+    public C_UDP_StartServiceRequester CreateStartServiceRequester(P_UDP_StartServiceRequester parameters)
     {
-        return new C_UDP_StartServiceRequester(_ContextService, this, _NetworkFactory, _CommandDtoMapper, _Logger, id);
+        return DICreate(C_UDP_StartServiceRequester.class, P_UDP_StartServiceRequester.class, parameters);
     }
 
     public C_LoadConfig CreateLoadConfig()
     {
-        return new C_LoadConfig(_ContextService, _FileService, _ConfigurationService, _ConfigurationFactory, _Logger, UUID.randomUUID());
+        P_LoadConfig p = new P_LoadConfig();
+        
+        p.id = UUID.randomUUID();
+        
+        return CreateLoadConfig(p);
     }
     
-    public C_LoadConfig CreateLoadConfig(UUID id)
+    public C_LoadConfig CreateLoadConfig(P_LoadConfig parameters)
     {
-        return new C_LoadConfig(_ContextService, _FileService, _ConfigurationService, _ConfigurationFactory, _Logger, id);
+        return DICreate(C_LoadConfig.class, P_LoadConfig.class, parameters);
     }
 
     public C_StartServer CreateStartServer(UUID localId, String localName, String srvname, String srvmsg, int udpPort, int tcpPort, boolean autoconnect)
     {
-        return new C_StartServer(_ContextService, _CardPlugin, _NetworkFactory, _StateFactory, this, _ConfigurationFactory, _CommandDtoMapper, _Logger, UUID.randomUUID(), localId, localName, srvname, srvmsg, udpPort, tcpPort, autoconnect);
+        P_StartServer p = new P_StartServer();
+        
+        p.id = UUID.randomUUID();
+        p.localId = localId;
+        p.localName = localName;
+        p.srvname = srvname;
+        p.srvmsg = srvmsg;
+        p.udpPort = udpPort;
+        p.tcpPort = tcpPort;
+        p.autoconnect = autoconnect;
+        
+        return CreateStartServer(p);
     }
     
-    public C_StartServer CreateStartServer(UUID id, UUID localId, String localName, String srvname, String srvmsg, int udpPort, int tcpPort, boolean autoconnect)
+    public C_StartServer CreateStartServer(P_StartServer parameters)
     {
-        return new C_StartServer(_ContextService, _CardPlugin, _NetworkFactory, _StateFactory, this, _ConfigurationFactory, _CommandDtoMapper, _Logger, id, localId, localName, srvname, srvmsg, udpPort, tcpPort, autoconnect);
+        return DICreate(C_StartServer.class, P_StartServer.class, parameters);
+    }
+    
+    
+
+    public C_ShowConnect ShowDialog_Connect()
+    {
+        P_Connect p = new P_Connect();
+        
+        p.id = UUID.randomUUID();
+        
+        return ShowDialog_Connect(p);
+    }
+    
+    public C_ShowConnect ShowDialog_Connect(P_Connect parameters)
+    {
+        return DICreate(C_ShowConnect.class, P_Connect.class, parameters);
     }
 
-    public D_Connect ShowDialog_Connect()
+    
+    
+    public C_ShowPlayerLeft ShowDialog_OnPlayerLeft()
     {
-        return new D_Connect(_ContextService, _FrameService, this, UUID.randomUUID());
+        P_ShowPlayerLeft p = new P_ShowPlayerLeft();
+        
+        p.id = UUID.randomUUID();
+        
+        return ShowDialog_OnPlayerLeft(p);
     }
     
-    public D_Connect ShowDialog_Connect(UUID id)
+    public C_ShowPlayerLeft ShowDialog_OnPlayerLeft(P_ShowPlayerLeft parameters)
     {
-        return new D_Connect(_ContextService, _FrameService, this, id);
+        return DICreate(C_ShowPlayerLeft.class, P_ShowPlayerLeft.class, parameters);
     }
 
-    public D_OnPlayerLeft ShowDialog_OnPlayerLeft()
+    public C_ShowLobby ShowDialog_Lobby()
     {
-        return new D_OnPlayerLeft(_ContextService, _FrameService, _Loc, UUID.randomUUID());
+        P_ShowLobby p = new P_ShowLobby();
+        
+        p.id = UUID.randomUUID();
+        
+        return ShowDialog_Lobby(p);
     }
     
-    public D_OnPlayerLeft ShowDialog_OnPlayerLeft(UUID id)
+    public C_ShowLobby ShowDialog_Lobby(P_ShowLobby parameters)
     {
-        return new D_OnPlayerLeft(_ContextService, _FrameService, _Loc, id);
+        return DICreate(C_ShowLobby.class, P_ShowLobby.class, parameters);
     }
 
-    public D_ShowLobby ShowDialog_Lobby()
+    public C_ShowToggleMenuMP ShowDialog_ToggleMenuMP()
     {
-        return new D_ShowLobby(_ContextService, _FrameService, this, UUID.randomUUID());
+        P_ShowToggleMenuMP p = new P_ShowToggleMenuMP();
+        
+        p.id = UUID.randomUUID();
+        
+        return ShowDialog_ToggleMenuMP(p);
     }
     
-    public D_ShowLobby ShowDialog_Lobby(UUID id)
+    public C_ShowToggleMenuMP ShowDialog_ToggleMenuMP(P_ShowToggleMenuMP parameters)
     {
-        return new D_ShowLobby(_ContextService, _FrameService, this, id);
+        return DICreate(C_ShowToggleMenuMP.class, P_ShowToggleMenuMP.class, parameters);
     }
 
-    public CommandBase ShowDialog_ToggleMenuMP()
+    public C_ShowStartServer ShowDialog_StartServer()
     {
-        return new D_ToggleMenuMP(_ContextService, _FrameService, UUID.randomUUID());
+        P_ShowStartServer p = new P_ShowStartServer();
+        
+        p.id = UUID.randomUUID();
+        
+        return ShowDialog_StartServer(p);
     }
     
-    public CommandBase ShowDialog_ToggleMenuMP(UUID id)
+    public C_ShowStartServer ShowDialog_StartServer(P_ShowStartServer parameters)
     {
-        return new D_ToggleMenuMP(_ContextService, _FrameService, id);
+        return DICreate(C_ShowStartServer.class, P_ShowStartServer.class, parameters);
     }
 
-    public CommandBase ShowDialog_StartServer()
+    
+    
+    
+    
+    
+    public C_ShowReexecutionFail ShowDialog_ReexecutionFail(List<CommandExecution> fails)
     {
-        return new D_StartServer(_ContextService, _FrameService, this, UUID.randomUUID());
+        P_ShowReexecutionFail p = new P_ShowReexecutionFail();
+        
+        p.id = UUID.randomUUID();
+        p.fails = fails;
+        
+        return ShowDialog_ReexecutionFail(p);
     }
     
-    public CommandBase ShowDialog_StartServer(UUID id)
+    public C_ShowReexecutionFail ShowDialog_ReexecutionFail(P_ShowReexecutionFail parameters)
     {
-        return new D_StartServer(_ContextService, _FrameService, this, id);
-    }
-
-    public D_OnReexecutionFail ShowDialog_ReexecutionFail(List<CommandExecution> fails)
-    {
-        return new D_OnReexecutionFail(_ContextService, _FrameService, _Loc, UUID.randomUUID(), fails);
-    }
-    
-    public D_OnReexecutionFail ShowDialog_ReexecutionFail(UUID id, List<CommandExecution> fails)
-    {
-        return new D_OnReexecutionFail(_ContextService, _FrameService, _Loc, id, fails);
+        return DICreate(C_ShowReexecutionFail.class, P_ShowReexecutionFail.class, parameters);
     }
         
     public C_Move CreateMove(UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
     {
-        return new C_Move(_ContextService, UUID.randomUUID(), srcCardStackId, dstCardStackId, cardId);
+        P_Move p = new P_Move();
+        
+        p.id = UUID.randomUUID();
+        p.srcCardStackId = srcCardStackId;
+        p.dstCardStackId = dstCardStackId;
+        p.cardId = cardId;
+        
+        return CreateMove(p);
     }
     
-    public C_Move CreateMove(UUID id, UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
+    public C_Move CreateMove(P_Move parameters)
     {
-        return new C_Move(_ContextService, id, srcCardStackId, dstCardStackId, cardId);
+        return DICreate(C_Move.class, P_Move.class, parameters);
     }
 
-    public C_SetVisible CreateSetVisible(List<Card> cards, boolean b)
+    public C_SetVisible CreateSetVisible(List<Card> cards, boolean visible)
     {
-        return new C_SetVisible(_ContextService, UUID.randomUUID(), cards, b);
+        P_SetVisible p = new P_SetVisible();
+        
+        p.id = UUID.randomUUID();
+        p.cards = cards;
+        p.visible = visible;
+        
+        return CreateSetVisible(p);
     }
     
-    public C_SetVisible CreateSetVisible(UUID id, List<Card> cards, boolean b)
+    public C_SetVisible CreateSetVisible(P_SetVisible parameters)
     {
-        return new C_SetVisible(_ContextService, id, cards, b);
+        return DICreate(C_SetVisible.class, P_SetVisible.class, parameters);
     }
 
     public abstract C_Push CreatePush(UUID dstCardStackId, List<UUID> srcCardIds);
-    public abstract C_Push CreatePush(UUID id, UUID dstCardStackId, List<UUID> srcCardIds);
+    public abstract C_Push CreatePush(P_Push parameters);
 
     public abstract C_Use CreateUse(UUID initiatorCardStackId, UUID initiatorCardId);
-    public abstract C_Use CreateUse(UUID id, UUID initiatorCardStackId, UUID initiatorCardId);
+    public abstract C_Use CreateUse(P_Use parameters);
 
     public abstract C_Pull CreatePull(UUID cardStackId, UUID cardId);
-    public abstract C_Pull CreatePull(UUID id, UUID cardStackId, UUID cardId);
+    public abstract C_Pull CreatePull(P_Pull parameters);
+    
+    
+
+    public ITcpConnectionListener CreateCommandSchedulingTcpConnectionListener(ContextType contextType)
+    {
+        return DICreate(CommandSchedulingTcpConnectionListener.class, ContextType.class, contextType);
+    }
+    
+    protected <C, P> C DICreate(Class<C> toCreateClazz, Class<P> parametersClazz, P parameters)
+    {
+        ContainerBuilder cb = _Container.Scope();        
+        cb.AddSingletonInstance(parametersClazz, parameters);
+        Container c = cb.Build();
+        return c.Get(toCreateClazz);
+    }
 }

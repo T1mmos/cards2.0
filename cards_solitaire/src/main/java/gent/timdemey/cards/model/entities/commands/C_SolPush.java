@@ -1,21 +1,23 @@
 package gent.timdemey.cards.model.entities.commands;
 
 import java.util.List;
-import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.state.CardValue;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_Push;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes;
 import gent.timdemey.cards.services.interfaces.IContextService;
 
 public class C_SolPush extends C_Push
 {
-    public C_SolPush(IContextService contextService, UUID id, UUID dstCardStackId, List<UUID> srcCardIds)
+    public C_SolPush(
+        IContextService contextService, 
+        P_Push parameters)
     {
-        super(contextService, id, dstCardStackId, srcCardIds);
+        super(contextService, parameters);
     }
 
     @Override

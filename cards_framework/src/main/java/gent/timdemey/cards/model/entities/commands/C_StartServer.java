@@ -8,6 +8,7 @@ import gent.timdemey.cards.ICardPlugin;
 
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_StartServer;
 import gent.timdemey.cards.model.entities.config.Configuration;
 import gent.timdemey.cards.model.entities.config.ConfigurationFactory;
 import gent.timdemey.cards.model.entities.state.GameState;
@@ -57,7 +58,7 @@ public class C_StartServer extends CommandBase
     private ICardPlugin _CardPlugin;
     private CommandDtoMapper _CommandDtoMapper;
 
-    C_StartServer(
+    public C_StartServer(
         IContextService contextService, 
         ICardPlugin cardPlugin,
         
@@ -67,31 +68,31 @@ public class C_StartServer extends CommandBase
         ConfigurationFactory configurationFactory,
         CommandDtoMapper commandDtoMapper,
         Logger logger,
-        UUID id, UUID playerId, String playerName, String srvname, String srvmsg, int udpport, int tcpport, boolean autoconnect)
+        P_StartServer parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
-        if (playerId == null)
+        if (parameters.localId == null)
         {
-            throw new IllegalArgumentException("playerId");
+            throw new IllegalArgumentException("localId");
         }
-        if (playerName == null)
+        if (parameters.localName == null)
         {
             throw new IllegalArgumentException("playerName");
         }
-        if (srvname == null || srvname.isEmpty())
+        if (parameters.srvname == null || parameters.srvname.isEmpty())
         {
             throw new IllegalArgumentException("srvname");
         }        
-        if (udpport <= 1024)
+        if (parameters.udpPort <= 1024)
         {
             throw new IllegalArgumentException("serverUdpPort");
         }
-        if (tcpport <= 1024)
+        if (parameters.tcpPort <= 1024)
         {
             throw new IllegalArgumentException("serverTcpPort");
         }
-        if (udpport == tcpport)
+        if (parameters.udpPort == parameters.tcpPort)
         {
             throw new IllegalArgumentException("serverTcpPort equals serverUdpPort");
         }
@@ -104,13 +105,13 @@ public class C_StartServer extends CommandBase
         this._CommandDtoMapper = commandDtoMapper;
         this._Logger = logger;
         
-        this.playerId = playerId;
-        this.playerName = playerName;
-        this.srvname = srvname;
-        this.srvmsg = srvmsg;
-        this.udpport = udpport;
-        this.tcpport = tcpport;
-        this.autoconnect = autoconnect;
+        this.playerId = parameters.localId;
+        this.playerName = parameters.localName;
+        this.srvname = parameters.srvname;
+        this.srvmsg = parameters.srvmsg;
+        this.udpport = parameters.udpPort;
+        this.tcpport = parameters.tcpPort;
+        this.autoconnect = parameters.autoconnect;
     }
 
     @Override

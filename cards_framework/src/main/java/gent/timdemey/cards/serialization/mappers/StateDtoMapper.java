@@ -28,12 +28,12 @@ import static gent.timdemey.cards.serialization.mappers.CommonMapper.toDto;
 import static gent.timdemey.cards.serialization.mappers.CommonMapper.toInetAddress;
 import static gent.timdemey.cards.serialization.mappers.EntityBaseDtoMapper.mergeDtoBaseToPayload;
 import static gent.timdemey.cards.serialization.mappers.EntityBaseDtoMapper.mergeEntityBaseToDto;
-public class CardsDtoMapper extends EntityBaseDtoMapper
+public class StateDtoMapper extends EntityBaseDtoMapper
 {
     static MapperDefs mapperDefs = new MapperDefs();
     private final StateFactory _StateFactory;
     
-    public CardsDtoMapper (StateFactory stateFactory)
+    public StateDtoMapper (StateFactory stateFactory)
     {
         this._StateFactory = stateFactory;
           

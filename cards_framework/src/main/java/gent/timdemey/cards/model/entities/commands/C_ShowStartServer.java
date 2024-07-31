@@ -4,6 +4,7 @@ import java.util.UUID;
 
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_ShowStartServer;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
@@ -16,18 +17,18 @@ import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.ui.panels.PanelOutData;
 import gent.timdemey.cards.ui.panels.dialogs.mp.StartServerPanelData;
 
-public class D_StartServer extends DialogCommandBase
+public class C_ShowStartServer extends DialogCommandBase
 {
     private final IFrameService _FrameService;
     private final CommandFactory _CommandFactory;
     
-    public D_StartServer (
+    public C_ShowStartServer (
         IContextService contextService, 
         IFrameService frameService, 
         CommandFactory commandFactory,
-        UUID id)
+        P_ShowStartServer parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
         this._FrameService = frameService;
         this._CommandFactory = commandFactory;

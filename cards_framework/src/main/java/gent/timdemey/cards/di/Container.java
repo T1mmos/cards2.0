@@ -23,20 +23,21 @@ public class Container
     private final Map<Class, Supplier> _SingletonSuppliersMap;
     private final Map<Class, Class> _SingletonClassesMap;
     
-    private final Map<Class, Object> _SingletonInstancesMap = new HashMap<>();    
+    private final Map<Class, Object> _SingletonInstancesMap;    
             
-    Container (Map<Class, Class> transientClassesMap, Map<Class, Class> singletonClassesMap, Map<Class, Supplier> singletonSuppliersMap)
+    // keep track of what we're constructing, to detect circular dependencies
+    private Stack<Class> constructing = new Stack<>();
+    
+    Container (Map<Class, Class> transientClassesMap, Map<Class, Class> singletonClassesMap,Map<Class, Object> singletonInstancesMap, Map<Class, Supplier> singletonSuppliersMap)
     {
         _TransientClassesMap = transientClassesMap;
         _SingletonClassesMap = singletonClassesMap;
         _SingletonSuppliersMap = singletonSuppliersMap;
+        _SingletonInstancesMap = singletonInstancesMap;
     }
         
     public <I> I Get(Class<I> clazz)
     {    
-        // keep track of what we're constructing, to detect circular dependencies
-        Stack<Class> constructing = new Stack<>();
-        
         return TryGet(clazz, constructing);
     }
     
@@ -79,7 +80,7 @@ public class Container
         }
         
         // fail
-        throw new UnsupportedOperationException("Class " + clazz.getName() + " is not mapped or if it's a concrete type, no suitable constructor was found");
+        throw new DIException("Class " + clazz.getName() + " is not mapped or if it's a concrete type, no suitable constructor was found");
     }
     
     private <I> I TryGet(Class<I> iclazz, Stack<Class> constructing, Map<Class, Class> definitions, Map<Class, Supplier> suppliers, Map<Class, Object> instances)
@@ -152,7 +153,7 @@ public class Container
                     b.append(System.lineSeparator() + "\t" + line);
                 }
                
-                throw new IllegalArgumentException("Class " + clazz.getName() + " cannot be constructed as a circular dependency was detected: " + b);
+                throw new DIException("Class " + clazz.getName() + " cannot be constructed as a circular dependency was detected: " + b);
             }
             
             // track that we are constructing this class
@@ -199,7 +200,12 @@ public class Container
         } 
         catch (Exception ex) 
         {
-            return null;
+            if (ex.getCause() instanceof DIException)
+            {
+                throw (DIException) ex.getCause();
+            }
+            
+            throw new DIException(ex);
         }
     }
 
@@ -216,6 +222,11 @@ public class Container
         values.addAll(_SingletonInstancesMap.values());
         
         return values;
+    }
+    
+    public ContainerBuilder Scope()
+    {
+        return new ContainerBuilder(_TransientClassesMap, _SingletonClassesMap, _SingletonInstancesMap, _SingletonSuppliersMap);
     }
 
 }

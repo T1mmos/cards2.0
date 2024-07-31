@@ -1,20 +1,22 @@
 package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_TCP_OK;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import java.util.UUID;
 
 public class C_TCP_OK extends CommandBase
 {   
     private final CommandFactory _CommandFactory;
     
-    C_TCP_OK (IContextService contextService, CommandFactory commandFactory, UUID id)
+    public C_TCP_OK (
+        IContextService contextService, CommandFactory commandFactory, 
+        P_TCP_OK parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
         this._CommandFactory = commandFactory;
     }

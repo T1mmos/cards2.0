@@ -1,0 +1,21 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package gent.timdemey.cards.model.entities.commands.payload;
+
+import gent.timdemey.cards.model.entities.common.PayloadBase;
+import gent.timdemey.cards.model.entities.state.Card;
+import java.util.List;
+
+/**
+ *
+ * @author Timmos
+ */
+public class P_SetVisible extends PayloadBase
+{
+
+    public List<Card> cards;
+    public boolean visible;
+    
+}

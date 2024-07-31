@@ -7,6 +7,7 @@ import java.util.UUID;
 import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_Push;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
@@ -19,13 +20,13 @@ public abstract class C_Push extends CommandBase
     private final UUID dstCardStackId;
     private final List<UUID> srcCardIds;
     
-    protected C_Push(
+    public C_Push(
         IContextService contextService, 
-        UUID id, UUID dstCardStackId, List<UUID> srcCardIds)
+        P_Push parameters)
     {
-        super(contextService, id);
-        this.dstCardStackId = dstCardStackId;
-        this.srcCardIds = Collections.unmodifiableList(srcCardIds);        
+        super(contextService, parameters);
+        this.dstCardStackId = parameters.dstCardStackId;
+        this.srcCardIds = Collections.unmodifiableList(parameters.srcCardIds);        
     }
     
     @Override

@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.commands.C_Disconnect.DisconnectReason;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_OnTcpConnectionClosed;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
@@ -16,17 +17,17 @@ public class C_OnTcpConnectionClosed extends CommandBase
     private final boolean local;
     private final CommandFactory _CommandFactory;
 
-    C_OnTcpConnectionClosed(
+    public C_OnTcpConnectionClosed(
         IContextService contextService, 
         CommandFactory commandFactory,
-        UUID id, UUID connectionId, boolean local)
+        P_OnTcpConnectionClosed parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
         this._CommandFactory = commandFactory;
         
-        this.connectionId = connectionId;
-        this.local = local;
+        this.connectionId = parameters.connectionId;
+        this.local = parameters.local;
     }
     
     @Override

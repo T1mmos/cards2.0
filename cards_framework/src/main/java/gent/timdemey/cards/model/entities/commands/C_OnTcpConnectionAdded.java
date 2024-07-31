@@ -4,6 +4,7 @@ import gent.timdemey.cards.ICardPlugin;
 
 import gent.timdemey.cards.model.entities.commands.C_TCP_NOK.TcpNokReason;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_OnTcpConnectionAdded;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.model.net.TCP_Connection;
 import gent.timdemey.cards.services.context.Context;
@@ -19,20 +20,20 @@ public class C_OnTcpConnectionAdded extends CommandBase
     private final INetworkService _NetworkService;
     private final CommandFactory _CommandFactory;
 
-    C_OnTcpConnectionAdded(
+    public C_OnTcpConnectionAdded(
         IContextService contextService,
         CommandFactory commandFactory,
         ICardPlugin cardPlugin,
         INetworkService networkService,
-        UUID id, TCP_Connection tcpConnection)
+        P_OnTcpConnectionAdded parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
         this._CommandFactory = commandFactory;
         this._CardPlugin = cardPlugin;
         this._NetworkService = networkService;
         
-        this.tcpConnection = tcpConnection;
+        this.tcpConnection = parameters.tcpConnection;
     }
 
     @Override

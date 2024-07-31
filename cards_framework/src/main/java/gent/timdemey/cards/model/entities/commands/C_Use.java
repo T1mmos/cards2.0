@@ -3,6 +3,7 @@ package gent.timdemey.cards.model.entities.commands;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_Use;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
@@ -15,18 +16,20 @@ public abstract class C_Use extends CommandBase
     protected final UUID initiatorStackId;
     protected final UUID initiatorCardId;
 
-    C_Use(IContextService contextService, UUID id, UUID initiatorStackId, UUID initiatorCardId)
+    public C_Use(
+        IContextService contextService,
+        P_Use parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
-        if ((initiatorStackId == null && initiatorCardId == null)
-                || (initiatorStackId != null && initiatorCardId != null))
+        if ((parameters.initiatorStackId == null && parameters.initiatorCardId == null)
+                || (parameters.initiatorStackId != null && parameters.initiatorCardId != null))
         {
             throw new IllegalArgumentException(
                     "Choose exactly one initator for a Use command: a card, or a card stack, but not both.");
         }
-        this.initiatorStackId = initiatorStackId;
-        this.initiatorCardId = initiatorCardId;
+        this.initiatorStackId = parameters.initiatorStackId;
+        this.initiatorCardId = parameters.initiatorCardId;
     }
 
     @Override

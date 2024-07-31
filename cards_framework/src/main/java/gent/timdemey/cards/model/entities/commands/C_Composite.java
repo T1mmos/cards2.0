@@ -1,17 +1,16 @@
 package gent.timdemey.cards.model.entities.commands;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
+import gent.timdemey.cards.model.entities.commands.payload.P_Composite;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.utils.Debug;
-import java.util.UUID;
 
 /**
  * A composite command bundles multiple commands in one atomic command.
@@ -31,32 +30,27 @@ public class C_Composite extends CommandBase
 {
     private final List<CommandBase> commands;
     
-    private C_Composite(IContextService contextService, UUID id, List<CommandBase> commands)
+    public C_Composite(IContextService contextService, P_Composite parameters)
     {
-        super(contextService, id);
-        if (commands == null)
+        super(contextService, parameters);
+        if (parameters.commands == null)
         {
             throw new IllegalArgumentException("commands");
         }
-        if (commands.size() == 0)
+        if (parameters.commands.size() == 0)
         {
             throw new IllegalArgumentException("commands");
         }
-        for (int i = 0; i < commands.size(); i++)
+        for (int i = 0; i < parameters.commands.size(); i++)
         {
-            CommandBase cmd = commands.get(i);
+            CommandBase cmd = parameters.commands.get(i);
             if (cmd == null)
             {
                 throw new IllegalArgumentException("command[" + i + "]");
             }
         }
         
-        this.commands = commands;
-    }
-
-    public C_Composite(IContextService contextService, UUID id, CommandBase... commands)
-    {
-        this(contextService, id, Arrays.asList(commands));
+        this.commands = parameters.commands;
     }
 
     @Override

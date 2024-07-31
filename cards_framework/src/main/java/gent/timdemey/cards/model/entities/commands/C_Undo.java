@@ -1,11 +1,11 @@
 package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_Undo;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import java.util.UUID;
 
 /**
  * Special meta command to undo the last command. This command should not be
@@ -15,9 +15,11 @@ import java.util.UUID;
  */
 public final class C_Undo extends CommandBase
 {
-    C_Undo(IContextService contextService, UUID id)
+    public C_Undo(
+        IContextService contextService, 
+        P_Undo parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
     }
 
     @Override

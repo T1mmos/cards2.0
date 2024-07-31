@@ -7,6 +7,7 @@ import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.C_Disconnect.DisconnectReason;
 import gent.timdemey.cards.model.entities.commands.C_OnGameToLobby.GameToLobbyReason;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_RemovePlayer;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.Player;
 import gent.timdemey.cards.model.entities.state.State;
@@ -23,17 +24,17 @@ public class C_RemovePlayer extends CommandBase
     private final Logger _Logger;
     private final CommandFactory _CommandFactory;
 
-    C_RemovePlayer(
+    public C_RemovePlayer(
         IContextService contextService, INetworkService networkService, CommandFactory commandFactory, Logger logger, 
-        UUID id, UUID playerId)
+        P_RemovePlayer parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
         this._NetworkService = networkService;
         this._CommandFactory = commandFactory;
         this._Logger = logger;
         
-        this.playerId = playerId;
+        this.playerId = parameters.playerId;
     }
 
     @Override

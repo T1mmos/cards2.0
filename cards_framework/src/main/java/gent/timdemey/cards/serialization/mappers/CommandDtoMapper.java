@@ -1,5 +1,6 @@
 package gent.timdemey.cards.serialization.mappers;
 
+import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.model.entities.commands.C_Accept;
 import gent.timdemey.cards.model.entities.commands.C_DenyClient;
 import gent.timdemey.cards.model.entities.commands.C_Disconnect;
@@ -30,8 +31,8 @@ import gent.timdemey.cards.model.entities.commands.payload.P_Move;
 import gent.timdemey.cards.model.entities.commands.payload.P_OnGameEnded;
 import gent.timdemey.cards.model.entities.commands.payload.P_OnGameToLobby;
 import gent.timdemey.cards.model.entities.commands.payload.P_OnLobbyPlayerJoined;
+import gent.timdemey.cards.model.entities.commands.payload.P_OnLobbyToGame;
 import gent.timdemey.cards.model.entities.commands.payload.P_OnLobbyWelcome;
-import gent.timdemey.cards.model.entities.commands.payload.P_OnMultiplayerGameStarted;
 import gent.timdemey.cards.model.entities.commands.payload.P_Reject;
 import gent.timdemey.cards.model.entities.commands.payload.P_RemovePlayer;
 import gent.timdemey.cards.model.entities.commands.payload.P_StartMultiplayerGame;
@@ -60,12 +61,14 @@ import gent.timdemey.cards.serialization.dto.commands.C_UDP_RequestDto;
 import gent.timdemey.cards.serialization.dto.commands.C_UDP_ResponseDto;
 import gent.timdemey.cards.serialization.dto.commands.CommandBaseDto;
 
+
 public class CommandDtoMapper extends EntityBaseDtoMapper
 {
     protected final MapperDefs mapperDefs = new MapperDefs();
     
     private final CommandFactory _CommandFactory;
-    private final CardsDtoMapper _CardsDtoMapper;
+    private final StateDtoMapper _CardsDtoMapper;
+    
     {        
         // domain objects to DTO
         mapperDefs.addMapping(C_Accept.class, C_AcceptDto.class, this::toDto);
@@ -104,10 +107,10 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         mapperDefs.addMapping(C_TCP_OKDto.class, C_TCP_OK.class, this::toCommand);
     }
     
-    public CommandDtoMapper(CommandFactory commandFactory, CardsDtoMapper cardsDtoMapper)
+    public CommandDtoMapper(Container container)
     {
-        this._CommandFactory = commandFactory;
-        this._CardsDtoMapper = cardsDtoMapper;
+        this._CommandFactory = container.Get(CommandFactory.class);
+        this._CardsDtoMapper = container.Get(StateDtoMapper.class);
     }
 
     public String toJson(CommandBase cmd)
@@ -139,7 +142,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         {
             mergeDtoBaseToPayload(dto, pl);
         }        
-        return _CommandFactory.CreateUDPRequest(pl.id);
+        return _CommandFactory.CreateUDPRequest(pl);
     }
 
     private C_UDP_ResponseDto toDto(C_UDP_Response cmd)
@@ -161,7 +164,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
             
             pl.server = _CardsDtoMapper.toDomainObject(dto.server);
         };
-        return _CommandFactory.CreateUDPResponse(pl.id, pl.server);
+        return _CommandFactory.CreateUDPResponse(pl);
     }
 
     private C_DenyClientDto toDto (C_DenyClient cmd)
@@ -201,7 +204,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
             
             pl.reason = toEnum(DisconnectReason.class, dto.reason);
         }
-        return _CommandFactory.CreateDisconnect(pl.id, pl.reason);        
+        return _CommandFactory.CreateDisconnect(pl);        
     }
     
     private C_OnGameToLobbyDto toDto (C_OnGameToLobby cmd)
@@ -223,7 +226,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
             
             pl.reason = toEnum(GameToLobbyReason.class, dto.reason);
         }
-        return _CommandFactory.CreateOnGameToLobby(pl.id, pl.reason);        
+        return _CommandFactory.CreateOnGameToLobby(pl);        
     }
 
     private C_RemovePlayerDto toDto (C_RemovePlayer cmd)
@@ -245,7 +248,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
             
             pl.playerId = toUuid(dto.playerId);
         }
-        return _CommandFactory.CreateRemovePlayer(pl.id, pl.playerId);        
+        return _CommandFactory.CreateRemovePlayer(pl);        
     }
     
     private C_EnterLobbyDto toDto(C_EnterLobby cmd)
@@ -268,7 +271,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
             pl.clientId = CommonMapper.toUuid(dto.clientId);
             pl.clientName = dto.clientName;
         }        
-        return _CommandFactory.CreateEnterLobby(pl.id, pl.clientName, pl.clientId);
+        return _CommandFactory.CreateEnterLobby(pl);
     }
     
     private C_OnLobbyWelcomeDto toDto(C_OnLobbyWelcome cmd)
@@ -279,7 +282,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
             dto.clientId = toDto(cmd.clientId);
             dto.serverId = toDto(cmd.serverId);
             dto.serverMessage = cmd.serverMessage;
-            dto.connected = mapList(CardsDtoMapper.mapperDefs, cmd.connected, PlayerDto.class);
+            dto.connected = mapList(StateDtoMapper.mapperDefs, cmd.connected, PlayerDto.class);
             dto.lobbyAdminId = toDto(cmd.lobbyAdminId);
         }        
         return dto;
@@ -293,10 +296,10 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
             pl.clientId = toUuid(dto.clientId);
             pl.serverId = toUuid(dto.serverId);
             pl.serverMessage = dto.serverMessage;
-            pl.connected = mapList(CardsDtoMapper.mapperDefs, dto.connected, Player.class);
+            pl.connected = mapList(StateDtoMapper.mapperDefs, dto.connected, Player.class);
             pl.lobbyAdminId = toUuid(dto.lobbyAdminId);
         }        
-        return _CommandFactory.CreateOnLobbyWelcome(pl.id, pl.clientId, pl.serverId, pl.serverMessage, pl.connected, pl.lobbyAdminId);
+        return _CommandFactory.CreateOnLobbyWelcome(pl);
     }
     
     private C_OnLobbyPlayerJoinedDto toDto(C_OnLobbyPlayerJoined cmd)
@@ -318,7 +321,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
             
             pl.player = _CardsDtoMapper.toDomainObject(dto.player);
         }        
-        return _CommandFactory.CreateOnLobbyPlayerJoined(pl.id, pl.player);
+        return _CommandFactory.CreateOnLobbyPlayerJoined(pl);
     }
     
     private C_StartMultiplayerGameDto toDto(C_StartMultiplayerGame cmd)
@@ -336,7 +339,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         {
             mergeDtoBaseToPayload(dto, pl);
         }        
-        return _CommandFactory.CreateStartMultiplayerGame(pl.id);
+        return _CommandFactory.CreateStartMultiplayerGame(pl);
     }
     
     private C_OnMultiplayerGameStartedDto toDto(C_OnLobbyToGame cmd)
@@ -352,13 +355,13 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     
     private C_OnLobbyToGame toCommand(C_OnMultiplayerGameStartedDto dto)
     {
-        P_OnMultiplayerGameStarted pl = new P_OnMultiplayerGameStarted();
+        P_OnLobbyToGame pl = new P_OnLobbyToGame();
         {
             mergeDtoBaseToPayload(dto, pl);
             
             pl.cardGame = _CardsDtoMapper.toDomainObject(dto.cardGame);
         }        
-        return _CommandFactory.CreateOnLobbyToGame(pl.id, pl.cardGame);
+        return _CommandFactory.CreateOnLobbyToGame(pl);
     }
     
     private C_RejectDto toDto(C_Reject cmd)
@@ -380,7 +383,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
             
             pl.rejectedCommandId = toUuid(dto.rejectedCommandId);
         }        
-        return _CommandFactory.CreateReject(pl.id, pl.rejectedCommandId);
+        return _CommandFactory.CreateReject(pl);
     }
     
     private C_AcceptDto toDto(C_Accept cmd)
@@ -402,7 +405,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
             
             pl.acceptedCommandId = toUuid(dto.acceptedCommandId);
         }        
-        return _CommandFactory.CreateAccept(pl.id, pl.acceptedCommandId);
+        return _CommandFactory.CreateAccept(pl);
     }
     
     private C_OnGameEndedDto toDto(C_OnGameEnded cmd)
@@ -423,7 +426,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
             mergeDtoBaseToPayload(dto, pl);
             pl.winnerId = toUuid(dto.winnerId);
         }
-        return _CommandFactory.CreateOnGameEnded(pl.id, pl.winnerId);
+        return _CommandFactory.CreateOnGameEnded(pl);
     }
     
     private C_TCP_OKDto toDto(C_TCP_OK cmd)
@@ -441,7 +444,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         {
             mergeDtoBaseToPayload(dto, pl);
         }
-        return _CommandFactory.CreateTCPOK(pl.id);
+        return _CommandFactory.CreateTCPOK(pl);
     }
     
     private C_TCP_NOKDto toDto(C_TCP_NOK cmd)
@@ -461,7 +464,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
             mergeDtoBaseToPayload(dto, pl);
             pl.reason = toEnum(TcpNokReason.class, dto.reason);
         }
-        return _CommandFactory.CreateTCPNOK(pl.id, pl.reason);
+        return _CommandFactory.CreateTCPNOK(pl);
     }
     
     private <T extends Enum<T>> String toDto (T enumInst)

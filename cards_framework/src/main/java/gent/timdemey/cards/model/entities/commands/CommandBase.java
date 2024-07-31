@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.common.EntityBase;
+import gent.timdemey.cards.model.entities.common.PayloadBase;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.model.net.TCP_Connection;
 import gent.timdemey.cards.model.net.UDP_Source;
@@ -20,10 +21,11 @@ public abstract class CommandBase extends EntityBase
     private volatile String serialized;
     
     protected final IContextService _ContextService;
+    
 
-    protected CommandBase(IContextService contextService, UUID id)
+    protected CommandBase(IContextService contextService, PayloadBase payload)
     {
-        super(id);
+        super(payload.id);
         
         this._ContextService = contextService;
     }

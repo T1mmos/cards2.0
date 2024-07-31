@@ -3,6 +3,7 @@ package gent.timdemey.cards.model.entities.commands;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_Reject;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -13,13 +14,13 @@ public class C_Reject extends CommandBase
 {
     public final UUID rejectedCommandId;
     
-    C_Reject (
+    public C_Reject (
         IContextService contextService,
-        UUID id, UUID rejectedCommandId)
+        P_Reject parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
-        this.rejectedCommandId = rejectedCommandId;
+        this.rejectedCommandId = parameters.rejectedCommandId;
     }
     
     @Override

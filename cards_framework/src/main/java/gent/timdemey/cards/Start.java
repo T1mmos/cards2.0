@@ -12,7 +12,6 @@ import gent.timdemey.cards.logging.LogManager;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.delta.IChangeTracker;
 import gent.timdemey.cards.model.delta.StateChangeTracker;
-import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.action.ActionService;
 import gent.timdemey.cards.services.animation.AnimationDescriptorFactory;
 import gent.timdemey.cards.services.animation.AnimationService;

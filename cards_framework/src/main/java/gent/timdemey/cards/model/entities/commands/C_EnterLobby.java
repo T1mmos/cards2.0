@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_EnterLobby;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.Player;
 import gent.timdemey.cards.model.entities.state.State;
@@ -37,16 +38,16 @@ public class C_EnterLobby extends CommandBase
         CommandFactory commandFactory,
         StateFactory stateFactory,
         INetworkService networkService,
-        UUID id, String clientName, UUID clientId)
+        P_EnterLobby parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
         this._Logger = logger;
         this._CommandFactory = commandFactory;
         this._StateFactory = stateFactory;
         this._NetworkService = networkService;
-        this.clientName = clientName;
-        this.clientId = clientId;
+        this.clientName = parameters.clientName;
+        this.clientId = parameters.clientId;
     }
 
     @Override

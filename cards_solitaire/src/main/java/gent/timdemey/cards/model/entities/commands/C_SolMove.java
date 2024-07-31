@@ -9,6 +9,7 @@ import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_Move;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -22,15 +23,16 @@ import gent.timdemey.cards.services.interfaces.IContextService;
  */
 public class C_SolMove extends C_Move
 {
-    private List<Card> transferCards;
     private List<Card> flippedTransferCards;
     private boolean depotInvolved;
     private boolean visible;
     private final CommandFactory _CommandFactory;
 
-    public C_SolMove(IContextService contextService, CommandFactory commandFactory, UUID id, UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
+    public C_SolMove(
+        IContextService contextService, CommandFactory commandFactory, 
+        P_Move parameters)
     {
-        super(contextService, id, srcCardStackId, dstCardStackId, cardId);
+        super(contextService, parameters);
         
         this._CommandFactory = commandFactory;
     }

@@ -9,6 +9,7 @@ import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.state.ServerTCP;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.model.entities.state.StateFactory;
+import gent.timdemey.cards.model.entities.commands.payload.P_Connect;
 import gent.timdemey.cards.model.net.ITcpConnectionListener;
 import gent.timdemey.cards.model.net.NetworkFactory;
 import gent.timdemey.cards.model.net.TCP_ConnectionPool;
@@ -35,28 +36,27 @@ public class C_Connect extends CommandBase
     private final StateFactory _StateFactory;
     private final NetworkFactory _NetworkFactory;
     private final CommandFactory _CommandFactory;
-    
-    C_Connect(
+        
+    public C_Connect(
         IContextService contextService,
         ICardPlugin cardPlugin, 
         NetworkFactory networkFactory,
         StateFactory stateFactory,
         CommandFactory commandFactory,
-        UUID id, UUID playerId, UUID serverId, InetAddress serverInetAddress, int serverTcpPort, String serverName, String playerName)
+        P_Connect parameters)
     {
-        super(contextService, id);
-        
+        super(contextService, parameters);
         this._CardPlugin = cardPlugin;
         this._NetworkFactory = networkFactory;
         this._StateFactory = stateFactory;
         this._CommandFactory = commandFactory;
         
-        this.playerId = playerId;
-        this.serverId = serverId;
-        this.serverInetAddress = serverInetAddress;
-        this.serverTcpPort = serverTcpPort;
-        this.serverName = serverName;
-        this.playerName = playerName;
+        this.playerId = parameters.playerId;
+        this.serverId = parameters.serverId;
+        this.serverInetAddress = parameters.serverInetAddress;
+        this.serverTcpPort = parameters.serverTcpPort;
+        this.serverName = parameters.serverName;
+        this.playerName = parameters.playerName;
     }
 
     @Override

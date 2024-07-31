@@ -7,6 +7,7 @@ import gent.timdemey.cards.ICardPlugin;
 
 import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_StartMultiplayerGame;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -28,11 +29,11 @@ public class C_StartMultiplayerGame extends CommandBase
     private final ICardGameService _CardGameService;
     private CommandFactory _CommandFactory;
     
-    C_StartMultiplayerGame(
+    public C_StartMultiplayerGame(
         IContextService contextService, ICardPlugin cardPlugin, INetworkService networkService, ICardGameService cardGameService, CommandFactory commandFactory,
-        UUID id)
+        P_StartMultiplayerGame parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
         this._CardPlugin = cardPlugin;
         this._NetworkService = networkService;

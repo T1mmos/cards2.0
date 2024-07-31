@@ -7,6 +7,7 @@ import java.util.UUID;
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_StartLocalGame;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.Player;
 import gent.timdemey.cards.model.entities.state.State;
@@ -22,11 +23,11 @@ public class C_StartLocalGame extends CommandBase
     private final ICardGameService _CardGameService;
     private final StateFactory _StateFactory;
     
-    C_StartLocalGame(
+    public C_StartLocalGame(
         IContextService contextService, ICardPlugin cardPlugin, ICardGameService cardGameService, StateFactory stateFactory,
-        UUID id)
+        P_StartLocalGame parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
         this._CardPlugin = cardPlugin;
         this._CardGameService = cardGameService;

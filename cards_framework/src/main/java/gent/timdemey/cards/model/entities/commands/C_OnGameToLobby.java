@@ -2,6 +2,7 @@ package gent.timdemey.cards.model.entities.commands;
 
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_OnGameToLobby;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
@@ -38,14 +39,14 @@ public class C_OnGameToLobby extends CommandBase
     
     public final GameToLobbyReason reason;
 
-    C_OnGameToLobby(IContextService contextService, INetworkService networkService, CommandFactory commandFactory, UUID id, GameToLobbyReason reason)
+    public C_OnGameToLobby(IContextService contextService, INetworkService networkService, CommandFactory commandFactory, P_OnGameToLobby parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
         this._NetworkService = networkService;
         this._CommandFactory = commandFactory;
         
-        this.reason = reason;
+        this.reason = parameters.reason;
     }
 
     @Override
@@ -75,12 +76,12 @@ public class C_OnGameToLobby extends CommandBase
                 {
                     // if the game is ongoing then the entire game ends, so the user needs to be
                     // notified
-                    D_OnPlayerLeft cmd_dialog = _CommandFactory.ShowDialog_OnPlayerLeft();
+                    C_ShowPlayerLeft cmd_dialog = _CommandFactory.ShowDialog_OnPlayerLeft();
                     run(cmd_dialog);
                 }
             }
             
-            D_ShowLobby cmd_showlobby = _CommandFactory.ShowDialog_Lobby();
+            C_ShowLobby cmd_showlobby = _CommandFactory.ShowDialog_Lobby();
             run(cmd_showlobby);
         }
         else

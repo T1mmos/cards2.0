@@ -1,6 +1,7 @@
 package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_SaveState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -14,16 +15,16 @@ public class C_SaveState extends CommandBase
     private final int serverUdpPort;
     private final int clientUdpPort;
        
-    C_SaveState (
+    public C_SaveState (
         IContextService contextService, 
-        UUID id, String playerName, int serverTcpPort, int serverUdpPort, int clientUdpPort)
+        P_SaveState parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
-        this.playerName = playerName;
-        this.serverTcpPort = serverTcpPort;
-        this.serverUdpPort = serverUdpPort;
-        this.clientUdpPort = clientUdpPort;
+        this.playerName = parameters.playerName;
+        this.serverTcpPort = parameters.serverTcpPort;
+        this.serverUdpPort = parameters.serverUdpPort;
+        this.clientUdpPort = parameters.clientUdpPort;
     }
         
     @Override

@@ -1,9 +1,8 @@
 package gent.timdemey.cards.model.entities.commands;
 
-
-import gent.timdemey.cards.model.entities.state.CommandHistory;
 import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_OnLobbyToGame;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.model.entities.state.StateFactory;
@@ -27,20 +26,20 @@ public class C_OnLobbyToGame extends CommandBase
     private final INetworkService _NetworkService;
     private final StateFactory _StateFactory;
     
-    C_OnLobbyToGame(
+    public C_OnLobbyToGame(
         IContextService contextService,
         IFrameService frameService,
         INetworkService networkService,
         StateFactory stateFactory,
-        UUID id, CardGame cardGame)
+        P_OnLobbyToGame parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
         this._FrameService = frameService;
         this._NetworkService = networkService;
         this._StateFactory = stateFactory;
         
-        this.cardGame = cardGame;
+        this.cardGame = parameters.cardGame;
     }
     
     @Override

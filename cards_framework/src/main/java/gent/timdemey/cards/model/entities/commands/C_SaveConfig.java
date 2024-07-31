@@ -15,6 +15,7 @@ import gent.timdemey.cards.ICardPlugin;
 
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_SaveConfig;
 import gent.timdemey.cards.model.entities.config.Configuration;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
@@ -31,9 +32,11 @@ public class C_SaveConfig extends CommandBase
     private final IFileService _FileService;
     private final Logger _Logger;
     
-    C_SaveConfig (IContextService contextService, ICardPlugin cardPlugin, IFileService fileService, Logger logger, UUID id)
+    public C_SaveConfig (
+        IContextService contextService, ICardPlugin cardPlugin, IFileService fileService, Logger logger, 
+        P_SaveConfig parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
         this._CardPlugin = cardPlugin;
         this._FileService = fileService;

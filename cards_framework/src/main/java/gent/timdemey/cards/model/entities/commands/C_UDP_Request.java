@@ -3,6 +3,7 @@ package gent.timdemey.cards.model.entities.commands;
 import gent.timdemey.cards.ICardPlugin;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_UDP_Request;
 import gent.timdemey.cards.model.entities.state.ServerTCP;
 import gent.timdemey.cards.model.entities.state.ServerUDP;
 import gent.timdemey.cards.model.entities.state.State;
@@ -13,7 +14,6 @@ import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import java.util.UUID;
 
 public class C_UDP_Request extends CommandBase
 {
@@ -22,12 +22,11 @@ public class C_UDP_Request extends CommandBase
     private final CommandFactory _CommandFactory;
     private final CommandDtoMapper _CommandDtoMapper;
     
-    C_UDP_Request(
+    public C_UDP_Request(
         IContextService contextService, ICardPlugin cardPlugin, StateFactory stateFactory, CommandFactory commandFactory, CommandDtoMapper commandDtoMapper,
-            
-            UUID id)
+        P_UDP_Request parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
         this._CardPlugin = cardPlugin;
         this._StateFactory = stateFactory;

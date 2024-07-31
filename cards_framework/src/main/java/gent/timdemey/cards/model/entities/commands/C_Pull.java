@@ -5,6 +5,7 @@ import java.util.UUID;
 import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_Pull;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
@@ -17,14 +18,14 @@ public abstract class C_Pull extends CommandBase
     private final UUID srcCardStackId;
     private final UUID srcCardId;
     
-    protected C_Pull(
+    public C_Pull(
         IContextService contextService,
-        UUID id, UUID srcCardStackId, UUID srcCardId)
+        P_Pull parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
-        this.srcCardStackId = srcCardStackId;
-        this.srcCardId = srcCardId;
+        this.srcCardStackId = parameters.srcCardStackId;
+        this.srcCardId = parameters.srcCardId;
     }
     
     @Override

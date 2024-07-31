@@ -142,8 +142,8 @@ class CardGamePanelMouseListener extends MouseAdapter
             ReadOnlyCard card = (ReadOnlyCard) jsimage.getComponent().getPayload();
             ReadOnlyCardStack stack = card.getCardStack();
 
-            CommandBase cmdPull = _CommandFactory.CreatePull(playerId, stack.getId(), card.getId());
-            CommandBase cmdUse = _CommandFactory.CreateUse(playerId, null, card.getId());
+            CommandBase cmdPull = _CommandFactory.CreatePull(stack.getId(), card.getId());
+            CommandBase cmdUse = _CommandFactory.CreateUse(null, card.getId());
             boolean pullable = canExecute(context, cmdPull, "mousePressed/card");
             boolean useable = canExecute(context, cmdUse, "mousePressed/card");
 
@@ -205,7 +205,7 @@ class CardGamePanelMouseListener extends MouseAdapter
         }
         else if (jsimage.getComponent().getComponentType().hasTypeName(ComponentTypes.CARDSTACK))
         {
-            CommandBase cmdUse = _CommandFactory.CreateUse(playerId, ((ReadOnlyCardStack)jsimage.getComponent().getPayload()).getId(), null);
+            CommandBase cmdUse = _CommandFactory.CreateUse(((ReadOnlyCardStack)jsimage.getComponent().getPayload()).getId(), null);
             if (canExecute(context, cmdUse, "mousePressed/cardstack"))
             {
                 context.schedule(cmdUse);
@@ -280,7 +280,7 @@ class CardGamePanelMouseListener extends MouseAdapter
                         .map(c -> (ReadOnlyCard) c.getComponent().getPayload())
                         .collect(Collectors.toList());
                 ReadOnlyEntityList<ReadOnlyCard> roCards = new ReadOnlyEntityList<>(cards);
-                CommandBase cmdPush = _CommandFactory.CreatePush(playerId, dstCardStack.getId(), roCards.getIds());
+                CommandBase cmdPush = _CommandFactory.CreatePush(dstCardStack.getId(), roCards.getIds());
                 if (canExecute(context, cmdPush, "mouseReleased"))
                 {
                     Rectangle intersection = comp.getAbsCoords().getBounds().intersection(olComp.getAbsCoords().getBounds());

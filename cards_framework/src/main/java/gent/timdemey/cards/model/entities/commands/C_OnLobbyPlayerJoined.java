@@ -1,6 +1,7 @@
 package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_OnLobbyPlayerJoined;
 import gent.timdemey.cards.model.entities.state.Player;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
@@ -19,11 +20,11 @@ public class C_OnLobbyPlayerJoined extends CommandBase
 {
     public final Player player;
 
-    C_OnLobbyPlayerJoined(IContextService contextService, UUID id, Player player)
+    public C_OnLobbyPlayerJoined(IContextService contextService, P_OnLobbyPlayerJoined parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
-        this.player = player;
+        this.player = parameters.player;
     }
 
     @Override

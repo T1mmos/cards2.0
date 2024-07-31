@@ -2,6 +2,7 @@ package gent.timdemey.cards.model.entities.commands;
 
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_ShowToggleMenuMP;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
@@ -9,15 +10,16 @@ import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
-import java.util.UUID;
 
-public class D_ToggleMenuMP extends DialogCommandBase
+public class C_ShowToggleMenuMP extends DialogCommandBase
 {
-
     private final IFrameService _FrameService;
-    public D_ToggleMenuMP(IContextService contextService, IFrameService frameService, UUID id)
+    
+    public C_ShowToggleMenuMP(
+        IContextService contextService, IFrameService frameService, 
+        P_ShowToggleMenuMP parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
         this._FrameService = frameService;
     }

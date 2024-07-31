@@ -2,8 +2,8 @@ package gent.timdemey.cards.serialization.mappers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import gent.timdemey.cards.serialization.dto.commands.CommandBaseDto;
+
 import gent.timdemey.cards.serialization.gson.CommandDtoAdapter;
 
 class JsonMapper

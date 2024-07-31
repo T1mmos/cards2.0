@@ -1,5 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.model.entities.commands.payload.P_Use;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -15,12 +16,13 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 
 public class C_SolUse extends C_Use
 {
-
     private final CommandFactory _CommandFactory;
     
-    public C_SolUse(IContextService contextService, CommandFactory commandFactory, UUID id, UUID initiatorStackId, UUID initiatorCardId)
+    public C_SolUse(
+        IContextService contextService, CommandFactory commandFactory,
+        P_Use parameters)
     {
-        super(contextService, id, initiatorStackId, initiatorCardId);
+        super(contextService, parameters);
         
         this._CommandFactory = commandFactory;
     }

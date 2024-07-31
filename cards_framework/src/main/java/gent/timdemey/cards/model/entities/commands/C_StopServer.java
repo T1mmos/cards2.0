@@ -1,17 +1,19 @@
 package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_StopServer;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import java.util.UUID;
 
 public class C_StopServer extends CommandBase
 {    
-    C_StopServer(IContextService contextService, UUID id)
+    public C_StopServer(
+        IContextService contextService, 
+        P_StopServer parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
     }
     
     @Override

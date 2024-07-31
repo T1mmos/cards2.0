@@ -3,6 +3,7 @@ package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_UDP_StartServiceRequester;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.model.net.NetworkFactory;
 import gent.timdemey.cards.model.net.UDP_ServiceRequester;
@@ -26,11 +27,11 @@ public class C_UDP_StartServiceRequester extends CommandBase
     private final Logger _Logger;
     private final NetworkFactory _NetworkFactory;
     
-    C_UDP_StartServiceRequester(
+    public C_UDP_StartServiceRequester(
         IContextService contextService, CommandFactory commandFactory, NetworkFactory networkFactory, CommandDtoMapper commandDtoMapper, Logger logger,
-        UUID id)
+        P_UDP_StartServiceRequester parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
         this._CommandFactory = commandFactory;
         this._NetworkFactory = networkFactory;

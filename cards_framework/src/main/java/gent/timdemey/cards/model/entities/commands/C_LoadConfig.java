@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_LoadConfig;
 import gent.timdemey.cards.model.entities.config.Configuration;
 import gent.timdemey.cards.model.entities.config.ConfigurationFactory;
 import gent.timdemey.cards.model.entities.state.State;
@@ -30,15 +31,15 @@ public class C_LoadConfig extends CommandBase
     private final ConfigurationFactory _ConfigurationFactory;
     private final Logger _Logger;
     
-    C_LoadConfig(
+    public C_LoadConfig(
         IContextService contextService, 
         IFileService fileService,
         IConfigurationService configurationService, 
         ConfigurationFactory configurationFactory,
         Logger logger,
-        UUID id)
+        P_LoadConfig parameters)
     { 
-        super(contextService, id);
+        super(contextService, parameters);
         
         this._FileService = fileService;
         this._ConfigurationService = configurationService;

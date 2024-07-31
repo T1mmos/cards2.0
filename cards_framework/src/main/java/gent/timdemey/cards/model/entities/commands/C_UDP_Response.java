@@ -1,6 +1,7 @@
 package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_UDP_Response;
 import gent.timdemey.cards.model.entities.state.ServerUDP;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
@@ -21,11 +22,13 @@ public final class C_UDP_Response extends CommandBase
 {
     public final ServerUDP server;
 
-    C_UDP_Response(IContextService contextService, UUID id, ServerUDP server)
+    public C_UDP_Response(
+        IContextService contextService,
+        P_UDP_Response parameters)
     {
-        super(contextService, id);
+        super(contextService, parameters);
         
-        this.server = server;
+        this.server = parameters.server;
     }
 
     @Override
