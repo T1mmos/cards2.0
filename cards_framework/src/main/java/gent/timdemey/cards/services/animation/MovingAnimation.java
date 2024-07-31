@@ -9,8 +9,8 @@ import gent.timdemey.cards.ui.components.ext.IHasComponent;
 
 public class MovingAnimation implements IAnimation
 {
-
     private final IPositionService _PositionService;
+    
     public MovingAnimation (IPositionService positionService)
     {
         this._PositionService = positionService;

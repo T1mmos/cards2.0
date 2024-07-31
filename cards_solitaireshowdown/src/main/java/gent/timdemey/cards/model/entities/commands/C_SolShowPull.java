@@ -7,14 +7,16 @@ import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.state.SuitColor;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.payload.P_Pull;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
+import gent.timdemey.cards.services.interfaces.IContextService;
 
 public class C_SolShowPull extends C_Pull
 {
-    public C_SolShowPull(UUID srcCardStackId, UUID cardId)
+    public C_SolShowPull(IContextService contextService, P_Pull parameters)
     {
-        super(srcCardStackId, cardId);
+        super(contextService, parameters);
     }
 
     @Override

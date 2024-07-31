@@ -18,6 +18,7 @@ import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptors;
+import gent.timdemey.cards.services.id.Ids;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IResourceNameService;
 import gent.timdemey.cards.ui.components.SImageResource;
@@ -149,8 +150,7 @@ public class CardGamePanelManager extends PanelManagerBase
             JSImage jsimage_card = (JSImage) comp;
             ReadOnlyCard card = (ReadOnlyCard) jsimage_card.getComponent().getPayload();
 
-            UUID resId = card.isVisible() ? _IdService.createCardFrontScalableResourceId(card.getSuit(), card.getValue())
-                    : _IdService.createCardBackScalableResourceId();
+            UUID resId = card.isVisible() ? Ids.RESID_CARD_FRONTSIDE.GetId(card) : Ids.RESID_CARD_BACKSIDE.GetId();
             ((ScaledImageDrawer) jsimage_card.getDrawer()).setScalableImageResource(resId);
             jsimage_card.repaint();
 
@@ -162,7 +162,7 @@ public class CardGamePanelManager extends PanelManagerBase
             JSImage jsimage_cs = (JSImage) comp;
             ReadOnlyCardStack cardStack = (ReadOnlyCardStack) jsimage_cs.getComponent().getPayload();
 
-            UUID resId = _IdService.createCardStackScalableResourceId(cardStack.getCardStackType());
+            UUID resId = Ids.RESID_CARDSTACK.GetId(cardStack);
             ((ScaledImageDrawer) jsimage_cs.getDrawer()).setScalableImageResource(resId);
             return;
         }
@@ -176,14 +176,14 @@ public class CardGamePanelManager extends PanelManagerBase
     protected void preloadCards()
     {
         // card back
-        preloadImage(_IdService.createCardBackScalableResourceId(), _ResourceNameService.getFilePath(ResourceDescriptors.CardBack));
+        preloadImage(Ids.RESID_CARD_BACKSIDE.GetId(), _ResourceNameService.getFilePath(ResourceDescriptors.CardBack));
 
         // card fronts
         for (CardSuit suit : CardSuit.values())
         {
             for (CardValue value : CardValue.values()) // have fun reading the code lol
             {
-                UUID resId = _IdService.createCardFrontScalableResourceId(suit, value);
+                UUID resId = Ids.RESID_CARD_FRONTSIDE_SV.GetId(suit, value);
                 preloadImage(resId, _ResourceNameService.getFilePath(ResourceDescriptors.CardFront, suit, value));
             }
         }
@@ -211,12 +211,13 @@ public class CardGamePanelManager extends PanelManagerBase
         // cards - fronts
         for (ReadOnlyCard card : cardGame.getCards())
         {
-            UUID resId = _IdService.createCardFrontScalableResourceId(card.getSuit(), card.getValue());
+            
+            UUID resId = Ids.RESID_CARD_FRONTSIDE.GetId(card);
             addRescaleRequest(requests, ComponentTypes.CARD, resId);
         }
         // cards - back
         {
-            UUID resId = _IdService.createCardBackScalableResourceId();
+            UUID resId = Ids.RESID_CARD_BACKSIDE.GetId();
             addRescaleRequest(requests, ComponentTypes.CARD, resId);
         }
         // card stacks
@@ -224,7 +225,7 @@ public class CardGamePanelManager extends PanelManagerBase
         {
             String csType = cs.getCardStackType();
             ComponentType cd_cardstack = ComponentTypes.CARDSTACK.derive(csType);
-            UUID resId = _IdService.createCardStackScalableResourceId(csType);
+            UUID resId = Ids.RESID_CARDSTACK_TYPE.GetId(csType);
             addRescaleRequest(requests, cd_cardstack, resId);
         }
     }   
@@ -239,8 +240,8 @@ public class CardGamePanelManager extends PanelManagerBase
             throw new IllegalArgumentException("A scalable component already exist for the given model object: " + card);            
         }
         
-        UUID resFrontId = _IdService.createCardFrontScalableResourceId(card.getSuit(), card.getValue());
-        UUID resBackId = _IdService.createCardBackScalableResourceId();
+        UUID resFrontId = Ids.RESID_CARD_FRONTSIDE.GetId(card);
+        UUID resBackId = Ids.RESID_CARD_BACKSIDE.GetId();
 
         // create the component using its necessary image resources
         SImageResource res_front = (SImageResource) _ScalingService.getSResource(resFrontId);
@@ -254,21 +255,21 @@ public class CardGamePanelManager extends PanelManagerBase
         return (JSImage) getComponent((ReadOnlyEntityBase<?>) card);
     }
         
-    protected void createJSImage(ReadOnlyCardStack cardstack)
+    protected void createJSImage(ReadOnlyCardStack cardStack)
     {
-        UUID compId = createComponentId(cardstack);
+        UUID compId = createComponentId(cardStack);
 
         JComponent comp = comp2jcomp.get(compId);
         if (comp != null)
         {
-            throw new IllegalArgumentException("A scalable component already exist for the given model object: " + cardstack);            
+            throw new IllegalArgumentException("A scalable component already exist for the given model object: " + cardStack);            
         }
         
-        UUID csResId = _IdService.createCardStackScalableResourceId(cardstack.getCardStackType());
+        UUID csResId = Ids.RESID_CARDSTACK.GetId(cardStack);
 
         // create the component using its necessary image resources
         SImageResource res = (SImageResource) _ScalingService.getSResource(csResId);
-        createJSImage(compId, ComponentTypes.CARDSTACK, cardstack, res);
+        createJSImage(compId, ComponentTypes.CARDSTACK, cardStack, res);
     }
     
     protected JSImage getJSImage(ReadOnlyCardStack cardStack)

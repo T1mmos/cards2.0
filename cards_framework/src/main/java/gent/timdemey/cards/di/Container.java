@@ -7,41 +7,62 @@ package gent.timdemey.cards.di;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-import java.util.function.Supplier;
 
 /**
  *
  * @author Timmos
  */
-public class Container
+public final class Container
 {
     private final Map<Class, Class> _TransientClassesMap;    
-    private final Map<Class, Supplier> _SingletonSuppliersMap;
-    private final Map<Class, Class> _SingletonClassesMap;
-    
+    private final Map<Class, Class> _SingletonClassesMap;    
     private final Map<Class, Object> _SingletonInstancesMap;    
             
     // keep track of what we're constructing, to detect circular dependencies
-    private Stack<Class> constructing = new Stack<>();
+    private final Stack<Class> constructing = new Stack<>();
     
-    Container (Map<Class, Class> transientClassesMap, Map<Class, Class> singletonClassesMap,Map<Class, Object> singletonInstancesMap, Map<Class, Supplier> singletonSuppliersMap)
+    Container (Map<Class, Class> transientClassesMap, Map<Class, Class> singletonClassesMap, Map<Class, Object> singletonInstancesMap)
     {
         _TransientClassesMap = transientClassesMap;
         _SingletonClassesMap = singletonClassesMap;
-        _SingletonSuppliersMap = singletonSuppliersMap;
         _SingletonInstancesMap = singletonInstancesMap;
     }
         
     public <I> I Get(Class<I> clazz)
     {    
-        return TryGet(clazz, constructing);
+        return TryGet(clazz);
     }
     
-    private <I> I TryGet(Class<I> clazz, Stack<Class> constructing)
+    public List<Object> GetAllInstances() 
+    {
+        List<Object> values = new ArrayList<>();
+        
+        // add all instances
+        for(Class<?> clz : _TransientClassesMap.keySet())
+        {
+            values.add(TryGet(clz));
+        }
+        
+        for(Class<?> clz : _SingletonClassesMap.keySet())
+        {
+            values.add(TryGet(clz));
+        }
+        
+        values.addAll(_SingletonInstancesMap.values());
+        
+        return values;
+    }
+    
+    public ContainerBuilder Scope()
+    {
+        return new ContainerBuilder(_TransientClassesMap, _SingletonClassesMap, _SingletonInstancesMap);
+    }
+
+    
+    private <I> I TryGet(Class<I> clazz)
     {
         // the container can also be injected
         if (clazz == Container.class)
@@ -51,7 +72,7 @@ public class Container
         
         // try singletons
         {
-            I instance = TryGet(clazz, constructing, _SingletonClassesMap, _SingletonSuppliersMap, _SingletonInstancesMap);
+            I instance = TryGet(clazz, _SingletonClassesMap, _SingletonInstancesMap);
             if (instance != null)
             {
                 return instance;
@@ -60,7 +81,7 @@ public class Container
         
         // try transients
         {
-            I instance = TryGet(clazz, constructing, _TransientClassesMap, null, null);
+            I instance = TryGet(clazz, _TransientClassesMap, null);
             if (instance != null)
             {
                 return instance;
@@ -71,7 +92,7 @@ public class Container
         {
             if (!clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers()))
             {
-                I instance = TryInstantiate(clazz, constructing);
+                I instance = TryInstantiate(clazz);
                 if (instance != null)
                 {
                     return instance;
@@ -83,7 +104,7 @@ public class Container
         throw new DIException("Class " + clazz.getName() + " is not mapped or if it's a concrete type, no suitable constructor was found, construction chain: " + constructing);
     }
     
-    private <I> I TryGet(Class<I> iclazz, Stack<Class> constructing, Map<Class, Class> definitions, Map<Class, Supplier> suppliers, Map<Class, Object> instances)
+    private <I> I TryGet(Class<I> iclazz, Map<Class, Class> definitions, Map<Class, Object> instances)
     {    
         I obj = null;
         if (instances != null)
@@ -97,7 +118,7 @@ public class Container
             Class<? extends I> concreteCls = definitions.get(iclazz);
             if (concreteCls != null)
             {
-                I instance = TryInstantiate(concreteCls, constructing);
+                I instance = TryInstantiate(concreteCls);
                 if (instance != null)
                 {
                     obj = instance;
@@ -109,25 +130,6 @@ public class Container
                 }
             }            
         }
-        
-        // try instantiating from suppliers if no instance exists            
-        if (obj == null && suppliers != null)
-        {
-            Supplier<? extends I> supplier = suppliers.get(iclazz);
-            if (supplier != null)
-            {
-                I instance = supplier.get();
-                if (instance != null)
-                {
-                    obj = instance;
-
-                    if (instances != null)
-                    {
-                        instances.put(iclazz, instance);    
-                    }                    
-                }
-            }
-        }
 
         if (obj != null)
         {
@@ -138,7 +140,7 @@ public class Container
         return null;
     }
     
-    private <I, C extends I> I TryInstantiate(Class<C> clazz, Stack<Class> constructing)
+    private <I, C extends I> I TryInstantiate(Class<C> clazz)
     {
         if (clazz != null)
         {
@@ -164,7 +166,7 @@ public class Container
             I instance = null;
             for (Constructor<?> c : constructors)
             {
-                Object obj = TryInstantiate(c, constructing);
+                Object obj = TryInstantiate(c);
                 if (obj != null)
                 {
                     instance = clazz.cast(obj);
@@ -184,13 +186,13 @@ public class Container
         return null;
     }
 
-    private Object TryInstantiate(Constructor<?> c, Stack<Class> constructing) 
+    private Object TryInstantiate(Constructor<?> c) 
     {
         Object[] params = new Object[c.getParameterCount()];
         for (int x = 0; x < c.getParameterCount(); x++)
         {
             Class<?> paramXCls = c.getParameterTypes()[x];
-            Object xObj = TryGet(paramXCls, constructing);
+            Object xObj = TryGet(paramXCls);
             params[x] = xObj;
         }
         
@@ -209,24 +211,5 @@ public class Container
         }
     }
 
-    public List<Object> GetAll() 
-    {
-        // add transient instances 
-        List<Object> values = new ArrayList<>();
-        for(Class<?> clz : _TransientClassesMap.keySet())
-        {
-            values.add(Get(clz));
-        }
-        
-        // add singletons
-        values.addAll(_SingletonInstancesMap.values());
-        
-        return values;
-    }
-    
-    public ContainerBuilder Scope()
-    {
-        return new ContainerBuilder(_TransientClassesMap, _SingletonClassesMap, _SingletonInstancesMap, _SingletonSuppliersMap);
-    }
-
+   
 }

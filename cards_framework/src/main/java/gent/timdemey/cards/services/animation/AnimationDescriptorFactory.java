@@ -11,7 +11,7 @@ import gent.timdemey.cards.ui.components.ext.IComponent;
 
 public class AnimationDescriptorFactory implements IAnimationDescriptorFactory
 {
-    private final IPositionService _PositionService;
+    protected final IPositionService _PositionService;
     
     public AnimationDescriptorFactory (IPositionService positionService)
     {

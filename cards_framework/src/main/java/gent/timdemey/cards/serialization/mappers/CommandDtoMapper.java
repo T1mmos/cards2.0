@@ -66,7 +66,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
 {
     protected final MapperDefs mapperDefs = new MapperDefs();
     
-    private final CommandFactory _CommandFactory;
+    protected final CommandFactory _CommandFactory;
     private final StateDtoMapper _CardsDtoMapper;
     
     {        

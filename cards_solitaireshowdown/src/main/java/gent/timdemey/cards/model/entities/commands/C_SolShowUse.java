@@ -1,5 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.model.entities.commands.payload.P_Use;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -11,12 +12,19 @@ import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.IContextService;
 
 public class C_SolShowUse extends C_Use
 {    
-    public C_SolShowUse(UUID initiatorStackId, UUID initiatorCardId)
+
+    private final CommandFactory _CommandFactory;
+    public C_SolShowUse(
+        IContextService contextService, CommandFactory commandFactory,
+        P_Use parameters)
     {
-        super(initiatorStackId, initiatorCardId);
+        super(contextService, parameters);
+        
+        this._CommandFactory = commandFactory;
     }
     
     @Override
@@ -81,7 +89,7 @@ public class C_SolShowUse extends C_Use
                 allLaydownStacks.addAll(otherLaydownStacks);
                 for (CardStack dstCardStack : allLaydownStacks)
                 {
-                    C_SolShowMove cmd = new C_SolShowMove(initiatorStack.id, dstCardStack.id, initiatorCardId);
+                    C_Move cmd = _CommandFactory.CreateMove(initiatorStack.id, dstCardStack.id, initiatorCardId);
                     cmd.setSourceId(getSourceId());
                     eligible.add(cmd);
                 }
@@ -111,7 +119,7 @@ public class C_SolShowUse extends C_Use
             CardStack dstCardStack = cardGame.getCardStack(localId, SolShowCardStackType.DEPOT, 0);
             if(!srcCardStack.getCards().isEmpty())
             {
-                C_SolShowMove cmd = new C_SolShowMove(srcCardStack.id, dstCardStack.id, srcCardStack.getLowestCard().id);
+                C_Move cmd = _CommandFactory.CreateMove(srcCardStack.id, dstCardStack.id, srcCardStack.getLowestCard().id);
                 cmd.setSourceId(getSourceId());
                 eligible.add(cmd);
             }
@@ -126,7 +134,7 @@ public class C_SolShowUse extends C_Use
             int takeCount = Math.min(3, availableCount);
             int idx = availableCount - takeCount;
             UUID highestCardId = availableCards.get(idx).id;
-            C_SolShowMove cmd = new C_SolShowMove(srcCardStack.id, dstCardStack.id, highestCardId);
+            C_Move cmd = _CommandFactory.CreateMove(srcCardStack.id, dstCardStack.id, highestCardId);
             cmd.setSourceId(getSourceId());
             eligible.add(cmd);
         }

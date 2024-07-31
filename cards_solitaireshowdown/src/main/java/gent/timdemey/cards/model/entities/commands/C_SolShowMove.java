@@ -5,12 +5,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-
 import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.payload.P_SolShowMove;
+import gent.timdemey.cards.model.entities.commands.payload.P_Move;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
@@ -21,6 +20,7 @@ import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.ICardGameService;
+import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.INetworkService;
 
 public class C_SolShowMove extends C_Move
@@ -28,15 +28,19 @@ public class C_SolShowMove extends C_Move
     private List<Card> flippedTransferCards;
     private boolean depotInvolved;
     private boolean visible;
+    private final INetworkService _NetworkService;
+    private final CommandFactory _CommandFactory;
+    private final ICardGameService _CardGameService;
 
-    public C_SolShowMove(UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
+    public C_SolShowMove(
+        IContextService contextService, INetworkService networkService, CommandFactory commandFactory, ICardGameService cardGameService,
+        P_Move parameters)
     {
-        super(srcCardStackId, dstCardStackId, cardId);
-    }
-
-    public C_SolShowMove(P_SolShowMove pl)
-    {
-        super(pl);
+        super(contextService, parameters);
+        
+        this._CommandFactory = commandFactory;
+        this._NetworkService = networkService;
+        this._CardGameService = cardGameService;
     }
 
     @Override
@@ -60,9 +64,9 @@ public class C_SolShowMove extends C_Move
         Card card = state.getCardGame().getCard(cardId);
 
         List<UUID> toTransferIds = srcCardStack.getCardsFrom(card).getIds();
-        C_SolShowPull cmdPull = new C_SolShowPull(srcCardStackId, cardId);
+        C_Pull cmdPull = _CommandFactory.CreatePull(srcCardStackId, cardId);
         cmdPull.setSourceId(getSourceId());
-        C_SolShowPush cmdPush = new C_SolShowPush(dstCardStackId, toTransferIds);
+        C_Push cmdPush = _CommandFactory.CreatePush(dstCardStackId, toTransferIds);
         cmdPush.setSourceId(getSourceId());
 
         boolean canPull = cmdPull.canExecute(context, type, state).canExecute();
@@ -166,10 +170,9 @@ public class C_SolShowMove extends C_Move
         // calculate score
         addScore(state, cardGame, srcCardStack, dstCardStack, false);
         
-        INetworkService netServ = Services.get(INetworkService.class);
         if (type == ContextType.UI)
         {
-            netServ.send(state.getLocalId(), state.getServerId(), this, state.getTcpConnectionPool());
+            _NetworkService.send(state.getLocalId(), state.getServerId(), this, state.getTcpConnectionPool());
         }
         else if (type == ContextType.Server)
         {
@@ -181,10 +184,12 @@ public class C_SolShowMove extends C_Move
             {
                 state.setGameState(GameState.Ended);
                 UUID winnerId = cardGame.getPlayerId(srcCardStack);
-                C_OnGameEnded cmd_endgame = new C_OnGameEnded(winnerId);
+                
+                
+                C_OnGameEnded cmd_endgame = _CommandFactory.CreateOnGameEnded(winnerId);
 
                 List<UUID> ids_endgame = state.getPlayers().getIds();
-                netServ.broadcast(state.getLocalId(), ids_endgame, cmd_endgame, state.getTcpConnectionPool());
+                _NetworkService.broadcast(state.getLocalId(), ids_endgame, cmd_endgame, state.getTcpConnectionPool());
             }
         }
     }
@@ -211,8 +216,8 @@ public class C_SolShowMove extends C_Move
         ReadOnlyEntityList<ReadOnlyCard> roTransferCards = ReadOnlyEntityFactory.getOrCreateCardList(transferCards);
         ReadOnlyCardStack roSrcCardStack = ReadOnlyEntityFactory.getOrCreateCardStack(srcCardStack);
         ReadOnlyCardStack roDstCardStack = ReadOnlyEntityFactory.getOrCreateCardStack(dstCardStack);
-        ICardGameService cgServ = Services.get(ICardGameService.class);
-        int score = cgServ.getScore(roSrcCardStack, roDstCardStack, roTransferCards);
+        
+        int score = _CardGameService.getScore(roSrcCardStack, roDstCardStack, roTransferCards);
         
         if (undo)
         {

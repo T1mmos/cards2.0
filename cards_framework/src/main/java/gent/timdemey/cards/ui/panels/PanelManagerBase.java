@@ -4,6 +4,8 @@ import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.CommandFactory;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -22,10 +24,10 @@ import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.res.FontResource;
 import gent.timdemey.cards.services.contract.res.ImageResource;
+import gent.timdemey.cards.services.id.Ids;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IAnimationService;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
@@ -46,7 +48,6 @@ public abstract class PanelManagerBase implements IPanelManager
     protected final Container _Container;
     protected final IResourceCacheService _ResourceCacheService;
     protected final IScalingService _ScalingService;
-    protected final IIdService _IdService;
     protected final IPositionService _PositionService;
     protected final IAnimationService _AnimationService;
     protected final IContextService _ContextService;
@@ -62,7 +63,6 @@ public abstract class PanelManagerBase implements IPanelManager
         this._AnimationService = container.Get(IAnimationService.class);
         this._ResourceCacheService = container.Get(IResourceCacheService.class);
         this._ScalingService = container.Get(IScalingService.class);
-        this._IdService = container.Get(IIdService.class);
         this._PositionService = container.Get(IPositionService.class);
         this._ContextService = container.Get(IContextService.class);
         this._ActionService = container.Get(IActionService.class);
@@ -161,7 +161,15 @@ public abstract class PanelManagerBase implements IPanelManager
         }
 
         // get the ids
-        compId = _IdService.createScalableComponentId(entity);
+        if (entity instanceof ReadOnlyCard)
+        {
+            compId = Ids.COMPID_CARD.GetId((ReadOnlyCard) entity);
+        }
+        else if (entity instanceof ReadOnlyCardStack)
+        {
+            compId = Ids.COMPID_CARDSTACK.GetId((ReadOnlyCardStack) entity);
+        }
+        
         entity2comp.put(entity.getId(), compId);
         
         return compId;

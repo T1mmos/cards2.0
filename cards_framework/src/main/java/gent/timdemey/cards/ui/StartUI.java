@@ -116,7 +116,7 @@ public class StartUI
         // this solves ConcurrentModificationExceptions and equally important we only want to preload once.
         
         
-        List<IPreload> preloadables = _Container.GetAll().stream()
+        List<IPreload> preloadables = _Container.GetAllInstances().stream()
                 .filter(obj -> obj instanceof IPreload)
                 .map(obj -> (IPreload) obj)
                 .collect(Collectors.toList());

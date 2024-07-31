@@ -5,10 +5,8 @@ import gent.timdemey.cards.di.ContainerBuilder;
 import gent.timdemey.cards.model.entities.commands.CommandFactory;
 import gent.timdemey.cards.model.entities.commands.SolCommandFactory;
 import gent.timdemey.cards.services.cardgame.SolitaireCardGameCreationService;
-import gent.timdemey.cards.services.id.SolitaireIdService;
 import gent.timdemey.cards.services.interfaces.ICardGameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
-import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.panels.SolitairePanelService;
 import gent.timdemey.cards.services.panels.game.SolitairePositionService;
@@ -24,7 +22,6 @@ public class SolitairePlugin implements ICardPlugin
     public void installServices(ContainerBuilder cb)
     {        
         cb.AddSingleton(ICardGameService.class, SolitaireCardGameCreationService.class);
-        cb.AddSingleton(IIdService.class, SolitaireIdService.class);
         cb.AddSingleton(CommandFactory.class, SolCommandFactory.class);
         cb.AddSingleton(IPositionService.class, SolitairePositionService.class);
         cb.AddSingleton(IPanelService.class, SolitairePanelService.class);

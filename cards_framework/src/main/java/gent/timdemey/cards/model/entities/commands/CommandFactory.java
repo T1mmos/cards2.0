@@ -672,7 +672,7 @@ public abstract class CommandFactory
     protected <C, P> C DICreate(Class<C> toCreateClazz, Class<P> parametersClazz, P parameters)
     {
         ContainerBuilder cb = _Container.Scope();        
-        cb.AddSingletonInstance(parametersClazz, parameters);
+        cb.AddSingleton(parametersClazz, parameters);
         Container c = cb.Build();
         return c.Get(toCreateClazz);
     }

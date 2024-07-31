@@ -32,7 +32,7 @@ import gent.timdemey.cards.ui.components.swing.JSImage;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.IPanelManager;
 
-class CardGamePanelMouseListener extends MouseAdapter
+public class CardGamePanelMouseListener extends MouseAdapter
 {
 
     private final IPanelService _PanelService;
@@ -60,13 +60,12 @@ class CardGamePanelMouseListener extends MouseAdapter
     private final List<CardDragState> dragStates;
     private final List<JComponent> draggedJComps;
 
-    CardGamePanelMouseListener(
-            Logger logger,
-            IPanelService panelService,
-            IContextService contextService,
-            IPositionService positionService,
-            CommandFactory commandFactory
-    )
+    public CardGamePanelMouseListener(
+        Logger logger,
+        IPanelService panelService,
+        IContextService contextService,
+        IPositionService positionService,
+        CommandFactory commandFactory)
     {
         this._Logger = logger;
         this._PanelService = panelService;

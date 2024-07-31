@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
+import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.resources.SolShowResourceDefines;
 import gent.timdemey.cards.ui.components.ext.IComponent;
 
@@ -12,13 +13,18 @@ public class SolShowAnimationDescriptorFactory extends AnimationDescriptorFactor
 {
     private static final int TIME_MS_ANIMATION_CARDSCORE = 500;
     private static final int TIME_MS_ANIMATION_CARD      = 200;
+        
+    public SolShowAnimationDescriptorFactory (IPositionService positionService)
+    {
+        super(positionService);
+    }
     
     @Override
     public AnimationDescriptor getAnimationDescriptor(IComponent comp)
     {      
         if (comp.getComponentType().hasTypeName(ComponentTypes.CARDSCORE))
         {            
-            MovingAnimation anim1 = new MovingAnimation();
+            MovingAnimation anim1 = new MovingAnimation(_PositionService);
             
             Color color_inner_start = SolShowResourceDefines.COLOR_ANIMATION_CARDSCORE_INNER_START;
             Color color_inner_end = SolShowResourceDefines.COLOR_ANIMATION_CARDSCORE_INNER_END;
@@ -35,7 +41,7 @@ public class SolShowAnimationDescriptorFactory extends AnimationDescriptorFactor
         }
         else if (comp.getComponentType().hasTypeName(ComponentTypes.CARD))
         {
-            MovingAnimation anim1 = new MovingAnimation();
+            MovingAnimation anim1 = new MovingAnimation(_PositionService);
             List<IAnimation> animations = Arrays.asList(anim1);
             AnimationDescriptor descr = new AnimationDescriptor(TIME_MS_ANIMATION_CARD, animations, false);
             return descr;

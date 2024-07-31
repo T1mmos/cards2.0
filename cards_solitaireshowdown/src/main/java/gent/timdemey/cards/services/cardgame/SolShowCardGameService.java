@@ -9,6 +9,7 @@ import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.state.PlayerConfiguration;
+import gent.timdemey.cards.model.entities.state.StateFactory;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyList;
@@ -17,12 +18,22 @@ import gent.timdemey.cards.utils.CardDeckUtils;
 
 public class SolShowCardGameService implements ICardGameService
 {
+
+    private final StateFactory _StateFactory;
+    private final CardDeckUtils _CardDeckUtils;
+    
+    public SolShowCardGameService(StateFactory stateFactory, CardDeckUtils cardDeckUtils)
+    {
+        this._StateFactory = stateFactory;
+        this._CardDeckUtils = cardDeckUtils;
+    }
+    
     private List<List<Card>> getCards()
     {
         // solitaire showdown: each player starts with his own deck of 52 cards.
-        Card[] deck1 = CardDeckUtils.createFullDeck();
+        Card[] deck1 = _CardDeckUtils.createFullDeck();
         CardDeckUtils.shuffleDeck(deck1);
-        Card[] deck2 = CardDeckUtils.createFullDeck();
+        Card[] deck2 = _CardDeckUtils.createFullDeck();
         CardDeckUtils.shuffleDeck(deck2);
 
         List<List<Card>> playerCards = new ArrayList<>();
@@ -57,17 +68,17 @@ public class SolShowCardGameService implements ICardGameService
             addCardStack(cardStacks, SolShowCardStackType.LAYDOWN, 2, new ArrayList<>(), false);
             addCardStack(cardStacks, SolShowCardStackType.LAYDOWN, 3, new ArrayList<>(), false);
 
-            PlayerConfiguration pc = new PlayerConfiguration(id, cardStacks);
+            PlayerConfiguration pc = _StateFactory.CreatePlayerConfiguration(id, cardStacks);
             playersConfiguration.add(pc);
         }
         
-        CardGame cg = new CardGame(playersConfiguration);
+        CardGame cg = _StateFactory.CreateCardGame(playersConfiguration);
         return cg;
     }
 
     private void addCardStack(List<CardStack> listToAdd, String cardStackType, int typeNumber, List<Card> cards, boolean visible)
     {
-        CardStack cs = new CardStack(cardStackType, typeNumber);
+        CardStack cs = _StateFactory.CreateCardStack(cardStackType, typeNumber);
         cs.cards.addAll(cards);
         for (Card card : cards)
         {

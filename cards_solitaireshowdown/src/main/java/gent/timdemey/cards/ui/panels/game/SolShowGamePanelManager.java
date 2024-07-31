@@ -1,5 +1,6 @@
 package gent.timdemey.cards.ui.panels.game;
 
+import gent.timdemey.cards.di.Container;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,6 +19,7 @@ import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.SolShowComponentTypes;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IIdService;
+import gent.timdemey.cards.services.interfaces.IResourceNameService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.interfaces.ISolShowIdService;
 import gent.timdemey.cards.services.resources.SolShowResourceDefines;
@@ -31,6 +33,11 @@ import gent.timdemey.cards.ui.components.swing.JSLabel;
 
 public class SolShowGamePanelManager extends CardGamePanelManager
 {
+    public SolShowGamePanelManager(Container container, IResourceNameService resourceNameService, IContextService contextService, IScalingService scalingService)
+    {
+        super(container, resourceNameService, contextService);
+    }
+    
     @Override
     protected CardGamePanelStateListener createStateListener()
     {
@@ -42,8 +49,6 @@ public class SolShowGamePanelManager extends CardGamePanelManager
     {
         super.addComponentCreators(compCreators);
         
-        IScalingService scaleServ = Services.get(IScalingService.class);
-        ISolShowIdService idServ = Services.get(ISolShowIdService.class);
         
         ReadOnlyState state = Services.get(IContextService.class).getThreadContext().getReadOnlyState();
         ReadOnlyCardGame cardGame = state.getCardGame();
@@ -61,15 +66,15 @@ public class SolShowGamePanelManager extends CardGamePanelManager
         // special stack background and counter text
         compCreators.add(() -> 
         {
-            UUID textResId = idServ.createFontScalableResourceId(SolShowResourceDefines.FILEPATH_FONT_SPECIALCOUNT);            
-            SFontResource textRes = (SFontResource) scaleServ.getSResource(textResId);  
+            UUID textResId = _IdService.createFontScalableResourceId(SolShowResourceDefines.FILEPATH_FONT_SPECIALCOUNT);            
+            SFontResource textRes = (SFontResource) _ScalingService.getSResource(textResId);  
             
             for(ReadOnlyPlayer player : state.getPlayers())
             {
                 ReadOnlyCardStack cs = cardGame.getCardStack(player.getId(), SolShowCardStackType.SPECIAL, 0);            
 
-                UUID counterCompId = idServ.createSpecialCounterComponentId(cs);
-                UUID bgCompId = idServ.createSpecialBackgroundComponentId(cs);                                         
+                UUID counterCompId = _IdService.createSpecialCounterComponentId(cs);
+                UUID bgCompId = _IdService.createSpecialBackgroundComponentId(cs);                                         
                 
                 boolean local = state.getLocalId().equals(player.getId());
                
@@ -78,7 +83,7 @@ public class SolShowGamePanelManager extends CardGamePanelManager
                 ((ScaledTextDrawer) textComp.getDrawer()).setOuterColor(SolShowResourceDefines.COLOR_FONT_SPECIALCOUNT_OUTER);
                 
                 UUID resid_spec_bg = idServ.createSpecialBackgroundResourceId(!local);
-                SImageResource res_spec_bg = (SImageResource) scaleServ.getSResource(resid_spec_bg);
+                SImageResource res_spec_bg = (SImageResource) _ScalingService.getSResource(resid_spec_bg);
                 
                 JSImage imgComp = createJSImage(bgCompId, SolShowComponentTypes.SPECIALBACKGROUND, cs, res_spec_bg);
                 imgComp.getDrawer().setMirror(!local);
@@ -92,7 +97,7 @@ public class SolShowGamePanelManager extends CardGamePanelManager
             UUID compId_remote = idServ.createPlayerNameComponentId(player_remote);
             
             UUID textResId = idServ.createFontScalableResourceId(SolShowResourceDefines.FILEPATH_FONT_PLAYERNAME);
-            SFontResource textRes = (SFontResource) scaleServ.getSResource(textResId);     
+            SFontResource textRes = (SFontResource) _ScalingService.getSResource(textResId);     
                         
             JSLabel text_plocal = createJSLabel(compId_local, SolShowComponentTypes.PLAYERNAME, player_local.getName(), player_local, textRes);
             text_plocal.getComponent().setPayload(player_local);
@@ -107,7 +112,7 @@ public class SolShowGamePanelManager extends CardGamePanelManager
         // background images
         compCreators.add(() -> 
         {
-            UUID resid_cardareabg_remote = idServ.createCardAreaBgResourceId(true);
+            UUID resid_cardareabg_remote = _IdService.createCardAreaBgResourceId(true);
             UUID resid_cardareabg_local = idServ.createCardAreaBgResourceId(false);
             UUID resid_playerbg_remote = idServ.createPlayerBgResourceId(true);
             UUID resid_playerbg_local = idServ.createPlayerBgResourceId(false);
@@ -119,11 +124,11 @@ public class SolShowGamePanelManager extends CardGamePanelManager
             UUID compid_playerbg_local = idServ.createPlayerBgComponentId(false);
             UUID compid_vs = idServ.createVsComponentId();
             
-            SImageResource res_cardareabg_remote = (SImageResource) scaleServ.getSResource(resid_cardareabg_remote);
-            SImageResource res_cardareabg_local = (SImageResource) scaleServ.getSResource(resid_cardareabg_local);
-            SImageResource res_playerbg_remote = (SImageResource) scaleServ.getSResource(resid_playerbg_remote);
-            SImageResource res_playerbg_local = (SImageResource) scaleServ.getSResource(resid_playerbg_local);
-            SImageResource res_vs = (SImageResource) scaleServ.getSResource(resid_vs);
+            SImageResource res_cardareabg_remote = (SImageResource) _ScalingService.getSResource(resid_cardareabg_remote);
+            SImageResource res_cardareabg_local = (SImageResource) _ScalingService.getSResource(resid_cardareabg_local);
+            SImageResource res_playerbg_remote = (SImageResource) _ScalingService.getSResource(resid_playerbg_remote);
+            SImageResource res_playerbg_local = (SImageResource) _ScalingService.getSResource(resid_playerbg_local);
+            SImageResource res_vs = (SImageResource) _ScalingService.getSResource(resid_vs);
             
             createJSImage(compid_cardareabg_remote, SolShowComponentTypes.CARDAREABG, player_remote, res_cardareabg_remote);
             createJSImage(compid_cardareabg_local, SolShowComponentTypes.CARDAREABG, player_local, res_cardareabg_local); 

@@ -8,6 +8,7 @@ import java.util.UUID;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes;
+import gent.timdemey.cards.services.id.Ids;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IResourceNameService;
 import gent.timdemey.cards.ui.panels.game.CardGamePanelManager;
@@ -31,13 +32,13 @@ public class SolitaireGamePanelManager extends CardGamePanelManager
     
     private void preloadCardStacks()
     {
-        String[] stacks = new String[] { SolitaireComponentTypes.DEPOT, SolitaireComponentTypes.LAYDOWN, SolitaireComponentTypes.MIDDLE,
+        String[] stackTypes = new String[] { SolitaireComponentTypes.DEPOT, SolitaireComponentTypes.LAYDOWN, SolitaireComponentTypes.MIDDLE,
                 SolitaireComponentTypes.TURNOVER };
 
-        for (String stack : stacks)
+        for (String stackType : stackTypes)
         {
-            UUID id = _IdService.createCardStackScalableResourceId(stack);
-            String filename = String.format(FILEPATH_CARDSTACK, stack.toLowerCase());
+            UUID id = Ids.RESID_CARDSTACK_TYPE.GetId(stackType);
+            String filename = String.format(FILEPATH_CARDSTACK, stackType.toLowerCase());
             preloadImage(id, filename);
         }
     }
