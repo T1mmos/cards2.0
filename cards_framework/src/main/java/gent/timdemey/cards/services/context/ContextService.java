@@ -109,7 +109,7 @@ public class ContextService implements IContextService
 
         boolean allowListeners = type == ContextType.UI;
         Context context = _Container.Get(Context.class);
-        context.initialize(allowListeners, type);
+        context.initialize(type);
 
         Context prev = fullContexts.putIfAbsent(type, context);
         if (prev != null)

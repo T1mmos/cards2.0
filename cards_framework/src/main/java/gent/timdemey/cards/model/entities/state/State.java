@@ -54,7 +54,7 @@ public class State extends EntityBase
     private UDP_ServiceRequester udpServiceRequester = null;
     private final Logger _Logger;
 
-    State(IChangeTracker changeTracker, Logger logger, UUID id)
+    public State(IChangeTracker changeTracker, Logger logger, UUID id)
     {
         super(id);
         

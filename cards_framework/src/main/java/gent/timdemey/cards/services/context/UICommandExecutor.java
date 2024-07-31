@@ -20,7 +20,7 @@ import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.interfaces.IContextService;
 
-class UICommandExecutor implements ICommandExecutor
+public class UICommandExecutor implements ICommandExecutor
 {
     private final List<IExecutionListener> executionListeners;
     private final IContextService _ContextService;

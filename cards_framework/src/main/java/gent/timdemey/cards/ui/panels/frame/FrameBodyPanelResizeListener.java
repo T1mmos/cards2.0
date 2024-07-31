@@ -10,7 +10,7 @@ import javax.swing.SwingUtilities;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 
-class FrameBodyPanelResizeListener implements ComponentListener
+public class FrameBodyPanelResizeListener implements ComponentListener
 {
     // relayout time window for a resize event. if a new resize event enters
     // in the current time window, only the last request is honored after the

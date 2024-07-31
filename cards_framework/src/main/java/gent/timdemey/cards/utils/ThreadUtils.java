@@ -35,7 +35,7 @@ public class ThreadUtils
                 });
             }
         };
-        Thread thr = new Thread(thrRun, "threadName");
+        Thread thr = new Thread(thrRun, threadName);
         thr.start();
     }
     

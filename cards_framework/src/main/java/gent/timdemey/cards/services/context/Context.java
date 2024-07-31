@@ -1,7 +1,6 @@
 package gent.timdemey.cards.services.context;
 
 import gent.timdemey.cards.ICardPlugin;
-import gent.timdemey.cards.model.delta.StateChangeTracker;
 import gent.timdemey.cards.model.delta.Change;
 import gent.timdemey.cards.model.delta.IChangeTracker;
 import gent.timdemey.cards.model.delta.ChangeType;
@@ -16,6 +15,7 @@ import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.delta.Property;
 import gent.timdemey.cards.model.entities.state.State;
+import gent.timdemey.cards.model.entities.state.StateFactory;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityFactory;
@@ -29,7 +29,6 @@ public final class Context
     private final List<IStateListener> stateListeners;
             
     LimitedContext limitedContext;
-    private boolean allowListeners;
     
     private final IContextService _ContextService;
     private final Logger _Logger;
@@ -41,17 +40,18 @@ public final class Context
             ICardPlugin cardPlugin, 
             ICommandExecutor commandExecutor, 
             IContextService contextService,
-            State state,
+            IChangeTracker changeTracker,
+            StateFactory stateFactory,
             Logger logger)
     {
         this._CardPlugin = cardPlugin;
         this._CommandExecutor = commandExecutor;
         this._ContextService = contextService;
-        this._State = state;
+        this._State = stateFactory.CreateState();
         this._Logger = logger;
         
-        this.stateListeners = allowListeners ? new ArrayList<>() : null;
-        this.changeTracker = allowListeners ? new StateChangeTracker() : new NopChangeTracker();
+        this.stateListeners = new ArrayList<>();
+        this.changeTracker = changeTracker;
     }
     
     public ReadOnlyState getReadOnlyState()
@@ -97,10 +97,6 @@ public final class Context
 
     public void addStateListener(IStateListener stateListener)
     {
-        if (!allowListeners)
-        {
-            throw new IllegalStateException("This context isn't configured to track changes, therefore you cannot add a state listener.");
-        }
         if (stateListeners.contains(stateListener))
         {
             throw new IllegalStateException("This state listener is already added.");
@@ -123,15 +119,12 @@ public final class Context
         stateListeners.remove(stateListener);
     }
 
-    void initialize(boolean allowListeners, ContextType contextType) 
+    void initialize(ContextType contextType) 
     {   
-        this.allowListeners = allowListeners;
         this.limitedContext = new LimitedContext(_CardPlugin, _CommandExecutor, _State, contextType);
         
-        if (allowListeners)
-        {
-            addExecutionListener(this::onExecuted);    
-        }     
+        addExecutionListener(this::onExecuted);    
+         
     }
 
     private static class EntityPropertyChange

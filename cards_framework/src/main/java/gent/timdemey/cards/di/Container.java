@@ -80,7 +80,7 @@ public class Container
         }
         
         // fail
-        throw new DIException("Class " + clazz.getName() + " is not mapped or if it's a concrete type, no suitable constructor was found");
+        throw new DIException("Class " + clazz.getName() + " is not mapped or if it's a concrete type, no suitable constructor was found, construction chain: " + constructing);
     }
     
     private <I> I TryGet(Class<I> iclazz, Stack<Class> constructing, Map<Class, Class> definitions, Map<Class, Supplier> suppliers, Map<Class, Object> instances)

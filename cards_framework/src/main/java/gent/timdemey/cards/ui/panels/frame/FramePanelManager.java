@@ -34,7 +34,6 @@ import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IResourceNameService;
 import gent.timdemey.cards.ui.components.swing.JSButton;
-import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.PanelManagerBase;
 import net.miginfocom.swing.MigLayout;
@@ -57,16 +56,18 @@ public class FramePanelManager extends PanelManagerBase
     private ICardPlugin _CardPlugin;
     
     public FramePanelManager( 
-            Container container,
-            ICardPlugin cardPlugin,
-            IResourceNameService resourceNameService,
-            IActionService actionService,
-            FrameBodyPanelResizeListener resizeListener)
+        Container container,
+        ICardPlugin cardPlugin,
+        IResourceNameService resourceNameService,
+        IResourceCacheService resourceCacheService,
+        IActionService actionService,
+        FrameBodyPanelResizeListener resizeListener)
     {
         super(container);
         
         this._CardPlugin = cardPlugin;
         this._ResourceNameService = resourceNameService;
+        this._ResourceCacheService = resourceCacheService;
         this._ActionService = actionService;
         this._ResizeListener = resizeListener;
     }

@@ -18,6 +18,8 @@ import gent.timdemey.cards.services.animation.AnimationService;
 import gent.timdemey.cards.services.config.ConfigService;
 import gent.timdemey.cards.services.context.CommandNetworkService;
 import gent.timdemey.cards.services.context.ContextService;
+import gent.timdemey.cards.services.context.ICommandExecutor;
+import gent.timdemey.cards.services.context.UICommandExecutor;
 import gent.timdemey.cards.services.file.FileService;
 import gent.timdemey.cards.services.frame.FrameService;
 import gent.timdemey.cards.services.interfaces.IActionService;
@@ -150,5 +152,6 @@ public class Start
         cb.AddSingleton(IAnimationDescriptorFactory.class, AnimationDescriptorFactory.class);
         // cb.AddTransient(State.class, State.class);
         cb.AddSingleton(IChangeTracker.class, StateChangeTracker.class);
+        cb.AddSingleton(ICommandExecutor.class, UICommandExecutor.class);
     }
 }
