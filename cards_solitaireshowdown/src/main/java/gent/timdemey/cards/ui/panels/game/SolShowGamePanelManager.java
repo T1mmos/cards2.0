@@ -17,11 +17,10 @@ import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.SolShowComponentTypes;
+import gent.timdemey.cards.services.id.SolShowIds;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.services.interfaces.IIdService;
 import gent.timdemey.cards.services.interfaces.IResourceNameService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
-import gent.timdemey.cards.services.interfaces.ISolShowIdService;
 import gent.timdemey.cards.services.resources.SolShowResourceDefines;
 import gent.timdemey.cards.ui.components.SFontResource;
 import gent.timdemey.cards.ui.components.SImageResource;
@@ -41,7 +40,7 @@ public class SolShowGamePanelManager extends CardGamePanelManager
     @Override
     protected CardGamePanelStateListener createStateListener()
     {
-        return new SolShowGamePanelStateListener();
+        return _Container.Get(SolShowGamePanelStateListener.class);
     }
     
     @Override
@@ -50,7 +49,7 @@ public class SolShowGamePanelManager extends CardGamePanelManager
         super.addComponentCreators(compCreators);
         
         
-        ReadOnlyState state = Services.get(IContextService.class).getThreadContext().getReadOnlyState();
+        ReadOnlyState state = _ContextService.getThreadContext().getReadOnlyState();
         ReadOnlyCardGame cardGame = state.getCardGame();
         ReadOnlyPlayer player_local = state.getLocalPlayer();
         ReadOnlyPlayer player_remote = state.getRemotePlayers().get(0);
@@ -66,15 +65,15 @@ public class SolShowGamePanelManager extends CardGamePanelManager
         // special stack background and counter text
         compCreators.add(() -> 
         {
-            UUID textResId = _IdService.createFontScalableResourceId(SolShowResourceDefines.FILEPATH_FONT_SPECIALCOUNT);            
+            UUID textResId = SolShowIds.RESID_FONT.GetId(SolShowResourceDefines.FILEPATH_FONT_SPECIALCOUNT);            
             SFontResource textRes = (SFontResource) _ScalingService.getSResource(textResId);  
             
             for(ReadOnlyPlayer player : state.getPlayers())
             {
                 ReadOnlyCardStack cs = cardGame.getCardStack(player.getId(), SolShowCardStackType.SPECIAL, 0);            
 
-                UUID counterCompId = _IdService.createSpecialCounterComponentId(cs);
-                UUID bgCompId = _IdService.createSpecialBackgroundComponentId(cs);                                         
+                UUID counterCompId = SolShowIds.COMPID_SPECIALCOUNTER.GetId(cs);
+                UUID bgCompId = SolShowIds.COMPID_SPECIALBACKGROUND.GetId(cs);
                 
                 boolean local = state.getLocalId().equals(player.getId());
                
@@ -82,7 +81,7 @@ public class SolShowGamePanelManager extends CardGamePanelManager
                 textComp.setForeground(SolShowResourceDefines.COLOR_FONT_SPECIALCOUNT_INNER);
                 ((ScaledTextDrawer) textComp.getDrawer()).setOuterColor(SolShowResourceDefines.COLOR_FONT_SPECIALCOUNT_OUTER);
                 
-                UUID resid_spec_bg = idServ.createSpecialBackgroundResourceId(!local);
+                UUID resid_spec_bg = SolShowIds.RESID_SPECIALBACKGROUND.GetId(!local);
                 SImageResource res_spec_bg = (SImageResource) _ScalingService.getSResource(resid_spec_bg);
                 
                 JSImage imgComp = createJSImage(bgCompId, SolShowComponentTypes.SPECIALBACKGROUND, cs, res_spec_bg);
@@ -93,10 +92,10 @@ public class SolShowGamePanelManager extends CardGamePanelManager
         // player names
         compCreators.add(() -> 
         {
-            UUID compId_local = idServ.createPlayerNameComponentId(player_local);
-            UUID compId_remote = idServ.createPlayerNameComponentId(player_remote);
+            UUID compId_local = SolShowIds.COMPID_PLAYERNAME.GetId(player_local);
+            UUID compId_remote = SolShowIds.COMPID_PLAYERNAME.GetId(player_remote);
             
-            UUID textResId = idServ.createFontScalableResourceId(SolShowResourceDefines.FILEPATH_FONT_PLAYERNAME);
+            UUID textResId = SolShowIds.RESID_FONT.GetId(SolShowResourceDefines.FILEPATH_FONT_PLAYERNAME);
             SFontResource textRes = (SFontResource) _ScalingService.getSResource(textResId);     
                         
             JSLabel text_plocal = createJSLabel(compId_local, SolShowComponentTypes.PLAYERNAME, player_local.getName(), player_local, textRes);
@@ -112,17 +111,17 @@ public class SolShowGamePanelManager extends CardGamePanelManager
         // background images
         compCreators.add(() -> 
         {
-            UUID resid_cardareabg_remote = _IdService.createCardAreaBgResourceId(true);
-            UUID resid_cardareabg_local = idServ.createCardAreaBgResourceId(false);
-            UUID resid_playerbg_remote = idServ.createPlayerBgResourceId(true);
-            UUID resid_playerbg_local = idServ.createPlayerBgResourceId(false);
-            UUID resid_vs = idServ.createVsResourceId();
+            UUID resid_cardareabg_remote = SolShowIds.RESID_CARDAREA_BACKGROUND.GetId(true);
+            UUID resid_cardareabg_local = SolShowIds.RESID_CARDAREA_BACKGROUND.GetId(false);
+            UUID resid_playerbg_remote = SolShowIds.RESID_PLAYERNAME_BACKGROUND.GetId(true);
+            UUID resid_playerbg_local = SolShowIds.RESID_PLAYERNAME_BACKGROUND.GetId(false);
+            UUID resid_vs = SolShowIds.RESID_VS.GetId();
             
-            UUID compid_cardareabg_remote = idServ.createCardAreaBgComponentId(true);
-            UUID compid_cardareabg_local = idServ.createCardAreaBgComponentId(false);
-            UUID compid_playerbg_remote = idServ.createPlayerBgComponentId(true);
-            UUID compid_playerbg_local = idServ.createPlayerBgComponentId(false);
-            UUID compid_vs = idServ.createVsComponentId();
+            UUID compid_cardareabg_remote =SolShowIds.COMPID_CARDAREA_BACKGROUND.GetId(true);
+            UUID compid_cardareabg_local = SolShowIds.COMPID_CARDAREA_BACKGROUND.GetId(false);
+            UUID compid_playerbg_remote = SolShowIds.COMPID_PLAYERNAME_BACKGROUND.GetId(true);
+            UUID compid_playerbg_local = SolShowIds.COMPID_PLAYERNAME_BACKGROUND.GetId(false);
+            UUID compid_vs = SolShowIds.COMPID_VS.GetId();
             
             SImageResource res_cardareabg_remote = (SImageResource) _ScalingService.getSResource(resid_cardareabg_remote);
             SImageResource res_cardareabg_local = (SImageResource) _ScalingService.getSResource(resid_cardareabg_local);
@@ -143,39 +142,37 @@ public class SolShowGamePanelManager extends CardGamePanelManager
     {
         // cards, cardstacks
         super.addRescaleRequests(requests);
-        
-        ISolShowIdService idServ = Services.get(ISolShowIdService.class);
-        
+                
         // card scores
         {
-            UUID resId = idServ.createFontScalableResourceId(SolShowResourceDefines.FILEPATH_FONT_SCORE);
+            UUID resId = SolShowIds.RESID_FONT.GetId(SolShowResourceDefines.FILEPATH_FONT_SCORE);
             addRescaleRequest(requests, ComponentTypes.CARDSCORE, resId);
         }
         
         // special stack counter + background
         {
-            UUID resid_spec_count = idServ.createFontScalableResourceId(SolShowResourceDefines.FILEPATH_FONT_SPECIALCOUNT);
+            UUID resid_spec_count = SolShowIds.RESID_FONT.GetId(SolShowResourceDefines.FILEPATH_FONT_SPECIALCOUNT);
             addRescaleRequest(requests, SolShowComponentTypes.SPECIALSCORE, resid_spec_count);
             
-            UUID resid_spec_bg_remote = idServ.createSpecialBackgroundResourceId(true);
-            UUID resid_spec_bg_local = idServ.createSpecialBackgroundResourceId(false);
+            UUID resid_spec_bg_remote = SolShowIds.RESID_SPECIALBACKGROUND.GetId(true);
+            UUID resid_spec_bg_local = SolShowIds.RESID_SPECIALBACKGROUND.GetId(false);
             addRescaleRequest(requests, SolShowComponentTypes.SPECIALBACKGROUND, resid_spec_bg_remote);
             addRescaleRequest(requests, SolShowComponentTypes.SPECIALBACKGROUND, resid_spec_bg_local);
         }
         
         // player names
         {
-            UUID pNameResId = idServ.createFontScalableResourceId(SolShowResourceDefines.FILEPATH_FONT_PLAYERNAME);
+            UUID pNameResId = SolShowIds.RESID_FONT.GetId(SolShowResourceDefines.FILEPATH_FONT_PLAYERNAME);
             addRescaleRequest(requests, SolShowComponentTypes.PLAYERNAME, pNameResId);
         }
         
         // background images
         {
-            UUID resid_cardareabg_remote = idServ.createCardAreaBgResourceId(true);
-            UUID resid_cardareabg_local = idServ.createCardAreaBgResourceId(false);
-            UUID resid_playerbg_remote = idServ.createPlayerBgResourceId(true);
-            UUID resid_playerbg_local = idServ.createPlayerBgResourceId(false);
-            UUID resid_vs = idServ.createVsResourceId();
+            UUID resid_cardareabg_remote = SolShowIds.RESID_CARDAREA_BACKGROUND.GetId(true);
+            UUID resid_cardareabg_local = SolShowIds.RESID_CARDAREA_BACKGROUND.GetId(false);
+            UUID resid_playerbg_remote = SolShowIds.RESID_PLAYERNAME_BACKGROUND.GetId(true);
+            UUID resid_playerbg_local = SolShowIds.RESID_PLAYERNAME_BACKGROUND.GetId(false);
+            UUID resid_vs = SolShowIds.RESID_VS.GetId();
             
             addRescaleRequest(requests, SolShowComponentTypes.CARDAREABG, resid_cardareabg_remote);
             addRescaleRequest(requests, SolShowComponentTypes.CARDAREABG, resid_cardareabg_local);
@@ -225,35 +222,33 @@ public class SolShowGamePanelManager extends CardGamePanelManager
     {
         super.preloadImages();
         
-        ISolShowIdService idServ = Services.get(ISolShowIdService.class);
-
         // cardstacks depot, laydown, middle
         String[] solstacks = new String[]
         { SolShowCardStackType.DEPOT, SolShowCardStackType.LAYDOWN, SolShowCardStackType.MIDDLE };        
         for (String stack : solstacks)
         {
-            UUID id = idServ.createCardStackScalableResourceId(stack);
+            UUID id = SolShowIds.RESID_CARDSTACK_TYPE.GetId(stack);
             String filename = String.format(SolShowResourceDefines.FILEPATH_IMG_CARDSTACK, stack.toLowerCase());
             preloadImage(id, filename);
         }
         // cardstacks turnover and special
-        UUID rid_turnover = idServ.createCardStackScalableResourceId(SolShowCardStackType.TURNOVER);
+        UUID rid_turnover = SolShowIds.RESID_CARDSTACK_TYPE.GetId(SolShowCardStackType.TURNOVER);
         preloadImage(rid_turnover, SolShowResourceDefines.FILEPATH_IMG_CARDSTACK_TURNOVER);        
-        UUID rid_special = idServ.createCardStackScalableResourceId(SolShowCardStackType.SPECIAL);
+        UUID rid_special = SolShowIds.RESID_CARDSTACK_TYPE.GetId(SolShowCardStackType.SPECIAL);
         preloadImage(rid_special, SolShowResourceDefines.FILEPATH_IMG_CARDSTACK_SPECIAL);
         
         // special stack background star images
-        UUID rid_star_remote = idServ.createSpecialBackgroundResourceId(true);
-        UUID rid_star_local = idServ.createSpecialBackgroundResourceId(false);
+        UUID rid_star_remote = SolShowIds.RESID_SPECIALBACKGROUND.GetId(true);
+        UUID rid_star_local = SolShowIds.RESID_SPECIALBACKGROUND.GetId(false);
         preloadImage(rid_star_remote, SolShowResourceDefines.FILEPATH_IMG_BACKGROUND_SPECIAL_REMOTE);
         preloadImage(rid_star_local, SolShowResourceDefines.FILEPATH_IMG_BACKGROUND_SPECIAL_LOCAL);
         
         // player-specific backgrounds and VS background
-        UUID rid_pbgremote = idServ.createPlayerBgResourceId(true);
-        UUID rid_pbglocal = idServ.createPlayerBgResourceId(false);    
-        UUID rid_cabgremote = idServ.createCardAreaBgResourceId(true);
-        UUID rid_cabglocal = idServ.createCardAreaBgResourceId(false);
-        UUID rid_vs = idServ.createVsResourceId();
+        UUID rid_pbgremote = SolShowIds.RESID_PLAYERNAME_BACKGROUND.GetId(true);
+        UUID rid_pbglocal = SolShowIds.RESID_PLAYERNAME_BACKGROUND.GetId(false);    
+        UUID rid_cabgremote = SolShowIds.RESID_CARDAREA_BACKGROUND.GetId(true);
+        UUID rid_cabglocal = SolShowIds.RESID_CARDAREA_BACKGROUND.GetId(false);
+        UUID rid_vs = SolShowIds.RESID_VS.GetId();
         preloadImage(rid_pbgremote, SolShowResourceDefines.FILEPATH_IMG_BACKGROUND_PLAYER_REMOTE);
         preloadImage(rid_pbglocal,  SolShowResourceDefines.FILEPATH_IMG_BACKGROUND_PLAYER_LOCAL);
         preloadImage(rid_cabgremote, SolShowResourceDefines.FILEPATH_IMG_BACKGROUND_CARDAREA_REMOTE);
@@ -267,22 +262,18 @@ public class SolShowGamePanelManager extends CardGamePanelManager
         super.preloadFonts();
         
         // SolShow: score font
-        IIdService idServ = Services.get(IIdService.class);
         
         // score font        
-        preloadFont(idServ.createFontScalableResourceId(SolShowResourceDefines.FILEPATH_FONT_SCORE), SolShowResourceDefines.FILEPATH_FONT_SCORE);
+        preloadFont(SolShowIds.RESID_FONT.GetId(SolShowResourceDefines.FILEPATH_FONT_SCORE), SolShowResourceDefines.FILEPATH_FONT_SCORE);
         
         // special stack counter font
-        preloadFont(idServ.createFontScalableResourceId(SolShowResourceDefines.FILEPATH_FONT_SPECIALCOUNT), SolShowResourceDefines.FILEPATH_FONT_SPECIALCOUNT);
+        preloadFont(SolShowIds.RESID_FONT.GetId(SolShowResourceDefines.FILEPATH_FONT_SPECIALCOUNT), SolShowResourceDefines.FILEPATH_FONT_SPECIALCOUNT);
     }
 
     public void animateScore(ReadOnlyCard card, int increment)
-    {
-        ISolShowIdService idServ = Services.get(ISolShowIdService.class);
-        IScalingService scaleServ = Services.get(IScalingService.class);
-        
-        UUID resId = idServ.createFontScalableResourceId(SolShowResourceDefines.FILEPATH_FONT_SCORE);
-        SFontResource scaleFontRes = (SFontResource) scaleServ.getSResource(resId);
+    {        
+        UUID resId = SolShowIds.RESID_FONT.GetId(SolShowResourceDefines.FILEPATH_FONT_SCORE);
+        SFontResource scaleFontRes = (SFontResource) _ScalingService.getSResource(resId);
         
         String text = "+" + increment;
         JSLabel label = createJSLabel(UUID.randomUUID(), ComponentTypes.CARDSCORE, text, card, scaleFontRes);

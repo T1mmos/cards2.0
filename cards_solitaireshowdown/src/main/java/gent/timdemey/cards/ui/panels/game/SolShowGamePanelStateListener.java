@@ -16,22 +16,25 @@ import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.model.delta.ChangeType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
+import gent.timdemey.cards.services.id.SolShowIds;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
-import gent.timdemey.cards.services.interfaces.ISolShowIdService;
 import gent.timdemey.cards.ui.components.swing.JSLabel;
 
 public class SolShowGamePanelStateListener extends CardGamePanelStateListener
 {
+
+    public SolShowGamePanelStateListener(IPanelService panelService, IContextService contextService)
+    {
+        super(panelService, contextService);
+    }
+    
     @Override
     public void onChange(ReadOnlyChange change)
     {
-        IContextService contextService = Services.get(IContextService.class);
-        ISolShowIdService idServ = Services.get(ISolShowIdService.class);
-        IPanelService panelServ = Services.get(IPanelService.class);
-        SolShowGamePanelManager pm = (SolShowGamePanelManager) panelServ.getPanelManager(PanelDescriptors.Game);
+        SolShowGamePanelManager pm = (SolShowGamePanelManager) _PanelService.getPanelManager(PanelDescriptors.Game);
         
-        Context context = contextService.getThreadContext();
+        Context context = _ContextService.getThreadContext();
         ReadOnlyState state = context.getReadOnlyState();
 
         ReadOnlyProperty<?> property = change.property;
@@ -65,7 +68,7 @@ public class SolShowGamePanelStateListener extends CardGamePanelStateListener
                 }
                 else if (cardStack.getCardStackType().equals(SolShowCardStackType.SPECIAL))
                 {
-                    UUID compId = idServ.createSpecialCounterComponentId(cardStack);
+                    UUID compId = SolShowIds.COMPID_SPECIALCOUNTER.GetId(cardStack);
                     JSLabel jslabel = (JSLabel) pm.getComponentById(compId);
                     pm.updateComponent(jslabel);
                 }

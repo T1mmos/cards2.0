@@ -22,9 +22,8 @@ import gent.timdemey.cards.ui.panels.IPanelManager;
 
 public class CardGamePanelStateListener implements IStateListener
 {
-
-    private final IPanelService _PanelService;
-    private final IContextService _ContextService;
+    protected final IPanelService _PanelService;
+    protected final IContextService _ContextService;
     
     public CardGamePanelStateListener (
         IPanelService panelService,

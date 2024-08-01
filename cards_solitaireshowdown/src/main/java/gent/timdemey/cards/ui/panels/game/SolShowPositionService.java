@@ -38,7 +38,14 @@ public class SolShowPositionService implements IPositionService
     private static final LayerRange LAYERRANGE_ANIMATIONS_CARDSCORE     = new LayerRange(21000, 21999);
 
     private Positions pos;
+    private final IContextService _ContextService;
 
+    public SolShowPositionService(IContextService contextService)
+    {
+        this._ContextService = contextService;
+    }
+    
+    
     @Override
     public void setMaxSize(int maxWidth, int maxHeight)
     {
@@ -136,8 +143,7 @@ public class SolShowPositionService implements IPositionService
         IComponent comp = ComponentUtils.getComponent(jcomp);
         ComponentType compType = comp.getComponentType();
         
-        IContextService contextService = Services.get(IContextService.class);
-        Context context = contextService.getThreadContext();
+        Context context = _ContextService.getThreadContext();
         UUID localId = context.getReadOnlyState().getLocalId();
         
         if (compType.hasTypeName(ComponentTypes.CARD))
@@ -251,8 +257,7 @@ public class SolShowPositionService implements IPositionService
 
     private LayeredArea getLayeredArea(ReadOnlyCard card)
     {
-        IContextService contextService = Services.get(IContextService.class);
-        Context context = contextService.getThreadContext();
+        Context context = _ContextService.getThreadContext();
         ReadOnlyCardGame cardGame = context.getReadOnlyState().getCardGame();
 
         ReadOnlyCardStack cs = card.getCardStack();
@@ -283,8 +288,7 @@ public class SolShowPositionService implements IPositionService
 
     private LayeredArea getLayeredArea(ReadOnlyCardStack cardStack)
     {
-        IContextService contextService = Services.get(IContextService.class);
-        Context context = contextService.getThreadContext();
+        Context context = _ContextService.getThreadContext();
 
         UUID localId = context.getReadOnlyState().getLocalId();
         UUID playerId = context.getReadOnlyState().getCardGame().getPlayerId(cardStack);
