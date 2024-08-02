@@ -1,7 +1,6 @@
 package gent.timdemey.cards.services.context;
 
 import gent.timdemey.cards.model.entities.commands.CommandBase;
-import gent.timdemey.cards.model.entities.state.State;
 
 /**
  * Processes a command, a unit of work. Keeps track of the sequence of commands
@@ -19,14 +18,14 @@ public interface ICommandExecutor
      * 
      * @param command
      */
-    void schedule(CommandBase command, State state);
+    void schedule(CommandBase command);
     
     /**
      * Immediately executes a command. 
      * @param command
      * @param state
      */
-    void run(CommandBase command, State state);
+    void run(CommandBase command);
     
     void shutdown();
 

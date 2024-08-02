@@ -42,12 +42,13 @@ public final class Context
             IContextService contextService,
             IChangeTracker changeTracker,
             StateFactory stateFactory,
+            State state,
             Logger logger)
     {
         this._CardPlugin = cardPlugin;
         this._CommandExecutor = commandExecutor;
         this._ContextService = contextService;
-        this._State = stateFactory.CreateState();
+        this._State = state;   // ???
         this._Logger = logger;
         
         this.stateListeners = new ArrayList<>();
@@ -56,7 +57,7 @@ public final class Context
     
     public ReadOnlyState getReadOnlyState()
     {
-        return ReadOnlyEntityFactory.getOrCreateState(limitedContext.getState());
+        return ReadOnlyEntityFactory.getOrCreateState(_State);
     }
 
     public void addExecutionListener(IExecutionListener executionListener)

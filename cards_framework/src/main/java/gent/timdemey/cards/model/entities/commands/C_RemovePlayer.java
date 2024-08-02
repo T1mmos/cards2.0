@@ -25,10 +25,10 @@ public class C_RemovePlayer extends CommandBase
     private final CommandFactory _CommandFactory;
 
     public C_RemovePlayer(
-        IContextService contextService, INetworkService networkService, CommandFactory commandFactory, Logger logger, 
+        IContextService contextService, INetworkService networkService, CommandFactory commandFactory, Logger logger, State state,
         P_RemovePlayer parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._NetworkService = networkService;
         this._CommandFactory = commandFactory;
@@ -38,13 +38,13 @@ public class C_RemovePlayer extends CommandBase
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
-        if(state.getGameState() == GameState.Disconnected)
+        if(_State.getGameState() == GameState.Disconnected)
         {
             return CanExecuteResponse.no("A player cannot leave in the Disconnected state");
         }
-        if(!state.getPlayers().contains(playerId))
+        if(!_State.getPlayers().contains(playerId))
         {
             return CanExecuteResponse.no("PlayerId " + playerId + " was not found in the State.Players");
         }
@@ -52,18 +52,18 @@ public class C_RemovePlayer extends CommandBase
     }
 
     @Override
-    public void execute(Context context, ContextType contextType, State state)
+    public void execute(Context context, ContextType contextType)
     {
-        Player player_removed = removePlayer(state, playerId);
+        Player player_removed = removePlayer(playerId);
 
         if(contextType == ContextType.Server)
         {
-            if(state.getLobbyAdminId().equals(player_removed.id))
+            if(_State.getLobbyAdminId().equals(player_removed.id))
             {
                 // when the lobby admin leaves, server should stop, so make
                 // everyone disconnect gracefully, then stop the server
                 C_Disconnect cmd_leavelobby = _CommandFactory.CreateDisconnect(DisconnectReason.LobbyAdminLeft);
-                _NetworkService.broadcast(state.getLocalId(), state.getRemotePlayerIds(), cmd_leavelobby, state.getTcpConnectionPool());                
+                _NetworkService.broadcast(_State.getLocalId(), _State.getRemotePlayerIds(), cmd_leavelobby, _State.getTcpConnectionPool());                
 
                 C_StopServer cmd_stopserver = _CommandFactory.CreateStopServer();
                 run(cmd_stopserver);
@@ -71,9 +71,9 @@ public class C_RemovePlayer extends CommandBase
             else 
             {
                 // inform all clients
-                _NetworkService.broadcast(state.getLocalId(), state.getRemotePlayerIds(), this, state.getTcpConnectionPool());
+                _NetworkService.broadcast(_State.getLocalId(), _State.getRemotePlayerIds(), this, _State.getTcpConnectionPool());
                 
-                if(state.getGameState() != GameState.Lobby)
+                if(_State.getGameState() != GameState.Lobby)
                 {
                     // while ingame, we force every remaining player back to the lobby
                     C_OnGameToLobby cmd_ongametolobby = _CommandFactory.CreateOnGameToLobby(GameToLobbyReason.PlayerLeft);
@@ -83,9 +83,9 @@ public class C_RemovePlayer extends CommandBase
         }
     }
 
-    private Player removePlayer(State state, UUID playerId)
+    private Player removePlayer(UUID playerId)
     {
-        Player player = state.getPlayers().remove(playerId);
+        Player player = _State.getPlayers().remove(playerId);
         _Logger.info("Removed player %s, id=%s", player.getName(), player.id);
         return player;
     }

@@ -27,6 +27,7 @@ import gent.timdemey.cards.model.entities.state.ServerUDP;
 import gent.timdemey.cards.model.entities.commands.payload.P_Connect;
 import gent.timdemey.cards.model.net.ITcpConnectionListener;
 import gent.timdemey.cards.model.entities.commands.payload.P_Composite;
+import gent.timdemey.cards.model.entities.commands.payload.P_HelloWorld;
 import gent.timdemey.cards.model.entities.commands.payload.P_LoadConfig;
 import gent.timdemey.cards.model.entities.commands.payload.P_Move;
 import gent.timdemey.cards.model.entities.commands.payload.P_OnGameEnded;
@@ -673,5 +674,10 @@ public abstract class CommandFactory
         Container container = _Container.Scope();        
         container.AddSingleton(parametersClazz, parameters);
         return container.Get(toCreateClazz);
+    }
+
+    public C_HelloWorld CreateHelloWorld()
+    {
+        return DICreate(C_HelloWorld.class, P_HelloWorld.class, new P_HelloWorld());
     }
 }

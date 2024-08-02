@@ -10,16 +10,16 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 public class C_StopServer extends CommandBase
 {    
     public C_StopServer(
-        IContextService contextService, 
+        IContextService contextService, State state,
         P_StopServer parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
     }
     
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
-        if (state.getServerId() == null)
+        if (_State.getServerId() == null)
         {
             return CanExecuteResponse.no("There is no ServerId set");
         }
@@ -28,7 +28,7 @@ public class C_StopServer extends CommandBase
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
         if (type == ContextType.UI)
         {
@@ -37,19 +37,19 @@ public class C_StopServer extends CommandBase
         }
         
         // clean up
-        state.setUdpServiceAnnouncer(null);       
-        state.setTcpConnectionAccepter(null);     
-        state.setTcpConnectionPool(null);
+        _State.setUdpServiceAnnouncer(null);       
+        _State.setTcpConnectionAccepter(null);     
+        _State.setTcpConnectionPool(null);
        
         // Drop the server context entirely
         _ContextService.drop(ContextType.Server);
     }
 
     @Override
-    protected void undo(Context context, ContextType type, State state)
+    protected void undo(Context context, ContextType type)
     {
         // TODO Auto-generated method stub
-        super.undo(context, type, state);
+        super.undo(context, type);
     }
     
     @Override

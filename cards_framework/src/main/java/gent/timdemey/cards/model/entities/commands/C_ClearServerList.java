@@ -9,23 +9,25 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 
 public class C_ClearServerList extends CommandBase
 {
-    public C_ClearServerList(IContextService contextService, P_ClearServerList parameters)
+    public C_ClearServerList(
+        IContextService contextService, State state, 
+        P_ClearServerList parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
         return CanExecuteResponse.yes();
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
         if (type == ContextType.UI)
         {
-            state.getUDPServers().clear();
+            _State.getUDPServers().clear();
         }
     }
 

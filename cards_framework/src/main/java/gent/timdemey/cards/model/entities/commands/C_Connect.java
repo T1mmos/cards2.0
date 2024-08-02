@@ -7,9 +7,9 @@ import gent.timdemey.cards.ICardPlugin;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.state.ServerTCP;
-import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.model.entities.state.StateFactory;
 import gent.timdemey.cards.model.entities.commands.payload.P_Connect;
+import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.model.net.ITcpConnectionListener;
 import gent.timdemey.cards.model.net.NetworkFactory;
 import gent.timdemey.cards.model.net.TCP_ConnectionPool;
@@ -43,9 +43,10 @@ public class C_Connect extends CommandBase
         NetworkFactory networkFactory,
         StateFactory stateFactory,
         CommandFactory commandFactory,
+        State state,
         P_Connect parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         this._CardPlugin = cardPlugin;
         this._NetworkFactory = networkFactory;
         this._StateFactory = stateFactory;
@@ -60,7 +61,7 @@ public class C_Connect extends CommandBase
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
         if (_CardPlugin.getPlayerCount() == 1)
         {
@@ -71,19 +72,19 @@ public class C_Connect extends CommandBase
     }
     
     @Override
-    public void execute(Context context, ContextType type, State state)
+    public void execute(Context context, ContextType type)
     {
         CheckNotContext(type, ContextType.Server);
         if (type == ContextType.UI)
         {
             ServerTCP server = _StateFactory.CreateServerTCP(serverId, serverName, serverInetAddress, serverTcpPort);
-            state.setServer(server);
-            state.setLocalName(playerName);
+            _State.setServer(server);
+            _State.setLocalName(playerName);
             
             ITcpConnectionListener tcpConnListener = _CommandFactory.CreateCommandSchedulingTcpConnectionListener(ContextType.UI);
             TCP_ConnectionPool tcpConnPool = _NetworkFactory.CreateTCPConnectionPool(type.name(), 1, tcpConnListener);
 
-            state.setTcpConnectionPool(tcpConnPool);
+            _State.setTcpConnectionPool(tcpConnPool);
 
             tcpConnPool.addConnection(serverInetAddress, serverTcpPort);            
         }

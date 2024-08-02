@@ -20,26 +20,27 @@ public abstract class C_Pull extends CommandBase
     
     public C_Pull(
         IContextService contextService,
+        State state,
         P_Pull parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this.srcCardStackId = parameters.srcCardStackId;
         this.srcCardId = parameters.srcCardId;
     }
     
     @Override
-    public final CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    public final CanExecuteResponse canExecute(Context context, ContextType type)
     {        
-        if (state.getGameState() != GameState.Started)
+        if (_State.getGameState() != GameState.Started)
         {
-            return CanExecuteResponse.no("GameState should be Started but is: " + state.getGameState());
+            return CanExecuteResponse.no("GameState should be Started but is: " + _State.getGameState());
         }
         
-        CardStack srcCardStack = state.getCardGame().getCardStack(srcCardStackId);
-        Card srcCard = state.getCardGame().getCards().get(srcCardId);
+        CardStack srcCardStack = _State.getCardGame().getCardStack(srcCardStackId);
+        Card srcCard = _State.getCardGame().getCards().get(srcCardId);
                 
-        return canPull(srcCardStack, srcCard, state);
+        return canPull(srcCardStack, srcCard);
     }
     
     /**
@@ -48,20 +49,20 @@ public abstract class C_Pull extends CommandBase
      * @param srcCard
      * @return
      */
-    protected CanExecuteResponse canPull(CardStack srcCardStack, Card srcCard, State state)
+    protected CanExecuteResponse canPull(CardStack srcCardStack, Card srcCard)
     {
         return CanExecuteResponse.yes();
     }
 
     
     @Override
-    public final void execute(Context context, ContextType type, State state)
+    public final void execute(Context context, ContextType type)
     {
         throw new UnsupportedOperationException("This command should not be executed directly, only the canExecute is important");
     }
     
     @Override
-    public final boolean canUndo(Context context, ContextType type, State state)
+    public final boolean canUndo(Context context, ContextType type)
     {
         return false;
     }
@@ -73,7 +74,7 @@ public abstract class C_Pull extends CommandBase
     }
     
     @Override
-    public final void undo(Context context, ContextType type, State state)
+    public final void undo(Context context, ContextType type)
     {
         throw new UnsupportedOperationException("This command should not be executed directly");
     }

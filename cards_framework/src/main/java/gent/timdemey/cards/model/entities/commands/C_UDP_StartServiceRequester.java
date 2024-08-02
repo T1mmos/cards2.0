@@ -28,10 +28,10 @@ public class C_UDP_StartServiceRequester extends CommandBase
     private final NetworkFactory _NetworkFactory;
     
     public C_UDP_StartServiceRequester(
-        IContextService contextService, CommandFactory commandFactory, NetworkFactory networkFactory, CommandDtoMapper commandDtoMapper, Logger logger,
+        IContextService contextService, CommandFactory commandFactory, NetworkFactory networkFactory, CommandDtoMapper commandDtoMapper, Logger logger, State state,
         P_UDP_StartServiceRequester parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._CommandFactory = commandFactory;
         this._NetworkFactory = networkFactory;
@@ -40,18 +40,18 @@ public class C_UDP_StartServiceRequester extends CommandBase
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
         return CanExecuteResponse.yes();
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
 
-        if (state.getUdpServiceRequester() != null)
+        if (_State.getUdpServiceRequester() != null)
         {
             throw new IllegalStateException("Already a requesting service running. Stop the current one first.");
         }
@@ -65,10 +65,10 @@ public class C_UDP_StartServiceRequester extends CommandBase
         
         String json = _CommandDtoMapper.toJson(cmd);
         
-        int udpport = state.getConfiguration().getServerUdpPort();
+        int udpport = _State.getConfiguration().getServerUdpPort();
         
         UDP_ServiceRequester udpServRequester = _NetworkFactory.createUDPServiceRequester(json, udpport, this::onUdpReceived);
-        state.setUdpServiceRequester(udpServRequester);
+        _State.setUdpServiceRequester(udpServRequester);
 
         udpServRequester.start();
     }

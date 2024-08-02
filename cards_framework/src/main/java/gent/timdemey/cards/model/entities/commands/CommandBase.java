@@ -21,13 +21,15 @@ public abstract class CommandBase extends EntityBase
     private volatile String serialized;
     
     protected final IContextService _ContextService;
+    protected final State _State;
     
 
-    protected CommandBase(IContextService contextService, PayloadBase payload)
+    protected CommandBase(IContextService contextService, State state, PayloadBase payload)
     {
         super(payload.id);
         
         this._ContextService = contextService;
+        this._State = state;
     }
 
     private final Context getContext()
@@ -36,10 +38,10 @@ public abstract class CommandBase extends EntityBase
         return context;
     }
 
-    public final CanExecuteResponse canExecute(State state)
+    public final CanExecuteResponse canExecute()
     {
         Context context = getContext();
-        CanExecuteResponse response = canExecute(context, context.getContextType(), state);
+        CanExecuteResponse response = canExecute(context, context.getContextType());
         
         if (response == null)
         {
@@ -49,15 +51,15 @@ public abstract class CommandBase extends EntityBase
         return response;
     }
 
-    protected abstract CanExecuteResponse canExecute(Context context, ContextType type, State state);
+    protected abstract CanExecuteResponse canExecute(Context context, ContextType type);
 
-    public final void execute(State state)
+    public final void execute()
     {
         Context context = getContext();
-        execute(context, context.getContextType(), state);
+        execute(context, context.getContextType());
     }
 
-    protected abstract void execute(Context context, ContextType type, State state);
+    protected abstract void execute(Context context, ContextType type);
 
     /**
      * Called after {@link #execute(State)} but only after the server has accepted the command.
@@ -67,13 +69,13 @@ public abstract class CommandBase extends EntityBase
      * that the top card's removal was a valid action.     
      * @param state
      */
-    public final void onAccepted(State state)
+    public final void onAccepted()
     {
         Context context = getContext();
-        onAccepted(context, context.getContextType(), state);
+        onAccepted(context, context.getContextType());
     }
 
-    public void onAccepted(Context context, ContextType type, State state)
+    public void onAccepted(Context context, ContextType type)
     {
         // override when necessary
     }
@@ -89,24 +91,24 @@ public abstract class CommandBase extends EntityBase
         // override when necessary
     }
 
-    public final boolean canUndo(State state)
+    public final boolean canUndo()
     {
         Context context = getContext();
-        return canUndo(context, context.getContextType(), state);
+        return canUndo(context, context.getContextType());
     }
 
-    protected boolean canUndo(Context context, ContextType type, State state)
+    protected boolean canUndo(Context context, ContextType type)
     {
         return false;
     }
 
-    public final void undo(State state)
+    public final void undo()
     {
         Context context = getContext();
-        undo(context, context.getContextType(), state);
+        undo(context, context.getContextType());
     }
 
-    protected void undo(Context context, ContextType type, State state)
+    protected void undo(Context context, ContextType type)
     {
         throw new UnsupportedOperationException();
     }

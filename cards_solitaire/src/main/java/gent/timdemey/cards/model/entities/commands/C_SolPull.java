@@ -13,14 +13,14 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 public class C_SolPull extends C_Pull
 {
     public C_SolPull(
-        IContextService contextService,
+        IContextService contextService, State state,
         P_Pull parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
     }
     
     @Override
-    protected CanExecuteResponse canPull(CardStack srcCardStack, Card srcCard, State state)
+    protected CanExecuteResponse canPull(CardStack srcCardStack, Card srcCard)
     {
         String srcType = srcCardStack.cardStackType;
         List<Card> cards = srcCardStack.getCards();        

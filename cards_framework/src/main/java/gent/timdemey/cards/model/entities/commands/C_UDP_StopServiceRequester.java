@@ -10,31 +10,31 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 public class C_UDP_StopServiceRequester extends CommandBase
 {
     public C_UDP_StopServiceRequester(
-        IContextService contextService, 
+        IContextService contextService, State state,
         P_UDP_StopServiceRequester parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
         return CanExecuteResponse.yes();
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
         
-        if (state.getUdpServiceRequester() == null)
+        if (_State.getUdpServiceRequester() == null)
         {
             throw new IllegalStateException("Already stopped the requesting service.");
         }
 
-        state.getUdpServiceRequester().stop();
-        state.setUdpServiceRequester(null);
+        _State.getUdpServiceRequester().stop();
+        _State.setUdpServiceRequester(null);
     }
 
     @Override

@@ -10,7 +10,6 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
-import java.util.UUID;
 
 public class C_TCP_NOK extends CommandBase
 {
@@ -25,10 +24,10 @@ public class C_TCP_NOK extends CommandBase
     public final TcpNokReason reason;
     
     public C_TCP_NOK (
-        IContextService contextService, IFrameService frameService, CommandFactory commandFactory, Loc loc, 
+        IContextService contextService, IFrameService frameService, CommandFactory commandFactory, Loc loc, State state,
         P_TCP_NOK parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._FrameService = frameService;
         this._CommandFactory = commandFactory;
@@ -37,16 +36,16 @@ public class C_TCP_NOK extends CommandBase
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
         return CanExecuteResponse.yes();
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
-        state.setServer(null);
-        state.setTcpConnectionPool(null);  
+        _State.setServer(null);
+        _State.setTcpConnectionPool(null);  
         
         String title = null;
         String msg = null;      

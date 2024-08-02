@@ -30,6 +30,7 @@ import java.awt.Window;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.swing.SwingUtilities;
 import net.miginfocom.swing.MigLayout;
 
 public class StartUI
@@ -65,8 +66,11 @@ public class StartUI
     
     public void startUI()
     {    
-        ThreadUtils.checkEDT();
-
+        SwingUtilities.invokeLater(this::startOnEDT);
+    }
+    
+    private void startOnEDT()
+    {
         showSplash();
         
         // let all services preload load in the background

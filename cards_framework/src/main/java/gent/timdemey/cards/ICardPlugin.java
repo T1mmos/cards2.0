@@ -5,7 +5,9 @@ import gent.timdemey.cards.di.Container;
 
 public interface ICardPlugin
 {
-    public void installServices(Container cb);
+    public void installCommonServices(Container c);
+    
+    public void installUIServices(Container c);
     
     public int getPlayerCount();
 

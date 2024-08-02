@@ -8,26 +8,23 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import gent.timdemey.cards.model.entities.commands.CommandBase;
-import gent.timdemey.cards.model.entities.state.State;
 
 abstract class CommandExecutorBase implements ICommandExecutor
 {
     private final class CommandTask implements Runnable, Comparable<CommandTask>
-    {
+    {        
         private final CommandBase command;
-        private final State state;
         private final long time_issued;
         private final boolean highprio;
 
-        private CommandTask(CommandBase command, State state, boolean highprio)
+        private CommandTask(CommandBase command, boolean highprio)
         {
             if (command == null)
             {
                 throw new IllegalArgumentException("command");
             }
-
+            
             this.command = command;
-            this.state = state;
             this.time_issued = System.currentTimeMillis();
             this.highprio = highprio;
         }
@@ -35,15 +32,7 @@ abstract class CommandExecutorBase implements ICommandExecutor
         @Override
         public void run()
         {
-            // if the command has no source id set yet, it means
-            // it is incoming from the local context and not from
-            // a TCP connection.
-            if(command.getSourceId() == null)
-            {
-                command.setSourceId(state.getLocalId());
-            }           
-
-            execute(command, state);
+            execute(command);
         }
 
         @Override
@@ -81,20 +70,20 @@ abstract class CommandExecutorBase implements ICommandExecutor
     }
 
     @Override
-    public void schedule(CommandBase command, State state)
+    public void schedule(CommandBase command)
     {
-        CommandTask task = new CommandTask(command, state, false);
+        CommandTask task = new CommandTask(command, false);
         executor.execute(task);
     }
     
     @Override
-    public final void run(CommandBase command, State state)
+    public final void run(CommandBase command)
     {
-        CommandTask task = new CommandTask(command, state, true);
+        CommandTask task = new CommandTask(command, true);
         executor.execute(task);
     }
 
-    protected abstract void execute(CommandBase command, State state);
+    protected abstract void execute(CommandBase command);
     
     @Override
     public void shutdown()

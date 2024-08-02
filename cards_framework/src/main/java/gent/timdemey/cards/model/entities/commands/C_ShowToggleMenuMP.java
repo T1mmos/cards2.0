@@ -16,16 +16,16 @@ public class C_ShowToggleMenuMP extends DialogCommandBase
     private final IFrameService _FrameService;
     
     public C_ShowToggleMenuMP(
-        IContextService contextService, IFrameService frameService, 
+        IContextService contextService, IFrameService frameService, State state,
         P_ShowToggleMenuMP parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._FrameService = frameService;
     }
     
     @Override
-    protected CanExecuteResponse canShowDialog(Context context, ContextType type, State state)
+    protected CanExecuteResponse canShowDialog(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
                 
@@ -36,7 +36,7 @@ public class C_ShowToggleMenuMP extends DialogCommandBase
         }
         
         // you can only make it visible when the game is started
-        if (state.getGameState() != GameState.Started)
+        if (_State.getGameState() != GameState.Started)
         {
             return CanExecuteResponse.no("State.GameState should be Started in order to show the in-game menu");
         }
@@ -45,7 +45,7 @@ public class C_ShowToggleMenuMP extends DialogCommandBase
     }
 
     @Override
-    protected void showDialog(Context context, ContextType type, State state)
+    protected void showDialog(Context context, ContextType type)
     {
         if (_FrameService.isShown(PanelDescriptors.GameMenu))
         {

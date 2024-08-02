@@ -24,10 +24,10 @@ public class C_StartLocalGame extends CommandBase
     private final StateFactory _StateFactory;
     
     public C_StartLocalGame(
-        IContextService contextService, ICardPlugin cardPlugin, ICardGameService cardGameService, StateFactory stateFactory,
+        IContextService contextService, ICardPlugin cardPlugin, ICardGameService cardGameService, StateFactory stateFactory, State state,
         P_StartLocalGame parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._CardPlugin = cardPlugin;
         this._CardGameService = cardGameService;
@@ -35,7 +35,7 @@ public class C_StartLocalGame extends CommandBase
     }
     
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
         
@@ -44,7 +44,7 @@ public class C_StartLocalGame extends CommandBase
         {
             return CanExecuteResponse.no("This is a command for single player only!");
         }
-        if (state.getCardGame() != null)
+        if (_State.getCardGame() != null)
         {
             return CanExecuteResponse.no("State.CardGame is not null");
         }
@@ -53,20 +53,20 @@ public class C_StartLocalGame extends CommandBase
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
                
-        Player player = _StateFactory.CreatePlayer(state.getLocalId(), state.getLocalName());
-        state.getPlayers().add(player);
-        List<UUID> playerIds = state.getPlayers().getIds();
+        Player player = _StateFactory.CreatePlayer(_State.getLocalId(), _State.getLocalName());
+        _State.getPlayers().add(player);
+        List<UUID> playerIds = _State.getPlayers().getIds();
         CardGame cardGame = _CardGameService.createCardGame(playerIds);
-        state.setCardGame(cardGame);
-        state.setGameState(GameState.Started);
+        _State.setCardGame(cardGame);
+        _State.setGameState(GameState.Started);
         
         boolean canUndo = true;       // single player
         boolean canRemove = false;    // single player
         CommandHistory commandHistory = _StateFactory.CreateCommandHistory(canUndo, canRemove);
-        state.setCommandHistory(commandHistory);
+        _State.setCommandHistory(commandHistory);
     }
 }

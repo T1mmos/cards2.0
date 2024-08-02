@@ -20,36 +20,36 @@ import gent.timdemey.cards.ui.panels.dialogs.mp.JoinMPGamePanelData;
 
 public class C_ShowConnect extends DialogCommandBase
 {
-
     private final IFrameService _FrameService;
     private final CommandFactory _CommandFactory;
+    
     public C_ShowConnect(
-        IContextService contextService, IFrameService frameService, CommandFactory commandFactory,
+        IContextService contextService, IFrameService frameService, CommandFactory commandFactory, State state,
         P_ShowConnect parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._FrameService = frameService;
         this._CommandFactory = commandFactory;
     }
     
     @Override
-    protected CanExecuteResponse canShowDialog(Context context, ContextType type, State state)
+    protected CanExecuteResponse canShowDialog(Context context, ContextType type)
     {
-        if (state.getGameState() != GameState.Disconnected)
+        if (_State.getGameState() != GameState.Disconnected)
         {
-            return CanExecuteResponse.no("GameState should be Disconnected but is: " + state.getGameState());
+            return CanExecuteResponse.no("GameState should be Disconnected but is: " + _State.getGameState());
         }
-        if (state.getServerId() != null)
+        if (_State.getServerId() != null)
         {
-            return CanExecuteResponse.no("State.ServerId is not null: " + state.getServerId());
+            return CanExecuteResponse.no("State.ServerId is not null: " + _State.getServerId());
         }
 
         return CanExecuteResponse.yes();
     }
 
     @Override
-    protected void showDialog(Context context, ContextType type, State state)
+    protected void showDialog(Context context, ContextType type)
     {        
         _FrameService.showPanel(PanelDescriptors.Connect, null, this::onClose);     
     }

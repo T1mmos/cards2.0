@@ -30,10 +30,10 @@ public class C_StartMultiplayerGame extends CommandBase
     private CommandFactory _CommandFactory;
     
     public C_StartMultiplayerGame(
-        IContextService contextService, ICardPlugin cardPlugin, INetworkService networkService, ICardGameService cardGameService, CommandFactory commandFactory,
+        IContextService contextService, ICardPlugin cardPlugin, INetworkService networkService, ICardGameService cardGameService, CommandFactory commandFactory, State state,
         P_StartMultiplayerGame parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._CardPlugin = cardPlugin;
         this._NetworkService = networkService;
@@ -42,23 +42,23 @@ public class C_StartMultiplayerGame extends CommandBase
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {        
         int reqPlayerCnt = _CardPlugin.getPlayerCount();
-        int curPlayerCnt = state.getPlayers().size();
+        int curPlayerCnt = _State.getPlayers().size();
 
-        if (state.getCardGame() != null)
+        if (_State.getCardGame() != null)
         {
             return CanExecuteResponse.no("State.CardGame is not null");
         }
-        if (state.getPlayers().size() != reqPlayerCnt)
+        if (_State.getPlayers().size() != reqPlayerCnt)
         {
             String msg = "RequiredPlayerCount (%s) != State.Players.Size (%s)";
             String format = String.format(msg, reqPlayerCnt, curPlayerCnt);
             return CanExecuteResponse.no(format);
         }
 
-        if (!getSourceId().equals(state.getLobbyAdminId()))
+        if (!getSourceId().equals(_State.getLobbyAdminId()))
         {
             // this command is not authorized: 
             return CanExecuteResponse.no("This command's SourceId is not equal to the LobbyAdminId");
@@ -68,16 +68,16 @@ public class C_StartMultiplayerGame extends CommandBase
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
         if (type == ContextType.UI)
         {
-            _NetworkService.send(state.getLocalId(), state.getServerId(), this, state.getTcpConnectionPool());
+            _NetworkService.send(_State.getLocalId(), _State.getServerId(), this, _State.getTcpConnectionPool());
         }
         else
         {
             // ready to kick off. Generate some cards for the current game type.
-            List<UUID> playerIds = state.getPlayers().getIds();
+            List<UUID> playerIds = _State.getPlayers().getIds();
             CardGame cardGame = _CardGameService.createCardGame(playerIds);
 
             C_OnLobbyToGame cmd = _CommandFactory.CreateOnLobbyToGame(cardGame);

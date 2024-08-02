@@ -16,20 +16,20 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 public final class C_Undo extends CommandBase
 {
     public C_Undo(
-        IContextService contextService, 
+        IContextService contextService, State state,
         P_Undo parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
-        if (state.getCommandHistory() == null)
+        if (_State.getCommandHistory() == null)
         {
             return CanExecuteResponse.no("State.CommandHistory is null");
         }
-        if (!state.getCommandHistory().canUndo())
+        if (!_State.getCommandHistory().canUndo())
         {
             return CanExecuteResponse.no("CommandHistory cannot undo");
         }
@@ -38,9 +38,9 @@ public final class C_Undo extends CommandBase
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
-        state.getCommandHistory().undo(state);
+        _State.getCommandHistory().undo();
     }
 
     @Override

@@ -6,8 +6,15 @@ import gent.timdemey.cards.di.Container;
 
 public class MockCardPlugin implements ICardPlugin
 {
+    
     @Override
-    public void installServices(Container cb)
+    public void installCommonServices(Container c)
+    {
+        
+    }
+    
+    @Override
+    public void installUIServices(Container cb)
     {
         // not necessary, the unit tests must install the required (mock)
         // services
@@ -31,4 +38,5 @@ public class MockCardPlugin implements ICardPlugin
     {
         return new Version(1,0);
     }
+
 }

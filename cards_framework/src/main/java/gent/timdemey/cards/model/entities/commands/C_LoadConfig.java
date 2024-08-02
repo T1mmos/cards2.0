@@ -37,9 +37,10 @@ public class C_LoadConfig extends CommandBase
         IConfigurationService configurationService, 
         ConfigurationFactory configurationFactory,
         Logger logger,
+        State state,
         P_LoadConfig parameters)
     { 
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._FileService = fileService;
         this._ConfigurationService = configurationService;
@@ -48,7 +49,7 @@ public class C_LoadConfig extends CommandBase
     }
     
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
         return CanExecuteResponse.yes();
@@ -56,7 +57,7 @@ public class C_LoadConfig extends CommandBase
 
     
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
         
@@ -97,14 +98,14 @@ public class C_LoadConfig extends CommandBase
             int serverUdpPort = parseProperty(properties, ConfigKeyDescriptors.ServerUdpPort);
             int clientUdpPort = parseProperty(properties, ConfigKeyDescriptors.ClientUdpPort);
             
-            state.setLocalName(pname);
-            state.setLocalId(UUID.randomUUID());
+            _State.setLocalName(pname);
+            _State.setLocalId(UUID.randomUUID());
             
             Configuration cfg = _ConfigurationFactory.CreateConfiguration();
             cfg.setServerTcpPort(serverTcpPort);
             cfg.setServerUdpPort(serverUdpPort);
             cfg.setClientUdpPort(clientUdpPort);
-            state.setConfiguration(cfg);
+            _State.setConfiguration(cfg);
         }
         catch (Exception ex)
         {

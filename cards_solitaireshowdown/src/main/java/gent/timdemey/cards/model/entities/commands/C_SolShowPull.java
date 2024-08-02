@@ -14,13 +14,13 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 
 public class C_SolShowPull extends C_Pull
 {
-    public C_SolShowPull(IContextService contextService, P_Pull parameters)
+    public C_SolShowPull(IContextService contextService, State state, P_Pull parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
     }
 
     @Override
-    protected CanExecuteResponse canPull(CardStack srcCardStack, Card srcCard, State state)
+    protected CanExecuteResponse canPull(CardStack srcCardStack, Card srcCard)
     {
         if (srcCardStack.cardStackType.equals(SolShowCardStackType.DEPOT)
                 || srcCardStack.cardStackType.equals(SolShowCardStackType.LAYDOWN))
@@ -29,8 +29,8 @@ public class C_SolShowPull extends C_Pull
         }
 
         UUID srcPlayerId = getSourceId();
-        if (!srcPlayerId.equals(state.getServerId())
-                && !srcPlayerId.equals(state.getCardGame().getPlayerId(srcCardStack)))
+        if (!srcPlayerId.equals(_State.getServerId())
+                && !srcPlayerId.equals(_State.getCardGame().getPlayerId(srcCardStack)))
         {
             return CanExecuteResponse.no("Can only pull from own stacks");
         }

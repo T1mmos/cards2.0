@@ -37,10 +37,11 @@ public class C_EnterLobby extends CommandBase
         Logger logger, 
         CommandFactory commandFactory,
         StateFactory stateFactory,
+        State state,
         INetworkService networkService,
         P_EnterLobby parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._Logger = logger;
         this._CommandFactory = commandFactory;
@@ -51,20 +52,20 @@ public class C_EnterLobby extends CommandBase
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
         if (type == ContextType.UI)
         {
-            if (state.getGameState() != GameState.Connected)
+            if (_State.getGameState() != GameState.Connected)
             {
-                return CanExecuteResponse.no("GameState should be Connected but is: " + state.getGameState());
+                return CanExecuteResponse.no("GameState should be Connected but is: " + _State.getGameState());
             }
         }
         else
         {
-            if (state.getGameState() != GameState.Lobby)
+            if (_State.getGameState() != GameState.Lobby)
             {
-                return CanExecuteResponse.no("GameState should be Lobby but is: " + state.getGameState());
+                return CanExecuteResponse.no("GameState should be Lobby but is: " + _State.getGameState());
             }
         }
         
@@ -72,48 +73,48 @@ public class C_EnterLobby extends CommandBase
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {        
         if(type == ContextType.UI)
         {
           
-            _NetworkService.send(state.getLocalId(), state.getServerId(), this, state.getTcpConnectionPool());
+            _NetworkService.send(_State.getLocalId(), _State.getServerId(), this, _State.getTcpConnectionPool());
         }
         else if(type == ContextType.Server)
         {
             TCP_Connection tcpConnection = getSourceTcpConnection();
             _Logger.info("Player %s (id %s) joining from %s", clientName, clientId, tcpConnection.getRemote());
 
-            state.getTcpConnectionPool().bindUUID(clientId, tcpConnection);
+            _State.getTcpConnectionPool().bindUUID(clientId, tcpConnection);
 
-            if (state.getPlayers().getIds().contains(clientId) && !state.getLobbyAdminId().equals(clientId))
+            if (_State.getPlayers().getIds().contains(clientId) && !_State.getLobbyAdminId().equals(clientId))
             {
                 throw new IllegalStateException("This player already joined the lobby: " + clientId + " ( " + clientName + " )");
             }            
            
             Player player;
-            if(!state.getLobbyAdminId().equals(clientId))
+            if(!_State.getLobbyAdminId().equals(clientId))
             {   
                 player = _StateFactory.CreatePlayer(clientId, clientName);
-                state.getPlayers().add(player);
+                _State.getPlayers().add(player);
             }
             else
             {
-                player = state.getPlayers().get(clientId);
+                player = _State.getPlayers().get(clientId);
             }
             
             // send unicast to new client
             {
-                CommandBase cmd_answer = _CommandFactory.CreateOnLobbyWelcome(clientId, state.getServerId(), state.getServerMessage(), state.getRemotePlayers(), state.getLobbyAdminId());
-                _NetworkService.send(state.getLocalId(), clientId, cmd_answer, state.getTcpConnectionPool());
+                CommandBase cmd_answer = _CommandFactory.CreateOnLobbyWelcome(clientId, _State.getServerId(), _State.getServerMessage(), _State.getRemotePlayers(), _State.getLobbyAdminId());
+                _NetworkService.send(_State.getLocalId(), clientId, cmd_answer, _State.getTcpConnectionPool());
             }
 
             // send update to already connected clients
-            List<UUID> updateIds = state.getPlayers().getExceptUUID(clientId);
+            List<UUID> updateIds = _State.getPlayers().getExceptUUID(clientId);
             if(updateIds.size() > 0)
             {
                 CommandBase cmd_update = _CommandFactory.CreateOnLobbyPlayerJoined(player);
-                _NetworkService.broadcast(state.getLocalId(), updateIds, cmd_update, state.getTcpConnectionPool());
+                _NetworkService.broadcast(_State.getLocalId(), updateIds, cmd_update, _State.getTcpConnectionPool());
             }            
         }
     }

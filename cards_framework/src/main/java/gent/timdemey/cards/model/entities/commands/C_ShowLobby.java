@@ -17,29 +17,29 @@ import gent.timdemey.cards.ui.panels.dialogs.mp.LobbyPanelData;
 
 public class C_ShowLobby extends DialogCommandBase
 {
-
     private final IFrameService _FrameService;
     private final CommandFactory _CommandFactory;
+    
     public C_ShowLobby (
-        IContextService contextService, IFrameService frameService, CommandFactory commandFactory,
+        IContextService contextService, IFrameService frameService, CommandFactory commandFactory, State state,
         P_ShowLobby parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._FrameService = frameService;
         this._CommandFactory = commandFactory;
     }
             
     @Override
-    protected CanExecuteResponse canShowDialog(Context context, ContextType type, State state)
+    protected CanExecuteResponse canShowDialog(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
 
-        if (state.getServerId() == null)
+        if (_State.getServerId() == null)
         {
             return CanExecuteResponse.no("State.ServerId is null");
         }
-        if (state.getCardGame() != null)
+        if (_State.getCardGame() != null)
         {
             return CanExecuteResponse.no("State.CardGame is not null");
         }
@@ -48,9 +48,9 @@ public class C_ShowLobby extends DialogCommandBase
     }
 
     @Override
-    protected void showDialog(Context context, ContextType type, State state)
+    protected void showDialog(Context context, ContextType type)
     {
-        ServerTCP server = state.getServer();
+        ServerTCP server = _State.getServer();
      
         LobbyPanelData payload = new LobbyPanelData(server.serverName);
         _FrameService.showPanel(PanelDescriptors.Lobby, payload, this::onClose);        

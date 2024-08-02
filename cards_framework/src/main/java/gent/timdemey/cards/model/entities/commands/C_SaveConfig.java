@@ -24,7 +24,6 @@ import gent.timdemey.cards.services.contract.descriptors.ConfigKeyDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.FileDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFileService;
-import java.util.UUID;
 
 public class C_SaveConfig extends CommandBase
 {
@@ -33,10 +32,10 @@ public class C_SaveConfig extends CommandBase
     private final Logger _Logger;
     
     public C_SaveConfig (
-        IContextService contextService, ICardPlugin cardPlugin, IFileService fileService, Logger logger, 
+        IContextService contextService, ICardPlugin cardPlugin, IFileService fileService, Logger logger, State state,
         P_SaveConfig parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._CardPlugin = cardPlugin;
         this._FileService = fileService;
@@ -44,7 +43,7 @@ public class C_SaveConfig extends CommandBase
     }
     
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
         return CanExecuteResponse.yesPerm();
@@ -52,7 +51,7 @@ public class C_SaveConfig extends CommandBase
 
     
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
         
@@ -102,8 +101,8 @@ public class C_SaveConfig extends CommandBase
             }
             
             // write all properties            
-            Configuration cfg = state.getConfiguration();
-            properties.setProperty(ConfigKeyDescriptors.PlayerName.id, state.getLocalName());
+            Configuration cfg = _State.getConfiguration();
+            properties.setProperty(ConfigKeyDescriptors.PlayerName.id, _State.getLocalName());
             properties.setProperty(ConfigKeyDescriptors.ServerTcpPort.id, "" + cfg.getServerTcpPort());
             properties.setProperty(ConfigKeyDescriptors.ServerUdpPort.id, "" + cfg.getServerUdpPort());
             properties.setProperty(ConfigKeyDescriptors.ClientUdpPort.id, "" + cfg.getClientUdpPort());

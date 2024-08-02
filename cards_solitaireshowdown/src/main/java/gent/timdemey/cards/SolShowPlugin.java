@@ -25,14 +25,19 @@ public class SolShowPlugin implements ICardPlugin
     }
     
     @Override
-    public void installServices(Container c)
-    {        
+    public void installCommonServices(Container c)
+    {
         c.AddSingleton(CommandFactory.class, SolShowCommandFactory.class);
         c.AddSingleton(CommandDtoMapper.class, SolShowCommandDtoMapper.class);
         c.AddSingleton(ICardGameService.class, SolShowCardGameService.class);
+        c.AddSingleton(IPositionService.class, SolShowPositionService.class);        
+    }
+    
+    @Override
+    public void installUIServices(Container c)
+    {        
         c.AddSingleton(IPanelService.class, SolShowPanelService.class);
         c.AddSingleton(IResourceRepository.class, SolShowResourceRepository.class);
-        c.AddSingleton(IPositionService.class, SolShowPositionService.class);
         c.AddSingleton(IAnimationDescriptorFactory.class, SolShowAnimationDescriptorFactory.class);
     }
 

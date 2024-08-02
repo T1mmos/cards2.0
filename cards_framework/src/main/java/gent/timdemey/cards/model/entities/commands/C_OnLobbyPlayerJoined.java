@@ -8,7 +8,6 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.utils.Debug;
-import java.util.UUID;
 
 /**
  * Multicast sent to players in a lobby when a new player joined the lobby.
@@ -20,25 +19,27 @@ public class C_OnLobbyPlayerJoined extends CommandBase
 {
     public final Player player;
 
-    public C_OnLobbyPlayerJoined(IContextService contextService, P_OnLobbyPlayerJoined parameters)
+    public C_OnLobbyPlayerJoined(
+        IContextService contextService, State state,
+        P_OnLobbyPlayerJoined parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this.player = parameters.player;
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
         return CanExecuteResponse.yes();
     }
 
     @Override
-    public void execute(Context context, ContextType type, State state)
+    public void execute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
-        state.getPlayers().add(player);
+        _State.getPlayers().add(player);
     }
 
     @Override

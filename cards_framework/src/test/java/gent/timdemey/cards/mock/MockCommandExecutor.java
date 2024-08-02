@@ -1,7 +1,6 @@
 package gent.timdemey.cards.mock;
 
 import gent.timdemey.cards.model.entities.commands.CommandBase;
-import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.ICommandExecutor;
 import gent.timdemey.cards.services.context.IExecutionListener;
 
@@ -9,7 +8,7 @@ public class MockCommandExecutor implements ICommandExecutor
 {
 
     @Override
-    public void schedule(CommandBase command, State state)
+    public void schedule(CommandBase command)
     {
         // MockCommandExecutor installed in Client layer, so
         // do nothing
@@ -37,7 +36,7 @@ public class MockCommandExecutor implements ICommandExecutor
     }
 
     @Override
-    public void run(CommandBase command, State state)
+    public void run(CommandBase command)
     {
         // TODO Auto-generated method stub
         

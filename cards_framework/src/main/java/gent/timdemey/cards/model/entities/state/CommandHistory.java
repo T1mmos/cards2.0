@@ -184,12 +184,12 @@ public class CommandHistory extends EntityBase
         return true;
     }
 
-    public void undo(State state)
+    public void undo()
     {
-        undo(1, state);
+        undo(1);
     }
 
-    public void undo(int count, State state)
+    public void undo(int count)
     {
         int chainStartIdx = getCurrentIndex() - count + 1;
         if (chainStartIdx < 0)
@@ -199,10 +199,10 @@ public class CommandHistory extends EntityBase
                             + (getCurrentIndex() + 1));
         }
         List<CommandExecution> list = execLine.subList(chainStartIdx, getCurrentIndex() + 1);
-        undo(list, state);
+        undo(list);
     }
 
-    public void undo(UUID chainStart, State state)
+    public void undo(UUID chainStart)
     {
         int chainStartIdx = indexOf(chainStart, false);
 
@@ -223,10 +223,10 @@ public class CommandHistory extends EntityBase
 
         List<CommandExecution> toUndo = execLine.subList(chainStartIdx, getCurrentIndex() + 1);
 
-        undo(toUndo, state);
+        undo(toUndo);
     }
 
-    private void undo(List<CommandExecution> list, State state)
+    private void undo(List<CommandExecution> list)
     {
         int count = list.size();
 
@@ -255,7 +255,7 @@ public class CommandHistory extends EntityBase
 
             if (execState != CommandExecutionState.Quarantined)
             {
-                if (!command.canUndo(state))
+                if (!command.canUndo())
                 {
                     // should not happen: either there is a bug in the command or the command
                     // should never have been added to the history
@@ -265,7 +265,7 @@ public class CommandHistory extends EntityBase
                 }
 
                 // undo the command and set the execution state
-                command.undo(state);
+                command.undo();
                 setCurrentIndex(getCurrentIndex() - 1);
             }
 
@@ -329,12 +329,12 @@ public class CommandHistory extends EntityBase
         return true;
     }
 
-    public void redo(State state)
+    public void redo()
     {
-        redo(1, state);
+        redo(1);
     }
 
-    public void redo(int count, State state)
+    public void redo(int count)
     {
         int chainEndIdx = getCurrentIndex() + count;
         if (chainEndIdx > getLastIndex())
@@ -344,15 +344,15 @@ public class CommandHistory extends EntityBase
                             + (getLastIndex() - getCurrentIndex()));
         }
         List<CommandExecution> list = execLine.subList(getCurrentIndex() + 1, getCurrentIndex() + count + 1);
-        redo(list, state, true);
+        redo(list, true);
     }
 
-    public void redo(UUID chainEnd, State state)
+    public void redo(UUID chainEnd)
     {
         int chainEndIdx = indexOf(chainEnd, true);
         List<CommandExecution> list = execLine.subList(getCurrentIndex() + 1, chainEndIdx + 1);
 
-        redo(list, state, true);
+        redo(list, true);
     }
 
     /**
@@ -362,7 +362,7 @@ public class CommandHistory extends EntityBase
      * @param state
      * @return
      */
-    private List<CommandExecution> redo(List<CommandExecution> list, State state, boolean noFails)
+    private List<CommandExecution> redo(List<CommandExecution> list, boolean noFails)
     {
         int count = list.size();
 
@@ -373,7 +373,7 @@ public class CommandHistory extends EntityBase
             CommandExecution cmdExecution = list.get(i);
             CommandBase command = cmdExecution.getCommand();
             CommandExecutionState execState = cmdExecution.getExecutionState();
-            CanExecuteResponse resp = command.canExecute(state);
+            CanExecuteResponse resp = command.canExecute();
             CommandExecutionState nextState;
 
             if (resp.execState == ExecutionState.Error)
@@ -429,7 +429,7 @@ public class CommandHistory extends EntityBase
             cmdExecution.setExecutionState(nextState);
             if (execState != CommandExecutionState.Quarantined && resp.canExecute())
             {
-                command.execute(state);
+                command.execute();
             }
         }
 
@@ -448,18 +448,18 @@ public class CommandHistory extends EntityBase
         return fails;
     }
 
-    public void addExecuted(CommandBase cmd, State state)
+    public void addExecuted(CommandBase cmd)
     {
         _Logger.trace("CommandHistory::addExecuted '%s', id=%s", cmd.getName(), cmd.id);
 
-        add(cmd, CommandExecutionState.Executed, state);
+        add(cmd, CommandExecutionState.Executed);
     }
 
-    public void addAwaiting(CommandBase cmd, State state)
+    public void addAwaiting(CommandBase cmd)
     {
         _Logger.trace("CommandHistory::addAwaiting '%s', id=%s", cmd.getName(), cmd.id);
 
-        add(cmd, CommandExecutionState.AwaitingConfirmation, state);
+        add(cmd, CommandExecutionState.AwaitingConfirmation);
     }
 
     public List<CommandExecution> addAccepted(CommandBase cmd, State state)
@@ -473,10 +473,10 @@ public class CommandHistory extends EntityBase
 
         CommandExecution commandExec = _StateFactory.CreateCommandExecution(cmd, CommandExecutionState.Accepted);
         acceptedCommandIds.add(cmd.id);
-        return inject(commandExec, state);
+        return inject(commandExec);
     }
 
-    private void add(CommandBase cmd, CommandExecutionState execState, State state)
+    private void add(CommandBase cmd, CommandExecutionState execState)
     {
         if (execState != CommandExecutionState.Executed && execState != CommandExecutionState.AwaitingConfirmation)
         {
@@ -516,7 +516,7 @@ public class CommandHistory extends EntityBase
 
         // now add the command execution
         CommandExecution cmdExecution = _StateFactory.CreateCommandExecution(cmd, execState);
-        cmdExecution.getCommand().execute(state);
+        cmdExecution.getCommand().execute();
 
         // we cannot just add at the end of the execution line, because there can be
         // quarantined commands which are beyond the current index pointer.
@@ -559,7 +559,7 @@ public class CommandHistory extends EntityBase
      *         could not be reexecuted, starting from the state right before the
      *         erased command would have executed
      */
-    public List<CommandExecution> reject(UUID commandId, State state)
+    public List<CommandExecution> reject(UUID commandId)
     {
         _Logger.trace("CommandHistory::reject id=%s", commandId);
 
@@ -580,7 +580,7 @@ public class CommandHistory extends EntityBase
         else
         {
             // undo all the commands [idx(commandId) <---- currentIdx]
-            undo(commandId, state);
+            undo(commandId);
 
             // enlist all unexecuted commands except the one to erase
             List<CommandExecution> list = new ArrayList<>(execLine.subList(getCurrentIndex() + 2, getLastIndex() + 1));
@@ -589,7 +589,7 @@ public class CommandHistory extends EntityBase
             execLine.remove(getCurrentIndex() + 1);
 
             // redo all the unexecuted commands, failures are allowed
-            List<CommandExecution> fails = redo(list, state, false);
+            List<CommandExecution> fails = redo(list, false);
             return fails;
         }
     }
@@ -628,7 +628,7 @@ public class CommandHistory extends EntityBase
      *         but that could not be reexecuted, starting from the state right after
      *         the inserted command has executed
      */
-    private List<CommandExecution> inject(CommandExecution commandExec, State state)
+    private List<CommandExecution> inject(CommandExecution commandExec)
     {
         if (!canInject())
         {
@@ -647,25 +647,25 @@ public class CommandHistory extends EntityBase
         List<CommandExecution> list = new ArrayList<>(execLine.subList(idx, getLastIndex() + 1));
 
         // undo all these commands
-        undo(list, state);
+        undo(list);
 
         // execute the inserted command, insert it in the line, increment pointers
         CommandBase command = commandExec.getCommand();
-        CanExecuteResponse resp = command.canExecute(state);
+        CanExecuteResponse resp = command.canExecute();
         if (!resp.canExecute())
         {
             throw new IllegalStateException(
                     "The CommandExecution is Accepted, yet can't execute it in the current state where all previous commands are Accepted, because: "
                             + resp.reason);
         }
-        command.execute(state);
-        command.onAccepted(state);
+        command.execute();
+        command.onAccepted();
         execLine.add(getCurrentIndex() + 1, commandExec);
         setCurrentIndex(getCurrentIndex() + 1);
         setAcceptedIndex(getAcceptedIndex() + 1);
 
         // redo all the unexecuted commands, failures are allowed
-        List<CommandExecution> fails = redo(list, state, false);
+        List<CommandExecution> fails = redo(list, false);
         return fails;
     }
 
@@ -676,7 +676,7 @@ public class CommandHistory extends EntityBase
      * @param commandId
      * @param state
      */
-    public void accept(UUID commandId, State state)
+    public void accept(UUID commandId)
     {
         _Logger.trace("CommandHistory::accept id=%s", commandId);
 
@@ -704,7 +704,7 @@ public class CommandHistory extends EntityBase
         if (execState == CommandExecutionState.Quarantined)
         {
             // a quarantined command is unexecuted. as it is accepted, it must be redoable
-            CanExecuteResponse resp = cmd.canExecute(state);
+            CanExecuteResponse resp = cmd.canExecute();
             if (!resp.canExecute())
             {
                 throw new IllegalStateException(
@@ -712,14 +712,14 @@ public class CommandHistory extends EntityBase
                                 + ": " + resp.reason);
             }
 
-            cmd.execute(state);
+            cmd.execute();
             setCurrentIndex(getCurrentIndex() + 1);
         }
 
         // a command awaiting acceptance hasn't yet executed its postExecute 
         // (TODO: infact we should also rollback here, because postExecute may alter the state in such 
         // way that subsequent commands cannot longer be executed.)
-        cmd.onAccepted(state);
+        cmd.onAccepted();
         cmdExecution.setExecutionState(CommandExecutionState.Accepted);
         setAcceptedIndex(currAcptIdx + 1);
     }

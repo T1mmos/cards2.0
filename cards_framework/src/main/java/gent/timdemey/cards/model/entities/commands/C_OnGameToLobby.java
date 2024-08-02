@@ -39,9 +39,11 @@ public class C_OnGameToLobby extends CommandBase
     
     public final GameToLobbyReason reason;
 
-    public C_OnGameToLobby(IContextService contextService, INetworkService networkService, CommandFactory commandFactory, P_OnGameToLobby parameters)
+    public C_OnGameToLobby(
+        IContextService contextService, INetworkService networkService, CommandFactory commandFactory, State state,
+        P_OnGameToLobby parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._NetworkService = networkService;
         this._CommandFactory = commandFactory;
@@ -50,9 +52,9 @@ public class C_OnGameToLobby extends CommandBase
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
-        GameState gameState = state.getGameState();
+        GameState gameState = _State.getGameState();
         if(gameState != GameState.Started && gameState != GameState.Paused && gameState != GameState.Ended)
         {
             return CanExecuteResponse.no("GameState is not expected: " + gameState);
@@ -61,14 +63,14 @@ public class C_OnGameToLobby extends CommandBase
     }
 
     @Override
-    public void execute(Context context, ContextType type, State state)
+    public void execute(Context context, ContextType type)
     {
-        state.setCardGame(null);
-        state.setGameState(GameState.Lobby);
+        _State.setCardGame(null);
+        _State.setGameState(GameState.Lobby);
 
         if(type == ContextType.UI)
         {
-            GameState gameState = state.getGameState();
+            GameState gameState = _State.getGameState();
             
             if (reason == GameToLobbyReason.PlayerLeft)
             {
@@ -86,7 +88,7 @@ public class C_OnGameToLobby extends CommandBase
         }
         else
         {
-            _NetworkService.broadcast(state.getLocalId(), state.getRemotePlayerIds(), this, state.getTcpConnectionPool());
+            _NetworkService.broadcast(_State.getLocalId(), _State.getRemotePlayerIds(), this, _State.getTcpConnectionPool());
         }
     }
 

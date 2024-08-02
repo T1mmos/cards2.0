@@ -19,9 +19,11 @@ public class C_OnGameEnded extends CommandBase
     private final Loc _Loc;
     private final IFrameService _FrameService;
 
-    public C_OnGameEnded(IContextService contextService, CommandFactory commandFactory, IFrameService frameService, Loc loc, P_OnGameEnded parameters)
+    public C_OnGameEnded(
+        IContextService contextService, CommandFactory commandFactory, IFrameService frameService, Loc loc, State state,
+        P_OnGameEnded parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._FrameService = frameService;
         this._Loc = loc;
@@ -30,21 +32,21 @@ public class C_OnGameEnded extends CommandBase
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
         CheckNotContext(type, ContextType.Server);
         return CanExecuteResponse.yes();
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
 
-        state.setGameState(GameState.Ended);
+        _State.setGameState(GameState.Ended);
        
         String title, msg;
-        if (state.getLocalId().equals(winnerId))
+        if (_State.getLocalId().equals(winnerId))
         {
             title = _Loc.get(LocKey.DialogTitle_youwin);
             msg = _Loc.get(LocKey.DialogMessage_youwin);    

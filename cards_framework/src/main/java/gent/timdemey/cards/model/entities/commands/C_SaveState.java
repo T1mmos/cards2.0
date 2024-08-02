@@ -6,7 +6,6 @@ import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import java.util.UUID;
 
 public class C_SaveState extends CommandBase
 {
@@ -16,10 +15,10 @@ public class C_SaveState extends CommandBase
     private final int clientUdpPort;
        
     public C_SaveState (
-        IContextService contextService, 
+        IContextService contextService, State state,
         P_SaveState parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this.playerName = parameters.playerName;
         this.serverTcpPort = parameters.serverTcpPort;
@@ -28,25 +27,25 @@ public class C_SaveState extends CommandBase
     }
         
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
         // player name
-        if (playerName != null && !playerName.isEmpty() && !playerName.equals(state.getLocalName()))
+        if (playerName != null && !playerName.isEmpty() && !playerName.equals(_State.getLocalName()))
         {
             return CanExecuteResponse.yesPerm();
         }
         // server TCP port
-        if (serverTcpPort > 1024 && serverTcpPort != state.getConfiguration().getServerTcpPort())
+        if (serverTcpPort > 1024 && serverTcpPort != _State.getConfiguration().getServerTcpPort())
         {
             return CanExecuteResponse.yesPerm();
         }       
         // server UDP port
-        if (serverUdpPort > 1024 && serverUdpPort != state.getConfiguration().getServerUdpPort())
+        if (serverUdpPort > 1024 && serverUdpPort != _State.getConfiguration().getServerUdpPort())
         {
             return CanExecuteResponse.yesPerm();
         }
         // client UDP port
-        if (clientUdpPort > 1024 && clientUdpPort != state.getConfiguration().getClientUdpPort())
+        if (clientUdpPort > 1024 && clientUdpPort != _State.getConfiguration().getClientUdpPort())
         {
             return CanExecuteResponse.yesPerm();
         }
@@ -55,11 +54,11 @@ public class C_SaveState extends CommandBase
     }
     
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
-        state.setLocalName(playerName);
-        state.getConfiguration().setServerTcpPort(serverTcpPort);    
-        state.getConfiguration().setServerUdpPort(serverUdpPort);   
-        state.getConfiguration().setClientUdpPort(clientUdpPort); 
+        _State.setLocalName(playerName);
+        _State.getConfiguration().setServerTcpPort(serverTcpPort);    
+        _State.getConfiguration().setServerUdpPort(serverUdpPort);   
+        _State.getConfiguration().setClientUdpPort(clientUdpPort); 
     }
 }

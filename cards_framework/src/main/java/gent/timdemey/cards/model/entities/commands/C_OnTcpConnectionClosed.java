@@ -20,9 +20,10 @@ public class C_OnTcpConnectionClosed extends CommandBase
     public C_OnTcpConnectionClosed(
         IContextService contextService, 
         CommandFactory commandFactory,
+        State state,
         P_OnTcpConnectionClosed parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._CommandFactory = commandFactory;
         
@@ -31,9 +32,9 @@ public class C_OnTcpConnectionClosed extends CommandBase
     }
     
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
-        GameState gameState = state.getGameState();
+        GameState gameState = _State.getGameState();
         boolean expected = gameState == GameState.Disconnected;
         if (local && !expected)
         {
@@ -43,11 +44,11 @@ public class C_OnTcpConnectionClosed extends CommandBase
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
         if (type == ContextType.UI)
         {
-            GameState gameState = state.getGameState();
+            GameState gameState = _State.getGameState();
             boolean expected = gameState == GameState.Disconnected;
             
             if (!expected)

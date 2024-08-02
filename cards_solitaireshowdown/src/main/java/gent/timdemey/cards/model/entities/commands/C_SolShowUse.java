@@ -19,18 +19,18 @@ public class C_SolShowUse extends C_Use
 
     private final CommandFactory _CommandFactory;
     public C_SolShowUse(
-        IContextService contextService, CommandFactory commandFactory,
+        IContextService contextService, State state, CommandFactory commandFactory,
         P_Use parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._CommandFactory = commandFactory;
     }
     
     @Override
-    protected CommandBase resolveCommand(Context context, ContextType type, State state)
+    protected CommandBase resolveCommand(Context context, ContextType type)
     {        
-        CardGame cardGame = state.getCardGame();
+        CardGame cardGame = _State.getCardGame();
         List<CommandBase> eligible = new ArrayList<>();
         UUID localId = context.getReadOnlyState().getLocalId();        
 
@@ -82,7 +82,7 @@ public class C_SolShowUse extends C_Use
             
             if(isTurnOver || isMiddle || isSpecial)
             {
-                List<UUID> otherPlayerIds = state.getPlayers().getExceptUUID(localId);
+                List<UUID> otherPlayerIds = _State.getPlayers().getExceptUUID(localId);
                 UUID otherPlayerId = otherPlayerIds.get(0);
                 List<CardStack> allLaydownStacks = cardGame.getCardStacks(localId, SolShowCardStackType.LAYDOWN);
                 List<CardStack> otherLaydownStacks = cardGame.getCardStacks(otherPlayerId, SolShowCardStackType.LAYDOWN);
@@ -102,7 +102,7 @@ public class C_SolShowUse extends C_Use
         
         for (CommandBase cmd : eligible)
         {
-            if(cmd.canExecute(state).canExecute())
+            if(cmd.canExecute().canExecute())
             {
                 return cmd;
             }

@@ -25,9 +25,10 @@ public class C_OnTcpConnectionAdded extends CommandBase
         CommandFactory commandFactory,
         ICardPlugin cardPlugin,
         INetworkService networkService,
+        State state,
         P_OnTcpConnectionAdded parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._CommandFactory = commandFactory;
         this._CardPlugin = cardPlugin;
@@ -37,23 +38,23 @@ public class C_OnTcpConnectionAdded extends CommandBase
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
         return CanExecuteResponse.yes();
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
         if(type == ContextType.UI)
         {
-            state.getTcpConnectionPool().bindUUID(state.getServerId(), tcpConnection);
+            _State.getTcpConnectionPool().bindUUID(_State.getServerId(), tcpConnection);
         }
         else
         {
             int playerCnt_max = _CardPlugin.getPlayerCount();
-            int playerCnt_curr = state.getPlayers().size();
-            int reserved = state.getTcpConnectionPool().getHalfConnections();
+            int playerCnt_curr = _State.getPlayers().size();
+            int reserved = _State.getTcpConnectionPool().getHalfConnections();
 
             CommandBase cmd_response;
             if (playerCnt_curr + reserved > playerCnt_max)

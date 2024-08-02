@@ -3,7 +3,6 @@ package gent.timdemey.cards.services.context;
 import gent.timdemey.cards.ICardPlugin;
 
 import gent.timdemey.cards.model.entities.commands.CommandBase;
-import gent.timdemey.cards.model.entities.state.CommandHistory;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.state.State;
 
@@ -12,7 +11,6 @@ public class LimitedContext
     private final ContextType _ContextType;
     private final ICommandExecutor _CommandExecutor;
     private final State _State;
-    private final ICardPlugin _CardPlugin;
 
     public LimitedContext(
             ICardPlugin cardPlugin, 
@@ -29,7 +27,6 @@ public class LimitedContext
             throw new IllegalArgumentException("cmdExecServ");
         }
         
-        this._CardPlugin = cardPlugin;
         this._CommandExecutor = cmdExecServ;
         this._ContextType = contextType;        
         this._State = state;
@@ -46,7 +43,7 @@ public class LimitedContext
         {
             command.setSourceId(_State.getLocalId());
         }
-        CanExecuteResponse resp = command.canExecute(_State);
+        CanExecuteResponse resp = command.canExecute();
         
         return resp;
     }
@@ -57,7 +54,7 @@ public class LimitedContext
         {
             command.setSourceId(_State.getLocalId());
         }
-        _CommandExecutor.schedule(command, _State);
+        _CommandExecutor.schedule(command);
     }
 
     public void run(CommandBase command)
@@ -66,7 +63,7 @@ public class LimitedContext
         {
             command.setSourceId(_State.getLocalId());
         }
-        _CommandExecutor.run(command, _State);
+        _CommandExecutor.run(command);
     }
     
     void addExecutionListener(IExecutionListener executionListener)
@@ -78,19 +75,9 @@ public class LimitedContext
     {
         _CommandExecutor.removeExecutionListener(executionListener);
     }
-
-    State getState()
-    {
-        return _State;
-    }
     
     void shutdownAndWait()
     {
         this._CommandExecutor.shutdown();
-    }
-
-    public CommandHistory getCommandHistory()
-    {
-        return _State.getCommandHistory();
     }
 }

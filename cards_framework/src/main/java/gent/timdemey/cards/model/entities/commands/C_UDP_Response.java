@@ -23,29 +23,29 @@ public final class C_UDP_Response extends CommandBase
     public final ServerUDP server;
 
     public C_UDP_Response(
-        IContextService contextService,
+        IContextService contextService, State state,
         P_UDP_Response parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this.server = parameters.server;
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
         return CanExecuteResponse.yes();
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
 
-        if (!state.getUDPServers().contains(server))
+        if (!_State.getUDPServers().contains(server))
         {
-            state.getUDPServers().add(server);
+            _State.getUDPServers().add(server);
         }
     }
 

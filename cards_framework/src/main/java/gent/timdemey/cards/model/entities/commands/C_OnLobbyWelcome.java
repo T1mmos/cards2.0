@@ -29,10 +29,10 @@ public class C_OnLobbyWelcome extends CommandBase
     private final CommandFactory _CommandFactory;
 
     public C_OnLobbyWelcome(
-            IContextService contextService, CommandFactory commandFactory,
+            IContextService contextService, CommandFactory commandFactory, State state,
             P_OnLobbyWelcome parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._CommandFactory = commandFactory;
         
@@ -44,7 +44,7 @@ public class C_OnLobbyWelcome extends CommandBase
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
 
@@ -52,26 +52,26 @@ public class C_OnLobbyWelcome extends CommandBase
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
 
         // safety checks: returned clientId == localId
-        if (!state.getLocalId().equals(clientId))
+        if (!_State.getLocalId().equals(clientId))
         {
             throw new IllegalArgumentException(
                     "Server returned a WelcomeClient with a clientId not matching the localId");
         }
-        if (!state.getServerId().equals(serverId))
+        if (!_State.getServerId().equals(serverId))
         {
             throw new IllegalArgumentException(
                     "Server returned a WelcomeClient with a serverId not matching the serverId");
         }
 
-        state.setServerMessage(serverMessage);
-        state.setLobbyAdminId(lobbyAdminId);
-        state.getPlayers().addAll(connected);      
-        state.setGameState(GameState.Lobby);
+        _State.setServerMessage(serverMessage);
+        _State.setLobbyAdminId(lobbyAdminId);
+        _State.getPlayers().addAll(connected);      
+        _State.setGameState(GameState.Lobby);
         
         run(_CommandFactory.ShowDialog_Lobby());
     }

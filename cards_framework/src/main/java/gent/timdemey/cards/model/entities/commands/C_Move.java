@@ -23,9 +23,11 @@ public class C_Move extends CommandBase
     public final UUID cardId;
     protected List<Card> transferCards;
 
-    public C_Move(IContextService contextService, P_Move parameters)
+    public C_Move(
+        IContextService contextService, State state,            
+        P_Move parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this.srcCardStackId = parameters.srcCardStackId;
         this.dstCardStackId = parameters.dstCardStackId;
@@ -40,11 +42,11 @@ public class C_Move extends CommandBase
      * @return
      */
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
-        if (state.getGameState() != GameState.Started)
+        if (_State.getGameState() != GameState.Started)
         {
-            return CanExecuteResponse.no("GameState should be Started but is: " + state.getGameState());
+            return CanExecuteResponse.no("GameState should be Started but is: " + _State.getGameState());
         }
         return CanExecuteResponse.yes();
     }
@@ -57,9 +59,9 @@ public class C_Move extends CommandBase
      * @return
      */
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
-        CardGame cardGame = state.getCardGame();
+        CardGame cardGame = _State.getCardGame();
         CardStack srcCardStack = cardGame.getCardStack(srcCardStackId);
         CardStack dstCardStack = cardGame.getCardStack(dstCardStackId);
 
@@ -81,9 +83,9 @@ public class C_Move extends CommandBase
     }
 
     @Override
-    protected void undo(Context context, ContextType type, State state)
+    protected void undo(Context context, ContextType type)
     {
-        CardGame cardGame = state.getCardGame();
+        CardGame cardGame = _State.getCardGame();
         CardStack srcCardStack = cardGame.getCardStacks().get(srcCardStackId);
         CardStack dstCardStack = cardGame.getCardStacks().get(dstCardStackId);
 
@@ -93,7 +95,7 @@ public class C_Move extends CommandBase
     }
 
     @Override
-    protected boolean canUndo(Context context, ContextType type, State state)
+    protected boolean canUndo(Context context, ContextType type)
     {
         return true;
     }

@@ -23,10 +23,10 @@ public class C_ShowReexecutionFail extends DialogCommandBase
     private final Loc _Loc;
 
     public C_ShowReexecutionFail(
-        IContextService contextService, IFrameService frameService, Loc loc, 
+        IContextService contextService, IFrameService frameService, Loc loc, State state,
         P_ShowReexecutionFail parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._FrameService = frameService;
         this._Loc = loc;
@@ -35,13 +35,13 @@ public class C_ShowReexecutionFail extends DialogCommandBase
     }
 
     @Override
-    protected CanExecuteResponse canShowDialog(Context context, ContextType type, State state)
+    protected CanExecuteResponse canShowDialog(Context context, ContextType type)
     {
         return CanExecuteResponse.yes();
     }
 
     @Override
-    protected void showDialog(Context context, ContextType type, State state)
+    protected void showDialog(Context context, ContextType type)
     {
         String title = _Loc.get(LocKey.DialogTitle_commandundone);
         String msg = _Loc.get(LocKey.DialogMessage_commandundone);

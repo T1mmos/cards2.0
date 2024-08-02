@@ -21,9 +21,9 @@ import gent.timdemey.cards.services.interfaces.IFrameService;
  */
 public class C_Disconnect extends CommandBase
 {
-
     private final Loc _Loc;
     private final IFrameService _FrameService;
+
     public enum DisconnectReason
     {
         /** Lost connection to the server. */
@@ -45,9 +45,10 @@ public class C_Disconnect extends CommandBase
             IContextService contextService, 
             IFrameService frameService,
             Loc loc,
+            State state,
             P_Disconnect parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._FrameService = frameService;
         this._Loc = loc;
@@ -55,9 +56,9 @@ public class C_Disconnect extends CommandBase
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
-        if (state.getGameState() == GameState.Disconnected)
+        if (_State.getGameState() == GameState.Disconnected)
         {
             return CanExecuteResponse.no("GameState shouldn't be Disconnected");
         }
@@ -65,20 +66,20 @@ public class C_Disconnect extends CommandBase
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
 
         // clean all state
-        state.setTcpConnectionPool(null);
-        state.setUdpServiceRequester(null);
-        state.setGameState(GameState.Disconnected);
-        state.setCardGame(null);
-        state.getPlayers().clear();
-        state.getUDPServers().clear();
-        state.setLobbyAdminId(null);
-        state.setServer(null);
-        state.setServerMessage(null);
+        _State.setTcpConnectionPool(null);
+        _State.setUdpServiceRequester(null);
+        _State.setGameState(GameState.Disconnected);
+        _State.setCardGame(null);
+        _State.getPlayers().clear();
+        _State.getUDPServers().clear();
+        _State.setLobbyAdminId(null);
+        _State.setServer(null);
+        _State.setServerMessage(null);
     }
     
     @Override

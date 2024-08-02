@@ -26,31 +26,32 @@ public class C_ShowStartServer extends DialogCommandBase
         IContextService contextService, 
         IFrameService frameService, 
         CommandFactory commandFactory,
+        State state,
         P_ShowStartServer parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._FrameService = frameService;
         this._CommandFactory = commandFactory;
     }
     
     @Override
-    protected CanExecuteResponse canShowDialog(Context context, ContextType type, State state)
+    protected CanExecuteResponse canShowDialog(Context context, ContextType type)
     {
         if (_ContextService.isInitialized(ContextType.Server))
         {
             return CanExecuteResponse.no("Server context already initialized");
         }
-        if (state.getGameState() != GameState.Disconnected)
+        if (_State.getGameState() != GameState.Disconnected)
         {
-            return CanExecuteResponse.no("Cannot start a server while connected to a server, current GameState=" + state.getGameState());
+            return CanExecuteResponse.no("Cannot start a server while connected to a server, current GameState=" + _State.getGameState());
         }
 
         return CanExecuteResponse.yes();
     }
 
     @Override
-    protected void showDialog(Context context, ContextType type, State state)
+    protected void showDialog(Context context, ContextType type)
     {  
         String name = _ContextService.getThreadContext().getReadOnlyState().getLocalName();     
         _FrameService.showPanel(PanelDescriptors.StartServer, name, this::onClose);
@@ -60,11 +61,10 @@ public class C_ShowStartServer extends DialogCommandBase
     {
         if (data.closeType == PanelButtonDescriptors.Ok)
         {
-            ReadOnlyState state = _ContextService.getThreadContext().getReadOnlyState();
-            UUID localId = state.getLocalId();
-            String localName = state.getLocalName();
-            int udpPort = state.getConfiguration().getServerUdpPort();
-            int tcpPort = state.getConfiguration().getServerTcpPort();
+            UUID localId = _State.getLocalId();
+            String localName = _State.getLocalName();
+            int udpPort = _State.getConfiguration().getServerUdpPort();
+            int tcpPort = _State.getConfiguration().getServerTcpPort();
             
             C_StartServer cmd_startServer =_CommandFactory.CreateStartServer(localId, localName, data.data_out.srvname, data.data_out.srvmsg,
                     udpPort, tcpPort, data.data_out.autoconnect);

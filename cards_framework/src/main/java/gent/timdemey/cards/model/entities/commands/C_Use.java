@@ -17,10 +17,10 @@ public abstract class C_Use extends CommandBase
     protected final UUID initiatorCardId;
 
     public C_Use(
-        IContextService contextService,
+        IContextService contextService, State state,
         P_Use parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         if ((parameters.initiatorStackId == null && parameters.initiatorCardId == null)
                 || (parameters.initiatorStackId != null && parameters.initiatorCardId != null))
@@ -33,15 +33,15 @@ public abstract class C_Use extends CommandBase
     }
 
     @Override
-    protected final CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected final CanExecuteResponse canExecute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
-        if (state.getGameState() != GameState.Started)
+        if (_State.getGameState() != GameState.Started)
         {
-            return CanExecuteResponse.no("GameState should be Started but is: " + state.getGameState());
+            return CanExecuteResponse.no("GameState should be Started but is: " + _State.getGameState());
         }
 
-        CommandBase cmd = resolveCommand(context, type, state);
+        CommandBase cmd = resolveCommand(context, type);
         if (cmd == null)
         {
             return CanExecuteResponse.no("No command could be resolved");
@@ -50,11 +50,11 @@ public abstract class C_Use extends CommandBase
         return CanExecuteResponse.yes();
     }
 
-    protected final void execute(Context context, ContextType type, State state)
+    protected final void execute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
 
-        CommandBase cmd = resolveCommand(context, type, state);
+        CommandBase cmd = resolveCommand(context, type);
         schedule(ContextType.UI, cmd);
     };
 
@@ -64,10 +64,9 @@ public abstract class C_Use extends CommandBase
      * 
      * @param context
      * @param type
-     * @param state
      * @return
      */
-    protected abstract CommandBase resolveCommand(Context context, ContextType type, State state);
+    protected abstract CommandBase resolveCommand(Context context, ContextType type);
 
     @Override
     public String toDebugString()

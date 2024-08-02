@@ -11,6 +11,10 @@ import gent.timdemey.cards.logging.LogManager;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.delta.IChangeTracker;
 import gent.timdemey.cards.model.delta.StateChangeTracker;
+import gent.timdemey.cards.model.entities.commands.CommandFactory;
+import gent.timdemey.cards.model.entities.state.State;
+import gent.timdemey.cards.model.entities.state.StateFactory;
+import gent.timdemey.cards.server.StartServer;
 import gent.timdemey.cards.services.action.ActionService;
 import gent.timdemey.cards.services.animation.AnimationDescriptorFactory;
 import gent.timdemey.cards.services.animation.AnimationService;
@@ -18,7 +22,9 @@ import gent.timdemey.cards.services.config.ConfigService;
 import gent.timdemey.cards.services.context.CommandNetworkService;
 import gent.timdemey.cards.services.context.ContextService;
 import gent.timdemey.cards.services.context.ICommandExecutor;
+import gent.timdemey.cards.services.context.ServerCommandExecutor;
 import gent.timdemey.cards.services.context.UICommandExecutor;
+import static gent.timdemey.cards.services.contract.descriptors.PanelDescriptors.StartServer;
 import gent.timdemey.cards.services.file.FileService;
 import gent.timdemey.cards.services.frame.FrameService;
 import gent.timdemey.cards.services.interfaces.IActionService;
@@ -51,29 +57,61 @@ public class Start
     }
 
     public static void main(String[] args)
+    {        
+        // based on args we could also start a standalone server
+        startUI(args);
+    }
+    
+    public static void startUI(String[] args)
     {
+        ICardPlugin plugin = getCardPlugin(args);
+        
+        Container container = new Container();          
+        installPlugin(container, plugin);
+        installCommonServices(container);    
+        installUIServices(container);
+        plugin.installCommonServices(container);
+        plugin.installUIServices(container);
+        
+        State state = container.Get(StateFactory.class).CreateState();
+        container.AddSingleton(State.class, state);
+        
+        StartUI startUI = container.Get(StartUI.class);        
+        startUI.startUI();
+    }
+    
+    public static void startServer(String[] args)
+    {
+        ICardPlugin plugin = getCardPlugin(args);
+        
+        Container container = new Container();          
+        installPlugin(container, plugin);
+        installCommonServices(container);    
+        installServerServices(container);
+        plugin.installCommonServices(container);
+        
+        State state = container.Get(StateFactory.class).CreateState();
+        container.AddSingleton(State.class, state);
+        
+        StartServer startServer = container.Get(StartServer.class);        
+        startServer.startServer();
+    }
+
+    private static ICardPlugin getCardPlugin(String[] args)
+    {
+        
         Container bootContainer = CreateBootContainer();
         Logger bootLogger = bootContainer.Get(Logger.class);
         
-        Container container = new Container();  
-        installBaseServices(container);                  
-        installCardPlugin(args, container, bootLogger);
-        
-        StartUI startUI = container.Get(StartUI.class);        
-        SwingUtilities.invokeLater(startUI::startUI);
-    }
-
-    private static void installCardPlugin(String[] args, Container container, Logger logger) {
-        
          // determine plugin and if found, let it install services
-        ICardPlugin plugin = loadCardPlugin(args, logger);
+        ICardPlugin plugin = loadCardPlugin(args, bootLogger);
         if(plugin == null)
         {
             throw new IllegalStateException("Cannot load plugin class. Terminating.");
         }
         
-        container.AddSingleton(ICardPlugin.class, plugin);        
-        plugin.installServices(container);
+        return plugin;
+        
     }
     
     private static ICardPlugin loadCardPlugin(String[] args, Logger logger)
@@ -125,27 +163,51 @@ public class Start
         container.AddSingleton(ILogManager.class, new LogManager(LogLevel.DEBUG));                
         
         return container;
+    }    
+
+    private static void installPlugin(Container container, ICardPlugin plugin)
+    {
+        container.AddSingleton(ICardPlugin.class, plugin);
     }
     
-    private static void installBaseServices(Container cb)
-    {
-        cb.AddSingleton(ILogManager.class, new LogManager(LogLevel.DEBUG));       
-        cb.AddSingleton(IConfigurationService.class, ConfigService.class);
-        cb.AddSingleton(IContextService.class, ContextService.class);
-        cb.AddSingleton(IScalingService.class, ScalingService.class);
-        cb.AddSingleton(IResourceCacheService.class, ResourceCacheService.class);
-        cb.AddSingleton(IResourceRepository.class, ResourceRepository.class);
-        cb.AddSingleton(IResourceNameService.class, ResourceNameService.class);
-        cb.AddSingleton(INetworkService.class, CommandNetworkService.class);        
-        cb.AddSingleton(IAnimationService.class, AnimationService.class); 
-        cb.AddSingleton(IFrameService.class, FrameService.class);
-        cb.AddSingleton(IActionService.class, ActionService.class);
-        cb.AddSingleton(IPanelService.class, PanelService.class);
-        cb.AddSingleton(IFileService.class, FileService.class);
-        cb.AddSingleton(ISoundService.class, SoundService.class);
-        cb.AddSingleton(IAnimationDescriptorFactory.class, AnimationDescriptorFactory.class);
-        // cb.AddTransient(State.class, State.class);
-        cb.AddSingleton(IChangeTracker.class, StateChangeTracker.class);
-        cb.AddSingleton(ICommandExecutor.class, UICommandExecutor.class);
+    private static void installCommonServices(Container c)
+    {        
+        c.AddSingleton(IChangeTracker.class, StateChangeTracker.class);
+        c.AddSingleton(IConfigurationService.class, ConfigService.class);
+        c.AddSingleton(IContextService.class, ContextService.class);        
+        c.AddSingleton(ILogManager.class, new LogManager(LogLevel.DEBUG));     
+        c.AddSingleton(INetworkService.class, CommandNetworkService.class);    
+    }
+    
+    private static void installUIServices(Container c)
+    {        
+        c.AddSingleton(IActionService.class, ActionService.class);
+        c.AddSingleton(IAnimationDescriptorFactory.class, AnimationDescriptorFactory.class);
+        c.AddSingleton(IAnimationService.class, AnimationService.class);  
+        c.AddSingleton(ICommandExecutor.class, UICommandExecutor.class);
+        c.AddSingleton(IFileService.class, FileService.class);
+        c.AddSingleton(IFrameService.class, FrameService.class); 
+        c.AddSingleton(IPanelService.class, PanelService.class);
+        c.AddSingleton(IResourceCacheService.class, ResourceCacheService.class);
+        c.AddSingleton(IResourceRepository.class, ResourceRepository.class);
+        c.AddSingleton(IResourceNameService.class, ResourceNameService.class);   
+        c.AddSingleton(IScalingService.class, ScalingService.class);   
+        c.AddSingleton(ISoundService.class, SoundService.class);
+    }
+    
+    private static void installServerServices(Container c)
+    {        
+        c.AddSingleton(IActionService.class, ActionService.class);
+        c.AddSingleton(IAnimationDescriptorFactory.class, AnimationDescriptorFactory.class);
+        c.AddSingleton(IAnimationService.class, AnimationService.class);  
+        c.AddSingleton(IFileService.class, FileService.class);
+        c.AddSingleton(IFrameService.class, FrameService.class); 
+        c.AddSingleton(IPanelService.class, PanelService.class);
+        c.AddSingleton(IResourceCacheService.class, ResourceCacheService.class);
+        c.AddSingleton(IResourceRepository.class, ResourceRepository.class);
+        c.AddSingleton(IResourceNameService.class, ResourceNameService.class);   
+        c.AddSingleton(IScalingService.class, ScalingService.class);   
+        c.AddSingleton(ISoundService.class, SoundService.class);
+        c.AddSingleton(ICommandExecutor.class, ServerCommandExecutor.class);
     }
 }

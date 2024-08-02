@@ -14,19 +14,21 @@ import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.interfaces.INetworkService;
 
-class ServerCommandExecutor extends CommandExecutorBase
+public class ServerCommandExecutor extends CommandExecutorBase
 {
 
     private final INetworkService _NetworkService;
     private final CommandDtoMapper _CommandDtoMapper;
     private final Logger _Logger;
     private final CommandFactory _CommandFactory;
+    private final State _State;
     
     public ServerCommandExecutor(
         INetworkService networkService,
         CommandFactory commandFactory,
         CommandDtoMapper commandDtoMapper,
-        Logger logger
+        Logger logger,
+        State state
     )
     {
         super(ContextType.Server);
@@ -35,14 +37,15 @@ class ServerCommandExecutor extends CommandExecutorBase
         this._CommandFactory = commandFactory;
         this._CommandDtoMapper = commandDtoMapper;
         this._Logger = logger;
+        this._State = state;
     }
 
     @Override
-    protected void execute(CommandBase command, State state)
+    protected void execute(CommandBase command)
     {
         _Logger.info("Processing command '%s', id=%s", command.getName(), command.id);
 
-        CommandHistory cmdHist = state.getCommandHistory();
+        CommandHistory cmdHist = _State.getCommandHistory();
 
         // a command cannot be executed twice
         if (cmdHist != null && cmdHist.containsAccepted(command))
@@ -51,7 +54,7 @@ class ServerCommandExecutor extends CommandExecutorBase
             return;
         }
 
-        CanExecuteResponse resp = command.canExecute(state);
+        CanExecuteResponse resp = command.canExecute();
         CommandType cmdType = command.getCommandType();
 
         // syncable commands are commands that are executed clientside,
@@ -61,19 +64,19 @@ class ServerCommandExecutor extends CommandExecutorBase
         {
             if (cmdType == CommandType.TRACKED || cmdType == CommandType.SYNCED)
             {
-                state.getCommandHistory().addAccepted(command, state);
+                _State.getCommandHistory().addAccepted(command, _State);
 
                 // in case of syncable commands, we send a response to the source so
                 // the client can mark the command as accepted in its history
                 if (cmdType == CommandType.SYNCED)
                 {
                     C_Accept acceptCmd = _CommandFactory.CreateAccept(command.id);
-                    _NetworkService.send(state.getLocalId(), command.getSourceId(), acceptCmd, state.getTcpConnectionPool());
+                    _NetworkService.send(_State.getLocalId(), command.getSourceId(), acceptCmd, _State.getTcpConnectionPool());
                 }
             }
             else if (cmdType == CommandType.DEFAULT)
             {
-                command.execute(state);
+                command.execute();
             }
         }
         else if (resp.execState == ExecutionState.No)
@@ -84,7 +87,7 @@ class ServerCommandExecutor extends CommandExecutorBase
 
                 C_Reject rejectCmd = _CommandFactory.CreateReject(command.id);
                 String answer = _CommandDtoMapper.toJson(rejectCmd);
-                state.getTcpConnectionPool().getConnection(command.getSourceId()).send(answer);
+                _State.getTcpConnectionPool().getConnection(command.getSourceId()).send(answer);
             }
             else
             {

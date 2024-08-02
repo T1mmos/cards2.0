@@ -24,19 +24,22 @@ public final class Container
             
     // keep track of what we're constructing, to detect circular dependencies
     private final Stack<Class> constructing = new Stack<>();
-    
     private final Container _ParentContainer;
     
     public Container ()
     {
-        this(null);
+         _TransientClassesMap = new HashMap<>();
+        _SingletonClassesMap = new HashMap<>();
+        _SingletonInstancesMap = new HashMap<>();
+        
+        _ParentContainer = null;
     }
     
     private Container (Container parent)
     {
-        _TransientClassesMap = new HashMap<>();
-        _SingletonClassesMap = new HashMap<>();
-        _SingletonInstancesMap = new HashMap<>();
+        _TransientClassesMap = new HashMap<>(parent._TransientClassesMap);
+        _SingletonClassesMap = new HashMap<>(parent._SingletonClassesMap);
+        _SingletonInstancesMap = new HashMap<>(parent._SingletonInstancesMap);
         
         _ParentContainer = parent;
     }
@@ -83,6 +86,10 @@ public final class Container
     
     public Container Scope()
     {
+        // ensure all mappings are instantiated, e.g. singletons, so the
+        // child can take over the instances
+        GetAllInstances();
+        
         return new Container(this);
     }
     
@@ -123,19 +130,7 @@ public final class Container
                 }
             }
         }
-        
-        // try parent container
-        {
-            if (_ParentContainer != null)
-            {
-                I instance = _ParentContainer.TryGet(clazz);
-                if (instance != null)
-                {
-                    return instance;
-                }
-            }
-        }
-        
+                
         // fail
         throw new DIException("Class " + clazz.getName() + " is not mapped or if it's a concrete type, no suitable constructor was found, construction chain: " + constructing);
     }

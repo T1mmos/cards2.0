@@ -19,7 +19,13 @@ public class SolitairePlugin implements ICardPlugin
     }
     
     @Override
-    public void installServices(Container c)
+    public void installCommonServices(Container c)
+    {
+        // single player -> doesn't matter common or UI, it's the same as there is no server
+    }
+    
+    @Override
+    public void installUIServices(Container c)
     {        
         c.AddSingleton(ICardGameService.class, SolitaireCardGameCreationService.class);
         c.AddSingleton(CommandFactory.class, SolCommandFactory.class);

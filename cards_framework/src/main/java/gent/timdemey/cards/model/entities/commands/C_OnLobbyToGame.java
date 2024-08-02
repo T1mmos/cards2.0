@@ -12,7 +12,6 @@ import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.INetworkService;
-import java.util.UUID;
 
 /**
  * Transition from the lobby to the multiplayer game.
@@ -31,9 +30,10 @@ public class C_OnLobbyToGame extends CommandBase
         IFrameService frameService,
         INetworkService networkService,
         StateFactory stateFactory,
+        State state,
         P_OnLobbyToGame parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._FrameService = frameService;
         this._NetworkService = networkService;
@@ -43,28 +43,28 @@ public class C_OnLobbyToGame extends CommandBase
     }
     
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
         return CanExecuteResponse.yes();        
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {        
         _FrameService.showPanel(PanelDescriptors.Load);
         
-        state.setCardGame(cardGame);
-        state.setGameState(GameState.Started);
+        _State.setCardGame(cardGame);
+        _State.setGameState(GameState.Started);
         
         if (type == ContextType.UI)
         {
             boolean canUndo = false;    // multiplayer
             boolean canRemove = true;   // multiplayer
-            state.setCommandHistory(_StateFactory.CreateCommandHistory(canUndo, canRemove));
+            _State.setCommandHistory(_StateFactory.CreateCommandHistory(canUndo, canRemove));
         }
         else
         {                   
-            _NetworkService.broadcast(state.getLocalId(), state.getPlayers().getIds(), this, state.getTcpConnectionPool());            
+            _NetworkService.broadcast(_State.getLocalId(), _State.getPlayers().getIds(), this, _State.getTcpConnectionPool());            
         }
     }
 }

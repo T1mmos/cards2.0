@@ -17,19 +17,20 @@ public final class C_Redo extends CommandBase
 {
     public C_Redo(
         IContextService contextService, 
+        State state,
         P_Redo parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
-        if (state.getCommandHistory() == null)
+        if (_State.getCommandHistory() == null)
         {
             return CanExecuteResponse.no("State.CommandHistory is null");
         }
-        if (!state.getCommandHistory().canRedo())
+        if (!_State.getCommandHistory().canRedo())
         {
             return CanExecuteResponse.no("CommandHistory cannot redo");
         }
@@ -37,9 +38,9 @@ public final class C_Redo extends CommandBase
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
-        state.getCommandHistory().redo(state);
+        _State.getCommandHistory().redo();
     }
 
     @Override

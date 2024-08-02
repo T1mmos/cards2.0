@@ -23,10 +23,10 @@ public class C_UDP_Request extends CommandBase
     private final CommandDtoMapper _CommandDtoMapper;
     
     public C_UDP_Request(
-        IContextService contextService, ICardPlugin cardPlugin, StateFactory stateFactory, CommandFactory commandFactory, CommandDtoMapper commandDtoMapper,
+        IContextService contextService, ICardPlugin cardPlugin, StateFactory stateFactory, CommandFactory commandFactory, CommandDtoMapper commandDtoMapper, State state,
         P_UDP_Request parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._CardPlugin = cardPlugin;
         this._StateFactory = stateFactory;
@@ -35,20 +35,20 @@ public class C_UDP_Request extends CommandBase
     }
     
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.Server);
         return CanExecuteResponse.yes();
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.Server);
 
         
-        ServerTCP server = state.getServer();                
-        ServerUDP udpServer = _StateFactory.CreateServerUDP(server, _CardPlugin.getVersion(), state.getPlayers().size(), _CardPlugin.getPlayerCount());;
+        ServerTCP server = _State.getServer();                
+        ServerUDP udpServer = _StateFactory.CreateServerUDP(server, _CardPlugin.getVersion(), _State.getPlayers().size(), _CardPlugin.getPlayerCount());;
         C_UDP_Response udpResponseCmd = _CommandFactory.CreateUDPResponse(udpServer);
 
         UDP_Source udpSource = getSourceUdp();
@@ -57,7 +57,7 @@ public class C_UDP_Request extends CommandBase
         C_UDP_Response responseCmd = msg.responseCmd;
         String json = _CommandDtoMapper.toJson(udpResponseCmd);
         
-        state.getUdpServiceAnnouncer().sendUnicast(udpSource.inetAddress,  udpSource.tcpPort, json);
+        _State.getUdpServiceAnnouncer().sendUnicast(udpSource.inetAddress,  udpSource.tcpPort, json);
     }
 
     @Override

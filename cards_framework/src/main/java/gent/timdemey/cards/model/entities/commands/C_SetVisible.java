@@ -11,7 +11,6 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.utils.Debug;
-import java.util.UUID;
 
 public class C_SetVisible extends CommandBase
 {
@@ -19,10 +18,10 @@ public class C_SetVisible extends CommandBase
     private final boolean visible;
 
     public C_SetVisible(
-        IContextService contextService, 
+        IContextService contextService, State state,
         P_SetVisible parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         if (parameters.cards == null)
         {
@@ -46,13 +45,13 @@ public class C_SetVisible extends CommandBase
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
         return CanExecuteResponse.yes();
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
         for (Card card : cards)
         {
@@ -61,13 +60,13 @@ public class C_SetVisible extends CommandBase
     }
 
     @Override
-    protected boolean canUndo(Context context, ContextType type, State state)
+    protected boolean canUndo(Context context, ContextType type)
     {
         return true;
     }
 
     @Override
-    protected void undo(Context context, ContextType type, State state)
+    protected void undo(Context context, ContextType type)
     {
         for (Card card : cards)
         {

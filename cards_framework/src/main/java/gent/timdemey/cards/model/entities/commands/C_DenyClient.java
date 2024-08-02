@@ -14,22 +14,24 @@ public class C_DenyClient extends CommandBase
 
     private final IFrameService _FrameService;
     
-    public C_DenyClient(IContextService contextService, IFrameService frameService, P_DenyClient parameters)
+    public C_DenyClient(
+        IContextService contextService, IFrameService frameService, State state,        
+        P_DenyClient parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._FrameService = frameService;
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
         return CanExecuteResponse.yes();
     }
 
     @Override
-    public void execute(Context context, ContextType type, State state)
+    public void execute(Context context, ContextType type)
     {
         if (type == ContextType.UI)
         {

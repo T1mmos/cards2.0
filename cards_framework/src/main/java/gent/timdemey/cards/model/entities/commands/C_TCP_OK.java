@@ -13,35 +13,35 @@ public class C_TCP_OK extends CommandBase
     private final CommandFactory _CommandFactory;
     
     public C_TCP_OK (
-        IContextService contextService, CommandFactory commandFactory, 
+        IContextService contextService, CommandFactory commandFactory, State state,
         P_TCP_OK parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._CommandFactory = commandFactory;
     }
     
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
-        if (state.getGameState() != GameState.Disconnected)
+        if (_State.getGameState() != GameState.Disconnected)
         {
-            return CanExecuteResponse.no("Expected the current GameState to be Disconnected but it is: " + state.getGameState());
+            return CanExecuteResponse.no("Expected the current GameState to be Disconnected but it is: " + _State.getGameState());
         }
         
         return CanExecuteResponse.yes();
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
         if (type == ContextType.UI)
         {
             // state goes from Disconnected -> Connected
-            state.setGameState(GameState.Connected);
+            _State.setGameState(GameState.Connected);
             
             // enter the lobby to go from Connected -> Lobby
-            C_EnterLobby cmd = _CommandFactory.CreateEnterLobby(state.getLocalName(), state.getLocalId());
+            C_EnterLobby cmd = _CommandFactory.CreateEnterLobby(_State.getLocalName(), _State.getLocalId());
             run(cmd);
         }
     }

@@ -14,13 +14,15 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 
 public class C_SolShowPush extends C_Push
 {
-    public C_SolShowPush(IContextService contextService, P_Push parameters)
+    public C_SolShowPush(
+        IContextService contextService, State state, 
+        P_Push parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
     }
 
     @Override
-    protected CanExecuteResponse canPush(CardStack dstCardStack, List<Card> srcCards, State state)
+    protected CanExecuteResponse canPush(CardStack dstCardStack, List<Card> srcCards)
     {
         if (dstCardStack.cardStackType.equals(SolShowCardStackType.DEPOT)
                 || dstCardStack.cardStackType.equals(SolShowCardStackType.TURNOVER)
@@ -32,8 +34,8 @@ public class C_SolShowPush extends C_Push
         if (dstCardStack.cardStackType.equals(SolShowCardStackType.MIDDLE))
         {
             UUID playerId = getSourceId();
-            if (!playerId.equals(state.getServerId())
-                    && !playerId.equals(state.getCardGame().getPlayerId(dstCardStack)))
+            if (!playerId.equals(_State.getServerId())
+                    && !playerId.equals(_State.getCardGame().getPlayerId(dstCardStack)))
             {
                 return CanExecuteResponse.no("Can only push onto your own MIDDLE stacks");
             }

@@ -14,14 +14,14 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 public class C_SolPush extends C_Push
 {
     public C_SolPush(
-        IContextService contextService, 
+        IContextService contextService, State state,
         P_Push parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
     }
 
     @Override
-    protected CanExecuteResponse canPush(CardStack dstCardStack, List<Card> srcCards, State state)
+    protected CanExecuteResponse canPush(CardStack dstCardStack, List<Card> srcCards)
     {
         String dstType = dstCardStack.cardStackType;
 

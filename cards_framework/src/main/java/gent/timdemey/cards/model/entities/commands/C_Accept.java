@@ -14,20 +14,22 @@ public class C_Accept extends CommandBase
 {
     public final UUID acceptedCommandId;
     
-    public C_Accept (IContextService contextService, P_Accept parameters)
+    public C_Accept (
+        IContextService contextService, State state,
+        P_Accept parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         this.acceptedCommandId = parameters.acceptedCommandId;
     }
     
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
         return CanExecuteResponse.no("This command is not intended to ever execute");
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
         throw new IllegalStateException("This command cannot be executed directly.");
     }

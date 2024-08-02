@@ -29,26 +29,26 @@ public class C_SolMove extends C_Move
     private final CommandFactory _CommandFactory;
 
     public C_SolMove(
-        IContextService contextService, CommandFactory commandFactory, 
+        IContextService contextService, State state, CommandFactory commandFactory, 
         P_Move parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         this._CommandFactory = commandFactory;
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
-        CardStack srcCardStack = state.getCardGame().getCardStacks().get(srcCardStackId);
-        CardStack dstCardStack = state.getCardGame().getCardStacks().get(dstCardStackId);
-        Card card = state.getCardGame().getCard(cardId);
+        CardStack srcCardStack = _State.getCardGame().getCardStacks().get(srcCardStackId);
+        CardStack dstCardStack = _State.getCardGame().getCardStacks().get(dstCardStackId);
+        Card card = _State.getCardGame().getCard(cardId);
 
         List<UUID> toTransferIds = srcCardStack.getCardsFrom(card).getIds();
         C_Pull cmdPull = _CommandFactory.CreatePull(srcCardStackId, cardId);
         C_Push cmdPush = _CommandFactory.CreatePush(dstCardStackId, toTransferIds);
-        boolean canPull = cmdPull.canExecute(context, type, state).canExecute();
-        boolean canPush = cmdPush.canExecute(context, type, state).canExecute();
+        boolean canPull = cmdPull.canExecute(context, type).canExecute();
+        boolean canPush = cmdPush.canExecute(context, type).canExecute();
         if (canPull && canPush) // user action
         {
             return CanExecuteResponse.yes();
@@ -104,9 +104,9 @@ public class C_SolMove extends C_Move
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
-        CardGame cardGame = state.getCardGame();
+        CardGame cardGame = _State.getCardGame();
         CardStack srcCardStack = cardGame.getCardStacks().get(srcCardStackId);
         CardStack dstCardStack = cardGame.getCardStacks().get(dstCardStackId);
 
@@ -149,17 +149,17 @@ public class C_SolMove extends C_Move
     }
 
     @Override
-    protected boolean canUndo(Context context, ContextType type, State state)
+    protected boolean canUndo(Context context, ContextType type)
     {
-        CardStack dstCardStack = state.getCardGame().getCardStacks().get(dstCardStackId);
+        CardStack dstCardStack = _State.getCardGame().getCardStacks().get(dstCardStackId);
 
         return dstCardStack.getCards().contains(cardId);
     }
 
     @Override
-    protected void undo(Context context, ContextType type, State state)
+    protected void undo(Context context, ContextType type)
     {
-        CardGame cardGame = state.getCardGame();
+        CardGame cardGame = _State.getCardGame();
         CardStack srcCardStack = cardGame.getCardStacks().get(srcCardStackId);
         CardStack dstCardStack = cardGame.getCardStacks().get(dstCardStackId);
 

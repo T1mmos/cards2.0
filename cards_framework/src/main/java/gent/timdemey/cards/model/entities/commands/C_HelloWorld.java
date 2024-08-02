@@ -1,43 +1,46 @@
 package gent.timdemey.cards.model.entities.commands;
 
-import java.util.UUID;
-
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.payload.P_Reject;
+import gent.timdemey.cards.model.entities.commands.payload.P_HelloWorld;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.IContextService;
-import gent.timdemey.cards.utils.Debug;
 
-public class C_Reject extends CommandBase
-{
-    public final UUID rejectedCommandId;
+/**
+ * Example command that logs something.
+ * @author Timmos
+ */
+public class C_HelloWorld extends CommandBase
+{    
+
+    private final Logger _Logger;
     
-    public C_Reject (
-        IContextService contextService, State state,
-        P_Reject parameters)
+    public C_HelloWorld (
+        IContextService contextService, State state, Logger logger,
+        P_HelloWorld parameters)
     {
         super(contextService, state, parameters);
         
-        this.rejectedCommandId = parameters.rejectedCommandId;
+        this._Logger = logger;
     }
     
     @Override
     protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
-        return CanExecuteResponse.no("This command is not intended to be executed");
+        return CanExecuteResponse.yes();
     }
 
     @Override
     protected void execute(Context context, ContextType type)
     {
-        throw new IllegalStateException("This command cannot be executed directly.");
+        _Logger.debug("Hello World! This is " + getClass().getName());
     }
 
     @Override
     public String toDebugString()
     {
-        return Debug.getKeyValue("rejectedCommandId", rejectedCommandId);
+        return "C_HelloWorld (toDebugString)";
     }
 }

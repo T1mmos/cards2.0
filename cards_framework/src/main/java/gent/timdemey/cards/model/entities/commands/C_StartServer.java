@@ -5,6 +5,7 @@ import java.net.InetAddress;
 import java.util.UUID;
 
 import gent.timdemey.cards.ICardPlugin;
+import gent.timdemey.cards.Start;
 
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
@@ -68,9 +69,10 @@ public class C_StartServer extends CommandBase
         ConfigurationFactory configurationFactory,
         CommandDtoMapper commandDtoMapper,
         Logger logger,
+        State state,
         P_StartServer parameters)
     {
-        super(contextService, parameters);
+        super(contextService, state, parameters);
         
         if (parameters.localId == null)
         {
@@ -115,7 +117,7 @@ public class C_StartServer extends CommandBase
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected CanExecuteResponse canExecute(Context context, ContextType type)
     {
         boolean srvCtxtInit = _ContextService.isInitialized(ContextType.Server);
         if(type == ContextType.UI)
@@ -137,10 +139,12 @@ public class C_StartServer extends CommandBase
     }
 
     @Override
-    protected void execute(Context context, ContextType type, State state)
+    protected void execute(Context context, ContextType type)
     {
         if(type == ContextType.UI)
         {
+            Start.startServer(new String[] {"gent.timdemey.cards.SolShowPlugin"});
+            
             _ContextService.initialize(ContextType.Server);
 
             schedule(ContextType.Server, this);
@@ -178,20 +182,20 @@ public class C_StartServer extends CommandBase
 
                 // update the state: set server, lobby admin, add player, command history
                 ServerTCP server = _StateFactory.CreateServerTCP(srvname, addr, tcpport);
-                state.setServer(server);
-                state.setServerMessage(srvmsg);
-                state.setLocalId(server.id);
-                state.setLobbyAdminId(playerId);
-                state.setGameState(GameState.Lobby);
-                state.setConfiguration(cfg);
-                state.getPlayers().add(player);
-                state.setUdpServiceAnnouncer(udpServAnnouncer);
-                state.setTcpConnectionAccepter(tcpConnAccepter);
-                state.setTcpConnectionPool(tcpConnPool);
+                _State.setServer(server);
+                _State.setServerMessage(srvmsg);
+                _State.setLocalId(server.id);
+                _State.setLobbyAdminId(playerId);
+                _State.setGameState(GameState.Lobby);
+                _State.setConfiguration(cfg);
+                _State.getPlayers().add(player);
+                _State.setUdpServiceAnnouncer(udpServAnnouncer);
+                _State.setTcpConnectionAccepter(tcpConnAccepter);
+                _State.setTcpConnectionPool(tcpConnPool);
                 
                 boolean canUndo = false;       // multiplayer
                 boolean canRemove = true;      // must be able to correct history due to network lag based on server decision
-                state.setCommandHistory(_StateFactory.CreateCommandHistory(canUndo, canRemove));
+                _State.setCommandHistory(_StateFactory.CreateCommandHistory(canUndo, canRemove));
 
                 // start the services
                 udpServAnnouncer.start(new UDPListener());

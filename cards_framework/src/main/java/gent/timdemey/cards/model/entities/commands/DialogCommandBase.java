@@ -9,29 +9,29 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 
 public abstract class DialogCommandBase extends CommandBase
 {
-    protected DialogCommandBase(IContextService contextService, PayloadBase payload)
+    protected DialogCommandBase(IContextService contextService, State state, PayloadBase payload)
     {
-        super(contextService, payload);
+        super(contextService, state, payload);
     }
 
     @Override
-    protected final CanExecuteResponse canExecute(Context context, ContextType type, State state)
+    protected final CanExecuteResponse canExecute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
 
-        return canShowDialog(context, type, state);
+        return canShowDialog(context, type);
     }
 
-    protected abstract CanExecuteResponse canShowDialog(Context context, ContextType type, State state);
+    protected abstract CanExecuteResponse canShowDialog(Context context, ContextType type);
 
     @Override
-    protected final void execute(Context context, ContextType type, State state)
+    protected final void execute(Context context, ContextType type)
     {
         CheckContext(type, ContextType.UI);
-        showDialog(context, type, state);
+        showDialog(context, type);
     }
 
-    protected abstract void showDialog(Context context, ContextType type, State state);
+    protected abstract void showDialog(Context context, ContextType type);
 
     @Override
     public String toDebugString()
