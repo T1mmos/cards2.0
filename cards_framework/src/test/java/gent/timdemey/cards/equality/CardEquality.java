@@ -1,7 +1,7 @@
-package gent.timdemey.cards.test.equality;
+package gent.timdemey.cards.equality;
 
 import gent.timdemey.cards.model.entities.state.Card;
-import gent.timdemey.cards.test.common.IEquality;
+import gent.timdemey.cards.common.IEquality;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CardEquality implements IEquality<Card>

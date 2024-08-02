@@ -1,13 +1,13 @@
-package gent.timdemey.cards;
+package gent.timdemey.cards.mock;
 
+import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.common.Version;
-import gent.timdemey.cards.di.ContainerBuilder;
-import gent.timdemey.cards.model.entities.state.State;
+import gent.timdemey.cards.di.Container;
 
 public class MockCardPlugin implements ICardPlugin
 {
     @Override
-    public void installServices(ContainerBuilder cb)
+    public void installServices(Container cb)
     {
         // not necessary, the unit tests must install the required (mock)
         // services

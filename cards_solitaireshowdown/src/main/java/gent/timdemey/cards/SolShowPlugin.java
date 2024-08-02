@@ -1,7 +1,7 @@
 package gent.timdemey.cards;
 
 import gent.timdemey.cards.common.Version;
-import gent.timdemey.cards.di.ContainerBuilder;
+import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.model.entities.commands.CommandFactory;
 import gent.timdemey.cards.model.entities.commands.SolShowCommandFactory;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
@@ -25,15 +25,15 @@ public class SolShowPlugin implements ICardPlugin
     }
     
     @Override
-    public void installServices(ContainerBuilder cb)
+    public void installServices(Container c)
     {        
-        cb.AddSingleton(CommandFactory.class, SolShowCommandFactory.class);
-        cb.AddSingleton(CommandDtoMapper.class, SolShowCommandDtoMapper.class);
-        cb.AddSingleton(ICardGameService.class, SolShowCardGameService.class);
-        cb.AddSingleton(IPanelService.class, SolShowPanelService.class);
-        cb.AddSingleton(IResourceRepository.class, SolShowResourceRepository.class);
-        cb.AddSingleton(IPositionService.class, SolShowPositionService.class);
-        cb.AddSingleton(IAnimationDescriptorFactory.class, SolShowAnimationDescriptorFactory.class);
+        c.AddSingleton(CommandFactory.class, SolShowCommandFactory.class);
+        c.AddSingleton(CommandDtoMapper.class, SolShowCommandDtoMapper.class);
+        c.AddSingleton(ICardGameService.class, SolShowCardGameService.class);
+        c.AddSingleton(IPanelService.class, SolShowPanelService.class);
+        c.AddSingleton(IResourceRepository.class, SolShowResourceRepository.class);
+        c.AddSingleton(IPositionService.class, SolShowPositionService.class);
+        c.AddSingleton(IAnimationDescriptorFactory.class, SolShowAnimationDescriptorFactory.class);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package gent.timdemey.cards.test.mock;
+package gent.timdemey.cards.mock;
 
 import gent.timdemey.cards.logging.ILogManager;
 import gent.timdemey.cards.logging.LogLevel;

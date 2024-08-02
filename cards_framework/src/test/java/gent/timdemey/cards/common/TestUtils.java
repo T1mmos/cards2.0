@@ -1,4 +1,4 @@
-package gent.timdemey.cards.test.common;
+package gent.timdemey.cards.common;
 
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;

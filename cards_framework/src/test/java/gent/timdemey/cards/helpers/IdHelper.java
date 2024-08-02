@@ -1,4 +1,4 @@
-package gent.timdemey.cards.test.helpers;
+package gent.timdemey.cards.helpers;
 
 import java.util.UUID;
 

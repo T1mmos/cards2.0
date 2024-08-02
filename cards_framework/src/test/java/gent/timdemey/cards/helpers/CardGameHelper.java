@@ -1,13 +1,13 @@
-package gent.timdemey.cards.test.helpers;
+package gent.timdemey.cards.helpers;
 
 import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.state.PlayerConfiguration;
-import gent.timdemey.cards.test.equality.CardEquality;
-import gent.timdemey.cards.test.equality.CardGameEquality;
-import gent.timdemey.cards.test.equality.CardStackEquality;
-import gent.timdemey.cards.test.equality.PlayerConfigurationEquality;
+import gent.timdemey.cards.equality.CardEquality;
+import gent.timdemey.cards.equality.CardGameEquality;
+import gent.timdemey.cards.equality.CardStackEquality;
+import gent.timdemey.cards.equality.PlayerConfigurationEquality;
 
 public class CardGameHelper
 {

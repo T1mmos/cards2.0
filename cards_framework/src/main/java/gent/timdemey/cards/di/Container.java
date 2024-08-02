@@ -7,6 +7,7 @@ package gent.timdemey.cards.di;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -24,11 +25,35 @@ public final class Container
     // keep track of what we're constructing, to detect circular dependencies
     private final Stack<Class> constructing = new Stack<>();
     
-    Container (Map<Class, Class> transientClassesMap, Map<Class, Class> singletonClassesMap, Map<Class, Object> singletonInstancesMap)
+    private final Container _ParentContainer;
+    
+    public Container ()
     {
-        _TransientClassesMap = transientClassesMap;
-        _SingletonClassesMap = singletonClassesMap;
-        _SingletonInstancesMap = singletonInstancesMap;
+        this(null);
+    }
+    
+    private Container (Container parent)
+    {
+        _TransientClassesMap = new HashMap<>();
+        _SingletonClassesMap = new HashMap<>();
+        _SingletonInstancesMap = new HashMap<>();
+        
+        _ParentContainer = parent;
+    }
+        
+    public <T> void AddTransient(Class<T> clazz, Class<? extends T> impl)
+    {
+        _TransientClassesMap.put(clazz, impl);
+    }
+    
+    public <T> void AddSingleton(Class<T> clazz, Class<? extends T> instanceClass)
+    {
+        _SingletonClassesMap.put(clazz, instanceClass);
+    }
+    
+    public <T> void AddSingleton(Class<T> clazz, T impl)
+    {
+        _SingletonInstancesMap.put(clazz, impl);
     }
         
     public <I> I Get(Class<I> clazz)
@@ -56,11 +81,10 @@ public final class Container
         return values;
     }
     
-    public ContainerBuilder Scope()
+    public Container Scope()
     {
-        return new ContainerBuilder(_TransientClassesMap, _SingletonClassesMap, _SingletonInstancesMap);
+        return new Container(this);
     }
-
     
     private <I> I TryGet(Class<I> clazz)
     {
@@ -93,6 +117,18 @@ public final class Container
             if (!clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers()))
             {
                 I instance = TryInstantiate(clazz);
+                if (instance != null)
+                {
+                    return instance;
+                }
+            }
+        }
+        
+        // try parent container
+        {
+            if (_ParentContainer != null)
+            {
+                I instance = _ParentContainer.TryGet(clazz);
                 if (instance != null)
                 {
                     return instance;

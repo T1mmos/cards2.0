@@ -1,7 +1,9 @@
-package gent.timdemey.cards.services.context;
+package gent.timdemey.cards.mock;
 
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.state.State;
+import gent.timdemey.cards.services.context.ICommandExecutor;
+import gent.timdemey.cards.services.context.IExecutionListener;
 
 public class MockCommandExecutor implements ICommandExecutor
 {

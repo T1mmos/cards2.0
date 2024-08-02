@@ -1,7 +1,6 @@
 package gent.timdemey.cards;
 
 import gent.timdemey.cards.di.Container;
-import gent.timdemey.cards.di.ContainerBuilder;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.SwingUtilities;
@@ -56,20 +55,15 @@ public class Start
         Container bootContainer = CreateBootContainer();
         Logger bootLogger = bootContainer.Get(Logger.class);
         
-        ContainerBuilder cb = new ContainerBuilder();        
+        Container container = new Container();  
+        installBaseServices(container);                  
+        installCardPlugin(args, container, bootLogger);
         
-        installBaseServices(cb);                  
-        installCardPlugin(args, cb, bootLogger);
-
-        Container container = cb.Build();
-        
-        StartUI startUI = container.Get(StartUI.class);
-        
-        
+        StartUI startUI = container.Get(StartUI.class);        
         SwingUtilities.invokeLater(startUI::startUI);
     }
 
-    private static void installCardPlugin(String[] args, ContainerBuilder cb, Logger logger) {
+    private static void installCardPlugin(String[] args, Container container, Logger logger) {
         
          // determine plugin and if found, let it install services
         ICardPlugin plugin = loadCardPlugin(args, logger);
@@ -78,8 +72,8 @@ public class Start
             throw new IllegalStateException("Cannot load plugin class. Terminating.");
         }
         
-        cb.AddSingleton(ICardPlugin.class, plugin);        
-        plugin.installServices(cb);
+        container.AddSingleton(ICardPlugin.class, plugin);        
+        plugin.installServices(container);
     }
     
     private static ICardPlugin loadCardPlugin(String[] args, Logger logger)
@@ -126,14 +120,14 @@ public class Start
 
     private static Container CreateBootContainer()
     {
-        ContainerBuilder cb = new ContainerBuilder();
+        Container container = new Container();
         
-        cb.AddSingleton(ILogManager.class, new LogManager(LogLevel.DEBUG));                
+        container.AddSingleton(ILogManager.class, new LogManager(LogLevel.DEBUG));                
         
-        return cb.Build();
+        return container;
     }
     
-    private static void installBaseServices(ContainerBuilder cb)
+    private static void installBaseServices(Container cb)
     {
         cb.AddSingleton(ILogManager.class, new LogManager(LogLevel.DEBUG));       
         cb.AddSingleton(IConfigurationService.class, ConfigService.class);

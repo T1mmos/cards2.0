@@ -1,7 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.di.Container;
-import gent.timdemey.cards.di.ContainerBuilder;
 import gent.timdemey.cards.model.entities.commands.payload.P_Accept;
 import gent.timdemey.cards.model.entities.commands.payload.P_ClearServerList;
 import gent.timdemey.cards.model.entities.commands.payload.P_DenyClient;
@@ -671,9 +670,8 @@ public abstract class CommandFactory
     
     protected <C, P> C DICreate(Class<C> toCreateClazz, Class<P> parametersClazz, P parameters)
     {
-        ContainerBuilder cb = _Container.Scope();        
-        cb.AddSingleton(parametersClazz, parameters);
-        Container c = cb.Build();
-        return c.Get(toCreateClazz);
+        Container container = _Container.Scope();        
+        container.AddSingleton(parametersClazz, parameters);
+        return container.Get(toCreateClazz);
     }
 }

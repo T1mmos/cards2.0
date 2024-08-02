@@ -1,4 +1,4 @@
-package gent.timdemey.cards.test.common;
+package gent.timdemey.cards.common;
 
 import org.junit.jupiter.api.BeforeAll;
 

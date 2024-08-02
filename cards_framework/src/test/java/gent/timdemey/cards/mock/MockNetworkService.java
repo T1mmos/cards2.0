@@ -1,4 +1,4 @@
-package gent.timdemey.cards.test.mock;
+package gent.timdemey.cards.mock;
 
 import java.util.List;
 import java.util.UUID;
