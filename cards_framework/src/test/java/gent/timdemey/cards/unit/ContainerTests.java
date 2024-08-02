@@ -1,13 +1,9 @@
-package gent.timdemey.cards.unittests;
+package gent.timdemey.cards.unit;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.mock.MockCardPlugin;
 import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.di.DIException;
-import gent.timdemey.cards.mock.ITestDI;
-import gent.timdemey.cards.mock.ITestDI2;
-import gent.timdemey.cards.mock.TestDI;
-import gent.timdemey.cards.mock.TestDI2;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -24,12 +20,12 @@ public class ContainerTests {
     {
         Container c = new Container();
         c.AddSingleton(ICardPlugin.class, MockCardPlugin.class);
-        c.AddTransient(ITestDI.class, TestDI.class);
+        c.AddTransient(IDIInterface.class, DIImplementation.class);
         
         // test transient, must return different object every time
-        ITestDI instance = c.Get(ITestDI.class);
-        assertEquals(TestDI.class, instance.getClass());
-        ITestDI instance2 = c.Get(ITestDI.class);
+        IDIInterface instance = c.Get(IDIInterface.class);
+        assertEquals(DIImplementation.class, instance.getClass());
+        IDIInterface instance2 = c.Get(IDIInterface.class);
         assertNotEquals(instance2.hashCode(), instance.hashCode());
         
         // test singleton, must return same object every time
@@ -45,18 +41,18 @@ public class ContainerTests {
         // create parent container
         Container cP = new Container();
         cP.AddSingleton(ICardPlugin.class, MockCardPlugin.class);
-        cP.AddTransient(ITestDI.class, TestDI.class);
+        cP.AddTransient(IDIInterface.class, DIImplementation.class);
         
         // create child container, add extra mapping
         Container cC = cP.Scope();        
-        cC.AddTransient(ITestDI2.class, TestDI2.class);
+        cC.AddTransient(IDIInterface2.class, DIImplementation2.class);
         
         // test transient, must return different object every time
-        ITestDI instance = cC.Get(ITestDI.class);
-        assertEquals(TestDI.class, instance.getClass());
-        ITestDI instance2 = cC.Get(ITestDI.class);
+        IDIInterface instance = cC.Get(IDIInterface.class);
+        assertEquals(DIImplementation.class, instance.getClass());
+        IDIInterface instance2 = cC.Get(IDIInterface.class);
         assertNotEquals(instance2.hashCode(), instance.hashCode());
-        ITestDI instance6 = cP.Get(ITestDI.class);
+        IDIInterface instance6 = cP.Get(IDIInterface.class);
         assertNotEquals(instance6.hashCode(), instance.hashCode());
         assertNotEquals(instance6.hashCode(), instance2.hashCode());
         
@@ -69,11 +65,20 @@ public class ContainerTests {
         assertEquals(singleton3.hashCode(), singleton.hashCode());   
         
         // test child-added interface - child has mapping but not the parent
-        ITestDI2 instance3 = cC.Get(ITestDI2.class);
-        assertEquals(TestDI2.class, instance3.getClass());
-        ITestDI2 instance4 = cC.Get(ITestDI2.class);
+        IDIInterface2 instance3 = cC.Get(IDIInterface2.class);
+        assertEquals(DIImplementation2.class, instance3.getClass());
+        IDIInterface2 instance4 = cC.Get(IDIInterface2.class);
         assertNotEquals(instance4.hashCode(), instance3.hashCode());
-        assertThrows(DIException.class, () -> cP.Get(ITestDI2.class) );
+        assertThrows(DIException.class, () -> cP.Get(IDIInterface2.class) );        
+    }
+    
+    @Test
+    public void testContainer()
+    {
+        Container c = new Container();
+        c.AddSingleton(ICardPlugin.class, MockCardPlugin.class);
+        c.AddTransient(IDIInterface.class, DIImplementation.class);
         
+        IDIInterface testDI = c.Get(IDIInterface.class);
     }
 }
