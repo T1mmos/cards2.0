@@ -105,7 +105,7 @@ public class SolitaireCardGameCreationService implements ICardGameService
 
     private List<List<Card>> getCards()
     {
-        Card[] cards = _CardDeckUtils.createFullDeck();
+        Card[] cards = _StateFactory.createFullDeck();
         CardDeckUtils.shuffleDeck(cards);
         List<List<Card>> playerCards = new ArrayList<>();
         playerCards.add(Arrays.asList(cards));

@@ -16,7 +16,6 @@ import gent.timdemey.cards.services.interfaces.INetworkService;
 
 public class ServerCommandExecutor extends CommandExecutorBase
 {
-
     private final INetworkService _NetworkService;
     private final CommandDtoMapper _CommandDtoMapper;
     private final Logger _Logger;

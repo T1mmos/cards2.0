@@ -4,62 +4,12 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import gent.timdemey.cards.model.entities.state.Card;
-import gent.timdemey.cards.model.entities.state.CardSuit;
-import gent.timdemey.cards.model.entities.state.CardValue;
-import gent.timdemey.cards.model.entities.state.StateFactory;
 
 public class CardDeckUtils
 {
 
-    private final StateFactory _StateFactory;
-    public CardDeckUtils(StateFactory stateFactory)
+    private CardDeckUtils()
     {
-        this._StateFactory = stateFactory;
-    }
-
-    /**
-     * Creates a deck of all 52 cards.
-     * 
-     * @return
-     */
-    public Card[] createFullDeck()
-    {
-        return createDeck(CardSuit.values(), CardValue.values());
-    }
-
-    /**
-     * Creates a deck with 32 cards - all suits with values 7, 8, 9, 10, J, Q, K and
-     * A. Can be used with Manillen.
-     * 
-     * @return
-     */
-    public Card[] create7toADeck()
-    {
-        CardValue[] values = new CardValue[8];
-        values[0] = CardValue.V_7;
-        values[1] = CardValue.V_8;
-        values[2] = CardValue.V_9;
-        values[3] = CardValue.V_10;
-        values[4] = CardValue.V_J;
-        values[5] = CardValue.V_Q;
-        values[6] = CardValue.V_K;
-        values[7] = CardValue.V_A;
-        return createDeck(CardSuit.values(), values);
-    }
-
-    public Card[] createDeck(CardSuit[] suits, CardValue[] values)
-    {
-        Card[] cards = new Card[values.length * suits.length];
-        int i = 0;
-        for (CardSuit suit : CardSuit.values())
-        {
-            for (CardValue value : values)
-            {
-                Card card = _StateFactory.CreateCard(suit, value, true);
-                cards[i++] = card;
-            }
-        }
-        return cards;
     }
 
     // Implementing Fisher-Yates shuffle

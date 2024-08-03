@@ -20,20 +20,18 @@ public class SolShowCardGameService implements ICardGameService
 {
 
     private final StateFactory _StateFactory;
-    private final CardDeckUtils _CardDeckUtils;
     
-    public SolShowCardGameService(StateFactory stateFactory, CardDeckUtils cardDeckUtils)
+    public SolShowCardGameService(StateFactory stateFactory)
     {
         this._StateFactory = stateFactory;
-        this._CardDeckUtils = cardDeckUtils;
     }
     
     private List<List<Card>> getCards()
     {
         // solitaire showdown: each player starts with his own deck of 52 cards.
-        Card[] deck1 = _CardDeckUtils.createFullDeck();
+        Card[] deck1 = _StateFactory.createFullDeck();
         CardDeckUtils.shuffleDeck(deck1);
-        Card[] deck2 = _CardDeckUtils.createFullDeck();
+        Card[] deck2 = _StateFactory.createFullDeck();
         CardDeckUtils.shuffleDeck(deck2);
 
         List<List<Card>> playerCards = new ArrayList<>();

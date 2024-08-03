@@ -57,7 +57,7 @@ public class SettingsPanelManager extends DataPanelManagerBase<Void, Void>
         tf_clientUdpPort.setText("" + state.getConfiguration().getClientUdpPort());    
     }
     
-    private void onCommandExecuted(CommandBase cmd)
+    private void onCommandExecuted()
     {
         updateUI();
     }

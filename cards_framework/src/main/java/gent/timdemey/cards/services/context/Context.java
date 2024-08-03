@@ -75,11 +75,6 @@ public final class Context
         return limitedContext.getContextType();
     }
 
-    public IChangeTracker getChangeTracker()
-    {
-        return changeTracker;
-    }
-
     public CanExecuteResponse canExecute(CommandBase command)
     {
         return limitedContext.canExecute(command);
@@ -185,7 +180,7 @@ public final class Context
     // Callback from execution service that lets us know that a command or a chain
     // of commands was executed.
     // We can therefore now update the state listeners.
-    private void onExecuted(CommandBase command)
+    private void onExecuted()
     {
         // get a list of all changes since the last reset()
         List<Change<?>> changes = changeTracker.getChangeList();

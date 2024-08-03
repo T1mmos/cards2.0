@@ -23,19 +23,16 @@ public class ContextService implements IContextService
 {
     protected final ConcurrentMap<ContextType, Context> fullContexts;
     private final Set<IContextListener> contextListeners;
-    private final ICardPlugin _CardPlugin;
     private final Container _Container;
 
     public ContextService(Container container, ICardPlugin cardPlugin)
     {
         this._Container = container;
-        this._CardPlugin = cardPlugin;
         fullContexts = new ConcurrentHashMap<>();
         contextListeners = Collections.synchronizedSet(new HashSet<>());
     }
-
-    @Override
-    public boolean isUiThread()
+    
+    private boolean isUiThread()
     {
         return SwingUtilities.isEventDispatchThread();
     }
@@ -93,21 +90,6 @@ public class ContextService implements IContextService
             throw new IllegalStateException("You must initialize from the UI thread!");
         }
 
-        ICommandExecutor cmdExecutor = null;
-        if (type == ContextType.UI)
-        {
-            cmdExecutor = _Container.Get(UICommandExecutor.class);
-        }
-        else if (type == ContextType.Server)
-        {
-            cmdExecutor = _Container.Get(ServerCommandExecutor.class);
-        }
-        else
-        {
-            throw new IllegalArgumentException("Unknown ContextType: " + type);
-        }
-
-        boolean allowListeners = type == ContextType.UI;
         Context context = _Container.Get(Context.class);
         context.initialize(type);
 

@@ -4,5 +4,5 @@ import gent.timdemey.cards.model.entities.commands.CommandBase;
 
 public interface IExecutionListener
 {
-    public void onExecuted(CommandBase command);
+    public void onExecuted();
 }
