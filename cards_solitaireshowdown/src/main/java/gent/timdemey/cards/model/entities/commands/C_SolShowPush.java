@@ -1,5 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.di.Container;
 import java.util.List;
 import java.util.UUID;
 
@@ -8,9 +9,7 @@ import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.state.CardValue;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_Push;
-import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
-import gent.timdemey.cards.di.IContainerService;
 
 public class C_SolShowPush extends C_Push
 {

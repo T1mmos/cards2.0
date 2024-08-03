@@ -20,6 +20,7 @@ import gent.timdemey.cards.services.animation.AnimationDescriptorFactory;
 import gent.timdemey.cards.services.animation.AnimationService;
 import gent.timdemey.cards.services.config.ConfigService;
 import gent.timdemey.cards.services.context.CommandNetworkService;
+import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.context.ICommandExecutor;
 import gent.timdemey.cards.services.context.ServerCommandExecutor;
@@ -74,6 +75,7 @@ public class Starter
         State state = container.Get(StateFactory.class).CreateState();
         container.AddSingleton(State.class, state);
         container.AddSingleton(ContextType.class, ContextType.UI);
+        container.AddSingleton(Context.class, Context.class);
         
         StartUI startUI = container.Get(StartUI.class);        
         startUI.startUI();
@@ -88,6 +90,8 @@ public class Starter
                 
         State state = container.Get(StateFactory.class).CreateState();
         container.AddSingleton(State.class, state);
+        container.AddSingleton(ContextType.class, ContextType.Server);
+        container.AddSingleton(Context.class, Context.class);
         
         StartServer startServer = container.Get(StartServer.class);        
         startServer.startServer();

@@ -1,5 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.di.Container;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +18,6 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityFactory;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityList;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
-import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.ICardGameService;
 import gent.timdemey.cards.services.interfaces.INetworkService;
@@ -33,7 +33,7 @@ public class C_SolShowMove extends C_Move
     private final ICardGameService _CardGameService;
 
     public C_SolShowMove(
-        IContainerService contextService, INetworkService networkService, CommandFactory commandFactory, ICardGameService cardGameService, State state,
+        Container container, INetworkService networkService, CommandFactory commandFactory, ICardGameService cardGameService,
         P_Move parameters)
     {
         super(container, parameters);

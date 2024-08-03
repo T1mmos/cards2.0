@@ -19,14 +19,13 @@ import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.id.SolShowIds;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.ui.components.swing.JSLabel;
-import gent.timdemey.cards.di.IContainerService;
 
 public class SolShowGamePanelStateListener extends CardGamePanelStateListener
 {
 
-    public SolShowGamePanelStateListener(IPanelService panelService, IContainerService contextService)
+    public SolShowGamePanelStateListener(IPanelService panelService, Context context)
     {
-        super(panelService, contextService);
+        super(panelService, context);
     }
     
     @Override
@@ -34,8 +33,7 @@ public class SolShowGamePanelStateListener extends CardGamePanelStateListener
     {
         SolShowGamePanelManager pm = (SolShowGamePanelManager) _PanelService.getPanelManager(PanelDescriptors.Game);
         
-        Context context = _ContextService.getThreadContext();
-        ReadOnlyState state = context.getReadOnlyState();
+        ReadOnlyState state = _Context.getReadOnlyState();
 
         ReadOnlyProperty<?> property = change.property;
 

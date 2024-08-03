@@ -73,7 +73,7 @@ public final class Context
         stateListeners.remove(stateListener);
     }
 
-    void initialize(ContextType contextType) 
+    public void initialize() 
     {           
         _CommandExecutor.addExecutionListener(this::onExecuted);             
     }

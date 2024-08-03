@@ -39,10 +39,12 @@ public class SolShowPositionService implements IPositionService
 
     private Positions pos;
     private final IContainerService _ContextService;
+    private final Context _Context;
 
-    public SolShowPositionService(IContainerService contextService)
+    public SolShowPositionService(IContainerService contextService, Context context)
     {
         this._ContextService = contextService;
+        this._Context = context;
     }
     
     
@@ -143,8 +145,7 @@ public class SolShowPositionService implements IPositionService
         IComponent comp = ComponentUtils.getComponent(jcomp);
         ComponentType compType = comp.getComponentType();
         
-        Context context = _ContextService.getThreadContext();
-        UUID localId = context.getReadOnlyState().getLocalId();
+        UUID localId = _Context.getReadOnlyState().getLocalId();
         
         if (compType.hasTypeName(ComponentTypes.CARD))
         {
@@ -176,7 +177,7 @@ public class SolShowPositionService implements IPositionService
         {            
             ReadOnlyCardStack cardStack = (ReadOnlyCardStack) comp.getPayload();
 
-            UUID playerId = context.getReadOnlyState().getCardGame().getPlayerId(cardStack);
+            UUID playerId = _Context.getReadOnlyState().getCardGame().getPlayerId(cardStack);
             boolean isLocal = localId.equals(playerId);
 
             Rectangle rect = pos.getRectangle(SolShowGameLayout.RECT_SPECIALCOUNTERTEXT);
@@ -188,7 +189,7 @@ public class SolShowPositionService implements IPositionService
         {
             ReadOnlyCardStack cardStack = (ReadOnlyCardStack) comp.getPayload();
 
-            UUID playerId = context.getReadOnlyState().getCardGame().getPlayerId(cardStack);
+            UUID playerId = _Context.getReadOnlyState().getCardGame().getPlayerId(cardStack);
             boolean isLocal = localId.equals(playerId);
 
             Rectangle rect = pos.getRectangle(SolShowGameLayout.RECT_SPECIALCOUNTERBACKGROUND);
@@ -257,8 +258,7 @@ public class SolShowPositionService implements IPositionService
 
     private LayeredArea getLayeredArea(ReadOnlyCard card)
     {
-        Context context = _ContextService.getThreadContext();
-        ReadOnlyCardGame cardGame = context.getReadOnlyState().getCardGame();
+        ReadOnlyCardGame cardGame = _Context.getReadOnlyState().getCardGame();
 
         ReadOnlyCardStack cs = card.getCardStack();
         Rectangle rect = pos.getRectangle("RECT_STACK_%s_%s", cs.getCardStackType(), cs.getTypeNumber());
@@ -267,7 +267,7 @@ public class SolShowPositionService implements IPositionService
         boolean isOffsetY = cs.getCardStackType().equals(SolShowCardStackType.MIDDLE);
 
         // position x,y
-        boolean local = context.getReadOnlyState().isLocalId(cardGame.getPlayerId(card));
+        boolean local = _Context.getReadOnlyState().isLocalId(cardGame.getPlayerId(card));
         int shiftLeft = Math.max(0, 3 - cs.getCards().size());
         int shiftRight = Math.max(0, 3 - cs.getCardCountFrom(card));
         int shift = shiftRight - shiftLeft;
@@ -288,10 +288,8 @@ public class SolShowPositionService implements IPositionService
 
     private LayeredArea getLayeredArea(ReadOnlyCardStack cardStack)
     {
-        Context context = _ContextService.getThreadContext();
-
-        UUID localId = context.getReadOnlyState().getLocalId();
-        UUID playerId = context.getReadOnlyState().getCardGame().getPlayerId(cardStack);
+        UUID localId = _Context.getReadOnlyState().getLocalId();
+        UUID playerId = _Context.getReadOnlyState().getCardGame().getPlayerId(cardStack);
         boolean isLocal = localId.equals(playerId);
         String csType = cardStack.getCardStackType();
 

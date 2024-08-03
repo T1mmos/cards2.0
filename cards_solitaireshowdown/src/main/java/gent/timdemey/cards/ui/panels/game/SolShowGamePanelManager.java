@@ -19,7 +19,6 @@ import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.SolShowComponentTypes;
 import gent.timdemey.cards.services.id.SolShowIds;
 import gent.timdemey.cards.services.interfaces.IResourceNameService;
-import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.resources.SolShowResourceDefines;
 import gent.timdemey.cards.ui.components.SFontResource;
 import gent.timdemey.cards.ui.components.SImageResource;
@@ -29,12 +28,13 @@ import gent.timdemey.cards.ui.components.ext.IHasComponent;
 import gent.timdemey.cards.ui.components.swing.JSImage;
 import gent.timdemey.cards.ui.components.swing.JSLabel;
 import gent.timdemey.cards.di.IContainerService;
+import gent.timdemey.cards.services.context.Context;
 
 public class SolShowGamePanelManager extends CardGamePanelManager
 {
-    public SolShowGamePanelManager(Container container, IResourceNameService resourceNameService, IContainerService contextService, IScalingService scalingService)
+    public SolShowGamePanelManager(Container container, IResourceNameService resourceNameService, IContainerService contextService, Context context)
     {
-        super(container, resourceNameService, contextService);
+        super(container, resourceNameService, contextService, context);
     }
     
     @Override
@@ -49,7 +49,7 @@ public class SolShowGamePanelManager extends CardGamePanelManager
         super.addComponentCreators(compCreators);
         
         
-        ReadOnlyState state = _ContextService.getThreadContext().getReadOnlyState();
+        ReadOnlyState state = _Context.getReadOnlyState();
         ReadOnlyCardGame cardGame = state.getCardGame();
         ReadOnlyPlayer player_local = state.getLocalPlayer();
         ReadOnlyPlayer player_remote = state.getRemotePlayers().get(0);

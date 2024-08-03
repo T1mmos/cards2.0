@@ -44,17 +44,20 @@ public class StartUI
     private final Logger _Logger;
     private final Loc _Loc;
     private final CommandFactory _CommandFactory;
+    private final Context _Context;
     
     public StartUI(
-            Container container, 
-            ICommandExecutor commandExecutor,
-            IFrameService frameService, 
-            IPanelService panelService,
-            CommandFactory commandFactory,
-            Logger logger,
-            Loc loc)
+        Container container, 
+        Context context,
+        ICommandExecutor commandExecutor,
+        IFrameService frameService, 
+        IPanelService panelService,
+        CommandFactory commandFactory,
+        Logger logger,
+        Loc loc)
     {
         this._Container = container;
+        this._Context = context;
         this._CommandExecutor = commandExecutor;
         this._FrameService = frameService;
         this._PanelService = panelService;
@@ -70,6 +73,8 @@ public class StartUI
     
     private void startOnEDT()
     {
+        _Context.initialize();
+        
         showSplash();
         
         // let all services preload load in the background
