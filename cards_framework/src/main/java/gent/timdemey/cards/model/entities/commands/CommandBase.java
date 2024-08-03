@@ -27,6 +27,8 @@ public abstract class CommandBase extends EntityBase
     protected final Context _Context;
     protected final ContextType _ContextType;
     
+    private final PayloadBase _Payload;
+    
     protected CommandBase(Container container, PayloadBase payload)
     {
         super(payload.id);
@@ -36,6 +38,8 @@ public abstract class CommandBase extends EntityBase
         this._Context = container.Get(Context.class);
         this._State = container.Get(State.class);
         this._ContextType = container.Get(ContextType.class);
+        
+        this._Payload = payload;
     }
 
     public abstract CanExecuteResponse canExecute();
@@ -78,7 +82,22 @@ public abstract class CommandBase extends EntityBase
 
     protected final void schedule(ContextType type, CommandBase cmd)
     {
-        _ContainerService.get(type).Get(ICommandExecutor.class).schedule(cmd);
+        
+        // recreate the command if it is intended for a different container, 
+        // this way the correct dependencies are injected
+        if (type != cmd._ContextType)
+        {
+            Container container = _ContainerService.get(type);
+            Container scopedContainer  = container.Scope();
+            scopedContainer.AddSingleton((Class<PayloadBase>) cmd._Payload.getClass(), cmd._Payload);
+            CommandBase cmd_copy = scopedContainer.Get((Class<CommandBase>) cmd.getClass());
+            container.Get(ICommandExecutor.class).schedule(cmd_copy);
+        }
+        else 
+        {
+            _ContainerService.get(type).Get(ICommandExecutor.class).schedule(cmd);
+        }
+        
     }
 
     /**
