@@ -19,10 +19,10 @@ import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
 import gent.timdemey.cards.services.interfaces.IActionService;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.DataPanelManagerBase;
 import net.miginfocom.swing.MigLayout;
+import gent.timdemey.cards.di.IContainerService;
 
 public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void>
 {
@@ -35,9 +35,6 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
     private JLabel l_waitingToStart;
 
     private IStateListener stateListener = null;
-    private IContextService _ContextService;
-    private IActionService _ActionService;
-
     
     public LobbyPanelManager (Container container)
     {
@@ -50,8 +47,7 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
         @Override
         public void onChange(ReadOnlyChange change)
         {
-            Context context = _ContextService.getThreadContext();
-            ReadOnlyState state = context.getReadOnlyState();
+            ReadOnlyState state = _Context.getReadOnlyState();
            
             ReadOnlyProperty<?> property = change.property;
 
@@ -91,8 +87,7 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
     @Override
     public JSLayeredPane createPanel()
     {
-        Context context = _ContextService.getThreadContext();
-        ReadOnlyState state = context.getReadOnlyState();
+        ReadOnlyState state = _Context.getReadOnlyState();
         
         panel = _JSFactory.createLayeredPane(ComponentTypes.PANEL);
         panel.setLayout(new MigLayout("insets 0, wmin 300"));
@@ -141,18 +136,14 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
     @Override
     public void onShown()
     {
-        Context context = _ContextService.getThreadContext();
-
         this.stateListener = new LobbyDialogStateListener();
-        context.addStateListener(stateListener);
+       _Context.addStateListener(stateListener);
     }
     
     @Override
     public void onHidden()
     {
-        Context context = _ContextService.getThreadContext();
-
-        context.removeStateListener(stateListener);
+        _Context.removeStateListener(stateListener);
         stateListener = null;
     }
     

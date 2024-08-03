@@ -1,5 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.di.Container;
 import java.util.UUID;
 
 
@@ -10,10 +11,8 @@ import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_RemovePlayer;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.Player;
-import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.INetworkService;
 import gent.timdemey.cards.utils.Debug;
 
@@ -25,10 +24,10 @@ public class C_RemovePlayer extends CommandBase
     private final CommandFactory _CommandFactory;
 
     public C_RemovePlayer(
-        IContextService contextService, INetworkService networkService, CommandFactory commandFactory, Logger logger, State state,
+        Container container, INetworkService networkService, CommandFactory commandFactory, Logger logger, 
         P_RemovePlayer parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
         
         this._NetworkService = networkService;
         this._CommandFactory = commandFactory;
@@ -38,7 +37,7 @@ public class C_RemovePlayer extends CommandBase
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type)
+    public CanExecuteResponse canExecute()
     {
         if(_State.getGameState() == GameState.Disconnected)
         {
@@ -52,11 +51,11 @@ public class C_RemovePlayer extends CommandBase
     }
 
     @Override
-    public void execute(Context context, ContextType contextType)
+    public void execute()
     {
         Player player_removed = removePlayer(playerId);
 
-        if(contextType == ContextType.Server)
+        if(_ContextType == ContextType.Server)
         {
             if(_State.getLobbyAdminId().equals(player_removed.id))
             {

@@ -1,5 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.di.Container;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,11 +11,7 @@ import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_Move;
-import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.services.context.Context;
-import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes;
-import gent.timdemey.cards.services.interfaces.IContextService;
 
 /**
  * Solitaire specific move command.
@@ -29,16 +26,16 @@ public class C_SolMove extends C_Move
     private final CommandFactory _CommandFactory;
 
     public C_SolMove(
-        IContextService contextService, State state, CommandFactory commandFactory, 
+        Container container, CommandFactory commandFactory, 
         P_Move parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
         
         this._CommandFactory = commandFactory;
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type)
+    public CanExecuteResponse canExecute()
     {
         CardStack srcCardStack = _State.getCardGame().getCardStacks().get(srcCardStackId);
         CardStack dstCardStack = _State.getCardGame().getCardStacks().get(dstCardStackId);
@@ -47,8 +44,8 @@ public class C_SolMove extends C_Move
         List<UUID> toTransferIds = srcCardStack.getCardsFrom(card).getIds();
         C_Pull cmdPull = _CommandFactory.CreatePull(srcCardStackId, cardId);
         C_Push cmdPush = _CommandFactory.CreatePush(dstCardStackId, toTransferIds);
-        boolean canPull = cmdPull.canExecute(context, type).canExecute();
-        boolean canPush = cmdPush.canExecute(context, type).canExecute();
+        boolean canPull = cmdPull.canExecute().canExecute();
+        boolean canPush = cmdPush.canExecute().canExecute();
         if (canPull && canPush) // user action
         {
             return CanExecuteResponse.yes();
@@ -104,7 +101,7 @@ public class C_SolMove extends C_Move
     }
 
     @Override
-    protected void execute(Context context, ContextType type)
+    public void execute()
     {
         CardGame cardGame = _State.getCardGame();
         CardStack srcCardStack = cardGame.getCardStacks().get(srcCardStackId);
@@ -149,7 +146,7 @@ public class C_SolMove extends C_Move
     }
 
     @Override
-    protected boolean canUndo(Context context, ContextType type)
+    public boolean canUndo()
     {
         CardStack dstCardStack = _State.getCardGame().getCardStacks().get(dstCardStackId);
 
@@ -157,7 +154,7 @@ public class C_SolMove extends C_Move
     }
 
     @Override
-    protected void undo(Context context, ContextType type)
+    public void undo()
     {
         CardGame cardGame = _State.getCardGame();
         CardStack srcCardStack = cardGame.getCardStacks().get(srcCardStackId);

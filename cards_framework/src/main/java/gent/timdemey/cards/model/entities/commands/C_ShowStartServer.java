@@ -1,18 +1,15 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.di.Container;
 import java.util.UUID;
 
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_ShowStartServer;
 import gent.timdemey.cards.model.entities.state.GameState;
-import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.readonlymodel.ReadOnlyState;
-import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.ui.panels.PanelOutData;
 import gent.timdemey.cards.ui.panels.dialogs.mp.StartServerPanelData;
@@ -23,22 +20,21 @@ public class C_ShowStartServer extends DialogCommandBase
     private final CommandFactory _CommandFactory;
     
     public C_ShowStartServer (
-        IContextService contextService, 
+        Container container,
         IFrameService frameService, 
         CommandFactory commandFactory,
-        State state,
         P_ShowStartServer parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
         
         this._FrameService = frameService;
         this._CommandFactory = commandFactory;
     }
     
     @Override
-    protected CanExecuteResponse canShowDialog(Context context, ContextType type)
+    protected CanExecuteResponse canShowDialog()
     {
-        if (_ContextService.isInitialized(ContextType.Server))
+        if (_ContainerService.isInitialized(ContextType.Server))
         {
             return CanExecuteResponse.no("Server context already initialized");
         }
@@ -51,9 +47,9 @@ public class C_ShowStartServer extends DialogCommandBase
     }
 
     @Override
-    protected void showDialog(Context context, ContextType type)
+    protected void showDialog()
     {  
-        String name = _ContextService.getThreadContext().getReadOnlyState().getLocalName();     
+        String name = _Context.getReadOnlyState().getLocalName();     
         _FrameService.showPanel(PanelDescriptors.StartServer, name, this::onClose);
     }
     

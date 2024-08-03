@@ -18,7 +18,6 @@ import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.SolShowComponentTypes;
 import gent.timdemey.cards.services.id.SolShowIds;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IResourceNameService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
 import gent.timdemey.cards.services.resources.SolShowResourceDefines;
@@ -29,10 +28,11 @@ import gent.timdemey.cards.ui.components.ext.IComponent;
 import gent.timdemey.cards.ui.components.ext.IHasComponent;
 import gent.timdemey.cards.ui.components.swing.JSImage;
 import gent.timdemey.cards.ui.components.swing.JSLabel;
+import gent.timdemey.cards.di.IContainerService;
 
 public class SolShowGamePanelManager extends CardGamePanelManager
 {
-    public SolShowGamePanelManager(Container container, IResourceNameService resourceNameService, IContextService contextService, IScalingService scalingService)
+    public SolShowGamePanelManager(Container container, IResourceNameService resourceNameService, IContainerService contextService, IScalingService scalingService)
     {
         super(container, resourceNameService, contextService);
     }

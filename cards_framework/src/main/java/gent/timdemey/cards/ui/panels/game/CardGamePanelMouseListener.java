@@ -21,9 +21,9 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityList;
 import gent.timdemey.cards.services.animation.LayerRange;
 import gent.timdemey.cards.services.context.Context;
+import gent.timdemey.cards.services.context.ICommandExecutor;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.ui.components.ext.IComponent;
@@ -36,10 +36,11 @@ public class CardGamePanelMouseListener extends MouseAdapter
 {
 
     private final IPanelService _PanelService;
-    private final IContextService _ContextService;
     private final IPositionService _PositionService;
     private final CommandFactory _CommandFactory;
     private final Logger _Logger;
+    private final Context _Context;
+    private final ICommandExecutor _CommandExecutor;
     
     
     private static class CardDragState
@@ -63,13 +64,15 @@ public class CardGamePanelMouseListener extends MouseAdapter
     public CardGamePanelMouseListener(
         Logger logger,
         IPanelService panelService,
-        IContextService contextService,
+        Context context,
+        ICommandExecutor commandExecutor,
         IPositionService positionService,
         CommandFactory commandFactory)
     {
         this._Logger = logger;
         this._PanelService = panelService;
-        this._ContextService = contextService;
+        this._Context = context;
+        this._CommandExecutor = commandExecutor;
         this._PositionService = positionService;
         this._CommandFactory = commandFactory;
         
@@ -132,9 +135,7 @@ public class CardGamePanelMouseListener extends MouseAdapter
                 
         JSImage jsimage = comps.get(0);
 
-        Context context = _ContextService.getThreadContext();
-
-        UUID playerId = context.getReadOnlyState().getLocalId();
+        UUID playerId = _Context.getReadOnlyState().getLocalId();
 
         if (jsimage.getComponent().getComponentType().hasTypeName(ComponentTypes.CARD))
         {
@@ -143,8 +144,8 @@ public class CardGamePanelMouseListener extends MouseAdapter
 
             CommandBase cmdPull = _CommandFactory.CreatePull(stack.getId(), card.getId());
             CommandBase cmdUse = _CommandFactory.CreateUse(null, card.getId());
-            boolean pullable = canExecute(context, cmdPull, "mousePressed/card");
-            boolean useable = canExecute(context, cmdUse, "mousePressed/card");
+            boolean pullable = canExecute(cmdPull, "mousePressed/card");
+            boolean useable = canExecute(cmdUse, "mousePressed/card");
 
             boolean pull = pullable && (!useable || useable && e.getClickCount() % 2 == 1);
             boolean use = useable && (!pullable || pullable && e.getClickCount() % 2 == 0);
@@ -196,7 +197,7 @@ public class CardGamePanelMouseListener extends MouseAdapter
                     pm.stopAnimate(jsimage_card);
                 }
                 
-                context.schedule(cmdUse);
+                _CommandExecutor.schedule(cmdUse);
             }
 
             mouse_xstart = e.getX();
@@ -205,9 +206,9 @@ public class CardGamePanelMouseListener extends MouseAdapter
         else if (jsimage.getComponent().getComponentType().hasTypeName(ComponentTypes.CARDSTACK))
         {
             CommandBase cmdUse = _CommandFactory.CreateUse(((ReadOnlyCardStack)jsimage.getComponent().getPayload()).getId(), null);
-            if (canExecute(context, cmdUse, "mousePressed/cardstack"))
+            if (canExecute(cmdUse, "mousePressed/cardstack"))
             {
-                context.schedule(cmdUse);
+                _CommandExecutor.schedule(cmdUse);
                 draggedJComps.clear();
             }
         }
@@ -221,10 +222,9 @@ public class CardGamePanelMouseListener extends MouseAdapter
             return;
         }
 
-        Context context = _ContextService.getThreadContext();
         IPanelManager pm = _PanelService.getPanelManager(PanelDescriptors.Game);
 
-        UUID playerId = context.getReadOnlyState().getLocalId();
+        UUID playerId = _Context.getReadOnlyState().getLocalId();
 
         if (!draggedJComps.isEmpty())
         {
@@ -280,7 +280,7 @@ public class CardGamePanelMouseListener extends MouseAdapter
                         .collect(Collectors.toList());
                 ReadOnlyEntityList<ReadOnlyCard> roCards = new ReadOnlyEntityList<>(cards);
                 CommandBase cmdPush = _CommandFactory.CreatePush(dstCardStack.getId(), roCards.getIds());
-                if (canExecute(context, cmdPush, "mouseReleased"))
+                if (canExecute(cmdPush, "mouseReleased"))
                 {
                     Rectangle intersection = comp.getAbsCoords().getBounds().intersection(olComp.getAbsCoords().getBounds());
                     int intersectA = intersection.width * intersection.height;
@@ -298,7 +298,7 @@ public class CardGamePanelMouseListener extends MouseAdapter
             {
                 // the cards will be animated towards their destination stack 
                 // by the state listener that will react to the model change
-                context.schedule(cmdMove);
+                _CommandExecutor.schedule(cmdMove);
             }
             else
             {
@@ -325,10 +325,10 @@ public class CardGamePanelMouseListener extends MouseAdapter
         return false;
     }
 
-    private boolean canExecute(Context context, CommandBase command, String dragContext)
+    private boolean canExecute(CommandBase command, String dragContext)
     {
-        CanExecuteResponse response = context.canExecute(command);
-        if (response.execState == ExecutionState.Yes)
+        CanExecuteResponse response = command.canExecute();
+        if (response.execState == ExecutionState.Yes || response.execState == ExecutionState.YesPerm)
         {
             return true;
 

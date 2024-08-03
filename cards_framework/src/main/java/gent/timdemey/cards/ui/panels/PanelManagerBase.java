@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 import javax.swing.JComponent;
 
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityBase;
+import gent.timdemey.cards.services.context.ICommandExecutor;
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.res.FontResource;
@@ -27,7 +28,6 @@ import gent.timdemey.cards.services.contract.res.ImageResource;
 import gent.timdemey.cards.services.id.Ids;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IAnimationService;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IScalingService;
@@ -39,6 +39,8 @@ import gent.timdemey.cards.ui.components.ext.IHasComponent;
 import gent.timdemey.cards.ui.components.swing.JSFactory;
 import gent.timdemey.cards.ui.components.swing.JSImage;
 import gent.timdemey.cards.ui.components.swing.JSLabel;
+import gent.timdemey.cards.di.IContainerService;
+import gent.timdemey.cards.services.context.Context;
 
 public abstract class PanelManagerBase implements IPanelManager
 {
@@ -50,12 +52,14 @@ public abstract class PanelManagerBase implements IPanelManager
     protected final IScalingService _ScalingService;
     protected final IPositionService _PositionService;
     protected final IAnimationService _AnimationService;
-    protected final IContextService _ContextService;
+    protected final IContainerService _ContextService;
     protected final IActionService _ActionService;
     protected final CommandFactory _CommandFactory;    
     protected final JSFactory _JSFactory;
     protected final Logger _Logger;    
     protected final Loc _Loc;
+    protected final ICommandExecutor _CommandExecutor;
+    protected final Context _Context;
     
     public PanelManagerBase(Container container)
     {
@@ -64,12 +68,14 @@ public abstract class PanelManagerBase implements IPanelManager
         this._ResourceCacheService = container.Get(IResourceCacheService.class);
         this._ScalingService = container.Get(IScalingService.class);
         this._PositionService = container.Get(IPositionService.class);
-        this._ContextService = container.Get(IContextService.class);
+        this._ContextService = container.Get(IContainerService.class);
         this._ActionService = container.Get(IActionService.class);
         this._CommandFactory = container.Get(CommandFactory.class);
         this._JSFactory = container.Get(JSFactory.class);
         this._Logger = container.Get(Logger.class);
         this._Loc = container.Get(Loc.class);
+        this._CommandExecutor = container.Get(ICommandExecutor.class);
+        this._Context = container.Get(Context.class);
         
         this.comp2jcomp = new HashMap<>();
         this.entity2comp = new HashMap<>();

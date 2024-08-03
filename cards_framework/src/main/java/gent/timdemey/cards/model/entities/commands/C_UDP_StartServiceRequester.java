@@ -1,6 +1,7 @@
 package gent.timdemey.cards.model.entities.commands;
 
 
+import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_UDP_StartServiceRequester;
@@ -10,9 +11,8 @@ import gent.timdemey.cards.model.net.UDP_ServiceRequester;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.context.LimitedContext;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import java.util.UUID;
+import gent.timdemey.cards.di.IContainerService;
 
 /**
  * Command sent over UDP broadcast to the network in order to detect servers.
@@ -28,10 +28,10 @@ public class C_UDP_StartServiceRequester extends CommandBase
     private final NetworkFactory _NetworkFactory;
     
     public C_UDP_StartServiceRequester(
-        IContextService contextService, CommandFactory commandFactory, NetworkFactory networkFactory, CommandDtoMapper commandDtoMapper, Logger logger, State state,
+        Container container, CommandFactory commandFactory, NetworkFactory networkFactory, CommandDtoMapper commandDtoMapper, Logger logger, 
         P_UDP_StartServiceRequester parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
         
         this._CommandFactory = commandFactory;
         this._NetworkFactory = networkFactory;
@@ -40,16 +40,16 @@ public class C_UDP_StartServiceRequester extends CommandBase
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type)
+    public CanExecuteResponse canExecute()
     {
-        CheckContext(type, ContextType.UI);
+        CheckContext(ContextType.UI);
         return CanExecuteResponse.yes();
     }
 
     @Override
-    protected void execute(Context context, ContextType type)
+    public void execute()
     {
-        CheckContext(type, ContextType.UI);
+        CheckContext(ContextType.UI);
 
         if (_State.getUdpServiceRequester() != null)
         {
@@ -58,7 +58,7 @@ public class C_UDP_StartServiceRequester extends CommandBase
 
         // clear the server list shown in the UI
         C_ClearServerList clrServList = _CommandFactory.CreateClearServerList();
-        _ContextService.getContext(ContextType.UI).schedule(clrServList);
+        schedule(ContextType.UI, clrServList);
 
         // prepare UDP broadcast
         C_UDP_Request cmd = _CommandFactory.CreateUDPRequest();
@@ -84,8 +84,7 @@ public class C_UDP_StartServiceRequester extends CommandBase
                 return;
             }
 
-            LimitedContext context = _ContextService.getContext(ContextType.UI);
-            context.schedule(command);
+            _CommandExecutor.schedule(command);
         }
         catch (Exception ex)
         {

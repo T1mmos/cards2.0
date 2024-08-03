@@ -36,7 +36,6 @@ import javax.swing.WindowConstants;
 
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
-import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.SnapSide;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.DataPanelDescriptor;
@@ -50,7 +49,6 @@ import gent.timdemey.cards.services.contract.preload.IPreload;
 import gent.timdemey.cards.services.contract.preload.PreloadOrder;
 import gent.timdemey.cards.services.contract.preload.PreloadOrderType;
 import gent.timdemey.cards.services.contract.res.FontResource;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
@@ -68,6 +66,8 @@ import gent.timdemey.cards.ui.panels.frame.FramePanelManager;
 import gent.timdemey.cards.utils.DimensionUtils;
 import gent.timdemey.cards.utils.StreamUtils;
 import net.miginfocom.swing.MigLayout;
+import gent.timdemey.cards.di.IContainerService;
+import gent.timdemey.cards.services.context.Context;
 
 public class FrameService implements IFrameService, IPreload
 {
@@ -85,7 +85,7 @@ public class FrameService implements IFrameService, IPreload
     private final IResourceCacheService _ResourceCacheService;
     private final IResourceNameService _ResourceNameService;
     private final IPanelService _PanelService;
-    private final IContextService _ContextService;
+    private final Context _Context;
     private final IPositionService _PositionService;
     private final JSFactory _JSFactory;
     private final Loc _Loc;
@@ -95,17 +95,16 @@ public class FrameService implements IFrameService, IPreload
         IResourceCacheService resourceCacheService,
         IResourceNameService resourceNameService,
         IPanelService panelService,
-        IContextService contextService,
+        Context context,
         IPositionService positionService,
         JSFactory jsFactory,
-        Loc loc
-        )
+        Loc loc)
     {
         this._Container = container;
         this._ResourceCacheService = resourceCacheService;
         this._ResourceNameService = resourceNameService;
         this._PanelService = panelService;
-        this._ContextService = contextService;
+        this._Context = context;
         this._PositionService = positionService;
         this._JSFactory = jsFactory;
         this._Loc = loc;
@@ -724,10 +723,8 @@ public class FrameService implements IFrameService, IPreload
 
     @Override
     public void installStateListeners()
-    {
-        Context ctxt = _ContextService.getThreadContext();
-        
-        ctxt.addStateListener(_Container.Get(FrameStateListener.class));
+    {        
+        _Context.addStateListener(_Container.Get(FrameStateListener.class));
     }
     
     private <IN, OUT> JSLayeredPane createDialogPanel(DataPanelDescriptor<IN, OUT> desc, IN inData,

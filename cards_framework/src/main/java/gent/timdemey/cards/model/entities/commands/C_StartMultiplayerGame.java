@@ -4,15 +4,13 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.ICardPlugin;
+import gent.timdemey.cards.di.Container;
 
 import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_StartMultiplayerGame;
-import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.ICardGameService;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.INetworkService;
 
 /**
@@ -30,10 +28,10 @@ public class C_StartMultiplayerGame extends CommandBase
     private CommandFactory _CommandFactory;
     
     public C_StartMultiplayerGame(
-        IContextService contextService, ICardPlugin cardPlugin, INetworkService networkService, ICardGameService cardGameService, CommandFactory commandFactory, State state,
+        Container container, ICardPlugin cardPlugin, INetworkService networkService, ICardGameService cardGameService, CommandFactory commandFactory, 
         P_StartMultiplayerGame parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
         
         this._CardPlugin = cardPlugin;
         this._NetworkService = networkService;
@@ -42,7 +40,7 @@ public class C_StartMultiplayerGame extends CommandBase
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type)
+    public CanExecuteResponse canExecute()
     {        
         int reqPlayerCnt = _CardPlugin.getPlayerCount();
         int curPlayerCnt = _State.getPlayers().size();
@@ -68,9 +66,9 @@ public class C_StartMultiplayerGame extends CommandBase
     }
 
     @Override
-    protected void execute(Context context, ContextType type)
+    public void execute()
     {
-        if (type == ContextType.UI)
+        if (_ContextType == ContextType.UI)
         {
             _NetworkService.send(_State.getLocalId(), _State.getServerId(), this, _State.getTcpConnectionPool());
         }

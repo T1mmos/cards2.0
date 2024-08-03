@@ -1,23 +1,21 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_StopServer;
-import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.IContextService;
 
 public class C_StopServer extends CommandBase
 {    
     public C_StopServer(
-        IContextService contextService, State state,
+        Container container,
         P_StopServer parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
     }
     
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type)
+    public CanExecuteResponse canExecute()
     {
         if (_State.getServerId() == null)
         {
@@ -28,9 +26,9 @@ public class C_StopServer extends CommandBase
     }
 
     @Override
-    protected void execute(Context context, ContextType type)
+    public void execute()
     {
-        if (type == ContextType.UI)
+        if (_ContextType == ContextType.UI)
         {
             schedule(ContextType.Server, this);
             return;
@@ -42,14 +40,14 @@ public class C_StopServer extends CommandBase
         _State.setTcpConnectionPool(null);
        
         // Drop the server context entirely
-        _ContextService.drop(ContextType.Server);
+        _ContainerService.drop(ContextType.Server);
     }
 
     @Override
-    protected void undo(Context context, ContextType type)
+    public void undo()
     {
         // TODO Auto-generated method stub
-        super.undo(context, type);
+        super.undo();
     }
     
     @Override

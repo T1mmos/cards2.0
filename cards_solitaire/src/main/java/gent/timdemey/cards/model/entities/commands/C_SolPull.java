@@ -1,22 +1,21 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.di.Container;
 import java.util.List;
 
 import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_Pull;
-import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes;
-import gent.timdemey.cards.services.interfaces.IContextService;
 
 public class C_SolPull extends C_Pull
 {
     public C_SolPull(
-        IContextService contextService, State state,
+        Container container,
         P_Pull parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
     }
     
     @Override

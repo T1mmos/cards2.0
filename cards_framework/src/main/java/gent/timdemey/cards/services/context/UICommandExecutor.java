@@ -18,18 +18,18 @@ import gent.timdemey.cards.model.entities.commands.C_ShowReexecutionFail;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.di.IContainerService;
 
 public class UICommandExecutor implements ICommandExecutor
 {
     private final List<IExecutionListener> executionListeners;
-    private final IContextService _ContextService;
+    private final IContainerService _ContextService;
     private final Logger _Logger;
     private final CommandFactory _CommandFactory;
     private final State _State;
 
     public UICommandExecutor(
-        IContextService contextService,
+        IContainerService contextService,
         CommandFactory commandFactory,
         State state,
         Logger logger)
@@ -51,8 +51,7 @@ public class UICommandExecutor implements ICommandExecutor
     @Override
     public void run(CommandBase command)
     {
-        ContextType type = _ContextService.getThreadContext().getContextType();
-        if(type != ContextType.UI)
+        if(!SwingUtilities.isEventDispatchThread())
         {
             throw new IllegalStateException("Can only run a command from the UI thread. Use schedule instead when posting command from another thread!");
         }
@@ -69,7 +68,7 @@ public class UICommandExecutor implements ICommandExecutor
         UUID serverId = _State.getServerId();
         UUID cmdSrcId = command.getSourceId();
         
-         boolean src_local = cmdSrcId == null || cmdSrcId.equals(localId);
+        boolean src_local = cmdSrcId == null || cmdSrcId.equals(localId);
         boolean src_server = cmdSrcId != null && cmdSrcId.equals(serverId);
         boolean hasServer = serverId != null;
 
@@ -157,7 +156,7 @@ public class UICommandExecutor implements ICommandExecutor
         if(fails.size() > 0)
         {
             C_ShowReexecutionFail cmd = _CommandFactory.ShowDialog_ReexecutionFail(fails);
-            _ContextService.getThreadContext().schedule(cmd);
+            schedule(cmd);
         }
     }
 
@@ -176,7 +175,7 @@ public class UICommandExecutor implements ICommandExecutor
     public void removeExecutionListener(IExecutionListener executionListener)
     {
         // check that the execution listener is installed on the UI thread
-        if(!_ContextService.isCurrentContext(ContextType.UI))
+        if(!!SwingUtilities.isEventDispatchThread())
         {
             throw new IllegalStateException("Execution listener should be set on the UI thread");
         }

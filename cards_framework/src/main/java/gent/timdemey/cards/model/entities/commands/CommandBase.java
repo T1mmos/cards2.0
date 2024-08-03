@@ -1,5 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.di.Container;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
@@ -10,8 +11,8 @@ import gent.timdemey.cards.model.net.TCP_Connection;
 import gent.timdemey.cards.model.net.UDP_Source;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.context.LimitedContext;
-import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.di.IContainerService;
+import gent.timdemey.cards.services.context.ICommandExecutor;
 
 public abstract class CommandBase extends EntityBase
 {
@@ -20,46 +21,26 @@ public abstract class CommandBase extends EntityBase
     private volatile UUID sourceId;
     private volatile String serialized;
     
-    protected final IContextService _ContextService;
+    protected final IContainerService _ContainerService;
+    protected final ICommandExecutor _CommandExecutor;
     protected final State _State;
+    protected final Context _Context;
+    protected final ContextType _ContextType;
     
-
-    protected CommandBase(IContextService contextService, State state, PayloadBase payload)
+    protected CommandBase(Container container, PayloadBase payload)
     {
         super(payload.id);
         
-        this._ContextService = contextService;
-        this._State = state;
+        this._ContainerService = container.Get(IContainerService.class);
+        this._CommandExecutor = container.Get(ICommandExecutor.class);
+        this._Context = container.Get(Context.class);
+        this._State = container.Get(State.class);
+        this._ContextType = container.Get(ContextType.class);
     }
 
-    private final Context getContext()
-    {
-        Context context = _ContextService.getThreadContext();
-        return context;
-    }
+    public abstract CanExecuteResponse canExecute();
 
-    public final CanExecuteResponse canExecute()
-    {
-        Context context = getContext();
-        CanExecuteResponse response = canExecute(context, context.getContextType());
-        
-        if (response == null)
-        {
-            throw new NullPointerException("canExecute must return a CanExecuteResponse but got null");
-        }
-        
-        return response;
-    }
-
-    protected abstract CanExecuteResponse canExecute(Context context, ContextType type);
-
-    public final void execute()
-    {
-        Context context = getContext();
-        execute(context, context.getContextType());
-    }
-
-    protected abstract void execute(Context context, ContextType type);
+    public abstract void execute();
 
     /**
      * Called after {@link #execute(State)} but only after the server has accepted the command.
@@ -69,15 +50,9 @@ public abstract class CommandBase extends EntityBase
      * that the top card's removal was a valid action.     
      * @param state
      */
-    public final void onAccepted()
+    public void onAccepted()
     {
-        Context context = getContext();
-        onAccepted(context, context.getContextType());
-    }
-
-    public void onAccepted(Context context, ContextType type)
-    {
-        // override when necessary
+         // override when necessary
     }
     
     /**
@@ -91,65 +66,38 @@ public abstract class CommandBase extends EntityBase
         // override when necessary
     }
 
-    public final boolean canUndo()
-    {
-        Context context = getContext();
-        return canUndo(context, context.getContextType());
-    }
-
-    protected boolean canUndo(Context context, ContextType type)
+    public boolean canUndo()
     {
         return false;
     }
 
-    public final void undo()
-    {
-        Context context = getContext();
-        undo(context, context.getContextType());
-    }
-
-    protected void undo(Context context, ContextType type)
+    public void undo()
     {
         throw new UnsupportedOperationException();
     }
 
     protected final void schedule(ContextType type, CommandBase cmd)
     {
-        LimitedContext context = _ContextService.getContext(type);
-        context.schedule(cmd);
+        _ContainerService.get(type).Get(ICommandExecutor.class).schedule(cmd);
     }
 
     /**
-     * Immediately runs the given command on the current context thread. If on the
+     * Immediately runs the given command on the current context. If on the
      * UI thread any dialog is shown, this call will block.
      * 
      * @param cmd
      */
     protected final void run(CommandBase cmd)
     {
-        ContextType ctxtType = _ContextService.getThreadContext().getContextType();
-        LimitedContext context = _ContextService.getContext(ctxtType);
-        context.run(cmd);
+        _CommandExecutor.run(cmd);
     }
 
-    protected final void CheckNotContext(ContextType current, ContextType... types)
+    protected final void CheckContext(ContextType expected)
     {
-        for (ContextType type : types)
+        if (_ContextType != expected)
         {
-            if (current == type)
-            {
-                throw new IllegalStateException(
-                        "This command cannot be executed under the current context type " + current);
-            }
-        }
-    }
-
-    protected final void CheckContext(ContextType current, ContextType expected)
-    {
-        if (current != expected)
-        {
-            throw new IllegalStateException("This command must be executed under the context type " + expected
-                    + ", but current context type is: " + current);
+            throw new IllegalStateException("This command must be executed under the context type '" + expected
+                    + "', but current context type is: '" + _ContextType + "'");
         }
     }
 

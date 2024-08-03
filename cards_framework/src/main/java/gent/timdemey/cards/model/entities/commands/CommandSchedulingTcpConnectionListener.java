@@ -9,33 +9,35 @@ import gent.timdemey.cards.model.net.NetworkFactory;
 import gent.timdemey.cards.model.net.TCP_Connection;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.context.LimitedContext;
-import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.di.IContainerService;
+import gent.timdemey.cards.services.context.ICommandExecutor;
 
 public final class CommandSchedulingTcpConnectionListener implements ITcpConnectionListener
 {
-    private final ContextType contextType;
+    private final ContextType _ContextType;
     private final Logger _Logger;
     private final NetworkFactory _NetworkFactory;
-    private final IContextService _ContextService;
+    private final IContainerService _ContextService;
     private final CommandDtoMapper _CommandDtoMapper;
     private final CommandFactory _CommandFactory;
+    private final ICommandExecutor _CommandExecutor;
 
     public CommandSchedulingTcpConnectionListener(
-        IContextService contextService, 
+        IContainerService contextService, 
         CommandDtoMapper commandDtoMapper,
         CommandFactory commandFactory,
         NetworkFactory networkFactory,
         Logger logger,
-        ContextType contextType)
+        ContextType contextType,
+        ICommandExecutor commandExecutor)
     {
         this._ContextService = contextService;
         this._CommandDtoMapper = commandDtoMapper;
         this._CommandFactory = commandFactory;
         this._NetworkFactory = networkFactory;
         this._Logger = logger;
-        
-        this.contextType = contextType;
+        this._ContextType = contextType;
+        this._CommandExecutor = commandExecutor;
     }
 
     @Override
@@ -45,8 +47,7 @@ public final class CommandSchedulingTcpConnectionListener implements ITcpConnect
         
         C_OnTcpConnectionAdded cmd = _NetworkFactory.CreateOnTcpConnectionAdded(connection);
         
-        LimitedContext context = _ContextService.getContext(contextType);
-        context.schedule(cmd);
+        _CommandExecutor.schedule(cmd);
     }
 
     @Override
@@ -63,8 +64,7 @@ public final class CommandSchedulingTcpConnectionListener implements ITcpConnect
 
             _Logger.info("Received command '%s' from '%s'", command.getName(), tcpConnection.getRemote());
 
-            LimitedContext context = _ContextService.getContext(contextType);
-            context.schedule(command);
+            _CommandExecutor.schedule(command);
         }
         catch (Exception e)
         {
@@ -77,8 +77,7 @@ public final class CommandSchedulingTcpConnectionListener implements ITcpConnect
     {
         _Logger.info("TCP connection closed by the %s party (id=%s)", local ? "local" : "remote", id);
      
-        C_OnTcpConnectionClosed cmd = _CommandFactory.CreateOnTcpConnectionClosed(id, local);
-        LimitedContext context = _ContextService.getContext(contextType);
-        context.schedule(cmd);        
+        C_OnTcpConnectionClosed cmd = _CommandFactory.CreateOnTcpConnectionClosed(id, local);        
+        _CommandExecutor.schedule(cmd);        
     }
 }

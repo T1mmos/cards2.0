@@ -1,6 +1,5 @@
 package gent.timdemey.cards.services.context;
 
-import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.model.delta.Change;
 import gent.timdemey.cards.model.delta.IChangeTracker;
 import gent.timdemey.cards.model.delta.ChangeType;
@@ -11,84 +10,43 @@ import java.util.Map;
 import java.util.UUID;
 
 import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.model.entities.commands.CommandBase;
-import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.delta.Property;
 import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.model.entities.state.StateFactory;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityFactory;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
-import gent.timdemey.cards.services.interfaces.IContextService;
 
 public final class Context
 {
     // calculated
-    private final IChangeTracker changeTracker;
+    private final IChangeTracker _ChangeTracker;
     private final List<IStateListener> stateListeners;
-            
-    LimitedContext limitedContext;
-    
-    private final IContextService _ContextService;
+                
     private final Logger _Logger;
-    private final ICardPlugin _CardPlugin;
     private final ICommandExecutor _CommandExecutor;
     private final State _State;
+    private final ContextType _ContextType;
     
     public Context(
-            ICardPlugin cardPlugin, 
-            ICommandExecutor commandExecutor, 
-            IContextService contextService,
-            IChangeTracker changeTracker,
-            StateFactory stateFactory,
-            State state,
-            Logger logger)
+        ICommandExecutor commandExecutor, 
+        IChangeTracker changeTracker,
+        ContextType contextType,
+        State state,
+        Logger logger)
     {
-        this._CardPlugin = cardPlugin;
         this._CommandExecutor = commandExecutor;
-        this._ContextService = contextService;
-        this._State = state;   // ???
+        this._ContextType = contextType;
+        this._State = state;
         this._Logger = logger;
+        this._ChangeTracker = changeTracker;
         
         this.stateListeners = new ArrayList<>();
-        this.changeTracker = changeTracker;
     }
     
     public ReadOnlyState getReadOnlyState()
     {
         return ReadOnlyEntityFactory.getOrCreateState(_State);
-    }
-
-    public void addExecutionListener(IExecutionListener executionListener)
-    {
-        limitedContext.addExecutionListener(executionListener);
-    }
-
-    public void removeExecutionListener(IExecutionListener executionListener)
-    {
-        limitedContext.removeExecutionListener(executionListener);
-    }
-    
-    public ContextType getContextType()
-    {
-        return limitedContext.getContextType();
-    }
-
-    public CanExecuteResponse canExecute(CommandBase command)
-    {
-        return limitedContext.canExecute(command);
-    }
-
-    public void schedule(CommandBase command)
-    {
-        boolean isCurrentContext = _ContextService.isCurrentContext(getContextType());
-        if(!isCurrentContext)
-        {
-            throw new IllegalStateException("You can only schedule on the Context on the correct thread, expected context type = " + getContextType());
-        }
-
-        limitedContext.schedule(command);
     }
 
     public void addStateListener(IStateListener stateListener)
@@ -103,7 +61,7 @@ public final class Context
 
     public void removeStateListener(IStateListener stateListener)
     {
-        if (changeTracker == null)
+        if (_ChangeTracker == null)
         {
             throw new IllegalStateException("This context isn't configured to track changes, therefore you cannot remove a state listener.");
         }
@@ -116,11 +74,8 @@ public final class Context
     }
 
     void initialize(ContextType contextType) 
-    {   
-        this.limitedContext = new LimitedContext(_CardPlugin, _CommandExecutor, _State, contextType);
-        
-        addExecutionListener(this::onExecuted);    
-         
+    {           
+        _CommandExecutor.addExecutionListener(this::onExecuted);             
     }
 
     private static class EntityPropertyChange
@@ -183,7 +138,7 @@ public final class Context
     private void onExecuted()
     {
         // get a list of all changes since the last reset()
-        List<Change<?>> changes = changeTracker.getChangeList();
+        List<Change<?>> changes = _ChangeTracker.getChangeList();
                 
         // do not leak EntityBase objects, convert to readonly counterparts
         List<ReadOnlyChange> roChanges = new ArrayList<>();
@@ -234,7 +189,7 @@ public final class Context
         // reset the tracker before updating all listeners,
         // this way listeners themselves may schedule commands and 
         // will not cause stackoverflows
-        changeTracker.reset();
+        _ChangeTracker.reset();
         
         if (roChanges.isEmpty())
         {

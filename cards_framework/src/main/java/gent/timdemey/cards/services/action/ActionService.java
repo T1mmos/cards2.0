@@ -27,10 +27,12 @@ import gent.timdemey.cards.services.contract.descriptors.PayloadActionDescriptor
 import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptor.ResourceDescriptorP1;
 import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptors;
 import gent.timdemey.cards.services.interfaces.IActionService;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IResourceNameService;
+import gent.timdemey.cards.di.IContainerService;
+import gent.timdemey.cards.services.context.Context;
+import gent.timdemey.cards.services.context.ICommandExecutor;
 
 public class ActionService implements IActionService
 {
@@ -38,20 +40,22 @@ public class ActionService implements IActionService
     private Map<ActionDescriptor, ActionBase> desc2actions = new HashMap<>();
     private Map<ActionDescriptor, Runnable> desc2code = new HashMap<>();
     
-    private final IContextService _ContextService;
+    private final IContainerService _ContextService;
     private final IResourceNameService _ResourceNameService;
     private final IResourceCacheService _ResourceCacheService;
     private final IFrameService _FrameService;
     private final Loc _Loc;
     private final Logger _Logger;
     private final CommandFactory _CommandFactory;
+    private final Context _Context;
     
     public ActionService (
-            IContextService contextService,
+            IContainerService contextService,
             IFrameService frameService,
             IResourceNameService resourceNameService,
             IResourceCacheService resourceCacheService,
             CommandFactory commandFactory,
+            Context context,
             Loc loc,
             Logger logger)
     {
@@ -60,6 +64,7 @@ public class ActionService implements IActionService
         this._ResourceNameService = resourceNameService;
         this._ResourceCacheService = resourceCacheService;
         this._CommandFactory = commandFactory;
+        this._Context = context;
         this._Loc = loc;
         this._Logger = logger;
     }
@@ -150,7 +155,7 @@ public class ActionService implements IActionService
         CommandBase cmd = mapToCommand(desc);
         if (cmd != null)
         {
-            _ContextService.getContext(ContextType.UI).schedule(cmd);
+            _ContextService.get(ContextType.UI).Get(ICommandExecutor.class).schedule(cmd);
             return;
         }
         
@@ -175,7 +180,7 @@ public class ActionService implements IActionService
         CommandBase cmd = createCommand(desc, payload);
         if (cmd != null)
         {
-            _ContextService.getContext(ContextType.UI).schedule(cmd);
+            _ContextService.get(ContextType.UI).Get(ICommandExecutor.class).schedule(cmd);
             return;
         }
         
@@ -224,7 +229,7 @@ public class ActionService implements IActionService
             action.checkEnabled();
       
             _ContextService.addContextListener(action);
-            _ContextService.getThreadContext().addStateListener(action); 
+            _Context.addStateListener(action); 
         }
 
         return action;
@@ -484,7 +489,7 @@ public class ActionService implements IActionService
     
     private boolean canExecute(CommandBase command)
     {
-        CanExecuteResponse response = _ContextService.getThreadContext().canExecute(command);
+        CanExecuteResponse response = command.canExecute();
         switch (response.execState)
         {
             case Yes:

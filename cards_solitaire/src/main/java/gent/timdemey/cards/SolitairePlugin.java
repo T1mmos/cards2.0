@@ -15,7 +15,7 @@ public class SolitairePlugin implements ICardPlugin
 {
     public static void main(String[] args)
     {
-        Start.main(new String [] { SolitairePlugin.class.getName() });
+        Main.main(new String [] { SolitairePlugin.class.getName() });
     }
     
     @Override

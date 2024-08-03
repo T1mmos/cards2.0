@@ -10,15 +10,15 @@ import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_Push;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
-import gent.timdemey.cards.services.interfaces.IContextService;
+import gent.timdemey.cards.di.IContainerService;
 
 public class C_SolShowPush extends C_Push
 {
     public C_SolShowPush(
-        IContextService contextService, State state, 
+        Container container,
         P_Push parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
     }
 
     @Override

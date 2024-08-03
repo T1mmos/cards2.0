@@ -1,28 +1,26 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_TCP_OK;
 import gent.timdemey.cards.model.entities.state.GameState;
-import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.IContextService;
 
 public class C_TCP_OK extends CommandBase
 {   
     private final CommandFactory _CommandFactory;
     
     public C_TCP_OK (
-        IContextService contextService, CommandFactory commandFactory, State state,
+        Container container, CommandFactory commandFactory, 
         P_TCP_OK parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
         
         this._CommandFactory = commandFactory;
     }
     
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type)
+    public CanExecuteResponse canExecute()
     {
         if (_State.getGameState() != GameState.Disconnected)
         {
@@ -33,9 +31,9 @@ public class C_TCP_OK extends CommandBase
     }
 
     @Override
-    protected void execute(Context context, ContextType type)
+    public void execute()
     {
-        if (type == ContextType.UI)
+        if (_ContextType == ContextType.UI)
         {
             // state goes from Disconnected -> Connected
             _State.setGameState(GameState.Connected);

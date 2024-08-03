@@ -1,32 +1,30 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_UDP_StopServiceRequester;
-import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.IContextService;
 
 public class C_UDP_StopServiceRequester extends CommandBase
 {
     public C_UDP_StopServiceRequester(
-        IContextService contextService, State state,
+        Container container,
         P_UDP_StopServiceRequester parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type)
+    public CanExecuteResponse canExecute()
     {
-        CheckContext(type, ContextType.UI);
+        CheckContext(ContextType.UI);
         return CanExecuteResponse.yes();
     }
 
     @Override
-    protected void execute(Context context, ContextType type)
+    public void execute()
     {
-        CheckContext(type, ContextType.UI);
+        CheckContext(ContextType.UI);
         
         if (_State.getUdpServiceRequester() == null)
         {

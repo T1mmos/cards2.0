@@ -24,15 +24,12 @@ public final class Container
             
     // keep track of what we're constructing, to detect circular dependencies
     private final Stack<Class> constructing = new Stack<>();
-    private final Container _ParentContainer;
     
     public Container ()
     {
-         _TransientClassesMap = new HashMap<>();
+        _TransientClassesMap = new HashMap<>();
         _SingletonClassesMap = new HashMap<>();
         _SingletonInstancesMap = new HashMap<>();
-        
-        _ParentContainer = null;
     }
     
     private Container (Container parent)
@@ -40,8 +37,6 @@ public final class Container
         _TransientClassesMap = new HashMap<>(parent._TransientClassesMap);
         _SingletonClassesMap = new HashMap<>(parent._SingletonClassesMap);
         _SingletonInstancesMap = new HashMap<>(parent._SingletonInstancesMap);
-        
-        _ParentContainer = parent;
     }
         
     public <T> void AddTransient(Class<T> clazz, Class<? extends T> impl)

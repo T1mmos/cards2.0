@@ -1,17 +1,14 @@
 package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.ICardPlugin;
+import gent.timdemey.cards.di.Container;
 
 import gent.timdemey.cards.model.entities.commands.C_TCP_NOK.TcpNokReason;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_OnTcpConnectionAdded;
-import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.model.net.TCP_Connection;
-import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.INetworkService;
-import java.util.UUID;
 
 public class C_OnTcpConnectionAdded extends CommandBase
 {
@@ -21,14 +18,13 @@ public class C_OnTcpConnectionAdded extends CommandBase
     private final CommandFactory _CommandFactory;
 
     public C_OnTcpConnectionAdded(
-        IContextService contextService,
+        Container container,
         CommandFactory commandFactory,
         ICardPlugin cardPlugin,
         INetworkService networkService,
-        State state,
         P_OnTcpConnectionAdded parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
         
         this._CommandFactory = commandFactory;
         this._CardPlugin = cardPlugin;
@@ -38,15 +34,15 @@ public class C_OnTcpConnectionAdded extends CommandBase
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type)
+    public CanExecuteResponse canExecute()
     {
         return CanExecuteResponse.yes();
     }
 
     @Override
-    protected void execute(Context context, ContextType type)
+    public void execute()
     {
-        if(type == ContextType.UI)
+        if(_ContextType == ContextType.UI)
         {
             _State.getTcpConnectionPool().bindUUID(_State.getServerId(), tcpConnection);
         }

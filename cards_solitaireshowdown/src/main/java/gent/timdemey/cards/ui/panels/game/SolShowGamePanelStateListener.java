@@ -17,14 +17,14 @@ import gent.timdemey.cards.model.delta.ChangeType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.id.SolShowIds;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.ui.components.swing.JSLabel;
+import gent.timdemey.cards.di.IContainerService;
 
 public class SolShowGamePanelStateListener extends CardGamePanelStateListener
 {
 
-    public SolShowGamePanelStateListener(IPanelService panelService, IContextService contextService)
+    public SolShowGamePanelStateListener(IPanelService panelService, IContainerService contextService)
     {
         super(panelService, contextService);
     }

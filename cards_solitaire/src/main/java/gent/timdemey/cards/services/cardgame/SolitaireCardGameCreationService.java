@@ -20,12 +20,10 @@ import gent.timdemey.cards.utils.CardDeckUtils;
 public class SolitaireCardGameCreationService implements ICardGameService
 {
     private final StateFactory _StateFactory;
-    private final CardDeckUtils _CardDeckUtils;
     
-    public SolitaireCardGameCreationService(StateFactory stateFactory, CardDeckUtils cardDeckUtils)
+    public SolitaireCardGameCreationService(StateFactory stateFactory)
     {
         this._StateFactory = stateFactory;
-        this._CardDeckUtils = cardDeckUtils;
     }
     
     @Override

@@ -1,5 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.di.Container;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,14 +14,11 @@ import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_LoadConfig;
 import gent.timdemey.cards.model.entities.config.Configuration;
 import gent.timdemey.cards.model.entities.config.ConfigurationFactory;
-import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.ConfigKeyDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ConfigKeyDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.FileDescriptors;
 import gent.timdemey.cards.services.interfaces.IConfigurationService;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFileService;
 
 public class C_LoadConfig extends CommandBase
@@ -32,15 +30,14 @@ public class C_LoadConfig extends CommandBase
     private final Logger _Logger;
     
     public C_LoadConfig(
-        IContextService contextService, 
+        Container container,
         IFileService fileService,
         IConfigurationService configurationService, 
         ConfigurationFactory configurationFactory,
         Logger logger,
-        State state,
         P_LoadConfig parameters)
     { 
-        super(contextService, state, parameters);
+        super(container, parameters);
         
         this._FileService = fileService;
         this._ConfigurationService = configurationService;
@@ -49,17 +46,17 @@ public class C_LoadConfig extends CommandBase
     }
     
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type)
+    public CanExecuteResponse canExecute()
     {
-        CheckContext(type, ContextType.UI);
+        CheckContext(ContextType.UI);
         return CanExecuteResponse.yes();
     }
 
     
     @Override
-    protected void execute(Context context, ContextType type)
+    public void execute()
     {
-        CheckContext(type, ContextType.UI);
+        CheckContext(ContextType.UI);
         
         Properties properties = new Properties();
         

@@ -16,12 +16,10 @@ import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.C_LoadConfig;
 import gent.timdemey.cards.model.entities.commands.CommandFactory;
 import gent.timdemey.cards.services.context.Context;
-import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
 import gent.timdemey.cards.services.contract.preload.IPreload;
 import gent.timdemey.cards.services.contract.preload.PreloadOrder;
 import gent.timdemey.cards.services.contract.preload.PreloadOrderType;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.utils.Async;
@@ -32,15 +30,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.SwingUtilities;
 import net.miginfocom.swing.MigLayout;
+import gent.timdemey.cards.services.context.ICommandExecutor;
 
 public class StartUI
 {
     private static JFrame frame;
     
     private final IFrameService _FrameService;
-    private final IContextService _ContextService;
     
     private final Container _Container;
+    private final ICommandExecutor _CommandExecutor;
     private final IPanelService _PanelService;
     private final Logger _Logger;
     private final Loc _Loc;
@@ -48,7 +47,7 @@ public class StartUI
     
     public StartUI(
             Container container, 
-            IContextService contextService, 
+            ICommandExecutor commandExecutor,
             IFrameService frameService, 
             IPanelService panelService,
             CommandFactory commandFactory,
@@ -56,7 +55,7 @@ public class StartUI
             Loc loc)
     {
         this._Container = container;
-        this._ContextService = contextService;
+        this._CommandExecutor = commandExecutor;
         this._FrameService = frameService;
         this._PanelService = panelService;
         this._CommandFactory = commandFactory;
@@ -183,17 +182,13 @@ public class StartUI
         
         // locale
         _Loc.setLocale(Loc.AVAILABLE_LOCALES[0]);
-        
-        // initialize UI context
-        _ContextService.initialize(ContextType.UI);
-        
+                
         // show the frame with just the loading animation, but already with a certain size
         _FrameService.getFrame().setVisible(true);
         
         // import configuration
-        Context ctxt = _ContextService.getThreadContext();
         C_LoadConfig cmd_loadcfg = _CommandFactory.CreateLoadConfig();
-        ctxt.schedule(cmd_loadcfg);
+        _CommandExecutor.schedule(cmd_loadcfg);
         
         _FrameService.installStateListeners();
         

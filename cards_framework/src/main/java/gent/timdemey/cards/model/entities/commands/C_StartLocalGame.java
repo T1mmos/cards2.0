@@ -5,17 +5,15 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.ICardPlugin;
+import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_StartLocalGame;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.Player;
-import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.model.entities.state.StateFactory;
-import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.ICardGameService;
-import gent.timdemey.cards.services.interfaces.IContextService;
 
 public class C_StartLocalGame extends CommandBase
 {
@@ -24,10 +22,10 @@ public class C_StartLocalGame extends CommandBase
     private final StateFactory _StateFactory;
     
     public C_StartLocalGame(
-        IContextService contextService, ICardPlugin cardPlugin, ICardGameService cardGameService, StateFactory stateFactory, State state,
+        Container container, ICardPlugin cardPlugin, ICardGameService cardGameService, StateFactory stateFactory,
         P_StartLocalGame parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
         
         this._CardPlugin = cardPlugin;
         this._CardGameService = cardGameService;
@@ -35,9 +33,9 @@ public class C_StartLocalGame extends CommandBase
     }
     
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type)
+    public CanExecuteResponse canExecute()
     {
-        CheckContext(type, ContextType.UI);
+        CheckContext(ContextType.UI);
         
         boolean multiplayer = _CardPlugin.getPlayerCount() > 1;
         if (multiplayer)
@@ -53,9 +51,9 @@ public class C_StartLocalGame extends CommandBase
     }
 
     @Override
-    protected void execute(Context context, ContextType type)
+    public void execute()
     {
-        CheckContext(type, ContextType.UI);
+        CheckContext(ContextType.UI);
                
         Player player = _StateFactory.CreatePlayer(_State.getLocalId(), _State.getLocalName());
         _State.getPlayers().add(player);

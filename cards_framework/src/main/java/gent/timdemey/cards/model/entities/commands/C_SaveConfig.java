@@ -12,17 +12,15 @@ import java.util.Properties;
 import java.util.Set;
 
 import gent.timdemey.cards.ICardPlugin;
+import gent.timdemey.cards.di.Container;
 
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_SaveConfig;
 import gent.timdemey.cards.model.entities.config.Configuration;
-import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.ConfigKeyDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.FileDescriptors;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFileService;
 
 public class C_SaveConfig extends CommandBase
@@ -32,10 +30,10 @@ public class C_SaveConfig extends CommandBase
     private final Logger _Logger;
     
     public C_SaveConfig (
-        IContextService contextService, ICardPlugin cardPlugin, IFileService fileService, Logger logger, State state,
+        Container container, ICardPlugin cardPlugin, IFileService fileService, Logger logger, 
         P_SaveConfig parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
         
         this._CardPlugin = cardPlugin;
         this._FileService = fileService;
@@ -43,17 +41,17 @@ public class C_SaveConfig extends CommandBase
     }
     
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type)
+    public CanExecuteResponse canExecute()
     {
-        CheckContext(type, ContextType.UI);
+        CheckContext(ContextType.UI);
         return CanExecuteResponse.yesPerm();
     }
 
     
     @Override
-    protected void execute(Context context, ContextType type)
+    public void execute()
     {
-        CheckContext(type, ContextType.UI);
+        CheckContext(ContextType.UI);
         
         // create a properties object, ensure that content is ordered alphabetically on the keys
         Properties properties = new Properties() 

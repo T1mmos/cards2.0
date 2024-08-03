@@ -20,11 +20,11 @@ import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.SolShowComponentTypes;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.ui.components.ext.IComponent;
 import gent.timdemey.cards.ui.panels.Positions;
 import gent.timdemey.cards.utils.ComponentUtils;
+import gent.timdemey.cards.di.IContainerService;
 
 public class SolShowPositionService implements IPositionService
 {
@@ -38,9 +38,9 @@ public class SolShowPositionService implements IPositionService
     private static final LayerRange LAYERRANGE_ANIMATIONS_CARDSCORE     = new LayerRange(21000, 21999);
 
     private Positions pos;
-    private final IContextService _ContextService;
+    private final IContainerService _ContextService;
 
-    public SolShowPositionService(IContextService contextService)
+    public SolShowPositionService(IContainerService contextService)
     {
         this._ContextService = contextService;
     }

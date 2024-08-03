@@ -1,15 +1,12 @@
 package gent.timdemey.cards.model.entities.commands;
 
 
+import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_OnGameToLobby;
 import gent.timdemey.cards.model.entities.state.GameState;
-import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.INetworkService;
-import java.util.UUID;
 
 /**
  * Transition from the multiplayer game to the lobby. Reasons may vary: a player
@@ -40,10 +37,10 @@ public class C_OnGameToLobby extends CommandBase
     public final GameToLobbyReason reason;
 
     public C_OnGameToLobby(
-        IContextService contextService, INetworkService networkService, CommandFactory commandFactory, State state,
+        Container container, INetworkService networkService, CommandFactory commandFactory,
         P_OnGameToLobby parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
         
         this._NetworkService = networkService;
         this._CommandFactory = commandFactory;
@@ -52,7 +49,7 @@ public class C_OnGameToLobby extends CommandBase
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type)
+    public CanExecuteResponse canExecute()
     {
         GameState gameState = _State.getGameState();
         if(gameState != GameState.Started && gameState != GameState.Paused && gameState != GameState.Ended)
@@ -63,12 +60,12 @@ public class C_OnGameToLobby extends CommandBase
     }
 
     @Override
-    public void execute(Context context, ContextType type)
+    public void execute()
     {
         _State.setCardGame(null);
         _State.setGameState(GameState.Lobby);
 
-        if(type == ContextType.UI)
+        if(_ContextType == ContextType.UI)
         {
             GameState gameState = _State.getGameState();
             

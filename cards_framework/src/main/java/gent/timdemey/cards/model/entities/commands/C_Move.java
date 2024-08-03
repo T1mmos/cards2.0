@@ -1,5 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.di.Container;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -10,10 +11,6 @@ import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_Move;
 import gent.timdemey.cards.model.entities.state.GameState;
-import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.services.context.Context;
-import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.utils.Debug;
 
 public class C_Move extends CommandBase
@@ -24,10 +21,10 @@ public class C_Move extends CommandBase
     protected List<Card> transferCards;
 
     public C_Move(
-        IContextService contextService, State state,            
+        Container container,           
         P_Move parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
         
         this.srcCardStackId = parameters.srcCardStackId;
         this.dstCardStackId = parameters.dstCardStackId;
@@ -42,7 +39,7 @@ public class C_Move extends CommandBase
      * @return
      */
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type)
+    public CanExecuteResponse canExecute()
     {
         if (_State.getGameState() != GameState.Started)
         {
@@ -59,7 +56,7 @@ public class C_Move extends CommandBase
      * @return
      */
     @Override
-    protected void execute(Context context, ContextType type)
+    public void execute()
     {
         CardGame cardGame = _State.getCardGame();
         CardStack srcCardStack = cardGame.getCardStack(srcCardStackId);
@@ -83,7 +80,7 @@ public class C_Move extends CommandBase
     }
 
     @Override
-    protected void undo(Context context, ContextType type)
+    public void undo()
     {
         CardGame cardGame = _State.getCardGame();
         CardStack srcCardStack = cardGame.getCardStacks().get(srcCardStackId);
@@ -95,7 +92,7 @@ public class C_Move extends CommandBase
     }
 
     @Override
-    protected boolean canUndo(Context context, ContextType type)
+    public boolean canUndo()
     {
         return true;
     }

@@ -9,26 +9,24 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptors;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.ISoundService;
 
 public class FrameStateListener implements IStateListener
-{        
-
-    private final IContextService _ContextService;
+{
     private final ISoundService _SoundService;
     private final IFrameService _FrameService;
     private final IPanelService _PanelService;
+    private final Context _Context;
     
     public FrameStateListener(
-        IContextService contextService,
+        Context context,
         ISoundService soundService,
         IFrameService frameService,
         IPanelService panelService)
     {
-        this._ContextService = contextService;
+        this._Context = context;
         this._SoundService = soundService;
         this._FrameService = frameService;
         this._PanelService  = panelService;
@@ -37,8 +35,7 @@ public class FrameStateListener implements IStateListener
     @Override
     public void onChange(ReadOnlyChange change)
     {
-        Context context = _ContextService.getThreadContext();
-        ReadOnlyState state = context.getReadOnlyState();
+        ReadOnlyState state = _Context.getReadOnlyState();
 
         CheckSound(state, change);
     }

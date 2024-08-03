@@ -15,7 +15,6 @@ import gent.timdemey.cards.readonlymodel.TypedChange;
 import gent.timdemey.cards.model.delta.ChangeType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.ui.components.swing.JSImage;
 import gent.timdemey.cards.ui.panels.IPanelManager;
@@ -23,22 +22,21 @@ import gent.timdemey.cards.ui.panels.IPanelManager;
 public class CardGamePanelStateListener implements IStateListener
 {
     protected final IPanelService _PanelService;
-    protected final IContextService _ContextService;
+    protected final Context _Context;
     
     public CardGamePanelStateListener (
         IPanelService panelService,
-        IContextService contextService)
+        Context context)
     {
         this._PanelService = panelService;
-        this._ContextService = contextService;
+        this._Context = context;
     }
     
     @Override
     public void onChange(ReadOnlyChange change)
     {
         IPanelManager pm = _PanelService.getPanelManager(PanelDescriptors.Game);
-        Context context = _ContextService.getThreadContext();
-        ReadOnlyState state = context.getReadOnlyState();
+        ReadOnlyState state = _Context.getReadOnlyState();
         
         ReadOnlyProperty<?> property = change.property;
 

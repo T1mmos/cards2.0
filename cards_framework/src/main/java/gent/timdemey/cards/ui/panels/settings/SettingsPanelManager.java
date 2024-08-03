@@ -10,9 +10,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
-import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.payload.P_SaveState;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.action.ActionBase;
@@ -49,7 +47,7 @@ public class SettingsPanelManager extends DataPanelManagerBase<Void, Void>
 
     private void updateUI()
     {
-        ReadOnlyState state = _ContextService.getThreadContext().getReadOnlyState();
+        ReadOnlyState state = _Context.getReadOnlyState();
         
         tf_pname.setText(state.getLocalName());        
         tf_serverTcpPort.setText("" + state.getConfiguration().getServerTcpPort());       
@@ -136,14 +134,14 @@ public class SettingsPanelManager extends DataPanelManagerBase<Void, Void>
         
         // register listener
         execListener = this::onCommandExecuted;
-        _ContextService.getThreadContext().addExecutionListener(execListener);
+        _CommandExecutor.addExecutionListener(execListener);
     }
     
     @Override
     public void onHidden()
     {
         // deregister listener
-        _ContextService.getThreadContext().removeExecutionListener(execListener);
+        _CommandExecutor.removeExecutionListener(execListener);
         execListener = null;
         
         tf_pname.getDocument().removeDocumentListener(docListener);

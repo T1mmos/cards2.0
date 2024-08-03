@@ -1,5 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.di.Container;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.state.Card;
@@ -7,10 +8,8 @@ import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_Pull;
 import gent.timdemey.cards.model.entities.state.GameState;
-import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.utils.Debug;
 
 public abstract class C_Pull extends CommandBase
@@ -19,18 +18,17 @@ public abstract class C_Pull extends CommandBase
     private final UUID srcCardId;
     
     public C_Pull(
-        IContextService contextService,
-        State state,
+        Container container,
         P_Pull parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
         
         this.srcCardStackId = parameters.srcCardStackId;
         this.srcCardId = parameters.srcCardId;
     }
     
     @Override
-    public final CanExecuteResponse canExecute(Context context, ContextType type)
+    public final CanExecuteResponse canExecute()
     {        
         if (_State.getGameState() != GameState.Started)
         {
@@ -56,13 +54,13 @@ public abstract class C_Pull extends CommandBase
 
     
     @Override
-    public final void execute(Context context, ContextType type)
+    public final void execute()
     {
         throw new UnsupportedOperationException("This command should not be executed directly, only the canExecute is important");
     }
     
     @Override
-    public final boolean canUndo(Context context, ContextType type)
+    public final boolean canUndo()
     {
         return false;
     }
@@ -74,7 +72,7 @@ public abstract class C_Pull extends CommandBase
     }
     
     @Override
-    public final void undo(Context context, ContextType type)
+    public final void undo()
     {
         throw new UnsupportedOperationException("This command should not be executed directly");
     }

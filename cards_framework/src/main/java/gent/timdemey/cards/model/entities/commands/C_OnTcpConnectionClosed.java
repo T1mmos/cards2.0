@@ -1,15 +1,13 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.di.Container;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.commands.C_Disconnect.DisconnectReason;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_OnTcpConnectionClosed;
 import gent.timdemey.cards.model.entities.state.GameState;
-import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.IContextService;
 
 public class C_OnTcpConnectionClosed extends CommandBase
 {
@@ -18,12 +16,11 @@ public class C_OnTcpConnectionClosed extends CommandBase
     private final CommandFactory _CommandFactory;
 
     public C_OnTcpConnectionClosed(
-        IContextService contextService, 
+        Container container,
         CommandFactory commandFactory,
-        State state,
         P_OnTcpConnectionClosed parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
         
         this._CommandFactory = commandFactory;
         
@@ -32,7 +29,7 @@ public class C_OnTcpConnectionClosed extends CommandBase
     }
     
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type)
+    public CanExecuteResponse canExecute()
     {
         GameState gameState = _State.getGameState();
         boolean expected = gameState == GameState.Disconnected;
@@ -44,9 +41,9 @@ public class C_OnTcpConnectionClosed extends CommandBase
     }
 
     @Override
-    protected void execute(Context context, ContextType type)
+    public void execute()
     {
-        if (type == ContextType.UI)
+        if (_ContextType == ContextType.UI)
         {
             GameState gameState = _State.getGameState();
             boolean expected = gameState == GameState.Disconnected;
@@ -61,7 +58,7 @@ public class C_OnTcpConnectionClosed extends CommandBase
         else
         {
             C_RemovePlayer cmd = _CommandFactory.CreateRemovePlayer(connectionId);
-            context.schedule(cmd);
+            run(cmd);
         }
     }
 

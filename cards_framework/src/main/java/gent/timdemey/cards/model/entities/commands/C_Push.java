@@ -1,5 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.di.Container;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -9,10 +10,6 @@ import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_Push;
 import gent.timdemey.cards.model.entities.state.GameState;
-import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.services.context.Context;
-import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.utils.Debug;
 
 public abstract class C_Push extends CommandBase
@@ -21,17 +18,16 @@ public abstract class C_Push extends CommandBase
     private final List<UUID> srcCardIds;
     
     public C_Push(
-        IContextService contextService, 
-        State state,
+        Container container,
         P_Push parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
         this.dstCardStackId = parameters.dstCardStackId;
         this.srcCardIds = Collections.unmodifiableList(parameters.srcCardIds);        
     }
     
     @Override
-    public final CanExecuteResponse canExecute(Context context, ContextType type)
+    public final CanExecuteResponse canExecute()
     {        
         if (_State.getGameState() != GameState.Started)
         {
@@ -56,19 +52,19 @@ public abstract class C_Push extends CommandBase
     }
     
     @Override
-    public final void execute(Context context, ContextType type)
+    public final void execute()
     {
         throw new UnsupportedOperationException("This command should not be executed directly, only the canExecute is important");
     }
     
     @Override
-    protected final boolean canUndo(Context context, ContextType type)
+    public final boolean canUndo()
     {
         return false;
     }
     
     @Override
-    protected final void undo(Context context, ContextType type)
+    public final void undo()
     {
         throw new UnsupportedOperationException("This command should not be executed directly");
     }

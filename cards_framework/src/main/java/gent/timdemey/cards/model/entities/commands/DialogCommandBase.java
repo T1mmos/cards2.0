@@ -1,37 +1,35 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.common.PayloadBase;
-import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.IContextService;
 
 public abstract class DialogCommandBase extends CommandBase
 {
-    protected DialogCommandBase(IContextService contextService, State state, PayloadBase payload)
+    protected DialogCommandBase(Container container, PayloadBase payload)
     {
-        super(contextService, state, payload);
+        super(container, payload);
     }
 
     @Override
-    protected final CanExecuteResponse canExecute(Context context, ContextType type)
+    public final CanExecuteResponse canExecute()
     {
-        CheckContext(type, ContextType.UI);
+        CheckContext(ContextType.UI);
 
-        return canShowDialog(context, type);
+        return canShowDialog();
     }
 
-    protected abstract CanExecuteResponse canShowDialog(Context context, ContextType type);
+    protected abstract CanExecuteResponse canShowDialog();
 
     @Override
-    protected final void execute(Context context, ContextType type)
+    public final void execute()
     {
-        CheckContext(type, ContextType.UI);
-        showDialog(context, type);
+        CheckContext(ContextType.UI);
+        showDialog();
     }
 
-    protected abstract void showDialog(Context context, ContextType type);
+    protected abstract void showDialog();
 
     @Override
     public String toDebugString()

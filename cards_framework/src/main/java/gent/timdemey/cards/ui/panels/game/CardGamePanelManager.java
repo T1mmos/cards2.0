@@ -19,7 +19,6 @@ import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.ResourceDescriptors;
 import gent.timdemey.cards.services.id.Ids;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IResourceNameService;
 import gent.timdemey.cards.ui.components.SImageResource;
 import gent.timdemey.cards.ui.components.drawers.GamePanelDrawer;
@@ -29,6 +28,7 @@ import gent.timdemey.cards.ui.components.ext.IHasComponent;
 import gent.timdemey.cards.ui.components.swing.JSImage;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.PanelManagerBase;
+import gent.timdemey.cards.di.IContainerService;
 
 public class CardGamePanelManager extends PanelManagerBase
 {
@@ -36,18 +36,19 @@ public class CardGamePanelManager extends PanelManagerBase
     private CardGamePanelMouseListener mouseListener;
     private CardGamePanelStateListener stateListener;
     private CardGamePanelContainerListener contListener;
-    protected final IContextService _ContextService;
     protected final IResourceNameService _ResourceNameService;
+    protected final Context _Context;
 
     public CardGamePanelManager(
-            Container container,
-            IResourceNameService resourceNameService,
-            IContextService contextService)
+        Container container,
+        IResourceNameService resourceNameService,
+        IContainerService contextService,
+        Context context)
     {
         super(container);
         
         this._ResourceNameService = resourceNameService;
-        this._ContextService = contextService;
+        this._Context = context;
     }
     
     @Override
@@ -59,22 +60,18 @@ public class CardGamePanelManager extends PanelManagerBase
 
     @Override
     public void onShown()
-    {
-        Context ctxt = _ContextService.getThreadContext();
-        
+    {        
         gamePanel.addMouseMotionListener(mouseListener);
         gamePanel.addMouseListener(mouseListener);
-        ctxt.addStateListener(stateListener);
+        _Context.addStateListener(stateListener);
     }
 
     @Override
     public void onHidden()
-    {
-        Context ctxt = _ContextService.getThreadContext();
-        
+    {        
         gamePanel.addMouseMotionListener(mouseListener);
         gamePanel.removeMouseListener(mouseListener);
-        ctxt.removeStateListener(stateListener);
+        _Context.removeStateListener(stateListener);
     }
 
     @Override
@@ -131,7 +128,7 @@ public class CardGamePanelManager extends PanelManagerBase
     @Override
     public void addComponentCreators(List<Runnable> compCreators)
     {
-        ReadOnlyCardGame cardGame = _ContextService.getThreadContext().getReadOnlyState().getCardGame();      
+        ReadOnlyCardGame cardGame = _Context.getReadOnlyState().getCardGame();      
         
         List<ReadOnlyCard> cards = cardGame.getCards();
         for (int i = 0; i < cards.size(); i++)
@@ -205,7 +202,7 @@ public class CardGamePanelManager extends PanelManagerBase
 
     public void addRescaleRequests(List<? super RescaleRequest> requests)
     {
-        ReadOnlyCardGame cardGame = _ContextService.getThreadContext().getReadOnlyState()
+        ReadOnlyCardGame cardGame = _Context.getReadOnlyState()
                 .getCardGame();
 
         // cards - fronts

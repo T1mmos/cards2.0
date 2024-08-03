@@ -1,5 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.di.Container;
 import java.util.List;
 import java.util.UUID;
 
@@ -7,10 +8,7 @@ import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_OnLobbyWelcome;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.Player;
-import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.utils.Debug;
 
 /**
@@ -29,10 +27,10 @@ public class C_OnLobbyWelcome extends CommandBase
     private final CommandFactory _CommandFactory;
 
     public C_OnLobbyWelcome(
-            IContextService contextService, CommandFactory commandFactory, State state,
-            P_OnLobbyWelcome parameters)
+        Container container, CommandFactory commandFactory, 
+        P_OnLobbyWelcome parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
         
         this._CommandFactory = commandFactory;
         
@@ -44,17 +42,17 @@ public class C_OnLobbyWelcome extends CommandBase
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type)
+    public CanExecuteResponse canExecute()
     {
-        CheckContext(type, ContextType.UI);
+        CheckContext(ContextType.UI);
 
         return CanExecuteResponse.yes();
     }
 
     @Override
-    protected void execute(Context context, ContextType type)
+    public void execute()
     {
-        CheckContext(type, ContextType.UI);
+        CheckContext(ContextType.UI);
 
         // safety checks: returned clientId == localId
         if (!_State.getLocalId().equals(clientId))

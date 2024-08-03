@@ -20,8 +20,8 @@ import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.ICardGameService;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.INetworkService;
+import gent.timdemey.cards.di.IContainerService;
 
 public class C_SolShowMove extends C_Move
 {    
@@ -33,10 +33,10 @@ public class C_SolShowMove extends C_Move
     private final ICardGameService _CardGameService;
 
     public C_SolShowMove(
-        IContextService contextService, INetworkService networkService, CommandFactory commandFactory, ICardGameService cardGameService, State state,
+        IContainerService contextService, INetworkService networkService, CommandFactory commandFactory, ICardGameService cardGameService, State state,
         P_Move parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
         
         this._CommandFactory = commandFactory;
         this._NetworkService = networkService;
@@ -44,9 +44,9 @@ public class C_SolShowMove extends C_Move
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type)
+    public CanExecuteResponse canExecute()
     {
-        CanExecuteResponse supResp = super.canExecute(context, type);
+        CanExecuteResponse supResp = super.canExecute();
         if (!supResp.canExecute())
         {
             return supResp;
@@ -69,8 +69,8 @@ public class C_SolShowMove extends C_Move
         C_Push cmdPush = _CommandFactory.CreatePush(dstCardStackId, toTransferIds);
         cmdPush.setSourceId(getSourceId());
 
-        boolean canPull = cmdPull.canExecute(context, type).canExecute();
-        boolean canPush = cmdPush.canExecute(context, type).canExecute();
+        boolean canPull = cmdPull.canExecute().canExecute();
+        boolean canPush = cmdPush.canExecute().canExecute();
         if (canPull && canPush) // user action
         {
             return CanExecuteResponse.yes();
@@ -124,7 +124,7 @@ public class C_SolShowMove extends C_Move
     }
 
     @Override
-    protected void execute(Context context, ContextType type)
+    public void execute()
     {
         CardGame cardGame = _State.getCardGame();
         CardStack srcCardStack = cardGame.getCardStack(srcCardStackId);
@@ -170,11 +170,11 @@ public class C_SolShowMove extends C_Move
         // calculate score
         addScore(_State, cardGame, srcCardStack, dstCardStack, false);
         
-        if (type == ContextType.UI)
+        if (_ContextType == ContextType.UI)
         {
             _NetworkService.send(_State.getLocalId(), _State.getServerId(), this, _State.getTcpConnectionPool());
         }
-        else if (type == ContextType.Server)
+        else if (_ContextType == ContextType.Server)
         {
             List<UUID> ids_move = _State.getPlayers().getExceptUUID(getSourceId());
             _State.getTcpConnectionPool().broadcast(ids_move, getSerialized());
@@ -195,7 +195,7 @@ public class C_SolShowMove extends C_Move
     }
     
     @Override
-    public void onAccepted(Context context, ContextType type)
+    public void onAccepted()
     {
         CardGame cardGame = _State.getCardGame();
         CardStack srcCardStack = cardGame.getCardStack(srcCardStackId);
@@ -206,7 +206,7 @@ public class C_SolShowMove extends C_Move
     }
 
     @Override
-    protected boolean canUndo(Context context, ContextType type)
+    public boolean canUndo()
     {
         return true;
     }
@@ -232,7 +232,7 @@ public class C_SolShowMove extends C_Move
     }
     
     @Override
-    protected void undo(Context context, ContextType type)
+    public void undo()
     {
         CardGame cardGame = _State.getCardGame();
         CardStack srcCardStack = cardGame.getCardStacks().get(srcCardStackId);

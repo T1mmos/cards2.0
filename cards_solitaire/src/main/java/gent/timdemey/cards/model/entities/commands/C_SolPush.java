@@ -1,5 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.di.Container;
 import java.util.List;
 
 import gent.timdemey.cards.model.entities.state.Card;
@@ -7,17 +8,15 @@ import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.state.CardValue;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_Push;
-import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes;
-import gent.timdemey.cards.services.interfaces.IContextService;
 
 public class C_SolPush extends C_Push
 {
     public C_SolPush(
-        IContextService contextService, State state,
+        Container container,
         P_Push parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
     }
 
     @Override

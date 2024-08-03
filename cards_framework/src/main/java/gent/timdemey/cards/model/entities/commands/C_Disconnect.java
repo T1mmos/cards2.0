@@ -1,15 +1,13 @@
 package gent.timdemey.cards.model.entities.commands;
 
 
+import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_Disconnect;
 import gent.timdemey.cards.model.entities.state.GameState;
-import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 
 /**
@@ -42,13 +40,10 @@ public class C_Disconnect extends CommandBase
     public final DisconnectReason reason;
 
     public C_Disconnect(
-            IContextService contextService, 
-            IFrameService frameService,
-            Loc loc,
-            State state,
-            P_Disconnect parameters)
+        Container container, IFrameService frameService, Loc loc,
+        P_Disconnect parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
         
         this._FrameService = frameService;
         this._Loc = loc;
@@ -56,7 +51,7 @@ public class C_Disconnect extends CommandBase
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type)
+    public CanExecuteResponse canExecute()
     {
         if (_State.getGameState() == GameState.Disconnected)
         {
@@ -66,9 +61,9 @@ public class C_Disconnect extends CommandBase
     }
 
     @Override
-    protected void execute(Context context, ContextType type)
+    public void execute()
     {
-        CheckContext(type, ContextType.UI);
+        CheckContext(ContextType.UI);
 
         // clean all state
         _State.setTcpConnectionPool(null);

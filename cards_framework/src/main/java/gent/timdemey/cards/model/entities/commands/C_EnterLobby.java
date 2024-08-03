@@ -1,5 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.di.Container;
 import java.util.List;
 import java.util.UUID;
 
@@ -9,12 +10,9 @@ import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_EnterLobby;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.Player;
-import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.model.entities.state.StateFactory;
 import gent.timdemey.cards.model.net.TCP_Connection;
-import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.INetworkService;
 import gent.timdemey.cards.utils.Debug;
 
@@ -33,15 +31,14 @@ public class C_EnterLobby extends CommandBase
     private final CommandFactory _CommandFactory;
 
     public C_EnterLobby(
-        IContextService contextService, 
+        Container container,
         Logger logger, 
         CommandFactory commandFactory,
         StateFactory stateFactory,
-        State state,
         INetworkService networkService,
         P_EnterLobby parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
         
         this._Logger = logger;
         this._CommandFactory = commandFactory;
@@ -52,9 +49,9 @@ public class C_EnterLobby extends CommandBase
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type)
+    public CanExecuteResponse canExecute()
     {
-        if (type == ContextType.UI)
+        if (_ContextType == ContextType.UI)
         {
             if (_State.getGameState() != GameState.Connected)
             {
@@ -73,14 +70,13 @@ public class C_EnterLobby extends CommandBase
     }
 
     @Override
-    protected void execute(Context context, ContextType type)
+    public void execute()
     {        
-        if(type == ContextType.UI)
-        {
-          
+        if(_ContextType == ContextType.UI)
+        {          
             _NetworkService.send(_State.getLocalId(), _State.getServerId(), this, _State.getTcpConnectionPool());
         }
-        else if(type == ContextType.Server)
+        else if(_ContextType == ContextType.Server)
         {
             TCP_Connection tcpConnection = getSourceTcpConnection();
             _Logger.info("Player %s (id %s) joining from %s", clientName, clientId, tcpConnection.getRemote());

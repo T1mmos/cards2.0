@@ -1,11 +1,8 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_Undo;
-import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.services.context.Context;
-import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.IContextService;
 
 /**
  * Special meta command to undo the last command. This command should not be
@@ -16,14 +13,14 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 public final class C_Undo extends CommandBase
 {
     public C_Undo(
-        IContextService contextService, State state,
+        Container container,
         P_Undo parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type)
+    public CanExecuteResponse canExecute()
     {
         if (_State.getCommandHistory() == null)
         {
@@ -38,7 +35,7 @@ public final class C_Undo extends CommandBase
     }
 
     @Override
-    protected void execute(Context context, ContextType type)
+    public void execute()
     {
         _State.getCommandHistory().undo();
     }

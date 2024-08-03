@@ -5,7 +5,9 @@ import java.net.InetAddress;
 import java.util.UUID;
 
 import gent.timdemey.cards.ICardPlugin;
-import gent.timdemey.cards.Start;
+import gent.timdemey.cards.Main;
+import gent.timdemey.cards.Starter;
+import gent.timdemey.cards.di.Container;
 
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
@@ -24,11 +26,10 @@ import gent.timdemey.cards.model.net.TCP_ConnectionPool;
 import gent.timdemey.cards.model.net.UDP_ServiceAnnouncer;
 import gent.timdemey.cards.model.net.UDP_Source;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
-import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.utils.Debug;
 import gent.timdemey.cards.model.net.IUdpMessageListener;
+import gent.timdemey.cards.di.IContainerService;
 
 /**
  * Command that starts a server and automatically joins the current player in
@@ -58,9 +59,10 @@ public class C_StartServer extends CommandBase
     private CommandFactory _CommandFactory;
     private ICardPlugin _CardPlugin;
     private CommandDtoMapper _CommandDtoMapper;
+    private Starter _Starter;
 
     public C_StartServer(
-        IContextService contextService, 
+        Container container,
         ICardPlugin cardPlugin,
         
         NetworkFactory networkFactory,
@@ -69,10 +71,10 @@ public class C_StartServer extends CommandBase
         ConfigurationFactory configurationFactory,
         CommandDtoMapper commandDtoMapper,
         Logger logger,
-        State state,
+        Starter starter,
         P_StartServer parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
         
         if (parameters.localId == null)
         {
@@ -106,6 +108,7 @@ public class C_StartServer extends CommandBase
         this._ConfigurationFactory = configurationFactory;
         this._CommandDtoMapper = commandDtoMapper;
         this._Logger = logger;
+        this._Starter = starter;
         
         this.playerId = parameters.localId;
         this.playerName = parameters.localName;
@@ -117,17 +120,17 @@ public class C_StartServer extends CommandBase
     }
 
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type)
+    public CanExecuteResponse canExecute()
     {
-        boolean srvCtxtInit = _ContextService.isInitialized(ContextType.Server);
-        if(type == ContextType.UI)
+        boolean srvCtxtInit = _ContainerService.isInitialized(ContextType.Server);
+        if(_ContextType == ContextType.UI)
         {
             if(srvCtxtInit)
             {
                 return CanExecuteResponse.no("Server context is already initialized");
             }
         }
-        else if(type == ContextType.Server)
+        else if(_ContextType == ContextType.Server)
         {
             if(!srvCtxtInit)
             {
@@ -139,14 +142,12 @@ public class C_StartServer extends CommandBase
     }
 
     @Override
-    protected void execute(Context context, ContextType type)
+    public void execute()
     {
-        if(type == ContextType.UI)
+        if(_ContextType == ContextType.UI)
         {
-            Start.startServer(new String[] {"gent.timdemey.cards.SolShowPlugin"});
+            _Starter.startServer();
             
-            _ContextService.initialize(ContextType.Server);
-
             schedule(ContextType.Server, this);
         }
         else
@@ -177,7 +178,7 @@ public class C_StartServer extends CommandBase
                 // create web service to accept TCP connections
                 int playerCount = _CardPlugin.getPlayerCount();
                 ITcpConnectionListener tcpConnListener = _CommandFactory.CreateCommandSchedulingTcpConnectionListener(ContextType.Server);
-                TCP_ConnectionPool tcpConnPool = _NetworkFactory.CreateTCPConnectionPool(type.name(), playerCount, tcpConnListener);
+                TCP_ConnectionPool tcpConnPool = _NetworkFactory.CreateTCPConnectionPool(_ContextType.name(), playerCount, tcpConnListener);
                 TCP_ConnectionAccepter tcpConnAccepter = _NetworkFactory.CreateTCPConnectionAccepter(tcpConnPool, tcpport);
 
                 // update the state: set server, lobby admin, add player, command history
@@ -259,7 +260,7 @@ public class C_StartServer extends CommandBase
             UDP_Source udpSource = new UDP_Source(sourceAddress, sourcePort);
             udpRequestCmd.setSourceUdp(udpSource);
 
-            _ContextService.getContext(ContextType.Server).schedule(udpRequestCmd);
+            _CommandExecutor.run(udpRequestCmd);
         }        
     }
 }

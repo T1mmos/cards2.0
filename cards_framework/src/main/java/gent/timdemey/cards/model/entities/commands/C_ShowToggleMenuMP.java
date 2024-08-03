@@ -1,14 +1,12 @@
 package gent.timdemey.cards.model.entities.commands;
 
 
+import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_ShowToggleMenuMP;
 import gent.timdemey.cards.model.entities.state.GameState;
-import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 
 public class C_ShowToggleMenuMP extends DialogCommandBase
@@ -16,18 +14,18 @@ public class C_ShowToggleMenuMP extends DialogCommandBase
     private final IFrameService _FrameService;
     
     public C_ShowToggleMenuMP(
-        IContextService contextService, IFrameService frameService, State state,
+        Container container, IFrameService frameService, 
         P_ShowToggleMenuMP parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
         
         this._FrameService = frameService;
     }
     
     @Override
-    protected CanExecuteResponse canShowDialog(Context context, ContextType type)
+    protected CanExecuteResponse canShowDialog()
     {
-        CheckContext(type, ContextType.UI);
+        CheckContext(ContextType.UI);
                 
         // you can always hide this dialog when it's shown
         if (_FrameService.isShown(PanelDescriptors.GameMenu))
@@ -45,7 +43,7 @@ public class C_ShowToggleMenuMP extends DialogCommandBase
     }
 
     @Override
-    protected void showDialog(Context context, ContextType type)
+    protected void showDialog()
     {
         if (_FrameService.isShown(PanelDescriptors.GameMenu))
         {

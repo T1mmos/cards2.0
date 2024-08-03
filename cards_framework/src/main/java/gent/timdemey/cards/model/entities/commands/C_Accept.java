@@ -1,35 +1,30 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.di.Container;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_Accept;
-import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.services.context.Context;
-import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.utils.Debug;
 
 public class C_Accept extends CommandBase
 {
     public final UUID acceptedCommandId;
     
-    public C_Accept (
-        IContextService contextService, State state,
-        P_Accept parameters)
+    public C_Accept (Container container, P_Accept parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
         this.acceptedCommandId = parameters.acceptedCommandId;
     }
     
     @Override
-    protected CanExecuteResponse canExecute(Context context, ContextType type)
+    public CanExecuteResponse canExecute()
     {
         return CanExecuteResponse.no("This command is not intended to ever execute");
     }
 
     @Override
-    protected void execute(Context context, ContextType type)
+    public void execute()
     {
         throw new IllegalStateException("This command cannot be executed directly.");
     }

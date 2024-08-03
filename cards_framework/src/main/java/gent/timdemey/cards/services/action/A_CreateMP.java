@@ -35,12 +35,9 @@ class A_CreateMP extends ActionBase
     
     private void onContextChange(ContextType type)
     {
-        if (type == ContextType.Server)
-        {
-            // the listener can be invoked from different contexts, 
-            // but we want to ensure being on the UI context
-            SwingUtilities.invokeLater(() -> checkEnabled());
-        }
+        // the listener can be invoked from different contexts, 
+        // but we want to ensure being on the UI context
+        SwingUtilities.invokeLater(() -> checkEnabled());
     }
 
     @Override

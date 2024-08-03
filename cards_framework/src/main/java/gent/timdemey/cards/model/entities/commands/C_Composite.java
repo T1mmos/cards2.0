@@ -1,15 +1,12 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.di.Container;
 import java.util.ArrayList;
 import java.util.List;
 
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.model.entities.commands.payload.P_Composite;
-import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.services.context.Context;
-import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.IContextService;
 import gent.timdemey.cards.utils.Debug;
 
 /**
@@ -31,10 +28,10 @@ public class C_Composite extends CommandBase
     private final List<CommandBase> commands;
     
     public C_Composite(
-        IContextService contextService, State state,
+        Container container,
         P_Composite parameters)
     {
-        super(contextService, state, parameters);
+        super(container, parameters);
         if (parameters.commands == null)
         {
             throw new IllegalArgumentException("commands");
@@ -56,20 +53,20 @@ public class C_Composite extends CommandBase
     }
 
     @Override
-    public CanExecuteResponse canExecute(Context context, ContextType type)
+    public CanExecuteResponse canExecute()
     {        
         boolean canExecute = true;
         CanExecuteResponse [] executed = new CanExecuteResponse[commands.size()];
         int i = 0;
         while (canExecute && i < commands.size())
         {
-            CanExecuteResponse respI = commands.get(i).canExecute(context, type);
+            CanExecuteResponse respI = commands.get(i).canExecute();
             executed[i] = respI;
             if (respI.execState == ExecutionState.Yes)
             {
                 try
                 {
-                    commands.get(i).execute(context, type);                    
+                    commands.get(i).canExecute();                    
                 }
                 catch (Exception e)
                 {
@@ -94,7 +91,7 @@ public class C_Composite extends CommandBase
             if (respI.execState == ExecutionState.Yes)
             {
                 CommandBase cmd = commands.get(i);
-                cmd.undo(context, type);
+                cmd.undo();
             }
         }
         
@@ -115,20 +112,20 @@ public class C_Composite extends CommandBase
     }
 
     @Override
-    public void execute(Context context, ContextType type)
+    public void execute()
     {
         for (int i = 0; i < commands.size(); i++)
         {
-            commands.get(i).execute(context, type);
+            commands.get(i).canExecute();
         }
     }
 
     @Override
-    public void undo(Context context, ContextType type)
+    public void undo()
     {
         for (int i = commands.size() - 1; i >= 0; i--)
         {
-            commands.get(i).undo(context, type);
+            commands.get(i).undo();
         }
     }
 
