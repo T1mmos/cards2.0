@@ -31,6 +31,7 @@ import gent.timdemey.cards.model.entities.commands.payload.P_HelloWorld;
 import gent.timdemey.cards.model.entities.commands.payload.P_LoadConfig;
 import gent.timdemey.cards.model.entities.commands.payload.P_Move;
 import gent.timdemey.cards.model.entities.commands.payload.P_OnGameEnded;
+import gent.timdemey.cards.model.entities.commands.payload.P_OnTcpConnectionAdded;
 import gent.timdemey.cards.model.entities.commands.payload.P_Pull;
 import gent.timdemey.cards.model.entities.commands.payload.P_Push;
 import gent.timdemey.cards.model.entities.commands.payload.P_ShowPlayerLeft;
@@ -48,6 +49,7 @@ import gent.timdemey.cards.model.entities.commands.payload.P_UDP_StartServiceReq
 import gent.timdemey.cards.model.entities.commands.payload.P_UDP_StopServiceRequester;
 import gent.timdemey.cards.model.entities.commands.payload.P_Undo;
 import gent.timdemey.cards.model.entities.commands.payload.P_Use;
+import gent.timdemey.cards.model.net.TCP_Connection;
 import gent.timdemey.cards.services.context.ContextType;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -679,5 +681,10 @@ public abstract class CommandFactory
     public C_HelloWorld CreateHelloWorld()
     {
         return DICreate(C_HelloWorld.class, P_HelloWorld.class, new P_HelloWorld());
+    }
+
+    public C_OnTcpConnectionAdded CreateOnTcpConnectionAdded(P_OnTcpConnectionAdded parameters)
+    {
+        return DICreate(C_OnTcpConnectionAdded.class, P_OnTcpConnectionAdded.class, parameters);
     }
 }

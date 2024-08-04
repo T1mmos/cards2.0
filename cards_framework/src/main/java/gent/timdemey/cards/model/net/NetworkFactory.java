@@ -45,11 +45,5 @@ public class NetworkFactory
     public UDP_ServiceRequester createUDPServiceRequester(String message, int port, Consumer<String> callback)
     {
         return new UDP_ServiceRequester(_Logger, message, port, callback);
-    }
-
-    public C_OnTcpConnectionAdded CreateOnTcpConnectionAdded(TCP_Connection connection)
-    {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-    
+    }   
 }

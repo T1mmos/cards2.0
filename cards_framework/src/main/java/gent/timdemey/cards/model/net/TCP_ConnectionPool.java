@@ -13,6 +13,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import gent.timdemey.cards.logging.Logger;
+import java.util.concurrent.Callable;
 
 public final class TCP_ConnectionPool
 {
@@ -51,6 +52,13 @@ public final class TCP_ConnectionPool
             public Thread newThread(Runnable r)
             {
                 Thread thr = new Thread(r, name + " :: TCP_ConnectionPool");
+                thr.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler(){
+                    @Override
+                    public void uncaughtException(Thread t, Throwable e)
+                    {
+                        _Logger.error(e);
+                    }
+                });
                 thr.setDaemon(true);
                 return thr;
             }
@@ -119,9 +127,10 @@ public final class TCP_ConnectionPool
             throw new IllegalArgumentException("socket");
         }
 
-        execServ.submit(() ->
+        submit(() ->
         {
             addConnectionAndStart(socket);
+            return null;
         });
     }
 
@@ -132,23 +141,16 @@ public final class TCP_ConnectionPool
             throw new NullPointerException("address");
         }
 
-        execServ.submit(() ->
+        submit(() ->
         {
-            Socket socket;
-            try
-            {
-                String hostAddr = address.getHostAddress();
-                _Logger.info("Connecting to %s:%s...", hostAddr, port);
-                socket = new Socket(address, port);
-                String localAddr = socket.getLocalAddress().getHostAddress();
-                int localPort = socket.getLocalPort();
-                _Logger.info("Connected to %s:%s, local address is %s:%s", hostAddr, port, localAddr, localPort);
-                addConnectionAndStart(socket);
-            }
-            catch (IOException e)
-            {
-                _Logger.error(e);
-            }
+            String hostAddr = address.getHostAddress();
+            _Logger.info("Connecting to %s:%s...", hostAddr, port);
+            Socket socket = new Socket(address, port);
+            String localAddr = socket.getLocalAddress().getHostAddress();
+            int localPort = socket.getLocalPort();
+            _Logger.info("Connected to %s:%s, local address is %s:%s", hostAddr, port, localAddr, localPort);
+            addConnectionAndStart(socket);
+            return null;
         });
     }
 
@@ -223,7 +225,7 @@ public final class TCP_ConnectionPool
             throw new IllegalArgumentException("remote");
         }
 
-        execServ.submit(() ->
+        submit(() ->
         {
             TCP_Connection conn = uuid2conn.get(remote);
             if (conn == null)
@@ -234,7 +236,25 @@ public final class TCP_ConnectionPool
             TCP_Connection tcpConnection = uuid2conn.get(remote);
             locallyClosing.add(remote);
             tcpConnection.stop();
+            return null;
         });
+    }
+    
+    private void submit(Callable<Void> callable)
+    {
+        // wrap in exception-catching Runnable
+        Runnable wrapper = () -> 
+        {
+            try 
+            {
+                callable.call();
+            }
+            catch (Exception ex)
+            {
+                _Logger.error(ex);
+            }
+        };
+        execServ.submit(wrapper);
     }
 
     public int getHalfConnections()

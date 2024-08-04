@@ -77,7 +77,7 @@ public abstract class CommandBase extends EntityBase
 
     public void undo()
     {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Undo logic must be provided in the concrete implementing class");
     }
 
     protected final void schedule(ContextType type, CommandBase cmd)

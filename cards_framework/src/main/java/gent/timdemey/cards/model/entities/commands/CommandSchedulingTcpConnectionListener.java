@@ -10,6 +10,7 @@ import gent.timdemey.cards.model.net.TCP_Connection;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.di.IContainerService;
+import gent.timdemey.cards.model.entities.commands.payload.P_OnTcpConnectionAdded;
 import gent.timdemey.cards.services.context.ICommandExecutor;
 
 public final class CommandSchedulingTcpConnectionListener implements ITcpConnectionListener
@@ -45,7 +46,9 @@ public final class CommandSchedulingTcpConnectionListener implements ITcpConnect
     {
         _Logger.info("A TCP connection was added to " + connection.getRemote());
         
-        C_OnTcpConnectionAdded cmd = _NetworkFactory.CreateOnTcpConnectionAdded(connection);
+        P_OnTcpConnectionAdded p = new P_OnTcpConnectionAdded();
+        p.tcpConnection = connection;
+        C_OnTcpConnectionAdded cmd = _CommandFactory.CreateOnTcpConnectionAdded(p);
         
         _CommandExecutor.schedule(cmd);
     }
