@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package gent.timdemey.cards;
 
 import gent.timdemey.cards.di.Container;
@@ -19,7 +15,6 @@ import gent.timdemey.cards.services.action.ActionService;
 import gent.timdemey.cards.services.animation.AnimationDescriptorFactory;
 import gent.timdemey.cards.services.animation.AnimationService;
 import gent.timdemey.cards.services.config.ConfigService;
-import gent.timdemey.cards.services.context.CommandNetworkService;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.context.ICommandExecutor;
@@ -33,7 +28,6 @@ import gent.timdemey.cards.services.interfaces.IAnimationService;
 import gent.timdemey.cards.services.interfaces.IConfigurationService;
 import gent.timdemey.cards.services.interfaces.IFileService;
 import gent.timdemey.cards.services.interfaces.IFrameService;
-import gent.timdemey.cards.services.interfaces.INetworkService;
 import gent.timdemey.cards.services.interfaces.IPanelService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IResourceNameService;
@@ -116,7 +110,6 @@ public class Starter
         c.AddSingleton(IFileService.class, FileService.class);
         c.AddSingleton(IFrameService.class, FrameService.class); 
         c.AddSingleton(IPanelService.class, PanelService.class);
-        c.AddSingleton(INetworkService.class, CommandNetworkService.class);    
         c.AddSingleton(IResourceCacheService.class, ResourceCacheService.class);
         c.AddSingleton(IResourceRepository.class, ResourceRepository.class);
         c.AddSingleton(IResourceNameService.class, ResourceNameService.class);   
@@ -134,7 +127,6 @@ public class Starter
         c.AddSingleton(IContainerService.class, ContainerService.class);   
         c.AddSingleton(IFileService.class, FileService.class);
         c.AddSingleton(IFrameService.class, FrameService.class); 
-        c.AddSingleton(INetworkService.class, CommandNetworkService.class);    
         c.AddSingleton(IPanelService.class, PanelService.class);
         c.AddSingleton(IResourceCacheService.class, ResourceCacheService.class);
         c.AddSingleton(IResourceRepository.class, ResourceRepository.class);

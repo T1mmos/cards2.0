@@ -12,7 +12,10 @@ import gent.timdemey.cards.model.net.UDP_Source;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.di.IContainerService;
+import gent.timdemey.cards.model.net.TCP_ConnectionPool;
+import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.context.ICommandExecutor;
+import java.util.List;
 
 public abstract class CommandBase extends EntityBase
 {
@@ -26,6 +29,7 @@ public abstract class CommandBase extends EntityBase
     protected final State _State;
     protected final Context _Context;
     protected final ContextType _ContextType;
+    protected final CommandDtoMapper _CommandDtoMapper;
     
     private final PayloadBase _Payload;
     
@@ -38,6 +42,7 @@ public abstract class CommandBase extends EntityBase
         this._Context = container.Get(Context.class);
         this._State = container.Get(State.class);
         this._ContextType = container.Get(ContextType.class);
+        this._CommandDtoMapper = container.Get(CommandDtoMapper.class);
         
         this._Payload = payload;
     }
@@ -82,7 +87,6 @@ public abstract class CommandBase extends EntityBase
 
     protected final void schedule(ContextType type, CommandBase cmd)
     {
-        
         // recreate the command if it is intended for a different container, 
         // this way the correct dependencies are injected
         if (type != cmd._ContextType)
@@ -97,7 +101,6 @@ public abstract class CommandBase extends EntityBase
         {
             _ContainerService.get(type).Get(ICommandExecutor.class).schedule(cmd);
         }
-        
     }
 
     /**
@@ -111,6 +114,24 @@ public abstract class CommandBase extends EntityBase
         _CommandExecutor.run(cmd);
     }
 
+    protected final void send(UUID remoteId, CommandBase cmd)
+    {
+        TCP_Connection connection = _State.getTcpConnectionPool().getConnection(remoteId);
+        String msg = _CommandDtoMapper.toJson(cmd);
+        connection.send(msg);
+    }
+    
+    protected final void send(List<UUID> remoteIds, CommandBase cmd)
+    {
+        TCP_ConnectionPool pool = _State.getTcpConnectionPool();
+        String msg = _CommandDtoMapper.toJson(cmd);
+        for (UUID remoteId : remoteIds)
+        {
+            TCP_Connection connection = pool.getConnection(remoteId);
+            connection.send(msg);
+        }
+    }    
+      
     protected final void CheckContext(ContextType expected)
     {
         if (_ContextType != expected)

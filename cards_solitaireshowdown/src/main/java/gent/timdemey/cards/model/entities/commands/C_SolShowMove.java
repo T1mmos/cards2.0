@@ -20,26 +20,22 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyEntityList;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.ICardGameService;
-import gent.timdemey.cards.services.interfaces.INetworkService;
-import gent.timdemey.cards.di.IContainerService;
 
 public class C_SolShowMove extends C_Move
 {    
     private List<Card> flippedTransferCards;
     private boolean depotInvolved;
     private boolean visible;
-    private final INetworkService _NetworkService;
     private final CommandFactory _CommandFactory;
     private final ICardGameService _CardGameService;
 
     public C_SolShowMove(
-        Container container, INetworkService networkService, CommandFactory commandFactory, ICardGameService cardGameService,
+        Container container, CommandFactory commandFactory, ICardGameService cardGameService,
         P_Move parameters)
     {
         super(container, parameters);
         
         this._CommandFactory = commandFactory;
-        this._NetworkService = networkService;
         this._CardGameService = cardGameService;
     }
 
@@ -172,15 +168,15 @@ public class C_SolShowMove extends C_Move
         
         if (_ContextType == ContextType.UI)
         {
-            _NetworkService.send(_State.getLocalId(), _State.getServerId(), this, _State.getTcpConnectionPool());
+            send(_State.getServerId(), this);
         }
         else if (_ContextType == ContextType.Server)
         {
             List<UUID> ids_move = _State.getPlayers().getExceptUUID(getSourceId());
-            _State.getTcpConnectionPool().broadcast(ids_move, getSerialized());
+            send(ids_move, this);
 
             // end of game trigger
-            if (srcCardStack.cardStackType.equals(SolShowCardStackType.SPECIAL) && srcCardStack.getCards().size() == 0)
+            if (srcCardStack.cardStackType.equals(SolShowCardStackType.SPECIAL) && srcCardStack.getCards().isEmpty())
             {
                 _State.setGameState(GameState.Ended);
                 UUID winnerId = cardGame.getPlayerId(srcCardStack);
@@ -189,7 +185,8 @@ public class C_SolShowMove extends C_Move
                 C_OnGameEnded cmd_endgame = _CommandFactory.CreateOnGameEnded(winnerId);
 
                 List<UUID> ids_endgame = _State.getPlayers().getIds();
-                _NetworkService.broadcast(_State.getLocalId(), ids_endgame, cmd_endgame, _State.getTcpConnectionPool());
+                
+                send(ids_endgame, cmd_endgame);
             }
         }
     }
@@ -199,7 +196,7 @@ public class C_SolShowMove extends C_Move
     {
         CardGame cardGame = _State.getCardGame();
         CardStack srcCardStack = cardGame.getCardStack(srcCardStackId);
-        if (srcCardStack.cardStackType.equals(SolShowCardStackType.SPECIAL) && srcCardStack.cards.size() > 0)
+        if (srcCardStack.cardStackType.equals(SolShowCardStackType.SPECIAL) && !srcCardStack.cards.isEmpty())
         {
             srcCardStack.getHighestCard().visibleRef.set(true);
         }

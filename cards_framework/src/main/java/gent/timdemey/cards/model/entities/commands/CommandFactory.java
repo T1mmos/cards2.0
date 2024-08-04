@@ -344,12 +344,13 @@ public abstract class CommandFactory
         return DICreate(C_Reject.class, P_Reject.class, parameters);
     }
 
-    public C_Accept CreateAccept(UUID acceptedCommandId)
+    public C_Accept CreateAccept(UUID acceptedCommandId, UUID sourceId)
     {
         P_Accept p = new P_Accept();
         
         p.id = UUID.randomUUID();
         p.acceptedCommandId = acceptedCommandId;
+        p.acceptedCommandSourceId = sourceId;
         
         return CreateAccept(p);
     }
@@ -683,6 +684,16 @@ public abstract class CommandFactory
         return DICreate(C_HelloWorld.class, P_HelloWorld.class, new P_HelloWorld());
     }
 
+    public C_OnTcpConnectionAdded CreateOnTcpConnectionAdded(TCP_Connection tcpConnection)
+    {
+        P_OnTcpConnectionAdded p = new P_OnTcpConnectionAdded();
+        
+        p.id = UUID.randomUUID();
+        p.tcpConnection = tcpConnection;
+        
+        return CreateOnTcpConnectionAdded(p);
+    }
+    
     public C_OnTcpConnectionAdded CreateOnTcpConnectionAdded(P_OnTcpConnectionAdded parameters)
     {
         return DICreate(C_OnTcpConnectionAdded.class, P_OnTcpConnectionAdded.class, parameters);

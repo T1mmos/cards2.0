@@ -10,11 +10,13 @@ import gent.timdemey.cards.utils.Debug;
 public class C_Accept extends CommandBase
 {
     public final UUID acceptedCommandId;
+    private final UUID acceptedCommandSourceId;
     
     public C_Accept (Container container, P_Accept parameters)
     {
         super(container, parameters);
         this.acceptedCommandId = parameters.acceptedCommandId;
+        this.acceptedCommandSourceId = parameters.acceptedCommandSourceId;
     }
     
     @Override
@@ -26,7 +28,7 @@ public class C_Accept extends CommandBase
     @Override
     public void execute()
     {
-        throw new IllegalStateException("This command cannot be executed directly.");
+         send(acceptedCommandSourceId, this);
     }
 
     @Override

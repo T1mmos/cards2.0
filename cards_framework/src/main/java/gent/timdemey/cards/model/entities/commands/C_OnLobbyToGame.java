@@ -9,7 +9,6 @@ import gent.timdemey.cards.model.entities.state.StateFactory;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IFrameService;
-import gent.timdemey.cards.services.interfaces.INetworkService;
 
 /**
  * Transition from the lobby to the multiplayer game.
@@ -20,20 +19,17 @@ public class C_OnLobbyToGame extends CommandBase
 {
     public final CardGame cardGame;
     private final IFrameService _FrameService;
-    private final INetworkService _NetworkService;
     private final StateFactory _StateFactory;
     
     public C_OnLobbyToGame(
         Container container,
         IFrameService frameService,
-        INetworkService networkService,
         StateFactory stateFactory,
         P_OnLobbyToGame parameters)
     {
         super(container, parameters);
         
         this._FrameService = frameService;
-        this._NetworkService = networkService;
         this._StateFactory = stateFactory;
         
         this.cardGame = parameters.cardGame;
@@ -61,7 +57,7 @@ public class C_OnLobbyToGame extends CommandBase
         }
         else
         {                   
-            _NetworkService.broadcast(_State.getLocalId(), _State.getPlayers().getIds(), this, _State.getTcpConnectionPool());            
+            send(_State.getPlayers().getIds(), this);
         }
     }
 }

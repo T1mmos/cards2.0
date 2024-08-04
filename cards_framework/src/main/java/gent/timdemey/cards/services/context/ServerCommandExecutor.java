@@ -12,18 +12,15 @@ import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
-import gent.timdemey.cards.services.interfaces.INetworkService;
 
 public class ServerCommandExecutor extends CommandExecutorBase
 {
-    private final INetworkService _NetworkService;
     private final CommandDtoMapper _CommandDtoMapper;
     private final Logger _Logger;
     private final CommandFactory _CommandFactory;
     private final State _State;
     
     public ServerCommandExecutor(
-        INetworkService networkService,
         CommandFactory commandFactory,
         CommandDtoMapper commandDtoMapper,
         Logger logger,
@@ -32,7 +29,6 @@ public class ServerCommandExecutor extends CommandExecutorBase
     {
         super(ContextType.Server);
         
-        this._NetworkService = networkService;
         this._CommandFactory = commandFactory;
         this._CommandDtoMapper = commandDtoMapper;
         this._Logger = logger;
@@ -69,8 +65,8 @@ public class ServerCommandExecutor extends CommandExecutorBase
                 // the client can mark the command as accepted in its history
                 if (cmdType == CommandType.SYNCED)
                 {
-                    C_Accept acceptCmd = _CommandFactory.CreateAccept(command.id);
-                    _NetworkService.send(_State.getLocalId(), command.getSourceId(), acceptCmd, _State.getTcpConnectionPool());
+                    C_Accept acceptCmd = _CommandFactory.CreateAccept(command.id, command.getSourceId());
+                    acceptCmd.execute();
                 }
             }
             else if (cmdType == CommandType.DEFAULT)

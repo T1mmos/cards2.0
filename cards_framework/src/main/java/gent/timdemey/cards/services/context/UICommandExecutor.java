@@ -18,23 +18,19 @@ import gent.timdemey.cards.model.entities.commands.C_ShowReexecutionFail;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.di.IContainerService;
 
 public class UICommandExecutor implements ICommandExecutor
 {
     private final List<IExecutionListener> executionListeners;
-    private final IContainerService _ContextService;
     private final Logger _Logger;
     private final CommandFactory _CommandFactory;
     private final State _State;
 
     public UICommandExecutor(
-        IContainerService contextService,
         CommandFactory commandFactory,
         State state,
         Logger logger)
     {
-        this._ContextService = contextService;
         this._CommandFactory = commandFactory;
         this._Logger = logger;
         this._State = state;
@@ -45,6 +41,7 @@ public class UICommandExecutor implements ICommandExecutor
     @Override
     public void schedule(CommandBase command)
     {
+        int a = 4;
         SwingUtilities.invokeLater(() -> execute(command));
     }
 

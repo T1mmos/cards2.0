@@ -48,6 +48,7 @@ public abstract class C_Use extends CommandBase
         return CanExecuteResponse.yes();
     }
 
+    @Override
     public final void execute()
     {
         CheckContext(ContextType.UI);
@@ -60,8 +61,6 @@ public abstract class C_Use extends CommandBase
      * Resolves the actual command to execute whenever a user invokes a 'Use'
      * action.
      * 
-     * @param context
-     * @param type
      * @return
      */
     protected abstract CommandBase resolveCommand();

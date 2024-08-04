@@ -11,7 +11,6 @@ import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_StartMultiplayerGame;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.ICardGameService;
-import gent.timdemey.cards.services.interfaces.INetworkService;
 
 /**
  * A signal sent to the server by the lobby admin to start the game. The server
@@ -23,18 +22,16 @@ import gent.timdemey.cards.services.interfaces.INetworkService;
 public class C_StartMultiplayerGame extends CommandBase
 {
     private final ICardPlugin _CardPlugin;
-    private final INetworkService _NetworkService;
     private final ICardGameService _CardGameService;
     private CommandFactory _CommandFactory;
     
     public C_StartMultiplayerGame(
-        Container container, ICardPlugin cardPlugin, INetworkService networkService, ICardGameService cardGameService, CommandFactory commandFactory, 
+        Container container, ICardPlugin cardPlugin, ICardGameService cardGameService, CommandFactory commandFactory, 
         P_StartMultiplayerGame parameters)
     {
         super(container, parameters);
         
         this._CardPlugin = cardPlugin;
-        this._NetworkService = networkService;
         this._CardGameService = cardGameService;
         this._CommandFactory = commandFactory;
     }
@@ -58,7 +55,6 @@ public class C_StartMultiplayerGame extends CommandBase
 
         if (!getSourceId().equals(_State.getLobbyAdminId()))
         {
-            // this command is not authorized: 
             return CanExecuteResponse.no("This command's SourceId is not equal to the LobbyAdminId");
         }
         
@@ -70,7 +66,7 @@ public class C_StartMultiplayerGame extends CommandBase
     {
         if (_ContextType == ContextType.UI)
         {
-            _NetworkService.send(_State.getLocalId(), _State.getServerId(), this, _State.getTcpConnectionPool());
+            send(_State.getServerId(), this);
         }
         else
         {

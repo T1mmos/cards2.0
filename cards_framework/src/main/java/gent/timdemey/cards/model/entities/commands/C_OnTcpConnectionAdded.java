@@ -8,27 +8,23 @@ import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_OnTcpConnectionAdded;
 import gent.timdemey.cards.model.net.TCP_Connection;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.INetworkService;
 
 public class C_OnTcpConnectionAdded extends CommandBase
 {
     private final TCP_Connection tcpConnection;
     private final ICardPlugin _CardPlugin;
-    private final INetworkService _NetworkService;
     private final CommandFactory _CommandFactory;
 
     public C_OnTcpConnectionAdded(
         Container container,
         CommandFactory commandFactory,
         ICardPlugin cardPlugin,
-        INetworkService networkService,
         P_OnTcpConnectionAdded parameters)
     {
         super(container, parameters);
         
         this._CommandFactory = commandFactory;
         this._CardPlugin = cardPlugin;
-        this._NetworkService = networkService;
         
         this.tcpConnection = parameters.tcpConnection;
     }
@@ -62,7 +58,9 @@ public class C_OnTcpConnectionAdded extends CommandBase
                 cmd_response = _CommandFactory.CreateTCPOK();
             }
             
-            _NetworkService.send(tcpConnection, cmd_response);
+            String msg = _CommandDtoMapper.toJson(cmd_response);
+            tcpConnection.send(msg);
+            
         }
     }
 }

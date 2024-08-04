@@ -13,7 +13,6 @@ import gent.timdemey.cards.model.entities.state.Player;
 import gent.timdemey.cards.model.entities.state.StateFactory;
 import gent.timdemey.cards.model.net.TCP_Connection;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.INetworkService;
 import gent.timdemey.cards.utils.Debug;
 
 /**
@@ -26,7 +25,6 @@ public class C_EnterLobby extends CommandBase
     public final String clientName;
     public final UUID clientId;
     private final Logger _Logger;
-    private final INetworkService _NetworkService;
     private final StateFactory _StateFactory;
     private final CommandFactory _CommandFactory;
 
@@ -35,7 +33,6 @@ public class C_EnterLobby extends CommandBase
         Logger logger, 
         CommandFactory commandFactory,
         StateFactory stateFactory,
-        INetworkService networkService,
         P_EnterLobby parameters)
     {
         super(container, parameters);
@@ -43,7 +40,6 @@ public class C_EnterLobby extends CommandBase
         this._Logger = logger;
         this._CommandFactory = commandFactory;
         this._StateFactory = stateFactory;
-        this._NetworkService = networkService;
         this.clientName = parameters.clientName;
         this.clientId = parameters.clientId;
     }
@@ -74,7 +70,7 @@ public class C_EnterLobby extends CommandBase
     {        
         if(_ContextType == ContextType.UI)
         {          
-            _NetworkService.send(_State.getLocalId(), _State.getServerId(), this, _State.getTcpConnectionPool());
+            send(_State.getServerId(), this);
         }
         else if(_ContextType == ContextType.Server)
         {
@@ -102,7 +98,8 @@ public class C_EnterLobby extends CommandBase
             // send unicast to new client
             {
                 CommandBase cmd_answer = _CommandFactory.CreateOnLobbyWelcome(clientId, _State.getServerId(), _State.getServerMessage(), _State.getRemotePlayers(), _State.getLobbyAdminId());
-                _NetworkService.send(_State.getLocalId(), clientId, cmd_answer, _State.getTcpConnectionPool());
+                
+                send(clientId, cmd_answer);
             }
 
             // send update to already connected clients
@@ -110,7 +107,7 @@ public class C_EnterLobby extends CommandBase
             if(updateIds.size() > 0)
             {
                 CommandBase cmd_update = _CommandFactory.CreateOnLobbyPlayerJoined(player);
-                _NetworkService.broadcast(_State.getLocalId(), updateIds, cmd_update, _State.getTcpConnectionPool());
+                send(updateIds, cmd_update);
             }            
         }
     }

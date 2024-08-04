@@ -200,11 +200,6 @@ public final class TCP_ConnectionPool
         return conn;
     }
 
-    public void broadcast(List<UUID> ids, String msg)
-    {
-        ids.stream().map(id -> getConnection(id)).forEach(conn -> conn.send(msg));
-    }
-
     public void closeAllConnections()
     {
         for (UUID id : uuid2conn.keySet())

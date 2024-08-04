@@ -6,7 +6,6 @@ import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_OnGameToLobby;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.INetworkService;
 
 /**
  * Transition from the multiplayer game to the lobby. Reasons may vary: a player
@@ -18,8 +17,6 @@ import gent.timdemey.cards.services.interfaces.INetworkService;
  */
 public class C_OnGameToLobby extends CommandBase
 {
-
-    private final INetworkService _NetworkService;
     private final CommandFactory _CommandFactory;
     
     public enum GameToLobbyReason
@@ -37,12 +34,11 @@ public class C_OnGameToLobby extends CommandBase
     public final GameToLobbyReason reason;
 
     public C_OnGameToLobby(
-        Container container, INetworkService networkService, CommandFactory commandFactory,
+        Container container, CommandFactory commandFactory,
         P_OnGameToLobby parameters)
     {
         super(container, parameters);
         
-        this._NetworkService = networkService;
         this._CommandFactory = commandFactory;
         
         this.reason = parameters.reason;
@@ -85,7 +81,7 @@ public class C_OnGameToLobby extends CommandBase
         }
         else
         {
-            _NetworkService.broadcast(_State.getLocalId(), _State.getRemotePlayerIds(), this, _State.getTcpConnectionPool());
+            send(_State.getRemotePlayerIds(), this);
         }
     }
 

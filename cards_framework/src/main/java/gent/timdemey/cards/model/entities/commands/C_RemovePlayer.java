@@ -3,7 +3,6 @@ package gent.timdemey.cards.model.entities.commands;
 import gent.timdemey.cards.di.Container;
 import java.util.UUID;
 
-
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.C_Disconnect.DisconnectReason;
 import gent.timdemey.cards.model.entities.commands.C_OnGameToLobby.GameToLobbyReason;
@@ -11,25 +10,21 @@ import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_RemovePlayer;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.Player;
-import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.INetworkService;
 import gent.timdemey.cards.utils.Debug;
 
 public class C_RemovePlayer extends CommandBase
 {
     public final UUID playerId;
-    private final INetworkService _NetworkService;
     private final Logger _Logger;
     private final CommandFactory _CommandFactory;
 
     public C_RemovePlayer(
-        Container container, INetworkService networkService, CommandFactory commandFactory, Logger logger, 
+        Container container, CommandFactory commandFactory, Logger logger, 
         P_RemovePlayer parameters)
     {
         super(container, parameters);
         
-        this._NetworkService = networkService;
         this._CommandFactory = commandFactory;
         this._Logger = logger;
         
@@ -61,16 +56,16 @@ public class C_RemovePlayer extends CommandBase
             {
                 // when the lobby admin leaves, server should stop, so make
                 // everyone disconnect gracefully, then stop the server
-                C_Disconnect cmd_leavelobby = _CommandFactory.CreateDisconnect(DisconnectReason.LobbyAdminLeft);
-                _NetworkService.broadcast(_State.getLocalId(), _State.getRemotePlayerIds(), cmd_leavelobby, _State.getTcpConnectionPool());                
-
+                C_Disconnect cmd_leavelobby = _CommandFactory.CreateDisconnect(DisconnectReason.LobbyAdminLeft);      
+                send(_State.getRemotePlayerIds(), cmd_leavelobby);                
+                
                 C_StopServer cmd_stopserver = _CommandFactory.CreateStopServer();
                 run(cmd_stopserver);
             }
             else 
             {
                 // inform all clients
-                _NetworkService.broadcast(_State.getLocalId(), _State.getRemotePlayerIds(), this, _State.getTcpConnectionPool());
+                send(_State.getRemotePlayerIds(), this);  
                 
                 if(_State.getGameState() != GameState.Lobby)
                 {
