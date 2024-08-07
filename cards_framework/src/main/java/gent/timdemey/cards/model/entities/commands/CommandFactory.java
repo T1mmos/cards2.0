@@ -1,6 +1,7 @@
 package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.di.Container;
+import gent.timdemey.cards.model.entities.commands.payload.CommandPayloadBase;
 import gent.timdemey.cards.model.entities.commands.payload.P_Accept;
 import gent.timdemey.cards.model.entities.commands.payload.P_ClearServerList;
 import gent.timdemey.cards.model.entities.commands.payload.P_DenyClient;
@@ -39,6 +40,7 @@ import gent.timdemey.cards.model.entities.commands.payload.P_Redo;
 import gent.timdemey.cards.model.entities.commands.payload.P_SaveConfig;
 import gent.timdemey.cards.model.entities.commands.payload.P_SaveState;
 import gent.timdemey.cards.model.entities.commands.payload.P_SetVisible;
+import gent.timdemey.cards.model.entities.commands.payload.P_ShowConnect;
 import gent.timdemey.cards.model.entities.commands.payload.P_ShowLobby;
 import gent.timdemey.cards.model.entities.commands.payload.P_ShowReexecutionFail;
 import gent.timdemey.cards.model.entities.commands.payload.P_ShowStartServer;
@@ -49,6 +51,7 @@ import gent.timdemey.cards.model.entities.commands.payload.P_UDP_StartServiceReq
 import gent.timdemey.cards.model.entities.commands.payload.P_UDP_StopServiceRequester;
 import gent.timdemey.cards.model.entities.commands.payload.P_Undo;
 import gent.timdemey.cards.model.entities.commands.payload.P_Use;
+import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.model.net.TCP_Connection;
 import gent.timdemey.cards.services.context.ContextType;
 import java.net.InetAddress;
@@ -71,9 +74,8 @@ public abstract class CommandFactory
 
     public C_Connect CreateConnect(UUID playerId, UUID serverId, InetAddress inetAddress, int tcpPort, String serverName, String playerName)
     {        
-        P_Connect p = new P_Connect(); 
+        P_Connect p = NewCommandPayload(P_Connect.class); 
        
-        p.id = UUID.randomUUID();
         p.playerId = playerId;
         p.serverId = serverId;
         p.serverInetAddress = inetAddress;
@@ -91,9 +93,7 @@ public abstract class CommandFactory
 
     public C_StopServer CreateStopServer()
     {
-        P_StopServer p = new P_StopServer();
-        
-        p.id = UUID.randomUUID();
+        P_StopServer p = NewCommandPayload(P_StopServer.class);
         
         return CreateStopServer(p);
     }
@@ -105,9 +105,8 @@ public abstract class CommandFactory
 
     public C_OnLobbyToGame CreateOnLobbyToGame(CardGame cardGame)
     {
-        P_OnLobbyToGame p = new P_OnLobbyToGame();
+        P_OnLobbyToGame p = NewCommandPayload(P_OnLobbyToGame.class);
         
-        p.id = UUID.randomUUID();
         p.cardGame = cardGame;
         
         return CreateOnLobbyToGame(p);
@@ -120,9 +119,8 @@ public abstract class CommandFactory
 
     public C_EnterLobby CreateEnterLobby(String clientName, UUID clientId)
     {
-        P_EnterLobby p = new P_EnterLobby();
+        P_EnterLobby p = NewCommandPayload(P_EnterLobby.class);
         
-        p.id = UUID.randomUUID();
         p.clientId = clientId;
         p.clientName = clientName;
         
@@ -136,9 +134,8 @@ public abstract class CommandFactory
 
     public C_UDP_Response CreateUDPResponse(ServerUDP udpServer)
     {
-        P_UDP_Response p = new P_UDP_Response();
+        P_UDP_Response p = NewCommandPayload(P_UDP_Response.class);
         
-        p.id = UUID.randomUUID();
         p.server = udpServer;
         
         return CreateUDPResponse(p);
@@ -151,10 +148,8 @@ public abstract class CommandFactory
 
     public C_ClearServerList CreateClearServerList()
     {
-        P_ClearServerList p = new P_ClearServerList();
-        
-        p.id = UUID.randomUUID();
-        
+        P_ClearServerList p = NewCommandPayload(P_ClearServerList.class);
+                
         return CreateClearServerList(p);
     }
     
@@ -165,10 +160,8 @@ public abstract class CommandFactory
 
     public C_UDP_Request CreateUDPRequest()
     {
-        P_UDP_Request p = new P_UDP_Request();
-        
-        p.id = UUID.randomUUID();
-        
+        P_UDP_Request p = NewCommandPayload(P_UDP_Request.class);
+                
         return CreateUDPRequest(p);
     }
     
@@ -179,9 +172,8 @@ public abstract class CommandFactory
 
     public C_TCP_NOK CreateTCPNOK(C_TCP_NOK.TcpNokReason tcpNokReason)
     {
-        P_TCP_NOK p = new P_TCP_NOK();
+        P_TCP_NOK p = NewCommandPayload(P_TCP_NOK.class);
         
-        p.id = UUID.randomUUID();
         p.reason = tcpNokReason;
         
         return CreateTCPNOK(p);
@@ -194,10 +186,8 @@ public abstract class CommandFactory
     
     public C_TCP_OK CreateTCPOK()
     {
-        P_TCP_OK p = new P_TCP_OK();
-        
-        p.id = UUID.randomUUID();
-        
+        P_TCP_OK p = NewCommandPayload(P_TCP_OK.class);
+                
         return CreateTCPOK(p);
     }
     
@@ -208,9 +198,8 @@ public abstract class CommandFactory
 
     public C_Disconnect CreateDisconnect(C_Disconnect.DisconnectReason disconnectReason)
     {
-        P_Disconnect p = new P_Disconnect();
+        P_Disconnect p = NewCommandPayload(P_Disconnect.class);
         
-        p.id = UUID.randomUUID();
         p.reason = disconnectReason;
         
         return CreateDisconnect(p);
@@ -223,9 +212,8 @@ public abstract class CommandFactory
 
     public C_RemovePlayer CreateRemovePlayer(UUID playerId)
     {
-        P_RemovePlayer p = new P_RemovePlayer();
+        P_RemovePlayer p = NewCommandPayload(P_RemovePlayer.class);
         
-        p.id = UUID.randomUUID();
         p.playerId = playerId;
         
        return CreateRemovePlayer(p);
@@ -238,9 +226,8 @@ public abstract class CommandFactory
 
     public C_OnGameToLobby CreateOnGameToLobby(C_OnGameToLobby.GameToLobbyReason gameToLobbyReason)
     {
-        P_OnGameToLobby p = new P_OnGameToLobby();
+        P_OnGameToLobby p = NewCommandPayload(P_OnGameToLobby.class);
         
-        p.id = UUID.randomUUID();
         p.reason = gameToLobbyReason;
         
         return CreateOnGameToLobby(p);
@@ -253,9 +240,8 @@ public abstract class CommandFactory
 
     public C_OnTcpConnectionClosed CreateOnTcpConnectionClosed(UUID connectionId, boolean local)
     {
-        P_OnTcpConnectionClosed p = new P_OnTcpConnectionClosed();
+        P_OnTcpConnectionClosed p = NewCommandPayload(P_OnTcpConnectionClosed.class);
         
-        p.id = UUID.randomUUID();
         p.connectionId = connectionId;
         p.local = local;
         
@@ -269,10 +255,8 @@ public abstract class CommandFactory
 
     public C_DenyClient CreateDenyClient(UUID id)
     {
-        P_DenyClient p = new P_DenyClient();
-        
-        p.id = UUID.randomUUID();
-        
+        P_DenyClient p = NewCommandPayload(P_DenyClient.class);
+                
         return CreateDenyClient(p);
     }
     
@@ -283,9 +267,8 @@ public abstract class CommandFactory
 
     public C_OnLobbyWelcome CreateOnLobbyWelcome(UUID clientId, UUID serverId, String serverMessage, List<Player> remotePlayers, UUID lobbyAdminId)
     {
-        P_OnLobbyWelcome p = new P_OnLobbyWelcome();
+        P_OnLobbyWelcome p = NewCommandPayload(P_OnLobbyWelcome.class);
         
-        p.id = UUID.randomUUID();
         p.clientId = clientId;
         p.serverId = serverId;
         p.serverMessage = serverMessage;
@@ -302,9 +285,8 @@ public abstract class CommandFactory
 
     public C_OnLobbyPlayerJoined CreateOnLobbyPlayerJoined(Player player)
     {
-        P_OnLobbyPlayerJoined p = new P_OnLobbyPlayerJoined();
+        P_OnLobbyPlayerJoined p = NewCommandPayload(P_OnLobbyPlayerJoined.class);
         
-        p.id = UUID.randomUUID();
         p.player = player;
         
         return CreateOnLobbyPlayerJoined(p);
@@ -317,10 +299,8 @@ public abstract class CommandFactory
 
     public C_StartMultiplayerGame CreateStartMultiplayerGame()
     {
-        P_StartMultiplayerGame p = new P_StartMultiplayerGame();
-        
-        p.id = UUID.randomUUID();
-       
+        P_StartMultiplayerGame p = NewCommandPayload(P_StartMultiplayerGame.class);
+               
         return CreateStartMultiplayerGame(p);
     }
     
@@ -331,9 +311,8 @@ public abstract class CommandFactory
 
     public C_Reject CreateReject(UUID rejectedCommandId)
     {
-        P_Reject p = new P_Reject();
+        P_Reject p = NewCommandPayload(P_Reject.class);
         
-        p.id = UUID.randomUUID();
         p.rejectedCommandId = rejectedCommandId;
         
         return CreateReject(p);
@@ -346,13 +325,29 @@ public abstract class CommandFactory
 
     public C_Accept CreateAccept(UUID acceptedCommandId, UUID sourceId)
     {
-        P_Accept p = new P_Accept();
+        P_Accept p = NewCommandPayload(P_Accept.class);
         
-        p.id = UUID.randomUUID();
         p.acceptedCommandId = acceptedCommandId;
         p.acceptedCommandSourceId = sourceId;
         
         return CreateAccept(p);
+    }
+    
+    private <P extends CommandPayloadBase> P NewCommandPayload(Class<P> clazz)
+    {
+        try
+        {
+            P instance = (P) clazz.getConstructors()[0].newInstance();
+            
+            instance.id = UUID.randomUUID();
+            instance.creatorId = _Container.Get(State.class).id;
+            
+            return instance;
+        } 
+        catch (Exception ex)
+        {
+            throw new IllegalArgumentException("Class " + clazz.getSimpleName() + " cannot be instantiated: expects a single public parameterless constructor");
+        }
     }
     
     public C_Accept CreateAccept(P_Accept parameters)
@@ -362,9 +357,8 @@ public abstract class CommandFactory
 
     public C_OnGameEnded CreateOnGameEnded(UUID winnerId)
     {
-        P_OnGameEnded p = new P_OnGameEnded();
+        P_OnGameEnded p = NewCommandPayload(P_OnGameEnded.class);
         
-        p.id = UUID.randomUUID();
         p.winnerId = winnerId;
         
         return CreateOnGameEnded(p);
@@ -377,10 +371,8 @@ public abstract class CommandFactory
 
     public C_StartLocalGame CreateStartLocalGame()
     {
-        P_StartLocalGame p = new P_StartLocalGame();
-        
-        p.id = UUID.randomUUID();
-        
+        P_StartLocalGame p = NewCommandPayload(P_StartLocalGame.class);
+                
         return CreateStartLocalGame(p);
     }
     
@@ -391,10 +383,8 @@ public abstract class CommandFactory
 
     public C_Redo CreateRedo()
     {
-        P_Redo p = new P_Redo();
-        
-        p.id = UUID.randomUUID();
-        
+        P_Redo p = NewCommandPayload(P_Redo.class);
+                
         return CreateRedo(p);
     }
     
@@ -405,10 +395,8 @@ public abstract class CommandFactory
 
     public C_Undo CreateUndo()
     {
-        P_Undo p = new P_Undo();
-        
-        p.id = UUID.randomUUID();
-        
+        P_Undo p = NewCommandPayload(P_Undo.class);
+                
         return CreateUndo(p);
     }
     
@@ -419,9 +407,8 @@ public abstract class CommandFactory
 
     public C_SaveState CreateSaveState(String playerName, int serverTcpPort, int serverUdpPort, int clientUdpPort)
     {
-        P_SaveState p = new P_SaveState();
+        P_SaveState p = NewCommandPayload(P_SaveState.class);
         
-        p.id = UUID.randomUUID();
         p.playerName = playerName;
         p.serverTcpPort = serverTcpPort;
         p.serverUdpPort = serverUdpPort;
@@ -437,10 +424,8 @@ public abstract class CommandFactory
 
     public C_SaveConfig CreateSaveConfig()
     {
-        P_SaveConfig p = new P_SaveConfig();
-        
-        p.id = UUID.randomUUID();
-        
+        P_SaveConfig p = NewCommandPayload(P_SaveConfig.class);
+                
         return CreateSaveConfig(p);
     }
 
@@ -451,9 +436,8 @@ public abstract class CommandFactory
 
     public C_Composite CreateComposite(CommandBase cmd1, CommandBase cmd2)
     {
-        P_Composite p = new P_Composite();
+        P_Composite p = NewCommandPayload(P_Composite.class);
         
-        p.id = UUID.randomUUID();
         p.commands = new ArrayList<>();
         p.commands.add(cmd1);
         p.commands.add(cmd2);
@@ -468,10 +452,8 @@ public abstract class CommandFactory
 
     public C_UDP_StopServiceRequester CreateStopServiceRequester()
     {
-        P_UDP_StopServiceRequester p = new P_UDP_StopServiceRequester();
-        
-        p.id = UUID.randomUUID();
-                
+        P_UDP_StopServiceRequester p = NewCommandPayload(P_UDP_StopServiceRequester.class);
+                        
         return CreateStopServiceRequester(p);
     }
     
@@ -482,10 +464,8 @@ public abstract class CommandFactory
 
     public C_UDP_StartServiceRequester CreateStartServiceRequester()
     {
-        P_UDP_StartServiceRequester p = new P_UDP_StartServiceRequester();
-        
-        p.id = UUID.randomUUID();
-                
+        P_UDP_StartServiceRequester p = NewCommandPayload(P_UDP_StartServiceRequester.class);
+                        
         return CreateStartServiceRequester(p);
     }
     
@@ -496,10 +476,8 @@ public abstract class CommandFactory
 
     public C_LoadConfig CreateLoadConfig()
     {
-        P_LoadConfig p = new P_LoadConfig();
-        
-        p.id = UUID.randomUUID();
-        
+        P_LoadConfig p = NewCommandPayload(P_LoadConfig.class);
+                
         return CreateLoadConfig(p);
     }
     
@@ -510,9 +488,8 @@ public abstract class CommandFactory
 
     public C_StartServer CreateStartServer(UUID localId, String localName, String srvname, String srvmsg, int udpPort, int tcpPort, boolean autoconnect)
     {
-        P_StartServer p = new P_StartServer();
+        P_StartServer p = NewCommandPayload(P_StartServer.class);
         
-        p.id = UUID.randomUUID();
         p.localId = localId;
         p.localName = localName;
         p.srvname = srvname;
@@ -533,26 +510,20 @@ public abstract class CommandFactory
 
     public C_ShowConnect ShowDialog_Connect()
     {
-        P_Connect p = new P_Connect();
-        
-        p.id = UUID.randomUUID();
-        
+        P_ShowConnect p = NewCommandPayload(P_ShowConnect.class);
+                
         return ShowDialog_Connect(p);
     }
     
-    public C_ShowConnect ShowDialog_Connect(P_Connect parameters)
+    public C_ShowConnect ShowDialog_Connect(P_ShowConnect parameters)
     {
-        return DICreate(C_ShowConnect.class, P_Connect.class, parameters);
+        return DICreate(C_ShowConnect.class, P_ShowConnect.class, parameters);
     }
-
-    
     
     public C_ShowPlayerLeft ShowDialog_OnPlayerLeft()
     {
-        P_ShowPlayerLeft p = new P_ShowPlayerLeft();
-        
-        p.id = UUID.randomUUID();
-        
+        P_ShowPlayerLeft p = NewCommandPayload(P_ShowPlayerLeft.class);
+                
         return ShowDialog_OnPlayerLeft(p);
     }
     
@@ -563,10 +534,8 @@ public abstract class CommandFactory
 
     public C_ShowLobby ShowDialog_Lobby()
     {
-        P_ShowLobby p = new P_ShowLobby();
-        
-        p.id = UUID.randomUUID();
-        
+        P_ShowLobby p = NewCommandPayload(P_ShowLobby.class);
+                
         return ShowDialog_Lobby(p);
     }
     
@@ -577,10 +546,8 @@ public abstract class CommandFactory
 
     public C_ShowToggleMenuMP ShowDialog_ToggleMenuMP()
     {
-        P_ShowToggleMenuMP p = new P_ShowToggleMenuMP();
-        
-        p.id = UUID.randomUUID();
-        
+        P_ShowToggleMenuMP p = NewCommandPayload(P_ShowToggleMenuMP.class);
+                
         return ShowDialog_ToggleMenuMP(p);
     }
     
@@ -591,10 +558,8 @@ public abstract class CommandFactory
 
     public C_ShowStartServer ShowDialog_StartServer()
     {
-        P_ShowStartServer p = new P_ShowStartServer();
-        
-        p.id = UUID.randomUUID();
-        
+        P_ShowStartServer p = NewCommandPayload(P_ShowStartServer.class);
+                
         return ShowDialog_StartServer(p);
     }
     
@@ -602,17 +567,11 @@ public abstract class CommandFactory
     {
         return DICreate(C_ShowStartServer.class, P_ShowStartServer.class, parameters);
     }
-
-    
-    
-    
-    
     
     public C_ShowReexecutionFail ShowDialog_ReexecutionFail(List<CommandExecution> fails)
     {
-        P_ShowReexecutionFail p = new P_ShowReexecutionFail();
+        P_ShowReexecutionFail p = NewCommandPayload(P_ShowReexecutionFail.class);
         
-        p.id = UUID.randomUUID();
         p.fails = fails;
         
         return ShowDialog_ReexecutionFail(p);
@@ -625,9 +584,8 @@ public abstract class CommandFactory
         
     public C_Move CreateMove(UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
     {
-        P_Move p = new P_Move();
+        P_Move p = NewCommandPayload(P_Move.class);
         
-        p.id = UUID.randomUUID();
         p.srcCardStackId = srcCardStackId;
         p.dstCardStackId = dstCardStackId;
         p.cardId = cardId;
@@ -642,9 +600,8 @@ public abstract class CommandFactory
 
     public C_SetVisible CreateSetVisible(List<Card> cards, boolean visible)
     {
-        P_SetVisible p = new P_SetVisible();
+        P_SetVisible p = NewCommandPayload(P_SetVisible.class);
         
-        p.id = UUID.randomUUID();
         p.cards = cards;
         p.visible = visible;
         
@@ -681,14 +638,13 @@ public abstract class CommandFactory
 
     public C_HelloWorld CreateHelloWorld()
     {
-        return DICreate(C_HelloWorld.class, P_HelloWorld.class, new P_HelloWorld());
+        return DICreate(C_HelloWorld.class, P_HelloWorld.class, NewCommandPayload(P_HelloWorld.class));
     }
 
     public C_OnTcpConnectionAdded CreateOnTcpConnectionAdded(TCP_Connection tcpConnection)
     {
-        P_OnTcpConnectionAdded p = new P_OnTcpConnectionAdded();
+        P_OnTcpConnectionAdded p = NewCommandPayload(P_OnTcpConnectionAdded.class);
         
-        p.id = UUID.randomUUID();
         p.tcpConnection = tcpConnection;
         
         return CreateOnTcpConnectionAdded(p);

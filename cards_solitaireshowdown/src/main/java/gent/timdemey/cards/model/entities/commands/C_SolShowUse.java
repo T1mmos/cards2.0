@@ -34,7 +34,7 @@ public class C_SolShowUse extends C_Use
         if(initiatorStackId != null)
         {
             CardStack initiatorStack = cardGame.getCardStack(initiatorStackId);
-            if (getSourceId().equals(cardGame.getPlayerId(initiatorStack)))
+            if (creatorId.equals(cardGame.getPlayerId(initiatorStack)))
             {
                 String cardStackType = initiatorStack.cardStackType;
 
@@ -87,7 +87,6 @@ public class C_SolShowUse extends C_Use
                 for (CardStack dstCardStack : allLaydownStacks)
                 {
                     C_Move cmd = _CommandFactory.CreateMove(initiatorStack.id, dstCardStack.id, initiatorCardId);
-                    cmd.setSourceId(getSourceId());
                     eligible.add(cmd);
                 }
             }
@@ -117,7 +116,6 @@ public class C_SolShowUse extends C_Use
             if(!srcCardStack.getCards().isEmpty())
             {
                 C_Move cmd = _CommandFactory.CreateMove(srcCardStack.id, dstCardStack.id, srcCardStack.getLowestCard().id);
-                cmd.setSourceId(getSourceId());
                 eligible.add(cmd);
             }
         }
@@ -132,7 +130,6 @@ public class C_SolShowUse extends C_Use
             int idx = availableCount - takeCount;
             UUID highestCardId = availableCards.get(idx).id;
             C_Move cmd = _CommandFactory.CreateMove(srcCardStack.id, dstCardStack.id, highestCardId);
-            cmd.setSourceId(getSourceId());
             eligible.add(cmd);
         }
     }

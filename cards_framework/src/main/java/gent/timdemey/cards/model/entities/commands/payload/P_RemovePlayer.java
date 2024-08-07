@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.common.PayloadBase;
 
-public class P_RemovePlayer extends PayloadBase
+public class P_RemovePlayer extends CommandPayloadBase
 {
     public UUID playerId;
 }

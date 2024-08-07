@@ -55,7 +55,7 @@ public class C_OnLobbyWelcome extends CommandBase
         CheckContext(ContextType.UI);
 
         // safety checks: returned clientId == localId
-        if (!_State.getLocalId().equals(clientId))
+        if (!_State.id.equals(clientId))
         {
             throw new IllegalArgumentException(
                     "Server returned a WelcomeClient with a clientId not matching the localId");

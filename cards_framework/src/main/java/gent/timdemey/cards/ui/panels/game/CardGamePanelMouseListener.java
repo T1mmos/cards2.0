@@ -135,8 +135,6 @@ public class CardGamePanelMouseListener extends MouseAdapter
                 
         JSImage jsimage = comps.get(0);
 
-        UUID playerId = _Context.getReadOnlyState().getLocalId();
-
         if (jsimage.getComponent().getComponentType().hasTypeName(ComponentTypes.CARD))
         {
             ReadOnlyCard card = (ReadOnlyCard) jsimage.getComponent().getPayload();
@@ -223,8 +221,6 @@ public class CardGamePanelMouseListener extends MouseAdapter
         }
 
         IPanelManager pm = _PanelService.getPanelManager(PanelDescriptors.Game);
-
-        UUID playerId = _Context.getReadOnlyState().getLocalId();
 
         if (!draggedJComps.isEmpty())
         {

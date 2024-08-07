@@ -96,7 +96,6 @@ public class C_LoadConfig extends CommandBase
             int clientUdpPort = parseProperty(properties, ConfigKeyDescriptors.ClientUdpPort);
             
             _State.setLocalName(pname);
-            _State.setLocalId(UUID.randomUUID());
             
             Configuration cfg = _ConfigurationFactory.CreateConfiguration();
             cfg.setServerTcpPort(serverTcpPort);

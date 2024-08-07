@@ -57,7 +57,7 @@ public class C_ShowStartServer extends DialogCommandBase
     {
         if (data.closeType == PanelButtonDescriptors.Ok)
         {
-            UUID localId = _State.getLocalId();
+            UUID localId = _State.id;
             String localName = _State.getLocalName();
             int udpPort = _State.getConfiguration().getServerUdpPort();
             int tcpPort = _State.getConfiguration().getServerTcpPort();

@@ -2,12 +2,12 @@ package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.common.PayloadBase;
+import gent.timdemey.cards.model.entities.commands.payload.CommandPayloadBase;
 import gent.timdemey.cards.services.context.ContextType;
 
 public abstract class DialogCommandBase extends CommandBase
 {
-    protected DialogCommandBase(Container container, PayloadBase payload)
+    protected DialogCommandBase(Container container, CommandPayloadBase payload)
     {
         super(container, payload);
     }

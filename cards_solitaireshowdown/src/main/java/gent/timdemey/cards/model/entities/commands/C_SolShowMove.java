@@ -61,9 +61,7 @@ public class C_SolShowMove extends C_Move
 
         List<UUID> toTransferIds = srcCardStack.getCardsFrom(card).getIds();
         C_Pull cmdPull = _CommandFactory.CreatePull(srcCardStackId, cardId);
-        cmdPull.setSourceId(getSourceId());
         C_Push cmdPush = _CommandFactory.CreatePush(dstCardStackId, toTransferIds);
-        cmdPush.setSourceId(getSourceId());
 
         boolean canPull = cmdPull.canExecute().canExecute();
         boolean canPush = cmdPush.canExecute().canExecute();
@@ -172,7 +170,7 @@ public class C_SolShowMove extends C_Move
         }
         else if (_ContextType == ContextType.Server)
         {
-            List<UUID> ids_move = _State.getPlayers().getExceptUUID(getSourceId());
+            List<UUID> ids_move = _State.getPlayers().getExceptUUID(creatorId);
             send(ids_move, this);
 
             // end of game trigger

@@ -12,6 +12,7 @@ import gent.timdemey.cards.model.net.UDP_Source;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.di.IContainerService;
+import gent.timdemey.cards.model.entities.commands.payload.CommandPayloadBase;
 import gent.timdemey.cards.model.net.TCP_ConnectionPool;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.context.ICommandExecutor;
@@ -21,8 +22,6 @@ public abstract class CommandBase extends EntityBase
 {
     private volatile TCP_Connection sourceTcpConnection;
     private volatile UDP_Source sourceUdp;
-    private volatile UUID sourceId;
-    private volatile String serialized;
     
     protected final IContainerService _ContainerService;
     protected final ICommandExecutor _CommandExecutor;
@@ -31,11 +30,17 @@ public abstract class CommandBase extends EntityBase
     protected final ContextType _ContextType;
     protected final CommandDtoMapper _CommandDtoMapper;
     
+    public final UUID creatorId;
     private final PayloadBase _Payload;
     
-    protected CommandBase(Container container, PayloadBase payload)
+    protected CommandBase(Container container, CommandPayloadBase payload)
     {
         super(payload.id);
+        
+        if (payload.creatorId == null)
+        {
+            throw new IllegalArgumentException("creatorId");
+        }
         
         this._ContainerService = container.Get(IContainerService.class);
         this._CommandExecutor = container.Get(ICommandExecutor.class);
@@ -45,6 +50,7 @@ public abstract class CommandBase extends EntityBase
         this._CommandDtoMapper = container.Get(CommandDtoMapper.class);
         
         this._Payload = payload;
+        this.creatorId = payload.creatorId;
     }
 
     public abstract CanExecuteResponse canExecute();
@@ -57,7 +63,6 @@ public abstract class CommandBase extends EntityBase
      * that the command's logic has been accepted.
      * <p>A good example is revealing cards of a cardstack only after it was confirmed by the server
      * that the top card's removal was a valid action.     
-     * @param state
      */
     public void onAccepted()
     {
@@ -159,31 +164,6 @@ public abstract class CommandBase extends EntityBase
     protected final UDP_Source getSourceUdp()
     {
         return sourceUdp;
-    }
-
-    public void setSourceId(UUID sourceId)
-    {
-        this.sourceId = sourceId;
-    }
-
-    public UUID getSourceId()
-    {
-        return sourceId;
-    }
-
-    public void setSerialized(String serialized)
-    {
-        this.serialized = serialized;
-    }
-
-    public String getSerialized()
-    {
-        if (serialized == null)
-        {
-            throw new IllegalStateException(
-                    "No serialized form of this command was set, this can happen when the command did not enter via a TCP connection.");
-        }
-        return serialized;
     }
 
     /**

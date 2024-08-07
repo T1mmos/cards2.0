@@ -6,7 +6,7 @@ import gent.timdemey.cards.model.entities.common.PayloadBase;
  *
  * @author Timmos
  */
-public class P_SaveConfig extends PayloadBase
+public class P_SaveConfig extends CommandPayloadBase
 {
     
 }

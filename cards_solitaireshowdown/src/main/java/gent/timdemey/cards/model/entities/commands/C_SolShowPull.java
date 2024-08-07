@@ -29,7 +29,7 @@ public class C_SolShowPull extends C_Pull
             return CanExecuteResponse.no("Cannot move from DEPOT to LAYDOWN");
         }
 
-        UUID srcPlayerId = getSourceId();
+        UUID srcPlayerId = creatorId;
         if (!srcPlayerId.equals(_State.getServerId())
                 && !srcPlayerId.equals(_State.getCardGame().getPlayerId(srcCardStack)))
         {

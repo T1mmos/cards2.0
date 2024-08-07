@@ -8,7 +8,7 @@ import java.util.UUID;
  *
  * @author Timmos
  */
-public class P_Connect extends PayloadBase
+public class P_Connect extends CommandPayloadBase
 {
     public UUID playerId;
     public UUID serverId;

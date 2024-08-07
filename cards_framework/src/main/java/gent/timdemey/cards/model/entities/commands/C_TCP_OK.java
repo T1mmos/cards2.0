@@ -39,7 +39,7 @@ public class C_TCP_OK extends CommandBase
             _State.setGameState(GameState.Connected);
             
             // enter the lobby to go from Connected -> Lobby
-            C_EnterLobby cmd = _CommandFactory.CreateEnterLobby(_State.getLocalName(), _State.getLocalId());
+            C_EnterLobby cmd = _CommandFactory.CreateEnterLobby(_State.getLocalName(), _State.id);
             run(cmd);
         }
     }

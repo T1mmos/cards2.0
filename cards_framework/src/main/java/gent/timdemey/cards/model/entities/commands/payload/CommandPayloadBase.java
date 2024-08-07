@@ -7,10 +7,10 @@ import java.util.UUID;
  *
  * @author Timmos
  */
-public class P_OnTcpConnectionClosed extends CommandPayloadBase
+public class CommandPayloadBase extends PayloadBase
 {
-
-    public UUID connectionId;
-    public boolean local;
-    
+    /**
+     * Id of the creator (playerId, serverId, ...) of the command.
+     */
+    public UUID creatorId;
 }

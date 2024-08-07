@@ -5,7 +5,6 @@ import java.net.InetAddress;
 import java.util.UUID;
 
 import gent.timdemey.cards.ICardPlugin;
-import gent.timdemey.cards.Main;
 import gent.timdemey.cards.Starter;
 import gent.timdemey.cards.di.Container;
 
@@ -17,7 +16,6 @@ import gent.timdemey.cards.model.entities.config.ConfigurationFactory;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.Player;
 import gent.timdemey.cards.model.entities.state.ServerTCP;
-import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.model.entities.state.StateFactory;
 import gent.timdemey.cards.model.net.ITcpConnectionListener;
 import gent.timdemey.cards.model.net.NetworkFactory;
@@ -29,7 +27,6 @@ import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.utils.Debug;
 import gent.timdemey.cards.model.net.IUdpMessageListener;
-import gent.timdemey.cards.di.IContainerService;
 
 /**
  * Command that starts a server and automatically joins the current player in
@@ -58,7 +55,6 @@ public class C_StartServer extends CommandBase
     private Logger _Logger;
     private CommandFactory _CommandFactory;
     private ICardPlugin _CardPlugin;
-    private CommandDtoMapper _CommandDtoMapper;
     private Starter _Starter;
 
     public C_StartServer(
@@ -69,7 +65,6 @@ public class C_StartServer extends CommandBase
         StateFactory stateFactory,
         CommandFactory commandFactory,
         ConfigurationFactory configurationFactory,
-        CommandDtoMapper commandDtoMapper,
         Logger logger,
         Starter starter,
         P_StartServer parameters)
@@ -106,7 +101,6 @@ public class C_StartServer extends CommandBase
         this._CommandFactory = commandFactory;
         this._StateFactory = stateFactory;        
         this._ConfigurationFactory = configurationFactory;
-        this._CommandDtoMapper = commandDtoMapper;
         this._Logger = logger;
         this._Starter = starter;
         
@@ -185,7 +179,6 @@ public class C_StartServer extends CommandBase
                 ServerTCP server = _StateFactory.CreateServerTCP(srvname, addr, tcpport);
                 _State.setServer(server);
                 _State.setServerMessage(srvmsg);
-                _State.setLocalId(server.id);
                 _State.setLobbyAdminId(playerId);
                 _State.setGameState(GameState.Lobby);
                 _State.setConfiguration(cfg);
@@ -205,8 +198,8 @@ public class C_StartServer extends CommandBase
                 // schedule a command to have the local player join the server
                 if(autoconnect)
                 {
-                    C_Connect cmd_connect;
-                    cmd_connect = _CommandFactory.CreateConnect(playerId, server.id, addr, tcpport, srvname, playerName);
+                    // create in UI context!
+                    C_Connect cmd_connect = _ContainerService.get(ContextType.UI).Get(CommandFactory.class).CreateConnect(playerId, server.id, addr, tcpport, srvname, playerName);                    
                     schedule(ContextType.UI, cmd_connect);
                 }
             }

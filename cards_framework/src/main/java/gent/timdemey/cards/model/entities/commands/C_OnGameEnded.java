@@ -44,7 +44,7 @@ public class C_OnGameEnded extends CommandBase
         _State.setGameState(GameState.Ended);
        
         String title, msg;
-        if (_State.getLocalId().equals(winnerId))
+        if (_State.id.equals(winnerId))
         {
             title = _Loc.get(LocKey.DialogTitle_youwin);
             msg = _Loc.get(LocKey.DialogMessage_youwin);    

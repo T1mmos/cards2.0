@@ -10,7 +10,7 @@ import gent.timdemey.cards.model.entities.common.PayloadBase;
  *
  * @author Timmos
  */
-public class P_ClearServerList extends PayloadBase
+public class P_ClearServerList extends CommandPayloadBase
 {
     
 }

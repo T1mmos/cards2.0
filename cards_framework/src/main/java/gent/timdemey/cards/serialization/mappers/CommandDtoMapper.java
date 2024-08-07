@@ -23,6 +23,7 @@ import gent.timdemey.cards.model.entities.commands.C_UDP_Request;
 import gent.timdemey.cards.model.entities.commands.C_UDP_Response;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CommandFactory;
+import gent.timdemey.cards.model.entities.commands.payload.CommandPayloadBase;
 import gent.timdemey.cards.model.entities.commands.payload.P_Accept;
 import gent.timdemey.cards.model.entities.commands.payload.P_DenyClient;
 import gent.timdemey.cards.model.entities.commands.payload.P_Disconnect;
@@ -40,7 +41,9 @@ import gent.timdemey.cards.model.entities.commands.payload.P_TCP_NOK;
 import gent.timdemey.cards.model.entities.commands.payload.P_TCP_OK;
 import gent.timdemey.cards.model.entities.commands.payload.P_UDP_Request;
 import gent.timdemey.cards.model.entities.commands.payload.P_UDP_Response;
+import gent.timdemey.cards.model.entities.common.PayloadBase;
 import gent.timdemey.cards.model.entities.state.Player;
+import gent.timdemey.cards.serialization.dto.EntityBaseDto;
 import gent.timdemey.cards.serialization.dto.cards.PlayerDto;
 import gent.timdemey.cards.serialization.dto.commands.C_AcceptDto;
 import gent.timdemey.cards.serialization.dto.commands.C_DenyClientDto;
@@ -131,7 +134,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         C_UDP_RequestDto dto = new C_UDP_RequestDto();
         {
-            mergeEntityBaseToDto(cmd, dto);    
+            mergeCommandBaseToDto(cmd, dto);    
         }        
         return dto;
     }
@@ -140,7 +143,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {        
         P_UDP_Request pl = new P_UDP_Request();
         {
-            mergeDtoBaseToPayload(dto, pl);
+            mergeCommandBaseDtoToPayload(dto, pl);
         }        
         return _CommandFactory.CreateUDPRequest(pl);
     }
@@ -149,7 +152,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         C_UDP_ResponseDto dto = new C_UDP_ResponseDto();              
         {
-            mergeEntityBaseToDto(cmd, dto);  
+            mergeCommandBaseToDto(cmd, dto);  
             
             dto.server = _CardsDtoMapper.toDto(cmd.server);
         }        
@@ -160,7 +163,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         P_UDP_Response pl = new P_UDP_Response();
         {
-            mergeDtoBaseToPayload(dto, pl);
+            mergeCommandBaseDtoToPayload(dto, pl);
             
             pl.server = _CardsDtoMapper.toDomainObject(dto.server);
         };
@@ -171,7 +174,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         C_DenyClientDto dto = new C_DenyClientDto();
         {
-            mergeEntityBaseToDto(cmd, dto);
+            mergeCommandBaseToDto(cmd, dto);
         }
         return dto;
     }
@@ -180,7 +183,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         P_DenyClient pl = new P_DenyClient();
         {
-            mergeDtoBaseToPayload(dto, pl);
+            mergeCommandBaseDtoToPayload(dto, pl);
         }
         return _CommandFactory.CreateDenyClient(pl.id);        
     }
@@ -189,7 +192,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         C_DisconnectDto dto = new C_DisconnectDto();
         {
-            mergeEntityBaseToDto(cmd, dto);
+            mergeCommandBaseToDto(cmd, dto);
             
             dto.reason = toDto(cmd.reason);
         }
@@ -200,7 +203,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         P_Disconnect pl = new P_Disconnect();
         {
-            mergeDtoBaseToPayload(dto, pl);
+            mergeCommandBaseDtoToPayload(dto, pl);
             
             pl.reason = toEnum(DisconnectReason.class, dto.reason);
         }
@@ -211,7 +214,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         C_OnGameToLobbyDto dto = new C_OnGameToLobbyDto();
         {
-            mergeEntityBaseToDto(cmd, dto);  
+            mergeCommandBaseToDto(cmd, dto);  
             
             dto.reason = toDto(cmd.reason);
         }
@@ -222,7 +225,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         P_OnGameToLobby pl = new P_OnGameToLobby();
         {
-            mergeDtoBaseToPayload(dto, pl);
+            mergeCommandBaseDtoToPayload(dto, pl);
             
             pl.reason = toEnum(GameToLobbyReason.class, dto.reason);
         }
@@ -233,7 +236,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         C_RemovePlayerDto dto = new C_RemovePlayerDto();
         {
-            mergeEntityBaseToDto(cmd, dto);
+            mergeCommandBaseToDto(cmd, dto);
             
             dto.playerId = toDto(cmd.playerId);    
         }
@@ -244,7 +247,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         P_RemovePlayer pl = new P_RemovePlayer();
         {
-            mergeDtoBaseToPayload(dto, pl);
+            mergeCommandBaseDtoToPayload(dto, pl);
             
             pl.playerId = toUuid(dto.playerId);
         }
@@ -255,7 +258,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         C_EnterLobbyDto dto = new C_EnterLobbyDto();
         {
-            mergeEntityBaseToDto(cmd, dto);  
+            mergeCommandBaseToDto(cmd, dto);  
             
             dto.clientId = CommonMapper.toDto(cmd.clientId);
             dto.clientName = cmd.clientName;
@@ -267,7 +270,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         P_EnterLobby pl = new P_EnterLobby();
         {
-            mergeDtoBaseToPayload(dto, pl);
+            mergeCommandBaseDtoToPayload(dto, pl);
             pl.clientId = CommonMapper.toUuid(dto.clientId);
             pl.clientName = dto.clientName;
         }        
@@ -278,7 +281,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         C_OnLobbyWelcomeDto dto = new C_OnLobbyWelcomeDto();
         {
-            mergeEntityBaseToDto(cmd, dto);    
+            mergeCommandBaseToDto(cmd, dto);    
             dto.clientId = toDto(cmd.clientId);
             dto.serverId = toDto(cmd.serverId);
             dto.serverMessage = cmd.serverMessage;
@@ -292,7 +295,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         P_OnLobbyWelcome pl = new P_OnLobbyWelcome();
         {
-            mergeDtoBaseToPayload(dto, pl);
+            mergeCommandBaseDtoToPayload(dto, pl);
             pl.clientId = toUuid(dto.clientId);
             pl.serverId = toUuid(dto.serverId);
             pl.serverMessage = dto.serverMessage;
@@ -306,7 +309,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         C_OnLobbyPlayerJoinedDto dto = new C_OnLobbyPlayerJoinedDto();
         {
-            mergeEntityBaseToDto(cmd, dto);    
+            mergeCommandBaseToDto(cmd, dto);    
             
             dto.player = _CardsDtoMapper.toDto(cmd.player);
         }        
@@ -317,7 +320,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         P_OnLobbyPlayerJoined pl = new P_OnLobbyPlayerJoined();
         {
-            mergeDtoBaseToPayload(dto, pl);
+            mergeCommandBaseDtoToPayload(dto, pl);
             
             pl.player = _CardsDtoMapper.toDomainObject(dto.player);
         }        
@@ -328,7 +331,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         C_StartMultiplayerGameDto dto = new C_StartMultiplayerGameDto();
         {
-            mergeEntityBaseToDto(cmd, dto);
+            mergeCommandBaseToDto(cmd, dto);
         }        
         return dto;
     }
@@ -337,7 +340,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         P_StartMultiplayerGame pl = new P_StartMultiplayerGame();
         {
-            mergeDtoBaseToPayload(dto, pl);
+            mergeCommandBaseDtoToPayload(dto, pl);
         }        
         return _CommandFactory.CreateStartMultiplayerGame(pl);
     }
@@ -346,7 +349,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         C_OnMultiplayerGameStartedDto dto = new C_OnMultiplayerGameStartedDto();
         {
-            mergeEntityBaseToDto(cmd, dto);    
+            mergeCommandBaseToDto(cmd, dto);    
             
             dto.cardGame = _CardsDtoMapper.toDto(cmd.cardGame);
         }        
@@ -357,7 +360,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         P_OnLobbyToGame pl = new P_OnLobbyToGame();
         {
-            mergeDtoBaseToPayload(dto, pl);
+            mergeCommandBaseDtoToPayload(dto, pl);
             
             pl.cardGame = _CardsDtoMapper.toDomainObject(dto.cardGame);
         }        
@@ -368,7 +371,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         C_RejectDto dto = new C_RejectDto();
         {
-            mergeEntityBaseToDto(cmd, dto);    
+            mergeCommandBaseToDto(cmd, dto);    
             
             dto.rejectedCommandId = toDto(cmd.rejectedCommandId);
         }        
@@ -379,7 +382,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         P_Reject pl = new P_Reject();
         {
-            mergeDtoBaseToPayload(dto, pl);
+            mergeCommandBaseDtoToPayload(dto, pl);
             
             pl.rejectedCommandId = toUuid(dto.rejectedCommandId);
         }        
@@ -390,7 +393,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         C_AcceptDto dto = new C_AcceptDto();
         {
-            mergeEntityBaseToDto(cmd, dto);    
+            mergeCommandBaseToDto(cmd, dto);    
             
             dto.acceptedCommandId = toDto(cmd.acceptedCommandId);
         }        
@@ -401,7 +404,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         P_Accept pl = new P_Accept();
         {
-            mergeDtoBaseToPayload(dto, pl);
+            mergeCommandBaseDtoToPayload(dto, pl);
             
             pl.acceptedCommandId = toUuid(dto.acceptedCommandId);
         }        
@@ -412,18 +415,30 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         C_OnGameEndedDto dto = new C_OnGameEndedDto();
         {
-            mergeEntityBaseToDto(cmd, dto);
+            mergeCommandBaseToDto(cmd, dto);
             
             dto.winnerId = toDto(cmd.winnerId);
         }
         return dto;
     }
     
+    private static void mergeCommandBaseToDto(CommandBase cmd, CommandBaseDto dto)
+    {
+        mergeEntityBaseToDto(cmd, dto);
+        dto.creatorId = CommonMapper.toDto(cmd.creatorId);
+    }
+    
+    private static void mergeCommandBaseDtoToPayload(CommandBaseDto dto, CommandPayloadBase pl)
+    {
+        mergeDtoBaseToPayload(dto, pl);
+        pl.creatorId = CommonMapper.toUuid(dto.creatorId);
+    }
+    
     private C_OnGameEnded toCommand(C_OnGameEndedDto dto)
     {
         P_OnGameEnded pl = new P_OnGameEnded();
         {
-            mergeDtoBaseToPayload(dto, pl);
+            mergeCommandBaseDtoToPayload(dto, pl);
             pl.winnerId = toUuid(dto.winnerId);
         }
         return _CommandFactory.CreateOnGameEnded(pl);
@@ -433,7 +448,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         C_TCP_OKDto dto = new C_TCP_OKDto();
         {
-            mergeEntityBaseToDto(cmd, dto);
+            mergeCommandBaseToDto(cmd, dto);
         }
         return dto;
     }
@@ -442,7 +457,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         P_TCP_OK pl = new P_TCP_OK();
         {
-            mergeDtoBaseToPayload(dto, pl);
+            mergeCommandBaseDtoToPayload(dto, pl);
         }
         return _CommandFactory.CreateTCPOK(pl);
     }
@@ -451,7 +466,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         C_TCP_NOKDto dto = new C_TCP_NOKDto();
         {
-            mergeEntityBaseToDto(cmd, dto);
+            mergeCommandBaseToDto(cmd, dto);
             dto.reason = toDto(cmd.reason);
         }
         return dto;
@@ -461,7 +476,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         P_TCP_NOK pl = new P_TCP_NOK();
         {
-            mergeDtoBaseToPayload(dto, pl);
+            mergeCommandBaseDtoToPayload(dto, pl);
             pl.reason = toEnum(TcpNokReason.class, dto.reason);
         }
         return _CommandFactory.CreateTCPNOK(pl);
@@ -490,4 +505,6 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         pl.dstCardStackId = toUuid(dto.dstCardStackId);
         pl.srcCardStackId = toUuid(dto.srcCardStackId);
     }
+    
+    
 }

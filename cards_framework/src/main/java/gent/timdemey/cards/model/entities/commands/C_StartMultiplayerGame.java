@@ -53,9 +53,9 @@ public class C_StartMultiplayerGame extends CommandBase
             return CanExecuteResponse.no(format);
         }
 
-        if (!getSourceId().equals(_State.getLobbyAdminId()))
+        if (!creatorId.equals(_State.getLobbyAdminId()))
         {
-            return CanExecuteResponse.no("This command's SourceId is not equal to the LobbyAdminId");
+            return CanExecuteResponse.no("This command's CreatorId is not equal to the LobbyAdminId");
         }
         
         return CanExecuteResponse.yes();

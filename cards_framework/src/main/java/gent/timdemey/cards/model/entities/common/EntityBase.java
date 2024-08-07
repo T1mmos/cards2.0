@@ -10,6 +10,11 @@ public abstract class EntityBase
 
     protected EntityBase(UUID id)
     {
+        if (id == null)
+        {
+            throw new IllegalArgumentException("id");
+        }
+        
         this.id = id;
     }
 

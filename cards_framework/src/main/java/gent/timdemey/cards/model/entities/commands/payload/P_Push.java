@@ -8,7 +8,7 @@ import java.util.UUID;
  *
  * @author Timmos
  */
-public class P_Push extends PayloadBase
+public class P_Push extends CommandPayloadBase
 {
     public UUID dstCardStackId;
     public List<UUID> srcCardIds;

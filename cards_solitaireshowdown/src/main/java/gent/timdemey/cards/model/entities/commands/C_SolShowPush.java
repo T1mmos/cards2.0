@@ -32,7 +32,7 @@ public class C_SolShowPush extends C_Push
 
         if (dstCardStack.cardStackType.equals(SolShowCardStackType.MIDDLE))
         {
-            UUID playerId = getSourceId();
+            UUID playerId = creatorId;
             if (!playerId.equals(_State.getServerId())
                     && !playerId.equals(_State.getCardGame().getPlayerId(dstCardStack)))
             {

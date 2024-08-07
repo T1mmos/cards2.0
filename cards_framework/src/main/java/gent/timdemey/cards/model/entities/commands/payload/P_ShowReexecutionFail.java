@@ -8,7 +8,7 @@ import java.util.List;
  *
  * @author Timmos
  */
-public class P_ShowReexecutionFail extends PayloadBase
+public class P_ShowReexecutionFail extends CommandPayloadBase
 {
 
     public List<CommandExecution> fails;

@@ -11,7 +11,7 @@ import gent.timdemey.cards.model.entities.state.CardGame;
  *
  * @author Timmos
  */
-public class P_OnLobbyToGame extends PayloadBase
+public class P_OnLobbyToGame extends CommandPayloadBase
 {
     public CardGame cardGame;    
 }

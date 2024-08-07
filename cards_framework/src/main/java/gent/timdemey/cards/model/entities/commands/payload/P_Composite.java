@@ -8,7 +8,7 @@ import java.util.List;
  *
  * @author Timmos
  */
-public class P_Composite extends PayloadBase
+public class P_Composite extends CommandPayloadBase
 {
     public List<CommandBase> commands;
 }

@@ -65,7 +65,7 @@ public class ServerCommandExecutor extends CommandExecutorBase
                 // the client can mark the command as accepted in its history
                 if (cmdType == CommandType.SYNCED)
                 {
-                    C_Accept acceptCmd = _CommandFactory.CreateAccept(command.id, command.getSourceId());
+                    C_Accept acceptCmd = _CommandFactory.CreateAccept(command.id, command.creatorId);
                     acceptCmd.execute();
                 }
             }
@@ -82,7 +82,7 @@ public class ServerCommandExecutor extends CommandExecutorBase
 
                 C_Reject rejectCmd = _CommandFactory.CreateReject(command.id);
                 String answer = _CommandDtoMapper.toJson(rejectCmd);
-                _State.getTcpConnectionPool().getConnection(command.getSourceId()).send(answer);
+                _State.getTcpConnectionPool().getConnection(command.creatorId).send(answer);
             }
             else
             {

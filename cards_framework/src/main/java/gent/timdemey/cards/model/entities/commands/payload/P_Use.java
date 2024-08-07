@@ -11,7 +11,7 @@ import java.util.UUID;
  *
  * @author Timmos
  */
-public class P_Use extends PayloadBase
+public class P_Use extends CommandPayloadBase
 {
     public UUID initiatorStackId;
     public UUID initiatorCardId;

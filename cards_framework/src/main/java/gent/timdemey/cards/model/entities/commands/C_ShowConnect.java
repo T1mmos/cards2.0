@@ -9,7 +9,6 @@ import gent.timdemey.cards.model.entities.commands.payload.P_ShowConnect;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.ServerTCP;
 import gent.timdemey.cards.readonlymodel.ReadOnlyUDPServer;
-import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;

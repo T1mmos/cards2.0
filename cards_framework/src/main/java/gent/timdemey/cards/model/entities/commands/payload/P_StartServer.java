@@ -11,7 +11,7 @@ import java.util.UUID;
  *
  * @author Timmos
  */
-public class P_StartServer extends PayloadBase
+public class P_StartServer extends CommandPayloadBase
 {
     public UUID localId;
     public String localName;

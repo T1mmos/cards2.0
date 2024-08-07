@@ -23,7 +23,6 @@ public class State extends EntityBase
     public static final Property<CommandHistory> CommandHistory = Property.of(State.class, CommandHistory.class, "CommandHistory");
     public static final Property<Configuration> Configuration = Property.of(State.class, Configuration.class, "Configuration");
     public static final Property<GameState> GameState = Property.of(State.class, GameState.class, "GameState");
-    public static final Property<UUID> LocalId = Property.of(State.class, UUID.class, "LocalId");
     public static final Property<String> LocalName = Property.of(State.class, String.class, "LocalName");
     public static final Property<UUID> LobbyAdminId = Property.of(State.class, UUID.class, "LobbyAdminId");
     public static final Property<Player> Players = Property.of(State.class, Player.class, "Players");
@@ -31,21 +30,20 @@ public class State extends EntityBase
     public static final Property<String> ServerMsg = Property.of(State.class, String.class, "ServerMsg");    
     public static final Property<ServerUDP> UDPServers = Property.of(State.class, ServerUDP.class, "UDPServers");
 
-    private StateValueRef<CommandHistory> commandHistoryRef;
-    private StateValueRef<Configuration> configurationRef;
+    private final StateValueRef<CommandHistory> commandHistoryRef;
+    private final StateValueRef<Configuration> configurationRef;
 
     // state lists
     private final EntityStateListRef<Player> playersRef;
     private final EntityStateListRef<ServerUDP> serversRef;
 
     // state values
-    private StateValueRef<CardGame> cardGameRef;
-    private StateValueRef<GameState> gameStateRef;
-    private StateValueRef<UUID> localIdRef;
-    private StateValueRef<String> localNameRef;
-    private StateValueRef<UUID> lobbyAdminId;
-    private StateValueRef<ServerTCP> serverRef;
-    private StateValueRef<String> serverMsgRef;
+    private final StateValueRef<CardGame> cardGameRef;
+    private final StateValueRef<GameState> gameStateRef;
+    private final StateValueRef<String> localNameRef;
+    private final StateValueRef<UUID> lobbyAdminId;
+    private final StateValueRef<ServerTCP> serverRef;
+    private final StateValueRef<String> serverMsgRef;
 
     // context specific
     private TCP_ConnectionAccepter tcpConnectionAccepter = null;
@@ -64,7 +62,6 @@ public class State extends EntityBase
         commandHistoryRef = new StateValueRef<>(changeTracker, CommandHistory, id);
         configurationRef = new StateValueRef<>(changeTracker, Configuration, id);
         gameStateRef = new StateValueRef<>(changeTracker, GameState, id, gent.timdemey.cards.model.entities.state.GameState.Disconnected);
-        localIdRef = new StateValueRef<>(changeTracker, LocalId, id);
         localNameRef = new StateValueRef<>(changeTracker, LocalName, id);
         playersRef = new EntityStateListRef<>(changeTracker, Players, id, new ArrayList<>());
         lobbyAdminId = new StateValueRef<>(changeTracker, LobbyAdminId, id);
@@ -190,22 +187,12 @@ public class State extends EntityBase
 
     public boolean isLocalId(UUID id)
     {
-        return getLocalId().equals(id);
+        return this.id.equals(id);
     }
 
-    public UUID getLocalId()
-    {
-        return localIdRef.get();
-    }
-    
     public Player getLocalPlayer()
     {
-        return getPlayers().get(getLocalId());
-    }
-
-    public void setLocalId(UUID id)
-    {
-        localIdRef.set(id);
+        return getPlayers().get(this.id);
     }
 
     public String getLocalName()
@@ -225,12 +212,12 @@ public class State extends EntityBase
 
     public List<Player> getRemotePlayers()
     {
-        return playersRef.getExcept(serverRef.get().id, localIdRef.get());
+        return playersRef.getExcept(serverRef.get().id, this.id);
     }
 
     public List<UUID> getRemotePlayerIds()
     {
-        return playersRef.getExceptUUID(serverRef.get().id, localIdRef.get());
+        return playersRef.getExceptUUID(serverRef.get().id, this.id);
     }
 
     public ServerTCP getServer()

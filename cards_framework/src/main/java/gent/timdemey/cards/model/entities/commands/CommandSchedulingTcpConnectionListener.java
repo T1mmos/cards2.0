@@ -2,17 +2,14 @@ package gent.timdemey.cards.model.entities.commands;
 
 import java.util.UUID;
 
-
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.net.ITcpConnectionListener;
 import gent.timdemey.cards.model.net.TCP_Connection;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
-import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.context.ICommandExecutor;
 
 public final class CommandSchedulingTcpConnectionListener implements ITcpConnectionListener
 {
-    private final ContextType _ContextType;
     private final Logger _Logger;
     private final CommandDtoMapper _CommandDtoMapper;
     private final CommandFactory _CommandFactory;
@@ -22,13 +19,11 @@ public final class CommandSchedulingTcpConnectionListener implements ITcpConnect
         CommandDtoMapper commandDtoMapper,
         CommandFactory commandFactory,
         Logger logger,
-        ContextType contextType,
         ICommandExecutor commandExecutor)
     {
         this._CommandDtoMapper = commandDtoMapper;
         this._CommandFactory = commandFactory;
         this._Logger = logger;
-        this._ContextType = contextType;
         this._CommandExecutor = commandExecutor;
     }
 
@@ -50,8 +45,6 @@ public final class CommandSchedulingTcpConnectionListener implements ITcpConnect
 
             // attach metadata to the command
             command.setSourceTcpConnection(tcpConnection);
-            command.setSourceId(id);
-            command.setSerialized(message);
 
             _Logger.info("Received command '%s' (id='%s') from '%s'", command.getName(), command.id, tcpConnection.getRemote());
 

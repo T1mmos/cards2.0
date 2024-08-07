@@ -14,15 +14,12 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyProperty;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.readonlymodel.TypedChange;
 import gent.timdemey.cards.model.delta.ChangeType;
-import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
-import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.DataPanelManagerBase;
 import net.miginfocom.swing.MigLayout;
-import gent.timdemey.cards.di.IContainerService;
 
 public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void>
 {

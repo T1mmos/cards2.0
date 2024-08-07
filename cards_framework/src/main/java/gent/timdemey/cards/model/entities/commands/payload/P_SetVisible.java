@@ -8,7 +8,7 @@ import java.util.List;
  *
  * @author Timmos
  */
-public class P_SetVisible extends PayloadBase
+public class P_SetVisible extends CommandPayloadBase
 {
 
     public List<Card> cards;

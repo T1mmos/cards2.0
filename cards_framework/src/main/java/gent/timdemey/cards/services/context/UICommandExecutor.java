@@ -61,11 +61,11 @@ public class UICommandExecutor implements ICommandExecutor
         _Logger.info("Executing '%s', id=%s...", command.getName(), command.id);
 
         CommandType cmdType = command.getCommandType();
-        UUID localId = _State.getLocalId();
+        UUID localId = _State.id;
         UUID serverId = _State.getServerId();
-        UUID cmdSrcId = command.getSourceId();
+        UUID cmdSrcId = command.creatorId;
         
-        boolean src_local = cmdSrcId == null || cmdSrcId.equals(localId);
+        boolean src_local = cmdSrcId != null && cmdSrcId.equals(localId);
         boolean src_server = cmdSrcId != null && cmdSrcId.equals(serverId);
         boolean hasServer = serverId != null;
 
