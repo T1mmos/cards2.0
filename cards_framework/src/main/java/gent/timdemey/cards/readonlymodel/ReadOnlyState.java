@@ -11,6 +11,7 @@ public class ReadOnlyState extends ReadOnlyEntityBase<State>
     public static final ReadOnlyProperty<ReadOnlyCommandHistory> CommandHistory = ReadOnlyProperty.of(ReadOnlyCommandHistory.class, State.CommandHistory);
     public static final ReadOnlyProperty<ReadOnlyConfiguration> Configuration = ReadOnlyProperty.of(ReadOnlyConfiguration.class, State.Configuration);
     public static final ReadOnlyProperty<GameState> GameState = ReadOnlyProperty.of(State.GameState);
+    public static final ReadOnlyProperty<UUID> LocalId = ReadOnlyProperty.of(State.LocalId);
     public static final ReadOnlyProperty<UUID> LobbyAdminId = ReadOnlyProperty.of(State.LobbyAdminId);
     public static final ReadOnlyProperty<String> LocalName = ReadOnlyProperty.of(State.LocalName);
     public static final ReadOnlyProperty<ReadOnlyPlayer> Players = ReadOnlyProperty.of(ReadOnlyPlayer.class, State.Players);
@@ -60,7 +61,7 @@ public class ReadOnlyState extends ReadOnlyEntityBase<State>
     
     public UUID getLocalId()
     {
-        return entity.id;
+        return entity.getLocalId();
     }
     
     public ReadOnlyPlayer getLocalPlayer()
@@ -71,11 +72,6 @@ public class ReadOnlyState extends ReadOnlyEntityBase<State>
     public String getServerMessage()
     {
         return entity.getServerMessage();
-    }
-
-    public UUID getServerId()
-    {
-        return entity.getServerId();
     }
 
     public UUID getLobbyAdminId()

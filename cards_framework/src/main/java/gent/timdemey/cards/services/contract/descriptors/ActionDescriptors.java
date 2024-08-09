@@ -1,6 +1,6 @@
 package gent.timdemey.cards.services.contract.descriptors;
 
-import gent.timdemey.cards.model.entities.commands.payload.P_SaveState;
+import gent.timdemey.cards.model.entities.commands.cfg.P_SaveState;
 
 public class ActionDescriptors
 {

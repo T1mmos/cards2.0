@@ -1,0 +1,96 @@
+package gent.timdemey.cards.model.entities.commands.game;
+
+import gent.timdemey.cards.model.entities.commands.admin.C_StopServer;
+import gent.timdemey.cards.model.entities.commands.net.C_TCP_ClientDisconnect;
+import gent.timdemey.cards.di.Container;
+import java.util.UUID;
+
+import gent.timdemey.cards.logging.Logger;
+import gent.timdemey.cards.model.entities.commands.net.C_TCP_ClientDisconnect.DisconnectReason;
+import gent.timdemey.cards.model.entities.commands.game.C_OnGameToLobby.GameToLobbyReason;
+import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.CommandBase;
+import gent.timdemey.cards.model.entities.commands.CommandFactory;
+import gent.timdemey.cards.model.entities.state.GameState;
+import gent.timdemey.cards.model.entities.state.Player;
+import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.utils.Debug;
+
+public class C_RemovePlayer extends CommandBase
+{
+    public final UUID playerId;
+    private final Logger _Logger;
+    private final CommandFactory _CommandFactory;
+
+    public C_RemovePlayer(
+        Container container, CommandFactory commandFactory, Logger logger, 
+        P_RemovePlayer parameters)
+    {
+        super(container, parameters);
+        
+        this._CommandFactory = commandFactory;
+        this._Logger = logger;
+        
+        this.playerId = parameters.playerId;
+    }
+
+    @Override
+    public CanExecuteResponse canExecute()
+    {
+        if(_State.getGameState() == GameState.Disconnected)
+        {
+            return CanExecuteResponse.no("A player cannot leave in the Disconnected state");
+        }
+        if(!_State.getPlayers().contains(playerId))
+        {
+            return CanExecuteResponse.no("PlayerId " + playerId + " was not found in the State.Players");
+        }
+        return CanExecuteResponse.yes();
+    }
+
+    @Override
+    public void execute()
+    {
+        Player player_removed = removePlayer(playerId);
+
+        if(_ContextType == ContextType.Server)
+        {
+            if(_State.getLobbyAdminId().equals(player_removed.id))
+            {
+                // when the lobby admin leaves, server should stop, so make
+                // everyone disconnect gracefully, then stop the server
+                C_TCP_ClientDisconnect cmd_leavelobby = _CommandFactory.CreateTCPClientDisconnect(DisconnectReason.LobbyAdminLeft);      
+                send(_State.getRemotePlayerIds(), cmd_leavelobby);                
+                
+                C_StopServer cmd_stopserver = _CommandFactory.CreateStopServer();
+                run(cmd_stopserver);
+            }
+            else 
+            {
+                // inform all clients
+                send(_State.getRemotePlayerIds(), this);  
+                
+                if(_State.getGameState() != GameState.Lobby)
+                {
+                    // while ingame, we force every remaining player back to the lobby
+                    C_OnGameToLobby cmd_ongametolobby = _CommandFactory.CreateOnGameToLobby(GameToLobbyReason.PlayerLeft);
+                    run(cmd_ongametolobby);
+                }
+            }
+        }
+    }
+
+    private Player removePlayer(UUID playerId)
+    {
+        Player player = _State.getPlayers().remove(playerId);
+        _Logger.info("Removed player %s, id=%s", player.getName(), player.id);
+        return player;
+    }
+
+    @Override
+    public String toDebugString()
+    {
+        return Debug.getKeyValue("playerId", playerId);
+    }
+
+}

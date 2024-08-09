@@ -7,8 +7,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
+import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.ExecutionState;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.delta.EntityStateListRef;
 import gent.timdemey.cards.model.delta.IChangeTracker;

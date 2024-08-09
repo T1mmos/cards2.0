@@ -1,52 +1,47 @@
 package gent.timdemey.cards.serialization.mappers;
 
 import gent.timdemey.cards.di.Container;
-import gent.timdemey.cards.model.entities.commands.C_Accept;
-import gent.timdemey.cards.model.entities.commands.C_DenyClient;
-import gent.timdemey.cards.model.entities.commands.C_Disconnect;
-import gent.timdemey.cards.model.entities.commands.C_Disconnect.DisconnectReason;
-import gent.timdemey.cards.model.entities.commands.C_EnterLobby;
-import gent.timdemey.cards.model.entities.commands.C_Move;
-import gent.timdemey.cards.model.entities.commands.C_OnGameEnded;
-import gent.timdemey.cards.model.entities.commands.C_OnGameToLobby;
-import gent.timdemey.cards.model.entities.commands.C_OnGameToLobby.GameToLobbyReason;
-import gent.timdemey.cards.model.entities.commands.C_OnLobbyPlayerJoined;
-import gent.timdemey.cards.model.entities.commands.C_OnLobbyToGame;
-import gent.timdemey.cards.model.entities.commands.C_OnLobbyWelcome;
-import gent.timdemey.cards.model.entities.commands.C_Reject;
-import gent.timdemey.cards.model.entities.commands.C_RemovePlayer;
-import gent.timdemey.cards.model.entities.commands.C_StartMultiplayerGame;
-import gent.timdemey.cards.model.entities.commands.C_TCP_NOK;
-import gent.timdemey.cards.model.entities.commands.C_TCP_NOK.TcpNokReason;
-import gent.timdemey.cards.model.entities.commands.C_TCP_OK;
-import gent.timdemey.cards.model.entities.commands.C_UDP_Request;
-import gent.timdemey.cards.model.entities.commands.C_UDP_Response;
+import gent.timdemey.cards.model.entities.commands.meta.C_Accept;
+import gent.timdemey.cards.model.entities.commands.net.C_TCP_ClientDisconnect;
+import gent.timdemey.cards.model.entities.commands.net.C_TCP_ClientDisconnect.DisconnectReason;
+import gent.timdemey.cards.model.entities.commands.lobby.C_Enter;
+import gent.timdemey.cards.model.entities.commands.game.C_Move;
+import gent.timdemey.cards.model.entities.commands.game.C_OnGameEnded;
+import gent.timdemey.cards.model.entities.commands.game.C_OnGameToLobby;
+import gent.timdemey.cards.model.entities.commands.game.C_OnGameToLobby.GameToLobbyReason;
+import gent.timdemey.cards.model.entities.commands.lobby.C_HandlePlayerJoined;
+import gent.timdemey.cards.model.entities.commands.lobby.C_HandleGameStarted;
+import gent.timdemey.cards.model.entities.commands.lobby.C_OnWelcome;
+import gent.timdemey.cards.model.entities.commands.meta.C_Reject;
+import gent.timdemey.cards.model.entities.commands.game.C_RemovePlayer;
+import gent.timdemey.cards.model.entities.commands.admin.C_StartMultiplayerGame;
+import gent.timdemey.cards.model.entities.commands.net.C_TCP_HandleRejected;
+import gent.timdemey.cards.model.entities.commands.net.C_TCP_HandleRejected.TcpNokReason;
+import gent.timdemey.cards.model.entities.commands.net.C_TCP_HandleAccepted;
+import gent.timdemey.cards.model.entities.commands.net.C_UDP_GetServerInfoRequest;
+import gent.timdemey.cards.model.entities.commands.net.C_UDP_GetServerInfoResponse;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CommandFactory;
-import gent.timdemey.cards.model.entities.commands.payload.CommandPayloadBase;
-import gent.timdemey.cards.model.entities.commands.payload.P_Accept;
-import gent.timdemey.cards.model.entities.commands.payload.P_DenyClient;
-import gent.timdemey.cards.model.entities.commands.payload.P_Disconnect;
-import gent.timdemey.cards.model.entities.commands.payload.P_EnterLobby;
-import gent.timdemey.cards.model.entities.commands.payload.P_Move;
-import gent.timdemey.cards.model.entities.commands.payload.P_OnGameEnded;
-import gent.timdemey.cards.model.entities.commands.payload.P_OnGameToLobby;
-import gent.timdemey.cards.model.entities.commands.payload.P_OnLobbyPlayerJoined;
-import gent.timdemey.cards.model.entities.commands.payload.P_OnLobbyToGame;
-import gent.timdemey.cards.model.entities.commands.payload.P_OnLobbyWelcome;
-import gent.timdemey.cards.model.entities.commands.payload.P_Reject;
-import gent.timdemey.cards.model.entities.commands.payload.P_RemovePlayer;
-import gent.timdemey.cards.model.entities.commands.payload.P_StartMultiplayerGame;
-import gent.timdemey.cards.model.entities.commands.payload.P_TCP_NOK;
-import gent.timdemey.cards.model.entities.commands.payload.P_TCP_OK;
-import gent.timdemey.cards.model.entities.commands.payload.P_UDP_Request;
-import gent.timdemey.cards.model.entities.commands.payload.P_UDP_Response;
-import gent.timdemey.cards.model.entities.common.PayloadBase;
+import gent.timdemey.cards.model.entities.commands.CommandPayloadBase;
+import gent.timdemey.cards.model.entities.commands.meta.P_Accept;
+import gent.timdemey.cards.model.entities.commands.net.P_TCP_ClientDisconnect;
+import gent.timdemey.cards.model.entities.commands.lobby.P_Enter;
+import gent.timdemey.cards.model.entities.commands.game.P_Move;
+import gent.timdemey.cards.model.entities.commands.game.P_OnGameEnded;
+import gent.timdemey.cards.model.entities.commands.game.P_OnGameToLobby;
+import gent.timdemey.cards.model.entities.commands.lobby.P_HandlePlayerJoined;
+import gent.timdemey.cards.model.entities.commands.lobby.P_HandleGameStarted;
+import gent.timdemey.cards.model.entities.commands.lobby.P_OnWelcome;
+import gent.timdemey.cards.model.entities.commands.meta.P_Reject;
+import gent.timdemey.cards.model.entities.commands.game.P_RemovePlayer;
+import gent.timdemey.cards.model.entities.commands.admin.P_StartMultiplayerGame;
+import gent.timdemey.cards.model.entities.commands.net.P_TCP_HandleRejected;
+import gent.timdemey.cards.model.entities.commands.net.P_TCP_HandleAccepted;
+import gent.timdemey.cards.model.entities.commands.net.P_UDP_GetServerInfoRequest;
+import gent.timdemey.cards.model.entities.commands.net.P_UDP_GetServerInfoResponse;
 import gent.timdemey.cards.model.entities.state.Player;
-import gent.timdemey.cards.serialization.dto.EntityBaseDto;
 import gent.timdemey.cards.serialization.dto.cards.PlayerDto;
 import gent.timdemey.cards.serialization.dto.commands.C_AcceptDto;
-import gent.timdemey.cards.serialization.dto.commands.C_DenyClientDto;
 import gent.timdemey.cards.serialization.dto.commands.C_DisconnectDto;
 import gent.timdemey.cards.serialization.dto.commands.C_EnterLobbyDto;
 import gent.timdemey.cards.serialization.dto.commands.C_MoveDto;
@@ -75,39 +70,37 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {        
         // domain objects to DTO
         mapperDefs.addMapping(C_Accept.class, C_AcceptDto.class, this::toDto);
-        mapperDefs.addMapping(C_DenyClient.class, C_DenyClientDto.class, this::toDto);
-        mapperDefs.addMapping(C_Disconnect.class, C_DisconnectDto.class, this::toDto);
+        mapperDefs.addMapping(C_TCP_ClientDisconnect.class, C_DisconnectDto.class, this::toDto);
         mapperDefs.addMapping(C_OnGameToLobby.class, C_OnGameToLobbyDto.class, this::toDto);
         mapperDefs.addMapping(C_OnGameEnded.class, C_OnGameEndedDto.class, this::toDto);
         mapperDefs.addMapping(C_RemovePlayer.class, C_RemovePlayerDto.class, this::toDto);
-        mapperDefs.addMapping(C_EnterLobby.class, C_EnterLobbyDto.class, this::toDto);
-        mapperDefs.addMapping(C_OnLobbyPlayerJoined.class, C_OnLobbyPlayerJoinedDto.class, this::toDto);
-        mapperDefs.addMapping(C_OnLobbyWelcome.class, C_OnLobbyWelcomeDto.class, this::toDto);
-        mapperDefs.addMapping(C_OnLobbyToGame.class, C_OnMultiplayerGameStartedDto.class, this::toDto);
+        mapperDefs.addMapping(C_Enter.class, C_EnterLobbyDto.class, this::toDto);
+        mapperDefs.addMapping(C_HandlePlayerJoined.class, C_OnLobbyPlayerJoinedDto.class, this::toDto);
+        mapperDefs.addMapping(C_OnWelcome.class, C_OnLobbyWelcomeDto.class, this::toDto);
+        mapperDefs.addMapping(C_HandleGameStarted.class, C_OnMultiplayerGameStartedDto.class, this::toDto);
         mapperDefs.addMapping(C_Reject.class, C_RejectDto.class, this::toDto);
         mapperDefs.addMapping(C_StartMultiplayerGame.class, C_StartMultiplayerGameDto.class, this::toDto);
-        mapperDefs.addMapping(C_UDP_Request.class, C_UDP_RequestDto.class, this::toDto);
-        mapperDefs.addMapping(C_UDP_Response.class, C_UDP_ResponseDto.class, this::toDto);
-        mapperDefs.addMapping(C_TCP_NOK.class, C_TCP_NOKDto.class, this::toDto);
-        mapperDefs.addMapping(C_TCP_OK.class, C_TCP_OKDto.class, this::toDto);
+        mapperDefs.addMapping(C_UDP_GetServerInfoRequest.class, C_UDP_RequestDto.class, this::toDto);
+        mapperDefs.addMapping(C_UDP_GetServerInfoResponse.class, C_UDP_ResponseDto.class, this::toDto);
+        mapperDefs.addMapping(C_TCP_HandleRejected.class, C_TCP_NOKDto.class, this::toDto);
+        mapperDefs.addMapping(C_TCP_HandleAccepted.class, C_TCP_OKDto.class, this::toDto);
         
         // DTO to domain object
         mapperDefs.addMapping(C_AcceptDto.class, C_Accept.class, this::toCommand);
-        mapperDefs.addMapping(C_DenyClientDto.class, C_DenyClient.class, this::toCommand);
-        mapperDefs.addMapping(C_DisconnectDto.class, C_Disconnect.class, this::toCommand);
+        mapperDefs.addMapping(C_DisconnectDto.class, C_TCP_ClientDisconnect.class, this::toCommand);
         mapperDefs.addMapping(C_OnGameToLobbyDto.class, C_OnGameToLobby.class, this::toCommand);
         mapperDefs.addMapping(C_OnGameEndedDto.class, C_OnGameEnded.class, this::toCommand);
-        mapperDefs.addMapping(C_OnLobbyWelcomeDto.class, C_OnLobbyWelcome.class, this::toCommand);
+        mapperDefs.addMapping(C_OnLobbyWelcomeDto.class, C_OnWelcome.class, this::toCommand);
         mapperDefs.addMapping(C_RemovePlayerDto.class, C_RemovePlayer.class, this::toCommand);
-        mapperDefs.addMapping(C_EnterLobbyDto.class, C_EnterLobby.class, this::toCommand);
-        mapperDefs.addMapping(C_OnMultiplayerGameStartedDto.class, C_OnLobbyToGame.class, this::toCommand);
-        mapperDefs.addMapping(C_OnLobbyPlayerJoinedDto.class, C_OnLobbyPlayerJoined.class, this::toCommand);
+        mapperDefs.addMapping(C_EnterLobbyDto.class, C_Enter.class, this::toCommand);
+        mapperDefs.addMapping(C_OnMultiplayerGameStartedDto.class, C_HandleGameStarted.class, this::toCommand);
+        mapperDefs.addMapping(C_OnLobbyPlayerJoinedDto.class, C_HandlePlayerJoined.class, this::toCommand);
         mapperDefs.addMapping(C_RejectDto.class, C_Reject.class, this::toCommand);
         mapperDefs.addMapping(C_StartMultiplayerGameDto.class, C_StartMultiplayerGame.class, this::toCommand);
-        mapperDefs.addMapping(C_UDP_RequestDto.class, C_UDP_Request.class, this::toCommand);
-        mapperDefs.addMapping(C_UDP_ResponseDto.class, C_UDP_Response.class, this::toCommand);
-        mapperDefs.addMapping(C_TCP_NOKDto.class, C_TCP_NOK.class, this::toCommand);
-        mapperDefs.addMapping(C_TCP_OKDto.class, C_TCP_OK.class, this::toCommand);
+        mapperDefs.addMapping(C_UDP_RequestDto.class, C_UDP_GetServerInfoRequest.class, this::toCommand);
+        mapperDefs.addMapping(C_UDP_ResponseDto.class, C_UDP_GetServerInfoResponse.class, this::toCommand);
+        mapperDefs.addMapping(C_TCP_NOKDto.class, C_TCP_HandleRejected.class, this::toCommand);
+        mapperDefs.addMapping(C_TCP_OKDto.class, C_TCP_HandleAccepted.class, this::toCommand);
     }
     
     public CommandDtoMapper(Container container)
@@ -130,7 +123,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         return command;
     }
 
-    private C_UDP_RequestDto toDto(C_UDP_Request cmd)
+    private C_UDP_RequestDto toDto(C_UDP_GetServerInfoRequest cmd)
     {
         C_UDP_RequestDto dto = new C_UDP_RequestDto();
         {
@@ -139,16 +132,16 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         return dto;
     }
 
-    private C_UDP_Request toCommand(C_UDP_RequestDto dto)
+    private C_UDP_GetServerInfoRequest toCommand(C_UDP_RequestDto dto)
     {        
-        P_UDP_Request pl = new P_UDP_Request();
+        P_UDP_GetServerInfoRequest pl = new P_UDP_GetServerInfoRequest();
         {
             mergeCommandBaseDtoToPayload(dto, pl);
         }        
-        return _CommandFactory.CreateUDPRequest(pl);
+        return _CommandFactory.CreateUDPGetServerInfoRequest(pl);
     }
 
-    private C_UDP_ResponseDto toDto(C_UDP_Response cmd)
+    private C_UDP_ResponseDto toDto(C_UDP_GetServerInfoResponse cmd)
     {
         C_UDP_ResponseDto dto = new C_UDP_ResponseDto();              
         {
@@ -159,9 +152,9 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         return dto;
     }
     
-    private C_UDP_Response toCommand(C_UDP_ResponseDto dto)
+    private C_UDP_GetServerInfoResponse toCommand(C_UDP_ResponseDto dto)
     {
-        P_UDP_Response pl = new P_UDP_Response();
+        P_UDP_GetServerInfoResponse pl = new P_UDP_GetServerInfoResponse();
         {
             mergeCommandBaseDtoToPayload(dto, pl);
             
@@ -169,26 +162,8 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         };
         return _CommandFactory.CreateUDPResponse(pl);
     }
-
-    private C_DenyClientDto toDto (C_DenyClient cmd)
-    {
-        C_DenyClientDto dto = new C_DenyClientDto();
-        {
-            mergeCommandBaseToDto(cmd, dto);
-        }
-        return dto;
-    }
     
-    private C_DenyClient toCommand(C_DenyClientDto dto)
-    {
-        P_DenyClient pl = new P_DenyClient();
-        {
-            mergeCommandBaseDtoToPayload(dto, pl);
-        }
-        return _CommandFactory.CreateDenyClient(pl.id);        
-    }
-    
-    private C_DisconnectDto toDto (C_Disconnect cmd)
+    private C_DisconnectDto toDto (C_TCP_ClientDisconnect cmd)
     {
         C_DisconnectDto dto = new C_DisconnectDto();
         {
@@ -199,15 +174,15 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         return dto;
     }
     
-    private C_Disconnect toCommand(C_DisconnectDto dto)
+    private C_TCP_ClientDisconnect toCommand(C_DisconnectDto dto)
     {
-        P_Disconnect pl = new P_Disconnect();
+        P_TCP_ClientDisconnect pl = new P_TCP_ClientDisconnect();
         {
             mergeCommandBaseDtoToPayload(dto, pl);
             
             pl.reason = toEnum(DisconnectReason.class, dto.reason);
         }
-        return _CommandFactory.CreateDisconnect(pl);        
+        return _CommandFactory.CreateTCPClientDisconnect(pl);        
     }
     
     private C_OnGameToLobbyDto toDto (C_OnGameToLobby cmd)
@@ -254,30 +229,28 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         return _CommandFactory.CreateRemovePlayer(pl);        
     }
     
-    private C_EnterLobbyDto toDto(C_EnterLobby cmd)
+    private C_EnterLobbyDto toDto(C_Enter cmd)
     {
         C_EnterLobbyDto dto = new C_EnterLobbyDto();
         {
             mergeCommandBaseToDto(cmd, dto);  
             
-            dto.clientId = CommonMapper.toDto(cmd.clientId);
             dto.clientName = cmd.clientName;
         }
         return dto;
     }
     
-    private C_EnterLobby toCommand(C_EnterLobbyDto dto)
+    private C_Enter toCommand(C_EnterLobbyDto dto)
     {
-        P_EnterLobby pl = new P_EnterLobby();
+        P_Enter pl = new P_Enter();
         {
             mergeCommandBaseDtoToPayload(dto, pl);
-            pl.clientId = CommonMapper.toUuid(dto.clientId);
             pl.clientName = dto.clientName;
         }        
         return _CommandFactory.CreateEnterLobby(pl);
     }
     
-    private C_OnLobbyWelcomeDto toDto(C_OnLobbyWelcome cmd)
+    private C_OnLobbyWelcomeDto toDto(C_OnWelcome cmd)
     {
         C_OnLobbyWelcomeDto dto = new C_OnLobbyWelcomeDto();
         {
@@ -291,9 +264,9 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         return dto;
     }
     
-    private C_OnLobbyWelcome toCommand(C_OnLobbyWelcomeDto dto)
+    private C_OnWelcome toCommand(C_OnLobbyWelcomeDto dto)
     {
-        P_OnLobbyWelcome pl = new P_OnLobbyWelcome();
+        P_OnWelcome pl = new P_OnWelcome();
         {
             mergeCommandBaseDtoToPayload(dto, pl);
             pl.clientId = toUuid(dto.clientId);
@@ -305,7 +278,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         return _CommandFactory.CreateOnLobbyWelcome(pl);
     }
     
-    private C_OnLobbyPlayerJoinedDto toDto(C_OnLobbyPlayerJoined cmd)
+    private C_OnLobbyPlayerJoinedDto toDto(C_HandlePlayerJoined cmd)
     {
         C_OnLobbyPlayerJoinedDto dto = new C_OnLobbyPlayerJoinedDto();
         {
@@ -316,9 +289,9 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         return dto;
     }
     
-    private C_OnLobbyPlayerJoined toCommand(C_OnLobbyPlayerJoinedDto dto)
+    private C_HandlePlayerJoined toCommand(C_OnLobbyPlayerJoinedDto dto)
     {
-        P_OnLobbyPlayerJoined pl = new P_OnLobbyPlayerJoined();
+        P_HandlePlayerJoined pl = new P_HandlePlayerJoined();
         {
             mergeCommandBaseDtoToPayload(dto, pl);
             
@@ -345,7 +318,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         return _CommandFactory.CreateStartMultiplayerGame(pl);
     }
     
-    private C_OnMultiplayerGameStartedDto toDto(C_OnLobbyToGame cmd)
+    private C_OnMultiplayerGameStartedDto toDto(C_HandleGameStarted cmd)
     {
         C_OnMultiplayerGameStartedDto dto = new C_OnMultiplayerGameStartedDto();
         {
@@ -356,9 +329,9 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         return dto;
     }
     
-    private C_OnLobbyToGame toCommand(C_OnMultiplayerGameStartedDto dto)
+    private C_HandleGameStarted toCommand(C_OnMultiplayerGameStartedDto dto)
     {
-        P_OnLobbyToGame pl = new P_OnLobbyToGame();
+        P_HandleGameStarted pl = new P_HandleGameStarted();
         {
             mergeCommandBaseDtoToPayload(dto, pl);
             
@@ -426,12 +399,14 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
     {
         mergeEntityBaseToDto(cmd, dto);
         dto.creatorId = CommonMapper.toDto(cmd.creatorId);
+        dto.creatorContextType = CommonMapper.toDto(cmd.creatorContextType);
     }
     
     private static void mergeCommandBaseDtoToPayload(CommandBaseDto dto, CommandPayloadBase pl)
     {
         mergeDtoBaseToPayload(dto, pl);
         pl.creatorId = CommonMapper.toUuid(dto.creatorId);
+        pl.creatorContextType = CommonMapper.toContextType(dto.creatorContextType);
     }
     
     private C_OnGameEnded toCommand(C_OnGameEndedDto dto)
@@ -444,7 +419,7 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         return _CommandFactory.CreateOnGameEnded(pl);
     }
     
-    private C_TCP_OKDto toDto(C_TCP_OK cmd)
+    private C_TCP_OKDto toDto(C_TCP_HandleAccepted cmd)
     {
         C_TCP_OKDto dto = new C_TCP_OKDto();
         {
@@ -453,16 +428,16 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         return dto;
     }
     
-    private C_TCP_OK toCommand(C_TCP_OKDto dto)
+    private C_TCP_HandleAccepted toCommand(C_TCP_OKDto dto)
     {
-        P_TCP_OK pl = new P_TCP_OK();
+        P_TCP_HandleAccepted pl = new P_TCP_HandleAccepted();
         {
             mergeCommandBaseDtoToPayload(dto, pl);
         }
-        return _CommandFactory.CreateTCPOK(pl);
+        return _CommandFactory.CreateTCPHandleAccepted(pl);
     }
     
-    private C_TCP_NOKDto toDto(C_TCP_NOK cmd)
+    private C_TCP_NOKDto toDto(C_TCP_HandleRejected cmd)
     {
         C_TCP_NOKDto dto = new C_TCP_NOKDto();
         {
@@ -472,14 +447,14 @@ public class CommandDtoMapper extends EntityBaseDtoMapper
         return dto;
     }
     
-    private C_TCP_NOK toCommand(C_TCP_NOKDto dto)
+    private C_TCP_HandleRejected toCommand(C_TCP_NOKDto dto)
     {
-        P_TCP_NOK pl = new P_TCP_NOK();
+        P_TCP_HandleRejected pl = new P_TCP_HandleRejected();
         {
             mergeCommandBaseDtoToPayload(dto, pl);
             pl.reason = toEnum(TcpNokReason.class, dto.reason);
         }
-        return _CommandFactory.CreateTCPNOK(pl);
+        return _CommandFactory.CreateTCPHandleRejected(pl);
     }
     
     private <T extends Enum<T>> String toDto (T enumInst)

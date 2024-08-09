@@ -13,11 +13,11 @@ import javax.swing.KeyStroke;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.model.entities.commands.C_Disconnect.DisconnectReason;
+import gent.timdemey.cards.model.entities.commands.net.C_TCP_ClientDisconnect.DisconnectReason;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CommandFactory;
-import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.payload.P_SaveState;
+import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.cfg.P_SaveState;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.ButtonState;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
@@ -386,7 +386,7 @@ public class ActionService implements IActionService
         }
         else if (desc == ActionDescriptors.LEAVEMP)
         {
-            return _CommandFactory.CreateDisconnect(DisconnectReason.LocalPlayerLeft);
+            return _CommandFactory.CreateTCPClientDisconnect(DisconnectReason.LocalPlayerLeft);
         }
         else if (desc == ActionDescriptors.REDO)
         {

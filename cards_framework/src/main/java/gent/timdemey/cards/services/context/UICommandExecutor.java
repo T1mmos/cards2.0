@@ -8,15 +8,15 @@ import javax.swing.SwingUtilities;
 
 
 import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.model.entities.commands.C_Accept;
-import gent.timdemey.cards.model.entities.commands.C_Reject;
+import gent.timdemey.cards.model.entities.commands.meta.C_Accept;
+import gent.timdemey.cards.model.entities.commands.meta.C_Reject;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CommandFactory;
 import gent.timdemey.cards.model.entities.state.CommandExecution;
 import gent.timdemey.cards.model.entities.commands.CommandType;
-import gent.timdemey.cards.model.entities.commands.C_ShowReexecutionFail;
-import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
+import gent.timdemey.cards.model.entities.commands.dialogs.C_ShowReexecutionFail;
+import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.ExecutionState;
 import gent.timdemey.cards.model.entities.state.State;
 
 public class UICommandExecutor implements ICommandExecutor
@@ -61,17 +61,17 @@ public class UICommandExecutor implements ICommandExecutor
         _Logger.info("Executing '%s', id=%s...", command.getName(), command.id);
 
         CommandType cmdType = command.getCommandType();
-        UUID localId = _State.id;
-        UUID serverId = _State.getServerId();
-        UUID cmdSrcId = command.creatorId;
+        UUID localId = _State.getLocalId();
+        UUID serverId = _State.getServer() != null ? _State.getServer().id : null;
         
-        boolean src_local = cmdSrcId != null && cmdSrcId.equals(localId);
-        boolean src_server = cmdSrcId != null && cmdSrcId.equals(serverId);
+        // localId is allowed to be null for some commands during startup
+        boolean src_local = command.creatorContextType == ContextType.UI && (localId == null || (command.creatorId != null && command.creatorId.equals(localId)));
+        boolean src_server = command.creatorContextType == ContextType.Server;
         boolean hasServer = serverId != null;
 
         if(!src_local && !src_server)
         {
-            throw new IllegalArgumentException("A command's source must either be local or the server");
+            throw new IllegalArgumentException("A command's source must either be local or the server: creatorContextType='" + command.creatorContextType + "', creatorId='" + command.creatorId + "', localId='" + localId + "'");
         }
 
         CanExecuteResponse resp = command.canExecute();

@@ -14,11 +14,13 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyProperty;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.readonlymodel.TypedChange;
 import gent.timdemey.cards.model.delta.ChangeType;
+import gent.timdemey.cards.readonlymodel.ReadOnlyEntityList;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
 import gent.timdemey.cards.services.contract.descriptors.PanelButtonDescriptor;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 import gent.timdemey.cards.ui.panels.DataPanelManagerBase;
+import java.util.UUID;
 import net.miginfocom.swing.MigLayout;
 
 public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void>
@@ -90,7 +92,10 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
         panel.setLayout(new MigLayout("insets 0, wmin 300"));
                 
         this.l_serverMsg = new JLabel(state.getServerMessage());
-        this.l_localPlayer = new JLabel(state.getPlayers().get(state.getLocalId()).getName(), JLabel.RIGHT);
+        ReadOnlyEntityList<ReadOnlyPlayer> players = state.getPlayers();
+        UUID localId = state.getLocalId();
+        ReadOnlyPlayer player = players.get(localId);
+        this.l_localPlayer = new JLabel(player.getName(), JLabel.RIGHT);
         this.b_startGame = new JButton(_ActionService.getAction(ActionDescriptors.STARTMP));
         
         String lobbyAdminName = state.getPlayers().get(state.getLobbyAdminId()).getName();

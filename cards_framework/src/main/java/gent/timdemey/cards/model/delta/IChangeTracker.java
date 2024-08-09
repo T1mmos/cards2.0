@@ -2,9 +2,6 @@ package gent.timdemey.cards.model.delta;
 
 import java.util.List;
 
-import gent.timdemey.cards.model.delta.StateListRef;
-import gent.timdemey.cards.model.delta.StateValueRef;
-
 public interface IChangeTracker
 {
     <X> void recordRefSet(StateValueRef<X> reference, X oldValue, X newValue);

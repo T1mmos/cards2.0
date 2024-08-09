@@ -2,14 +2,14 @@ package gent.timdemey.cards.services.context;
 
 
 import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.model.entities.commands.C_Accept;
-import gent.timdemey.cards.model.entities.commands.C_Reject;
+import gent.timdemey.cards.model.entities.commands.meta.C_Accept;
+import gent.timdemey.cards.model.entities.commands.meta.C_Reject;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CommandFactory;
 import gent.timdemey.cards.model.entities.state.CommandHistory;
 import gent.timdemey.cards.model.entities.commands.CommandType;
-import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
+import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
+import gent.timdemey.cards.model.entities.commands.ExecutionState;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 

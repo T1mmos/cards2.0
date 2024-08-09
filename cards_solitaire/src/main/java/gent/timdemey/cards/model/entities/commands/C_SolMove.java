@@ -1,5 +1,8 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.model.entities.commands.game.C_Move;
+import gent.timdemey.cards.model.entities.commands.game.C_Pull;
+import gent.timdemey.cards.model.entities.commands.game.C_Push;
 import gent.timdemey.cards.di.Container;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,8 +12,7 @@ import java.util.UUID;
 import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.model.entities.state.CardStack;
-import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.payload.P_Move;
+import gent.timdemey.cards.model.entities.commands.game.P_Move;
 import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes;
 
 /**

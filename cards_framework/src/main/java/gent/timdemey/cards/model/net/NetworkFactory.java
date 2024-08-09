@@ -5,7 +5,6 @@
 package gent.timdemey.cards.model.net;
 
 import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.model.entities.commands.C_OnTcpConnectionAdded;
 import java.net.Socket;
 import java.util.function.Consumer;
 
@@ -27,9 +26,9 @@ public class NetworkFactory
         return new TCP_Connection(_Logger, name, socket, connectionPool);
     }
 
-    public UDP_ServiceAnnouncer CreateUDPServiceAnnouncer(int udpport) 
+    public UDP_ServiceResponder CreateUDPServiceAnnouncer(int udpport) 
     {
-        return new UDP_ServiceAnnouncer(_Logger, udpport);
+        return new UDP_ServiceResponder(_Logger, udpport);
     }
 
     public TCP_ConnectionPool CreateTCPConnectionPool(String name, int playerCount, ITcpConnectionListener tcpConnListener) 

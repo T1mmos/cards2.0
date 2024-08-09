@@ -1,13 +1,13 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.model.entities.commands.game.C_Push;
 import gent.timdemey.cards.di.Container;
 import java.util.List;
 
 import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.state.CardValue;
-import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.payload.P_Push;
+import gent.timdemey.cards.model.entities.commands.game.P_Push;
 import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes;
 
 public class C_SolPush extends C_Push

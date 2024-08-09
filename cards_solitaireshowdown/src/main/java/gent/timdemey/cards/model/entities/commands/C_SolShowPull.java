@@ -1,5 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.model.entities.commands.game.C_Pull;
 import gent.timdemey.cards.di.Container;
 import java.util.List;
 import java.util.UUID;
@@ -7,8 +8,7 @@ import java.util.UUID;
 import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.state.SuitColor;
-import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.payload.P_Pull;
+import gent.timdemey.cards.model.entities.commands.game.P_Pull;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 
 public class C_SolShowPull extends C_Pull
@@ -30,7 +30,7 @@ public class C_SolShowPull extends C_Pull
         }
 
         UUID srcPlayerId = creatorId;
-        if (!srcPlayerId.equals(_State.getServerId())
+        if (!srcPlayerId.equals(_State.getServer().id)
                 && !srcPlayerId.equals(_State.getCardGame().getPlayerId(srcCardStack)))
         {
             return CanExecuteResponse.no("Can only pull from own stacks");

@@ -1,5 +1,6 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.model.entities.commands.game.C_Push;
 import gent.timdemey.cards.di.Container;
 import java.util.List;
 import java.util.UUID;
@@ -7,8 +8,7 @@ import java.util.UUID;
 import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.state.CardValue;
-import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.payload.P_Push;
+import gent.timdemey.cards.model.entities.commands.game.P_Push;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 
 public class C_SolShowPush extends C_Push
@@ -33,7 +33,7 @@ public class C_SolShowPush extends C_Push
         if (dstCardStack.cardStackType.equals(SolShowCardStackType.MIDDLE))
         {
             UUID playerId = creatorId;
-            if (!playerId.equals(_State.getServerId())
+            if (!playerId.equals(_State.getServer().id)
                     && !playerId.equals(_State.getCardGame().getPlayerId(dstCardStack)))
             {
                 return CanExecuteResponse.no("Can only push onto your own MIDDLE stacks");

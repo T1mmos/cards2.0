@@ -197,6 +197,8 @@ public final class Context
             return;
         }
         
+        _Logger.trace("Changes were detected in the Context. Notifying the IStateListener instances...");
+        
         // as some listeners may unregister themselves during updates, guard against
         // concurrency exceptions
         List<IStateListener> listeners = new ArrayList<>(stateListeners);

@@ -4,6 +4,7 @@
  */
 package gent.timdemey.cards.model.entities.config;
 
+import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.delta.IChangeTracker;
 import java.util.UUID;
 
@@ -15,7 +16,7 @@ public class ConfigurationFactory
 {
     private final IChangeTracker _ChangeTracker;
     
-    public ConfigurationFactory(IChangeTracker changeTracker)
+    public ConfigurationFactory(IChangeTracker changeTracker, Logger logger)
     {
         this._ChangeTracker = changeTracker;
     }

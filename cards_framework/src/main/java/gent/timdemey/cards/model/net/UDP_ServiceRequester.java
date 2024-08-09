@@ -19,14 +19,14 @@ import gent.timdemey.cards.logging.Logger;
 /**
  * Broadcast a string on the network via UDP and listens for string answers. The
  * thread created runs until no more answers are received after a timeout
- * period. Users of this class receive answers (in string form) via a callback.
+ * period. Registered listeners receive responses (string).
  * 
  * @author Timmos
  */
 public final class UDP_ServiceRequester
 {
-    private static String UDP_SERVICE_REQUEST_THREAD_NAME = "UI :: UDP Service Requester";
-    private static int UDP_SERVICE_REQUEST_TIMEOUT = 10000;
+    private final static String UDP_SERVICE_REQUEST_THREAD_NAME = "UI :: UDP Service Requester";
+    private final static int UDP_SERVICE_REQUEST_TIMEOUT = 10000;
 
     private DatagramSocket dsocket = null;
     private Thread thread = null;

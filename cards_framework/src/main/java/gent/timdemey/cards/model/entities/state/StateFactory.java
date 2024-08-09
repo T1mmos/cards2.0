@@ -16,6 +16,7 @@ import gent.timdemey.cards.model.entities.state.payload.P_Player;
 import gent.timdemey.cards.model.entities.state.payload.P_PlayerConfiguration;
 import gent.timdemey.cards.model.entities.state.payload.P_ServerTCP;
 import gent.timdemey.cards.model.entities.state.payload.P_ServerUDP;
+import gent.timdemey.cards.services.context.ContextType;
 import java.net.InetAddress;
 import java.util.List;
 import java.util.UUID;
@@ -27,12 +28,14 @@ import java.util.UUID;
 public class StateFactory 
 {
     private final IChangeTracker _ChangeTracker;
+    private final ContextType _ContextType;
     private final Logger _Logger;
     
     public StateFactory (
-        IChangeTracker changeTracker, Logger logger)
+        IChangeTracker changeTracker, ContextType contextType, Logger logger)
     {
         this._ChangeTracker = changeTracker;
+        this._ContextType = contextType;
         this._Logger = logger;
     }
     
@@ -143,12 +146,12 @@ public class StateFactory
                  
     public State CreateState() 
     {
-        return new State(_ChangeTracker, _Logger, UUID.randomUUID());
+        return new State(_ChangeTracker, _ContextType, _Logger, UUID.randomUUID());
     }
 
     public State CreateState(UUID id) 
     {
-        return new State(_ChangeTracker, _Logger, id);
+        return new State(_ChangeTracker, _ContextType, _Logger, id);
     }    
 
     public CommandExecution CreateCommandExecution(CommandBase cmd, CommandExecutionState commandExecutionState)

@@ -12,9 +12,9 @@ public class Configuration extends EntityBase
     public static final Property<Integer> ServerUdpPort = Property.of(Configuration.class, Integer.class, "ServerUdpPort");
     public static final Property<Integer> ClientUdpPort = Property.of(Configuration.class, Integer.class, "ClientUdpPort");
 
-    private StateValueRef<Integer> serverTcpPortRef;
-    private StateValueRef<Integer> serverUdpPortRef;
-    private StateValueRef<Integer> clientUdpPortRef;
+    private final StateValueRef<Integer> serverTcpPortRef;
+    private final StateValueRef<Integer> serverUdpPortRef;
+    private final StateValueRef<Integer> clientUdpPortRef;
     
     public Configuration(IChangeTracker changeTracker, UUID id)
     {

@@ -8,6 +8,7 @@ import gent.timdemey.cards.logging.LogLevel;
 import gent.timdemey.cards.logging.LogManager;
 import gent.timdemey.cards.model.delta.IChangeTracker;
 import gent.timdemey.cards.model.delta.StateChangeTracker;
+import gent.timdemey.cards.model.entities.commands.admin.P_StartServer;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.model.entities.state.StateFactory;
 import gent.timdemey.cards.server.StartServer;
@@ -66,29 +67,29 @@ public class Starter
         _CardPlugin.installCommonServices(container);
         _CardPlugin.installUIServices(container);
         
+        container.AddSingleton(ContextType.class, ContextType.UI);
         State state = container.Get(StateFactory.class).CreateState();
         container.AddSingleton(State.class, state);
-        container.AddSingleton(ContextType.class, ContextType.UI);
         container.AddSingleton(Context.class, Context.class);
         
         StartUI startUI = container.Get(StartUI.class);        
         startUI.startUI();
     }
     
-    public void startServer()
+    public void startServer(P_StartServer parameters)
     {
         Container container = _ContainerService.create(ContextType.Server);  
         installCommonServices(container);   
         installServerServices(container);
         _CardPlugin.installCommonServices(container);
                 
+        container.AddSingleton(ContextType.class, ContextType.Server);
         State state = container.Get(StateFactory.class).CreateState();
         container.AddSingleton(State.class, state);
-        container.AddSingleton(ContextType.class, ContextType.Server);
         container.AddSingleton(Context.class, Context.class);
         
         StartServer startServer = container.Get(StartServer.class);        
-        startServer.startServer();
+        startServer.startServer(parameters);
     }
         
     private void installCommonServices(Container container)

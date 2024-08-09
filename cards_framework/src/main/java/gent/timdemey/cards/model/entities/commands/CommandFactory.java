@@ -1,56 +1,94 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.model.entities.commands.dialogs.C_ClearServerList;
+import gent.timdemey.cards.model.entities.commands.game.C_RemovePlayer;
+import gent.timdemey.cards.model.entities.commands.game.C_OnGameToLobby;
+import gent.timdemey.cards.model.entities.commands.game.C_OnGameEnded;
+import gent.timdemey.cards.model.entities.commands.admin.C_StartServer;
+import gent.timdemey.cards.model.entities.commands.admin.C_StopServer;
+import gent.timdemey.cards.model.entities.commands.admin.C_StartMultiplayerGame;
+import gent.timdemey.cards.model.entities.commands.admin.C_StartLocalGame;
+import gent.timdemey.cards.model.entities.commands.meta.C_Composite;
+import gent.timdemey.cards.model.entities.commands.cfg.C_SaveState;
+import gent.timdemey.cards.model.entities.commands.net.CommandSchedulingTcpConnectionListener;
+import gent.timdemey.cards.model.entities.commands.meta.C_Undo;
+import gent.timdemey.cards.model.entities.commands.meta.C_Redo;
+import gent.timdemey.cards.model.entities.commands.meta.C_Accept;
+import gent.timdemey.cards.model.entities.commands.meta.C_Reject;
+import gent.timdemey.cards.model.entities.commands.dialogs.C_ShowLobby;
+import gent.timdemey.cards.model.entities.commands.dialogs.C_ShowToggleMenuMP;
+import gent.timdemey.cards.model.entities.commands.dialogs.C_ShowConnect;
+import gent.timdemey.cards.model.entities.commands.dialogs.C_ShowReexecutionFail;
+import gent.timdemey.cards.model.entities.commands.dialogs.C_ShowPlayerLeft;
+import gent.timdemey.cards.model.entities.commands.dialogs.C_ShowStartServer;
+import gent.timdemey.cards.model.entities.commands.lobby.C_OnWelcome;
+import gent.timdemey.cards.model.entities.commands.lobby.C_HandlePlayerJoined;
+import gent.timdemey.cards.model.entities.commands.lobby.C_Enter;
+import gent.timdemey.cards.model.entities.commands.lobby.C_HandleGameStarted;
+import gent.timdemey.cards.model.entities.commands.net.C_TCP_HandleNew;
+import gent.timdemey.cards.model.entities.commands.net.C_UDP_StartServerInfoRequestService;
+import gent.timdemey.cards.model.entities.commands.net.C_TCP_HandleClosed;
+import gent.timdemey.cards.model.entities.commands.net.C_TCP_ClientConnect;
+import gent.timdemey.cards.model.entities.commands.net.C_UDP_StopServerInfoRequestService;
+import gent.timdemey.cards.model.entities.commands.net.C_TCP_HandleAccepted;
+import gent.timdemey.cards.model.entities.commands.net.C_TCP_HandleRejected;
+import gent.timdemey.cards.model.entities.commands.net.C_UDP_GetServerInfoResponse;
+import gent.timdemey.cards.model.entities.commands.net.C_TCP_ClientDisconnect;
+import gent.timdemey.cards.model.entities.commands.net.C_UDP_GetServerInfoRequest;
+import gent.timdemey.cards.model.entities.commands.cfg.C_Load;
+import gent.timdemey.cards.model.entities.commands.cfg.C_Save;
+import gent.timdemey.cards.model.entities.commands.game.C_Pull;
+import gent.timdemey.cards.model.entities.commands.game.C_SetVisible;
+import gent.timdemey.cards.model.entities.commands.game.C_Move;
+import gent.timdemey.cards.model.entities.commands.game.C_Push;
+import gent.timdemey.cards.model.entities.commands.game.C_Use;
 import gent.timdemey.cards.di.Container;
-import gent.timdemey.cards.model.entities.commands.payload.CommandPayloadBase;
-import gent.timdemey.cards.model.entities.commands.payload.P_Accept;
-import gent.timdemey.cards.model.entities.commands.payload.P_ClearServerList;
-import gent.timdemey.cards.model.entities.commands.payload.P_DenyClient;
-import gent.timdemey.cards.model.entities.commands.payload.P_Disconnect;
-import gent.timdemey.cards.model.entities.commands.payload.P_EnterLobby;
-import gent.timdemey.cards.model.entities.commands.payload.P_OnGameToLobby;
-import gent.timdemey.cards.model.entities.commands.payload.P_OnLobbyPlayerJoined;
-import gent.timdemey.cards.model.entities.commands.payload.P_OnLobbyToGame;
-import gent.timdemey.cards.model.entities.commands.payload.P_OnLobbyWelcome;
-import gent.timdemey.cards.model.entities.commands.payload.P_OnTcpConnectionClosed;
-import gent.timdemey.cards.model.entities.commands.payload.P_Reject;
-import gent.timdemey.cards.model.entities.commands.payload.P_RemovePlayer;
-import gent.timdemey.cards.model.entities.commands.payload.P_StartMultiplayerGame;
-import gent.timdemey.cards.model.entities.commands.payload.P_StopServer;
-import gent.timdemey.cards.model.entities.commands.payload.P_TCP_NOK;
-import gent.timdemey.cards.model.entities.commands.payload.P_TCP_OK;
-import gent.timdemey.cards.model.entities.commands.payload.P_UDP_Request;
-import gent.timdemey.cards.model.entities.commands.payload.P_UDP_Response;
+import gent.timdemey.cards.model.entities.commands.meta.P_Accept;
+import gent.timdemey.cards.model.entities.commands.dialogs.P_ClearServerList;
+import gent.timdemey.cards.model.entities.commands.net.P_TCP_ClientDisconnect;
+import gent.timdemey.cards.model.entities.commands.lobby.P_Enter;
+import gent.timdemey.cards.model.entities.commands.game.P_OnGameToLobby;
+import gent.timdemey.cards.model.entities.commands.lobby.P_HandlePlayerJoined;
+import gent.timdemey.cards.model.entities.commands.lobby.P_HandleGameStarted;
+import gent.timdemey.cards.model.entities.commands.lobby.P_OnWelcome;
+import gent.timdemey.cards.model.entities.commands.net.P_TCP_HandleClosed;
+import gent.timdemey.cards.model.entities.commands.meta.P_Reject;
+import gent.timdemey.cards.model.entities.commands.game.P_RemovePlayer;
+import gent.timdemey.cards.model.entities.commands.admin.P_StartMultiplayerGame;
+import gent.timdemey.cards.model.entities.commands.admin.P_StopServer;
+import gent.timdemey.cards.model.entities.commands.net.P_TCP_HandleRejected;
+import gent.timdemey.cards.model.entities.commands.net.P_TCP_HandleAccepted;
+import gent.timdemey.cards.model.entities.commands.net.P_UDP_GetServerInfoRequest;
+import gent.timdemey.cards.model.entities.commands.net.P_UDP_GetServerInfoResponse;
 import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.model.entities.state.CommandExecution;
 import gent.timdemey.cards.model.entities.state.Player;
 import gent.timdemey.cards.model.entities.state.ServerUDP;
-import gent.timdemey.cards.model.entities.commands.payload.P_Connect;
-import gent.timdemey.cards.model.net.ITcpConnectionListener;
-import gent.timdemey.cards.model.entities.commands.payload.P_Composite;
-import gent.timdemey.cards.model.entities.commands.payload.P_HelloWorld;
-import gent.timdemey.cards.model.entities.commands.payload.P_LoadConfig;
-import gent.timdemey.cards.model.entities.commands.payload.P_Move;
-import gent.timdemey.cards.model.entities.commands.payload.P_OnGameEnded;
-import gent.timdemey.cards.model.entities.commands.payload.P_OnTcpConnectionAdded;
-import gent.timdemey.cards.model.entities.commands.payload.P_Pull;
-import gent.timdemey.cards.model.entities.commands.payload.P_Push;
-import gent.timdemey.cards.model.entities.commands.payload.P_ShowPlayerLeft;
-import gent.timdemey.cards.model.entities.commands.payload.P_Redo;
-import gent.timdemey.cards.model.entities.commands.payload.P_SaveConfig;
-import gent.timdemey.cards.model.entities.commands.payload.P_SaveState;
-import gent.timdemey.cards.model.entities.commands.payload.P_SetVisible;
-import gent.timdemey.cards.model.entities.commands.payload.P_ShowConnect;
-import gent.timdemey.cards.model.entities.commands.payload.P_ShowLobby;
-import gent.timdemey.cards.model.entities.commands.payload.P_ShowReexecutionFail;
-import gent.timdemey.cards.model.entities.commands.payload.P_ShowStartServer;
-import gent.timdemey.cards.model.entities.commands.payload.P_StartLocalGame;
-import gent.timdemey.cards.model.entities.commands.payload.P_StartServer;
-import gent.timdemey.cards.model.entities.commands.payload.P_ShowToggleMenuMP;
-import gent.timdemey.cards.model.entities.commands.payload.P_UDP_StartServiceRequester;
-import gent.timdemey.cards.model.entities.commands.payload.P_UDP_StopServiceRequester;
-import gent.timdemey.cards.model.entities.commands.payload.P_Undo;
-import gent.timdemey.cards.model.entities.commands.payload.P_Use;
+import gent.timdemey.cards.model.entities.commands.net.P_TCP_ClientConnect;
+import gent.timdemey.cards.model.entities.commands.meta.P_Composite;
+import gent.timdemey.cards.model.entities.commands.cfg.P_Load;
+import gent.timdemey.cards.model.entities.commands.game.P_Move;
+import gent.timdemey.cards.model.entities.commands.game.P_OnGameEnded;
+import gent.timdemey.cards.model.entities.commands.net.P_TCP_HandleNew;
+import gent.timdemey.cards.model.entities.commands.game.P_Pull;
+import gent.timdemey.cards.model.entities.commands.game.P_Push;
+import gent.timdemey.cards.model.entities.commands.dialogs.P_ShowPlayerLeft;
+import gent.timdemey.cards.model.entities.commands.meta.P_Redo;
+import gent.timdemey.cards.model.entities.commands.cfg.P_Save;
+import gent.timdemey.cards.model.entities.commands.cfg.P_SaveState;
+import gent.timdemey.cards.model.entities.commands.game.P_SetVisible;
+import gent.timdemey.cards.model.entities.commands.dialogs.P_ShowConnect;
+import gent.timdemey.cards.model.entities.commands.dialogs.P_ShowLobby;
+import gent.timdemey.cards.model.entities.commands.dialogs.P_ShowReexecutionFail;
+import gent.timdemey.cards.model.entities.commands.dialogs.P_ShowStartServer;
+import gent.timdemey.cards.model.entities.commands.admin.P_StartLocalGame;
+import gent.timdemey.cards.model.entities.commands.admin.P_StartServer;
+import gent.timdemey.cards.model.entities.commands.dialogs.P_ShowToggleMenuMP;
+import gent.timdemey.cards.model.entities.commands.net.P_UDP_StartServerInfoRequestService;
+import gent.timdemey.cards.model.entities.commands.net.P_UDP_StopServerInfoRequestService;
+import gent.timdemey.cards.model.entities.commands.meta.P_Undo;
+import gent.timdemey.cards.model.entities.commands.game.P_Use;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.model.net.TCP_Connection;
 import gent.timdemey.cards.services.context.ContextType;
@@ -72,23 +110,22 @@ public abstract class CommandFactory
         this._Container = container;
     }
 
-    public C_Connect CreateConnect(UUID playerId, UUID serverId, InetAddress inetAddress, int tcpPort, String serverName, String playerName)
+    public C_TCP_ClientConnect CreateTCPClientConnect(UUID serverId, InetAddress inetAddress, int tcpPort, String serverName, String playerName)
     {        
-        P_Connect p = NewCommandPayload(P_Connect.class); 
+        P_TCP_ClientConnect p = NewCommandPayload(P_TCP_ClientConnect.class); 
        
-        p.playerId = playerId;
         p.serverId = serverId;
         p.serverInetAddress = inetAddress;
         p.serverTcpPort = tcpPort;
         p.serverName = serverName;
         p.playerName = playerName;
                 
-        return CreateConnect(p);
+        return CreateTCPClientConnect(p);
     }
     
-    public C_Connect CreateConnect(P_Connect parameters)
+    public C_TCP_ClientConnect CreateTCPClientConnect(P_TCP_ClientConnect parameters)
     {        
-        return DICreate(C_Connect.class, P_Connect.class, parameters);
+        return DICreate(C_TCP_ClientConnect.class, P_TCP_ClientConnect.class, parameters);
     }
 
     public C_StopServer CreateStopServer()
@@ -103,47 +140,46 @@ public abstract class CommandFactory
         return DICreate(C_StopServer.class, P_StopServer.class, parameters);
     }
 
-    public C_OnLobbyToGame CreateOnLobbyToGame(CardGame cardGame)
+    public C_HandleGameStarted CreateOnLobbyToGame(CardGame cardGame)
     {
-        P_OnLobbyToGame p = NewCommandPayload(P_OnLobbyToGame.class);
+        P_HandleGameStarted p = NewCommandPayload(P_HandleGameStarted.class);
         
         p.cardGame = cardGame;
         
         return CreateOnLobbyToGame(p);
     }
 
-    public C_OnLobbyToGame CreateOnLobbyToGame(P_OnLobbyToGame parameters)
+    public C_HandleGameStarted CreateOnLobbyToGame(P_HandleGameStarted parameters)
     {
-        return DICreate(C_OnLobbyToGame.class, P_OnLobbyToGame.class, parameters);
+        return DICreate(C_HandleGameStarted.class, P_HandleGameStarted.class, parameters);
     }
 
-    public C_EnterLobby CreateEnterLobby(String clientName, UUID clientId)
+    public C_Enter CreateEnterLobby(String clientName)
     {
-        P_EnterLobby p = NewCommandPayload(P_EnterLobby.class);
+        P_Enter p = NewCommandPayload(P_Enter.class);
         
-        p.clientId = clientId;
         p.clientName = clientName;
         
         return CreateEnterLobby(p);
     }
 
-    public C_EnterLobby CreateEnterLobby(P_EnterLobby parameters)
+    public C_Enter CreateEnterLobby(P_Enter parameters)
     {
-        return DICreate(C_EnterLobby.class, P_EnterLobby.class, parameters);
+        return DICreate(C_Enter.class, P_Enter.class, parameters);
     }
 
-    public C_UDP_Response CreateUDPResponse(ServerUDP udpServer)
+    public C_UDP_GetServerInfoResponse CreateUDPResponse(ServerUDP udpServer)
     {
-        P_UDP_Response p = NewCommandPayload(P_UDP_Response.class);
+        P_UDP_GetServerInfoResponse p = NewCommandPayload(P_UDP_GetServerInfoResponse.class);
         
         p.server = udpServer;
         
         return CreateUDPResponse(p);
     }
 
-    public C_UDP_Response CreateUDPResponse(P_UDP_Response parameters)
+    public C_UDP_GetServerInfoResponse CreateUDPResponse(P_UDP_GetServerInfoResponse parameters)
     {
-        return DICreate(C_UDP_Response.class, P_UDP_Response.class, parameters);
+        return DICreate(C_UDP_GetServerInfoResponse.class, P_UDP_GetServerInfoResponse.class, parameters);
     }
 
     public C_ClearServerList CreateClearServerList()
@@ -158,56 +194,56 @@ public abstract class CommandFactory
         return DICreate(C_ClearServerList.class, P_ClearServerList.class, parameters);
     }
 
-    public C_UDP_Request CreateUDPRequest()
+    public C_UDP_GetServerInfoRequest CreateUDPGetServerInfoRequest()
     {
-        P_UDP_Request p = NewCommandPayload(P_UDP_Request.class);
+        P_UDP_GetServerInfoRequest p = NewCommandPayload(P_UDP_GetServerInfoRequest.class);
                 
-        return CreateUDPRequest(p);
+        return CommandFactory.this.CreateUDPGetServerInfoRequest(p);
     }
     
-    public C_UDP_Request CreateUDPRequest(P_UDP_Request parameters)
+    public C_UDP_GetServerInfoRequest CreateUDPGetServerInfoRequest(P_UDP_GetServerInfoRequest parameters)
     {
-        return DICreate(C_UDP_Request.class, P_UDP_Request.class, parameters);
+        return DICreate(C_UDP_GetServerInfoRequest.class, P_UDP_GetServerInfoRequest.class, parameters);
     }
 
-    public C_TCP_NOK CreateTCPNOK(C_TCP_NOK.TcpNokReason tcpNokReason)
+    public C_TCP_HandleRejected CreateTCPHandleRejected(C_TCP_HandleRejected.TcpNokReason tcpNokReason)
     {
-        P_TCP_NOK p = NewCommandPayload(P_TCP_NOK.class);
+        P_TCP_HandleRejected p = NewCommandPayload(P_TCP_HandleRejected.class);
         
         p.reason = tcpNokReason;
         
-        return CreateTCPNOK(p);
+        return CreateTCPHandleRejected(p);
     }
 
-    public C_TCP_NOK CreateTCPNOK(P_TCP_NOK parameters)
+    public C_TCP_HandleRejected CreateTCPHandleRejected(P_TCP_HandleRejected parameters)
     {
-        return DICreate(C_TCP_NOK.class, P_TCP_NOK.class, parameters);
+        return DICreate(C_TCP_HandleRejected.class, P_TCP_HandleRejected.class, parameters);
     }
     
-    public C_TCP_OK CreateTCPOK()
+    public C_TCP_HandleAccepted CreateTCPHandleAccepted()
     {
-        P_TCP_OK p = NewCommandPayload(P_TCP_OK.class);
+        P_TCP_HandleAccepted p = NewCommandPayload(P_TCP_HandleAccepted.class);
                 
-        return CreateTCPOK(p);
+        return CreateTCPHandleAccepted(p);
     }
     
-    public C_TCP_OK CreateTCPOK(P_TCP_OK parameters)
+    public C_TCP_HandleAccepted CreateTCPHandleAccepted(P_TCP_HandleAccepted parameters)
     {
-        return DICreate(C_TCP_OK.class, P_TCP_OK.class, parameters);
+        return DICreate(C_TCP_HandleAccepted.class, P_TCP_HandleAccepted.class, parameters);
     }
 
-    public C_Disconnect CreateDisconnect(C_Disconnect.DisconnectReason disconnectReason)
+    public C_TCP_ClientDisconnect CreateTCPClientDisconnect(C_TCP_ClientDisconnect.DisconnectReason disconnectReason)
     {
-        P_Disconnect p = NewCommandPayload(P_Disconnect.class);
+        P_TCP_ClientDisconnect p = NewCommandPayload(P_TCP_ClientDisconnect.class);
         
         p.reason = disconnectReason;
         
-        return CreateDisconnect(p);
+        return CommandFactory.this.CreateTCPClientDisconnect(p);
     }
     
-    public C_Disconnect CreateDisconnect(P_Disconnect parameters)
+    public C_TCP_ClientDisconnect CreateTCPClientDisconnect(P_TCP_ClientDisconnect parameters)
     {
-        return DICreate(C_Disconnect.class, P_Disconnect.class, parameters);
+        return DICreate(C_TCP_ClientDisconnect.class, P_TCP_ClientDisconnect.class, parameters);
     }
 
     public C_RemovePlayer CreateRemovePlayer(UUID playerId)
@@ -238,36 +274,24 @@ public abstract class CommandFactory
         return DICreate(C_OnGameToLobby.class, P_OnGameToLobby.class, parameters);
     }
 
-    public C_OnTcpConnectionClosed CreateOnTcpConnectionClosed(UUID connectionId, boolean local)
+    public C_TCP_HandleClosed CreateTCPHandleClosed(UUID connectionId, boolean local)
     {
-        P_OnTcpConnectionClosed p = NewCommandPayload(P_OnTcpConnectionClosed.class);
+        P_TCP_HandleClosed p = NewCommandPayload(P_TCP_HandleClosed.class);
         
         p.connectionId = connectionId;
         p.local = local;
         
-        return CreateOnTcpConnectionClosed(p);
+        return CreateTCPHandleClosed(p);
     }
     
-    public C_OnTcpConnectionClosed CreateOnTcpConnectionClosed(P_OnTcpConnectionClosed parameters)
+    public C_TCP_HandleClosed CreateTCPHandleClosed(P_TCP_HandleClosed parameters)
     {
-        return DICreate(C_OnTcpConnectionClosed.class, P_OnTcpConnectionClosed.class, parameters);
-    }
-
-    public C_DenyClient CreateDenyClient(UUID id)
-    {
-        P_DenyClient p = NewCommandPayload(P_DenyClient.class);
-                
-        return CreateDenyClient(p);
+        return DICreate(C_TCP_HandleClosed.class, P_TCP_HandleClosed.class, parameters);
     }
     
-    public C_DenyClient CreateDenyClient(P_DenyClient parameters)
+    public C_OnWelcome CreateOnLobbyWelcome(UUID clientId, UUID serverId, String serverMessage, List<Player> remotePlayers, UUID lobbyAdminId)
     {
-        return DICreate(C_DenyClient.class, P_DenyClient.class, parameters);
-    }
-
-    public C_OnLobbyWelcome CreateOnLobbyWelcome(UUID clientId, UUID serverId, String serverMessage, List<Player> remotePlayers, UUID lobbyAdminId)
-    {
-        P_OnLobbyWelcome p = NewCommandPayload(P_OnLobbyWelcome.class);
+        P_OnWelcome p = NewCommandPayload(P_OnWelcome.class);
         
         p.clientId = clientId;
         p.serverId = serverId;
@@ -278,23 +302,23 @@ public abstract class CommandFactory
         return CreateOnLobbyWelcome(p);
     }
     
-    public C_OnLobbyWelcome CreateOnLobbyWelcome(P_OnLobbyWelcome parameters)
+    public C_OnWelcome CreateOnLobbyWelcome(P_OnWelcome parameters)
     {
-        return DICreate(C_OnLobbyWelcome.class, P_OnLobbyWelcome.class, parameters);
+        return DICreate(C_OnWelcome.class, P_OnWelcome.class, parameters);
     }
 
-    public C_OnLobbyPlayerJoined CreateOnLobbyPlayerJoined(Player player)
+    public C_HandlePlayerJoined CreateOnLobbyPlayerJoined(Player player)
     {
-        P_OnLobbyPlayerJoined p = NewCommandPayload(P_OnLobbyPlayerJoined.class);
+        P_HandlePlayerJoined p = NewCommandPayload(P_HandlePlayerJoined.class);
         
         p.player = player;
         
         return CreateOnLobbyPlayerJoined(p);
     }
     
-    public C_OnLobbyPlayerJoined CreateOnLobbyPlayerJoined(P_OnLobbyPlayerJoined parameters)
+    public C_HandlePlayerJoined CreateOnLobbyPlayerJoined(P_HandlePlayerJoined parameters)
     {
-        return DICreate(C_OnLobbyPlayerJoined.class, P_OnLobbyPlayerJoined.class, parameters);
+        return DICreate(C_HandlePlayerJoined.class, P_HandlePlayerJoined.class, parameters);
     }
 
     public C_StartMultiplayerGame CreateStartMultiplayerGame()
@@ -340,7 +364,8 @@ public abstract class CommandFactory
             P instance = (P) clazz.getConstructors()[0].newInstance();
             
             instance.id = UUID.randomUUID();
-            instance.creatorId = _Container.Get(State.class).id;
+            instance.creatorId = _Container.Get(State.class).getLocalId();
+            instance.creatorContextType = _Container.Get(ContextType.class);
             
             return instance;
         } 
@@ -422,16 +447,16 @@ public abstract class CommandFactory
         return DICreate(C_SaveState.class, P_SaveState.class, parameters);
     }
 
-    public C_SaveConfig CreateSaveConfig()
+    public C_Save CreateSaveConfig()
     {
-        P_SaveConfig p = NewCommandPayload(P_SaveConfig.class);
+        P_Save p = NewCommandPayload(P_Save.class);
                 
         return CreateSaveConfig(p);
     }
 
-    public C_SaveConfig CreateSaveConfig(P_SaveConfig parameters)
+    public C_Save CreateSaveConfig(P_Save parameters)
     {
-        return DICreate(C_SaveConfig.class, P_SaveConfig.class, parameters);
+        return DICreate(C_Save.class, P_Save.class, parameters);
     }
 
     public C_Composite CreateComposite(CommandBase cmd1, CommandBase cmd2)
@@ -450,47 +475,46 @@ public abstract class CommandFactory
         return DICreate(C_Composite.class, P_Composite.class, parameters);
     }
 
-    public C_UDP_StopServiceRequester CreateStopServiceRequester()
+    public C_UDP_StopServerInfoRequestService CreateStopServiceRequester()
     {
-        P_UDP_StopServiceRequester p = NewCommandPayload(P_UDP_StopServiceRequester.class);
+        P_UDP_StopServerInfoRequestService p = NewCommandPayload(P_UDP_StopServerInfoRequestService.class);
                         
         return CreateStopServiceRequester(p);
     }
     
-    public C_UDP_StopServiceRequester CreateStopServiceRequester(P_UDP_StopServiceRequester parameters)
+    public C_UDP_StopServerInfoRequestService CreateStopServiceRequester(P_UDP_StopServerInfoRequestService parameters)
     {
-        return DICreate(C_UDP_StopServiceRequester.class, P_UDP_StopServiceRequester.class, parameters);
+        return DICreate(C_UDP_StopServerInfoRequestService.class, P_UDP_StopServerInfoRequestService.class, parameters);
     }
 
-    public C_UDP_StartServiceRequester CreateStartServiceRequester()
+    public C_UDP_StartServerInfoRequestService CreateStartServiceRequester()
     {
-        P_UDP_StartServiceRequester p = NewCommandPayload(P_UDP_StartServiceRequester.class);
+        P_UDP_StartServerInfoRequestService p = NewCommandPayload(P_UDP_StartServerInfoRequestService.class);
                         
         return CreateStartServiceRequester(p);
     }
     
-    public C_UDP_StartServiceRequester CreateStartServiceRequester(P_UDP_StartServiceRequester parameters)
+    public C_UDP_StartServerInfoRequestService CreateStartServiceRequester(P_UDP_StartServerInfoRequestService parameters)
     {
-        return DICreate(C_UDP_StartServiceRequester.class, P_UDP_StartServiceRequester.class, parameters);
+        return DICreate(C_UDP_StartServerInfoRequestService.class, P_UDP_StartServerInfoRequestService.class, parameters);
     }
 
-    public C_LoadConfig CreateLoadConfig()
+    public C_Load CreateLoadConfig()
     {
-        P_LoadConfig p = NewCommandPayload(P_LoadConfig.class);
+        P_Load p = NewCommandPayload(P_Load.class);
                 
         return CreateLoadConfig(p);
     }
     
-    public C_LoadConfig CreateLoadConfig(P_LoadConfig parameters)
+    public C_Load CreateLoadConfig(P_Load parameters)
     {
-        return DICreate(C_LoadConfig.class, P_LoadConfig.class, parameters);
+        return DICreate(C_Load.class, P_Load.class, parameters);
     }
 
-    public C_StartServer CreateStartServer(UUID localId, String localName, String srvname, String srvmsg, int udpPort, int tcpPort, boolean autoconnect)
+    public C_StartServer CreateStartServer(String localName, String srvname, String srvmsg, int udpPort, int tcpPort, boolean autoconnect)
     {
         P_StartServer p = NewCommandPayload(P_StartServer.class);
         
-        p.localId = localId;
         p.localName = localName;
         p.srvname = srvname;
         p.srvmsg = srvmsg;
@@ -506,8 +530,12 @@ public abstract class CommandFactory
         return DICreate(C_StartServer.class, P_StartServer.class, parameters);
     }
     
-    
-
+    /*public <C extends CommandBase, P extends CommandPayloadBase> C Create(Class<C> commandClazz, Class<P> payloadClazz, P payload)
+    {
+        P p = NewCommandPayload(payloadClazz);
+        return DICreate(commandClazz, payloadClazz, payload);
+    }
+*/
     public C_ShowConnect ShowDialog_Connect()
     {
         P_ShowConnect p = NewCommandPayload(P_ShowConnect.class);
@@ -624,7 +652,7 @@ public abstract class CommandFactory
     
     
 
-    public ITcpConnectionListener CreateCommandSchedulingTcpConnectionListener(ContextType contextType)
+    public CommandSchedulingTcpConnectionListener CreateCommandSchedulingTcpConnectionListener(ContextType contextType)
     {
         return DICreate(CommandSchedulingTcpConnectionListener.class, ContextType.class, contextType);
     }
@@ -636,22 +664,17 @@ public abstract class CommandFactory
         return container.Get(toCreateClazz);
     }
 
-    public C_HelloWorld CreateHelloWorld()
+    public C_TCP_HandleNew CreateTCPHandleNew(TCP_Connection tcpConnection)
     {
-        return DICreate(C_HelloWorld.class, P_HelloWorld.class, NewCommandPayload(P_HelloWorld.class));
-    }
-
-    public C_OnTcpConnectionAdded CreateOnTcpConnectionAdded(TCP_Connection tcpConnection)
-    {
-        P_OnTcpConnectionAdded p = NewCommandPayload(P_OnTcpConnectionAdded.class);
+        P_TCP_HandleNew p = NewCommandPayload(P_TCP_HandleNew.class);
         
         p.tcpConnection = tcpConnection;
         
-        return CreateOnTcpConnectionAdded(p);
+        return CreateTCPHandleNew(p);
     }
     
-    public C_OnTcpConnectionAdded CreateOnTcpConnectionAdded(P_OnTcpConnectionAdded parameters)
+    public C_TCP_HandleNew CreateTCPHandleNew(P_TCP_HandleNew parameters)
     {
-        return DICreate(C_OnTcpConnectionAdded.class, P_OnTcpConnectionAdded.class, parameters);
+        return DICreate(C_TCP_HandleNew.class, P_TCP_HandleNew.class, parameters);
     }
 }

@@ -1,10 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package gent.timdemey.cards.server;
 
 import gent.timdemey.cards.model.entities.commands.CommandFactory;
+import gent.timdemey.cards.model.entities.commands.admin.P_StartServer;
 import gent.timdemey.cards.services.context.ICommandExecutor;
 
 /**
@@ -13,7 +10,6 @@ import gent.timdemey.cards.services.context.ICommandExecutor;
  */
 public class StartServer
 {
-
     private final ICommandExecutor _CommandExecutor;
     private final CommandFactory _CommandFactory;
     
@@ -23,8 +19,8 @@ public class StartServer
         this._CommandFactory = commandFactory;
     }
     
-    public void startServer()
+    public void startServer(P_StartServer parameters)
     {                   
-        _CommandExecutor.schedule(_CommandFactory.CreateHelloWorld());
+        _CommandExecutor.schedule(_CommandFactory.CreateStartServer(parameters));
     }
 }

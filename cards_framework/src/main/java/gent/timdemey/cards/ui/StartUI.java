@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.localization.Loc;
 import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.model.entities.commands.C_LoadConfig;
+import gent.timdemey.cards.model.entities.commands.cfg.C_Load;
 import gent.timdemey.cards.model.entities.commands.CommandFactory;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptor;
@@ -184,6 +184,10 @@ public class StartUI
         }
         
         frame.setVisible(false);
+                
+        // import configuration
+        C_Load cmd_loadcfg = _CommandFactory.CreateLoadConfig();
+        _CommandExecutor.run(cmd_loadcfg);
         
         // locale
         _Loc.setLocale(Loc.AVAILABLE_LOCALES[0]);
@@ -191,9 +195,7 @@ public class StartUI
         // show the frame with just the loading animation, but already with a certain size
         _FrameService.getFrame().setVisible(true);
         
-        // import configuration
-        C_LoadConfig cmd_loadcfg = _CommandFactory.CreateLoadConfig();
-        _CommandExecutor.schedule(cmd_loadcfg);
+      
         
         _FrameService.installStateListeners();
         

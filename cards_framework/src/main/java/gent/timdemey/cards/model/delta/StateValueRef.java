@@ -1,5 +1,6 @@
 package gent.timdemey.cards.model.delta;
 
+import gent.timdemey.cards.logging.Logger;
 import java.util.UUID;
 
 import gent.timdemey.cards.utils.Debug;

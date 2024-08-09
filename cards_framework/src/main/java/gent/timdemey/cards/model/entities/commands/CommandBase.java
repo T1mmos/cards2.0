@@ -3,22 +3,19 @@ package gent.timdemey.cards.model.entities.commands;
 import gent.timdemey.cards.di.Container;
 import java.util.UUID;
 
-import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.common.EntityBase;
-import gent.timdemey.cards.model.entities.common.PayloadBase;
 import gent.timdemey.cards.model.entities.state.State;
 import gent.timdemey.cards.model.net.TCP_Connection;
 import gent.timdemey.cards.model.net.UDP_Source;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.di.IContainerService;
-import gent.timdemey.cards.model.entities.commands.payload.CommandPayloadBase;
 import gent.timdemey.cards.model.net.TCP_ConnectionPool;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.context.ICommandExecutor;
 import java.util.List;
 
-public abstract class CommandBase extends EntityBase
+public abstract class CommandBase<CMDPAYLOAD extends CommandPayloadBase> extends EntityBase
 {
     private volatile TCP_Connection sourceTcpConnection;
     private volatile UDP_Source sourceUdp;
@@ -31,15 +28,16 @@ public abstract class CommandBase extends EntityBase
     protected final CommandDtoMapper _CommandDtoMapper;
     
     public final UUID creatorId;
-    private final PayloadBase _Payload;
+    public final ContextType creatorContextType;
+    protected final CMDPAYLOAD _Payload;
     
-    protected CommandBase(Container container, CommandPayloadBase payload)
+    protected CommandBase(Container container, CMDPAYLOAD payload)
     {
         super(payload.id);
         
-        if (payload.creatorId == null)
+        if (payload.creatorContextType == null)
         {
-            throw new IllegalArgumentException("creatorId");
+            throw new IllegalArgumentException("creatorContextType");
         }
         
         this._ContainerService = container.Get(IContainerService.class);
@@ -51,6 +49,7 @@ public abstract class CommandBase extends EntityBase
         
         this._Payload = payload;
         this.creatorId = payload.creatorId;
+        this.creatorContextType = payload.creatorContextType;
     }
 
     public abstract CanExecuteResponse canExecute();
@@ -98,7 +97,7 @@ public abstract class CommandBase extends EntityBase
         {
             Container container = _ContainerService.get(type);
             Container scopedContainer  = container.Scope();
-            scopedContainer.AddSingleton((Class<PayloadBase>) cmd._Payload.getClass(), cmd._Payload);
+            scopedContainer.AddSingleton((Class<Object>)(Class<?>) cmd._Payload.getClass(), cmd._Payload);
             CommandBase cmd_copy = scopedContainer.Get((Class<CommandBase>) cmd.getClass());
             container.Get(ICommandExecutor.class).schedule(cmd_copy);
         }

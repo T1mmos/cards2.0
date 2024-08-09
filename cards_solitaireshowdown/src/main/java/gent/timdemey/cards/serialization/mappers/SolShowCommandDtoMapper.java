@@ -2,7 +2,7 @@ package gent.timdemey.cards.serialization.mappers;
 
 import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.model.entities.commands.C_SolShowMove;
-import gent.timdemey.cards.model.entities.commands.payload.P_Move;
+import gent.timdemey.cards.model.entities.commands.game.P_Move;
 import gent.timdemey.cards.serialization.dto.commands.C_SolShowMoveDto;
 
 public class SolShowCommandDtoMapper extends CommandDtoMapper

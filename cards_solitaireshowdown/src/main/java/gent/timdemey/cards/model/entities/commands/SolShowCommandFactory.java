@@ -5,10 +5,10 @@
 package gent.timdemey.cards.model.entities.commands;
 
 import gent.timdemey.cards.di.Container;
-import gent.timdemey.cards.model.entities.commands.payload.P_Move;
-import gent.timdemey.cards.model.entities.commands.payload.P_Pull;
-import gent.timdemey.cards.model.entities.commands.payload.P_Push;
-import gent.timdemey.cards.model.entities.commands.payload.P_Use;
+import gent.timdemey.cards.model.entities.commands.game.P_Move;
+import gent.timdemey.cards.model.entities.commands.game.P_Pull;
+import gent.timdemey.cards.model.entities.commands.game.P_Push;
+import gent.timdemey.cards.model.entities.commands.game.P_Use;
 import java.util.List;
 import java.util.UUID;
 

@@ -1,23 +1,20 @@
 package gent.timdemey.cards.model.delta;
-
-import gent.timdemey.cards.model.delta.Change;
-import gent.timdemey.cards.model.delta.IChangeTracker;
-import gent.timdemey.cards.model.delta.ChangeType;
+import gent.timdemey.cards.logging.Logger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import gent.timdemey.cards.model.delta.StateListRef;
-import gent.timdemey.cards.model.delta.StateValueRef;
-
 public class StateChangeTracker implements IChangeTracker
 {
     private List<Change<?>> changes;
+    private final Logger _Logger;
 
-    public StateChangeTracker()
+    public StateChangeTracker(Logger logger)
     {
         this.changes = new ArrayList<Change<?>>();
+        
+        this._Logger = logger;
     }
 
     private <X> Change<X> getChange(StateValueRef<X> stateRef)
@@ -106,7 +103,8 @@ public class StateChangeTracker implements IChangeTracker
             changes.remove(prevChangeX);
             changes.add(change);
         }
-
+        
+        _Logger.trace("Property %s set from '%s' to '%s'", reference.property, oldValue, newValue);
     }
 
     @Override

@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import gent.timdemey.cards.common.Version;
 import gent.timdemey.cards.serialization.dto.common.VersionDto;
+import gent.timdemey.cards.services.context.ContextType;
 
 class CommonMapper
 {
@@ -85,5 +86,15 @@ class CommonMapper
             destList.add(dst);
         }
         return destList;
+    }
+
+    static String toDto(ContextType creatorContextType)
+    {
+        return creatorContextType.name();
+    }
+
+    static ContextType toContextType(String creatorContextType)
+    {
+        return ContextType.valueOf(creatorContextType);
     }
 }

@@ -1,12 +1,12 @@
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.model.entities.commands.game.C_Pull;
 import gent.timdemey.cards.di.Container;
 import java.util.List;
 
 import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardStack;
-import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.commands.payload.P_Pull;
+import gent.timdemey.cards.model.entities.commands.game.P_Pull;
 import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes;
 
 public class C_SolPull extends C_Pull
