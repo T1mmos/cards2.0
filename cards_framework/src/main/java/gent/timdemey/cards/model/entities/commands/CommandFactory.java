@@ -357,7 +357,7 @@ public abstract class CommandFactory
         return CreateAccept(p);
     }
     
-    private <P extends CommandPayloadBase> P NewCommandPayload(Class<P> clazz)
+    protected <P extends CommandPayloadBase> P NewCommandPayload(Class<P> clazz)
     {
         try
         {

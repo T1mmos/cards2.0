@@ -27,9 +27,8 @@ public class SolCommandFactory extends CommandFactory
     @Override
     public C_SolMove CreateMove(UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
     {
-        P_Move p = new P_Move();
+        P_Move p = NewCommandPayload(P_Move.class);
         
-        p.id = UUID.randomUUID();
         p.srcCardStackId = srcCardStackId;
         p.dstCardStackId = dstCardStackId;
         p.cardId = cardId;
@@ -46,9 +45,8 @@ public class SolCommandFactory extends CommandFactory
     @Override
     public C_Push CreatePush(UUID dstCardStackId, List<UUID> srcCardIds)
     {
-        P_Push p = new P_Push();
+        P_Push p = NewCommandPayload(P_Push.class);
         
-        p.id = UUID.randomUUID();
         p.dstCardStackId = dstCardStackId;
         p.srcCardIds = srcCardIds;
         
@@ -64,9 +62,8 @@ public class SolCommandFactory extends CommandFactory
     @Override
     public C_SolUse CreateUse(UUID initiatorCardStackId, UUID initiatorCardId)
     {
-        P_Use p = new P_Use();
+        P_Use p = NewCommandPayload(P_Use.class);
         
-        p.id = UUID.randomUUID();
         p.initiatorStackId = initiatorCardStackId;
         p.initiatorCardId = initiatorCardId;
         
@@ -82,7 +79,7 @@ public class SolCommandFactory extends CommandFactory
     @Override
     public C_SolPull CreatePull(UUID cardStackId, UUID cardId)
     {
-        P_Pull p = new P_Pull();
+        P_Pull p = NewCommandPayload(P_Pull.class);
         
         p.srcCardStackId = cardStackId;
         p.srcCardId = cardId;
