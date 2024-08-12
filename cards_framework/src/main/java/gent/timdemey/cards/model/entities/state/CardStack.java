@@ -9,8 +9,8 @@ import gent.timdemey.cards.model.delta.EntityStateListRef;
 import gent.timdemey.cards.model.delta.IChangeTracker;
 import gent.timdemey.cards.model.delta.Property;
 import gent.timdemey.cards.model.entities.common.EntityList;
+import gent.timdemey.cards.model.entities.state.payload.P_CardStack;
 import gent.timdemey.cards.utils.Debug;
-import java.util.UUID;
 
 public class CardStack extends EntityBase
 {
@@ -20,12 +20,14 @@ public class CardStack extends EntityBase
     public final String cardStackType;
     public final int typeNumber;
 
-    CardStack(IChangeTracker changeTracker, UUID id, String cardStackType, int typeNumber)
+    public CardStack(
+        IChangeTracker changeTracker, 
+        P_CardStack parameters)
     {
-        super(id);
+        super(parameters);
         
-        this.cardStackType = cardStackType;
-        this.typeNumber = typeNumber;
+        this.cardStackType = parameters.cardStackType;
+        this.typeNumber = parameters.typeNumber;
         this.cards = new EntityStateListRef<>(changeTracker, Cards, id, new ArrayList<>());
     }
 

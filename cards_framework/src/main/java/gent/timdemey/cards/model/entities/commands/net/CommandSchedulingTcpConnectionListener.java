@@ -5,25 +5,26 @@ import java.util.UUID;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CommandFactory;
+import gent.timdemey.cards.model.entities.common.PayloadBase;
 import gent.timdemey.cards.model.net.ITcpConnectionListener;
 import gent.timdemey.cards.model.net.TCP_Connection;
-import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
+import gent.timdemey.cards.serialization.mappers.PayloadMapper;
 import gent.timdemey.cards.services.context.ICommandExecutor;
 
 public final class CommandSchedulingTcpConnectionListener implements ITcpConnectionListener
 {
     private final Logger _Logger;
-    private final CommandDtoMapper _CommandDtoMapper;
+    private final PayloadMapper _PayloadMapper;
     private final CommandFactory _CommandFactory;
     private final ICommandExecutor _CommandExecutor;
 
     public CommandSchedulingTcpConnectionListener(
-        CommandDtoMapper commandDtoMapper,
+        PayloadMapper payloadMapper,
         CommandFactory commandFactory,
         Logger logger,
         ICommandExecutor commandExecutor)
     {
-        this._CommandDtoMapper = commandDtoMapper;
+        this._PayloadMapper = payloadMapper;
         this._CommandFactory = commandFactory;
         this._Logger = logger;
         this._CommandExecutor = commandExecutor;
@@ -43,7 +44,8 @@ public final class CommandSchedulingTcpConnectionListener implements ITcpConnect
     {
         try
         {
-            CommandBase command = _CommandDtoMapper.toCommand(message);
+            PayloadBase p = _PayloadMapper.toPayload(message);
+            CommandBase command = _CommandFactory.NewCommand(p);
 
             // attach metadata to the command
             command.setSourceTcpConnection(tcpConnection);

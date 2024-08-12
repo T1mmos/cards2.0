@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 
 /**
  *
@@ -19,17 +20,19 @@ public interface IEntityList<X extends EntityBase>
 
     public List<UUID> getIds();
 
-    public List<X> getExcept(UUID... excluded);
+    public IEntityList<X> getExcept(UUID... excluded);
 
     public List<UUID> getExceptUUID(UUID... excluded);
 
     public boolean contains(UUID id);
 
-    public List<X> getOnly(List<UUID> included);
+    public IEntityList<X> getOnly(List<UUID> included);
     
     public X getFirst();
     
     public X getLast();
 
     public X remove(UUID id);
+    
+    public <Y> List<Y> select(Function<X, Y> selector);
 }

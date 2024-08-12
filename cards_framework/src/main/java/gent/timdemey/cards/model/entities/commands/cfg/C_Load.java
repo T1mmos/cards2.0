@@ -10,8 +10,8 @@ import java.util.Properties;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.config.Configuration;
-import gent.timdemey.cards.model.entities.config.ConfigurationFactory;
+import gent.timdemey.cards.model.entities.state.Configuration;
+import gent.timdemey.cards.model.entities.state.StateFactory;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.ConfigKeyDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.ConfigKeyDescriptors;
@@ -25,14 +25,14 @@ public class C_Load extends CommandBase<P_Load>
 
     private final IFileService _FileService;
     private final IConfigurationService _ConfigurationService;
-    private final ConfigurationFactory _ConfigurationFactory;
+    private final StateFactory _StateFactory;
     private final Logger _Logger;
     
     public C_Load(
         Container container,
         IFileService fileService,
         IConfigurationService configurationService, 
-        ConfigurationFactory configurationFactory,
+        StateFactory configurationFactory,
         Logger logger,
         P_Load parameters)
     { 
@@ -40,7 +40,7 @@ public class C_Load extends CommandBase<P_Load>
         
         this._FileService = fileService;
         this._ConfigurationService = configurationService;
-        this._ConfigurationFactory = configurationFactory;
+        this._StateFactory = configurationFactory;
         this._Logger = logger;
     }
     
@@ -97,7 +97,7 @@ public class C_Load extends CommandBase<P_Load>
             _State.setLocalId(UUID.randomUUID());
             _State.setLocalName(pname);
             
-            Configuration cfg = _ConfigurationFactory.CreateConfiguration();
+            Configuration cfg = _StateFactory.CreateConfiguration();
             cfg.setServerTcpPort(serverTcpPort);
             cfg.setServerUdpPort(serverUdpPort);
             cfg.setClientUdpPort(clientUdpPort);

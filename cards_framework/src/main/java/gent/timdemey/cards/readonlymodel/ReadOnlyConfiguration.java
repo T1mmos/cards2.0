@@ -1,6 +1,6 @@
 package gent.timdemey.cards.readonlymodel;
 
-import gent.timdemey.cards.model.entities.config.Configuration;
+import gent.timdemey.cards.model.entities.state.Configuration;
 
 public class ReadOnlyConfiguration extends ReadOnlyEntityBase<Configuration>
 {

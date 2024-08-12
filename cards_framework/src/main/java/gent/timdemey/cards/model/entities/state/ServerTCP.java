@@ -3,21 +3,22 @@ package gent.timdemey.cards.model.entities.state;
 import java.net.InetAddress;
 
 import gent.timdemey.cards.model.entities.common.EntityBase;
+import gent.timdemey.cards.model.entities.state.payload.P_ServerTCP;
 import gent.timdemey.cards.utils.Debug;
-import java.util.UUID;
 
-public class ServerTCP extends EntityBase
+public class ServerTCP extends EntityBase<P_ServerTCP>
 {
     public final String serverName;
     public final InetAddress inetAddress;
     public final int tcpport;
 
-    ServerTCP(UUID id, String serverName, InetAddress inetAddress, int tcpport)
+    public ServerTCP(P_ServerTCP parameters)
     {
-        super(id);
-        this.serverName = serverName;
-        this.inetAddress = inetAddress;
-        this.tcpport = tcpport;
+        super(parameters);
+        
+        this.serverName = parameters.serverName;
+        this.inetAddress = parameters.inetAddress;
+        this.tcpport = parameters.tcpport;
     }
 
     @Override

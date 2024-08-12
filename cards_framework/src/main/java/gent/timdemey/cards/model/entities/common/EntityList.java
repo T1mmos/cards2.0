@@ -1,13 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package gent.timdemey.cards.model.entities.common;
 
-import gent.timdemey.cards.model.entities.common.EntityBase;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 
 /**
  *
@@ -15,6 +11,27 @@ import java.util.UUID;
  */
 public class EntityList<X extends EntityBase> extends ArrayList<X> implements IEntityList<X> 
 {
+    public EntityList()
+    {        
+    }
+    
+    public static <E extends EntityBase> EntityList<E> from(List<E> other)
+    {
+        EntityList<E> list = new EntityList<>();
+        list.addAll(other);
+        return list;
+    }
+    
+    public static <Y,E extends EntityBase> EntityList<E> from(List<Y> other, Function<Y, E> selector)
+    {
+        EntityList<E> list = new EntityList<>();
+        for(Y y : other)
+        {
+            list.add(selector.apply(y));
+        }
+        return list;
+    }
+    
     @Override
     public X get(UUID id)
     {
@@ -28,7 +45,7 @@ public class EntityList<X extends EntityBase> extends ArrayList<X> implements IE
     }
 
     @Override
-    public List<X> getExcept(UUID... excluded)
+    public EntityList<X> getExcept(UUID... excluded)
     {
         return EntityListExtensions.getExcept(this, excluded);
     }
@@ -43,7 +60,7 @@ public class EntityList<X extends EntityBase> extends ArrayList<X> implements IE
         return EntityListExtensions.contains(this, id);
     }
 
-    public List<X> getOnly(List<UUID> included)
+    public EntityList<X> getOnly(List<UUID> included)
     {
         return EntityListExtensions.getOnly(this, included);
     }
@@ -61,5 +78,11 @@ public class EntityList<X extends EntityBase> extends ArrayList<X> implements IE
     public X remove(UUID id)
     {
         return EntityListExtensions.remove(this, id);
+    }
+
+    @Override
+    public <Y> List<Y> select(Function<X, Y> selector)
+    {
+        return EntityListExtensions.select(this, selector);        
     }
 }

@@ -1,7 +1,6 @@
 package gent.timdemey.cards.model.entities.state;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,27 +9,30 @@ import gent.timdemey.cards.model.delta.EntityStateListRef;
 import gent.timdemey.cards.model.delta.IChangeTracker;
 import gent.timdemey.cards.model.delta.Property;
 import gent.timdemey.cards.model.entities.common.EntityList;
+import gent.timdemey.cards.model.entities.state.payload.P_CardGame;
 
 public class CardGame extends EntityBase
 {
     public static final Property<CardStack> CardStacks = Property.of(CardGame.class, CardStack.class, "CardStacks");
 
-    public final List<PlayerConfiguration> playerConfigurations;
+    public final EntityList<PlayerConfiguration> playerConfigurations;
     
     private final EntityStateListRef<CardStack> cardStacksRef;
 
-    CardGame(IChangeTracker changeTracker, UUID id, List<PlayerConfiguration> playerConfigurations)
+    public CardGame(
+        IChangeTracker changeTracker,
+        P_CardGame parameters)
     {
-        super(id);
+        super(parameters);
         
         List<CardStack> cardStacks = new ArrayList<>();
-        for (PlayerConfiguration pc : playerConfigurations)
+        for (PlayerConfiguration pc : parameters.playerConfigurations)
         {
             cardStacks.addAll(pc.cardStacks);
         }
         
         this.cardStacksRef = new EntityStateListRef<>(changeTracker, CardStacks, id, cardStacks);
-        this.playerConfigurations = Collections.unmodifiableList(new ArrayList<>(playerConfigurations));
+        this.playerConfigurations = EntityList.from(parameters.playerConfigurations);
     }
     
     private Card getCardPriv(UUID cardId)

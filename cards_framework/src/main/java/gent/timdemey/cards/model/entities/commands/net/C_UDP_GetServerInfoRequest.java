@@ -6,7 +6,6 @@ import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CommandFactory;
 
 import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.state.ServerTCP;
 import gent.timdemey.cards.model.entities.state.ServerUDP;
 import gent.timdemey.cards.model.entities.state.StateFactory;
 import gent.timdemey.cards.model.net.UDP_Source;
@@ -47,15 +46,13 @@ public class C_UDP_GetServerInfoRequest extends CommandBase<P_UDP_GetServerInfoR
     {
         CheckContext(ContextType.Server);
         
-        ServerTCP server = _State.getServer();                
-        ServerUDP udpServer = _StateFactory.CreateServerUDP(server, _CardPlugin.getVersion(), _State.getPlayers().size(), _CardPlugin.getPlayerCount());;
+        ServerUDP udpServer = _StateFactory.CreateServerUDP(_State.getServer(), _CardPlugin.getVersion(), _State.getPlayers().size(), _CardPlugin.getPlayerCount());
         C_UDP_GetServerInfoResponse udpResponseCmd = _CommandFactory.CreateUDPResponse(udpServer);
 
         UDP_Source udpSource = getSourceUdp();
         UDP_UnicastMessage msg = new UDP_UnicastMessage(udpSource.inetAddress, udpSource.tcpPort, udpResponseCmd);
         
-        C_UDP_GetServerInfoResponse responseCmd = msg.responseCmd;
-        String json = _CommandDtoMapper.toJson(udpResponseCmd);
+        String json = _PayloadMapper.toJson(udpResponseCmd._Payload);
         
         _State.getUdpServiceAnnouncer().sendUnicast(udpSource.inetAddress,  udpSource.tcpPort, json);
     }

@@ -2,8 +2,8 @@ package gent.timdemey.cards.model.entities.state;
 
 import gent.timdemey.cards.common.Version;
 import gent.timdemey.cards.model.entities.common.EntityBase;
+import gent.timdemey.cards.model.entities.state.payload.P_ServerUDP;
 import gent.timdemey.cards.utils.Debug;
-import java.util.UUID;
 
 public class ServerUDP extends EntityBase
 {
@@ -12,14 +12,15 @@ public class ServerUDP extends EntityBase
     public final int playerCount;
     public final int maxPlayerCount;
 
-    ServerUDP(UUID id, ServerTCP server, Version version, int playerCount, int maxPlayerCount)
+    public ServerUDP(
+        P_ServerUDP parameters)
     {
-        super(id);
+        super(parameters);
         
-        this.server = server;
-        this.version = version;
-        this.playerCount = playerCount;
-        this.maxPlayerCount = maxPlayerCount;
+        this.server = parameters.server;
+        this.version = parameters.version;
+        this.playerCount = parameters.playerCount;
+        this.maxPlayerCount = parameters.maxPlayerCount;
     }
     
     @Override

@@ -11,18 +11,18 @@ import gent.timdemey.cards.model.entities.commands.CommandType;
 import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.ExecutionState;
 import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
+import gent.timdemey.cards.serialization.mappers.PayloadMapper;
 
 public class ServerCommandExecutor extends CommandExecutorBase
 {
-    private final CommandDtoMapper _CommandDtoMapper;
+    private final PayloadMapper _PayloadMapper;
     private final Logger _Logger;
     private final CommandFactory _CommandFactory;
     private final State _State;
     
     public ServerCommandExecutor(
         CommandFactory commandFactory,
-        CommandDtoMapper commandDtoMapper,
+        PayloadMapper payloadMapper,
         Logger logger,
         State state
     )
@@ -30,7 +30,7 @@ public class ServerCommandExecutor extends CommandExecutorBase
         super(ContextType.Server);
         
         this._CommandFactory = commandFactory;
-        this._CommandDtoMapper = commandDtoMapper;
+        this._PayloadMapper = payloadMapper;
         this._Logger = logger;
         this._State = state;
     }
@@ -81,7 +81,7 @@ public class ServerCommandExecutor extends CommandExecutorBase
                 _Logger.info("Can't execute syncable command: '%s'. Responding with a C_Reject. Reason: %s", command.getName(), resp.reason);
 
                 C_Reject rejectCmd = _CommandFactory.CreateReject(command.id);
-                String answer = _CommandDtoMapper.toJson(rejectCmd);
+                String answer = _PayloadMapper.toJson(rejectCmd._Payload);
                 _State.getTcpConnectionPool().getConnection(command.creatorId).send(answer);
             }
             else

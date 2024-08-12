@@ -4,8 +4,6 @@ import gent.timdemey.cards.common.Version;
 import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.model.entities.commands.CommandFactory;
 import gent.timdemey.cards.model.entities.commands.SolShowCommandFactory;
-import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
-import gent.timdemey.cards.serialization.mappers.SolShowCommandDtoMapper;
 import gent.timdemey.cards.services.animation.SolShowAnimationDescriptorFactory;
 import gent.timdemey.cards.services.cardgame.SolShowCardGameService;
 import gent.timdemey.cards.services.interfaces.IAnimationDescriptorFactory;
@@ -28,7 +26,6 @@ public class SolShowPlugin implements ICardPlugin
     public void installCommonServices(Container c)
     {
         c.AddSingleton(CommandFactory.class, SolShowCommandFactory.class);
-        c.AddSingleton(CommandDtoMapper.class, SolShowCommandDtoMapper.class);
         c.AddSingleton(ICardGameService.class, SolShowCardGameService.class);
         c.AddSingleton(IPositionService.class, SolShowPositionService.class);        
     }

@@ -6,7 +6,6 @@ import gent.timdemey.cards.model.delta.IChangeTracker;
 import gent.timdemey.cards.model.delta.Property;
 import gent.timdemey.cards.model.delta.StateValueRef;
 import gent.timdemey.cards.utils.Debug;
-import java.util.UUID;
 
 public class Card extends EntityBase
 {
@@ -20,13 +19,13 @@ public class Card extends EntityBase
     public final StateValueRef<Integer> scoreRef;
     public CardStack cardStack;    
         
-    Card(IChangeTracker changeTracker, UUID id, CardSuit suit, CardValue value, boolean visible)
+    public Card(IChangeTracker changeTracker, P_Card parameters)
     {
-        super(id);
+        super(parameters);
         
-        this.suit = suit;
-        this.value = value;
-        this.visibleRef = new StateValueRef<>(changeTracker, Visible, id, visible);
+        this.suit = parameters.suit;
+        this.value = parameters.value;
+        this.visibleRef = new StateValueRef<>(changeTracker, Visible, id, parameters.visible);
         this.scoreRef = new StateValueRef<>(changeTracker, Score, id, 0);
         this.cardStack = null;
     }

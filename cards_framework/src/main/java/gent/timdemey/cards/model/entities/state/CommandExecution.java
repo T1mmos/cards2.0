@@ -1,15 +1,15 @@
 package gent.timdemey.cards.model.entities.state;
 
 import gent.timdemey.cards.model.delta.IChangeTracker;
-import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.delta.Property;
 import gent.timdemey.cards.model.delta.StateValueRef;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CommandExecutionState;
+import gent.timdemey.cards.model.entities.common.EntityBase;
+import gent.timdemey.cards.model.entities.state.payload.P_CommandExecution;
 import gent.timdemey.cards.utils.Debug;
-import java.util.UUID;
 
-public final class CommandExecution extends EntityBase
+public final class CommandExecution extends EntityBase<P_CommandExecution>
 {
     public static final Property<CommandExecutionState> CommandExecutionState = Property.of(CommandExecution.class, CommandExecutionState.class, "CommandExecutionState");
 
@@ -19,12 +19,11 @@ public final class CommandExecution extends EntityBase
     
     public CommandExecution(
         IChangeTracker changeTracker,        
-        UUID id, CommandBase command, CommandExecutionState cmdExecutionState)
+        P_CommandExecution parameters)
     {
-        super(id);
-        
-        this.command = command;
-        this.cmdExecutionState = new StateValueRef<>(changeTracker, CommandExecutionState, id, cmdExecutionState);
+        super(parameters);
+        this.command = parameters.command;
+        this.cmdExecutionState = new StateValueRef<>(changeTracker, CommandExecutionState, id, parameters.cmdExecutionState);
     }
 
     public CommandBase getCommand()
@@ -41,7 +40,7 @@ public final class CommandExecution extends EntityBase
     {
         this.cmdExecutionState.set(state);
     }
-
+    
     @Override
     public String toDebugString()
     {

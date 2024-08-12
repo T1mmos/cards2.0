@@ -1,12 +1,11 @@
-package gent.timdemey.cards.model.entities.config;
+package gent.timdemey.cards.model.entities.state;
 
 import gent.timdemey.cards.model.delta.IChangeTracker;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.delta.Property;
 import gent.timdemey.cards.model.delta.StateValueRef;
-import java.util.UUID;
 
-public class Configuration extends EntityBase
+public class Configuration extends EntityBase<P_Configuration>
 {
     public static final Property<Integer> ServerTcpPort = Property.of(Configuration.class, Integer.class, "ServerTcpPort");
     public static final Property<Integer> ServerUdpPort = Property.of(Configuration.class, Integer.class, "ServerUdpPort");
@@ -16,9 +15,11 @@ public class Configuration extends EntityBase
     private final StateValueRef<Integer> serverUdpPortRef;
     private final StateValueRef<Integer> clientUdpPortRef;
     
-    public Configuration(IChangeTracker changeTracker, UUID id)
+    public Configuration(
+        IChangeTracker changeTracker,
+        P_Configuration parameters)
     {
-        super(id);
+        super(parameters);
         
         this.serverTcpPortRef = new StateValueRef<>(changeTracker, ServerTcpPort, id);
         this.serverUdpPortRef = new StateValueRef<>(changeTracker, ServerUdpPort, id);

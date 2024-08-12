@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 
 /**
  *
@@ -38,10 +39,10 @@ public class EntityListExtensions
         return ids;
     }
 
-    public static <X extends EntityBase> List<X> getExcept(List<X> list, UUID... excluded)
+    public static <X extends EntityBase> EntityList<X> getExcept(List<X> list, UUID... excluded)
     {
         List<UUID> exclIds = Arrays.asList(excluded);
-        List<X> xs = new ArrayList<>();
+        EntityList<X> xs = new EntityList<>();
         for (X x : list)
         {
             if (!exclIds.contains(x.id))
@@ -49,6 +50,7 @@ public class EntityListExtensions
                 xs.add(x);
             }
         }
+        
         return xs;
     }
 
@@ -71,9 +73,9 @@ public class EntityListExtensions
         return list.stream().anyMatch(x -> x.id.equals(id));
     }
 
-    public static <X extends EntityBase> List<X> getOnly(List<X> list, List<UUID> included)
+    public static <X extends EntityBase> EntityList<X> getOnly(List<X> list, List<UUID> included)
     {
-        List<X> xs = new ArrayList<>();
+        EntityList<X> xs = new EntityList<>();
         for (X x : list)
         {
             if (included.contains(x.id))
@@ -113,5 +115,15 @@ public class EntityListExtensions
         X x = get(list, id);
         list.remove(x);
         return x;
+    }
+    
+    public static <X,Y> List<Y> select(List<X> listX, Function<X, Y> selector)
+    {
+        List<Y> listY = new ArrayList<>();
+        for (X x : listX)
+        {
+            listY.add(selector.apply(x));
+        }
+        return listY;
     }
 }

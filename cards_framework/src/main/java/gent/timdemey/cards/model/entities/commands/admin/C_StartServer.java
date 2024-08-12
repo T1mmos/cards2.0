@@ -13,8 +13,7 @@ import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CommandFactory;
 import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.config.Configuration;
-import gent.timdemey.cards.model.entities.config.ConfigurationFactory;
+import gent.timdemey.cards.model.entities.state.Configuration;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.Player;
 import gent.timdemey.cards.model.entities.state.ServerTCP;
@@ -28,7 +27,6 @@ import gent.timdemey.cards.model.net.UDP_Source;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.utils.Debug;
 import gent.timdemey.cards.model.net.IUdpMessageListener;
-import java.util.UUID;
 
 /**
  * Command that starts a server and automatically joins the current player in
@@ -50,7 +48,6 @@ public class C_StartServer extends CommandBase<P_StartServer>
     public final int tcpport; // tcp port to accepts clients on that want to join a game
     public final boolean autoconnect; // whether to automatically connect as client to the server about to be created
 
-    private ConfigurationFactory _ConfigurationFactory;
     private StateFactory _StateFactory;
     private NetworkFactory _NetworkFactory;
     private Logger _Logger;
@@ -65,7 +62,6 @@ public class C_StartServer extends CommandBase<P_StartServer>
         NetworkFactory networkFactory,
         StateFactory stateFactory,
         CommandFactory commandFactory,
-        ConfigurationFactory configurationFactory,
         Logger logger,
         Starter starter,
         P_StartServer parameters)
@@ -97,7 +93,6 @@ public class C_StartServer extends CommandBase<P_StartServer>
         this._NetworkFactory = networkFactory;
         this._CommandFactory = commandFactory;
         this._StateFactory = stateFactory;        
-        this._ConfigurationFactory = configurationFactory;
         this._Logger = logger;
         this._Starter = starter;
         
@@ -151,7 +146,7 @@ public class C_StartServer extends CommandBase<P_StartServer>
                 }
                 
                 // create a configuration
-                Configuration cfg = _ConfigurationFactory.CreateConfiguration();
+                Configuration cfg = _StateFactory.CreateConfiguration();
                 {
                     cfg.setServerTcpPort(tcpport);
                     cfg.setServerUdpPort(udpport);    
@@ -169,10 +164,9 @@ public class C_StartServer extends CommandBase<P_StartServer>
                 TCP_ConnectionPool tcpConnPool = _NetworkFactory.CreateTCPConnectionPool(_ContextType.name(), playerCount, tcpConnListener);
                 TCP_ConnectionAccepter tcpConnAccepter = _NetworkFactory.CreateTCPConnectionAccepter(tcpConnPool, tcpport);
 
-                // update the state: set server, lobby admin, add player, command history
-                UUID localId = UUID.randomUUID();                
-                ServerTCP server = _StateFactory.CreateServerTCP(localId, srvname, addr, tcpport);
-                _State.setLocalId(localId);
+                // update the state: set server, lobby admin, add player, command history             
+                ServerTCP server = _StateFactory.CreateServerTCP(srvname, addr, tcpport);
+                _State.setLocalId(server.id);
                 _State.setServer(server);
                 _State.setServerMessage(srvmsg);
                 _State.setLobbyAdminId(creatorId);
@@ -227,7 +221,7 @@ public class C_StartServer extends CommandBase<P_StartServer>
             CommandBase command = null;
             try
             {
-                command = _CommandDtoMapper.toCommand(msg);
+                command = _CommandFactory.NewCommand(_PayloadMapper.toPayload(msg));
             }
             catch (Exception ex)
             {

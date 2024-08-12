@@ -43,6 +43,7 @@ import gent.timdemey.cards.model.entities.commands.game.C_Move;
 import gent.timdemey.cards.model.entities.commands.game.C_Push;
 import gent.timdemey.cards.model.entities.commands.game.C_Use;
 import gent.timdemey.cards.di.Container;
+import gent.timdemey.cards.model.entities.EntityFactory;
 import gent.timdemey.cards.model.entities.commands.meta.P_Accept;
 import gent.timdemey.cards.model.entities.commands.dialogs.P_ClearServerList;
 import gent.timdemey.cards.model.entities.commands.net.P_TCP_ClientDisconnect;
@@ -89,32 +90,33 @@ import gent.timdemey.cards.model.entities.commands.net.P_UDP_StartServerInfoRequ
 import gent.timdemey.cards.model.entities.commands.net.P_UDP_StopServerInfoRequestService;
 import gent.timdemey.cards.model.entities.commands.meta.P_Undo;
 import gent.timdemey.cards.model.entities.commands.game.P_Use;
+import gent.timdemey.cards.model.entities.common.PayloadBase;
 import gent.timdemey.cards.model.entities.state.State;
+import gent.timdemey.cards.model.entities.state.payload.P_Player;
 import gent.timdemey.cards.model.net.TCP_Connection;
 import gent.timdemey.cards.services.context.ContextType;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
  *
  * @author Timmos
  */
-public abstract class CommandFactory
+public abstract class CommandFactory extends EntityFactory
 {
-    private final Container _Container;
-
     public CommandFactory(Container container)
     {
-        this._Container = container;
+        super(container);
     }
 
     public C_TCP_ClientConnect CreateTCPClientConnect(UUID serverId, InetAddress inetAddress, int tcpPort, String serverName, String playerName)
     {        
         P_TCP_ClientConnect p = NewCommandPayload(P_TCP_ClientConnect.class); 
        
-        p.serverId = serverId;
         p.serverInetAddress = inetAddress;
         p.serverTcpPort = tcpPort;
         p.serverName = serverName;
@@ -140,7 +142,7 @@ public abstract class CommandFactory
         return DICreate(C_StopServer.class, P_StopServer.class, parameters);
     }
 
-    public C_HandleGameStarted CreateOnLobbyToGame(CardGame cardGame)
+    public C_HandleGameStarted CreateHandleGameStarted(CardGame cardGame)
     {
         P_HandleGameStarted p = NewCommandPayload(P_HandleGameStarted.class);
         
@@ -355,24 +357,6 @@ public abstract class CommandFactory
         p.acceptedCommandSourceId = sourceId;
         
         return CreateAccept(p);
-    }
-    
-    protected <P extends CommandPayloadBase> P NewCommandPayload(Class<P> clazz)
-    {
-        try
-        {
-            P instance = (P) clazz.getConstructors()[0].newInstance();
-            
-            instance.id = UUID.randomUUID();
-            instance.creatorId = _Container.Get(State.class).getLocalId();
-            instance.creatorContextType = _Container.Get(ContextType.class);
-            
-            return instance;
-        } 
-        catch (Exception ex)
-        {
-            throw new IllegalArgumentException("Class " + clazz.getSimpleName() + " cannot be instantiated: expects a single public parameterless constructor");
-        }
     }
     
     public C_Accept CreateAccept(P_Accept parameters)
@@ -650,18 +634,9 @@ public abstract class CommandFactory
     public abstract C_Pull CreatePull(UUID cardStackId, UUID cardId);
     public abstract C_Pull CreatePull(P_Pull parameters);
     
-    
-
     public CommandSchedulingTcpConnectionListener CreateCommandSchedulingTcpConnectionListener(ContextType contextType)
     {
         return DICreate(CommandSchedulingTcpConnectionListener.class, ContextType.class, contextType);
-    }
-    
-    protected <C, P> C DICreate(Class<C> toCreateClazz, Class<P> parametersClazz, P parameters)
-    {
-        Container container = _Container.Scope();        
-        container.AddSingleton(parametersClazz, parameters);
-        return container.Get(toCreateClazz);
     }
 
     public C_TCP_HandleNew CreateTCPHandleNew(TCP_Connection tcpConnection)
@@ -676,5 +651,53 @@ public abstract class CommandFactory
     public C_TCP_HandleNew CreateTCPHandleNew(P_TCP_HandleNew parameters)
     {
         return DICreate(C_TCP_HandleNew.class, P_TCP_HandleNew.class, parameters);
+    }
+    
+    private static final Map<Class<? extends PayloadBase>, Class<? extends CommandBase>> _Payload2CommandMap = new HashMap<>()
+    {{
+        put(P_Accept.class, C_Accept.class);
+        
+        put(P_TCP_ClientDisconnect.class, C_TCP_ClientConnect.class);
+        put(P_OnGameToLobby.class, C_OnGameToLobby.class);
+        put(P_OnGameEnded.class, C_OnGameEnded.class);
+        put(P_RemovePlayer.class, C_RemovePlayer.class);
+        put(P_Enter.class, C_Enter.class);
+        put(P_HandlePlayerJoined.class, C_HandlePlayerJoined.class);
+        put(P_OnWelcome.class, C_OnWelcome.class);
+        put(P_HandleGameStarted.class, C_HandleGameStarted.class);
+        put(P_Reject.class, C_Reject.class);
+        put(P_StartMultiplayerGame.class, C_StartMultiplayerGame.class);
+        put(P_UDP_GetServerInfoRequest.class, C_UDP_GetServerInfoRequest.class);
+        put(P_UDP_GetServerInfoResponse.class, C_UDP_GetServerInfoResponse.class);
+        put(P_TCP_HandleRejected.class, C_TCP_HandleRejected.class);
+        put(P_TCP_HandleAccepted.class, C_TCP_HandleAccepted.class);
+    }};    
+    
+    private Class<? extends CommandBase> ResolveCommandClass(PayloadBase payload)
+    {
+        Class<? extends CommandBase> cmdClazz = _Payload2CommandMap.get(payload.getClass());
+        if (cmdClazz == null)
+        {
+            throw new IllegalArgumentException("Cannot resolve CommandBase class: PayloadBase of type '" + payload.getClass()+"' is not mapped");
+        }
+        
+        return cmdClazz;
+    }
+
+    public CommandBase<?> NewCommand(PayloadBase payload)
+    {
+        Class<?> cmdClazz = ResolveCommandClass(payload);
+        Class<?> pClazz = (Class<?>) payload.getClass();
+        return (CommandBase<?>) DICreate(cmdClazz, (Class<Object>) pClazz, payload);
+    }
+        
+    protected <P extends CommandPayloadBase> P NewCommandPayload(Class<P> clazz)
+    {
+        P instance = super.NewPayload(clazz);
+            
+        instance.creatorId = _Container.Get(State.class).getLocalId();
+        instance.creatorContextType = _Container.Get(ContextType.class);
+
+        return instance;
     }
 }

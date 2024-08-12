@@ -4,21 +4,24 @@ import gent.timdemey.cards.model.delta.IChangeTracker;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.delta.Property;
 import gent.timdemey.cards.model.delta.StateValueRef;
+import gent.timdemey.cards.model.entities.state.payload.P_Player;
 import gent.timdemey.cards.utils.Debug;
-import java.util.UUID;
 
 public class Player extends EntityBase
 {
     public static final Property<String> Name = Property.of(Player.class, String.class, "Name");
     public static final Property<Integer> Score = Property.of(Player.class, Integer.class, "Score");
 
-    private StateValueRef<String> nameRef;
-    private StateValueRef<Integer> scoreRef;
+    private final StateValueRef<String> nameRef;
+    private final StateValueRef<Integer> scoreRef;
 
-    Player(IChangeTracker changeTracker, UUID id, String name)
+    public Player(
+        IChangeTracker changeTracker, 
+        P_Player parameters)
     {
-        super(id);
-        this.nameRef = new StateValueRef<>(changeTracker, Name, id, name);
+        super(parameters);
+        
+        this.nameRef = new StateValueRef<>(changeTracker, Name, id, parameters.name);
         this.scoreRef = new StateValueRef<>(changeTracker, Score, id, 0);
     }
 

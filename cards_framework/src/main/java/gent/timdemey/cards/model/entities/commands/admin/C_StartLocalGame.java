@@ -55,7 +55,7 @@ public class C_StartLocalGame extends CommandBase<P_StartLocalGame>
     {
         CheckContext(ContextType.UI);
                
-        Player player = _StateFactory.CreatePlayer(_State.getLocalId(), _State.getLocalName());
+        Player player = _StateFactory.CreatePlayer(_State.getLocalName());
         _State.getPlayers().add(player);
         List<UUID> playerIds = _State.getPlayers().getIds();
         CardGame cardGame = _CardGameService.createCardGame(playerIds);

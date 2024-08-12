@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.model.entities.common.EntityBase;
-import gent.timdemey.cards.model.entities.config.Configuration;
 import gent.timdemey.cards.model.delta.EntityStateListRef;
 import gent.timdemey.cards.model.delta.IChangeTracker;
 import gent.timdemey.cards.model.delta.Property;
 import gent.timdemey.cards.model.delta.StateValueRef;
+import gent.timdemey.cards.model.entities.common.EntityList;
+import gent.timdemey.cards.model.entities.state.payload.P_State;
 import gent.timdemey.cards.model.net.TCP_ConnectionAccepter;
 import gent.timdemey.cards.model.net.TCP_ConnectionPool;
 import gent.timdemey.cards.model.net.UDP_ServiceResponder;
@@ -53,13 +53,14 @@ public class State extends EntityBase
     private TCP_ConnectionPool tcpConnectionPool = null;
     private UDP_ServiceResponder udpServiceAnnouncer = null;
     private UDP_ServiceRequester udpServiceRequester = null;
-    
-    
+        
     private final Logger _Logger;    
 
-    public State(IChangeTracker changeTracker, ContextType contextType, Logger logger, UUID id)
+    public State(
+        IChangeTracker changeTracker, ContextType contextType, Logger logger, 
+        P_State parameters)
     {
-        super(id);
+        super(ensureId(parameters));
         
         this._Logger = logger;
                 
@@ -74,6 +75,15 @@ public class State extends EntityBase
         serverRef = new StateValueRef<>(changeTracker, Server, id);
         serverMsgRef = new StateValueRef<>(changeTracker, ServerMsg, id);
         serversRef = new EntityStateListRef<>(changeTracker, UDPServers, id, new ArrayList<>());
+    }
+    
+    private static P_State ensureId(P_State parameters)
+    {
+        if (parameters.id == null)
+        {
+            parameters.id = UUID.randomUUID();
+        }
+        return parameters;
     }
 
     public CardGame getCardGame()
@@ -226,7 +236,7 @@ public class State extends EntityBase
         return playersRef;
     }
 
-    public List<Player> getRemotePlayers()
+    public EntityList<Player> getRemotePlayers()
     {
         return playersRef.getExcept(serverRef.get().id, this.id);
     }

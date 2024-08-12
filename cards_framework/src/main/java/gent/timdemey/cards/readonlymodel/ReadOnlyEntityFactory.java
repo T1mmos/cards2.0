@@ -14,7 +14,7 @@ import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.state.CommandExecution;
 import gent.timdemey.cards.model.entities.state.CommandHistory;
 import gent.timdemey.cards.model.entities.common.EntityBase;
-import gent.timdemey.cards.model.entities.config.Configuration;
+import gent.timdemey.cards.model.entities.state.Configuration;
 import gent.timdemey.cards.model.entities.state.Player;
 import gent.timdemey.cards.model.entities.state.ServerTCP;
 import gent.timdemey.cards.model.entities.state.ServerUDP;

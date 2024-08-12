@@ -56,8 +56,7 @@ public class SolitaireCardGameCreationService implements ICardGameService
         { // depot stack - all remaining cards = 52 - 28 = 24 cards
             List<Card> cards = allCards.subList(0, 24);
             cards.forEach(c -> c.visibleRef.set(false));
-            CardStack stack = _StateFactory.CreateCardStack(SolitaireComponentTypes.DEPOT, 0);
-            stack.cards.addAll(cards);
+            CardStack stack = _StateFactory.CreateCardStack(SolitaireComponentTypes.DEPOT, 0, cards);
             for(Card card : cards)
             {
                 card.cardStack = stack;
@@ -72,8 +71,7 @@ public class SolitaireCardGameCreationService implements ICardGameService
                 int end = 24 + skipCards + i + 1;
                 List<Card> cards = allCards.subList(start, end);
                 allCards.subList(start, end - 1).forEach(c -> c.visibleRef.set(false));
-                CardStack stack = _StateFactory.CreateCardStack(SolitaireComponentTypes.MIDDLE, i);
-                stack.cards.addAll(cards);
+                CardStack stack = _StateFactory.CreateCardStack(SolitaireComponentTypes.MIDDLE, i, cards);
                 for(Card card : cards)
                 {
                     card.cardStack = stack;
@@ -82,13 +80,13 @@ public class SolitaireCardGameCreationService implements ICardGameService
             }
         }
         { // turnover stack - initially empty
-            CardStack stack = _StateFactory.CreateCardStack(SolitaireComponentTypes.TURNOVER, 0);            
+            CardStack stack = _StateFactory.CreateCardStack(SolitaireComponentTypes.TURNOVER, 0, new ArrayList<>());            
             stacks.add(stack);
         }
         { // laydown stacks - initially empty
             for (int i = 0; i < 4; i++)
             {
-                CardStack stack = _StateFactory.CreateCardStack(SolitaireComponentTypes.LAYDOWN, i);
+                CardStack stack = _StateFactory.CreateCardStack(SolitaireComponentTypes.LAYDOWN, i, new ArrayList<>());
                 stacks.add(stack);
             }
         }

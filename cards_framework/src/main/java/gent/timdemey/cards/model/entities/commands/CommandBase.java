@@ -11,11 +11,11 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.di.IContainerService;
 import gent.timdemey.cards.model.net.TCP_ConnectionPool;
-import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
+import gent.timdemey.cards.serialization.mappers.PayloadMapper;
 import gent.timdemey.cards.services.context.ICommandExecutor;
 import java.util.List;
 
-public abstract class CommandBase<CMDPAYLOAD extends CommandPayloadBase> extends EntityBase
+public abstract class CommandBase<CMDPAYLOAD extends CommandPayloadBase> extends EntityBase<CMDPAYLOAD>
 {
     private volatile TCP_Connection sourceTcpConnection;
     private volatile UDP_Source sourceUdp;
@@ -25,15 +25,14 @@ public abstract class CommandBase<CMDPAYLOAD extends CommandPayloadBase> extends
     protected final State _State;
     protected final Context _Context;
     protected final ContextType _ContextType;
-    protected final CommandDtoMapper _CommandDtoMapper;
+    protected final PayloadMapper _PayloadMapper;
     
     public final UUID creatorId;
     public final ContextType creatorContextType;
-    protected final CMDPAYLOAD _Payload;
     
     protected CommandBase(Container container, CMDPAYLOAD payload)
     {
-        super(payload.id);
+        super(payload);
         
         if (payload.creatorContextType == null)
         {
@@ -45,9 +44,8 @@ public abstract class CommandBase<CMDPAYLOAD extends CommandPayloadBase> extends
         this._Context = container.Get(Context.class);
         this._State = container.Get(State.class);
         this._ContextType = container.Get(ContextType.class);
-        this._CommandDtoMapper = container.Get(CommandDtoMapper.class);
+        this._PayloadMapper = container.Get(PayloadMapper.class);
         
-        this._Payload = payload;
         this.creatorId = payload.creatorId;
         this.creatorContextType = payload.creatorContextType;
     }
@@ -121,14 +119,14 @@ public abstract class CommandBase<CMDPAYLOAD extends CommandPayloadBase> extends
     protected final void send(UUID remoteId, CommandBase cmd)
     {
         TCP_Connection connection = _State.getTcpConnectionPool().getConnection(remoteId);
-        String msg = _CommandDtoMapper.toJson(cmd);
+        String msg = _PayloadMapper.toJson(cmd._Payload);
         connection.send(msg);
     }
     
     protected final void send(List<UUID> remoteIds, CommandBase cmd)
     {
         TCP_ConnectionPool pool = _State.getTcpConnectionPool();
-        String msg = _CommandDtoMapper.toJson(cmd);
+        String msg = _PayloadMapper.toJson(cmd._Payload);
         for (UUID remoteId : remoteIds)
         {
             TCP_Connection connection = pool.getConnection(remoteId);

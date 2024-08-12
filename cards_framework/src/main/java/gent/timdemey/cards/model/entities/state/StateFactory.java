@@ -1,22 +1,20 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package gent.timdemey.cards.model.entities.state;
 
 import gent.timdemey.cards.common.Version;
-import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.model.delta.IChangeTracker;
+import gent.timdemey.cards.di.Container;
+import gent.timdemey.cards.model.entities.EntityFactory;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CommandExecutionState;
 import gent.timdemey.cards.model.entities.state.payload.P_Card;
 import gent.timdemey.cards.model.entities.state.payload.P_CardGame;
 import gent.timdemey.cards.model.entities.state.payload.P_CardStack;
+import gent.timdemey.cards.model.entities.state.payload.P_CommandExecution;
+import gent.timdemey.cards.model.entities.state.payload.P_CommandHistory;
 import gent.timdemey.cards.model.entities.state.payload.P_Player;
 import gent.timdemey.cards.model.entities.state.payload.P_PlayerConfiguration;
 import gent.timdemey.cards.model.entities.state.payload.P_ServerTCP;
 import gent.timdemey.cards.model.entities.state.payload.P_ServerUDP;
-import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.model.entities.state.payload.P_State;
 import java.net.InetAddress;
 import java.util.List;
 import java.util.UUID;
@@ -25,150 +23,151 @@ import java.util.UUID;
  *
  * @author Timmos
  */
-public class StateFactory 
-{
-    private final IChangeTracker _ChangeTracker;
-    private final ContextType _ContextType;
-    private final Logger _Logger;
-    
-    public StateFactory (
-        IChangeTracker changeTracker, ContextType contextType, Logger logger)
+public class StateFactory extends EntityFactory
+{    
+    public StateFactory (Container container)
     {
-        this._ChangeTracker = changeTracker;
-        this._ContextType = contextType;
-        this._Logger = logger;
+        super(container);
     }
     
-    Card CreateCard(CardSuit suit, CardValue value, boolean visible)
+    public Card CreateCard(CardSuit suit, CardValue value, boolean visible)
     {
-        return new Card(_ChangeTracker, UUID.randomUUID(), suit, value, visible);
-    }
-    
-    Card CreateCard(UUID id, CardSuit suit, CardValue value, boolean visible)
-    {
-        return new Card(_ChangeTracker, id, suit, value, visible);
-    }
-    
-    public Card CreateCard(P_Card card)
-    {
-        return new Card(_ChangeTracker, card.id, card.suit, card.value, card.visible);
-    }
-    
-    public CardStack CreateCardStack(String cardStackType, int typeNumber)
-    {
-        return new CardStack(_ChangeTracker, UUID.randomUUID(), cardStackType, typeNumber);
+        P_Card p = NewPayload(P_Card.class);
+        p.suit = suit;
+        p.value = value;
+        p.visible = visible;
+        return CreateCard(p);
     }
         
-    public CardGame CreateCardGame( List<PlayerConfiguration> playerConfigurations)
+    public Card CreateCard(P_Card parameters)
     {
-        return new CardGame(_ChangeTracker, UUID.randomUUID(), playerConfigurations);
+        return DICreate(Card.class, P_Card.class, parameters);
     }
-    
-    public CardGame CreateCardGame(UUID id, List<PlayerConfiguration> playerConfigurations)
+        
+    public CardGame CreateCardGame(List<PlayerConfiguration> playerConfigurations)
     {
-        return new CardGame(_ChangeTracker, id, playerConfigurations);
+        P_CardGame p = NewPayload(P_CardGame.class);
+        p.playerConfigurations = playerConfigurations;
+        return CreateCardGame(p);
     }
     
     public CardGame CreateCardGame(P_CardGame cardGame)
     {
-        return new CardGame(_ChangeTracker, cardGame.id, cardGame.playerConfigurations);
+        return DICreate(CardGame.class, P_CardGame.class, cardGame);
     }
     
-    public CardStack CreateCardStack(String cardStackType, UUID id, int typeNumber)
+    public CardStack CreateCardStack(String cardStackType, int typeNumber, List<Card> cards)
     {
-        return new CardStack(_ChangeTracker, id, cardStackType, typeNumber);
+        P_CardStack p = NewPayload(P_CardStack.class);
+        p.cardStackType = cardStackType;
+        p.typeNumber = typeNumber;
+        p.cards = cards;
+        return CreateCardStack(p);
     }
     
-    public CardStack CreateCardStack(P_CardStack cardStack)
+    public CardStack CreateCardStack(P_CardStack parameters)
     {
-        return new CardStack(_ChangeTracker, cardStack.id, cardStack.cardStackType, cardStack.typeNumber);
+        return DICreate(CardStack.class, P_CardStack.class, parameters);
     }
         
     public Player CreatePlayer(String name) 
     {
-        return new Player(_ChangeTracker, UUID.randomUUID(), name);
+        P_Player p = NewPayload(P_Player.class);
+        p.name = name;
+        return CreatePlayer(p);
     }
-
+    
     public Player CreatePlayer(UUID id, String name) 
     {
-        return new Player(_ChangeTracker, id, name);
-    }    
+        P_Player p = new P_Player();
+        p.id = id;
+        p.name = name;        
+        return CreatePlayer(p);
+    }
     
-    public Player CreatePlayer(P_Player player) 
+    public Player CreatePlayer(P_Player parameters) 
     {
-        return new Player(_ChangeTracker, player.id, player.name);
+        return DICreate(Player.class, P_Player.class, parameters);
     }
     
     public PlayerConfiguration CreatePlayerConfiguration(UUID playerId, List<CardStack> cardStacks) 
     {
-        return new PlayerConfiguration(UUID.randomUUID(), playerId, cardStacks);
+        P_PlayerConfiguration p = NewPayload(P_PlayerConfiguration.class);
+        p.playerId = playerId;
+        p.cardStacks = cardStacks;
+        return CreatePlayerConfiguration(p);
     }
 
-    public PlayerConfiguration CreatePlayerConfiguration(UUID id, UUID playerId, List<CardStack> cardStacks) 
+    public PlayerConfiguration CreatePlayerConfiguration(P_PlayerConfiguration parameters) 
     {
-        return new PlayerConfiguration(id, playerId, cardStacks);
+        return DICreate(PlayerConfiguration.class, P_PlayerConfiguration.class, parameters);
     }    
-    
-    public PlayerConfiguration CreatePlayerConfiguration(P_PlayerConfiguration pl) 
-    {
-        return new PlayerConfiguration(pl.id, pl.playerId, pl.cardStacks);
-    }
-    
+        
     public ServerTCP CreateServerTCP(String serverName, InetAddress inetAddress, int tcpport) 
     {
-        return new ServerTCP(UUID.randomUUID(), serverName, inetAddress, tcpport);
+        P_ServerTCP p = NewPayload(P_ServerTCP.class);
+        p.serverName = serverName;
+        p.inetAddress = inetAddress;
+        p.tcpport = tcpport;
+        return CreateServerTCP(p);
     }
-
-    public ServerTCP CreateServerTCP(UUID id, String serverName, InetAddress inetAddress, int tcpport) 
-    {
-        return new ServerTCP(id, serverName, inetAddress, tcpport);
-    }    
     
-    public ServerTCP CreateServerTCP(P_ServerTCP pl) 
+    public ServerTCP CreateServerTCP(P_ServerTCP parameters) 
     {
-        return new ServerTCP(pl.id, pl.serverName, pl.inetAddress, pl.tcpport);
+        return DICreate(ServerTCP.class, P_ServerTCP.class, parameters);
     }
         
     public ServerUDP CreateServerUDP(ServerTCP server, Version version, int playerCount, int maxPlayerCount) 
     {
-        return new ServerUDP(UUID.randomUUID(), server, version, playerCount, maxPlayerCount);
+        P_ServerUDP p = NewPayload(P_ServerUDP.class);
+        p.server = server;
+        p.version = version;
+        p.playerCount = playerCount;
+        p.maxPlayerCount = maxPlayerCount;
+        return CreateServerUDP(p);
     }
 
-    public ServerUDP CreateServerUDP(UUID id, ServerTCP server, Version version, int playerCount, int maxPlayerCount) 
+    public ServerUDP CreateServerUDP(P_ServerUDP parameters) 
     {
-        return new ServerUDP(id, server, version, playerCount, maxPlayerCount);
-    }    
-     
-    public ServerUDP CreateServerUDP(P_ServerUDP pl) 
-    {
-        return new ServerUDP(pl.id, pl.server, pl.version, pl.playerCount, pl.maxPlayerCount);
+        return DICreate(ServerUDP.class, P_ServerUDP.class, parameters);
     }   
                  
     public State CreateState() 
     {
-        return new State(_ChangeTracker, _ContextType, _Logger, UUID.randomUUID());
+        P_State p = NewPayload(P_State.class);
+        return CreateState(p);
     }
-
-    public State CreateState(UUID id) 
+    
+    public State CreateState(P_State parameters) 
     {
-        return new State(_ChangeTracker, _ContextType, _Logger, id);
-    }    
+        return DICreate(State.class, P_State.class, parameters);
+    }
 
     public CommandExecution CreateCommandExecution(CommandBase cmd, CommandExecutionState commandExecutionState)
     {
-        return new CommandExecution(_ChangeTracker, UUID.randomUUID(), cmd, commandExecutionState);
+        P_CommandExecution p = NewPayload(P_CommandExecution.class);
+        p.command = cmd;
+        p.cmdExecutionState = commandExecutionState;
+        return CreateCommandExecution(p);
     }
     
-    public CommandExecution CreateCommandExecution(UUID id, CommandBase cmd, CommandExecutionState commandExecutionState)
+    public CommandExecution CreateCommandExecution(P_CommandExecution parameters)
     {
-        return new CommandExecution(_ChangeTracker, id, cmd, commandExecutionState);
+        return DICreate(CommandExecution.class, P_CommandExecution.class, parameters);
     }
 
     public CommandHistory CreateCommandHistory(boolean canUndo, boolean canRemove)
     {
-        return new CommandHistory(_ChangeTracker, this, _Logger, UUID.randomUUID(), canUndo, canRemove);
+        P_CommandHistory p = NewPayload(P_CommandHistory.class);
+        p.canUndo = canUndo;
+        p.canRemove = canRemove;
+        return CreateCommandHistory(p);
     }
     
+    public CommandHistory CreateCommandHistory(P_CommandHistory parameters)
+    {
+        return DICreate(CommandHistory.class, P_CommandHistory.class, parameters);
+    }
     
     /**
      * Creates a deck of all 52 cards.
@@ -213,5 +212,16 @@ public class StateFactory
             }
         }
         return cards;
+    }
+    
+    public Configuration CreateConfiguration() 
+    {
+        P_Configuration p = NewPayload(P_Configuration.class);
+        return CreateConfiguration(p);
+    }
+    
+     public Configuration CreateConfiguration(P_Configuration parameters) 
+    {
+        return DICreate(Configuration.class, P_Configuration.class, parameters);
     }
 }

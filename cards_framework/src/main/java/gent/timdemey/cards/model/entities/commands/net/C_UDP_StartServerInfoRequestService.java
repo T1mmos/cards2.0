@@ -56,7 +56,7 @@ public class C_UDP_StartServerInfoRequestService extends CommandBase<P_UDP_Start
 
         // prepare UDP broadcast
         C_UDP_GetServerInfoRequest cmd = _CommandFactory.CreateUDPGetServerInfoRequest();
-        String json = _CommandDtoMapper.toJson(cmd);
+        String json = _PayloadMapper.toJson(cmd._Payload);
         
         int udpport = _State.getConfiguration().getServerUdpPort();
         
@@ -70,7 +70,7 @@ public class C_UDP_StartServerInfoRequestService extends CommandBase<P_UDP_Start
     {
         try
         {
-            CommandBase command = _CommandDtoMapper.toCommand(json);
+            CommandBase command = _CommandFactory.NewCommand(_PayloadMapper.toPayload(json));
             if (!(command instanceof C_UDP_GetServerInfoResponse))
             {
                 _Logger.warn("Unexpected command on UDP datagram, class: " + command.getClass().getSimpleName());

@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.model.entities.common.EntityBase;
+import gent.timdemey.cards.model.entities.common.EntityList;
 import gent.timdemey.cards.model.entities.common.EntityListExtensions;
 import gent.timdemey.cards.model.entities.common.IEntityList;
+import java.util.function.Function;
 
 public class EntityStateListRef<X extends EntityBase> extends StateListRef<X> implements IEntityList<X>
 {
@@ -27,7 +29,7 @@ public class EntityStateListRef<X extends EntityBase> extends StateListRef<X> im
     }
 
     @Override
-    public List<X> getExcept(UUID... excluded)
+    public EntityList<X> getExcept(UUID... excluded)
     {
         return EntityListExtensions.getExcept(list, excluded);
     }
@@ -42,7 +44,7 @@ public class EntityStateListRef<X extends EntityBase> extends StateListRef<X> im
         return EntityListExtensions.contains(list, id);
     }
 
-    public List<X> getOnly(List<UUID> included)
+    public EntityList<X> getOnly(List<UUID> included)
     {
         return EntityListExtensions.getOnly(list, included);
     }
@@ -60,5 +62,11 @@ public class EntityStateListRef<X extends EntityBase> extends StateListRef<X> im
     public X remove(UUID id)
     {
         return EntityListExtensions.remove(list, id);
+    }
+
+    @Override
+    public <Y> List<Y> select(Function<X, Y> selector)
+    {
+        return EntityListExtensions.select(this, selector);   
     }
 }

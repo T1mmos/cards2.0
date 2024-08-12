@@ -12,6 +12,7 @@ import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.Player;
 import gent.timdemey.cards.model.entities.state.StateFactory;
+import gent.timdemey.cards.model.entities.state.payload.P_Player;
 import gent.timdemey.cards.model.net.TCP_Connection;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.utils.Debug;
@@ -25,8 +26,8 @@ public class C_Enter extends CommandBase<P_Enter>
 {
     public final String clientName;
     private final Logger _Logger;
-    private final StateFactory _StateFactory;
     private final CommandFactory _CommandFactory;
+    private final StateFactory _StateFactory;
 
     public C_Enter(
         Container container,

@@ -17,7 +17,7 @@ import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
-import gent.timdemey.cards.model.entities.config.Configuration;
+import gent.timdemey.cards.model.entities.state.Configuration;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.ConfigKeyDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.FileDescriptors;

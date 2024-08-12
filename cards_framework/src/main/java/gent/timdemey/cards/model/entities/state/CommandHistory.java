@@ -16,6 +16,7 @@ import gent.timdemey.cards.model.delta.Property;
 import gent.timdemey.cards.model.delta.StateValueRef;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CommandExecutionState;
+import gent.timdemey.cards.model.entities.state.payload.P_CommandHistory;
 import gent.timdemey.cards.utils.Debug;
 
 public class CommandHistory extends EntityBase
@@ -39,26 +40,17 @@ public class CommandHistory extends EntityBase
     private final Logger _Logger;
     private final StateFactory _StateFactory;
 
-    /**
-     * Creates a new command history.
-     * 
-     * @param undoable  Indicates whether the history will support undo/redo of
-     *                  commands
-     * @param removable Indicates whether the history will support the undoing of a
-     *                  command and removing it from the chain, while the command is
-     *                  not necessarily the last command in the chain
-     */
     public CommandHistory(
         IChangeTracker changeTracker, StateFactory stateFactory, Logger logger,
-        UUID id, boolean canUndo, boolean canRemove)
+        P_CommandHistory parameters)
     {
-        super(id);
+        super(parameters);
         
         this._StateFactory = stateFactory;
         this._Logger = logger;
         
-        this.undoable = canUndo;
-        this.removable = canRemove;
+        this.undoable = parameters.canUndo;
+        this.removable = parameters.canRemove;
         this.currentIdxRef = new StateValueRef<>(changeTracker, CurrentIndex, id, -1);
         this.acceptedIdxRef = new StateValueRef<>(changeTracker, AcceptedIndex, id, -1);
         this.execLine = new EntityStateListRef<>(changeTracker, ExecLine, id, new ArrayList<>());

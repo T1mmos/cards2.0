@@ -76,7 +76,7 @@ public class C_StartMultiplayerGame extends CommandBase<P_StartMultiplayerGame>
             List<UUID> playerIds = _State.getPlayers().getIds();
             CardGame cardGame = _CardGameService.createCardGame(playerIds);
 
-            C_HandleGameStarted cmd = _CommandFactory.CreateOnLobbyToGame(cardGame);
+            C_HandleGameStarted cmd = _CommandFactory.CreateHandleGameStarted(cardGame);
             schedule(ContextType.Server, cmd);
         }
     }

@@ -28,7 +28,7 @@ public class C_OnWelcome extends CommandBase<P_OnWelcome>
     private final CommandFactory _CommandFactory;
 
     public C_OnWelcome(
-        Container container, CommandFactory commandFactory, 
+        Container container, CommandFactory commandFactory,
         P_OnWelcome parameters)
     {
         super(container, parameters);
@@ -68,8 +68,8 @@ public class C_OnWelcome extends CommandBase<P_OnWelcome>
         }
 
         _State.setServerMessage(serverMessage);
-        _State.setLobbyAdminId(lobbyAdminId);
-        _State.getPlayers().addAll(connected);      
+        _State.setLobbyAdminId(lobbyAdminId);        
+        _State.getPlayers().addAll(this.connected);      
         _State.setGameState(GameState.Lobby);
         
         run(_CommandFactory.ShowDialog_Lobby());
@@ -79,6 +79,6 @@ public class C_OnWelcome extends CommandBase<P_OnWelcome>
     public String toDebugString()
     {
         return Debug.getKeyValue("clientId", clientId) + Debug.getKeyValue("serverId", serverId)
-                + Debug.getKeyValue("serverMessage", serverMessage) + Debug.listEntity("connected", connected);
+                + Debug.getKeyValue("serverMessage", serverMessage);
     }
 }

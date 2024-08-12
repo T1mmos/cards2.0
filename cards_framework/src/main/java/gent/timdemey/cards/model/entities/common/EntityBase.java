@@ -4,21 +4,12 @@ import java.util.UUID;
 
 import gent.timdemey.cards.utils.Debug;
 
-public abstract class EntityBase
+public abstract class EntityBase<PAYLOAD extends PayloadBase>
 {
     public final UUID id;
+    public final PAYLOAD _Payload;
 
-    protected EntityBase(UUID id)
-    {
-        if (id == null)
-        {
-            throw new IllegalArgumentException("id");
-        }
-        
-        this.id = id;
-    }
-
-    protected EntityBase(PayloadBase pl)
+    protected EntityBase(PAYLOAD pl)
     {
         if (pl == null)
         {
@@ -30,6 +21,7 @@ public abstract class EntityBase
         }
         
         this.id = pl.id;
+        this._Payload = pl;
     }
     
     @Override

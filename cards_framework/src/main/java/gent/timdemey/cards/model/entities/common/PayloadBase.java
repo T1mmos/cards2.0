@@ -5,7 +5,7 @@ import java.util.UUID;
 public class PayloadBase
 {
     /**
-     * Id of the command.
+     * Id of the entity.
      */
     public UUID id;
 }

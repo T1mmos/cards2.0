@@ -24,7 +24,6 @@ import gent.timdemey.cards.utils.Debug;
  */
 public class C_TCP_ClientConnect extends CommandBase<P_TCP_ClientConnect>
 {
-    final UUID serverId;
     final InetAddress serverInetAddress;
     final int serverTcpPort;
     final String serverName;
@@ -48,7 +47,6 @@ public class C_TCP_ClientConnect extends CommandBase<P_TCP_ClientConnect>
         this._StateFactory = stateFactory;
         this._CommandFactory = commandFactory;
         
-        this.serverId = parameters.serverId;
         this.serverInetAddress = parameters.serverInetAddress;
         this.serverTcpPort = parameters.serverTcpPort;
         this.serverName = parameters.serverName;
@@ -71,7 +69,7 @@ public class C_TCP_ClientConnect extends CommandBase<P_TCP_ClientConnect>
     {
         if (_ContextType == ContextType.UI)
         {
-            ServerTCP server = _StateFactory.CreateServerTCP(serverId, serverName, serverInetAddress, serverTcpPort);
+            ServerTCP server = _StateFactory.CreateServerTCP(serverName, serverInetAddress, serverTcpPort);
             _State.setServer(server);
             _State.setLocalName(playerName);
             

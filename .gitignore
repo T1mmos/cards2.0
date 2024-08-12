@@ -7,3 +7,4 @@
 **/target/**
 **/dist/**
 nbactions.xml
+nb-configuration.xml

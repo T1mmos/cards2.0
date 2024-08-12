@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package gent.timdemey.cards.di;
 
 import java.lang.reflect.Constructor;
@@ -11,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.function.Supplier;
 
 /**
  *
@@ -170,6 +167,7 @@ public final class Container
     {
         if (clazz != null)
         {
+            // error out when we detect cyclic dependency
             if (constructing.contains(clazz))
             {
                 List<Class> classCycle = new ArrayList<>(constructing);
@@ -182,6 +180,12 @@ public final class Container
                 }
                
                 throw new DIException("Class " + clazz.getName() + " cannot be constructed as a circular dependency was detected: " + b);
+            }
+            
+            // error out when class is not public
+            if (!Modifier.isPublic(clazz.getModifiers()))
+            {
+                throw new DIException("Class " + clazz.getName() + " is not public");
             }
             
             // track that we are constructing this class
