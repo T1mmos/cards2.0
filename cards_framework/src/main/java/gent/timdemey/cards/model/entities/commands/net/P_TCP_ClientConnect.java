@@ -1,7 +1,7 @@
 package gent.timdemey.cards.model.entities.commands.net;
 
 import gent.timdemey.cards.model.entities.commands.CommandPayloadBase;
-import java.net.InetAddress;
+import gent.timdemey.cards.model.entities.state.ServerTCP;
 
 /**
  *
@@ -9,8 +9,6 @@ import java.net.InetAddress;
  */
 public class P_TCP_ClientConnect extends CommandPayloadBase
 {
-    public InetAddress serverInetAddress;
-    public int serverTcpPort;
-    public String serverName;
+    public ServerTCP server;
     public String playerName;
 }

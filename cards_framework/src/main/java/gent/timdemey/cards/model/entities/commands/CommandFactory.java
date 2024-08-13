@@ -91,8 +91,8 @@ import gent.timdemey.cards.model.entities.commands.net.P_UDP_StopServerInfoReque
 import gent.timdemey.cards.model.entities.commands.meta.P_Undo;
 import gent.timdemey.cards.model.entities.commands.game.P_Use;
 import gent.timdemey.cards.model.entities.common.PayloadBase;
+import gent.timdemey.cards.model.entities.state.ServerTCP;
 import gent.timdemey.cards.model.entities.state.State;
-import gent.timdemey.cards.model.entities.state.payload.P_Player;
 import gent.timdemey.cards.model.net.TCP_Connection;
 import gent.timdemey.cards.services.context.ContextType;
 import java.net.InetAddress;
@@ -113,13 +113,11 @@ public abstract class CommandFactory extends EntityFactory
         super(container);
     }
 
-    public C_TCP_ClientConnect CreateTCPClientConnect(UUID serverId, InetAddress inetAddress, int tcpPort, String serverName, String playerName)
+    public C_TCP_ClientConnect CreateTCPClientConnect(ServerTCP server, String playerName)
     {        
         P_TCP_ClientConnect p = NewCommandPayload(P_TCP_ClientConnect.class); 
        
-        p.serverInetAddress = inetAddress;
-        p.serverTcpPort = tcpPort;
-        p.serverName = serverName;
+        p.server = server;
         p.playerName = playerName;
                 
         return CreateTCPClientConnect(p);

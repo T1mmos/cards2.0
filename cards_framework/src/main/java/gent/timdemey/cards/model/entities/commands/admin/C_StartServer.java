@@ -189,7 +189,7 @@ public class C_StartServer extends CommandBase<P_StartServer>
                 if(autoconnect)
                 {
                     // create in UI context!
-                    C_TCP_ClientConnect cmd_connect = _ContainerService.get(ContextType.UI).Get(CommandFactory.class).CreateTCPClientConnect(server.id, addr, tcpport, srvname, playerName);                    
+                    C_TCP_ClientConnect cmd_connect = _ContainerService.get(ContextType.UI).Get(CommandFactory.class).CreateTCPClientConnect(server, playerName);                    
                     schedule(ContextType.UI, cmd_connect);
                 }
             }

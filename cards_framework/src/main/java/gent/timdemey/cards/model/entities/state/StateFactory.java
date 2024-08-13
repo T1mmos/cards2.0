@@ -112,6 +112,15 @@ public class StateFactory extends EntityFactory
         return CreateServerTCP(p);
     }
     
+    public ServerTCP CreateServerTCP(UUID serverId, String serverName, InetAddress inetAddress, int tcpport) 
+    {
+        P_ServerTCP p = NewPayload(P_ServerTCP.class, serverId);
+        p.serverName = serverName;
+        p.inetAddress = inetAddress;
+        p.tcpport = tcpport;
+        return CreateServerTCP(p);
+    }
+    
     public ServerTCP CreateServerTCP(P_ServerTCP parameters) 
     {
         return DICreate(ServerTCP.class, P_ServerTCP.class, parameters);

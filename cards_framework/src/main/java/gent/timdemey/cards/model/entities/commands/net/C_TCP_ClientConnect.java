@@ -1,8 +1,5 @@
 package gent.timdemey.cards.model.entities.commands.net;
 
-import java.net.InetAddress;
-import java.util.UUID;
-
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
@@ -10,7 +7,6 @@ import gent.timdemey.cards.model.entities.commands.CommandFactory;
 
 import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.state.ServerTCP;
-import gent.timdemey.cards.model.entities.state.StateFactory;
 import gent.timdemey.cards.model.net.NetworkFactory;
 import gent.timdemey.cards.model.net.TCP_ConnectionPool;
 import gent.timdemey.cards.services.context.ContextType;
@@ -24,32 +20,25 @@ import gent.timdemey.cards.utils.Debug;
  */
 public class C_TCP_ClientConnect extends CommandBase<P_TCP_ClientConnect>
 {
-    final InetAddress serverInetAddress;
-    final int serverTcpPort;
-    final String serverName;
+    private final ServerTCP server;
     final String playerName;
     private final ICardPlugin _CardPlugin;
-    private final StateFactory _StateFactory;
     private final NetworkFactory _NetworkFactory;
     private final CommandFactory _CommandFactory;
-        
+    
     public C_TCP_ClientConnect(
         Container container,
         ICardPlugin cardPlugin, 
         NetworkFactory networkFactory,
-        StateFactory stateFactory,
         CommandFactory commandFactory,
         P_TCP_ClientConnect parameters)
     {
         super(container, parameters);
         this._CardPlugin = cardPlugin;
         this._NetworkFactory = networkFactory;
-        this._StateFactory = stateFactory;
         this._CommandFactory = commandFactory;
         
-        this.serverInetAddress = parameters.serverInetAddress;
-        this.serverTcpPort = parameters.serverTcpPort;
-        this.serverName = parameters.serverName;
+        this.server = parameters.server;
         this.playerName = parameters.playerName;
     }
 
@@ -69,7 +58,6 @@ public class C_TCP_ClientConnect extends CommandBase<P_TCP_ClientConnect>
     {
         if (_ContextType == ContextType.UI)
         {
-            ServerTCP server = _StateFactory.CreateServerTCP(serverName, serverInetAddress, serverTcpPort);
             _State.setServer(server);
             _State.setLocalName(playerName);
             
@@ -78,15 +66,15 @@ public class C_TCP_ClientConnect extends CommandBase<P_TCP_ClientConnect>
 
             _State.setTcpConnectionPool(tcpConnPool);
 
-            tcpConnPool.addConnection(serverInetAddress, serverTcpPort);            
+            tcpConnPool.addConnection(server.inetAddress, server.tcpport);            
         }
     }
 
     @Override
     public String toDebugString()
     {
-        return Debug.getKeyValue("serverAddress", serverInetAddress) + 
-               Debug.getKeyValue("serverPort", serverTcpPort) +
+        return Debug.getKeyValue("serverAddress", server.inetAddress) + 
+               Debug.getKeyValue("serverPort", server.tcpport) +
                Debug.getKeyValue("playerName", playerName);
     }
 }

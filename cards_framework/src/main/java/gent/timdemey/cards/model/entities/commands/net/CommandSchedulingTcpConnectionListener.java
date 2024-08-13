@@ -50,7 +50,8 @@ public final class CommandSchedulingTcpConnectionListener implements ITcpConnect
             // attach metadata to the command
             command.setSourceTcpConnection(tcpConnection);
 
-            _Logger.info("Received command '%s' (id='%s', ContextType='%s') from '%s'", command.getName(), command.id, command.creatorContextType, tcpConnection.getRemote());
+            _Logger.info("Received command '%s' (id='%s', ContextType='%s') from '%s'", command.getName(), command.id, command.creatorContextType, tcpConnection.getRemote());            
+            _Logger.trace(message.replace("\r\n", "\n").replace("\n", "\t\r\n"));
 
             _CommandExecutor.schedule(command);
         }

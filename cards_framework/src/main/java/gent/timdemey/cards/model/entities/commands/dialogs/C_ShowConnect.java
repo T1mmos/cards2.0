@@ -57,8 +57,7 @@ public class C_ShowConnect extends DialogCommandBase<P_ShowConnect>
         {
             ReadOnlyUDPServer udpServer = data.data_out.server;
             ServerTCP server = udpServer.getServer();
-            C_TCP_ClientConnect cmd = _CommandFactory.CreateTCPClientConnect(server.id, server.inetAddress,
-                    server.tcpport, server.serverName, data.data_out.playerName);
+            C_TCP_ClientConnect cmd = _CommandFactory.CreateTCPClientConnect(server, data.data_out.playerName);
             schedule(ContextType.UI, cmd);
         }
     }

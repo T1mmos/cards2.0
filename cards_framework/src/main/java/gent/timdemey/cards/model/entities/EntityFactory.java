@@ -26,11 +26,16 @@ public class EntityFactory
         
     protected <P extends PayloadBase> P NewPayload(Class<P> clazz)
     {
+        return NewPayload(clazz, UUID.randomUUID());
+    }
+    
+    protected <P extends PayloadBase> P NewPayload(Class<P> clazz, UUID id)
+    {
         try
         {
             P instance = (P) clazz.getConstructors()[0].newInstance();
             
-            instance.id = UUID.randomUUID();
+            instance.id = id;
             
             return instance;
         } 
