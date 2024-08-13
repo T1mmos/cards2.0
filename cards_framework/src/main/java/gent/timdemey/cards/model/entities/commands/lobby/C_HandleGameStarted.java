@@ -7,8 +7,6 @@ import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.StateFactory;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
-import gent.timdemey.cards.services.interfaces.IFrameService;
 
 /**
  * Transition from the lobby to the multiplayer game.
@@ -18,18 +16,15 @@ import gent.timdemey.cards.services.interfaces.IFrameService;
 public class C_HandleGameStarted extends CommandBase<P_HandleGameStarted>
 {
     public final CardGame cardGame;
-    private final IFrameService _FrameService;
     private final StateFactory _StateFactory;
     
     public C_HandleGameStarted(
         Container container,
-        IFrameService frameService,
         StateFactory stateFactory,
         P_HandleGameStarted parameters)
     {
         super(container, parameters);
         
-        this._FrameService = frameService;
         this._StateFactory = stateFactory;
         
         this.cardGame = parameters.cardGame;
@@ -44,7 +39,7 @@ public class C_HandleGameStarted extends CommandBase<P_HandleGameStarted>
     @Override
     public void execute()
     {        
-        _FrameService.showPanel(PanelDescriptors.Load);
+       // _FrameService.showPanel(PanelDescriptors.Load);
         
         _State.setCardGame(cardGame);
         _State.setGameState(GameState.Started);

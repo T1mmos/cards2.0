@@ -12,9 +12,7 @@ import gent.timdemey.cards.services.interfaces.IResourceRepository;
 
 public class Loc implements IPreload
 {
-   
-            
-            private static final String FILENAME_BASE = "solshowd";
+    private static final String FILENAME_BASE = "solshowd";
 
     private static Locale LOCALE = null;
     private static ResourceBundle BUNDLE = null;
