@@ -80,7 +80,8 @@ public class SolShowCardGameService implements ICardGameService
         for (Card card : cards)
         {
             card.cardStack = cs;
-            card.visibleRef.set(visible);            
+            card.visibleRef.set(visible);     
+            cs.cards.add(card);
         }
         
         if (cardStackType.equals(SolShowCardStackType.SPECIAL))
