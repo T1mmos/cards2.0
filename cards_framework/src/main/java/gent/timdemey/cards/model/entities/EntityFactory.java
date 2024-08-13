@@ -19,9 +19,7 @@ public class EntityFactory
         
     protected <C, P> C DICreate(Class<C> toCreateClazz, Class<P> parametersClazz, P parameters)
     {
-        Container container = _Container.Scope();        
-        container.AddSingleton(parametersClazz, parameters);
-        return container.Get(toCreateClazz);
+        return _Container.Get(toCreateClazz, parameters);
     }
         
     protected <P extends PayloadBase> P NewPayload(Class<P> clazz)

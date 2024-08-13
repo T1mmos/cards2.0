@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-import java.util.function.Supplier;
 
 /**
  *
@@ -18,6 +17,7 @@ public final class Container
     private final Map<Class, Class> _TransientClassesMap;    
     private final Map<Class, Class> _SingletonClassesMap;    
     private final Map<Class, Object> _SingletonInstancesMap;    
+    private final Map<Class, Object> _ParametersMap;
             
     // keep track of what we're constructing, to detect circular dependencies
     private final Stack<Class> constructing = new Stack<>();
@@ -27,13 +27,7 @@ public final class Container
         _TransientClassesMap = new HashMap<>();
         _SingletonClassesMap = new HashMap<>();
         _SingletonInstancesMap = new HashMap<>();
-    }
-    
-    private Container (Container parent)
-    {
-        _TransientClassesMap = new HashMap<>(parent._TransientClassesMap);
-        _SingletonClassesMap = new HashMap<>(parent._SingletonClassesMap);
-        _SingletonInstancesMap = new HashMap<>(parent._SingletonInstancesMap);
+        _ParametersMap = new HashMap<>();
     }
         
     public <T> void AddTransient(Class<T> clazz, Class<? extends T> impl)
@@ -56,6 +50,23 @@ public final class Container
         return TryGet(clazz);
     }
     
+    public <I> I Get(Class<I> clazz, Object parameters)
+    {
+        _ParametersMap.put(parameters.getClass(), parameters);
+                
+        I instance;
+        try 
+        {
+            instance = TryGet(clazz);
+        }
+        finally 
+        {
+            _ParametersMap.remove(parameters.getClass());
+        }
+        
+        return instance;
+    }
+    
     public List<Object> GetAllInstances() 
     {
         List<Object> values = new ArrayList<>();
@@ -76,15 +87,6 @@ public final class Container
         return values;
     }
     
-    public Container Scope()
-    {
-        // ensure all mappings are instantiated, e.g. singletons, so the
-        // child can take over the instances
-        GetAllInstances();
-        
-        return new Container(this);
-    }
-    
     private <I> I TryGet(Class<I> clazz)
     {
         // the container can also be injected
@@ -96,6 +98,15 @@ public final class Container
         // try singletons
         {
             I instance = TryGet(clazz, _SingletonClassesMap, _SingletonInstancesMap);
+            if (instance != null)
+            {
+                return instance;
+            }
+        }
+        
+        // try parameters 
+        {
+            I instance = TryGet(clazz, null, _ParametersMap);
             if (instance != null)
             {
                 return instance;

@@ -94,9 +94,7 @@ public abstract class CommandBase<CMDPAYLOAD extends CommandPayloadBase> extends
         if (type != cmd._ContextType)
         {
             Container container = _ContainerService.get(type);
-            Container scopedContainer  = container.Scope();
-            scopedContainer.AddSingleton((Class<Object>)(Class<?>) cmd._Payload.getClass(), cmd._Payload);
-            CommandBase cmd_copy = scopedContainer.Get((Class<CommandBase>) cmd.getClass());
+            CommandBase cmd_copy = container.Get(cmd.getClass(), cmd._Payload);
             container.Get(ICommandExecutor.class).schedule(cmd_copy);
         }
         else 

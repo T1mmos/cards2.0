@@ -26,17 +26,14 @@ public final class Context
     private final Logger _Logger;
     private final ICommandExecutor _CommandExecutor;
     private final State _State;
-    private final ContextType _ContextType;
     
     public Context(
         ICommandExecutor commandExecutor, 
         IChangeTracker changeTracker,
-        ContextType contextType,
         State state,
         Logger logger)
     {
         this._CommandExecutor = commandExecutor;
-        this._ContextType = contextType;
         this._State = state;
         this._Logger = logger;
         this._ChangeTracker = changeTracker;

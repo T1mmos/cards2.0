@@ -128,12 +128,14 @@ public class StateChangeTracker implements IChangeTracker
 
             // remove the Remove record, as Remove + Add leads to no-op
             changes.remove(prevChange);
+            _Logger.trace("Value '%s' was added to list property '%s' but as it was removed earlier, the overall change is empty; ListCount is now %s", e, ref.property, ref.size());
         }
         else
         {
             // add the Add record
             Change<X> change = Change.forAdd(ref, e);
             changes.add(change);
+            _Logger.trace("Value '%s' was added to list property '%s'; ListCount is now %s", e, ref.property, ref.size());
         }
     }
 
@@ -159,12 +161,14 @@ public class StateChangeTracker implements IChangeTracker
 
             // remove the Add record, as Add + Remove leads to no-op
             changes.remove(prevChange);
+            _Logger.trace("Value '%s' was removed from list property '%s' but as it was added earlier, the overall change is empty; ListCount is now %s", e, ref.property, ref.size());
         }
         else
         {
             // add the Remove record
             Change<X> change = Change.forRemove(ref, e);
             changes.add(change);
+            _Logger.trace("Value '%s' was removed from list property '%s'; ListCount is now %s", e, ref.property, ref.size());
         }
     }
 
