@@ -238,12 +238,12 @@ public class State extends EntityBase
 
     public EntityList<Player> getRemotePlayers()
     {
-        return playersRef.getExcept(serverRef.get().id, this.id);
+        return playersRef.getExcept(localIdRef.get(), this.id);
     }
 
     public List<UUID> getRemotePlayerIds()
     {
-        return playersRef.getExceptUUID(serverRef.get().id, this.id);
+        return playersRef.getExceptUUID(localIdRef.get(), this.id);
     }
 
     public ServerTCP getServer()
