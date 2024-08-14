@@ -11,7 +11,9 @@ import java.util.UUID;
 
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.delta.Property;
+import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.state.State;
+import gent.timdemey.cards.readonlymodel.ChangeList;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityFactory;
@@ -52,8 +54,9 @@ public final class Context
         {
             throw new IllegalStateException("This state listener is already added.");
         }
-        
+                
         stateListeners.add(stateListener);
+        _Logger.trace("StateListener '%s' was added", stateListener.getClass().getSimpleName());
     }
 
     public void removeStateListener(IStateListener stateListener)
@@ -68,6 +71,7 @@ public final class Context
         }
         
         stateListeners.remove(stateListener);
+        _Logger.trace("StateListener '%s' was removed", stateListener.getClass().getSimpleName());
     }
 
     public void initialize() 
@@ -129,10 +133,12 @@ public final class Context
         }   
     }
     
-    // Callback from execution service that lets us know that a command or a chain
-    // of commands was executed.
-    // We can therefore now update the state listeners.
-    private void onExecuted()
+    /**
+     * Callback from execution service that lets us know that a command or a chain
+     * of commands was executed.
+     * We can therefore now update the state listeners.
+     */
+    private void onExecuted(CommandBase<?> command)
     {
         // get a list of all changes since the last reset()
         List<Change<?>> changes = _ChangeTracker.getChangeList();
@@ -194,17 +200,16 @@ public final class Context
             return;
         }
         
-        _Logger.trace("Changes were detected in the Context. Notifying the IStateListener instances...");
+        _Logger.trace("Changes were detected in the Context. Notifying the IStateListener instances (%s)...", stateListeners.size());
         
         // as some listeners may unregister themselves during updates, guard against
         // concurrency exceptions
         List<IStateListener> listeners = new ArrayList<>(stateListeners);
+        ChangeList changeList = new ChangeList(roChanges);
         for (IStateListener sl : listeners)
         {
-            for (ReadOnlyChange roChange : roChanges)
-            {
-                sl.onChange(roChange);
-            }
+            _Logger.trace("Notifying StateListener '%s'", sl.getClass().getSimpleName());
+            sl.onChanges(changeList);
         }
     }
 }

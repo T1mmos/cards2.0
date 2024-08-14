@@ -17,6 +17,7 @@ import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.commands.net.C_UDP_StartServerInfoRequestService;
 import gent.timdemey.cards.model.entities.commands.net.C_UDP_StopServerInfoRequestService;
 import gent.timdemey.cards.model.entities.state.ServerTCP;
+import gent.timdemey.cards.readonlymodel.ChangeList;
 import gent.timdemey.cards.readonlymodel.IStateListener;
 import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
@@ -97,12 +98,9 @@ public class JoinMPGamePanelManager extends DataPanelManagerBase<Void, JoinMPGam
     private class ServersStateListener implements IStateListener
     {
         @Override
-        public void onChange(ReadOnlyChange change)
+        public void onChanges(ChangeList changeList)
         {
-            if (change.property == ReadOnlyState.Servers)
-            {
-                tableModel.fireTableDataChanged();
-            }
+            changeList.OnChange(ReadOnlyState.Servers, tableModel::fireTableDataChanged);
         }
     }
 

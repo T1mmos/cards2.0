@@ -1,14 +1,10 @@
 package gent.timdemey.cards.model.entities.commands.net;
 
-
 import gent.timdemey.cards.di.Container;
-import gent.timdemey.cards.localization.Loc;
-import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.IFrameService;
 
 /**
  * Leave the lobby and as such, fully disconnect from the server. All client
@@ -18,10 +14,7 @@ import gent.timdemey.cards.services.interfaces.IFrameService;
  *
  */
 public class C_TCP_ClientDisconnect extends CommandBase<P_TCP_ClientDisconnect>
-{
-    private final Loc _Loc;
-    private final IFrameService _FrameService;
-
+{    
     public enum DisconnectReason
     {
         /** Lost connection to the server. */
@@ -40,13 +33,11 @@ public class C_TCP_ClientDisconnect extends CommandBase<P_TCP_ClientDisconnect>
     public final DisconnectReason reason;
 
     public C_TCP_ClientDisconnect(
-        Container container, IFrameService frameService, Loc loc,
+        Container container,
         P_TCP_ClientDisconnect parameters)
     {
         super(container, parameters);
         
-        this._FrameService = frameService;
-        this._Loc = loc;
         this.reason = parameters.reason;
     }
 
@@ -76,37 +67,7 @@ public class C_TCP_ClientDisconnect extends CommandBase<P_TCP_ClientDisconnect>
         _State.setServer(null);
         _State.setServerMessage(null);
     }
-    
-    @Override
-    public void onExecuted()
-    {
-        String title = null;
-        String msg = null;        
-        switch(reason)
-        {
-        case ConnectionLost:
-            title = _Loc.get(LocKey.DialogTitle_connectionlost);
-            msg = _Loc.get(LocKey.DialogMessage_connectionlost);
-            break;
-        case Kicked:
-            title = _Loc.get(LocKey.DialogTitle_kicked);
-            msg = _Loc.get(LocKey.DialogMessage_kicked);
-            break;
-        case LobbyAdminLeft:
-            title = _Loc.get(LocKey.DialogTitle_lobbyAdminLeft);
-            msg = _Loc.get(LocKey.DialogMessage_lobbyAdminLeft);
-            break;
-        case LocalPlayerLeft: // no dialog
-        default:
-            break;
-        }
-        
-        if (title != null && msg != null)
-        {
-            _FrameService.showMessage(title, msg);
-        }
-    }
-    
+   
     @Override
     public String toDebugString()
     {

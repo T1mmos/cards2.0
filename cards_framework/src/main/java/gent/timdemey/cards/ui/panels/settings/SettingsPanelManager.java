@@ -11,6 +11,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import gent.timdemey.cards.localization.LocKey;
+import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.cfg.P_SaveState;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.action.ActionBase;
@@ -55,7 +56,7 @@ public class SettingsPanelManager extends DataPanelManagerBase<Void, Void>
         tf_clientUdpPort.setText("" + state.getConfiguration().getClientUdpPort());    
     }
     
-    private void onCommandExecuted()
+    private void onCommandExecuted(CommandBase<?> command)
     {
         updateUI();
     }

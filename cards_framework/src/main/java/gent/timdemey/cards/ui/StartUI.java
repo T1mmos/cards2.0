@@ -195,9 +195,7 @@ public class StartUI
         // show the frame with just the loading animation, but already with a certain size
         _FrameService.getFrame().setVisible(true);
         
-      
-        
-        _FrameService.installStateListeners();
+        _FrameService.installListeners();
         
         // the frame is visible and created so the frame services can 
         // give the available dimensions to the position service

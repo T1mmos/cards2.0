@@ -39,5 +39,5 @@ public interface IFrameService
     public void setBounds(int x, int y, int w, int h);
     public void updatePositionService();
 
-    public void installStateListeners();
+    public void installListeners();
 }

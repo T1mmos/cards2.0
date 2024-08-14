@@ -65,18 +65,7 @@ public abstract class CommandBase<CMDPAYLOAD extends CommandPayloadBase> extends
     {
          // override when necessary
     }
-    
-    /**
-     * Called after this command's logic ({@link #execute(State)} and {@link #onAccepted(State)}) has completely run
-     * and all execution listeners have been notified.
-     * This method should never alter state, as no execution listeners would be notified about such change(s). For
-     * example, this method can be implemented to spawn a dialog after all listeners have run their logic.
-     */
-    public void onExecuted()
-    {
-        // override when necessary
-    }
-
+   
     public boolean canUndo()
     {
         return false;

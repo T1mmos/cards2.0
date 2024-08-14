@@ -8,12 +8,11 @@ import javax.swing.JLabel;
 
 import gent.timdemey.cards.localization.LocKey;
 import gent.timdemey.cards.readonlymodel.IStateListener;
-import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyPlayer;
-import gent.timdemey.cards.readonlymodel.ReadOnlyProperty;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.readonlymodel.TypedChange;
 import gent.timdemey.cards.model.delta.ChangeType;
+import gent.timdemey.cards.readonlymodel.ChangeList;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityList;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptors;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
@@ -44,13 +43,11 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
     private class LobbyDialogStateListener implements IStateListener
     {
         @Override
-        public void onChange(ReadOnlyChange change)
+        public void onChanges(ChangeList changes)
         {
             ReadOnlyState state = _Context.getReadOnlyState();
            
-            ReadOnlyProperty<?> property = change.property;
-
-            if (property == ReadOnlyState.Players)
+            changes.OnChange(ReadOnlyState.Players, (change) ->
             {
                 TypedChange<ReadOnlyPlayer> typed = ReadOnlyState.Players.cast(change);
                 if (typed.changeType == ChangeType.Add)
@@ -67,19 +64,24 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
                 {                    
                     l_remotePlayer.setText(_Loc.get(LocKey.Label_emptyPlayer));
                 }
-            }
-            else if (property == ReadOnlyState.ServerMsg && change.changeType == ChangeType.Set)
+            });
+            
+            changes.OnChange(ReadOnlyState.ServerMsg, (change) -> 
             {
-                TypedChange<String> typed = ReadOnlyState.ServerMsg.cast(change);
-                l_serverMsg.setText(typed.newValue);
-            }
-            else if (property == ReadOnlyState.Server)
+                if (change.changeType == ChangeType.Set)
+                {
+                    TypedChange<String> typed = ReadOnlyState.ServerMsg.cast(change);
+                    l_serverMsg.setText(typed.newValue);
+                }                
+            });
+                        
+            changes.OnChange(ReadOnlyState.Server, (change) -> 
             {
                 if (change.newValue == null)
                 {
                     inData.closeFunc.run();
                 }
-            }
+            });
         }
     }
     

@@ -1,8 +1,7 @@
 package gent.timdemey.cards.services.action;
 
-import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
+import gent.timdemey.cards.readonlymodel.ChangeList;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCommandHistory;
-import gent.timdemey.cards.readonlymodel.ReadOnlyProperty;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
 import gent.timdemey.cards.services.interfaces.IActionService;
@@ -15,11 +14,9 @@ class A_Redo extends ActionBase
     }
 
     @Override
-    public void onChange(ReadOnlyChange roChange)
+    public void onChanges(ChangeList changeList)
     {
-        ReadOnlyProperty<?> property = roChange.property;
-
-        if (property == ReadOnlyCommandHistory.CurrentIndex || property == ReadOnlyState.CommandHistory)
+        if (changeList.HasAnyChange(ReadOnlyCommandHistory.CurrentIndex, ReadOnlyState.CommandHistory))
         {
             checkEnabled();
         }

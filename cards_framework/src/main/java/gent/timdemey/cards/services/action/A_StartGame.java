@@ -1,9 +1,8 @@
 package gent.timdemey.cards.services.action;
 
+import gent.timdemey.cards.readonlymodel.ChangeList;
 import java.awt.event.ActionEvent;
 
-
-import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
@@ -25,12 +24,9 @@ class A_StartGame extends ActionBase
     }
 
     @Override
-    public void onChange(ReadOnlyChange roChange)
+    public void onChanges(ChangeList changeList)
     {
-        if (roChange.property == ReadOnlyState.CardGame)
-        {
-            checkEnabled();
-        }
+        changeList.OnChange(ReadOnlyState.CardGame, this::checkEnabled);
     }
 
     @Override

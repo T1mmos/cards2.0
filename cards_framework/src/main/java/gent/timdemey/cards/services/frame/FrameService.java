@@ -68,6 +68,7 @@ import gent.timdemey.cards.utils.StreamUtils;
 import net.miginfocom.swing.MigLayout;
 import gent.timdemey.cards.di.IContainerService;
 import gent.timdemey.cards.services.context.Context;
+import gent.timdemey.cards.services.context.ICommandExecutor;
 
 public class FrameService implements IFrameService, IPreload
 {
@@ -79,7 +80,7 @@ public class FrameService implements IFrameService, IPreload
     private Rectangle prevBounds;
     private List<SnapSide> snaps = null;
 
-    private Stack<PanelDescriptor> panelStack = new Stack<>();
+    private final Stack<PanelDescriptor> panelStack = new Stack<>();
     
     private final Container _Container;
     private final IResourceCacheService _ResourceCacheService;
@@ -89,9 +90,11 @@ public class FrameService implements IFrameService, IPreload
     private final IPositionService _PositionService;
     private final JSFactory _JSFactory;
     private final Loc _Loc;
+    private final ICommandExecutor _CommandExecutor;
 
     public FrameService (
         Container container,        
+            ICommandExecutor commandExecutor,
         IResourceCacheService resourceCacheService,
         IResourceNameService resourceNameService,
         IPanelService panelService,
@@ -101,6 +104,7 @@ public class FrameService implements IFrameService, IPreload
         Loc loc)
     {
         this._Container = container;
+        this._CommandExecutor = commandExecutor;
         this._ResourceCacheService = resourceCacheService;
         this._ResourceNameService = resourceNameService;
         this._PanelService = panelService;
@@ -722,9 +726,11 @@ public class FrameService implements IFrameService, IPreload
     }
 
     @Override
-    public void installStateListeners()
+    public void installListeners()
     {        
-        _Context.addStateListener(_Container.Get(FrameStateListener.class));
+        FrameListener fl = _Container.Get(FrameListener.class);
+        _Context.addStateListener(fl);
+        _CommandExecutor.addExecutionListener(fl);
     }
     
     private <IN, OUT> JSLayeredPane createDialogPanel(DataPanelDescriptor<IN, OUT> desc, IN inData,

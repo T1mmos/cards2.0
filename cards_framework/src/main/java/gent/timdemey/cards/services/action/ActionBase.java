@@ -1,5 +1,6 @@
 package gent.timdemey.cards.services.action;
 
+import gent.timdemey.cards.readonlymodel.ChangeList;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
@@ -8,7 +9,6 @@ import javax.swing.Icon;
 
 
 import gent.timdemey.cards.readonlymodel.IStateListener;
-import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.context.IContextListener;
 import gent.timdemey.cards.services.contract.descriptors.ActionDescriptor;
@@ -93,7 +93,7 @@ public class ActionBase extends AbstractAction implements IContextListener, ISta
     }
     
     @Override
-    public void onChange(ReadOnlyChange roChange)
+    public void onChanges(ChangeList changeList)
     {
         
     }

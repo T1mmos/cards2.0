@@ -41,7 +41,6 @@ public class UICommandExecutor implements ICommandExecutor
     @Override
     public void schedule(CommandBase command)
     {
-        int a = 4;
         SwingUtilities.invokeLater(() -> execute(command));
     }
 
@@ -140,12 +139,12 @@ public class UICommandExecutor implements ICommandExecutor
         }
 
         // update the listeners
-        for (IExecutionListener execListener : executionListeners)
-        {
-            execListener.onExecuted();
+        _Logger.info("Notifying the ExecutionListeners (%s)...", executionListeners.size());
+        for (IExecutionListener el : executionListeners)
+        {            
+            _Logger.trace("Notifying ExecutionListener '%s'", el.getClass().getSimpleName());
+            el.onExecuted(command);
         }
-        
-        command.onExecuted();
     }
 
     private void HandleReexecutionFails(List<CommandExecution> fails)
@@ -164,8 +163,9 @@ public class UICommandExecutor implements ICommandExecutor
         {
             throw new IllegalStateException("This Execution Listener is already registered");
         }
-
+            
         this.executionListeners.add(executionListener);
+        _Logger.trace("ExecutionListener '%s' was added", executionListener.getClass().getSimpleName());
     }
 
     @Override
@@ -180,8 +180,9 @@ public class UICommandExecutor implements ICommandExecutor
         {
             throw new IllegalStateException("This Execution Listener is not registered");
         }
-
+        
         this.executionListeners.remove(executionListener);
+        _Logger.trace("ExecutionListener '%s' was removed", executionListener.getClass().getSimpleName());
     }
 
     @Override
