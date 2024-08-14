@@ -24,7 +24,6 @@ import gent.timdemey.cards.services.interfaces.IPositionService;
 import gent.timdemey.cards.ui.components.ext.IComponent;
 import gent.timdemey.cards.ui.panels.Positions;
 import gent.timdemey.cards.utils.ComponentUtils;
-import gent.timdemey.cards.di.IContainerService;
 
 public class SolShowPositionService implements IPositionService
 {
@@ -38,15 +37,12 @@ public class SolShowPositionService implements IPositionService
     private static final LayerRange LAYERRANGE_ANIMATIONS_CARDSCORE     = new LayerRange(21000, 21999);
 
     private Positions pos;
-    private final IContainerService _ContextService;
     private final Context _Context;
 
-    public SolShowPositionService(IContainerService contextService, Context context)
+    public SolShowPositionService(Context context)
     {
-        this._ContextService = contextService;
         this._Context = context;
-    }
-    
+    }    
     
     @Override
     public void setMaxSize(int maxWidth, int maxHeight)

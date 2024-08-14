@@ -203,7 +203,7 @@ public class State extends EntityBase
 
     public boolean isLocalId(UUID id)
     {
-        return this.id.equals(id);
+        return this.localIdRef.get().equals(id);
     }
 
     public UUID getLocalId()

@@ -234,7 +234,7 @@ public class CardGamePanelManager extends PanelManagerBase
         JComponent comp = comp2jcomp.get(compId);
         if (comp != null)
         {
-            throw new IllegalArgumentException("A scalable component already exist for the given model object: " + card);            
+            throw new IllegalArgumentException("A scalable component already exists for the given model object: " + card);            
         }
         
         UUID resFrontId = Ids.RESID_CARD_FRONTSIDE.GetId(card);
