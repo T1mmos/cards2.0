@@ -669,9 +669,10 @@ public abstract class CommandFactory extends EntityFactory
         put(P_UDP_GetServerInfoResponse.class, C_UDP_GetServerInfoResponse.class);
         put(P_TCP_HandleRejected.class, C_TCP_HandleRejected.class);
         put(P_TCP_HandleAccepted.class, C_TCP_HandleAccepted.class);
+        put(P_Move.class, C_Move.class);
     }};    
     
-    private Class<? extends CommandBase> ResolveCommandClass(PayloadBase payload)
+    protected Class<? extends CommandBase> ResolveCommandClass(PayloadBase payload)
     {
         Class<? extends CommandBase> cmdClazz = _Payload2CommandMap.get(payload.getClass());
         if (cmdClazz == null)

@@ -76,48 +76,53 @@ public class C_SolShowMove extends C_Move
         {
             UUID srcPlayerId = cardGame.getPlayerId(srcCardStack);
             UUID dstPlayerId = cardGame.getPlayerId(dstCardStack);
-            if (!srcPlayerId.equals(dstPlayerId))
-            {
-                return CanExecuteResponse.no("SrcPlayerId != DstPlayerId");
-            }
-
             String srcCardStackType = srcCardStack.cardStackType;
             String dstCardStackType = dstCardStack.cardStackType;
-            if (srcCardStackType.equals(SolShowCardStackType.DEPOT)
-                    && dstCardStackType.equals(SolShowCardStackType.TURNOVER))
+            int cardIndex = srcCardStack.cards.indexOf(card);
+            
+            if (!srcPlayerId.equals(dstPlayerId) && !dstCardStackType.equals(SolShowCardStackType.LAYDOWN))
             {
-                if (srcCardStack.getCards().isEmpty())
-                {
-                    return CanExecuteResponse.no("Source stack DEPOT is empty");
-                }
-                if (srcCardStack.cards.indexOf(card) < srcCardStack.cards.size() - 3)
-                {
-                    return CanExecuteResponse.no("The card to move from DEPOT to TURNOVER must be the third highest card");
-                }
-
-                return CanExecuteResponse.yes();
+                return CanExecuteResponse.no("Cannot move cards to card stacks of other player, except for LAYDOWN stacks, but destination stack is of type '" +dstCardStackType + "'");
             }
-            else if (srcCardStackType.equals(SolShowCardStackType.TURNOVER)
+            
+            if (srcCardStack.getCards().isEmpty())
+            {
+                return CanExecuteResponse.no("Cannot move from an empty card stack '" + srcCardStackType + "'");
+            }
+
+            if (srcCardStackType.equals(SolShowCardStackType.DEPOT)
+                    && dstCardStackType.equals(SolShowCardStackType.TURNOVER)
+                    && cardIndex < srcCardStack.cards.size() - 3)
+            {
+                return CanExecuteResponse.no("The card to move from DEPOT to TURNOVER must be the third highest card, or a lower indexed card if the stack contains less than 3 cards");
+            }
+            
+            if (srcCardStackType.equals(SolShowCardStackType.TURNOVER)
                     && dstCardStackType.equals(SolShowCardStackType.DEPOT))
             {
-                if (srcCardStack.getCards().isEmpty())
-                {
-                    return CanExecuteResponse.no("Source stack TURNOVER is empty");
-                }
                 if (!dstCardStack.getCards().isEmpty())
                 {
-                    return CanExecuteResponse.no("Destination stack DEPOT is not empty");
+                    return CanExecuteResponse.no("Cannot move from TURNOVER to DEPOT when DEPOT is not empty");
                 }
                 if (srcCardStack.getLowestCard() != card)
                 {
-                    return CanExecuteResponse.no("TURNOVER stack's lowest card is not the intended card to move");
+                    return CanExecuteResponse.no("Cannot move a part of TURNOVER stack to DEPOT, the full stack needs to be moved");
                 }
-
-                return CanExecuteResponse.yes();
             }
+            
+            if (dstCardStackType.equals(SolShowCardStackType.MIDDLE))
+            {
+                if (cardIndex != srcCardStack.cards.size() - 1)
+                {
+                    return CanExecuteResponse.no("Cannot move from TURNOVER to DEPOT when DEPOT is not empty");
+                }
+            }
+            
+            
         }
 
-        return CanExecuteResponse.no("This is not a valid Solitaire Showdown move command");
+        // return CanExecuteResponse.no("This is not a valid Solitaire Showdown move command");
+        return CanExecuteResponse.yes();
     }
 
     @Override

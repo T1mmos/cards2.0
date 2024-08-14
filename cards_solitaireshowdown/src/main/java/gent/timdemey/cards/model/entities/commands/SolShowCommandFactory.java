@@ -9,6 +9,7 @@ import gent.timdemey.cards.model.entities.commands.game.P_Move;
 import gent.timdemey.cards.model.entities.commands.game.P_Pull;
 import gent.timdemey.cards.model.entities.commands.game.P_Push;
 import gent.timdemey.cards.model.entities.commands.game.P_Use;
+import gent.timdemey.cards.model.entities.common.PayloadBase;
 import java.util.List;
 import java.util.UUID;
 
@@ -95,5 +96,17 @@ public class SolShowCommandFactory extends CommandFactory
         return DICreate(C_SolShowPull.class, P_Pull.class, parameters);
     }
 
+    @Override
+    protected Class<? extends CommandBase> ResolveCommandClass(PayloadBase payload)
+    {
+        if (payload instanceof P_Move)
+        {
+            return C_SolShowMove.class;
+        }
+        
+        return super.ResolveCommandClass(payload); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+    }
+
+    
 
 }

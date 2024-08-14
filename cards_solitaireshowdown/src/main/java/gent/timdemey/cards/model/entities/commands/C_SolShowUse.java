@@ -30,7 +30,7 @@ public class C_SolShowUse extends C_Use
     protected CommandBase resolveCommand()
     {        
         CardGame cardGame = _State.getCardGame();
-        List<CommandBase> eligible = new ArrayList<>();
+        List<C_Move> eligible = new ArrayList<>();
         UUID localId = _Context.getReadOnlyState().getLocalId();        
 
         if(initiatorStackId != null)
@@ -109,7 +109,7 @@ public class C_SolShowUse extends C_Use
 
     }
     
-    private void addUseCommandDepot (List<CommandBase> eligible, CardStack initiatorStack, CardGame cardGame, UUID localId)
+    private void addUseCommandDepot (List<C_Move> eligible, CardStack initiatorStack, CardGame cardGame, UUID localId)
     {
         if(initiatorStack.getCards().isEmpty()) // direction turnover -> depot, all cards
         {

@@ -65,7 +65,7 @@ public class UICommandExecutor implements ICommandExecutor
         
         // localId is allowed to be null for some commands during startup
         boolean src_local = command.creatorContextType == ContextType.UI && (localId == null || (command.creatorId != null && command.creatorId.equals(localId)));
-        boolean src_server = command.creatorContextType == ContextType.Server;
+        boolean src_server = (command.creatorContextType == ContextType.Server) || (command.creatorContextType == ContextType.UI && _State.getPlayers().getExceptUUID(localId).contains(command.creatorId));
         boolean hasServer = serverId != null;
 
         if(!src_local && !src_server)
