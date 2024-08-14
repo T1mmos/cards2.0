@@ -28,7 +28,11 @@ public class CardStack extends EntityBase
         
         this.cardStackType = parameters.cardStackType;
         this.typeNumber = parameters.typeNumber;
-        this.cards = new EntityStateListRef<>(changeTracker, Cards, id, new ArrayList<>());
+        this.cards = new EntityStateListRef<>(changeTracker, Cards, id, new ArrayList<>(parameters.cards));
+        for (Card card : this.cards)
+        {
+            card.cardStack = this;
+        }
     }
 
     public Card getLowestCard()

@@ -2,8 +2,6 @@ package gent.timdemey.cards.ui.components.drawers;
 
 import java.awt.Graphics2D;
 
-import javax.swing.JLayeredPane;
-
 import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.interfaces.IFrameService;
 import gent.timdemey.cards.services.interfaces.IPositionService;

@@ -79,9 +79,7 @@ public class SolShowCardGameService implements ICardGameService
         CardStack cs = _StateFactory.CreateCardStack(cardStackType, typeNumber, cards);
         for (Card card : cards)
         {
-            card.cardStack = cs;
             card.visibleRef.set(visible);     
-            cs.cards.add(card);
         }
         
         if (cardStackType.equals(SolShowCardStackType.SPECIAL))

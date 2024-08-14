@@ -4,6 +4,7 @@
  */
 package gent.timdemey.cards.model.entities.commands;
 
+import gent.timdemey.cards.model.entities.commands.game.C_Push;
 import gent.timdemey.cards.di.Container;
 import gent.timdemey.cards.model.entities.commands.game.P_Move;
 import gent.timdemey.cards.model.entities.commands.game.P_Pull;
@@ -16,19 +17,18 @@ import java.util.UUID;
  *
  * @author Timmos
  */
-public class SolShowCommandFactory extends CommandFactory
+public class SolCommandFactory extends CommandFactory
 {    
-    public SolShowCommandFactory(Container container)
+    public SolCommandFactory(Container container)
     {
         super(container);
     }
 
     @Override
-    public C_SolShowMove CreateMove(UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
+    public C_SolMove CreateMove(UUID srcCardStackId, UUID dstCardStackId, UUID cardId)
     {
         P_Move p = NewCommandPayload(P_Move.class);
         
-        p.id = UUID.randomUUID();
         p.srcCardStackId = srcCardStackId;
         p.dstCardStackId = dstCardStackId;
         p.cardId = cardId;
@@ -37,17 +37,16 @@ public class SolShowCommandFactory extends CommandFactory
     }
 
     @Override
-    public C_SolShowMove CreateMove(P_Move parameters)
+    public C_SolMove CreateMove(P_Move parameters)
     {
-        return DICreate(C_SolShowMove.class, P_Move.class, parameters);
+        return DICreate(C_SolMove.class, P_Move.class, parameters);
     }
 
     @Override
-    public C_SolShowPush CreatePush(UUID dstCardStackId, List<UUID> srcCardIds)
+    public C_Push CreatePush(UUID dstCardStackId, List<UUID> srcCardIds)
     {
         P_Push p = NewCommandPayload(P_Push.class);
         
-        p.id = UUID.randomUUID();
         p.dstCardStackId = dstCardStackId;
         p.srcCardIds = srcCardIds;
         
@@ -55,17 +54,16 @@ public class SolShowCommandFactory extends CommandFactory
     }
 
     @Override
-    public C_SolShowPush CreatePush(P_Push parameters)
+    public C_Push CreatePush(P_Push parameters)
     {
-        return DICreate(C_SolShowPush.class, P_Push.class, parameters);
+        return DICreate(C_SolPush.class, P_Push.class, parameters);
     }
 
     @Override
-    public C_SolShowUse CreateUse(UUID initiatorCardStackId, UUID initiatorCardId)
+    public C_SolUse CreateUse(UUID initiatorCardStackId, UUID initiatorCardId)
     {
         P_Use p = NewCommandPayload(P_Use.class);
         
-        p.id = UUID.randomUUID();
         p.initiatorStackId = initiatorCardStackId;
         p.initiatorCardId = initiatorCardId;
         
@@ -73,13 +71,13 @@ public class SolShowCommandFactory extends CommandFactory
     }
     
     @Override
-    public C_SolShowUse CreateUse(P_Use parameters)
+    public C_SolUse CreateUse(P_Use parameters)
     {
-        return DICreate(C_SolShowUse.class, P_Use.class, parameters);
+        return DICreate(C_SolUse.class, P_Use.class, parameters);
     }
     
     @Override
-    public C_SolShowPull CreatePull(UUID cardStackId, UUID cardId)
+    public C_SolPull CreatePull(UUID cardStackId, UUID cardId)
     {
         P_Pull p = NewCommandPayload(P_Pull.class);
         
@@ -90,9 +88,9 @@ public class SolShowCommandFactory extends CommandFactory
     }
 
     @Override
-    public C_SolShowPull CreatePull(P_Pull parameters)
+    public C_SolPull CreatePull(P_Pull parameters)
     {
-        return DICreate(C_SolShowPull.class, P_Pull.class, parameters);
+        return DICreate(C_SolPull.class, P_Pull.class, parameters);
     }
 
 

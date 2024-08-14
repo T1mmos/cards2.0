@@ -1,0 +1,61 @@
+package gent.timdemey.cards.services.panels.game;
+
+import gent.timdemey.cards.di.Container;
+import java.util.List;
+import java.util.UUID;
+
+
+import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
+import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes;
+import gent.timdemey.cards.services.id.Ids;
+import gent.timdemey.cards.services.interfaces.IResourceNameService;
+import gent.timdemey.cards.ui.panels.game.CardGamePanelManager;
+import gent.timdemey.cards.di.IContainerService;
+import gent.timdemey.cards.services.context.Context;
+
+public class SolitaireGamePanelManager extends CardGamePanelManager
+{
+    private static final String FILEPATH_CARDSTACK = "stack_solitaire_%s.png";
+
+    public SolitaireGamePanelManager(Container container, IResourceNameService resourceNameService, IContainerService contextService, Context context)
+    {
+        super(container, resourceNameService, contextService, context);
+    }
+    
+    @Override
+    public void preload()
+    {
+        super.preload();
+        
+        preloadCardStacks();
+    }
+    
+    private void preloadCardStacks()
+    {
+        String[] stackTypes = new String[] { SolitaireComponentTypes.DEPOT, SolitaireComponentTypes.LAYDOWN, SolitaireComponentTypes.MIDDLE,
+                SolitaireComponentTypes.TURNOVER };
+
+        for (String stackType : stackTypes)
+        {
+            UUID id = Ids.RESID_CARDSTACK_TYPE.GetId(stackType);
+            String filename = String.format(FILEPATH_CARDSTACK, stackType.toLowerCase());
+            preloadImage(id, filename);
+        }
+    }
+    
+    @Override
+    public void addComponentCreators(List<Runnable> compCreators)
+    {
+        super.addComponentCreators(compCreators);
+
+        ReadOnlyCardGame cardGame = _Context.getReadOnlyState().getCardGame();
+        // cardstack comp2jcomp
+        List<ReadOnlyCardStack> cardstacks = cardGame.getCardStacks();
+        for (int i = 0; i < cardstacks.size(); i++)
+        {
+            ReadOnlyCardStack cardstack = cardstacks.get(i);
+            createJSImage(cardstack);
+        }
+    }
+}

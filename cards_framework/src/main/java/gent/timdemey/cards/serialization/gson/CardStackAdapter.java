@@ -7,6 +7,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import gent.timdemey.cards.logging.Logger;
+import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.state.StateFactory;
 import gent.timdemey.cards.model.entities.state.payload.P_CardStack;
@@ -29,9 +30,9 @@ public class CardStackAdapter implements JsonSerializer<CardStack>, JsonDeserial
  
 
     @Override
-    public JsonElement serialize(CardStack cardGame, Type type, JsonSerializationContext context)
+    public JsonElement serialize(CardStack cardStack, Type type, JsonSerializationContext context)
     {
-        JsonElement elem = context.serialize(cardGame._Payload);
+        JsonElement elem = context.serialize(cardStack._Payload);
         return elem;
     }
 
@@ -39,6 +40,11 @@ public class CardStackAdapter implements JsonSerializer<CardStack>, JsonDeserial
     public CardStack deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
     {
         P_CardStack payload =  context.deserialize(json, P_CardStack.class);
-        return _StateFactory.CreateCardStack(payload);
+        CardStack cs = _StateFactory.CreateCardStack(payload);
+        for (Card c : cs.cards)
+        {
+            c.cardStack = cs;
+        }
+        return cs;
     }
 }

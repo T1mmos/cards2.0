@@ -90,7 +90,7 @@ public final class JSFactory
     
     public JSLabel createLabelScaled(UUID uuid, String text, ComponentType compType, SFontResource fontRes)
     {
-        JSLabel lbl = createLabel(uuid, text, compType, _Container.Get(ScaledTextDrawer.class));        
+        JSLabel lbl = createLabel(uuid, text, compType, _Container.Get(ScaledTextDrawer.class, fontRes));        
         return lbl;
     }
     

@@ -97,7 +97,7 @@ public class FrameListener implements IStateListener, IExecutionListener
     
     private void onRescaledResources ()
     {       
-        _FrameService.hidePanel(PanelDescriptors.Load);
+       //  _FrameService.hidePanel(PanelDescriptors.Load);
     }
 
     @Override
