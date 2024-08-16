@@ -8,6 +8,7 @@ import gent.timdemey.cards.equality.CardEquality;
 import gent.timdemey.cards.equality.CardGameEquality;
 import gent.timdemey.cards.equality.CardStackEquality;
 import gent.timdemey.cards.equality.PlayerConfigurationEquality;
+import gent.timdemey.cards.model.entities.state.CardOrder;
 import gent.timdemey.cards.model.entities.state.CardSuit;
 import gent.timdemey.cards.model.entities.state.CardValue;
 import gent.timdemey.cards.model.entities.state.StateFactory;
@@ -62,7 +63,7 @@ public class CardGameHelper
             List<Card> cards = new ArrayList<>();
             for (int j = 0; j < nrOfCardsPerStack; j++)
             {
-                cards.add(_StateFactory.CreateCard(CardSuit.CLUBS, CardValue.fromOrder2toA(j), true));
+                cards.add(_StateFactory.CreateCard(CardSuit.CLUBS, CardValue.getCardValue(CardOrder.AceToKing, j), true));
             }
             cardStacks.add(_StateFactory.CreateCardStack("test" + i, i, cards));
         }

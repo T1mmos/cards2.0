@@ -9,6 +9,7 @@ import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.state.SuitColor;
 import gent.timdemey.cards.model.entities.commands.game.P_Pull;
+import gent.timdemey.cards.model.entities.state.CardOrder;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 
 public class C_SolShowPull extends C_Pull
@@ -54,8 +55,8 @@ public class C_SolShowPull extends C_Pull
                     return CanExecuteResponse.no("All pulled cards must be visible");
                 }
 
-                int order_parent = card_parent.value.getOrderAtoK();
-                int order_child = card_child.value.getOrderAtoK();
+                int order_parent = card_parent.value.getIndex(CardOrder.AceToKing);
+                int order_child = card_child.value.getIndex(CardOrder.AceToKing);
                 if (order_parent != order_child + 1)
                 {
                     return CanExecuteResponse.no("order must differ exactly 1 between adjacent cards, e.g. a Q lies on a K");

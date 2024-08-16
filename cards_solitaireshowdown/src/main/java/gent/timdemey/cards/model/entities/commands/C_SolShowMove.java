@@ -14,8 +14,11 @@ import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardGame;
 import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.commands.game.P_Move;
+import gent.timdemey.cards.model.entities.state.CardOrder;
+import gent.timdemey.cards.model.entities.state.CardValue;
 import gent.timdemey.cards.model.entities.state.GameState;
 import gent.timdemey.cards.model.entities.state.State;
+import gent.timdemey.cards.model.entities.state.SuitColor;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityFactory;
@@ -54,13 +57,9 @@ public class C_SolShowMove extends C_Move
         CardGame cardGame = _State.getCardGame();
         CardStack srcCardStack = cardGame.getCardStack(srcCardStackId);
         CardStack dstCardStack = cardGame.getCardStack(dstCardStackId);
-
-        if (!srcCardStack.getCards().contains(cardId))
-        {
-            return CanExecuteResponse.no("Source stack doesn't contain the card with id " + cardId);
-        }
-
-        Card card = _State.getCardGame().getCard(cardId);
+        Card card = cardGame.getCard(cardId);
+        int cardIdx = srcCardStack.cards.indexOf(card);
+        int nrOfCards = srcCardStack.cards.size() - cardIdx;
 
         List<UUID> toTransferIds = srcCardStack.getCardsFrom(card).getIds();
         C_Pull cmdPull = _CommandFactory.CreatePull(srcCardStackId, cardId);
@@ -78,7 +77,6 @@ public class C_SolShowMove extends C_Move
             UUID dstPlayerId = cardGame.getPlayerId(dstCardStack);
             String srcCardStackType = srcCardStack.cardStackType;
             String dstCardStackType = dstCardStack.cardStackType;
-            int cardIndex = srcCardStack.cards.indexOf(card);
             
             if (!srcPlayerId.equals(dstPlayerId) && !dstCardStackType.equals(SolShowCardStackType.LAYDOWN))
             {
@@ -89,36 +87,101 @@ public class C_SolShowMove extends C_Move
             {
                 return CanExecuteResponse.no("Cannot move from an empty card stack '" + srcCardStackType + "'");
             }
-
-            if (srcCardStackType.equals(SolShowCardStackType.DEPOT)
-                    && dstCardStackType.equals(SolShowCardStackType.TURNOVER)
-                    && cardIndex < srcCardStack.cards.size() - 3)
+            
+            if (srcCardStackType.equals(SolShowCardStackType.LAYDOWN))
             {
-                return CanExecuteResponse.no("The card to move from DEPOT to TURNOVER must be the third highest card, or a lower indexed card if the stack contains less than 3 cards");
+                return CanExecuteResponse.no("Cannot move from LAYDOWN");
             }
             
-            if (srcCardStackType.equals(SolShowCardStackType.TURNOVER)
-                    && dstCardStackType.equals(SolShowCardStackType.DEPOT))
+            if (dstCardStackType.equals(SolShowCardStackType.SPECIAL))
             {
-                if (!dstCardStack.getCards().isEmpty())
+                return CanExecuteResponse.no("Cannot move to SPECIAL");
+            }
+
+            if (srcCardStackType.equals(SolShowCardStackType.DEPOT))
+            {
+                if (!dstCardStackType.equals(SolShowCardStackType.TURNOVER))
                 {
-                    return CanExecuteResponse.no("Cannot move from TURNOVER to DEPOT when DEPOT is not empty");
+                    return CanExecuteResponse.no("Cannot move from DEPOT to card stack type '"+dstCardStackType+"'");
                 }
-                if (srcCardStack.getLowestCard() != card)
+                
+                if (nrOfCards > 3)
                 {
-                    return CanExecuteResponse.no("Cannot move a part of TURNOVER stack to DEPOT, the full stack needs to be moved");
+                    return CanExecuteResponse.no("Cannot move more than 3 cards from DEPOT to TURNOVER");
+                }                
+            }
+            
+            if (srcCardStackType.equals(SolShowCardStackType.TURNOVER))
+            {
+                if (dstCardStackType.equals(SolShowCardStackType.DEPOT))
+                {
+                    if (!dstCardStack.getCards().isEmpty())
+                    {
+                        return CanExecuteResponse.no("Cannot move from TURNOVER to DEPOT when DEPOT is not empty");
+                    }
+                    if (srcCardStack.getLowestCard() != card)
+                    {
+                        return CanExecuteResponse.no("Cannot move a part of TURNOVER stack to DEPOT, the full stack needs to be moved");
+                    }
                 }
+                else 
+                {
+                    if (nrOfCards != 1)
+                    {
+                        return CanExecuteResponse.no("Cannot move "+nrOfCards+" cards of TURNOVER stack to '"+dstCardStackType+"', exactly 1 card is required");
+                    }
+                }                
             }
             
             if (dstCardStackType.equals(SolShowCardStackType.MIDDLE))
             {
-                if (cardIndex != srcCardStack.cards.size() - 1)
+                if (!srcCardStackType.equals(SolShowCardStackType.MIDDLE) && nrOfCards != 1)
                 {
-                    return CanExecuteResponse.no("Cannot move from TURNOVER to DEPOT when DEPOT is not empty");
+                    return CanExecuteResponse.no("Cannot move from '"+srcCardStackType+"' to MIDDLE because there are "+nrOfCards+" cards being moved; only 1 is allowed");
+                }
+                
+                if (!dstCardStack.cards.isEmpty())
+                {
+                     SuitColor dstCardColor = dstCardStack.getHighestCard().suit.getColor();
+                    if (dstCardColor == card.suit.getColor())
+                    {
+                        return CanExecuteResponse.no("Cannot move a card of color '"+card.suit.getColor()+"' to a MIDDLE stack onto a card of color '"+dstCardColor+"', colors must alternate");
+                    }
+                    
+                    int dstCardValueIdx = dstCardStack.getHighestCard().value.getIndex(CardOrder.AceToKing);
+                    int srcCardValueIdx = card.value.getIndex(CardOrder.AceToKing);
+                    if (srcCardValueIdx + 1 != dstCardValueIdx)
+                    {
+                        return CanExecuteResponse.no("Cannot move a card of CardValueIndex "+srcCardValueIdx+" to a MIDDLE stack where the destination CardValueIndex is "+dstCardValueIdx+", they should differ with 1");
+                    }
                 }
             }
             
-            
+            if (dstCardStackType.equals(SolShowCardStackType.LAYDOWN))
+            {
+                if (!dstCardStack.cards.isEmpty())
+                {
+                    SuitColor dstCardColor = dstCardStack.getHighestCard().suit.getColor();
+                    if (dstCardColor != card.suit.getColor())
+                    {
+                        return CanExecuteResponse.no("Cannot move a card of color '"+card.suit.getColor()+"' to a LAYDOWN stack onto a card of color '"+dstCardColor+"', colors must be the same");
+                    }
+                    
+                    int dstCardValueIdx = dstCardStack.getHighestCard().value.getIndex(CardOrder.AceToKing);
+                    int srcCardValueIdx = card.value.getIndex(CardOrder.AceToKing);
+                    if (srcCardValueIdx != dstCardValueIdx + 1)
+                    {
+                        return CanExecuteResponse.no("Cannot move a card of CardValueIndex "+srcCardValueIdx+" to a LAYDOWN stack where the destination CardValueIndex is "+dstCardValueIdx+", they should differ with 1");
+                    }
+                }
+                else 
+                {
+                    if (card.value != CardValue.V_A)
+                    {
+                        return CanExecuteResponse.no("Cannot move a card of CardValue '"+card.value+"' to an empty LAYDOWN stack; expected '"+CardValue.V_A+"'");
+                    }
+                }
+            }
         }
 
         // return CanExecuteResponse.no("This is not a valid Solitaire Showdown move command");

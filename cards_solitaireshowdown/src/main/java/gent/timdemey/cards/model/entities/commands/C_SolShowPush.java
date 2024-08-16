@@ -9,6 +9,7 @@ import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.state.CardValue;
 import gent.timdemey.cards.model.entities.commands.game.P_Push;
+import gent.timdemey.cards.model.entities.state.CardOrder;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 
 public class C_SolShowPush extends C_Push
@@ -54,8 +55,8 @@ public class C_SolShowPush extends C_Push
                 return CanExecuteResponse.no("Suit color must differ");
             }
 
-            int value_src = srcCard.value.getOrderAtoK();
-            int value_dst = dstCard.value.getOrderAtoK();
+            int value_src = srcCard.value.getIndex(CardOrder.AceToKing);
+            int value_dst = dstCard.value.getIndex(CardOrder.AceToKing);
             if (value_dst != value_src + 1)
             {
                 return CanExecuteResponse.no("Value of destination card must be 1 more than source card");
@@ -98,8 +99,8 @@ public class C_SolShowPush extends C_Push
                     return CanExecuteResponse.no("The suit must match");
                 }
 
-                int value_src = srcCard.value.getOrderAtoK();
-                int value_dst = dstCard.value.getOrderAtoK();
+                int value_src = srcCard.value.getIndex(CardOrder.AceToKing);;
+                int value_dst = dstCard.value.getIndex(CardOrder.AceToKing);;
                 if (value_dst + 1 != value_src)
                 {
                     return CanExecuteResponse.no("Value of source card must be 1 more than destination card");
