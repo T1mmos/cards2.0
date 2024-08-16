@@ -81,7 +81,7 @@ public class ServerCommandExecutor extends CommandExecutorBase
                 _Logger.info("Can't execute syncable command: '%s'. Responding with a C_Reject. Reason: %s", command.getName(), resp.reason);
 
                 C_Reject rejectCmd = _CommandFactory.CreateReject(command.id);
-                String answer = _PayloadMapper.toJson(rejectCmd._Payload);
+                String answer = _PayloadMapper.toJson(rejectCmd.getPayload());
                 _State.getTcpConnectionPool().getConnection(command.creatorId).send(answer);
             }
             else

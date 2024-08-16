@@ -56,7 +56,7 @@ public class C_UDP_StartServerInfoRequestService extends CommandBase<P_UDP_Start
 
         // prepare UDP broadcast
         C_UDP_GetServerInfoRequest cmd = _CommandFactory.CreateUDPGetServerInfoRequest();
-        String json = _PayloadMapper.toJson(cmd._Payload);
+        String json = _PayloadMapper.toJson(cmd.getPayload());
         
         int udpport = _State.getConfiguration().getServerUdpPort();
         

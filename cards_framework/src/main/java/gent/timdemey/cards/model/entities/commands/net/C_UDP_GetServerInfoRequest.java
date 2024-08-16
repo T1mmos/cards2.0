@@ -52,7 +52,7 @@ public class C_UDP_GetServerInfoRequest extends CommandBase<P_UDP_GetServerInfoR
         UDP_Source udpSource = getSourceUdp();
         UDP_UnicastMessage msg = new UDP_UnicastMessage(udpSource.inetAddress, udpSource.tcpPort, udpResponseCmd);
         
-        String json = _PayloadMapper.toJson(udpResponseCmd._Payload);
+        String json = _PayloadMapper.toJson(udpResponseCmd.getPayload());
         
         _State.getUdpServiceAnnouncer().sendUnicast(udpSource.inetAddress,  udpSource.tcpPort, json);
     }

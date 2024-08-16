@@ -59,7 +59,7 @@ public class C_TCP_HandleNew extends CommandBase<P_TCP_HandleNew>
                 cmd_response = _CommandFactory.CreateTCPHandleAccepted();
             }
             
-            String msg = _PayloadMapper.toJson(cmd_response._Payload);
+            String msg = _PayloadMapper.toJson(cmd_response.getPayload());
             tcpConnection.send(msg);
             
         }

@@ -37,7 +37,6 @@ public class CardGamePanelManager extends PanelManagerBase
     private CardGamePanelStateListener stateListener;
     private CardGamePanelContainerListener contListener;
     protected final IResourceNameService _ResourceNameService;
-    protected final Context _Context;
 
     public CardGamePanelManager(
         Container container,
@@ -48,7 +47,6 @@ public class CardGamePanelManager extends PanelManagerBase
         super(container);
         
         this._ResourceNameService = resourceNameService;
-        this._Context = context;
     }
     
     @Override

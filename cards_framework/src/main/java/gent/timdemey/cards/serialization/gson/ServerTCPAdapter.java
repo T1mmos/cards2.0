@@ -30,7 +30,7 @@ public class ServerTCPAdapter implements JsonSerializer<ServerTCP>, JsonDeserial
     @Override
     public JsonElement serialize(ServerTCP serverTCP, Type type, JsonSerializationContext context)
     {
-        JsonElement elem = context.serialize(serverTCP._Payload);
+        JsonElement elem = context.serialize(serverTCP.getPayload());
         return elem;
     }
 

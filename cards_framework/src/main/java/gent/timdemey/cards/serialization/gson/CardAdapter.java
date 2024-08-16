@@ -30,7 +30,7 @@ public class CardAdapter implements JsonSerializer<Card>, JsonDeserializer<Card>
     @Override
     public JsonElement serialize(Card card, Type type, JsonSerializationContext context)
     {
-        JsonElement elem = context.serialize(card._Payload);
+        JsonElement elem = context.serialize(card.getPayload());
         return elem;
     }
 

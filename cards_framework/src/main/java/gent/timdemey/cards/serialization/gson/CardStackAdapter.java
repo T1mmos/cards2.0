@@ -32,7 +32,7 @@ public class CardStackAdapter implements JsonSerializer<CardStack>, JsonDeserial
     @Override
     public JsonElement serialize(CardStack cardStack, Type type, JsonSerializationContext context)
     {
-        JsonElement elem = context.serialize(cardStack._Payload);
+        JsonElement elem = context.serialize(cardStack.getPayload());
         return elem;
     }
 

@@ -35,7 +35,7 @@ public class CardGameAdapter implements JsonSerializer<CardGame>, JsonDeserializ
     @Override
     public JsonElement serialize(CardGame cardGame, Type type, JsonSerializationContext context)
     {
-        JsonElement elem = context.serialize(cardGame._Payload);
+        JsonElement elem = context.serialize(cardGame.getPayload());
         return elem;
     }
 

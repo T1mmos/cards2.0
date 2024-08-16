@@ -30,7 +30,7 @@ public class ServerUDPAdapter implements JsonSerializer<ServerUDP>, JsonDeserial
     @Override
     public JsonElement serialize(ServerUDP serverUDP, Type type, JsonSerializationContext context)
     {
-        JsonElement elem = context.serialize(serverUDP._Payload);
+        JsonElement elem = context.serialize(serverUDP.getPayload());
         return elem;
     }
 

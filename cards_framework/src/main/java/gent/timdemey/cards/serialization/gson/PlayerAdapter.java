@@ -30,7 +30,7 @@ public class PlayerAdapter implements JsonSerializer<Player>, JsonDeserializer<P
     @Override
     public JsonElement serialize(Player player, Type type, JsonSerializationContext context)
     {
-        JsonElement elem = context.serialize(player._Payload);
+        JsonElement elem = context.serialize(player.getPayload());
         return elem;
     }
 

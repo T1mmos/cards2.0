@@ -83,7 +83,7 @@ public abstract class CommandBase<CMDPAYLOAD extends CommandPayloadBase> extends
         if (type != cmd._ContextType)
         {
             Container container = _ContainerService.get(type);
-            CommandBase cmd_copy = container.Get(cmd.getClass(), cmd._Payload);
+            CommandBase cmd_copy = container.Get(cmd.getClass(), cmd.getPayload());
             container.Get(ICommandExecutor.class).schedule(cmd_copy);
         }
         else 
@@ -106,14 +106,14 @@ public abstract class CommandBase<CMDPAYLOAD extends CommandPayloadBase> extends
     protected final void send(UUID remoteId, CommandBase cmd)
     {
         TCP_Connection connection = _State.getTcpConnectionPool().getConnection(remoteId);
-        String msg = _PayloadMapper.toJson(cmd._Payload);
+        String msg = _PayloadMapper.toJson(cmd.getPayload());
         connection.send(msg);
     }
     
     protected final void send(List<UUID> remoteIds, CommandBase cmd)
     {
         TCP_ConnectionPool pool = _State.getTcpConnectionPool();
-        String msg = _PayloadMapper.toJson(cmd._Payload);
+        String msg = _PayloadMapper.toJson(cmd.getPayload());
         for (UUID remoteId : remoteIds)
         {
             TCP_Connection connection = pool.getConnection(remoteId);

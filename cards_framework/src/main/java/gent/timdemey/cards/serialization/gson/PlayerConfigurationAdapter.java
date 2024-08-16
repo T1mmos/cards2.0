@@ -31,7 +31,7 @@ public class PlayerConfigurationAdapter implements JsonSerializer<PlayerConfigur
     @Override
     public JsonElement serialize(PlayerConfiguration playerConfiguration, Type type, JsonSerializationContext context)
     {
-        JsonElement elem = context.serialize(playerConfiguration._Payload);
+        JsonElement elem = context.serialize(playerConfiguration.getPayload());
         return elem;
     }
 

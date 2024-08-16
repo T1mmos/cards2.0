@@ -24,6 +24,11 @@ public abstract class EntityBase<PAYLOAD extends PayloadBase>
         this._Payload = pl;
     }
     
+    public PAYLOAD getPayload()
+    {
+        return _Payload;
+    }
+    
     @Override
     public final boolean equals(Object obj)
     {

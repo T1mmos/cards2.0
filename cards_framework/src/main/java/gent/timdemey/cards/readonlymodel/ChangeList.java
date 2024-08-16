@@ -1,5 +1,6 @@
 package gent.timdemey.cards.readonlymodel;
 
+import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -24,8 +25,8 @@ public class ChangeList
     
     public boolean HasChange(ReadOnlyProperty<?> property)
     {
-        ReadOnlyChange change = FindChange(property);
-        return change != null;
+        List<ReadOnlyChange> changes = FindChanges(property);
+        return !changes.isEmpty();
     }
     
     public boolean HasAnyChange(ReadOnlyProperty<?> ... properties)
@@ -43,23 +44,24 @@ public class ChangeList
         return false;
     }
     
-    private ReadOnlyChange FindChange(ReadOnlyProperty<?> property)
+    private List<ReadOnlyChange> FindChanges(ReadOnlyProperty<?> property)
     {
+        List<ReadOnlyChange> changes = new ArrayList<>();
         for (ReadOnlyChange change : _Changes)
         {
             if (change.property == property)
             {
-                return change;
+                changes.add(change);
             }
         }
         
-        return null;
+        return changes;
     }
     
     public void OnChange(ReadOnlyProperty<?> property, Consumer<ReadOnlyChange> action)
     {
-        ReadOnlyChange change = FindChange(property);
-        if (change != null)
+        List<ReadOnlyChange> changes = FindChanges(property);
+        for (ReadOnlyChange change : changes)
         {
             action.accept(change);
         }
@@ -67,8 +69,8 @@ public class ChangeList
     
     public void OnChange(ReadOnlyProperty<?> property, Runnable action)
     {
-        ReadOnlyChange change = FindChange(property);
-        if (change != null)
+        List<ReadOnlyChange> changes = FindChanges(property);
+        if (!changes.isEmpty())
         {
             action.run();
         }

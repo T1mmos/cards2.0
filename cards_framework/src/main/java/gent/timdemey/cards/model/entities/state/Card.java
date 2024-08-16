@@ -7,7 +7,7 @@ import gent.timdemey.cards.model.delta.Property;
 import gent.timdemey.cards.model.delta.StateValueRef;
 import gent.timdemey.cards.utils.Debug;
 
-public class Card extends EntityBase
+public class Card extends EntityBase<P_Card>
 {
     public static final Property<Boolean> Visible = Property.of(Card.class, Boolean.class, "Visible");
     public static final Property<Integer> Score = Property.of(Card.class, Integer.class, "Score");
@@ -29,6 +29,14 @@ public class Card extends EntityBase
         this.scoreRef = new StateValueRef<>(changeTracker, Score, id, 0);
         this.cardStack = null;
     }
+
+    @Override
+    public P_Card getPayload()
+    {
+        return new P_Card(id, suit, value, visibleRef.get());
+    }
+    
+    
     
     /**
      * Checks whether this card is equal to the given short card notation.
