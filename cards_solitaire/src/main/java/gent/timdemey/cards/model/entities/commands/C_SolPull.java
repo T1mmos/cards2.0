@@ -7,6 +7,7 @@ import java.util.List;
 import gent.timdemey.cards.model.entities.state.Card;
 import gent.timdemey.cards.model.entities.state.CardStack;
 import gent.timdemey.cards.model.entities.commands.game.P_Pull;
+import gent.timdemey.cards.model.entities.state.CardOrder;
 import gent.timdemey.cards.services.contract.descriptors.SolitaireComponentTypes;
 
 public class C_SolPull extends C_Pull
@@ -61,7 +62,7 @@ public class C_SolPull extends C_Pull
                     return CanExecuteResponse.no("Cannot push onto cards of the same color");
                 }
                 
-                if (lowerCard.value.getOrderAtoK() != higherCard.value.getOrderAtoK() + 1)
+                if (lowerCard.value.getIndex(CardOrder.AceToKing) != higherCard.value.getIndex(CardOrder.AceToKing) + 1)
                 {
                     return CanExecuteResponse.no("Value of destination card must be 1 more");
                 }
