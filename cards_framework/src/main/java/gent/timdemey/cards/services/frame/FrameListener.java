@@ -139,7 +139,7 @@ public class FrameListener implements IStateListener, IExecutionListener
         {
             C_OnGameEnded c = (C_OnGameEnded) command;
             String title, msg;
-            if (_State.id.equals(c.winnerId))
+            if (_State.isLocalId(c.winnerId))
             {
                 title = _Loc.get(LocKey.DialogTitle_youwin);
                 msg = _Loc.get(LocKey.DialogMessage_youwin);    
