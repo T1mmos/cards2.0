@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>gent.timdemey.cards</groupId>
     <artifactId>cards_solitaireshowdown</artifactId>
-    <version>1.0</version>
+    <version>alpha-1.1</version>
 
     <packaging>jar</packaging>
     <name>cards_solitaireshowdown</name>  
@@ -20,7 +20,7 @@
           <dependency>
               <groupId>gent.timdemey.cards</groupId>
               <artifactId>cards_framework</artifactId>
-              <version>1.0</version>
+              <version>alpha-1.1</version>
           </dependency> 
     </dependencies>
     
