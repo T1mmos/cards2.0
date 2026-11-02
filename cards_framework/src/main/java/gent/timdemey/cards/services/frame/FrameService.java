@@ -158,6 +158,12 @@ public class FrameService implements IFrameService, IPreload
     }
 
     @Override
+    public boolean isDialogShown()
+    {
+        return panelStack.stream().anyMatch(pd -> pd.panelType == PanelType.Dialog);
+    }
+
+    @Override
     public void showPanel(PanelDescriptor desc) 
     {
         if (desc.panelType != PanelType.Root && desc.panelType != PanelType.Overlay)
@@ -310,7 +316,8 @@ public class FrameService implements IFrameService, IPreload
             }            
         }
         
-        boolean addOverlay = pd.panelType == PanelType.Overlay && comp.getParent() != getFrameBodyPanel();
+        boolean isOverlayType = pd.panelType == PanelType.Overlay || pd.panelType == PanelType.DialogOverlay;
+        boolean addOverlay = isOverlayType && comp.getParent() != getFrameBodyPanel();
         if (push || addOverlay)
         {
             // determine how many

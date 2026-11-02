@@ -13,11 +13,19 @@ public class A_ToggleMenuMP extends ActionBase
     }
 
     @Override
+    public boolean isEnabled()
+    {
+        // whether the menu may be toggled depends on UI state (e.g. other dialogs being shown) 
+        // which isn't tracked by state changes, so this is checked when the command executes
+        return true;
+    }
+
+    @Override
     public void onChange(ReadOnlyChange roChange)
     {
         ReadOnlyProperty<?> property = roChange.property;
 
-        if (property == ReadOnlyState.GameState)
+        if (property == ReadOnlyState.GameState || property == ReadOnlyState.CardGame)
         {
             checkEnabled();
         }

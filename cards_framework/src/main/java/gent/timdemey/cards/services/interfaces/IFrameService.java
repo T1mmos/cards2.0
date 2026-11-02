@@ -15,6 +15,8 @@ public interface IFrameService
     public JFrame getFrame();
 
     public boolean isShown(PanelDescriptor desc);
+    /** Returns true if a (non-overlay) dialog is currently shown on top of the root panel. */
+    public boolean isDialogShown();
     public void showPanel(PanelDescriptor desc);
     public <IN, OUT> void showPanel(DataPanelDescriptor<IN, OUT> desc, IN data, Consumer<PanelOutData<OUT>> onClose);
     public void showMessage(String title, String message);

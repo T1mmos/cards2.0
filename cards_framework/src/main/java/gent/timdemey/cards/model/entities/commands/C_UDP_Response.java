@@ -44,10 +44,17 @@ public final class C_UDP_Response extends CommandBase
     {
         CheckContext(type, ContextType.UI);
 
-        if (!state.getUDPServers().contains(server))
+        // dedupe on the server's own UUID: a new UDPServer wrapper (with a new id) is created per response
+        java.util.List<UDPServer> servers = state.getUDPServers();
+        for (int i = 0; i < servers.size(); i++)
         {
-            state.getUDPServers().add(server);
+            if (servers.get(i).server.id.equals(server.server.id))
+            {
+                servers.set(i, server);
+                return;
+            }
         }
+        servers.add(server);
     }
 
     @Override

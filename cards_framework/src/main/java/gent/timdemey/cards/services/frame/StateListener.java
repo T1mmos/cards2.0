@@ -37,6 +37,10 @@ public class StateListener implements IStateListener
             ReadOnlyCardGame cardGame = state.getCardGame();
             if (cardGame == null)
             {
+                if (frameServ.isShown(PanelDescriptors.GameMenu))
+                {
+                    frameServ.hidePanel(PanelDescriptors.GameMenu);
+                }
                 frameServ.showPanel(PanelDescriptors.Menu);
                 frameServ.removePanel(PanelDescriptors.Game);
             }
