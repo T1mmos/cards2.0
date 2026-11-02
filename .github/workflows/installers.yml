@@ -23,9 +23,6 @@ jobs:
               --win-menu --win-shortcut --win-dir-chooser
               --win-menu-group Solitaire_Showdown
               --win-upgrade-uuid 6b1f6f0e-3c1a-4b8e-9a4e-2d6f7c9e5a11
-          - os: macos-latest
-            type: dmg
-            platformArgs: ''
           - os: ubuntu-latest
             type: deb
             platformArgs: >-
