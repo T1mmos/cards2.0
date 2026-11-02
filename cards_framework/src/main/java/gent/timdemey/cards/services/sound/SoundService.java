@@ -1,15 +1,7 @@
 package gent.timdemey.cards.services.sound;
 
-import java.io.ByteArrayInputStream;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.LineListener;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
@@ -23,63 +15,66 @@ import gent.timdemey.cards.services.interfaces.ISoundService;
 
 public class SoundService implements ISoundService, IPreload
 {
-    private ExecutorService executor = null;
-    
-    @Override
-    public void preload()
-    {
-        executor = Executors.newSingleThreadExecutor(new ThreadFactory()
-        {
-            @Override
-            public Thread newThread(Runnable r)
-            {
-                return new Thread(r, "Audio");
-            }
-        });
-      
-        // load necessary files
-        preload(ResourceDescriptors.SoundTest);
-    }
-    
-    private void preload(ResourceDescriptor desc)
-    {
-        IResourceCacheService resCacheServ = Services.get(IResourceCacheService.class);
-        IResourceNameService resNameServ = Services.get(IResourceNameService.class);
+	private final SoundMixer mixer = new SoundMixer();
+	private final Map<ResourceDescriptor, PcmSample> samples = new ConcurrentHashMap<>();
+	private volatile boolean muted = false;
 
-        String path = resNameServ.getFilePath(desc);
-        resCacheServ.getAudio(path); // ignore the resource
-    }
+	@Override
+	public void setMuted(boolean muted)
+	{
+		this.muted = muted;
+	}
 
-    @Override
-    public void play(ResourceDescriptor desc)
-    {
-        Logger.info("Playing %s", desc.toString());
-        
-        executor.submit(() -> 
-        {
-            try
-            {
-                IResourceCacheService resCacheServ = Services.get(IResourceCacheService.class);
-                IResourceNameService resNameServ = Services.get(IResourceNameService.class);
-                String path = resNameServ.getFilePath(desc);
-                AudioResource audioRes = resCacheServ.getAudio(path);
-                if (audioRes == null)
-                {
-                    Logger.error("Cannot play audio: no resource for descriptor " + desc);
-                    return;
-                }
-                
-                Clip clip = audioRes.raw;   
-                
-                clip.stop();
-                clip.setFramePosition(0);
-                clip.start();
-            }
-            catch (Exception e)
-            {
-                Logger.error(e);
-            }
-        });
-    }
+	@Override
+	public boolean isMuted()
+	{
+		return muted;
+	}
 
+	@Override
+	public void preload()
+	{
+		// load necessary files, decoded up front so play() never touches the disk or a decoder
+		preload(ResourceDescriptors.SoundTest);
+		preload(ResourceDescriptors.SoundPutDown);
+
+		// the output line stays open and running, so a sound never waits for the line to start
+		mixer.start();
+	}
+
+	private PcmSample preload(ResourceDescriptor desc)
+	{
+		IResourceCacheService resCacheServ = Services.get(IResourceCacheService.class);
+		IResourceNameService resNameServ = Services.get(IResourceNameService.class);
+
+		String path = resNameServ.getFilePath(desc);
+		AudioResource audioRes;
+		synchronized (resCacheServ)
+		{
+			audioRes = resCacheServ.getAudio(path);
+		}
+		if (audioRes == null || audioRes.raw == null)
+		{
+			Logger.error("Cannot load audio for descriptor " + desc);
+			return null;
+		}
+		samples.put(desc, audioRes.raw);
+		return audioRes.raw;
+	}
+
+	@Override
+	public void play(ResourceDescriptor desc)
+	{
+		if (muted)
+		{
+			return;
+		}
+		PcmSample sample = samples.get(desc);
+		if (sample == null)
+		{
+			Logger.warn("Sound %s was not preloaded, loading it now", desc);
+			sample = preload(desc);
+		}
+		mixer.play(sample);
+	}
 }

@@ -1,13 +1,11 @@
 package gent.timdemey.cards.model.entities.commands;
 
-import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_OnGameToLobby;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.INetworkService;
 
 /**
  * Transition from the multiplayer game to the lobby. Reasons may vary: a player
@@ -79,10 +77,9 @@ public class C_OnGameToLobby extends CommandBase
             D_ShowLobby cmd_showlobby = new D_ShowLobby();
             schedule(type, cmd_showlobby);
         }
-        else
+        else if (state.getGameServer() != null)
         {
-            INetworkService netServ = Services.get(INetworkService.class);
-            netServ.broadcast(state.getLocalId(), state.getRemotePlayerIds(), this, state.getTcpConnectionPool());
+            state.getGameServer().onGameToLobby(state, reason.name());
         }
     }
 

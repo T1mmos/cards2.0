@@ -19,6 +19,7 @@ import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityList;
+import gent.timdemey.cards.services.animation.AnimationKind;
 import gent.timdemey.cards.services.animation.LayerRange;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.descriptors.ComponentTypes;
@@ -139,7 +140,7 @@ class CardGamePanelMouseListener extends MouseAdapter
                 List<ReadOnlyCard> cards = stack.getCardsFrom(card);
                 int cardCnt = cards.size();
                 
-                LayerRange range = posServ.getDragLayerRange();
+                LayerRange range = posServ.getLayerRange(AnimationKind.DRAG);
                 int dragMax = range.layerEnd - range.layerStart + 1;
                 if (cardCnt > dragMax)
                 {
@@ -291,11 +292,7 @@ class CardGamePanelMouseListener extends MouseAdapter
             {
                 // there is no model change so we animate the cards back to their current stack
                 IPanelManager gamePanelMgr = panelServ.getPanelManager(PanelDescriptors.Game);
-                for (int i = 0; i < draggedJComps.size(); i++)
-                {
-                    JComponent jcomp_anim = draggedJComps.get(i);                    
-                    gamePanelMgr.startAnimate(jcomp_anim);
-                }
+                gamePanelMgr.startAnimate(new ArrayList<>(draggedJComps), AnimationKind.MOVE);
             }
 
             draggedJComps.clear();

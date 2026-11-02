@@ -2,6 +2,7 @@ package gent.timdemey.cards.services.animation;
 
 import java.awt.Component;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +13,7 @@ import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.LayeredArea;
 import gent.timdemey.cards.services.contract.preload.IPreload;
@@ -43,61 +45,82 @@ public class AnimationService implements IAnimationService, IPreload
     }
 
     @Override
-    public void animate(JComponent jcomp, IPanelManager pm)
+    public void animate(List<? extends JComponent> jcomps, IPanelManager pm, AnimationKind kind)
     {
-        if (!(jcomp instanceof IHasComponent<?>))
+        if (jcomps.isEmpty())
         {
-            throw new IllegalArgumentException("To animate a component, it needs to implement IHasComponent, to discover what animation is needed for it");
+            return;
         }
-        
-        IHasComponent<?> hasComp = (IHasComponent<?>) jcomp;        
-        IComponent comp = hasComp.getComponent();
-        
+
+        for (JComponent jcomp : jcomps)
+        {
+            if (!(jcomp instanceof IHasComponent<?>))
+            {
+                throw new IllegalArgumentException("To animate a component, it needs to implement IHasComponent, to discover what animation is needed for it");
+            }
+        }
+
         IPositionService posServ = Services.get(IPositionService.class);
         IAnimationDescriptorFactory animDescFact = Services.get(IAnimationDescriptorFactory.class);
 
-        AnimationDescriptor descr = animDescFact.getAnimationDescriptor(comp);
-        
-        // to support animation while resizing the window, we need to save the relative coordinates
-        // of the component at the start of the animation
-        Coords.Absolute abscoords = ((IHasComponent<?>) jcomp).getComponent().getAbsCoords();
-        Coords.Relative relcoords = posServ.getRelativeCoords(abscoords);
-        LayeredArea layeredArea = posServ.getLayeredArea(jcomp);
+        // sort from low to high in their card stack, so higher cards get higher layers
+        List<JComponent> sorted = new ArrayList<>(jcomps);
+        sorted.sort(Comparator.comparingInt(AnimationService::getStackOrder));
 
-        AnimationTracker tracker = new AnimationTracker(jcomp, pm, descr, relcoords, layeredArea);
-        animTrackers.add(tracker);
+        int layer = getFirstFreeLayer(pm, posServ.getLayerRange(kind), sorted.size());
 
-        // assign the component to a dedicated layer
-        setAnimationLayer(jcomp, pm, layeredArea);
-        
-        // must tick immediately to have the component updated so it doesn't show
-        // in wrong colors, wrong location, etc.
-        long currTickTime = System.currentTimeMillis();
-        tick(tracker, currTickTime);
+        for (JComponent jcomp : sorted)
+        {
+            IComponent comp = ((IHasComponent<?>) jcomp).getComponent();
+            AnimationDescriptor descr = animDescFact.getAnimationDescriptor(comp);
+
+            // to support animation while resizing the window, we need to save the relative coordinates
+            // of the component at the start of the animation
+            Coords.Absolute abscoords = comp.getAbsCoords();
+            Coords.Relative relcoords = posServ.getRelativeCoords(abscoords);
+            LayeredArea layeredArea = posServ.getLayeredArea(jcomp);
+
+            // a component can only be animated once at a time
+            stopAnimate(jcomp);
+
+            AnimationTracker tracker = new AnimationTracker(jcomp, pm, descr, relcoords, layeredArea);
+            animTrackers.add(tracker);
+
+            // assign the component to a dedicated layer
+            JSLayeredPane parent = (JSLayeredPane) jcomp.getParent();
+            parent.setLayer(jcomp, layer++);
+
+            // must tick immediately to have the component updated so it doesn't show
+            // in wrong colors, wrong location, etc.
+            long currTickTime = System.currentTimeMillis();
+            tick(tracker, currTickTime);
+        }
     }
-        
-    private void setAnimationLayer(JComponent jcomp, IPanelManager pm, LayeredArea layeredArea)
-    {        
-        LayerRange range = layeredArea.startLayerRange;
-        
+
+    private static int getStackOrder(JComponent jcomp)
+    {
+        Object payload = ((IHasComponent<?>) jcomp).getComponent().getPayload();
+        if (payload instanceof ReadOnlyCard card)
+        {
+            return card.getCardIndex();
+        }
+        return 0;
+    }
+
+    private int getFirstFreeLayer(IPanelManager pm, LayerRange range, int count)
+    {
         Optional<Integer> maxBusyLayer = animTrackers.stream()
                 .filter(at -> at.panelMan == pm)
                 .map(c -> pm.getPanel().getLayer((Component) c.component))
                 .filter(layer -> range.layerStart <= layer && layer <= range.layerEnd)
                 .max(Integer::compare);
-               
-        int layer;
-        if (maxBusyLayer.isPresent())
-        {
-            layer = maxBusyLayer.get() + 1;
-        }
-        else
+
+        int layer = maxBusyLayer.map(l -> l + 1).orElse(range.layerStart);
+        if (layer + count - 1 > range.layerEnd)
         {
             layer = range.layerStart;
         }
-        
-        JSLayeredPane parent = (JSLayeredPane) jcomp.getParent();
-        parent.setLayer(jcomp, layer);
+        return layer;
     }
 
     @Override

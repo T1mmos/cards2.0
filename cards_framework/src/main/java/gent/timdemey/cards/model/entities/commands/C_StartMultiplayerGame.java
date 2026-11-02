@@ -12,7 +12,7 @@ import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.ICardGameService;
-import gent.timdemey.cards.services.interfaces.INetworkService;
+import gent.timdemey.cards.logging.Logger;
 
 /**
  * A signal sent to the server by the lobby admin to start the game. The server
@@ -64,8 +64,13 @@ public class C_StartMultiplayerGame extends CommandBase
     {
         if (type == ContextType.UI)
         {
-            INetworkService netServ = Services.get(INetworkService.class);
-            netServ.send(state.getLocalId(), state.getServerId(), this, state.getTcpConnectionPool());
+            state.getGameClient().requestStartGame().whenComplete((ok, ex) ->
+            {
+                if (ex != null)
+                {
+                    Logger.warn("The server refused to start the game: %s", ex.getMessage());
+                }
+            });
         }
         else
         {

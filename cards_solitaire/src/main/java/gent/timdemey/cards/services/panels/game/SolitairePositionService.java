@@ -7,6 +7,7 @@ import javax.swing.JComponent;
 
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
+import gent.timdemey.cards.services.animation.AnimationKind;
 import gent.timdemey.cards.services.animation.LayerRange;
 import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.LayeredArea;
@@ -21,8 +22,10 @@ public class SolitairePositionService implements IPositionService
 {
     private static final int LAYER_CARDSTACKS = 0;
     private static final int LAYER_CARDS = 200;
-    private static final LayerRange LAYERRANGE_DRAG                     = new LayerRange(10000, 10999);
-    private static final LayerRange LAYERRANGE_ANIMATIONS               = new LayerRange(20000, 20999);
+    private static final LayerRange LAYERRANGE_RELAYOUT                 = new LayerRange(20000, 20999);
+    private static final LayerRange LAYERRANGE_MOVE                     = new LayerRange(21000, 21999);
+    private static final LayerRange LAYERRANGE_OVERLAY                  = new LayerRange(22000, 22999);
+    private static final LayerRange LAYERRANGE_DRAG                     = new LayerRange(23000, 23999);
 
     private SolitaireGameLayout gl;
 
@@ -127,7 +130,7 @@ public class SolitairePositionService implements IPositionService
         }
 
         Coords.Absolute coords = Coords.getAbsolute(bounds);
-        return new LayeredArea(coords, coords, LAYERRANGE_ANIMATIONS, layer, false);
+        return new LayeredArea(coords, coords, layer, false);
     }
 
     @Override
@@ -233,8 +236,14 @@ public class SolitairePositionService implements IPositionService
     }
 
     @Override
-    public LayerRange getDragLayerRange()
+    public LayerRange getLayerRange(AnimationKind kind)
     {
-        return LAYERRANGE_DRAG;
+        return switch (kind)
+        {
+            case RELAYOUT -> LAYERRANGE_RELAYOUT;
+            case MOVE -> LAYERRANGE_MOVE;
+            case OVERLAY -> LAYERRANGE_OVERLAY;
+            case DRAG -> LAYERRANGE_DRAG;
+        };
     }
 }

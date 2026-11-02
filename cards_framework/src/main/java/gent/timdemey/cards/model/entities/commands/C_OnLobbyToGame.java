@@ -10,7 +10,6 @@ import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
 import gent.timdemey.cards.services.interfaces.IFrameService;
-import gent.timdemey.cards.services.interfaces.INetworkService;
 
 /**
  * Transition from the lobby to the multiplayer game.
@@ -53,8 +52,10 @@ public class C_OnLobbyToGame extends CommandBase
         }
         else
         {                   
-            INetworkService netServ = Services.get(INetworkService.class);
-            netServ.broadcast(state.getLocalId(), state.getPlayers().getIds(), this, state.getTcpConnectionPool());            
+            if (state.getGameServer() != null)
+            {
+                state.getGameServer().onGameStarted(state, cardGame);
+            }
         }
     }
 }

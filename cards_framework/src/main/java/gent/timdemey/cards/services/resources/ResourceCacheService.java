@@ -21,12 +21,9 @@ import gent.timdemey.cards.services.contract.res.ImageResource;
 import gent.timdemey.cards.services.contract.res.ResourceType;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IResourceRepository;
+import gent.timdemey.cards.services.sound.PcmSample;
+import gent.timdemey.cards.services.sound.SoundMixer;
 import java.io.ByteArrayInputStream;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.LineListener;
 
 public class ResourceCacheService implements IResourceCacheService
 {
@@ -140,18 +137,9 @@ public class ResourceCacheService implements IResourceCacheService
     {           
         try
         {
-            byte[] arr = new byte[is.available()];
-            is.read(arr);
-                                     
-            @SuppressWarnings("resource")
-            Clip clip = AudioSystem.getClip();
-
-            ByteArrayInputStream bis = new ByteArrayInputStream(arr);
-            @SuppressWarnings("resource")
-            AudioInputStream ais = AudioSystem.getAudioInputStream(bis);
-            clip.open(ais);
-            
-            return new AudioResource(filename, false, clip);
+            byte[] arr = is.readAllBytes();
+            PcmSample sample = SoundMixer.decode(new ByteArrayInputStream(arr));
+            return new AudioResource(filename, false, sample);
         }
         catch (Exception e)
         {

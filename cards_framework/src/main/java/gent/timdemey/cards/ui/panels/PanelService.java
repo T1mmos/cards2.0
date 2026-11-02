@@ -134,11 +134,21 @@ public class PanelService implements IPanelService
 
     private void onRescaledResources(Runnable externalCallback)
     {
-        if (externalCallback != null)
+        try
         {
-            externalCallback.run();
+            if (externalCallback != null)
+            {
+                externalCallback.run();
+            }
         }
+        finally
+        {
+            repaintPanels();
+        }
+    }
 
+    private void repaintPanels()
+    {
         IPanelService panelServ = Services.get(IPanelService.class);
         for (PanelDescriptor pd : panelServ.getPanelDescriptors())
         {

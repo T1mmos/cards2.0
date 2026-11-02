@@ -7,7 +7,6 @@ import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.common.EntityBase;
 import gent.timdemey.cards.model.entities.common.PayloadBase;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.netcode.TCP_Connection;
 import gent.timdemey.cards.netcode.UDP_Source;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
@@ -16,7 +15,6 @@ import gent.timdemey.cards.services.interfaces.IContextService;
 
 public abstract class CommandBase extends EntityBase
 {
-    private volatile TCP_Connection sourceTcpConnection;
     private volatile UDP_Source sourceUdp;
     private volatile UUID sourceId;
     private volatile String serialized;
@@ -155,16 +153,6 @@ public abstract class CommandBase extends EntityBase
         }
     }
 
-    public void setSourceTcpConnection(TCP_Connection tcpConnection)
-    {
-        this.sourceTcpConnection = tcpConnection;
-    }
-
-    protected final TCP_Connection getSourceTcpConnection()
-    {
-        return sourceTcpConnection;
-    }
-
     public void setSourceUdp(UDP_Source udpSource)
     {
         this.sourceUdp = udpSource;
@@ -195,7 +183,7 @@ public abstract class CommandBase extends EntityBase
         if (serialized == null)
         {
             throw new IllegalStateException(
-                    "No serialized form of this command was set, this can happen when the command did not enter via a TCP connection.");
+                    "No serialized form of this command was set, this can happen when the command did not enter via the network.");
         }
         return serialized;
     }

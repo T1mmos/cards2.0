@@ -27,8 +27,7 @@ public class LoadPanelManager extends PanelManagerBase
     {
         loadPanel = JSFactory.createLayeredPane(ComponentTypes.PANEL);
         loadPanel.setLayout(new MigLayout("insets 10, align 100% 100%"));
-        loadPanel.setBackground(Color.decode("#1E3F5A"));
-        
+
         JSLabel label = JSFactory.createLabel("LOADING...");
         label.setBackground(Color.DARK_GRAY.darker().darker());
         

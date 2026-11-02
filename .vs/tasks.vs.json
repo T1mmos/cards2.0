@@ -1,0 +1,12 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskLabel": "Build & Run Solitaire",
+      "appliesTo": "/",
+      "type": "launch",
+      "command": "powershell.exe",
+      "args": [ "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceRoot}\\scripts\\dev_run_solitaire.ps1" ]
+    }
+  ]
+}

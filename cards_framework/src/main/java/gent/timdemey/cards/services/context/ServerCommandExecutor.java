@@ -1,17 +1,13 @@
 package gent.timdemey.cards.services.context;
 
-import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
-import gent.timdemey.cards.model.entities.commands.C_Accept;
-import gent.timdemey.cards.model.entities.commands.C_Reject;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
 import gent.timdemey.cards.model.entities.commands.CommandHistory;
 import gent.timdemey.cards.model.entities.commands.CommandType;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.contract.ExecutionState;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.services.interfaces.INetworkService;
-import gent.timdemey.cards.services.interfaces.ISerializationService;
+import gent.timdemey.cards.netcode.ws.GameServer;
 
 class ServerCommandExecutor extends CommandExecutorBase
 {
@@ -46,13 +42,16 @@ class ServerCommandExecutor extends CommandExecutorBase
             {
                 state.getCommandHistory().addAccepted(command, state);
 
-                // in case of syncable commands, we send a response to the source so
-                // the client can mark the command as accepted in its history
+                // in case of synced commands, all players are informed through a numbered
+                // MoveAccepted event so the source can mark the command as accepted in its history
+                // and the other players apply it
                 if (cmdType == CommandType.SYNCED)
                 {
-                    C_Accept acceptCmd = new C_Accept(command.id);
-                    INetworkService ns = Services.get(INetworkService.class);
-                    ns.send(state.getLocalId(), command.getSourceId(), acceptCmd, state.getTcpConnectionPool());
+                    GameServer gameServer = state.getGameServer();
+                    if (gameServer != null)
+                    {
+                        gameServer.onMoveAccepted(state, command);
+                    }
                 }
             }
             else if (cmdType == CommandType.DEFAULT)
@@ -64,12 +63,13 @@ class ServerCommandExecutor extends CommandExecutorBase
         {
             if (cmdType == CommandType.SYNCED)
             {
-                Logger.info("Can't execute syncable command: '%s'. Responding with a C_Reject. Reason: %s", command.getName(), resp.reason);
+                Logger.info("Can't execute syncable command: '%s'. Broadcasting a MoveRejected. Reason: %s", command.getName(), resp.reason);
 
-                C_Reject rejectCmd = new C_Reject(command.id);
-                ISerializationService serServ = Services.get(ISerializationService.class);
-                String answer = serServ.getCommandDtoMapper().toJson(rejectCmd);
-                state.getTcpConnectionPool().getConnection(command.getSourceId()).send(answer);
+                GameServer gameServer = state.getGameServer();
+                if (gameServer != null)
+                {
+                    gameServer.onMoveRejected(state, command, resp.reason);
+                }
             }
             else
             {

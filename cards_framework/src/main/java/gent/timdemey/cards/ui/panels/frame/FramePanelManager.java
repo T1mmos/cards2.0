@@ -33,6 +33,7 @@ import gent.timdemey.cards.services.frame.TitlePanelMouseListener;
 import gent.timdemey.cards.services.interfaces.IActionService;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IResourceNameService;
+import gent.timdemey.cards.services.interfaces.ISoundService;
 import gent.timdemey.cards.ui.components.drawers.IDrawer;
 import gent.timdemey.cards.ui.components.swing.JSButton;
 import gent.timdemey.cards.ui.components.swing.JSFactory;
@@ -80,6 +81,26 @@ public class FramePanelManager extends PanelManagerBase
         return button;
     }
 
+    private JButton createMuteButton()
+    {
+        ISoundService soundServ = Services.get(ISoundService.class);
+        JButton button = new JButton();
+        button.setFont(new Font(Font.DIALOG, Font.BOLD, 12));
+        button.setForeground(Color.darkGray.darker());
+        button.setContentAreaFilled(false);
+        button.setBorder(BorderFactory.createLineBorder(Color.darkGray, 1));
+        button.setFocusable(false);
+        button.setToolTipText("Mute / unmute sounds");
+        Runnable updateText = () -> button.setText(soundServ.isMuted() ? " SOUND OFF " : " SOUND ON ");
+        updateText.run();
+        button.addActionListener(e ->
+        {
+            soundServ.setMuted(!soundServ.isMuted());
+            updateText.run();
+        });
+        return button;
+    }
+
     @Override
     public JSLayeredPane createPanel()
     {
@@ -107,6 +128,7 @@ public class FramePanelManager extends PanelManagerBase
         title_text.setForeground(Color.darkGray.darker());
         frameTitlePanel.add(title_icon, "gapx 10, left");
         frameTitlePanel.add(title_text, "gapx 10, pushx, left");
+        frameTitlePanel.add(createMuteButton(), "align center top, gapright 10");
         frameTitlePanel.add(title_minimize, "align center top, gapright 5");
         frameTitlePanel.add(title_maximize, "align center top, gapright 5");
         frameTitlePanel.add(title_unmaximize, "align center top, gapright 5");

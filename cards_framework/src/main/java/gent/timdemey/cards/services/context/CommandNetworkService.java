@@ -1,85 +1,55 @@
 package gent.timdemey.cards.services.context;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.CommandBase;
-import gent.timdemey.cards.netcode.TCP_Connection;
-import gent.timdemey.cards.netcode.TCP_ConnectionPool;
+import gent.timdemey.cards.model.state.State;
+import gent.timdemey.cards.netcode.ws.GameClient;
 import gent.timdemey.cards.serialization.mappers.CommandDtoMapper;
 import gent.timdemey.cards.services.interfaces.INetworkService;
 import gent.timdemey.cards.services.interfaces.ISerializationService;
 
+/**
+ * Sends synced moves over the WebSocket connection as MoveRequest messages.
+ */
 public class CommandNetworkService implements INetworkService
 {
+	@Override
+	public void sendMove(State state, CommandBase command)
+	{
+		if (state == null)
+		{
+			throw new NullPointerException("state");
+		}
+		if (command == null)
+		{
+			throw new NullPointerException("command");
+		}
 
-    @Override
-    public void send(UUID localId, UUID dstId, CommandBase command, TCP_ConnectionPool tcpConnPool)
-    {
-        List<UUID> dstIds = Arrays.asList(dstId);
-        CheckArgs(localId, dstIds, command, tcpConnPool);
-        sendPriv(localId, dstIds, command, tcpConnPool);
-    }
-    
-    @Override 
-    public void send(TCP_Connection conn, CommandBase command)
-    {
-        String serialized = serialize(command);
-        conn.send(serialized);
-    }
+		UUID localId = state.getLocalId();
+		if (command.getSourceId() == null)
+		{
+			command.setSourceId(localId);
+		}
 
-    @Override
-    public void broadcast(UUID localId, List<UUID> dstIds, CommandBase command, TCP_ConnectionPool tcpConnPool)
-    {
-        CheckArgs(localId, dstIds, command, tcpConnPool);
-        sendPriv(localId, dstIds, command, tcpConnPool);
-    }
+		// only send a command if the SourceId == LocalId, meaning the command
+		// didn't originate from somewhere else.
+		if (!command.getSourceId().equals(localId))
+		{
+			Logger.debug("The command %s is not a local command, not so sending it", command.getName());
+			return;
+		}
 
-    private void sendPriv(UUID localId, List<UUID> dstIds, CommandBase command, TCP_ConnectionPool tcpConnPool)
-    {
-        UUID srcId = command.getSourceId();
+		GameClient gameClient = state.getGameClient();
+		if (gameClient == null)
+		{
+			Logger.warn("No network connection, cannot send command %s", command.getName());
+			return;
+		}
 
-        // only send a command if the SourceId == LocalId, meaning the command
-        // didn't originate from somewhere else.
-        if (srcId.equals(localId))
-        {
-            String serialized = serialize(command);
-            tcpConnPool.broadcast(dstIds, serialized);
-        }
-        else
-        {
-            Logger.debug("The command %s is not a local command, not so sending it", command.getName());
-        }
-    }
-    
-    private String serialize(CommandBase command)
-    {
-        CommandDtoMapper dtoMapper = Services.get(ISerializationService.class).getCommandDtoMapper();
-        String serialized = dtoMapper.toJson(command);
-        return serialized;
-    }
-
-    private void CheckArgs(UUID localId, List<UUID> dstIds, CommandBase command, TCP_ConnectionPool tcpConnPool)
-    {
-        if (localId == null)
-        {
-            throw new NullPointerException("localId");
-        }
-        if (dstIds == null)
-        {
-            throw new NullPointerException("destination");
-        }
-        if (command == null)
-        {
-            throw new NullPointerException("command");
-        }
-
-        if (command.getSourceId() == null)
-        {
-            command.setSourceId(localId);
-        }
-    }
+		CommandDtoMapper dtoMapper = Services.get(ISerializationService.class).getCommandDtoMapper();
+		gameClient.sendMove(command.id, dtoMapper.toCommandDto(command));
+	}
 }

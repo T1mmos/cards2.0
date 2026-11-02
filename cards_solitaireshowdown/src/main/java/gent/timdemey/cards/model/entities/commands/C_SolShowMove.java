@@ -166,25 +166,23 @@ public class C_SolShowMove extends C_Move
         // calculate score
         addScore(state, cardGame, srcCardStack, dstCardStack, false);
         
-        INetworkService netServ = Services.get(INetworkService.class);
         if (type == ContextType.UI)
         {
-            netServ.send(state.getLocalId(), state.getServerId(), this, state.getTcpConnectionPool());
+            Services.get(INetworkService.class).sendMove(state, this);
         }
         else if (type == ContextType.Server)
         {
-            List<UUID> ids_move = state.getPlayers().getExceptUUID(getSourceId());
-            state.getTcpConnectionPool().broadcast(ids_move, getSerialized());
+            // the move itself is broadcast to all players as a MoveAccepted event by the server executor
 
             // end of game trigger
             if (srcCardStack.cardStackType.equals(SolShowCardStackType.SPECIAL) && srcCardStack.getCards().size() == 0)
             {
                 state.setGameState(GameState.Ended);
                 UUID winnerId = cardGame.getPlayerId(srcCardStack);
-                C_OnGameEnded cmd_endgame = new C_OnGameEnded(winnerId);
-
-                List<UUID> ids_endgame = state.getPlayers().getIds();
-                netServ.broadcast(state.getLocalId(), ids_endgame, cmd_endgame, state.getTcpConnectionPool());
+                if (state.getGameServer() != null)
+                {
+                    state.getGameServer().onGameEnded(winnerId);
+                }
             }
         }
     }

@@ -65,7 +65,7 @@ public class C_Disconnect extends CommandBase
         CheckContext(type, ContextType.UI);
 
         // clean all state
-        state.setTcpConnectionPool(null);
+        state.setGameClient(null);
         state.setUdpServiceRequester(null);
         state.setGameState(GameState.Disconnected);
         state.setCardGame(null);

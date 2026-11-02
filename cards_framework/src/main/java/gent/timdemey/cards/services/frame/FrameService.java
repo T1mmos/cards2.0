@@ -310,9 +310,10 @@ public class FrameService implements IFrameService, IPreload
             }            
         }
         
-        if (push)
+        boolean addOverlay = pd.panelType == PanelType.Overlay && comp.getParent() != getFrameBodyPanel();
+        if (push || addOverlay)
         {
-            // determine how many panels of this PanelType are already visible,
+            // determine how many
             // use this number to assign the correct layer
             List<IPanelManager> visPms = StreamUtils.combine(
                     getPanelDescriptorsAsStream(), 

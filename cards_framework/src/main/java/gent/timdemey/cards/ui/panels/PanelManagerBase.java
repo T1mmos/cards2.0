@@ -15,6 +15,7 @@ import javax.swing.JComponent;
 
 import gent.timdemey.cards.Services;
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityBase;
+import gent.timdemey.cards.services.animation.AnimationKind;
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.services.contract.descriptors.ComponentType;
 import gent.timdemey.cards.services.contract.res.FontResource;
@@ -218,10 +219,16 @@ public abstract class PanelManagerBase implements IPanelManager
     }
 
     @Override
-    public void startAnimate(JComponent jcomp)
+    public void startAnimate(JComponent jcomp, AnimationKind kind)
+    {
+        startAnimate(List.of(jcomp), kind);
+    }
+
+    @Override
+    public void startAnimate(List<? extends JComponent> jcomps, AnimationKind kind)
     {
         IAnimationService animServ = Services.get(IAnimationService.class);
-        animServ.animate(jcomp, this);        
+        animServ.animate(jcomps, this, kind);
     }
 
     @Override

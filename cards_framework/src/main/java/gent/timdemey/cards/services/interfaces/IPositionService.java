@@ -4,6 +4,7 @@ import java.awt.Dimension;
 
 import javax.swing.JComponent;
 
+import gent.timdemey.cards.services.animation.AnimationKind;
 import gent.timdemey.cards.services.animation.LayerRange;
 import gent.timdemey.cards.services.contract.Coords;
 import gent.timdemey.cards.services.contract.LayeredArea;
@@ -68,8 +69,9 @@ public interface IPositionService
     public Dimension getResourceDimension(ComponentType compType);
     
     /** 
-     * Gets the drag layer range where a component can be dragged.
+     * Gets the layer range for the given kind of animation (or drag).
+     * Ranges of later AnimationKinds must be higher than those of earlier ones.
      * @return
      */
-    public LayerRange getDragLayerRange();
+    public LayerRange getLayerRange(AnimationKind kind);
 }

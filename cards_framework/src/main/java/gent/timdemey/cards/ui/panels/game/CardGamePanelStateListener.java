@@ -1,6 +1,7 @@
 package gent.timdemey.cards.ui.panels.game;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.JComponent;
 
@@ -13,6 +14,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyPlayer;
 import gent.timdemey.cards.readonlymodel.ReadOnlyProperty;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.readonlymodel.TypedChange;
+import gent.timdemey.cards.services.animation.AnimationKind;
 import gent.timdemey.cards.services.context.ChangeType;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.contract.descriptors.PanelDescriptors;
@@ -45,12 +47,10 @@ public class CardGamePanelStateListener implements IStateListener
             if (change.changeType == ChangeType.Add)
             {
                 TypedChange<ReadOnlyCard> tc = ReadOnlyCardStack.Cards.cast(change);
-                List<ReadOnlyCard> cards = tc.addedValues;      
-                for (ReadOnlyCard card : cards)
-                {
-                    JComponent comp = pm.getComponent(card);
-                    pm.startAnimate(comp);    
-                }
+                List<JComponent> comps = tc.addedValues.stream()
+                        .map(pm::getComponent)
+                        .collect(Collectors.toList());
+                pm.startAnimate(comps, AnimationKind.MOVE);
             }
         }
         else if (property == ReadOnlyPlayer.Score)

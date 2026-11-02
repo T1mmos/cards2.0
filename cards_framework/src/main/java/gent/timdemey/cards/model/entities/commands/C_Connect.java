@@ -8,9 +8,9 @@ import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.model.entities.game.payload.P_Server;
+import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.netcode.ITcpConnectionListener;
-import gent.timdemey.cards.netcode.TCP_ConnectionPool;
+import gent.timdemey.cards.netcode.ws.GameClient;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.utils.Debug;
@@ -69,13 +69,11 @@ public class C_Connect extends CommandBase
             state.setServer(server);
             
             state.setLocalName(playerName);
-            
-            ITcpConnectionListener tcpConnListener = new CommandSchedulingTcpConnectionListener(ContextType.UI);
-            TCP_ConnectionPool tcpConnPool = new TCP_ConnectionPool(type.name(), 1, tcpConnListener);
+            state.setGameState(GameState.Connected);
 
-            state.setTcpConnectionPool(tcpConnPool);
-
-            tcpConnPool.addConnection(serverInetAddress, serverTcpPort);            
+            GameClient gameClient = new GameClient(serverInetAddress.getHostAddress(), serverTcpPort);
+            state.setGameClient(gameClient);
+            gameClient.connectAndJoin(playerId, playerName);
         }
     }
 

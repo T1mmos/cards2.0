@@ -36,8 +36,7 @@ public class C_StopServer extends CommandBase
         
         // clean up
         state.setUdpServiceAnnouncer(null);       
-        state.setTcpConnectionAccepter(null);     
-        state.setTcpConnectionPool(null);
+        state.setGameServer(null);
        
         // Drop the server context entirely
         IContextService ctxtServ = Services.get(IContextService.class);

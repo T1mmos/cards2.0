@@ -219,8 +219,13 @@ public final class Context
         for (EntityPropertyChange epc : stateRef2ListAddedValues.keySet())
         {
             List<Object> addedValues = stateRef2ListAddedValues.get(epc);
+            ReadOnlyChange roChange = ReadOnlyEntityFactory.getReadOnlyChangeListValue(epc.changeType, epc.property, epc.entityId, addedValues, null);
+            roChanges.add(roChange);
+        }
+        for (EntityPropertyChange epc : stateRef2ListRemovedValues.keySet())
+        {
             List<Object> removedValues = stateRef2ListRemovedValues.get(epc);
-            ReadOnlyChange roChange = ReadOnlyEntityFactory.getReadOnlyChangeListValue(epc.changeType, epc.property, epc.entityId, addedValues, removedValues);
+            ReadOnlyChange roChange = ReadOnlyEntityFactory.getReadOnlyChangeListValue(epc.changeType, epc.property, epc.entityId, null, removedValues);
             roChanges.add(roChange);
         }
                

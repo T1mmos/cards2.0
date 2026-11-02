@@ -13,8 +13,8 @@ import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.model.entities.game.UDPServer;
-import gent.timdemey.cards.netcode.TCP_ConnectionAccepter;
-import gent.timdemey.cards.netcode.TCP_ConnectionPool;
+import gent.timdemey.cards.netcode.ws.GameClient;
+import gent.timdemey.cards.netcode.ws.GameServer;
 import gent.timdemey.cards.netcode.UDP_ServiceAnnouncer;
 import gent.timdemey.cards.netcode.UDP_ServiceRequester;
 
@@ -49,8 +49,8 @@ public class State extends EntityBase
     private StateValueRef<String> serverMsgRef;
 
     // context specific
-    private TCP_ConnectionAccepter tcpConnectionAccepter = null;
-    private TCP_ConnectionPool tcpConnectionPool = null;
+    private GameServer gameServer = null;
+    private GameClient gameClient = null;
     private UDP_ServiceAnnouncer udpServiceAnnouncer = null;
     private UDP_ServiceRequester udpServiceRequester = null;
 
@@ -89,47 +89,46 @@ public class State extends EntityBase
         gameStateRef.set(gameState);
     }
 
-    public TCP_ConnectionAccepter getTcpConnectionAccepter()
+    public GameServer getGameServer()
     {
-        return tcpConnectionAccepter;
+        return gameServer;
     }
 
-    public void setTcpConnectionAccepter(TCP_ConnectionAccepter tcpConnectionAccepter)
+    public void setGameServer(GameServer gameServer)
     {
-        if(this.tcpConnectionAccepter != null)
+        if(this.gameServer != null && this.gameServer != gameServer)
         {
             try
             {
-                this.tcpConnectionAccepter.stop();
+                this.gameServer.stop();
             }
             catch (Exception ex)
             {
                 Logger.error(ex);
             }
         }
-        this.tcpConnectionAccepter = tcpConnectionAccepter;
+        this.gameServer = gameServer;
     }
 
-    public TCP_ConnectionPool getTcpConnectionPool()
+    public GameClient getGameClient()
     {
-        return tcpConnectionPool;
+        return gameClient;
     }
 
-    public void setTcpConnectionPool(TCP_ConnectionPool tcpConnectionPool)
+    public void setGameClient(GameClient gameClient)
     {
-        if(this.tcpConnectionPool != null)
+        if(this.gameClient != null && this.gameClient != gameClient)
         {
             try
             {
-                this.tcpConnectionPool.closeAllConnections();
-                this.tcpConnectionPool.stop();
+                this.gameClient.close();
             }
             catch (Exception ex)
             {
                 Logger.error(ex);
             }
         }
-        this.tcpConnectionPool = tcpConnectionPool;
+        this.gameClient = gameClient;
     }
 
     public UDP_ServiceRequester getUdpServiceRequester()

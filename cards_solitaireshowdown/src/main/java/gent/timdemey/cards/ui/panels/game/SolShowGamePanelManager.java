@@ -6,6 +6,7 @@ import java.util.UUID;
 import javax.swing.JComponent;
 
 import gent.timdemey.cards.Services;
+import gent.timdemey.cards.services.animation.AnimationKind;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardGame;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
@@ -282,6 +283,6 @@ public class SolShowGamePanelManager extends CardGamePanelManager
         String text = "+" + increment;
         JSLabel label = createJSLabel(UUID.randomUUID(), ComponentTypes.CARDSCORE, text, card, scaleFontRes);
         
-        startAnimate(label);
+        startAnimate(label, AnimationKind.OVERLAY);
     }
 }

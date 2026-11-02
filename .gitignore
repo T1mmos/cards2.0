@@ -3,7 +3,8 @@
 **/.project
 **/.externalToolBuilders/**
 **/.classpath
-**/.vs
+.vs/*
+!.vs/tasks.vs.json
 **/target/**
 **/dist/**
 nbactions.xml

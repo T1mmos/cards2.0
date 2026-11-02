@@ -2,6 +2,7 @@ package gent.timdemey.cards.ui.panels.game;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.swing.JComponent;
 
@@ -12,6 +13,7 @@ import gent.timdemey.cards.readonlymodel.ReadOnlyChange;
 import gent.timdemey.cards.readonlymodel.ReadOnlyProperty;
 import gent.timdemey.cards.readonlymodel.ReadOnlyState;
 import gent.timdemey.cards.readonlymodel.TypedChange;
+import gent.timdemey.cards.services.animation.AnimationKind;
 import gent.timdemey.cards.services.cardgame.SolShowCardStackType;
 import gent.timdemey.cards.services.context.ChangeType;
 import gent.timdemey.cards.services.context.Context;
@@ -56,11 +58,10 @@ public class SolShowGamePanelStateListener extends CardGamePanelStateListener
                     int cnt = Math.min(cardStack.getCards().size(), 3);
                     if (cnt > 0)
                     {
-                        for (ReadOnlyCard card : cardStack.getHighestCards(cnt))
-                        {
-                            JComponent comp = pm.getComponent(card);
-                            pm.startAnimate(comp);
-                        }
+                        List<JComponent> comps = cardStack.getHighestCards(cnt).stream()
+                                .map(pm::getComponent)
+                                .collect(Collectors.toList());
+                        pm.startAnimate(comps, AnimationKind.RELAYOUT);
                     }
                 }
                 else if (cardStack.getCardStackType().equals(SolShowCardStackType.SPECIAL))
@@ -72,16 +73,21 @@ public class SolShowGamePanelStateListener extends CardGamePanelStateListener
             }
             else if (change.changeType == ChangeType.Add && cardStack.getCardStackType().equals(SolShowCardStackType.TURNOVER))
             {             
+                TypedChange<ReadOnlyCard> tc = ReadOnlyCardStack.Cards.cast(change);
+                List<ReadOnlyCard> added = tc.addedValues;
+                List<UUID> addedIds = added.stream().map(ReadOnlyCard::getId).collect(Collectors.toList());
+
                 int animCnt = Math.min(cardStack.getCards().size(), 5);
-                List<ReadOnlyCard> animCards = cardStack.getHighestCards(animCnt);
-                
-                // animate from low to high
-                for (int idx = 0; idx < animCnt; idx++)
-                {
-                    ReadOnlyCard animCard = animCards.get(idx);                    
-                    JComponent animComp = pm.getComponent(animCard);
-                    pm.startAnimate(animComp);                        
-                }
+                List<JComponent> relayoutComps = cardStack.getHighestCards(animCnt).stream()
+                        .filter(c -> !addedIds.contains(c.getId()))
+                        .map(pm::getComponent)
+                        .collect(Collectors.toList());
+                List<JComponent> moveComps = added.stream()
+                        .map(pm::getComponent)
+                        .collect(Collectors.toList());
+
+                pm.startAnimate(relayoutComps, AnimationKind.RELAYOUT);
+                pm.startAnimate(moveComps, AnimationKind.MOVE);
             }
             else
             {

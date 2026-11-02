@@ -2,7 +2,6 @@ package gent.timdemey.cards.model.entities.commands;
 
 import java.util.UUID;
 
-import gent.timdemey.cards.Services;
 import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.model.entities.commands.C_Disconnect.DisconnectReason;
 import gent.timdemey.cards.model.entities.commands.C_OnGameToLobby.GameToLobbyReason;
@@ -13,7 +12,6 @@ import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
-import gent.timdemey.cards.services.interfaces.INetworkService;
 import gent.timdemey.cards.utils.Debug;
 
 public class C_RemovePlayer extends CommandBase
@@ -52,22 +50,19 @@ public class C_RemovePlayer extends CommandBase
 
         if(contextType == ContextType.Server)
         {
-            INetworkService ns = Services.get(INetworkService.class);
-
             if(state.getLobbyAdminId().equals(player_removed.id))
             {
                 // when the lobby admin leaves, server should stop, so make
                 // everyone disconnect gracefully, then stop the server
-                C_Disconnect cmd_leavelobby = new C_Disconnect(DisconnectReason.LobbyAdminLeft);
-                ns.broadcast(state.getLocalId(), state.getRemotePlayerIds(), cmd_leavelobby, state.getTcpConnectionPool());                
+                state.getGameServer().onServerStopping(DisconnectReason.LobbyAdminLeft.name());
 
                 C_StopServer cmd_stopserver = new C_StopServer();
                 run(cmd_stopserver);
             }
             else 
             {
-                // inform all clients
-                ns.broadcast(state.getLocalId(), state.getRemotePlayerIds(), this, state.getTcpConnectionPool());
+                // inform all clients through a numbered lobby event
+                state.getGameServer().onPlayerLeft(player_removed.id);
                 
                 if(state.getGameState() != GameState.Lobby)
                 {

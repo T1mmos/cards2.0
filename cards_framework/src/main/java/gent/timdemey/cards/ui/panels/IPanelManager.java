@@ -8,6 +8,7 @@ import java.util.UUID;
 import javax.swing.JComponent;
 
 import gent.timdemey.cards.readonlymodel.ReadOnlyEntityBase;
+import gent.timdemey.cards.services.animation.AnimationKind;
 import gent.timdemey.cards.services.contract.RescaleRequest;
 import gent.timdemey.cards.ui.components.swing.JSLayeredPane;
 
@@ -48,7 +49,8 @@ public interface IPanelManager
     public <T extends JComponent> List<T> getComponentsAt(Point p, Class<T> clazz);
     public List<JComponent> getComponents();
 
-    public void startAnimate(JComponent scaleComp);
+    public void startAnimate(JComponent comp, AnimationKind kind);
+    public void startAnimate(List<? extends JComponent> comps, AnimationKind kind);
     public void stopAnimate(JComponent scaleComp);
 
 

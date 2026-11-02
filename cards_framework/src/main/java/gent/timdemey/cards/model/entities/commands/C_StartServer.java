@@ -3,6 +3,7 @@ package gent.timdemey.cards.model.entities.commands;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import gent.timdemey.cards.ICardPlugin;
 import gent.timdemey.cards.Services;
@@ -14,9 +15,8 @@ import gent.timdemey.cards.model.entities.game.Player;
 import gent.timdemey.cards.model.entities.game.Server;
 import gent.timdemey.cards.model.entities.game.payload.P_Player;
 import gent.timdemey.cards.model.state.State;
-import gent.timdemey.cards.netcode.TCP_ConnectionAccepter;
-import gent.timdemey.cards.netcode.TCP_ConnectionPool;
 import gent.timdemey.cards.netcode.UDP_ServiceAnnouncer;
+import gent.timdemey.cards.netcode.ws.GameServer;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
 import gent.timdemey.cards.services.interfaces.IContextService;
@@ -141,11 +141,8 @@ public class C_StartServer extends CommandBase
                 // create web service to announce the presence over UDP 
                 UDP_ServiceAnnouncer udpServAnnouncer = new UDP_ServiceAnnouncer(udpport);
 
-                // create web service to accept TCP connections
-                int playerCount = Services.get(ICardPlugin.class).getPlayerCount();
-                CommandSchedulingTcpConnectionListener tcpConnListener = new CommandSchedulingTcpConnectionListener(ContextType.Server);
-                TCP_ConnectionPool tcpConnPool = new TCP_ConnectionPool(type.name(), playerCount, tcpConnListener);
-                TCP_ConnectionAccepter tcpConnAccepter = new TCP_ConnectionAccepter(tcpConnPool, tcpport);
+                // create the WebSocket server that accepts clients
+                GameServer gameServer = new GameServer(tcpport);
 
                 // update the state: set server, lobby admin, add player, command history
                 Server server = new Server(srvname, addr, tcpport);
@@ -157,13 +154,12 @@ public class C_StartServer extends CommandBase
                 state.setConfiguration(cfg);
                 state.getPlayers().add(player);
                 state.setUdpServiceAnnouncer(udpServAnnouncer);
-                state.setTcpConnectionAccepter(tcpConnAccepter);
-                state.setTcpConnectionPool(tcpConnPool);
+                state.setGameServer(gameServer);
                 state.setCommandHistory(new CommandHistory(true));
 
                 // start the services
                 udpServAnnouncer.start();
-                tcpConnAccepter.start();
+                gameServer.start().get(5, TimeUnit.SECONDS);
 
                 // schedule a command to have the local player join the server
                 if(autoconnect)

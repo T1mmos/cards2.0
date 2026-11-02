@@ -1,11 +1,11 @@
 package gent.timdemey.cards.services.contract.res;
 
-import javax.sound.sampled.Clip;
+import gent.timdemey.cards.services.sound.PcmSample;
 
-public class AudioResource extends Resource<Clip>
+public class AudioResource extends Resource<PcmSample>
 {
-    public AudioResource(String filename, boolean fallback, Clip clip)
+    public AudioResource(String filename, boolean fallback, PcmSample sample)
     {
-        super(filename, fallback, clip);
+        super(filename, fallback, sample);
     }
 }
