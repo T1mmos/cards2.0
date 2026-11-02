@@ -19,13 +19,18 @@ jobs:
         include:
           - os: windows-2022
             type: msi
-            platformArgs: '--win-menu --win-shortcut --win-dir-chooser --win-menu-group "Solitaire Showdown" --win-upgrade-uuid 6b1f6f0e-3c1a-4b8e-9a4e-2d6f7c9e5a11'
+            platformArgs: >-
+              --win-menu --win-shortcut --win-dir-chooser
+              --win-menu-group Solitaire_Showdown
+              --win-upgrade-uuid 6b1f6f0e-3c1a-4b8e-9a4e-2d6f7c9e5a11
           - os: macos-latest
             type: dmg
             platformArgs: ''
           - os: ubuntu-latest
             type: deb
-            platformArgs: '--linux-package-name solitaire-showdown --linux-shortcut --linux-menu-group Game'
+            platformArgs: >-
+              --linux-package-name solitaire-showdown
+              --linux-shortcut --linux-menu-group Game
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -48,7 +53,15 @@ jobs:
 
       - name: Build installer
         shell: bash
-        "-Djpackage.platformArgs=${{ matrix.platformArgs }}" "-Djpackage.appVersion=1.0.${{ github.run_number }}"
+        env:
+          JP_TYPE: ${{ matrix.type }}
+          JP_ARGS: ${{ matrix.platformArgs }}
+          JP_VERSION: 1.0.${{ github.run_number }}
+        run: >-
+          mvn -B -Pinstaller package -DskipTests
+          "-Djpackage.type=$JP_TYPE"
+          "-Djpackage.platformArgs=$JP_ARGS"
+          "-Djpackage.appVersion=$JP_VERSION"
 
       - uses: actions/upload-artifact@v4
         with:
