@@ -1,0 +1,62 @@
+name: Build installers
+
+on:
+  push:
+    branches: [ master ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-2022
+            type: msi
+            platformArgs: '--win-menu --win-shortcut --win-dir-chooser --win-menu-group "Solitaire Showdown" --win-upgrade-uuid 6b1f6f0e-3c1a-4b8e-9a4e-2d6f7c9e5a11'
+          - os: macos-latest
+            type: dmg
+            platformArgs: ''
+          - os: ubuntu-latest
+            type: deb
+            platformArgs: '--linux-package-name solitaire-showdown --linux-shortcut --linux-menu-group Game'
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Ensure WiX 3 (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          if (-not (Get-Command candle.exe -ErrorAction SilentlyContinue)) {
+            choco install wixtoolset --version 3.14.1 -y --no-progress
+            echo "C:\Program Files (x86)\WiX Toolset v3.14\bin" >> $env:GITHUB_PATH
+          }
+
+      - name: Build installer
+        shell: bash
+        "-Djpackage.platformArgs=${{ matrix.platformArgs }}" "-Djpackage.appVersion=1.0.${{ github.run_number }}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: solitaire-showdown-${{ matrix.type }}
+          path: cards_solitaireshowdown/target/installer/*
+
+      - name: Attach to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: cards_solitaireshowdown/target/installer/*

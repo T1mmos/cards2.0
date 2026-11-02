@@ -30,7 +30,7 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                     <executions>
                         <execution>
-                            <phase>install</phase>
+                            <phase>package</phase>
                             <goals>
                                 <goal>copy-dependencies</goal>
                             </goals>
@@ -60,4 +60,59 @@
             </plugin>  
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <!-- Native installer via jpackage: mvn -Pinstaller package (-Djpackage.type=msi|exe|dmg|deb|rpm|app-image) -->
+            <id>installer</id>
+            <properties>
+                <jpackage.type>msi</jpackage.type>
+                <jpackage.appVersion>${project.version}</jpackage.appVersion>
+                <jpackage.platformArgs>--win-menu --win-shortcut --win-dir-chooser --win-menu-group "Solitaire Showdown" --win-upgrade-uuid 6b1f6f0e-3c1a-4b8e-9a4e-2d6f7c9e5a11</jpackage.platformArgs>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>jpackage</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <delete dir="${project.build.directory}/jpackage-input"/>
+                                        <copy todir="${project.build.directory}/jpackage-input">
+                                            <fileset dir="${project.build.directory}" includes="${project.build.finalName}.jar"/>
+                                        </copy>
+                                        <copy todir="${project.build.directory}/jpackage-input/lib">
+                                            <fileset dir="${project.build.directory}/lib"/>
+                                        </copy>
+                                        <delete dir="${project.build.directory}/installer"/>
+                                        <exec executable="jpackage" failonerror="true">
+                                            <arg line="--type ${jpackage.type}"/>
+                                            <arg value="--name"/>
+                                            <arg value="Solitaire Showdown"/>
+                                            <arg line="--app-version ${jpackage.appVersion}"/>
+                                            <arg value="--vendor"/>
+                                            <arg value="Tim De Mey"/>
+                                            <arg line="--input ${project.build.directory}/jpackage-input"/>
+                                            <arg line="--main-jar ${project.build.finalName}.jar"/>
+                                            <arg line="--add-modules java.base,java.desktop,java.logging,java.naming,java.sql,jdk.unsupported"/>
+                                            <arg line="--dest ${project.build.directory}/installer"/>
+                                            <arg line="${jpackage.platformArgs}"/>
+                                        </exec>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

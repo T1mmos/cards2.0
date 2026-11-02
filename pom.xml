@@ -1,0 +1,15 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!-- Aggregator: builds all modules in dependency order with a single 'mvn package' -->
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>gent.timdemey.cards</groupId>
+    <artifactId>cards</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
+    <name>cards</name>
+
+    <modules>
+        <module>cards_framework</module>
+        <module>cards_solitaire</module>
+        <module>cards_solitaireshowdown</module>
+    </modules>
+</project>
