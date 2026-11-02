@@ -53,12 +53,15 @@ jobs:
         env:
           JP_TYPE: ${{ matrix.type }}
           JP_ARGS: ${{ matrix.platformArgs }}
-          JP_VERSION: 1.0.${{ github.run_number }}
-        run: >-
-          mvn -B -Pinstaller package -DskipTests
-          "-Djpackage.type=$JP_TYPE"
-          "-Djpackage.platformArgs=$JP_ARGS"
-          "-Djpackage.appVersion=$JP_VERSION"
+        run: |
+          # Tag builds (vX.Y.Z) use the tag number; other builds are test builds 0.0.<run>
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            JP_VERSION="${GITHUB_REF_NAME#v}"
+          else
+            JP_VERSION="0.0.${GITHUB_RUN_NUMBER}"
+          fi
+          echo "Installer version: $JP_VERSION"
+          mvn -B -Pinstaller package -DskipTests "-Djpackage.type=$JP_TYPE" "-Djpackage.platformArgs=$JP_ARGS" "-Djpackage.appVersion=$JP_VERSION"
 
       - uses: actions/upload-artifact@v4
         with:
