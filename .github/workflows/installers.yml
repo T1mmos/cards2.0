@@ -61,7 +61,7 @@ jobs:
             JP_VERSION="0.0.${GITHUB_RUN_NUMBER}"
           fi
           echo "Installer version: $JP_VERSION"
-          mvn -B -Pinstaller package -DskipTests "-Djpackage.type=$JP_TYPE" "-Djpackage.platformArgs=$JP_ARGS" "-Djpackage.appVersion=$JP_VERSION"
+          "-Djpackage.appVersion=$JP_VERSION"
 
       - uses: actions/upload-artifact@v4
         with:

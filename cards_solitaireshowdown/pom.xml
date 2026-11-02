@@ -78,6 +78,19 @@
                         <version>3.1.0</version>
                         <executions>
                             <execution>
+                                <!-- Stamp the release version over the DEV BUILD placeholder before the jar is packaged -->
+                                <id>stamp-version</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <echo file="${project.build.outputDirectory}/solshow/cfg/app-version.properties" message="app.version=${jpackage.appVersion}${line.separator}"/>
+                                    </target>
+                                </configuration>
+                            </execution>
+                            <execution>
                                 <id>jpackage</id>
                                 <phase>package</phase>
                                 <goals>

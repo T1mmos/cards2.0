@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.function.BiFunction;
 
 import javax.imageio.ImageIO;
@@ -18,6 +19,7 @@ import gent.timdemey.cards.logging.Logger;
 import gent.timdemey.cards.services.contract.res.AudioResource;
 import gent.timdemey.cards.services.contract.res.FontResource;
 import gent.timdemey.cards.services.contract.res.ImageResource;
+import gent.timdemey.cards.services.contract.res.PropertiesResource;
 import gent.timdemey.cards.services.contract.res.ResourceType;
 import gent.timdemey.cards.services.interfaces.IResourceCacheService;
 import gent.timdemey.cards.services.interfaces.IResourceRepository;
@@ -31,6 +33,7 @@ public class ResourceCacheService implements IResourceCacheService
     private final Map<String, ImageResource> cache_images = new HashMap<>();
     private final Map<String, FontResource> cache_fonts = new HashMap<>();
     private final Map<String, AudioResource> cache_audio = new HashMap<>();
+    private final Map<String, PropertiesResource> cache_props = new HashMap<>();
     
     // black-pink checkerboard pattern that can be tiled
     private BufferedImage ERROR_IMAGE;
@@ -86,10 +89,18 @@ public class ResourceCacheService implements IResourceCacheService
     }
 
     @Override
+    public PropertiesResource getProperties(String filename)
+    {
+        PropertiesResource resp_cached = get(cache_props, filename, ResourceType.CONFIG, this::loadProperties);
+        return resp_cached;
+    }
+
+    @Override
     public void clear()
     {
         cache_images.clear();
         cache_fonts.clear();
+        cache_props.clear();
     }
 
     private ImageResource loadImage(InputStream is, String filename)
@@ -148,6 +159,21 @@ public class ResourceCacheService implements IResourceCacheService
         }
     }
     
+    private PropertiesResource loadProperties(InputStream is, String filename)
+    {
+        Properties props = new Properties();
+        try
+        {
+            props.load(is);
+            return new PropertiesResource(filename, false, props);
+        }
+        catch (IOException e)
+        {
+            Logger.error("Failed to load properties %s", filename);
+            return new PropertiesResource(filename, true, new Properties());
+        }
+    }
+
     private <T> T get(Map<String, T> cache, String filename, ResourceType resourceType, BiFunction<InputStream, String, T> loadFunc)
     {
         T value = cache.get(filename);
