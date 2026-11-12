@@ -106,8 +106,12 @@
                                             <fileset dir="${project.build.directory}/lib"/>
                                         </copy>
                                         <delete dir="${project.build.directory}/installer"/>
+                                        <condition property="installer.icon.args" value="--icon &quot;${project.basedir}/../cards_framework/src/main/resources/img/icon_spade_140x140.ico&quot;" else="">
+                                            <os family="windows"/>
+                                        </condition>
                                         <exec executable="jpackage" failonerror="true">
                                             <arg line="--type ${jpackage.type}"/>
+                                            <arg line="${installer.icon.args}"/>
                                             <arg value="--name"/>
                                             <arg value="Solitaire Showdown"/>
                                             <arg line="--app-version ${jpackage.appVersion}"/>
