@@ -34,7 +34,11 @@ The main engine found in [cards_framework](../master/cards_framework) must be st
 3. Run Only:
    * The JAR files ```cards_solitaire-1.0.jar``` and ```cards_solitaireshowdown-1.0.jar``` are executable, so you should be able to execute them from the CLI or even simpler by double clicking them.
    * If this doesn't work, you can run either ```scripts/run_solitaire.bat``` or ```scripts/run_solitaire_showdown.bat```
-  
+
+### Showdown developer mode
+
+Start the host with `java -jar cards_solitaireshowdown\target\cards_solitaireshowdown-1.0.jar --devmode` (or launch the installed `Solitaire Showdown.exe --devmode`). In the host's lobby, select **DEV MODE: easy card distribution** before starting a game. Both special stacks will have the easy deal; the remaining cards are shuffled normally. The checkbox is off by default and is not shown to remote players.
+
 ## Latest animated GIF
 
 ![Screenshot Solitaire Showdown](screenshots/solitaireshowdown_01112021.gif)

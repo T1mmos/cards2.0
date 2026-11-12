@@ -2,6 +2,7 @@ package gent.timdemey.cards.services.cardgame;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -9,6 +10,8 @@ import gent.timdemey.cards.model.entities.cards.Card;
 import gent.timdemey.cards.model.entities.cards.CardGame;
 import gent.timdemey.cards.model.entities.cards.CardStack;
 import gent.timdemey.cards.model.entities.cards.PlayerConfiguration;
+import gent.timdemey.cards.model.entities.cards.Suit;
+import gent.timdemey.cards.model.entities.cards.Value;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCard;
 import gent.timdemey.cards.readonlymodel.ReadOnlyCardStack;
 import gent.timdemey.cards.readonlymodel.ReadOnlyList;
@@ -17,6 +20,18 @@ import gent.timdemey.cards.utils.CardDeckUtils;
 
 public class SolShowCardGameService implements ICardGameService
 {
+    private final SolShowDevOptions devOptions;
+
+    public SolShowCardGameService()
+    {
+        this(new SolShowDevOptions(false));
+    }
+
+    public SolShowCardGameService(SolShowDevOptions devOptions)
+    {
+        this.devOptions = java.util.Objects.requireNonNull(devOptions);
+    }
+
     private List<List<Card>> getCards()
     {
         // solitaire showdown: each player starts with his own deck of 52 cards.
@@ -25,12 +40,40 @@ public class SolShowCardGameService implements ICardGameService
         Card[] deck2 = CardDeckUtils.createFullDeck();
         CardDeckUtils.shuffleDeck(deck2);
 
+        if (devOptions.isEasyDistribution())
+        {
+            // Object-array sorting is stable, preserving the shuffled order within each group.
+            Arrays.sort(deck1, Comparator.comparingInt(SolShowCardGameService::easyDealOrder));
+            Arrays.sort(deck2, Comparator.comparingInt(SolShowCardGameService::easyDealOrder));
+        }
+
         List<List<Card>> playerCards = new ArrayList<>();
 
         playerCards.add(Arrays.asList(deck1));
         playerCards.add(Arrays.asList(deck2));
 
         return playerCards;
+    }
+
+    private static int easyDealOrder(Card card)
+    {
+        if (card.value == Value.V_4 && card.suit == Suit.HEARTS)
+        {
+            return 0;
+        }
+        if (card.value == Value.V_3)
+        {
+            return 1;
+        }
+        if (card.value == Value.V_2)
+        {
+            return 2;
+        }
+        if (card.value == Value.V_A)
+        {
+            return 3;
+        }
+        return 4;
     }
 
     @Override

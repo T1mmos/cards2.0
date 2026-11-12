@@ -2,12 +2,14 @@ package gent.timdemey.cards.model.entities.commands;
 
 import java.util.UUID;
 
+import gent.timdemey.cards.Services;
 import gent.timdemey.cards.model.entities.commands.contract.CanExecuteResponse;
 import gent.timdemey.cards.model.entities.commands.payload.P_OnGameEnded;
 import gent.timdemey.cards.model.entities.game.GameState;
 import gent.timdemey.cards.model.state.State;
 import gent.timdemey.cards.services.context.Context;
 import gent.timdemey.cards.services.context.ContextType;
+import gent.timdemey.cards.services.interfaces.ISoundService;
 
 public class C_OnGameEnded extends CommandBase
 {
@@ -37,6 +39,7 @@ public class C_OnGameEnded extends CommandBase
         CheckContext(type, ContextType.UI);
 
         state.setGameState(GameState.Ended);
+        Services.get(ISoundService.class).playGameOutcome(state.getLocalId().equals(winnerId));
         D_OnEndGame d_onendgame = new D_OnEndGame(winnerId);
         schedule(ContextType.UI, d_onendgame);
     }

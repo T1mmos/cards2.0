@@ -17,9 +17,12 @@ public class SolitairePlugin implements ICardPlugin
 {
     public static void main(String[] args)
     {
-        Start.main(new String [] { SolitairePlugin.class.getName() });
+        String[] launchArgs = new String[args.length + 1];
+        launchArgs[0] = SolitairePlugin.class.getName();
+        System.arraycopy(args, 0, launchArgs, 1, args.length);
+        Start.main(launchArgs);
     }
-    
+
     @Override
     public void installServices(Services services)
     {        

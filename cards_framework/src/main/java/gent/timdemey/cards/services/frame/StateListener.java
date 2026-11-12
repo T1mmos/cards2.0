@@ -56,11 +56,12 @@ public class StateListener implements IStateListener
         {
             if (change.addedValues != null && !change.addedValues.isEmpty())
             {
-                soundServ.play(ResourceDescriptors.SoundPutDown);
+                ReadOnlyCardStack destination = state.getCardGame().getCardStack(change.entityId);
+                soundServ.playCardPlacement(destination);
             }
         }
     }
-     
+
     private static void onCreatedComponents ()
     {
         IPanelService panelServ = Services.get(IPanelService.class);

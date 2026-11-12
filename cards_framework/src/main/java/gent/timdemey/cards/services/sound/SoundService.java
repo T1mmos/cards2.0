@@ -42,7 +42,7 @@ public class SoundService implements ISoundService, IPreload
 		mixer.start();
 	}
 
-	private PcmSample preload(ResourceDescriptor desc)
+	protected PcmSample preload(ResourceDescriptor desc)
 	{
 		IResourceCacheService resCacheServ = Services.get(IResourceCacheService.class);
 		IResourceNameService resNameServ = Services.get(IResourceNameService.class);

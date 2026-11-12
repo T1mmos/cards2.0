@@ -21,7 +21,13 @@
               <groupId>gent.timdemey.cards</groupId>
               <artifactId>cards_framework</artifactId>
               <version>1.0</version>
-          </dependency> 
+          </dependency>
+          <dependency>
+              <groupId>org.junit.jupiter</groupId>
+              <artifactId>junit-jupiter-engine</artifactId>
+              <version>5.11.0-M2</version>
+              <scope>test</scope>
+          </dependency>
     </dependencies>
     
     <build>
@@ -35,6 +41,7 @@
                                 <goal>copy-dependencies</goal>
                             </goals>
                             <configuration>
+                                <includeScope>runtime</includeScope>
                                 <outputDirectory>${project.build.directory}/lib</outputDirectory>
                             </configuration>
                         </execution>

@@ -15,5 +15,6 @@ public class SolShowResourceRepository extends ResourceRepository
         super.buildUrlLists(typeUrls);
         addUrl(typeUrls, ResourceType.IMAGE, SolShowPlugin.class, "/solshow/img/");
         addUrl(typeUrls, ResourceType.CONFIG, SolShowPlugin.class, "/solshow/cfg/");
+        addUrl(typeUrls, ResourceType.SOUND, SolShowPlugin.class, "/solshow/snd/");
     }
 }

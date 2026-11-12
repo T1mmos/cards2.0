@@ -124,6 +124,7 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
         panel.add(l_remotePlayer, "align left, push, wrap, sg names");
         if (state.getLocalId().equals(state.getLobbyAdminId()))
         {
+            addHostOptions(panel, state);
             panel.add(b_startGame, "spanx, pushx, align right");
         }
         else
@@ -133,7 +134,11 @@ public class LobbyPanelManager extends DataPanelManagerBase<LobbyPanelData, Void
 
         return panel;
     }
-    
+
+    protected void addHostOptions(JSLayeredPane panel, ReadOnlyState state)
+    {
+    }
+
     @Override
     public JSLayeredPane getPanel()
     {

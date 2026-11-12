@@ -30,6 +30,7 @@ public final class LocKey
     public static final LocKey Button_startmp = Button("startmp");
     
     public static final LocKey CheckBox_autoconnect = CheckBox("autoconnect");
+    public static final LocKey CheckBox_easyDistribution = CheckBox("easyDistribution");
     
     public static final LocKey DebugMenu_debug = DebugMenu("debug");
     public static final LocKey DebugMenu_updateimages = DebugMenu("updateimages");

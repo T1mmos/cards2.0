@@ -54,14 +54,26 @@ public class Start
         // install services that cannot be overruled and that are immediately needed by code
         installRootServices();
         
+        LaunchOptions options;
+        try
+        {
+            options = LaunchOptions.parse(args);
+        }
+        catch (IllegalArgumentException ex)
+        {
+            Logger.error("Invalid command line: %s", ex.getMessage());
+            return;
+        }
+        App.getServices().install(LaunchOptions.class, options);
+
         // determine plugin and if found, let it install services
-        ICardPlugin plugin = loadCardPlugin(args);
+        ICardPlugin plugin = loadCardPlugin(options.pluginClassName);
         if(plugin == null)
         {
             Logger.error("Cannot load plugin class. Terminating.");
             return;
         }
-        
+
         instalPluginServices(plugin);
         
         // now install remaining services that were not overruled by the plugin
@@ -84,15 +96,8 @@ public class Start
         services.installIfAbsent(ILogManager.class, () -> new LogManager(LogLevel.DEBUG));
     }
     
-    private static ICardPlugin loadCardPlugin(String[] args)
+    private static ICardPlugin loadCardPlugin(String clazzName)
     {
-        if(args.length != 1)
-        {
-            Logger.error("A single argument is expected, but %s were given.", args.length);
-            return null;
-        }
-
-        String clazzName = args[0];
         Class<?> clazz;
         try
         {
